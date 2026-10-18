@@ -4,6 +4,7 @@ import { superAdminPeopleExportHref } from "@/modules/people/admin-users-export-
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { redirect } from "next/navigation";
 import { isSuperAdmin } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -32,7 +33,22 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  </div>;
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))redirect("/dashboard");
- const data=await listSuperAdminUsers(context,query.data);
+ const loaded=await listSuperAdminUsers(context,query.data)
+  .then(value=>({ok:true as const,value}))
+  .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
+ if(!loaded.ok) return <div className="min-w-0 space-y-4">
+  <PageHeader eyebrow="Super Admin" title="People Directory"/>
+  <ErrorState
+   title={loaded.denied?"Directory access denied":"People Directory unavailable"}
+   description={loaded.denied
+    ?"Your account can no longer view these membership records."
+    :"These membership records could not be loaded. Your filters were preserved."}
+   action={<Link href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
+    className="font-semibold text-[var(--lms-teal-deep)] underline">
+    {loaded.denied?"Back to dashboard":"Retry loading users"}
+   </Link>}/>
+ </div>;
+ const data=loaded.value;
  const tabs=[{id:"ALL",label:"All contacts"},{id:"FACULTY",label:"Faculty"},{id:"STUDENT",label:"Students"}] as const;
  const roleOptions = ["ALL", ...MEMBERSHIP_ROLES] as const;
  const membershipOptions = ["ALL", ...MEMBERSHIP_STATUSES] as const;
