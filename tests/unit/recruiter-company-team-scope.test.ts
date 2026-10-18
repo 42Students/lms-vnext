@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import {readFileSync} from "node:fs";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveRecruiterCompanyScope } from "@/modules/placements/recruiter-company-team-service";
 
@@ -76,6 +77,24 @@ describe("W05 recruiter company college scope", () => {
     expect(resolveRecruiterCompanyScope({
       ...base,recruiter:{...base.recruiter!,grants:[second]},
     },second.collegeId)).toMatchObject({status:"READY",grant:second});
+  });
+
+  it("HR-TEAM-REVOKE-32 revalidates persisted recruiter and grant before disclosing colleagues",()=>{
+    const source=readFileSync(
+      "src/modules/placements/recruiter-company-team-service.ts","utf8");
+    const scopeQuery=source.slice(source.indexOf("const [company]"),
+      source.indexOf('if (!company) throw new AuthorizationError'));
+    for(const check of [
+      "eq(placementRecruiterProfiles.userId,context.user.id)",
+      'eq(placementRecruiterProfiles.status,"ACTIVE")',
+      "eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id)",
+      'eq(placementRecruiterCollegeGrants.status,"ACTIVE")',
+      'eq(users.platformStatus,"ACTIVE")',
+      'eq(placementCompanyRelationships.status, "ACTIVE")',
+      'eq(placementCompanies.status, "ACTIVE")',
+    ])expect(scopeQuery).toContain(check);
+    expect(source.indexOf('if (!company) throw new AuthorizationError'))
+      .toBeLessThan(source.indexOf("const team = await db"));
   });
 
   it("rejects a forged college id instead of falling back", () => {
