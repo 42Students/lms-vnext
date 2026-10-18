@@ -141,3 +141,9 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | Service/UI | Implemented contract | Test | Pending |
 |---|---|---|---|
 | `tpoStudentNoticesOverview`, `/tpo/settings/notices`, `listTpoPlacementAnnouncements` | Status card uses true college-scoped notices instead of the signed-in officer's author-only history; counts distinguish exact values from at-least totals when page-capped; absent relation says unavailable, not zero or delivered | `tests/unit/chat11-tpo-notices-college-count.test.ts` — TPO-settings-audit-NOTICES-04; commits `9b953eb`, `e7e6f25`, `61e31bd` | PostgreSQL 101/102 notices, notices by multiple TPOs, live sender audience E2E |
+
+## Recipient-safe notification history after session revocation
+
+| Export | Added integrity contract | Regression | Still pending |
+|---|---|---|---|
+| `getTpoMyNotifications` | Own-user, same-college, same-organization filters apply independently to count and paginated rows; after preferences read the service rechecks active persisted TPO (not merely College Admin placements.manage) in transaction-held SHARE locks before responding, including to a revoked/disabled user | `tests/unit/chat11-tpo-private-notifications-revocation.test.ts` — TPO-settings-audit-NOTIFY-READ-05, commits `cb7b636`, `ee28856` | Two-session PG role revocation; mixed-college recipient integration |
