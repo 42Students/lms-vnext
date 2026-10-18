@@ -29,6 +29,20 @@ export type TpoMyNotificationsQuery = z.infer<
   typeof tpoMyNotificationsQuerySchema
 >;
 
+/** Reject repeated/unsupported query keys rather than choosing the first
+ * value of a potentially attacker-controlled array. */
+export function parseTpoMyNotificationsParams(
+  raw:Record<string,string|string[]|undefined>,
+):TpoMyNotificationsQuery|null{
+  if(Object.keys(raw).some(key=>!["view","page","pageSize"].includes(key)))return null;
+  if(Object.values(raw).some(Array.isArray))return null;
+  const parsed=tpoMyNotificationsQuerySchema.safeParse({
+    view:raw.view||undefined,page:raw.page||undefined,pageSize:raw.pageSize||undefined,
+  });
+  return parsed.success?parsed.data:null;
+}
+
+
 export type TpoNotificationPreferences = {
   morningDigest: boolean;
   recruiterMessages: boolean;
