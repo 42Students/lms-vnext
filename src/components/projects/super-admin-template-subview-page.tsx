@@ -283,7 +283,7 @@ export async function SuperAdminTemplateSubviewPage({
               .map((sprint) => (
                 <article
                   key={sprint.key}
-                  className="rounded-xl border border-border bg-surface p-5"
+                  className="border-b border-border py-5 last:border-b-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -364,7 +364,7 @@ export async function SuperAdminTemplateSubviewPage({
               .map((task) => (
                 <article
                   key={task.key}
-                  className="rounded-xl border border-border bg-surface p-5"
+                  className="border-b border-border py-5 last:border-b-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -468,7 +468,7 @@ export async function SuperAdminTemplateSubviewPage({
               .map((resource) => (
                 <article
                   key={resource.key}
-                  className="rounded-xl border border-border bg-surface p-5"
+                  className="border-b border-border py-5 last:border-b-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -605,7 +605,7 @@ export async function SuperAdminTemplateSubviewPage({
               return (
                 <article
                   key={version.id}
-                  className="rounded-xl border border-border bg-surface p-5"
+                  className="border-b border-border py-5 last:border-b-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
