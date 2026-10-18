@@ -170,3 +170,9 @@ New tests have not been executed.
 | Export | Test | Evidence and remaining stage |
 | --- | --- | --- |
 | `src/modules/people/super-admin-person-audit-service.ts` `listSuperAdminPersonAudit` | `tests/unit/chat4-superadmin-person-audit-actor.test.ts` (`SA-people-audit-ACTOR-01`) | Denies without selected college or authorized membership; rechecks live `people.manage` Super Admin permission *inside the activity-events transaction*, holding actor lock until private event read finishes; returns only membership-specific 100-row audit projection; no raw metadata. Live PostgreSQL concurrent role/scope revocation remains open. |
+
+## College faculty bulk membership import
+
+| Export | Behavioral test | Test coverage and boundary |
+| --- | --- | --- |
+| `src/modules/people/faculty-bulk-import-service.ts` `importFacultyCsv` | `tests/unit/chat4-college-faculty-bulk-service.test.ts` (`COL-people-faculty-bulk-01`) | Strict confirmation and shape, selected College Admin college must match request, Indian E.164 normalization, duplicate mobile skip, faculty role only, 500-row parser safety, collision/unknown exception mapped to safe per-row FAILED, later valid rows continue. No PostgreSQL identity index race executed. |
