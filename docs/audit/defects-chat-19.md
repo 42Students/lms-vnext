@@ -84,4 +84,9 @@ These checks are implemented in `tests/unit/chat19-projects-recruiter-role-journ
 
 The dedicated `docs/audit/coverage/hr-pages-chat19-ledger.md` enumerates all 22 `/hr` entrypoints and distinguishes direct mocked route execution from source contracts and full PostgreSQL/browser integration. The two alias routes are tested as executed redirect/re-export, not a separate private data render. CI ownership remains with the cloud orchestrator, so no lack-of-local-execution task blockade is recorded.
 
+
+### Additional recoverable recruiter deep-link defect
+
+| Finding ID | Before-fix severity | Source | Issue | Fix | Commit | Direct regression |
+|---|---|---|---|---|---|---|
 | HR-BREAK-JOB-02 | MAJOR | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | A valid authorized-looking job UUID with a malformed page, stage, applicant, offer or outcome filter made the underlying strict Zod parse throw to the page error boundary rather than provide actionable recovery. | Added inline recruiter-safe `ErrorState` with clear-filters action, retaining 404 for malformed job UUID, no private applicant payload or raw validation stack. | `13765dd3` | `tests/unit/HR-BREAK-chat19-legacy-job-aliases.test.ts` (`b23e24e4`) |
