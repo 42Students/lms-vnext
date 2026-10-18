@@ -13,3 +13,7 @@
 ## Shared form controls follow-up
 
 The GET filter form now uses the audited shared `Select`, `Button` controls, keeping source-specific labels, defaults, submitted URL parameter names, permission checks and all existing pagination/export behavior. Hidden URL-preservation fields remain native. Browser focus/native picker and TypeScript acceptance await orchestrator runs. **Test:** `tests/unit/UX-tpo-companies-companyid-contact-log-04.test.ts`.
+
+## Contact interactions responsive data table
+
+Removed fixed 40rem scrolling-only table and reused the shared DataTable. The Contact name is the phone primary field, with type, outcome and IST timestamp always accessible. Preserved the original explicit empty copy via the required `empty` prop, and existing 25-row URL pagination. Test: `tests/unit/UX-tpo-companies-companyid-contact-log-05.test.ts`. Orchestrator must run TypeScript, Vitest and mobile/AT checks before sign-off.
