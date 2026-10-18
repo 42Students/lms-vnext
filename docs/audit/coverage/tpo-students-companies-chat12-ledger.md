@@ -68,6 +68,10 @@
 
 `tests/unit/PROJ-BREAK-TPO-real-permission-matrix.test.ts` asserts the **actual** `can` function for own-college TPO versus College Admin, learner/faculty/mentor/recruiter, wrong college, forged org, disabled account, suspended membership and Super Admin acting-college scope. This is distinct from the mocked persisted project-member SQL read in `PROJ-BREAK-TPO-01.test.ts`. `projects.read` by itself does not permit a nonmember to open a project workspace; the access service still checks a persisted project-member row.
 
+### Private TPO page and CSV authorization boundaries
+
+`tests/unit/chat12-tpo-persisted-private-read-boundaries.test.ts` source-inspects the actual Students, Companies, Students CSV and Companies CSV entrypoints. All four must invoke `requireTpoBatchActor` before decoding filters, visiting a company memory deep-link or reading any roster rows. The helper itself validates the persisted ACTIVE user + membership and TPO/College Admin role. Service-level reads from other callers and authenticated browser revoke tests are separate remaining acceptance gates.
+
 ### Company export route
 
 | Production path | Handler | Evidence | Scope and remaining cases | Status |
