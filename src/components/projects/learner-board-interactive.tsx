@@ -36,7 +36,10 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   let note=restoreNote??null;
   if(next==="BLOCKED"&&!note){
    note=window.prompt("What is blocking this task?",task.blockerReason??"");
-   if(!note?.trim())return;
+  }
+  if(next==="BLOCKED"&&(!note||note.trim().length<3||note.trim().length>2000)){
+   setError("Describe the blocker in 3 to 2,000 characters, then try again.");
+   return;
   }
   setBusy(true);setError("");
   try{
