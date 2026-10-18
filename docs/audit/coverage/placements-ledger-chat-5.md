@@ -276,3 +276,10 @@ The branch was reconciled with the then-current `origin/main` using a two-parent
 ## TPO offer filter contract, source-only correction
 
 - **PLACEMENTS-OFFERS-FILTER-06** — `src/modules/placements/tpo-drive-offer-register-model.ts` distinguishes a submitted blank numeric filter (unbounded) from explicitly entered 0 LPA; CSV and page use the same `offerRegisterQuery` parser. `tests/unit/chat5-tpo-second-third-behavior.test.ts` covers blanks, zero, malformed numbers and retained ISSUED search matches. Cloud Vitest was not run.
+
+
+### Current follow-up: API edge cases and sweep input integrity
+
+- `PLACEMENTS-OFFERS-FILTER-06`: blank, whitespace-only, `null` and `undefined` package bounds now mean unbounded; explicit zero remains a valid bound; malformed/out-of-range values reject. Tested in `tests/unit/chat5-tpo-second-third-behavior.test.ts` against parsed filters and projected offer lists.
+- `PLACEMENTS-EXPIRY-SM-04`: `tests/integration/placements-p8-offers.test.ts` now verifies invalid reference clocks and unsafe batch limits reject before any expiration history can be written. The actual concurrent worker-vs-learner response race still requires dedicated DB tests.
+- No local tests, TypeScript compiler, PostgreSQL or browser were executed. Newly written integration assertions are pending the next cloud CI run.
