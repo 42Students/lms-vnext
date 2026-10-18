@@ -31,6 +31,18 @@ describe("TPO-companies-lead-facts-01 source-bound placement evidence",()=>{
   expect(deriveOwnRecruiterLeadStage(lead,jobs,[job("ours","ACCEPTED",new Date("2099-01-01"))])).toBe("NEW");
   expect(deriveOwnRecruiterLeadStage(lead,jobs,[{...job("ours","ACCEPTED"),jobStatus:"DRAFT"}])).toBe("NEW");
  });
+ it("TPO-companies-lead-facts-02 does not borrow offers from ambiguous same-name relationships",()=>{
+  const unlinked={...lead,companyRelationshipId:null,companyName:"Acme Pvt Ltd"};
+  const names=[
+   {jobId:"one",relationshipId:R1,companyName:"Acme Inc"},
+   {jobId:"two",relationshipId:R2,companyName:"ACME Private Ltd"},
+  ];
+  expect(deriveOwnRecruiterLeadStage(unlinked,names,[job("one","ACCEPTED"),job("two",null)])).toBe("NEW");
+  expect(deriveOwnRecruiterLeadStage(unlinked,[names[0]],[job("one","ACCEPTED")])).toBe("RECRUITED");
+  const owned={...unlinked,recruiterUserId:ACTOR};
+  expect(deriveOwnRecruiterLeadStage(owned,[{...names[0],createdByUserId:ACTOR},names[1]],
+   [job("one","ACCEPTED")])).toBe("RECRUITED");
+ });
  it("resolves an unlinked normalized name only when it uniquely maps to a relationship",()=>{
   const unnamed={companyRelationshipId:null,companyName:"Acme Pvt. Ltd."};
   expect(tpoCompanyKey(unnamed.companyName)).toBe(tpoCompanyKey("Acme"));
