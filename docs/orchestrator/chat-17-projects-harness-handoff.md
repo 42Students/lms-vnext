@@ -146,3 +146,5 @@ The UI coverage matrix still contains other teams' page-level/raw-table entries;
 - `UX-kit-HARDEN-49`: FormField required flag now reaches actual input validation, with both SSR and real Chromium checkValidity browser cases.
 
 New targeted regression files are included in `npm run test:ux:kit:hardening`; tests remain **unverified until CI runs**. Refresh `docs/audit/ux/COVERAGE-MATRIX.md` from the generator after merging; do not manually edit red gap counts.
+
+- **Unowned interview operations (UX-UNOWNED-TABLE-04):** `src/components/admin/super-admin-interview-operations.tsx` now uses the shared responsive `DataTable` for all eleven interview fields with actions visible on mobile; keeps 500-row CSV cap, conflicts, IST and `.ics`. New `tests/unit/UX-admin-interviews-table-chat17.test.ts` registered under `test:ux:kit:hardening`.
