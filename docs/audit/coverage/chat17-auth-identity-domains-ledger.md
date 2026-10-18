@@ -52,3 +52,5 @@ Each row lists exported runtime functions (non-executable TS interfaces and type
 - **Release gate:** no claim that every account is unbreakable until the orchestrator publishes passing typecheck, unit, DB-integrity and browser role-journey results.
 
 - **WEAK-system-roles-05..08:** `tests/unit/chat17-system-bootstrap-race.test.ts` exercises bootstrap existing-identity reconciliation, cross-contact collision denial, duplicate create race and invalid-input rejection before persistence. This is a service-level injected-directory test; real directory persistence remains unverified.
+
+- **WEAK-tenant-domains-07..16:** `tests/unit/chat17-tenant-domain-service-journeys.test.ts` exercises Super Admin-only role gating, acting college scope, same-host idempotency, duplicate foreign host conflicts, DNS verification success/failure guard, unverified promotion denial, exact primary-delete confirmation, canonical Host forwarding, malformed Host refusal and disabled actor denial. SQL uniqueness and runtime caches still require database-level tests.
