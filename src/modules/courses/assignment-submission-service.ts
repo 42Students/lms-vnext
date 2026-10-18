@@ -533,9 +533,6 @@ export async function getMyAssignmentSubmission(
           assignmentSubmissions.assignmentId,
           assignmentId,
         ),
-        // Shared assessments must not surface an old section's submission
-        // as if it belonged to the currently authorized delivery.
-        eq(assignmentSubmissions.deliveryId, deliveryId),
         eq(
           assignmentSubmissions.membershipId,
           context.membership.id,
