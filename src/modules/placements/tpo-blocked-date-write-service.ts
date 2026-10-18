@@ -7,6 +7,7 @@ import {placementTpoBlockedDates} from "@/db/schema/tpo-configuration";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {tpoIndiaCalendarDay} from "./tpo-local-date-model";
 const inputSchema=z.object({
  day:z.iso.date().optional(),startDay:z.iso.date().optional(),endDay:z.iso.date().optional(),
@@ -33,6 +34,11 @@ export async function createBlockedDate(ctx:RequestContext,raw:unknown){
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new BlockedDateError("DATE_NOT_FOUND");
+  // Revalidate the persisted TPO/College Admin role while holding the
+  // college lock: request-context permissions may have been revoked.
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const existing=await tx.select({day:placementTpoBlockedDates.day}).from(placementTpoBlockedDates)
    .where(and(eq(placementTpoBlockedDates.collegeId,collegeId),inArray(placementTpoBlockedDates.day,days)));
   if(existing.length)throw new BlockedDateError("DATE_EXISTS");
@@ -56,6 +62,11 @@ export async function deleteBlockedDate(ctx:RequestContext,raw:unknown){
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new BlockedDateError("DATE_NOT_FOUND");
+  // Revalidate the persisted TPO/College Admin role while holding the
+  // college lock: request-context permissions may have been revoked.
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const [current]=await tx.select().from(placementTpoBlockedDates)
    .where(and(eq(placementTpoBlockedDates.id,input.id),eq(placementTpoBlockedDates.collegeId,collegeId))).limit(1);
   if(!current)throw new BlockedDateError("DATE_NOT_FOUND");
@@ -83,6 +94,11 @@ export async function removeBlockedRange(ctx:RequestContext,raw:unknown){
   const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
     .where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new BlockedDateError("DATE_NOT_FOUND");
+  // Revalidate the persisted TPO/College Admin role while holding the
+  // college lock: request-context permissions may have been revoked.
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const records=await tx.select().from(placementTpoBlockedDates)
     .where(and(eq(placementTpoBlockedDates.collegeId,collegeId),
      inArray(placementTpoBlockedDates.id,input.versions.map(v=>v.id)))).for("update");
