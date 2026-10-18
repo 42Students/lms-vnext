@@ -141,3 +141,12 @@ No local execution. The module-wide College Admin and Super Admin coverage gate 
 | `src/modules/people/college-role-directory-export.ts` `escapeRoleDirectoryCsvCell`, `renderCollegeRoleDirectoryCsv` | Same test (`COL-people-export-formula-01`) | Escapes `= + - @` spreadsheet formulas even after Unicode format/combining marks, ordinary whitespace/control prefixes; numeric and quoted cells preserve CSV shape, active roster labels remain unmodified |
 
 This corrects the earlier blind spot in the People directory CSV encoder (which had recognized ASCII whitespace/control prefixes but not Unicode format and combining marks). **Tests were not run**. Database-role races and browser/spreadsheet import checks are still required.
+
+## Admin staff roster + devices page execution contracts
+
+| Page | New rendered regression test | Cases |
+| --- | --- | --- |
+| `/admin/colleges/[collegeId]/admins` | `tests/unit/chat4-superadmin-college-admins-list-page.test.tsx` (`SA-colleges-admins-list-01`) | Empty roster, College Admin/TPO onboarding actions, persisted suspended/role flags, scoped devices/history links, truthful 500-role cap disclosure, denied service without a rendered page |
+| `/admin/colleges/[collegeId]/admins/[userId]` | `tests/unit/chat4-superadmin-college-admin-sessions-page.test.tsx` (`SA-colleges-admins-sessions-01`) | Empty device state, persisted per-device labels, user agent HTML escaped, IP and IST timestamp, matching revoke count, no cross-tenant render after service denial |
+
+Both use isolated service mocks and server-rendered markup, **not** end-to-end browser or database races. Verification of device revocation persistence, pagination and accessibility remains outstanding. No CI execution performed.
