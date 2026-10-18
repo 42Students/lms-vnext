@@ -42,12 +42,12 @@ export function deriveMentorProjectAttention(
         occurredAt:project.submission.submittedAt.toISOString(),
       });
     }
-    // MEN-projects-meetings-73: legacy flags idle planned and active work.
-    // Use the latest recorded activity (or persisted project update), but
-    // never flag blocked, completed or archived projects as stalled.
+    // MEN-projects-meetings-73: legacy includes idle PLANNED and ACTIVE
+    // projects after seven days, but never BLOCKED, COMPLETED or ARCHIVED.
+    // Prefer recorded events; use last project update when none exist.
     const last=project.lastActivityAt ?? project.projectUpdatedAt;
     const lastMillis=last.getTime();
-    const stalled=(project.projectStatus==="ACTIVE"||project.projectStatus==="PLANNED") &&
+    const stalled=["PLANNED","ACTIVE"].includes(project.projectStatus) &&
       Number.isFinite(lastMillis) && timestamp-lastMillis >= 7*24*60*60*1000;
     if (stalled) alerts.push({
       projectId:project.projectId,
