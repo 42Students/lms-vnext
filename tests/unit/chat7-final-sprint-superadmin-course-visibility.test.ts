@@ -30,3 +30,25 @@ describe("Final sprint Super Admin course student visibility",()=>{
   expect(api).toContain("isSameOriginRequest(request)");
  });
 });
+
+
+describe("SA-academics-people-52/53 selected-course retry integrity",()=>{
+ it("SA-academics-people-52 sends only failed courses on retry instead of reapplying successful changes",()=>{
+  const client=read("src/components/courses/super-admin-course-bulk-visibility.tsx");
+  const service=read("src/modules/courses/super-admin-course-bulk-visibility.ts");
+  const lesson=read("src/modules/courses/super-admin-lesson-bulk-visibility.ts");
+  expect(client).toContain("void apply(lastAction,report.failedCourseIds)");
+  expect(client).toContain("ids=ids.filter(id=>currentIds.has(id))");
+  expect(service).toContain("failedCourseIds:input.courseIds.filter(id=>failedCourses.has(id))");
+  expect(service).toContain("lessonCourseIds.get(failure.lessonId)");
+  expect(service).toContain("lessonCourseIds.get(id)");
+  expect(lesson).toContain("lessonId:row.lessonId,reason:safeCourseVisibilityFailure(error)");
+ });
+ it("SA-academics-people-52 accepts the 100-course page but refuses unbounded bulk actions",()=>{
+  const service=read("src/modules/courses/super-admin-course-bulk-visibility.ts");
+  expect(service).toContain("courseIds:z.array(z.uuid()).min(1).max(100)");
+  expect(service).toContain(".limit(501)");
+  expect(service).toContain("COURSE_VISIBILITY_BULK_TOO_LARGE");
+  expect(service).toContain("selected.length!==input.courseIds.length");
+ });
+});

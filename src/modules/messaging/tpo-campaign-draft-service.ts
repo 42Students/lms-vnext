@@ -93,7 +93,11 @@ export async function listTpoCampaignDrafts(context:RequestContext){
  const college=await scope(context);
  if(!await tpoCampaignDraftStorageReady())return {ready:false as const,rows:[]};
 
- const rows=await getDb().execute<{
+ const rows=await getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  return tx.execute<{
   campaign_id:string;title:string;subject:string;segment:string;status:string;
   total_recipients:number;created_at:Date;sender_name:string;suppressed_counts:Record<string,number>;
   sent:number;failed:number;skipped:number;
@@ -110,6 +114,7 @@ export async function listTpoCampaignDrafts(context:RequestContext){
      and c.college_id=d.college_id
     where d.college_id=${college.id}::uuid
     order by d.created_at desc,d.campaign_id desc limit 100`);
+ });
  return {ready:true as const,rows:rows.rows};
 }
 
@@ -120,7 +125,11 @@ export async function getTpoCampaignDraft(context:RequestContext,rawId:unknown){
  const college=await scope(context);
  if(!await tpoCampaignDraftStorageReady())return null;
 
- const result=await getDb().execute<{
+ const result=await getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  return tx.execute<{
    campaign_id:string;title:string;subject:string;body:string;template_key:string;
    segment:string;status:string;total_recipients:number;created_at:Date;
    sender_name:string;suppressed_counts:Record<string,number>;sent:number;failed:number;skipped:number;
@@ -133,6 +142,7 @@ export async function getTpoCampaignDraft(context:RequestContext,rawId:unknown){
    join placement_tpo_email_campaigns c on c.id=d.campaign_id
     and c.college_id=d.college_id
    where d.college_id=${college.id}::uuid and d.campaign_id=${parsed.data}::uuid limit 1`);
+ });
  return result.rows[0]??null;
 }
 
