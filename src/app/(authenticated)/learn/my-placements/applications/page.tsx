@@ -58,14 +58,14 @@ export default async function LearnerPlacementApplicationsPage() {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
 
-      <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+      <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle">
         Review all official offers →
       </Link>
       {!roundsRead.available ? <p role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
-        <Link href="/learn/my-placements/applications" className="ml-2 font-semibold text-primary-text underline">Retry round shortcuts</Link>
+        <Link href="/learn/my-placements/applications" className="ml-2 font-semibold text-[var(--lms-teal-deep)] underline">Retry round shortcuts</Link>
       </p> : null}
       <Suspense fallback={<p className="text-sm text-body">Loading application filters…</p>}>
         <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks}

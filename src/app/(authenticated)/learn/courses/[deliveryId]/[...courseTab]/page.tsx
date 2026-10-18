@@ -159,7 +159,7 @@ export default async function LearnerCourseTabPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title={workspace.course.name}
         description="Course workspace"
@@ -167,19 +167,19 @@ export default async function LearnerCourseTabPage({
           <div className="flex flex-wrap gap-2">
             <Link
               href="/learn/courses"
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)]"
             >
               {LEARNER_BACK_TO_COURSES}
             </Link>
             <Link
               href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
             >
               Detailed progress
             </Link>
             <Link
               href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
             >
               Attendance history
             </Link>
