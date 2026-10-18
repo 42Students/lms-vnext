@@ -57,7 +57,7 @@ export function CollegeOfferingMetadataAction({offering}:{
           <button type="button" onClick={()=>setOpen(false)} disabled={pending}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Cancel</button>
           <button type="button" onClick={save} disabled={pending}
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">
             {pending?"Saving…":"Confirm edit"}</button>
         </div>
     </Dialog>
