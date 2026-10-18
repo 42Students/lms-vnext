@@ -320,3 +320,9 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Severity | Source | Failure and correction | Regression |
 |---|---|---|---|---|
 | HR-BREAK-TODAY-SLOTS-12 | MAJOR | `src/modules/placements/hr-today-open-slots-service.ts` | Query selected the earliest 100 upcoming scheduled interview rounds **before** excluding rounds already covered by OFFERED/BOOKED slots. If all first 100 were covered, an authorized round 101 needing slots was never shown. Add a college- and round-scoped SQL `NOT EXISTS` guard before the limit. Recheck latest slot status in the returned rows to avoid falsely prompting an offer if another employer operation offered a slot after the initial query. Do not expand authorized job IDs. | `tests/unit/HR-BREAK-chat19-today-slots-query-limit.test.ts` uses 110 rounds, mixed cancelled/proposed/offered/booked and a concurrent status change. |
+
+## Recruiter activity stale-filter recovery
+
+| ID | Severity | Source | Root cause and correction | Test |
+|---|---|---|---|---|
+| HR-BREAK-ACTIVITY-PAGE-13 | MAJOR | `src/modules/placements/hr-job-activity-service.ts`, `hr-job-activity-model.ts`, `src/app/(authenticated)/hr/activity/page.tsx` | The service applied the URL-supplied offset before checking whether that page still existed. An old bookmarked page after filters or grants changed would falsely report no events while eligible published/closed activity was still present. Count only current recruiter/company/college authorized job activity, clamp stale page to final real page, then apply the bounded offset and render the effective page in Previous/Next links. Keep strict malformed-query recovery and event privacy. | `tests/unit/HR-BREAK-chat19-activity-stale-page.test.ts` |
