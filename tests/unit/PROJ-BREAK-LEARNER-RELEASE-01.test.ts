@@ -91,7 +91,7 @@ describe("PROJ-BREAK-LEARNER-RELEASE-01 task deletion across lifecycle and autho
   expect(state.deleted).not.toHaveBeenCalled();
  });
  it("deletes only own unreviewed TODO task on an ACTIVE release with an activity and mentor notification",async()=>{
-  state.releaseStatus="ACTIVE";
+  state.releaseStatus="IN_PROGRESS";
   await expect(deleteLearnerOwnTask(actor,{projectId},taskId)).resolves.toEqual({deleted:true});
   expect(state.deleted).toHaveBeenCalledOnce();
   expect(state.activity).toHaveBeenCalledOnce();
