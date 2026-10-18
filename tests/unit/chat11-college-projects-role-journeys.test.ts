@@ -69,13 +69,15 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(page).not.toContain("membership.collegeId");
   });
 
-  it("PROJ-COL-SCOPE-04 every College Admin Projects index, create, templates, audit and mentor reassignment route checks the active selected college", () => {
+  it("PROJ-COL-SCOPE-04/05 all College Admin Projects creation, templates, detail, audit and reassignment routes check selected college", () => {
     const routes = [
       "src/app/(authenticated)/college/projects/page.tsx",
       "src/app/(authenticated)/college/projects/create/page.tsx",
       "src/app/(authenticated)/college/projects/templates/page.tsx",
       "src/app/(authenticated)/college/projects/audit/page.tsx",
       "src/app/(authenticated)/college/projects/reassign-mentor/page.tsx",
+      "src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx",
+      "src/app/(authenticated)/college/projects/workspaces/new/page.tsx",
     ];
     for (const route of routes) {
       const source = readFileSync(route, "utf8");
