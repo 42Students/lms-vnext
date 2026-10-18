@@ -185,6 +185,21 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
     });
   });
 
+  it("PROJ-HARNESS-PLACEMENTS-19 PostgreSQL forbids mismatched job and role option even via direct SQL",async()=>{
+    await withPlacementCase(async({db,tenant,actor,learner,drive})=>{
+      const other=await createPlacementFixture(db,tenant,actor);
+      await db.expectSqlState(()=>db.query(`
+        insert into placement_applications
+          (job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
+        values ($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4)`,
+        [drive.jobId,other.roleOptionId,learner.membershipId,learner.userId]),"23503");
+      const rows=await db.query<{n:number}>(`
+        select count(*)::int n from placement_applications
+        where job_id=$1 and role_option_id=$2`,[drive.jobId,other.roleOptionId]);
+      expect(rows[0]?.n).toBe(0);
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-15 candidate belongs to an active role option of exactly this drive",async()=>{
     await withPlacementCase(async({db,tenant,actor,learner,drive,candidate})=>{
       const rows=await db.query<{role_option_id:string;job_id:string;status:string}>(`
