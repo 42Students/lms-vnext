@@ -122,20 +122,35 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/learner-own-task-input-model.ts` | `learnerOwnTaskCreateInputSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-own-task-service.ts` | `createLearnerOwnTask` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-own-task-service.ts` | `deleteLearnerOwnTask` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/learner-project-activity-csv-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-activity-cursor-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-activity-empty-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-activity-filter-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-activity-page-summary-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-activity-text-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-archive-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-board-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-detail-error-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-due-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-goals-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-goals-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-list-empty-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-mobile-filter-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/learner-project-activity-csv-model.ts` | `learnerProjectActivityCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-cursor-model.ts` | `learnerProjectActivityLastFetched` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-empty-model.ts` | `learnerProjectActivityEmptyMessage` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityCategory` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-filter-model.ts` | `filterLearnerProjectActivity` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-filter-model.ts` | `parseLearnerProjectActivityFilters` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityDateBounds` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityPrefixes` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityPageHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityCategorySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityCategories` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityFilterSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-page-summary-model.ts` | `learnerProjectActivityPageSummary` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-activity-text-model.ts` | `filterLearnerProjectActivityText` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-archive-model.ts` | `learnerProjectArchiveState` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-board-model.ts` | `filterLearnerBoardTasks` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-board-model.ts` | `learnerBoardEmptyState` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-board-model.ts` | `learnerBoardActiveFilterCount` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-board-model.ts` | `learnerBoardSearchSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-board-model.ts` | `learnerBoardSprintSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-board-model.ts` | `learnerBoardReleaseSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-board-model.ts` | `learnerBoardPrioritySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-board-model.ts` | `learnerBoardStatusSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-detail-error-model.ts` | `learnerProjectReadFailureDisposition` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-due-service.ts` | `listMyLearnerProjectDueStates` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-goals-model.ts` | `learnerProjectGoalSummary` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-goals-service.ts` | `getLearnerProjectGoals` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-list-empty-model.ts` | `learnerProjectListEmptyState` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-mobile-filter-model.ts` | `learnerProjectMobileFilterSummary` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-project-progress-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/learner-project-progress-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/learner-project-review-notification-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
