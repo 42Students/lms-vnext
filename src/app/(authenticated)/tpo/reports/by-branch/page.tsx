@@ -64,7 +64,7 @@ export default async function TpoByBranchReportPage({
 
       <Link
         href="/tpo/reports/branch-season"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]"
       >
         View applicant and accepted-offer evidence by season →
       </Link>
