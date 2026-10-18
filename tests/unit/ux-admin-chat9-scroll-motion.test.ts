@@ -65,11 +65,14 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
  });
  it("UX-admin-scroll-motion-09 /admin/settings and /admin/semesters share a focusable responsive DataTable scroller",()=>{
   const page=read("src/components/ui/data-table.tsx");
-  expect(page).toContain("sm:overflow-x-auto sm:overscroll-x-contain");
-  expect(page).toContain("sm:[mask-image:linear-gradient(to_right");
-  expect(page).toContain('role="region"');
-  expect(page).toContain("tabIndex={0}");
-  expect(page).toContain("aria-label={caption ?");
+  expect(page).toContain('<ScrollCue axis="x"');
+  expect(page).toContain('label={caption ? caption+" scrollable columns"');
+  const cue=read("src/components/ui/scroll-cue.tsx");
+  expect(cue).toContain("overflow-x-auto overscroll-x-contain");
+  expect(cue).toContain('role={edges.scrollable ? "region" : undefined}');
+  expect(cue).toContain("tabIndex={edges.scrollable ? 0 : -1}");
+  expect(cue).toContain('data-scroll-fade="end"');
+  expect(cue).toContain("pointer-events-none");
  });
  it("UX-admin-scroll-motion-10 all audited custom cues avoid hardcoded duration and animation of layout size",()=>{
   const paths=[
