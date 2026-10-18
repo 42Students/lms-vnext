@@ -20,3 +20,15 @@ export function templateDirectoryHref(query:z.infer<typeof templateDirectoryQuer
  if(query.page>1)search.set("page",String(query.page));
  return "/admin/projects/templates"+(search.size?"?"+search:"");
 }
+
+/** Forged or stale URL keys should never be silently ignored on an admin
+ * catalogue. Reject repeated filters before the database read.
+ */
+export function parseSuperAdminTemplateDirectoryQuery(
+  params:Record<string,string|string[]|undefined>,
+){
+  if(Object.keys(params).some(key=>!["q","status","page"].includes(key))||
+     Object.values(params).some(Array.isArray))
+    return templateDirectoryQuerySchema.safeParse(null);
+  return templateDirectoryQuerySchema.safeParse(params);
+}
