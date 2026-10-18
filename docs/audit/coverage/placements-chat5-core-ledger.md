@@ -45,6 +45,8 @@
 | `TpoJoiningUpdateForm` client-side confirmation guard | `tests/unit/chat5-placements-ux-workflows.test.ts`: `PLACEMENTS-JOINING-CONFIRM-01` validation and explicit confirmation before PUT | Browser cancellation and double submit |
 | `TpoBulkRoundResultRecorder` bulk select shortcut | Same: `UX-placements-bulk-round-targets-01` 44px target, 25-cap and bulk confirmation guard | 320px phone interaction |
 
+| `offer-service.issuePlacementOffer`, `actOnPlacementOffer`, `recordPlacementJoiningOutcome` authorization | `tests/integration/placements-p8-offers.test.ts`: `PLACEMENTS-IDOR-01` foreign-college TPO issue, learner issues own, TPO self-accepts, learner joining update, durable no-write result | Wrong-organization and suspended membership DB fixture acceptance |
+
 ## Deliberately uncovered areas
 
 The `src/modules/placements` folder has hundreds of exports and far more handlers than listed; this is not an exhaustive generated inventory. Outstanding high-risk service branches include `tpo-waitlist-promotion-service.offerToNextWaitlisted`, `tpo-drive-selection-service`, `offer-cascade-undo-service.undoPlacementOfferCascade`, the sweep scheduler and cancellation overlap, `college-retention-report-service`, cross-tenant/role denials, CSV injection, notifications and audit dedupe, and actual transaction rollback/retry. More integration tests with isolated PostgreSQL fixtures are essential before release sign-off.
