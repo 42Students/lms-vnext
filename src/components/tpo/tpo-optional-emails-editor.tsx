@@ -1,6 +1,6 @@
 "use client";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useRef,useState} from "react";
 type Preferences={notifyDriveOpenEmail:boolean;notifyResultApplied:boolean;notifyNudges:boolean;notifyPrepAssigned:boolean};
 const fields=[
  ["notifyDriveOpenEmail","A drive opens or changes","Email to eligible students."],
@@ -11,21 +11,36 @@ const fields=[
 export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;version:string|null}){
  const router=useRouter(),[value,setValue]=useState<Preferences>(initial);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[status,setStatus]=useState("");
- const dirty=fields.some(([key])=>value[key]!==initial[key]);
+ const [saved,setSaved]=useState(initial),[currentVersion,setCurrentVersion]=useState(version);
+ const inFlight=useRef(false);
+ const dirty=fields.some(([key])=>value[key]!==saved[key]);
  async function save(){
-  if(busy||!dirty)return;
+  if(inFlight.current||!dirty)return;
+  inFlight.current=true;
   setBusy(true);setError("");setStatus("");
   try{
    const response=await fetch("/api/placements/tpo/settings/communication",{
     method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({section:"OPTIONAL_EMAILS",...value,expectedVersion:version}),
+    body:JSON.stringify({section:"OPTIONAL_EMAILS",...value,expectedVersion:currentVersion}),
    });
-   const result=await response.json() as {error?:string};
-   if(!response.ok)throw Error(result.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
-    result.error??"Email preferences were not saved.");
+   const result=await response.json().catch(()=>({})) as {error?:string;version?:string};
+   if(!response.ok){
+    // Never surface an arbitrary error field from a proxy or database provider.
+    setError(response.status===401?"Your session expired. Sign in again.":
+     response.status===403?"You no longer have permission to change these preferences.":
+     response.status===409||result.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
+     response.status===503||result.error==="TPO_SETTINGS_PENDING"?"Email settings are temporarily unavailable. Try again.":
+     "Email preferences were not saved. Please try again.");
+    return;
+   }
+   setSaved({...value});
+   setCurrentVersion(result.version??currentVersion);
    setStatus("Saved");router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Could not save settings.");}
-  finally{setBusy(false);}
+  }catch{
+   setError("Email preferences could not be saved. Check the connection and try again.");
+  }finally{
+   inFlight.current=false;setBusy(false);
+  }
  }
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
   <h2 className="font-semibold">Optional emails</h2>
