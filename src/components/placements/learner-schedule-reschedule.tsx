@@ -26,7 +26,7 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
  }
  return <div className="mt-3 space-y-2">
   <button type="button" aria-expanded={open} onClick={()=>setOpen(x=>!x)}
-    className="min-h-10 font-semibold text-primary-text underline">{open?"Cancel":"Can't make it? Ask to reschedule"}</button>
+    className="min-h-11 font-semibold text-primary-text underline">{open?"Cancel":"Can't make it? Ask to reschedule"}</button>
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
   {open?<div className="grid gap-3 rounded-lg border border-border p-3">
    <h4 className="font-semibold">Ask to reschedule</h4>

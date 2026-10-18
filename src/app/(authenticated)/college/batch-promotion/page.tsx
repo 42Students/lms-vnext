@@ -58,7 +58,7 @@ export default async function CollegeBatchPromotionPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Program
           <select name="programId" defaultValue={parsed.data.programId ?? ""}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="">All programs</option>
             {options.programs.map(program => <option key={program.id} value={program.id}>
               {program.name} ({program.code})
@@ -68,7 +68,7 @@ export default async function CollegeBatchPromotionPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Batch
           <select name="cohortId" defaultValue={parsed.data.cohortId ?? ""}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="">Select a batch</option>
             {options.cohorts.map(cohort => <option key={cohort.id} value={cohort.id}>
               {cohort.programName} · {cohort.name} ({cohort.status})
@@ -80,7 +80,7 @@ export default async function CollegeBatchPromotionPage({
           <input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
             defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}
             placeholder="e.g., 2099-00"
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <div className="flex items-end">
           <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-foreground">
@@ -157,7 +157,7 @@ export default async function CollegeBatchPromotionPage({
               No persisted learner enrollments exist for this batch. No eligible count is inferred.
             </p>
           ) : (
-            <table className="w-full min-w-[35rem] text-left text-sm">
+            <table className="w-full min-w-[35rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
               <thead className="bg-muted text-muted-foreground"><tr>
                 <th scope="col" className="px-4 py-3">Learner</th>
                 <th scope="col" className="px-4 py-3">Enrollment</th>

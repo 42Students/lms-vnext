@@ -2,6 +2,11 @@
 
 import {useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {ALL_ASSIGNMENT_METHODS,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
@@ -24,19 +29,23 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const [pending,setPending]=useState(false);
  const [message,setMessage]=useState("");
  const [error,setError]=useState("");
+ const [confirmCreate,setConfirmCreate]=useState(false),[confirmDiscard,setConfirmDiscard]=useState(false);
  const lock=useRef(false);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const chosen=lessons.find(x=>x.id===lessonId);
  const sections=useMemo(()=>deliveries.filter(d=>d.offeringId===chosen?.offeringId),
    [deliveries,chosen?.offeringId]);
+ function discardDraft(){
+  setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("10");
+  setDeliveryId("");setAllowedMethods(ALL_ASSIGNMENT_METHODS);setError("");setConfirmDiscard(false);
+ }
  function close(){
   if(pending)return;
   const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||points!=="10"||
    allowedMethods.length!==ALL_ASSIGNMENT_METHODS.length||
    ALL_ASSIGNMENT_METHODS.some(method=>!allowedMethods.includes(method)));
-  if(dirty&&!window.confirm("Discard unsaved assignment changes?"))return;
-  setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("10");
-  setDeliveryId("");setAllowedMethods(ALL_ASSIGNMENT_METHODS);setError("");
+  if(dirty){setConfirmDiscard(true);return;}
+  discardDraft();
  }
  async function create(){
   if(lock.current||!chosen)return;
@@ -55,7 +64,6 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   if(dueAt&&!dueIso){
    setError("Enter a valid deadline.");return;
   }
-  if(!window.confirm("Create assignment as a draft? Learners cannot submit until published."))return;
   lock.current=true;setPending(true);setError("");setMessage("");
   try{
    const response=await fetch("/api/courses/assignments",{
@@ -68,6 +76,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    if(!response.ok||!payload?.assignment?.id)throw new Error(
     typeof payload?.error==="string"?payload.error:"Could not create assignment.");
    setNextOverride(old=>({...old,[chosen.id]:(old[chosen.id]??chosen.nextSequence)+1}));
+   setConfirmCreate(false);
    if(!keepOpen)setOpened(false);
    setTitle("");setDescription("");setDueAt("");setPoints("10");
    setMessage("Assignment draft created. Publish it to let learners submit.");
@@ -80,41 +89,41 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    <div><h2 className="font-semibold">Assignments</h2>
     <p className="text-xs text-muted-foreground">Create a shared or Section-specific assignment draft.</p>
    </div>
-   <button type="button" disabled={!lessons.length||pending}
-    className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50"
-    onClick={()=>{setError("");setMessage("");setOpened(true);}}>Create New Assignment</button>
+   <Button type="button" variant="secondary" disabled={!lessons.length||pending}
+    className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
+    onClick={()=>{setError("");setMessage("");setOpened(true);}}>Create New Assignment</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">
    Create an active course offering and lesson before adding an assignment.</p>:null}
   {opened?<div className="grid gap-3 sm:grid-cols-2">
    <label className="grid gap-1 text-sm font-semibold">Course / Lesson
-    <select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
-     className="min-h-10 rounded border border-border bg-surface px-2">
+    <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
+     className="min-h-11 rounded border border-border bg-surface px-2">
      {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
       {lesson.courseCode} · {lesson.course} · {lesson.name}
      </option>)}
-    </select></label>
+    </Select></label>
    <label className="grid gap-1 text-sm font-semibold">Audience
-    <select value={deliveryId} disabled={pending} onChange={e=>setDeliveryId(e.target.value)}
-     className="min-h-10 rounded border border-border bg-surface px-2">
+    <Select value={deliveryId} disabled={pending} onChange={e=>setDeliveryId(e.target.value)}
+     className="min-h-11 rounded border border-border bg-surface px-2">
      <option value="">All currently eligible sections (shared offering)</option>
      {sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
       {section.sectionName} ({section.sectionCode})
      </option>)}
-    </select></label>
+    </Select></label>
    <label className="grid gap-1 text-sm font-semibold">Title
-    <input required maxLength={200} value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}
-     className="min-h-10 rounded border border-border bg-surface px-2"/></label>
+    <Input required maxLength={200} value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}
+     className="min-h-11 rounded border border-border bg-surface px-2"/></label>
    <label className="grid gap-1 text-sm font-semibold">Points
-    <input type="number" min={1} max={10000} value={points} disabled={pending}
+    <Input type="number" min={1} max={10000} value={points} disabled={pending}
      onChange={e=>setPoints(e.target.value)}
-     className="min-h-10 rounded border border-border bg-surface px-2"/></label>
+     className="min-h-11 rounded border border-border bg-surface px-2"/></label>
    <label className="grid gap-1 text-sm font-semibold">Deadline (IST, optional until publishing)
-    <input type="datetime-local" value={dueAt} disabled={pending}
+    <Input type="datetime-local" value={dueAt} disabled={pending}
      onChange={e=>setDueAt(e.target.value)}
-     className="min-h-10 rounded border border-border bg-surface px-2"/></label>
+     className="min-h-11 rounded border border-border bg-surface px-2"/></label>
    <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Instructions
-    <textarea rows={3} maxLength={10000} value={description} disabled={pending}
+    <Textarea rows={3} maxLength={10000} value={description} disabled={pending}
      onChange={e=>setDescription(e.target.value)}
      className="rounded border border-border bg-surface p-2"/></label>
    <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
@@ -127,13 +136,21 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
      onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving
    </label>
    <div className="flex flex-wrap gap-2 sm:col-span-2">
-    <button type="button" disabled={pending||!chosen||!title.trim()} onClick={()=>void create()}
-     className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-     {pending?"Creating…":"Create draft"}</button>
-    <button type="button" disabled={pending} onClick={close}
-     className="min-h-10 rounded border border-border px-4 text-sm">Cancel</button>
+    <Button type="button" disabled={pending||!chosen||!title.trim()} onClick={()=>setConfirmCreate(true)}
+     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     {pending?"Creating…":"Create draft"}</Button>
+    <Button type="button" variant="secondary" disabled={pending} onClick={close}
+     className="min-h-11 rounded border border-border px-4 text-sm">Cancel</Button>
    </div>
   </div>:null}
+  <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}
+   title="Create assignment as a draft?" description="Learners cannot submit until published."
+   confirmLabel="Create draft" pending={pending} confirmDisabled={!chosen||!title.trim()} onConfirm={()=>void create()}>
+   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+  </ConfirmDialog>
+  <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title="Discard unsaved assignment changes?"
+   description="Unsaved assignment details will be discarded." confirmLabel="Discard draft"
+   confirmVariant="danger" pending={pending} onConfirm={discardDraft}/>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-success">{message}</p>:null}
  </section>;

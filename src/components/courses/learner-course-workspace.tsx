@@ -11,6 +11,7 @@ import { learnerSafeExternalContentHref } from "@/modules/courses/learner-extern
 import {LearnerLiveClassLink} from "./learner-live-class-link";
 import { assignmentFilesRuntimeEnabled,multipartAssignmentRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -324,18 +325,13 @@ function ContentCard({
       ) : content.type==="LIVE_CLASS"&&learnerSafeExternalContentHref(content.externalUrl)?(
          <LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!} endsAt={content.endsAt?new Date(content.endsAt).toISOString():null}/>
        ) : learnerSafeExternalContentHref(content.externalUrl) ? (
-        <a
+        <div className="mt-4"><ThirdPartyLink
           href={learnerSafeExternalContentHref(content.externalUrl)!}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-4 inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
-        >
-          {content.type === "LIVE_CLASS"
+          label={content.type === "LIVE_CLASS"
             ? "Join live class ↗"
             : content.type === "RESOURCE"
               ? "Open resource ↗"
-              : "Open content ↗"}
-        </a>
+              : "Open content ↗"} /></div>
       ) : content.externalUrl ? (
         <p role="status" className="mt-4 text-xs font-semibold text-warning">
           The authored external link is unavailable or unsafe to open.
@@ -345,15 +341,13 @@ function ContentCard({
         <div className="mt-4 flex flex-wrap gap-2">
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file`}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Open resource ↗
           </a>
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file?download=1`}
-            className="inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Download
           </a>
@@ -470,9 +464,8 @@ function AssignmentCard({
         <section aria-label="Your submission" className="mt-4 rounded-lg bg-surface-subtle p-3">
           <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
           {learnerAssessmentSubmittedLinkHref(assignment.submissionUrl)?
-            <a href={learnerAssessmentSubmittedLinkHref(assignment.submissionUrl)!} target="_blank"
-              rel="noopener noreferrer" className="mt-2 block break-all text-sm text-primary-text underline">
-              {assignment.submissionUrl}</a>:
+            <div className="mt-2"><ThirdPartyLink href={learnerAssessmentSubmittedLinkHref(assignment.submissionUrl)!}
+              label={assignment.submissionUrl??"Saved link"} /></div>:
             <p className="text-sm text-body">Saved link unavailable.</p>}
         </section>:null}
       {assignment.submissionId && assignment.submissionType === "FILE" ?

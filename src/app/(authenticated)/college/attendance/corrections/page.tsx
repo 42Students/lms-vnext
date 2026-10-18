@@ -42,11 +42,11 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-5">
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
         <input name="from" type="date" required defaultValue={data.query.from??""}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
       </label>
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">To (IST)
         <input name="to" type="date" required defaultValue={data.query.to??""}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm"/>
       </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">View sessions</button>
     </form>
@@ -57,7 +57,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
       {data.items.length===0?<p className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
         No persisted scheduled sessions overlap this date range. This does not mean no attendance corrections occurred.
       </p>:<div className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface">
-        <table className="w-full min-w-[45rem] text-left text-sm">
+        <table className="w-full min-w-[45rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
           <thead className="sticky top-0 z-10 bg-surface"><tr><th className="p-3" scope="col">Session / class</th>
             <th className="p-3" scope="col">Time (IST)</th>
             <th className="p-3" scope="col">Attendance</th>

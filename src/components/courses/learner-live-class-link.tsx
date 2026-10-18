@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 
 /**
  * LEARNER-course-detail-R03:
@@ -28,8 +29,8 @@ export function LearnerLiveClassLink({href,endsAt}:{href:string;endsAt?:string|n
   This live session has ended. Join Meeting and Copy meeting link are no longer available.
  </p>;
  return <div className="mt-3 flex flex-wrap items-center gap-2">
-  <a href={href} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Join Meeting</a>
-  <button type="button" onClick={()=>void copy()} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">Copy meeting link</button>
+  <ThirdPartyLink href={href} label="Join Meeting" />
+  <button type="button" onClick={()=>void copy()} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text">Copy meeting link</button>
   {message?<span role="status" className="text-xs text-muted-foreground">{message}</span>:null}
  </div>;
 }

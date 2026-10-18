@@ -7,3 +7,7 @@
 
 ## Bounded slow-network fallback
 - Existing loading heading and accessible announcement “Evaluating college readiness…” are preserved. Replaced the unbounded shared `LoadingState` with shared `GracefulPageLoading` for reduced-motion skeletons and a 12-second retry affordance. Source test: `UX-admin-colleges-collegeId-readiness-03`.
+
+## Cross-audit chat-12 — A12-227 (MAJOR)
+
+The previous rollout retained native page-local text/search/date/number/select or submit controls. At 320/360/390px these lack a consistently guaranteed 16px input font, accessible 44px focus target and audited shared focus styling. Reused the existing shared `Select` (2), `Button` (1). Kept every original label, filter key/default, GET request, hidden scope control and business action. Announcement primary action no longer requests `text-primary-foreground` against the bright brand fill. Targeted source contract: `tests/unit/UX-admin-colleges-collegeId-readiness-12-01.test.ts`. Real viewport, TypeScript, Vitest and native WebView checks remain orchestrator work; no runtime pass is claimed.

@@ -133,7 +133,7 @@ export function CollegeBrandingPreview({
     <div className="space-y-6">
       <Link
         href="/admin/colleges"
-        className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
       >
         ← Colleges
       </Link>
@@ -209,7 +209,7 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Support email</dt>
             <dd className="mt-1 text-body">
               {branding.supportEmail ? (
-                <a href={"mailto:" + branding.supportEmail} className="text-primary-text underline">
+                <a href={"mailto:" + branding.supportEmail} className="text-[var(--lms-teal-deep)] underline">
                   {branding.supportEmail}
                 </a>
               ) : "Not configured"}
@@ -221,7 +221,7 @@ export function CollegeBrandingPreview({
               {branding.supportPhone ? (
                 <a
                   href={"tel:" + branding.supportPhone.replaceAll(/[ ()-]/g, "")}
-                  className="text-primary-text underline"
+                  className="text-[var(--lms-teal-deep)] underline"
                 >
                   {branding.supportPhone}
                 </a>
@@ -232,8 +232,8 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Terms</dt>
             <dd className="mt-1 text-body">
               {branding.termsUrl ? (
-                <a href={branding.termsUrl} target="_blank" rel="noopener noreferrer"
-                   className="text-primary-text underline">Open terms link</a>
+                <a href={branding.termsUrl}
+                   className="text-[var(--lms-teal-deep)] underline">Open terms link</a>
               ) : "Not configured"}
             </dd>
           </div>
@@ -241,8 +241,8 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Privacy</dt>
             <dd className="mt-1 text-body">
               {branding.privacyUrl ? (
-                <a href={branding.privacyUrl} target="_blank" rel="noopener noreferrer"
-                   className="text-primary-text underline">Open privacy link</a>
+                <a href={branding.privacyUrl}
+                   className="text-[var(--lms-teal-deep)] underline">Open privacy link</a>
               ) : "Not configured"}
             </dd>
           </div>

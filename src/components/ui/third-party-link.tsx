@@ -4,7 +4,7 @@ import { useState } from "react";
 
 /** WebView-safe external navigation with a user-selectable, copyable fallback.
  * Clipboard failures never hide the original validated HTTPS URL. */
-export function ThirdPartyLink({ href, label }: { href: string; label: string }) {
+export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label: string; ariaLabel?: string }) {
   const [showFallback, setShowFallback] = useState(false);
   const [copyStatus, setCopyStatus] = useState("");
   let safeHref: string | null = null;
@@ -26,7 +26,7 @@ export function ThirdPartyLink({ href, label }: { href: string; label: string })
   }
 
   return <span className="inline-flex min-w-0 flex-col gap-2">
-    {safeHref ? <a href={safeHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{label}</a> :
+    {safeHref ? <a href={safeHref} aria-label={ariaLabel} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{label}</a> :
       <span role="alert" className="text-sm text-foreground">This link is unavailable.</span>}
     {safeHref ? <span className="block select-text break-all text-xs text-body" aria-label="Destination URL">{safeHref}</span> : null}
     {safeHref ? <span className="flex flex-wrap gap-3">

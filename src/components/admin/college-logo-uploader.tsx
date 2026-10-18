@@ -1,4 +1,9 @@
+import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 "use client";
+import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
@@ -9,20 +14,21 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  const [positionX,setPositionX]=useState(50),[positionY,setPositionY]=useState(50);
  const [zoom,setZoom]=useState(1),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
  const [savedUrl,setSavedUrl]=useState<string|null>(null);
+ const [confirmRemove,setConfirmRemove]=useState(false);
  useEffect(()=>()=>{if(preview)URL.revokeObjectURL(preview);},[preview]);
  function select(value:File|null){
   setFile(value);setPreview(value?URL.createObjectURL(value):null);
   setPositionX(50);setPositionY(50);setZoom(1);setMessage("");
  }
  async function remove(){
-  if(!canEdit||busy||!window.confirm("Remove this college's uploaded logo?"))return;
+  if(!canEdit||busy)return;
   setBusy(true);setMessage("");
   try{
    const response=await fetch("/api/colleges/"+encodeURIComponent(collegeId)+"/branding/logo",{
     method:"DELETE",credentials:"same-origin",
    });
    if(!response.ok)throw Error("Could not remove the logo.");
-   setSavedUrl(null);setMessage("Uploaded logo removed.");router.refresh();
+   setSavedUrl(null);setConfirmRemove(false);setMessage("Uploaded logo removed.");router.refresh();
   }catch(error){setMessage(error instanceof Error?error.message:"Could not remove logo.");}
   finally{setBusy(false);}
  }
@@ -87,15 +93,16 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
     <label className="block text-sm">Zoom ({Math.round(zoom*100)}%)
      <input aria-label="Crop zoom" className="block w-52" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
     </label>
-    <button type="button" disabled={busy} onClick={()=>void upload()}
-     className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+    <Button type="button" disabled={busy} onClick={()=>void upload()}
+     className="disabled:opacity-50">
       {busy?"Uploading…":"Crop and upload logo"}
-    </button>
+    </Button>
    </div>:null}</>:<p className="text-sm text-muted-foreground">View-only access.</p>}
-  {canEdit&&(savedUrl||currentUrl)?<button type="button" disabled={busy} onClick={()=>void remove()}
-   className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+  {canEdit&&(savedUrl||currentUrl)?<Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirmRemove(true)}
+   className="disabled:opacity-50">
    Remove uploaded logo
-  </button>:null}
+  </Button>:null}
+  <ConfirmDialog open={confirmRemove} onOpenChange={setConfirmRemove} title="Remove this college's uploaded logo?" description="The uploaded logo will be removed from this college." confirmLabel="Remove uploaded logo" confirmVariant="danger" pending={busy} onConfirm={()=>void remove()}/>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;
 }

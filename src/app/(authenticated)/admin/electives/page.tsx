@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
@@ -37,37 +40,37 @@ export default async function SuperAdminElectivesPage({
       {options ? <CollegeSlotManager options={options} /> : null}
       <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
         <label className="grid gap-1 text-sm font-semibold text-body">Search
-          <input name="q" defaultValue={data.query.q} placeholder="Slot or program"
+          <Input name="q" defaultValue={data.query.q} placeholder="Slot or program"
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Status
-          <select name="status" defaultValue={data.query.status}
+          <Select name="status" defaultValue={data.query.status}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Program
-          <select name="programId" defaultValue={data.query.programId ?? ""}
+          <Select name="programId" defaultValue={data.query.programId ?? ""}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="">All programs</option>
             {data.programs.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Semester
-          <select name="semesterNumber" defaultValue={data.query.semesterNumber ?? ""}
+          <Select name="semesterNumber" defaultValue={data.query.semesterNumber ?? ""}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="">All semesters</option>
             {Array.from({length:12},(_,i)=>i+1).map(n=><option key={n} value={n}>{n}</option>)}
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
+        <Button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-foreground">Filter</Button>
       </form>
       <form method="get" action="/admin/electives" aria-label="Refresh elective directory">
         {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
         <input type="hidden" name="status" value={data.query.status} />
         {data.query.programId?<input type="hidden" name="programId" value={data.query.programId}/>:null}
         {data.query.semesterNumber?<input type="hidden" name="semesterNumber" value={data.query.semesterNumber}/>:null}
-        <button type="submit" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Refresh</button>
+        <Button variant="secondary" type="submit" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
       </form>
       <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
       {data.items.length ? <div className="grid gap-3 md:grid-cols-2">

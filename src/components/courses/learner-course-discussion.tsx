@@ -1,10 +1,12 @@
 "use client";
 
 import type { FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { learnerDiscussionCanPost } from "@/modules/courses/learner-discussion-capability-model";
 import { learnerDiscussionMayPost } from "@/modules/courses/learner-discussion-submit-guard-model";
 import { createLearnerDiscussionHistoryFlight } from "@/modules/courses/learner-discussion-history-flight-model";
@@ -65,6 +67,8 @@ export function LearnerCourseDiscussion({
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [draft, setDraft] = useState("");
+  const router = useRouter();
+  const [leaveHref,setLeaveHref]=useState<string|null>(null);
   const [posting, setPosting] = useState(false);
   useEffect(()=>{
     if(!draft.trim()&&!posting)return;
@@ -87,7 +91,8 @@ export function LearnerCourseDiscussion({
         const destination=new URL(href,window.location.href);
         if(destination.origin!==window.location.origin)return;
         if(destination.pathname===window.location.pathname&&destination.search===window.location.search)return;
-        if(!window.confirm("Discard your unsent discussion message?"))event.preventDefault();
+        event.preventDefault();
+        setLeaveHref(destination.pathname+destination.search+destination.hash);
       }catch{return;}
     }
     document.addEventListener("click",guard,true);
@@ -403,26 +408,31 @@ export function LearnerCourseDiscussion({
           {moderate && canPost ? (
             <button type="button" disabled={pinningId!==null}
               onClick={()=>void togglePin(pinned.id)}
-              className="mt-3 min-h-10 rounded-md border border-primary px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+              className="mt-3 min-h-11 rounded-md border border-primary px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
               {pinningId===pinned.id?"Saving…":"Unpin pinned message"}
             </button>
           ) : null}
         </section>
       ) : null}
 
-      {deleteTarget?<div role="dialog" aria-modal="true" aria-label="Delete this message?"
-        className="space-y-3 rounded-xl border border-warning bg-surface p-4">
-        <h3 className="font-semibold">Delete this message?</h3>
-        <p className="text-sm text-body">This cannot be undone.</p>
-        <div className="flex flex-wrap gap-2">
-          <button type="button" disabled={deletingId!==null}
-           onClick={()=>void remove(deleteTarget)} className="min-h-10 rounded border border-error px-4 text-sm font-semibold text-error">
-           {deletingId?"Deleting…":"Delete"}
-          </button>
-          <button type="button" disabled={deletingId!==null}
-           onClick={()=>setDeleteTarget(null)} className="min-h-10 rounded border border-border px-4 text-sm font-semibold">Cancel</button>
-        </div>
-      </div>:null}
+      <ConfirmDialog open={deleteTarget!==null}
+        onOpenChange={open=>{if(!open&&deletingId===null)setDeleteTarget(null);}}
+        title="Delete this message?"
+        description="This cannot be undone."
+        confirmLabel="Delete"
+        pending={deletingId!==null}
+        onConfirm={()=>{if(deleteTarget)void remove(deleteTarget);}}/>
+      <ConfirmDialog open={leaveHref!==null}
+        onOpenChange={open=>{if(!open)setLeaveHref(null);}}
+        title="Discard your unsent discussion message?"
+        description="Your unsent message will not be saved."
+        confirmLabel="Discard"
+        onConfirm={()=>{
+          const destination=leaveHref;
+          setLeaveHref(null);
+          setDraft("");
+          if(destination)router.push(destination);
+        }}/>
       {moderationError?<p role="alert" className="text-sm text-error">
         {moderationError}
       </p>:null}
@@ -538,7 +548,7 @@ export function LearnerCourseDiscussion({
                       {row.item.messageText}
                     </p>
                     {canPost ? <button type="button"
-                      className="mt-2 text-xs font-semibold text-primary-text underline"
+                      className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline"
                       onClick={() => {
                         setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
                         composerRef.current?.focus();
@@ -555,7 +565,7 @@ export function LearnerCourseDiscussion({
                             onClick={() =>
                               void togglePin(row.item.id)
                             }
-                            className="text-xs font-semibold text-primary-text hover:underline disabled:opacity-50"
+                            className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline disabled:opacity-50"
                           >
                             {pinningId === row.item.id
                               ? "Saving…"
@@ -568,7 +578,7 @@ export function LearnerCourseDiscussion({
                           type="button"
                           disabled={deletingId === row.item.id}
                           onClick={() => setDeleteTarget(row.item.id)}
-                          className="text-xs font-semibold text-error hover:underline disabled:opacity-50"
+                          className="inline-flex min-h-11 items-center text-xs font-semibold text-error hover:underline disabled:opacity-50"
                         >
                           {deletingId === row.item.id ? "Deleting…" : "Delete"}
                         </button> : null}
@@ -607,7 +617,7 @@ export function LearnerCourseDiscussion({
           </p>
           {replyTo ? <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-surface-subtle p-3">
             <p className="min-w-0 break-words text-xs text-body">Replying to: {replyTo.text}</p>
-            <button type="button" className="text-xs font-semibold text-primary-text underline"
+            <button type="button" className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline"
               onClick={() => setReplyTo(null)}>Cancel reply</button>
           </div> : null}
           <label className="text-xs font-semibold text-body" htmlFor="course-discussion-message">
@@ -631,7 +641,7 @@ export function LearnerCourseDiscussion({
             rows={3}
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
-            className="mt-1.5 w-full resize-y rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+            className="mt-1.5 min-h-11 w-full resize-y rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
           />
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-muted-foreground">

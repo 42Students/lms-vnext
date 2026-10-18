@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeCreateForm } from "@/components/admin/college-create-form";
@@ -139,14 +142,14 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       </Link>
       <form className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4" method="get">
        <label className="flex min-w-0 w-full flex-1 flex-col gap-1 text-sm font-semibold sm:min-w-48">Search college, code, city or organization
-        <input type="search" name="q" defaultValue={q} maxLength={100} className="min-h-11 w-full min-w-0 rounded border border-border px-3" />
+        <Input type="search" name="q" defaultValue={q} maxLength={100} className="min-h-11 w-full min-w-0 rounded border border-border px-3" />
        </label>
        <label className="flex flex-col gap-1 text-sm font-semibold">Rows per page
-        <select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 rounded border border-border px-3">
+        <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 rounded border border-border px-3">
          {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
-        </select>
+        </Select>
        </label>
-       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-foreground">Search</button>
+       <Button type="submit" className="min-h-11 rounded bg-primary px-4 text-foreground">Search</Button>
        <Link href="/admin/colleges" className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Clear search</Link>
        <Link href={href(page)} className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Refresh</Link>
       </form>

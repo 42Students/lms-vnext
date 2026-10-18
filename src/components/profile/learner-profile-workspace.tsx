@@ -18,6 +18,8 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -173,6 +175,17 @@ export function LearnerProfileWorkspace(props: {
   initialSection?: LearnerProfileSection | null;
 }) {
   const router=useRouter();
+  // Draft stays mounted until the native-accessible confirmation resolves.
+  const [pendingPrompt,setPendingPrompt]=useState<{message:string;resolve:(accepted:boolean)=>void}|null>(null);
+  function askConfirm(message:string):Promise<boolean>{
+    return new Promise(resolve=>setPendingPrompt({message,resolve}));
+  }
+  function completePrompt(accepted:boolean){
+    const current=pendingPrompt;
+    setPendingPrompt(null);
+    current?.resolve(accepted);
+  }
+
   const lastRefreshAt=useRef(0);
   const serverSnapshot=useRef(props.initialDocument);
   const { showToast } = useToast();
@@ -296,35 +309,35 @@ export function LearnerProfileWorkspace(props: {
     setDetailsOpen(true);
   }
 
-  function closeDetails() {
+  async function closeDetails() {
     if(pending)return;
     if(JSON.stringify(detailsDraft)!==JSON.stringify(detailsBaseline)&&
-      !window.confirm("Discard profile changes?"))return;
+      !(await askConfirm("Discard profile changes?")))return;
     setDetailsOpen(false);
   }
 
-  function closeCollection() {
+  async function closeCollection() {
     if(pending)return;
     if(JSON.stringify(itemDraft)!==JSON.stringify(itemBaseline)&&
-      !window.confirm("Discard your changes?"))return;
+      !(await askConfirm("Discard your changes?")))return;
     setCollection(null);
     setEditingId(null);
     setItemDraft({});
     setItemBaseline({});
   }
 
-  function closeContacts(){
+  async function closeContacts(){
     if(contactPending)return;
     if(JSON.stringify(contactDraft)!==JSON.stringify(document.contacts)&&
-       !window.confirm("Discard contact changes?"))return;
+       !(await askConfirm("Discard contact changes?")))return;
     setContactOpen(false);
     setContactError(null);
   }
 
-  function closeJobPreferences(){
+  async function closeJobPreferences(){
     if(pending)return;
     if(JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences)&&
-       !window.confirm("Discard job preference changes?"))return;
+       !(await askConfirm("Discard job preference changes?")))return;
     setJobPrefsEditing(false);
   }
 
@@ -401,10 +414,10 @@ export function LearnerProfileWorkspace(props: {
     setShowcaseBaseline(JSON.stringify(initial));
   }
 
-  function closeShowcase(){
+  async function closeShowcase(){
     if(pending)return;
     if(showcaseDraft&&JSON.stringify(showcaseDraft)!==showcaseBaseline&&
-       !window.confirm("Discard your award or publication edits?"))return;
+       !(await askConfirm("Discard your award or publication edits?")))return;
     setShowcaseDraft(null);setShowcaseError(null);setShowcaseBaseline(null);
   }
 
@@ -429,8 +442,8 @@ export function LearnerProfileWorkspace(props: {
     saveDocument({...document,metadata:next},()=>{setShowcaseDraft(null);setShowcaseError(null);});
   }
 
-  function deleteShowcase(kind:LearnerShowcaseKind,id:string) {
-    if(pending||!window.confirm(kind==="award"?"Delete this award?":"Delete this publication?"))return;
+  async function deleteShowcase(kind:LearnerShowcaseKind,id:string) {
+    if(pending||!(await askConfirm(kind==="award"?"Delete this award?":"Delete this publication?")))return;
     const next=document.metadata.filter(item=>item.id!==id);
     saveDocument({...document,metadata:next});
   }
@@ -499,12 +512,12 @@ export function LearnerProfileWorkspace(props: {
     }
   }
 
-  function removeItem(section: CollectionKey, id: string) {
+  async function removeItem(section: CollectionKey, id: string) {
     if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
     const current = document[section] as Array<Record<string, unknown>>;
     const confirmation=learnerProfileDeletePrompt(section,
       current.some(item=>String(item.id)===id));
-    if(!confirmation || !window.confirm(confirmation))return;
+    if(!confirmation || !(await askConfirm(confirmation)))return;
     const items = current.filter((item) => String(item.id) !== id);
     if (section === "education" || section === "skills" || section === "projects") {
       saveOwnedSection(section, items as LearnerProfileDocument[typeof section]);
@@ -566,7 +579,7 @@ export function LearnerProfileWorkspace(props: {
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
           </h2>
-          <Link href="/learn/profile/completeness" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Review full checklist
           </Link>
           <div className="flex items-center gap-3" aria-label={percent+" percent complete"}>
@@ -707,8 +720,7 @@ export function LearnerProfileWorkspace(props: {
                 {entry.organization?<p className="mt-1 text-xs text-body">{entry.organization}</p>:null}
                 {entry.date?<p className="mt-1 text-xs text-body">{entry.date}</p>:null}
                 {entry.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{entry.description}</p>:null}
-                {entry.url?<a className="mt-2 block break-all text-sm text-primary-text underline"
-                  href={entry.url} target="_blank" rel="noopener noreferrer">View link</a>:null}
+                {entry.url?<div className="mt-2"><ThirdPartyLink href={entry.url} label="View link" /></div>:null}
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Button size="sm" variant="secondary" disabled={pending||contactPending}
                     onClick={()=>openShowcase(kind,entry)}>Edit</Button>
@@ -1019,8 +1031,12 @@ export function LearnerProfileWorkspace(props: {
           </div>
         ) : null}
       </Dialog>
-
-
+      <ConfirmDialog open={pendingPrompt!==null}
+        onOpenChange={open=>{if(!open)completePrompt(false);}}
+        title={pendingPrompt?.message??"Confirm"}
+        description="Unsaved changes will be discarded, or the selected item will be deleted."
+        confirmLabel="Confirm"
+        onConfirm={()=>completePrompt(true)}/>
     </div>
   );
 }

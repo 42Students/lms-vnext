@@ -1,4 +1,5 @@
 "use client";
+import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
 import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS } from "@/modules/courses/college-courses-copy";
 import {apiFetch} from "@/lib/api-fetch";
@@ -26,6 +27,7 @@ export function CollegeFacultyAssignmentCreate({
   deliveriesTruncated: boolean; facultyTruncated: boolean;
 }) {
   const router = useRouter();
+  const {ask,confirmation}=useCollegeConfirmation();
   const [programId, setProgramId] = useState("");
   const [cohortId, setCohortId] = useState("");
   const [sectionId, setSectionId] = useState("");
@@ -64,7 +66,7 @@ export function CollegeFacultyAssignmentCreate({
       setError("Select a faculty member and at least one course to assign."); return;
     }
     const teacher = faculty.find(item => item.id === membershipId)?.label ?? "Faculty";
-    if (!window.confirm(`Assign ${teacher} to ${selected.length} selected course(s)? Existing assignments and duplicate primary lecturers will be refused.`)) return;
+    if (!(await ask(`Assign ${teacher} to ${selected.length} selected course(s)? Existing assignments and duplicate primary lecturers will be refused.`))) return;
     setSaving(true);
     try {
       const data=await apiFetch<BulkResult>("/api/college/teaching-assignments/bulk",{
@@ -85,7 +87,7 @@ export function CollegeFacultyAssignmentCreate({
     } finally { setSaving(false); }
   }
   const fieldClass = "min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground";
-  return <section aria-label="Assign Faculty to multiple courses"
+  return <>{confirmation}<section aria-label="Assign Faculty to multiple courses"
     className="rounded-xl border border-border bg-surface p-4 sm:p-5">
     <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
     <form onSubmit={event => void submit(event)} className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -165,7 +167,7 @@ export function CollegeFacultyAssignmentCreate({
     </p>}
     {error && <p role="alert" className="mt-3 text-sm text-error">{error}</p>}
     {message && <p role="status" className="mt-3 text-sm text-success">{message}</p>}
-  </section>;
+  </section></>;
 }
 
 export function CollegeFacultyAssignmentEnd({
@@ -200,7 +202,7 @@ export function CollegeFacultyAssignmentEnd({
   }
   return <div className="space-y-1">
     <button type="button" disabled={saving} onClick={()=>{setConfirming(true);setError(null);}}
-      className="min-h-9 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
+      className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
       {saving ? "Ending…" : "End assignment"}
     </button>
     {confirming?<div role="group" aria-label="Confirm end assignment" className="mt-2 space-y-2 rounded border border-border p-3 text-xs">

@@ -65,7 +65,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  return <div className="min-w-0 space-y-4">
   <div className="flex flex-wrap justify-end gap-2">
    <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
-   <button type="button" onClick={()=>router.refresh()} className="min-h-10 rounded-md border px-3 text-sm">Refresh</button>
+   <button type="button" onClick={()=>router.refresh()} className="min-h-11 rounded-md border px-3 text-sm">Refresh</button>
   </div>
   {activeTab==="WAITING"&&candidates.length>0?<div className="flex flex-wrap gap-3">
    <button type="button" onClick={()=>{
@@ -80,13 +80,13 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
-     className="min-h-10 rounded border px-3 text-sm">Select first 20 waiting</button>
+     className="min-h-11 rounded border px-3 text-sm">Select first 20 waiting</button>
     <button type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
-     className="min-h-10 rounded border px-3 text-sm">Clear selection</button>
+     className="min-h-11 rounded border px-3 text-sm">Clear selection</button>
     <button type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setBulkAction("VERIFY");setAcknowledged(false);}}
-     className="min-h-10 rounded border px-3 text-sm">Verify without opening</button>
+     className="min-h-11 rounded border px-3 text-sm">Verify without opening</button>
     <button type="button" disabled={bulkBusy||!chosen.length} onClick={()=>setBulkAction("SEND_BACK")}
-     className="min-h-10 rounded border px-3 text-sm">Send back</button>
+     className="min-h-11 rounded border px-3 text-sm">Send back</button>
    </div>
    <ul className="max-h-44 space-y-2 overflow-y-auto">
     {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)}>

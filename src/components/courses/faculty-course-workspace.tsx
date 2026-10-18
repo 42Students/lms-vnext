@@ -1,5 +1,6 @@
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -147,11 +148,9 @@ function ContentItem({
           className="h-full w-full" loading="lazy" referrerPolicy="strict-origin-when-cross-origin"
           allow="encrypted-media; picture-in-picture" allowFullScreen/>
       </div>:null}
-      {externalHref?<a href={externalHref} target="_blank" rel="noopener noreferrer"
-        className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
-        {item.contentType==="LIVE_CLASS"?"Join Meeting":
-         item.contentType==="RESOURCE"?"Open":"Watch on YouTube"}
-      </a>:null}
+      {externalHref?<div className="mt-3"><ThirdPartyLink href={externalHref}
+        label={item.contentType==="LIVE_CLASS"?"Join Meeting":
+         item.contentType==="RESOURCE"?"Open":"Watch on YouTube"} /></div>:null}
       {item.contentType==="RESOURCE"&&materialsEnabled?<LessonResourceMaterialsControl
         contentId={item.id} deliveryId={item.deliveryId} editable={Boolean(item.deliveryId)}/>:null}
       {item.deliveryId ? (
@@ -401,13 +400,13 @@ export function FacultyCourseWorkspace({
       <nav aria-label="Overview actions" className="flex flex-wrap gap-3">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
-          className="inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
         >
           Section reports hub
         </Link>
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
         >
           Current Section students
         </Link>
@@ -535,7 +534,7 @@ export function FacultyCourseWorkspace({
               href={facultyCourseTabHref(course.deliveryId,"blueprint")+
                 (value==="ALL"?"":"?filter="+value)}
               aria-current={contentFilter===value?"page":undefined}
-              className={"inline-flex min-h-10 items-center rounded-md border px-3 text-sm font-semibold "+
+              className={"inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold "+
                 (contentFilter===value?"border-primary bg-primary-subtle text-primary-text":
                 "border-border bg-surface text-body")}>
               {label}
@@ -622,7 +621,7 @@ export function FacultyCourseWorkspace({
                       </summary>
 
                       {!selectedLessonId?<Link href={"?lesson="+encodeURIComponent(lesson.id)}
-                        className="mb-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                        className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
                         View lesson details →
                       </Link>:<div className="mb-3 flex flex-wrap gap-2 text-xs">
                         <span className="rounded-full border border-border bg-surface px-2 py-1">
