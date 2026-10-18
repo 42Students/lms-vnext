@@ -28,6 +28,24 @@ describe("College Admin academic structure query integrity", () => {
     });
   });
 
+  it("COL-STRUCTURE-FILTER-01 surfaces unknown and cross-page query keys instead of broadening results", () => {
+    const foreign = readCollegeStructureParams({
+      q: "CSE", otherCollegeId: "11111111-1111-4111-8111-111111111111",
+    });
+    expect(foreign).toEqual({
+      q: "CSE", otherCollegeId: "11111111-1111-4111-8111-111111111111",
+    });
+    expect(collegeClassQuerySchema.safeParse(foreign).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse(foreign).success).toBe(false);
+    const fromWrongTab = readCollegeStructureParams({ slotName: "Open Elective" });
+    expect(collegeClassQuerySchema.safeParse(fromWrongTab).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse(fromWrongTab).success).toBe(true);
+    expect(readCollegeStructureParams({ programId: "", q: "Physics" })).toEqual({ q: "Physics" });
+    expect(readCollegeStructureParams({ page: "" })).toEqual({ page: "" });
+    expect(collegeClassQuerySchema.safeParse(readCollegeStructureParams({ page: "" })).success).toBe(false);
+    expect(readCollegeStructureParams({ page: ["1"] })).toBeNull();
+  });
+
   it("COL-STRUCTURE-DECIMAL-02 enforces numeric class capacities and interdependent filters", () => {
     const ok = collegeClassQuerySchema.parse({
       minimumCapacity: "1", maximumCapacity: "40", capacityState: "CONFIGURED",
