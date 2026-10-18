@@ -83,14 +83,14 @@ test("UX-AUDIT2-A2-12/13/14 explicit empty state, named info and persistent erro
   const toast=read(path("components/ui/toast.tsx"));
   assert.match(toast,/input\.tone !== "error"/);
 });
-test("UX-AUDIT2-F-02 AST guard covers high-risk and branch-changed routes", () => {
+test("UX-AUDIT2-F-02 AST guard covers the entire tracked UI tree with pinned waivers", () => {
   const guard=read("scripts/check-ux-anti-drift.mjs");
   assert.match(guard,/ls-files/);
   assert.match(guard,/UX-GUARD-WAIVERS/);
   assert.doesNotMatch(guard,/origin\/main\.\.\.HEAD/);
-  assert.match(guard,/mentor\/calendar/);
-  assert.match(guard,/tpo\/messages/);
-  assert.match(guard,/module-access/);
+  assert.match(guard,/src\/app/);
+  assert.match(guard,/src\/components/);
+  assert.match(guard,/baselineFor/);
 });
 test("UX-AUDIT2-E-01/E-04/F-03 screenshot commands require real state and affected callsite fixtures",()=>{
   const ref=read("scripts/ux-capture-references.mjs");
@@ -109,8 +109,8 @@ test("RV-01 and RV-05 enforce real roster actions and column-specific mobile det
   const table=read("src/components/ui/data-table.tsx");
   assert.match(table,/empty: ReactNode/);
   assert.doesNotMatch(table,/No records to show/);
-  assert.match(table,/column\.mobileDetail/);
-  assert.match(table,/column\.mobileDetail\.canView/);
+  assert.match(table,/col\.mobileDetail/);
+  assert.match(table,/col\.mobileDetail\.canView/);
 });
 test("RV-02 protects multiple persistent errors from timed queue eviction",()=>{
   const toast=read("src/components/ui/toast.tsx");
