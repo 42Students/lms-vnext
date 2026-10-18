@@ -16,6 +16,7 @@ describe("Independent audit finding action workflow",()=>{
   expect(detail).toContain("<IndependentFindingActions");
   expect(detail).toContain("Audit event history");
   const client=src("src/components/tracker/independent-finding-actions.tsx");
-  for(const v of ["FIX_COMMIT","COMMENT","DUPLICATE","Save details","window.confirm"])expect(client).toContain(v);
+  for(const v of ["FIX_COMMIT","COMMENT","DUPLICATE","Save details","<ConfirmDialog","onConfirm={()=>void submit(true)}","if(!confirmed){setConfirmOpen(true);return;}"])expect(client).toContain(v);
+  expect(client).not.toContain("window.confirm(");
  });
 });
