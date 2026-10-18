@@ -36,6 +36,24 @@ describe("TPO second-third — close preview and cancellation model state",()=>{
    {...request,reason:"short"},{...request,collegeId:uuid},
   ])expect(tpoDriveCloseSchema.safeParse(bad).success).toBe(false);
  });
+ it("PLACEMENTS-CLOSE-ENDED-01 both lifecycle and preview permit closing after season closure, never losing applicant reconciliation",()=>{
+  const code=source("src/modules/placements/tpo-drive-close-preview-service.ts");
+  expect(code).toContain('canClose:job.status==="PUBLISHED"&&Boolean(season)&&issuedOffers===0&&pendingSelections===0');
+  expect(code).toContain("evaluateTpoDriveClosure(job.status,season?.status??null");
+  expect(code).toContain("settleDriveWithdrawalRequests(");
+  expect(code).toContain("endDriveApplicants(");
+  expect(code).toContain("tellRecruiterDriveStopped(");
+  expect(code).toContain("auditTpoJobChange(");
+  const canonical=source("src/modules/placements/job-service.ts");
+  const start=canonical.indexOf("export async function closePlacementJob");
+  const end=canonical.indexOf("export function canCancelPublishedPlacementJob",start);
+  const close=canonical.slice(start,end);
+  expect(close).toContain('current.status !== "PUBLISHED"');
+  expect(close).not.toContain("await requirePlacementJobSeasonActive(");
+  const pageCode=page("close-preview");
+  expect(pageCode).not.toContain("only for published drives in an active season");
+  expect(pageCode).toContain("only for published drives with a recorded season");
+ });
  it("TPO-2ND-PAGE-close-preview-03 maintains guarded explicit form vs actionable blocked reason",()=>{
   const code=page("close-preview");
   expect(code).toContain('hasMembershipRole(context,"TPO")');
