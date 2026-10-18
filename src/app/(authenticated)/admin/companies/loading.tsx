@@ -1,1 +1,2 @@
-export default function CompaniesLoading() { return <div role="status" aria-label="Loading company directory" className="animate-pulse space-y-4"><div className="h-12 rounded bg-muted" /><div className="h-48 rounded bg-muted" /></div>; }
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+export default function CompaniesLoading() { return <GracefulPageLoading label="Loading company directory"/>; }

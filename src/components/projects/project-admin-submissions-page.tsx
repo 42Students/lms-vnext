@@ -101,24 +101,24 @@ export async function ProjectAdminSubmissionsPage({
 
       <nav aria-label="Submission categories" className="flex flex-wrap gap-3 text-sm font-semibold">
         <Link href={queuePath} aria-current={view==="ALL"?"page":undefined}
-          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">All submissions</Link>
+          className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 text-primary-text">All submissions</Link>
         <Link href={queuePath+"?view=NOT_SUBMITTED"} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
-          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">Not submitted</Link>
+          className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 text-primary-text">Not submitted</Link>
       </nav>
       <nav aria-label="Review status shortcuts" className="flex flex-wrap gap-2 text-xs font-semibold">
         <Link href={queuePath+"?submissionStatus=UNDER_REVIEW"}
           aria-current={query.submissionStatus==="UNDER_REVIEW"?"page":undefined}
-          className="min-h-10 rounded-md border border-border px-3 py-2 text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
           Under Review
         </Link>
         <Link href={queuePath+"?submissionStatus=LOCKED"}
           aria-current={query.submissionStatus==="LOCKED"?"page":undefined}
-          className="min-h-10 rounded-md border border-border px-3 py-2 text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
           Locked
         </Link>
         <Link href={queuePath+"?submissionStatus=DRAFT_REVISING"}
           aria-current={query.submissionStatus==="DRAFT_REVISING"?"page":undefined}
-          className="min-h-10 rounded-md border border-border px-3 py-2 text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
           Draft (revising)
         </Link>
       </nav>

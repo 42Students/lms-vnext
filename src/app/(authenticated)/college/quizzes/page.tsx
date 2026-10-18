@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
@@ -28,14 +29,15 @@ export default async function CollegeQuizzesPage({
       <div className="space-y-4">
         <PageHeader eyebrow="College Admin" title="Quizzes" />
         <ErrorState title="Invalid assessment filters"
-          description="The requested search, status or page is invalid. No records were loaded." />
+          description="The requested search, status or page is invalid. No records were loaded."
+          action={<Link href="/college/quizzes" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>} />
       </div>
     );
   }
   const data = await listCollegeAssessmentAggregate(context, "QUIZ", validation.data);
   const lessons=await getCollegeQuizAuthoringOptions(context);
-  return <div className="space-y-4">
+  return <main className="min-w-0 space-y-4">
     <CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
     <CollegeAssessmentAggregate data={data}/>
-  </div>;
+  </main>;
 }

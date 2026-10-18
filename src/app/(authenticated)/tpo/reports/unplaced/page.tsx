@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -79,28 +80,28 @@ export default async function TpoUnplacedReportPage({
         eyebrow="TPO · Reports"
         title="Unplaced students"
         description="Current registered placement-pool learners with no accepted offer in the selected reporting scope."
-        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Download filtered CSV</a>:null}
+        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Download filtered CSV</a>:null}
       />
 
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/unplaced" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/unplaced" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
        <label className="grid gap-1 text-sm">Batch
-        <select name="batchId" defaultValue={batchId??""} className="min-h-10 rounded border px-3">
+        <select name="batchId" defaultValue={batchId??""} className="min-h-11 rounded border px-3">
          <option value="">All current batches</option>
          {batches.batches.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}
         </select></label>
        <label className="grid gap-1 text-sm">Branch
-        <select name="branchId" defaultValue={branchId??""} className="min-h-10 rounded border px-3">
+        <select name="branchId" defaultValue={branchId??""} className="min-h-11 rounded border px-3">
          <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
         </select></label>
-       <button type="submit" className="min-h-10 rounded bg-primary px-4 text-on-primary">Filter</button>
-       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-10 items-center text-primary-text underline">Clear batch and branch</Link>:null}
+       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Filter</button>
+       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 items-center text-primary-text underline">Clear batch and branch</Link>:null}
        <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
-        className="inline-flex min-h-10 items-center text-primary-text underline">Act on them on Students</Link>
+        className="inline-flex min-h-11 items-center text-primary-text underline">Act on them on Students</Link>
       </form>
       {!permittedBatch?<p role="alert">The selected batch does not belong to this college.</p>:null}
       {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-primary-text underline">Clear filters</Link></p>:null}

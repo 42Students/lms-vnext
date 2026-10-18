@@ -6,3 +6,8 @@
 - **State coverage:** existing loading/error/empty, read-only, retry and result messages retained; no mutations introduced.
 - **Regression:** `tests/unit/ux-chat14-mentor-02.test.ts`, `UX-mentor-mentor-projects-projectId-team-meetings-01`.
 - **Verification:** source check authored, TypeScript + browser audit + unit execution pending; inventory unticked.
+
+## Mentor-only quality pass
+- Link contrast corrected: 6; focus outline added: 6; reused shared Button: 1.
+- Original filter/case semantics, tenancy and exact visible strings retained.
+- Source regression `UX-mentor-projects-projectId-team-meetings-02` in `tests/unit/ux-chat14-mentor-quality-04d.test.ts`; verification pending.

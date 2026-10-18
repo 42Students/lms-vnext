@@ -31,7 +31,7 @@ export default async function CollegeProjectTemplateDetailPage({
       />
       <Link
         href="/college/projects/templates"
-        className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
       >
         ← Template catalogue
       </Link>
@@ -48,9 +48,9 @@ export default async function CollegeProjectTemplateDetailPage({
           </StatusBadge>
         }
       />
-      <ProjectTemplateView
-        blueprint={detail.version.blueprint}
-      />
+      <section aria-label="Template sections" className="min-w-0">
+        <ProjectTemplateView blueprint={detail.version.blueprint} />
+      </section>
     </div>
   );
 }

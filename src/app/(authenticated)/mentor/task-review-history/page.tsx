@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -24,7 +25,7 @@ export default async function MentorTaskReviewHistoryPage({
   });
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid review history filters</h1>
-    <Link href="/mentor/task-review-history" className="text-primary-text underline">Clear filters</Link>
+    <Link href="/mentor/task-review-history" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if(!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
@@ -33,7 +34,7 @@ export default async function MentorTaskReviewHistoryPage({
     <PageHeader eyebrow="Mentor · Task Board" title="Reviewed task submissions"
       description="Registered task decisions on projects currently assigned to you."
       actions={<Link href="/mentor/task-reviews"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Pending task reviews
       </Link>} />
     {!data.enabled ? <section role="status"
@@ -69,11 +70,10 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="OLDEST">Earliest reviewed first</option>
           </select>
         </label>
-        <button type="submit"
-          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <Button type="submit" variant="primary">
           Filter
-        </button>
-        <Link href="/mentor/task-review-history" className="px-3 py-2 text-sm font-semibold text-primary-text">
+        </Button>
+        <Link href="/mentor/task-review-history" className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Clear
         </Link>
       </form>
@@ -82,7 +82,7 @@ export default async function MentorTaskReviewHistoryPage({
         <Link href={"/api/mentor/task-review-history/export?"+
           new URLSearchParams({decision:data.query.decision,priority:data.query.priority,
             order:data.query.order,search:data.query.search}).toString()}
-          download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Export reviewed task decisions CSV (max 200)
         </Link>
         {data.total>200?<span role="status">
@@ -105,12 +105,12 @@ export default async function MentorTaskReviewHistoryPage({
               }).format(item.reviewedAt)+" IST" : "date not recorded"}
           </p>
           <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board"}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             Open authorized Board →
           </Link>
           <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+
             "/tasks/"+encodeURIComponent(item.taskId)+"/feedback"}
-            className="ml-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+            className="ml-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             Recorded feedback →
           </Link>
         </li>)}</ol>}
@@ -118,9 +118,9 @@ export default async function MentorTaskReviewHistoryPage({
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page>1 && <Link href={mentorTaskHistoryHref({...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-primary-text">Previous</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
           {data.page<data.totalPages && <Link href={mentorTaskHistoryHref({...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-primary-text">Next</Link>}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
         </div>
       </nav>
     </>}

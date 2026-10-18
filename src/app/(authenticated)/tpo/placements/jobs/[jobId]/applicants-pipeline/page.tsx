@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {Suspense} from "react";
 import {TpoApplicationsSpreadsheet} from "@/components/tpo/tpo-applications-spreadsheet";
@@ -60,40 +63,40 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    {columns&&<input type="hidden" name="columns" value={columns}/>}
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Stage
-    <select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      {stages.map(s=><option key={s} value={s}>{s}</option>)}
-    </select></label>
+    </Select></label>
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Name, roll, branch, batch, email, phone or role
-    <input name="search" defaultValue={data.search} maxLength={100}
+    <Input name="search" defaultValue={data.search} maxLength={100}
      className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/></label>
    <label className="min-w-32 flex-1 text-sm font-semibold text-body">Application channel
-    <select name="channel" defaultValue={data.channel} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="channel" defaultValue={data.channel} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      <option value="ALL">All channels</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
-    </select></label>
+    </Select></label>
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Eligibility evidence
-    <select name="eligibility" defaultValue={data.eligibility} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="eligibility" defaultValue={data.eligibility} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      <option value="ALL">All evidence states</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · evidence missing</option>
-    </select></label>
+    </Select></label>
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Applicant flags
-    <select name="flag" defaultValue={data.flag} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="flag" defaultValue={data.flag} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      <option value="ALL">Any flag</option>
      <option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option>
      <option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
-    </select></label>
+    </Select></label>
    <label className="min-w-32 flex-1 text-sm font-semibold text-body">Order by
-    <select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner name</option>
-    </select></label>
+    </Select></label>
    <label className="min-w-36 flex-1 text-sm font-semibold text-body">Submitted window
-    <select name="submittedWithin" defaultValue={data.submittedWithin} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="submittedWithin" defaultValue={data.submittedWithin} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      <option value="ALL">Any submission date</option><option value="LAST_7_DAYS">Last 7 × 24 hours</option>
      <option value="LAST_30_DAYS">Last 30 × 24 hours</option>
-    </select></label>
-   <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground">Apply</button>
+    </Select></label>
+   <Button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground">Apply</Button>
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>

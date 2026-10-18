@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -98,9 +99,7 @@ export default async function TpoPlacementRulesSettingsPage({
       <TpoSettingsNav active="rules" />
 
       <section className="space-y-2">
-        <h2 className="m-0 text-xl font-semibold text-foreground">
-          Placement rules
-        </h2>
+        <PageHeader eyebrow="TPO · Settings" title="Placement rules" />
         <p className="text-sm leading-6 text-body">
           The college-wide offer policy and
           job-specific eligibility criteria.
@@ -371,7 +370,7 @@ export default async function TpoPlacementRulesSettingsPage({
                     ? "/tpo/settings/rules"
                     : `/tpo/settings/rules?page=${result.page - 1}`
                 }
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 ← Previous
               </Link>
@@ -379,7 +378,7 @@ export default async function TpoPlacementRulesSettingsPage({
             {result.page < result.totalPages ? (
               <Link
                 href={`/tpo/settings/rules?page=${result.page + 1}`}
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Next →
               </Link>

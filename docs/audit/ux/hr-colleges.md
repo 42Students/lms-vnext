@@ -1,8 +1,8 @@
-# HR source UX review — `/hr/colleges`
+# UX rollout — /hr/colleges
 
-- Page source: `src/app/(authenticated)/hr/colleges/page.tsx`; signed-off playbook, original headings and authorization preserved.
-- Weakness: small touch targets, horizontal page overflow, duplicate main landmarks or unscrollable tables where observed.
-- Changes: Redirect/re-export is intentional; no UI fork introduced..
-- States: existing error, empty, pending, access-denied and data freshness logic retained without inventing records.
-- Source test: `UX-hr-hr-colleges-01` in `tests/unit/ux-chat14-hr-01.test.ts`.
-- Not run: TypeScript/Vitest/320–390px/keyboard/manual QA; do not tick until orchestrator verification.
+- **Route:** src/app/(authenticated)/hr/colleges/page.tsx
+- **Test:** UX-hr-colleges-01 (`tests/ux-hr-rollout-01.test.mjs`).
+- **Earlier weakness:** The retired colleges alias must not create duplicate navigation or an unsafe alternative permission surface.
+- **Change:** Retained the intended /hr/home redirect and route semantics. No duplicate page or altered wording.
+- **States:** Existing access, invalid query, partial, empty, pagination and error paths are preserved; no invented records, retries or UI strings. Mobile/AT acceptance is orchestrator-owned.
+- **Test/acceptance:** Named static source regression test authored; execution of typecheck/lint/unit/browser remains with orchestrator and is not represented as having run.

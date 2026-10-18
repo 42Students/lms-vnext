@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {MentorProjectsUnavailable} from "@/components/projects/mentor-projects-unavailable";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -25,7 +26,7 @@ export default async function MentorCalendarPage({searchParams}:{
   }));
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1>Invalid meeting filters</h1>
-    <Link href="/mentor/calendar" className="text-primary-text underline">Clear filters</Link>
+    <Link href="/mentor/calendar" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
@@ -109,8 +110,8 @@ export default async function MentorCalendarPage({searchParams}:{
           <option value="PAST_7_DAYS">Previous 7 IST days</option>
         </Select>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
-      <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear</Link>
+      <Button type="submit" variant="primary">Filter</Button>
+      <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
     </form>
     </FilterBar>
      <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -118,7 +119,7 @@ export default async function MentorCalendarPage({searchParams}:{
         sprint:parsed.data.sprint,join:parsed.data.join,projectId:parsed.data.projectId??"",attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
         projectState:parsed.data.projectState,
         search:parsed.data.search,period:parsed.data.period,
-      }).toString()} download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+      }).toString()} download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Export filtered meeting metadata CSV (max 200)
       </Link>
       {displayed.length>200?<span role="status">Export omits {displayed.length-200} meetings.</span>:null}

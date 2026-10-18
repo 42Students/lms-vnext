@@ -1,8 +1,8 @@
-# HR source UX review — `/hr/conversations`
+# UX rollout — /hr/conversations
 
-- Page source: `src/app/(authenticated)/hr/conversations/page.tsx`; signed-off playbook, original headings and authorization preserved.
-- Weakness: small touch targets, horizontal page overflow, duplicate main landmarks or unscrollable tables where observed.
-- Changes: Removed nested main landmark; shell owns main; Fluid responsive page surface; Touch targets 44px (2).
-- States: existing error, empty, pending, access-denied and data freshness logic retained without inventing records.
-- Source test: `UX-hr-hr-conversations-01` in `tests/unit/ux-chat14-hr-01.test.ts`.
-- Not run: TypeScript/Vitest/320–390px/keyboard/manual QA; do not tick until orchestrator verification.
+- **Route:** src/app/(authenticated)/hr/conversations/page.tsx
+- **Test:** UX-hr-conversations-01 (`tests/ux-hr-rollout-01.test.mjs`).
+- **Earlier weakness:** 16 low-contrast `text-primary-text` utility occurrences; static actions lacked consistent keyboard focus and selected controls were smaller than 44px.
+- **Change:** Preserved all original page labels, headings, filter values, notices and APIs. Upgraded readable link color to the shared deep-teal token, added 2px focus outlines to 12 links and 3 buttons and normalized 2 input/select/textarea targets where applicable. Existing shared PageHeader, EmptyState and ErrorState are retained without bespoke replacements.
+- **States:** Existing access, invalid query, partial, empty, pagination and error paths are preserved; no invented records, retries or UI strings. Mobile/AT acceptance is orchestrator-owned.
+- **Test/acceptance:** Named static source regression test authored; execution of typecheck/lint/unit/browser remains with orchestrator and is not represented as having run.

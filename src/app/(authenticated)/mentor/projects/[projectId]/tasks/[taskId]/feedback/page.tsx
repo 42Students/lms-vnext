@@ -35,7 +35,7 @@ export default async function Page({params}:{
     <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">{entry.feedback}</p>
    </li>)}</ol>}
   <Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"?tab=board"}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
    Back to authorized task Board
   </Link>
   <p className="text-xs text-muted-foreground">

@@ -18,7 +18,7 @@ export default async function MentorProjectTimelinePage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-2">
     <h1>Invalid timeline selector</h1>
-    <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
+    <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
   </section>;
   const data=await getMentorProjectTimeline(
     await getCurrentRequestContext(),parsed.data,
@@ -27,7 +27,7 @@ export default async function MentorProjectTimelinePage({
     <PageHeader eyebrow="Mentor · Project" title="Release &amp; Sprint timeline"
       description={data.projectTitle}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
-        className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+        className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Sprint workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -39,7 +39,7 @@ export default async function MentorProjectTimelinePage({
           <Link key={status} href={mentorTimelineHref({
             ...data.query,releaseStatus:status,page:1,
           })} aria-current={data.query.releaseStatus===status?"page":undefined}
-            className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+            className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             {status.replaceAll("_"," ")}
           </Link>)}
       </nav>
@@ -47,7 +47,7 @@ export default async function MentorProjectTimelinePage({
         {(["ALL","PLANNED","ACTIVE","COMPLETED"] as const).map(status=>
           <Link key={status} href={mentorTimelineHref({...data.query,sprintStatus:status,page:1})}
             aria-current={data.query.sprintStatus===status?"page":undefined}
-            className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+            className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             {status==="ALL"?"All Sprint states":status}
           </Link>)}
       </nav>
@@ -87,9 +87,9 @@ export default async function MentorProjectTimelinePage({
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page>1&&<Link href={mentorTimelineHref({...data.query,page:data.page-1})}
-            className="text-primary-text underline">Previous</Link>}
+            className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
           {data.page<data.totalPages&&<Link href={mentorTimelineHref({...data.query,page:data.page+1})}
-            className="text-primary-text underline">Next</Link>}
+            className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
         </div>
       </nav>
     </>}
