@@ -12,3 +12,14 @@ export type WaitlistRow={
  applicationId:string;name:string;roleTitle:string;rank:number;
  reasons:string[];canPromote:boolean;
 };
+
+/** Decision made under the promotion row lock when multiple HTTP retries
+ * reconcile the same issued offer. Returning IDEMPOTENT must not re-audit.
+ */
+export function decideWaitlistReleaseSettlement(
+ status:string,storedOfferId:string|null,issuedOfferId:string,
+):"WRITE"|"IDEMPOTENT"|"STALE"{
+ if(status==="PENDING"&&storedOfferId===null)return "WRITE";
+ if(status==="RELEASED"&&storedOfferId===issuedOfferId)return "IDEMPOTENT";
+ return "STALE";
+}

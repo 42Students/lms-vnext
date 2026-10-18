@@ -46,27 +46,27 @@
 | `src/modules/placements/round-service.ts` | `getTpoRoundReorderReadiness` | **No direct behavioural test** | GAP (role, tenancy, state and races) |
 | `src/modules/placements/round-service.ts` | `reorderPlacementRounds` | **No direct behavioural test** | GAP (role, tenancy, state and races) |
 | `src/modules/placements/round-venue-booking-service.ts` | `requireAvailableRoundVenue` | **No direct behavioural test** | GAP (two-session advisory lock race) |
-| `src/modules/placements/tpo-interview-readiness-model.ts` | `tpoInterviewWindowSchema` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-interview-readiness-model.ts` | `projectTpoInterviewReadiness` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-interview-readiness-model.ts` | `tpoInterviewWindowSchema` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-interview-readiness-model.ts` | `projectTpoInterviewReadiness` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-interview-readiness-service.ts` | `getTpoInterviewReadiness` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-recruiter-slot-review-service.ts` | `listTpoRecruiterProposedSlots` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultTableQuerySchema` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-round-result-table-model.ts` | `projectTpoRoundResultTable` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultViewSchema` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-round-result-table-model.ts` | `filterTpoRoundResultRows` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `projectTpoRoundResultTable` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultViewSchema` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `filterTpoRoundResultRows` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-round-result-table-service.ts` | `getTpoRoundResultTable` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TPO_ROUND_ATTENDANCE_STATES` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-round-drive-day-model.ts` | `buildTpoRoundDriveDayRoster` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-round-drive-day-model.ts` | `buildTpoRoundDriveDayRoster` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-round-drive-day-service.ts` | `getTpoRoundDriveDay` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-round-facts-model.ts` | `projectTpoRoundFacts` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-round-facts-model.ts` | `projectTpoRoundFacts` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsvQuerySchema` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsv` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsv` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyPreviewCsv` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyReportCsv` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-round-result-entry-model.ts` | `tpoRoundResultEntryFormSchema` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `bulkTpoRoundResultSchema` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-bulk-round-result-model.ts` | `summarizeBulkRoundResults` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-bulk-round-result-model.ts` | `resolveBulkRoundLearnerTokens` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `summarizeBulkRoundResults` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `resolveBulkRoundLearnerTokens` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-bulk-round-result-service.ts` | `confirmTpoBulkRoundResults` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `confirmedTpoRoundResultSchema` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `TPO_RESULT_LABELS` | **No direct behavioural test** | GAP |
@@ -105,3 +105,10 @@
 4. **No local execution** in the available GitHub connector environment; CI must run `tsc`, Vitest and disposable PostgreSQL integration suite.
 
 Use this ledger to assign next writes. Do not convert a GAP to complete based on a source-string assertion.
+
+## Pass B follow-up (2026-10-18)
+
+- `chat2-tpo-round-model-break-02.test.ts` now checks malformed interview time windows, cancelled interview omission, uncertain durations, roster duplicate/ambiguous identities, stale round-result edit constraints, malformed bulk paste and CSV formula escaping.
+- `chat2-tpo-last-third-route-matrix.test.ts` enumerates each of the **42 distinct** last-third TPO routes (85–126), verifies tenant-guard inheritance and shared loading/error fallback, and adds report/settings-specific source contracts. It is **source-level only**; browser/role test evidence still needed per route.
+- Previous `chat2-ledger-round-import-and-scheduling.test.ts` CSV supported-type test has its production wording corrected without weakening its rejection rule.
+- These tests were authored but cannot be represented as passing without cloud CI. Full integration and double-submit actor-journey coverage remain open.
