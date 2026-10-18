@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -27,17 +28,17 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h3 className="font-semibold">Built-in job types</h3>
   <p className="text-sm text-muted-foreground">Their names and counts-as-placed answers are fixed. Switching off a type hides it from the college&apos;s available choices; existing drives keep their type.</p>
-  <div className="overflow-x-auto"><table className="w-full min-w-[24rem] text-left text-sm">
-   <thead><tr className="border-b border-border"><th scope="col" className="p-2">Job type</th><th scope="col" className="p-2">Counts as placed</th><th scope="col" className="p-2">In the drive form</th></tr></thead>
-   <tbody>{rows.map(row=><tr className="border-b border-border" key={row.label}>
-    <th scope="row" className="p-2 font-medium">{row.label} <span className="text-xs text-muted-foreground">Built-in</span></th>
-    <td className="p-2">{row.countsAsPlaced?"Yes":"No"}</td>
-    <td className="p-2"><label className="inline-flex min-h-10 items-center gap-2">
+  <DataTable rows={rows} getRowKey={row=>row.label} caption="Built-in job types"
+   empty={<p>No built-in job types available.</p>}
+   columns={[
+    {key:"jobType",header:"Job type",mobilePriority:"primary",cell:row=><span className="font-medium">{row.label} <span className="text-xs text-muted-foreground">Built-in</span></span>},
+    {key:"placed",header:"Counts as placed",mobilePriority:"secondary",cell:row=>row.countsAsPlaced?"Yes":"No"},
+    {key:"enabled",header:"In the drive form",mobilePriority:"action",cell:row=><label className="inline-flex min-h-11 items-center gap-2">
      <input type="checkbox" checked={row.override?.active??true} disabled={busy||((row.override?.active??true)&&activeCount<=1)}
-      aria-label={row.label+" in the drive form"} onChange={e=>void change(row.label,e.target.checked,row.override?.updatedAt??"none")}/>
+      aria-label={row.label+" in the drive form"} onChange={event=>void change(row.label,event.target.checked,row.override?.updatedAt??"none")}/>
      {(row.override?.active??true)?"On":"Off"}
-    </label></td>
-   </tr>)}</tbody></table></div>
+    </label>},
+   ]}/>
   <p className="text-xs text-muted-foreground">Internship never counts as placed; Internship + full-time counts once the full-time offer is made. Drive consumers must load the authoritative college choice list.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
