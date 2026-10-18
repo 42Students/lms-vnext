@@ -1,3 +1,4 @@
+import authStyles from "@/components/public/public-auth-skin.module.css";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -19,12 +20,12 @@ export default async function CompanySharePage({
  const {page,q,access}=await searchParams;
  const proof=(await cookies()).get("company_share_access")?.value??null;
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof).catch(()=>null);
- if(result===null)return <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10">
+ if(result===null)return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10`}>
   <ErrorState title="Shared applicants" description="This page is temporarily unavailable. Try again."
     action={<Link href={"/company-share/"+encodeURIComponent(token)}
-      className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Try again</Link>}/>
+      className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Try again</Link>}/>
  </main>;
- if(result.kind==="CODE_REQUIRED")return <main className="mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:py-10">
+ if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:py-10`}>
   <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-5 sm:p-6">
    <h1 className="text-xl font-semibold">Enter the 6-digit share code</h1>
    <p className="text-sm text-body">Ask the placement cell for the code sent separately with this company share link.</p>
@@ -41,11 +42,11 @@ export default async function CompanySharePage({
    <p className="text-xs text-muted-foreground">After ten wrong codes within an hour the share is locked and the placement cell is notified.</p>
   </section>
  </main>;
- if(result.kind!=="READY")return <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10">
+ if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10`}>
   <section role="alert" className="space-y-4 rounded-xl border border-border bg-surface p-6">
    <h1 className="text-xl font-semibold">This link is not valid any more.</h1>
    <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
-   <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Home</Link>
+   <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Home</Link>
   </section>
  </main>;
  const columns=safeCompanyShareColumns(result.selectedColumns);
@@ -57,7 +58,7 @@ export default async function CompanySharePage({
   mobilePriority: index===0?"primary":"secondary",
   cell: row=>row.cells[key]??"Not recorded",
  }));
- return <main className="relative isolate mx-auto min-w-0 max-w-5xl space-y-5 px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-5">
+ return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-5xl space-y-5 px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-5`}>
   <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 sm:grid-cols-3">
    {Array.from({length:18},(_,index)=><span key={index} className="block w-[150%] -rotate-30 whitespace-nowrap">{result.companyName} · confidential</span>)}
   </div>
@@ -84,7 +85,7 @@ export default async function CompanySharePage({
       className="w-full sm:w-64" placeholder="Name contains..." />
     </label>
     <Button type="submit">Apply search</Button>
-    <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</a>
+    <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</a>
   </form>
   <p role="status" className="text-sm text-body">
    {result.total} shortlisted applicants · Page {result.page} of {result.totalPages}
@@ -98,7 +99,7 @@ export default async function CompanySharePage({
    </div>}/>
   <Pagination page={result.page} pageCount={result.totalPages}
    hrefForPage={href} label="Share pages"/>
-  <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+  <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
    href={publicApplicantExportHref(token,result.search)}>
    Download list (CSV, up to 500 applicants)
   </a>
