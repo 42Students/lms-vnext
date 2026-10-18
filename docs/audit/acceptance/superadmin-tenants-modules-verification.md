@@ -82,3 +82,5 @@ New mutation tests check real typed request validation and current source contra
 | ID | Status | Evidence |
 |---|---|---|
 | SA-tenants-modules-R01 | DONE — source hardening, database race acceptance pending | `getModuleAccessOverviewMetrics` rechecks persisted `admin-scope.select` inside a transaction holding actor SHARE locks before either the empty-page shortcut or reading selected tenants and learner/override counts. Selected colleges are still validated individually against persisted organization and status; `tests/unit/chat11-super-admin-module-metrics-revoked-role.test.ts` — `SA-tenants-modules-R01`, commits `db34e73`, `df3d5e4`, `eee568d`. Two-session actor revocation and PostgreSQL aggregation checks remain pending. |
+
+| SA-tenants-modules-READY-03 | DONE — source check, CI pending | `src/modules/colleges/readiness-service.ts` executes transaction-locked `assertPersistedPlatformPermission` at the response boundary after readiness count gathering to deny revoked, disabled or wrong-college Super Admin. `tests/unit/chat11-super-admin-readiness-revocation.test.ts` includes three ID-named cases. Not a live DNS or login signoff. |
