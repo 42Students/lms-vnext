@@ -138,3 +138,9 @@ No real anonymous provider calls or browser traffic were issued, and these lines
 | PUBLIC-INVITE-SIZE-34..36 | S2 | Public recruiter invite OTP acceptance parsed arbitrary-size JSON before validating a six-digit code. Shared UTF-8 byte guard now protects grant-creation service from oversized anonymous payloads; normal code and readiness behaviour stays unchanged. | `tests/unit/chat16-public-recruiter-invite-accept-byte-cap-34.test.ts` (unrun) | `6b2ef651d6f0` |
 
 These are source/test edits without execution, as required by the owner’s no-CI-gating priority.
+
+
+| INBOUND-TRIAGE-SIZE-42..44 | S2 | Privileged inbound-mail status route consumed unbounded JSON before even resolving signed-in Super Admin session. Apply shared 8 KB strict UTF-8 limit, no-store 400/413 responses, existing CAS/role service unchanged. | `tests/unit/chat16-inbound-mail-status-json-cap-42.test.ts` (unrun) | `cfff6ef84778` |
+| AUTH-OTP-MERGE-45/46 | S2 | OTP ZeptoMail `learnerName` and `mobile` merge variables accepted untrusted profile markup/control characters and arbitrary phone strings, potentially producing spoofed provider template contents. Encode names for HTML before interpolation, strip formatting controls, bound by Unicode codepoints, and send mobile only for E.164. | `tests/unit/chat16-otp-template-merge-sanitization-45.test.ts` (unrun) | `58d726a21ea8`, `ef43a7599d6f` |
+
+No code/tests were run, no external OTP was sent, and no production service was changed.
