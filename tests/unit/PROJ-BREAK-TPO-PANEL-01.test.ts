@@ -14,7 +14,10 @@ describe("PROJ-BREAK-TPO-PANEL-01 private quick panel and note boundaries",()=>{
   const source=src("tpo-student-panel-detail-service.ts");
   expect(source).toContain('hasMembershipRole(ctx,"TPO")');
   expect(source).toContain('membership.status!=="ACTIVE"');
-  expect(source).toContain("requirePlacementManageScope(ctx,membership.collegeId)");
+  expect(source).toContain("const collegeId=await requireTpoBatchActor(ctx)");
+  expect(source).toContain("requirePlacementManageScope(ctx,collegeId)");
+  expect(source.indexOf("requireTpoBatchActor(ctx)"))
+   .toBeLessThan(source.indexOf("const db=getDb()"));
   expect(source).toContain('eq(collegeMemberships.collegeId,college.id)');
   expect(source).toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(source).toContain('eq(users.platformStatus,"ACTIVE")');
