@@ -37,7 +37,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
-      actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-primary-text underline">Drive overview</Link>} />
+      actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Interview round filters" className="flex flex-wrap items-end gap-4 rounded-xl border border-border p-4">
       <label className="grid gap-1 text-sm">Round kind
         <select name="kind" defaultValue={query.kind} className="min-h-11 rounded-md border border-border px-2">
@@ -50,7 +50,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
             <option key={status} value={status}>{status}</option>)}
         </select>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Filter</button>
     </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointments.interviews}
