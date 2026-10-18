@@ -46,7 +46,7 @@ beforeEach(()=>{
  vi.clearAllMocks();
  vi.mocked(listOwnRecruiterPlacementJobs).mockResolvedValue([{
   companyId:"company-a",collegeId:"college-a",job:{id:"job-a"},
- }] as Awaited<ReturnType<typeof listOwnRecruiterPlacementJobs>>);
+ }] as unknown as Awaited<ReturnType<typeof listOwnRecruiterPlacementJobs>>);
 });
 
 describe("chat-16 recruiter notifications versioned acknowledgement transaction",()=>{
