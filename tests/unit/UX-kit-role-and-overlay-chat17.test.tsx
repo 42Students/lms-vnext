@@ -235,6 +235,21 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(fileMatchesAccept({name:"proof.pdf",type:"application/pdf"},".pdf")).toBe(true);
   });
 
+  it("UX-kit-HARDEN-38 toast provider uses unique local keys without requiring WebView crypto APIs",()=>{
+    const source=readFileSync(join(process.cwd(),"src/components/ui/toast.tsx"),"utf8");
+    expect(source).toContain("const nextToastOrdinal = useRef(0)");
+    expect(source).toContain('const id = "toast-" + ++nextToastOrdinal.current');
+    expect(source).not.toContain("crypto.randomUUID()");
+    const notices:ToastItem[]=[
+      {id:"toast-1",title:"Saved successfully",tone:"success"},
+      {id:"toast-2",title:"Request failed",tone:"error"},
+    ];
+    expect(enqueueToast([],notices[0]!).items).toEqual([notices[0]]);
+    const {items}=enqueueToast([notices[0]!],notices[1]!);
+    expect(new Set(items.map(row=>row.id)).size).toBe(2);
+    expect(render(<ToastStack toasts={items} onDismiss={()=>{}}/>)).toContain("Request failed");
+  });
+
   it("UX-kit-HARDEN-29 persistent errors never evict and timed toast timers are cleaned up", () => {
     const errors:ToastItem[]=Array.from({length:6},(_,i)=>({
       id:"err-"+i,title:"Could not save attempt "+i,tone:"error",
