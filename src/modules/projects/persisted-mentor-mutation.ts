@@ -53,7 +53,7 @@ export async function assertPersistedProjectMutationActor(
     eq(projectMembers.role,"MENTOR"),
     isNull(projectMembers.endedAt),
   )).for("share").limit(1);
-  if(!member||!mayMutateProjectWithRole(
+  if(!member||member.role!=="MENTOR"||!mayMutateProjectWithRole(
     member.roleKind as ProjectMemberRoleKind,member.canMutate,
   ))throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
 }
