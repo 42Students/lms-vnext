@@ -13,6 +13,7 @@ describe("Super Admin organization directory calendar boundaries",()=>{
   expect(source).toContain("organizationCreatedIstDate(organization.createdAt)");
   expect(source).not.toContain("organization.createdAt.toISOString().slice(0, 10)");
   expect(source).toContain('requirePermission(context, "admin-scope.select")');
-  expect(source).toContain('can(context, "organization.manage"');
+  expect(source).toContain("const canCreate = can(");
+  expect(source).toContain('"organization.manage",');
  });
 });
