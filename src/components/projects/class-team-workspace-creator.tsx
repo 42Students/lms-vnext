@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { DataTable } from "@/components/ui/data-table";
 import { projectApiError, projectMutation } from "./project-api";
 import { previewClassTeams, type ProjectTeam } from "@/modules/projects/class-team-split-model";
 import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move";
@@ -210,17 +211,20 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       <h2 className="font-semibold">Before creating: one workspace per student</h2>
       <p>{currentPreflight.toCreate} to create · {currentPreflight.alreadyCovered} already covered · {currentPreflight.duplicates} duplicates · {currentPreflight.eligible} eligible</p>
       <div className="max-h-72 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] rounded-md border focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
-        <table className="w-full text-left text-xs">
-          <thead><tr><th scope="col" className="p-2">Learner</th><th scope="col" className="p-2">Decision</th></tr></thead>
-          <tbody>{currentPreflight.items.map((row,index)=>{
-            const learner=names.get(row.membershipId);
-            const decision=row.status==="TO_CREATE"?"To create":row.status==="ALREADY_COVERED"?"Already covered":"Duplicate";
-            return <tr key={row.membershipId+"-"+index} className="border-t">
-              <td className="p-2">{learner?.displayName??learner?.rollNumber??"Learner"}{learner?.rollNumber?" · "+learner.rollNumber:""}</td>
-              <td className="p-2">{decision}</td>
-            </tr>;
-          })}</tbody>
-        </table>
+        <DataTable
+          caption="Learner creation preflight"
+          rows={currentPreflight.items.map((row,index)=>({...row,index}))}
+          getRowKey={row=>row.membershipId+"-"+row.index}
+          columns={[
+            {key:"learner",header:"Learner",mobilePriority:"primary",cell:row=>{
+              const learner=names.get(row.membershipId);
+              return <>{learner?.displayName??learner?.rollNumber??"Learner"}{learner?.rollNumber?" · "+learner.rollNumber:""}</>;
+            }},
+            {key:"decision",header:"Decision",mobilePriority:"secondary",cell:row=>
+              row.status==="TO_CREATE"?"To create":row.status==="ALREADY_COVERED"?"Already covered":"Duplicate"},
+          ]}
+          empty={<p>No eligible learners in this preview.</p>}
+        />
       </div>
       <p className="text-xs text-muted-foreground">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
     </section>:null}
@@ -266,13 +270,17 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
           ? outcome.created.length+" workspace(s) created; "+(outcome.requested-outcome.alreadyCovered-outcome.created.length)+" student(s) failed. Review or export the report below before retrying."
           : "Created "+outcome.created.length+" workspace(s) for the class roster."}</p>
       <div className="max-h-72 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="Per-learner creation results" tabIndex={0}>
-        <table className="w-full text-left text-sm"><thead><tr><th scope="col">Learner</th><th scope="col">Result</th><th scope="col">Workspace</th></tr></thead>
-         <tbody>{outcome.individualResults.map(row=><tr key={row.membershipId}>
-          <td>{names.get(row.membershipId)?.displayName??row.membershipId}</td>
-          <td>{row.status==="CREATED"?"Created":"Already covered"}</td>
-          <td>{row.title??"Existing workspace"}</td>
-         </tr>)}</tbody>
-        </table>
+        <DataTable
+          caption="Individual workspace creation results"
+          rows={outcome.individualResults}
+          getRowKey={row=>row.membershipId}
+          columns={[
+            {key:"learner",header:"Learner",mobilePriority:"primary",cell:row=>names.get(row.membershipId)?.displayName??row.membershipId},
+            {key:"result",header:"Result",mobilePriority:"secondary",cell:row=>row.status==="CREATED"?"Created":"Already covered"},
+            {key:"workspace",header:"Workspace",mobilePriority:"secondary",cell:row=>row.title??"Existing workspace"},
+          ]}
+          empty={<p>No individual results recorded.</p>}
+        />
       </div>
       <button type="button" className="text-sm font-semibold text-primary-text underline"
         onClick={()=>{

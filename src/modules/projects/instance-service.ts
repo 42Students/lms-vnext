@@ -243,7 +243,7 @@ export async function createProjectInstance(
             eq(sectionEnrollments.status,"ACTIVE")))
           .where(and(inArray(collegeMemberships.id,input.learnerMembershipIds),
             eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE"),
-            eq(users.platformStatus,"ACTIVE")));
+            eq(learnerProgramEnrollments.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
         if(new Set(members.map(row=>row.id)).size!==input.learnerMembershipIds.length)
           throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
       }

@@ -11,5 +11,6 @@ export const inboundMailMetadataSchema = z.strictObject({
  status: z.enum(["NEW","TRIAGED","RESOLVED"]),
 });
 export function safeInboundPreview(value: string, length=180) {
- return value.replace(/[\u0000-\u001f\u007f]/g," ").replace(/\s+/g," ").trim().slice(0,length);
+ const limit=Number.isFinite(length)?Math.max(0,Math.min(1000,Math.trunc(length))):180;
+ return value.replace(/[\u0000-\u001f\u007f]/g," ").replace(/\s+/g," ").trim().slice(0,limit);
 }

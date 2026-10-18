@@ -58,6 +58,8 @@ export async function listInboundMailForAdmin(
 ):Promise<InboundMailPage>{
  requirePermission(context,"admin-scope.select");
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
+ if(context.adminScope?.collegeId||context.adminScope?.organizationId)
+  throw new AuthorizationError("admin-scope.select");
  const input=inboundMailListQuerySchema.parse(raw);
  if(!await repository.tableExists())
   return {available:false,items:[],page:input.page,hasMore:false,total:null,toReadCount:null};
@@ -72,6 +74,8 @@ export async function changeInboundMailStatusForAdmin(
 ){
  requirePermission(context,"admin-scope.select");
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
+ if(context.adminScope?.collegeId||context.adminScope?.organizationId)
+  throw new AuthorizationError("admin-scope.select");
  const input=z.strictObject({
   id:z.uuid(),
   expectedStatus:z.enum(["NEW","TRIAGED","RESOLVED"]),

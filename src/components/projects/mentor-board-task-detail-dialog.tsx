@@ -32,14 +32,15 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
  const attempts=submissions.filter(row=>row.taskId===task.id);
  return <dialog ref={ref} aria-labelledby="mentor-board-task-title" onClose={onClose}
   onCancel={event=>{event.preventDefault();ref.current?.close();}}
-  className="fixed inset-0 m-auto max-h-[90dvh] w-[min(95vw,42rem)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50">
-  <div className="flex items-start justify-between gap-3">
+  className="fixed inset-0 m-auto max-h-[90dvh] w-[min(95vw,42rem)] overflow-y-auto overscroll-contain rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50">
+  <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-border bg-surface pb-3">
    <div><p className="text-xs font-semibold uppercase text-muted-foreground">Mentor · Task details</p>
     <h2 id="mentor-board-task-title" className="text-lg font-semibold">{task.title}</h2></div>
    <button type="button" onClick={()=>ref.current?.close()}
     className="min-h-11 rounded border border-border px-3 text-sm font-semibold">Close</button>
   </div>
-  <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+  <p className="mt-3 text-xs text-muted-foreground">Scroll for more task details and activity.</p>
+   <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
    {([{label:"Status",value:task.status},{label:"Priority",value:task.priority},
       {label:"Assignee",value:author},{label:"Sprint",value:sprintTitle??"Product backlog"},
       {label:"Due date",value:(task.dueDate??"No due date")+

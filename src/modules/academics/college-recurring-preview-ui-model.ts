@@ -1,5 +1,4 @@
-export function collegePreviewErrorLabel(value: unknown): string {
-  if (value !== null && typeof value === "object" && "error" in value &&
-    typeof value.error === "string") return value.error.slice(0, 150);
+/** Server/provider error bodies are untrusted and must never become user-visible copy. */
+export function collegePreviewErrorLabel(_value: unknown): string {
   return "The schedule preview could not be loaded";
 }

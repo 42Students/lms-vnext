@@ -1,3 +1,6 @@
+import {Dialog} from "@/components/ui/dialog";
+import {DataTable} from "@/components/ui/data-table";
+import {ScrollCue} from "@/components/ui/scroll-cue";
 "use client";
 
 import Link from "next/link";
@@ -10,9 +13,9 @@ import {
   type TpoLeadImportRowResult,
 } from "@/modules/placements/tpo-lead-csv-import-model";
 
-const inputClass = "min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
-const buttonClass = "inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground disabled:opacity-50";
-const primaryClass = "inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50";
+const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const buttonClass = "inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground disabled:opacity-50";
+const primaryClass = "inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50";
 
 const template = "name,email,phone,companyName,designation,source\r\n" +
   "Example Recruiter,recruiter@example.org,,Example Company,HR,REFERRAL\r\n";
@@ -39,24 +42,8 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   const [previewStatus,setPreviewStatus]=useState<"idle"|"checking"|"ready"|"error">("idle");
   const previewSeq=useRef(0);
   const launchRef=useRef<HTMLButtonElement>(null);
-  const modalRef=useRef<HTMLElement>(null);
   const fileRef=useRef<HTMLInputElement>(null);
-  useEffect(()=>{
-    if(!open)return;
-    fileRef.current?.focus();
-    const onKey=(event:KeyboardEvent)=>{
-      if(event.key==="Escape"){event.preventDefault();if(!busy)close();return;}
-      if(event.key!=="Tab"||!modalRef.current)return;
-      const items=Array.from(modalRef.current.querySelectorAll<HTMLElement>(
-        'button:not([disabled]),input:not([disabled]),a[href],textarea:not([disabled])'));
-      const first=items[0],last=items[items.length-1];
-      if(!first||!last)return;
-      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
-      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
-    };
-    window.addEventListener("keydown",onKey);
-    return ()=>window.removeEventListener("keydown",onKey);
-  },[open,busy]);
+  useEffect(()=>{if(open)fileRef.current?.focus();},[open]);
 
   async function chooseFile(file: File | undefined) {
     const sequence=++previewSeq.current;
@@ -170,18 +157,12 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
       <button ref={launchRef} type="button" className={buttonClass} onClick={() => setOpen(true)}>
         Import leads CSV
       </button>
-      {open ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
-          <section ref={modalRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Import recruiter leads"
-            aria-describedby="recruiter-import-help"
-            className="max-h-[90vh] w-full max-w-3xl space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl"
-          >
+      <Dialog open={open} onOpenChange={next=>{if(!next)close();}}
+         title="Import recruiter leads" dismissible={!busy}
+         description="Review every imported row before creating any recruiter leads.">
+          <section className="space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-xl font-semibold text-foreground">Import recruiter leads</h2>
                 <p id="recruiter-import-help" className="mt-2 text-sm text-body">
                   Upload CSV or Excel (.xlsx), with the required headings:
                   name, email, phone, companyName, designation, source.
@@ -236,33 +217,23 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       className={rowGroup===value?primaryClass:buttonClass}
                       onClick={()=>setRowGroup(value)}>{label}</button>)}
                 </nav>
-                <div className="max-h-56 overflow-auto rounded-lg border border-border">
-                  <table className="w-full text-left text-sm">
-                    <thead className="sticky top-0 bg-surface-secondary text-muted-foreground">
-                      <tr>
-                        <th scope="col" className="px-3 py-2">File row</th>
-                        <th scope="col" className="px-3 py-2">Name</th>
-                        <th scope="col" className="px-3 py-2">Validation</th>
-                        <th scope="col" className="px-3 py-2">Include</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {previewRows.length===0?<tr><td colSpan={4} className="px-3 py-5 text-center text-sm text-muted-foreground">
-                        No rows in this group.
-                      </td></tr>:null}
-                      {previewRows.map(item => (
-                        <tr key={item.row} className="border-t border-border">
-                          <td className="px-3 py-2">{item.row}</td>
-                          <td className="px-3 py-2">{item.name || "Unnamed"}</td>
-                          <td className="px-3 py-2">{item.error ?? (existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}{existing.find(entry=>entry.row===item.row)? <Link className="ml-2 text-primary-text underline" href={"/tpo/recruiters/"+existing.find(entry=>entry.row===item.row)!.leadId}>Open</Link>:null}</td>
-                          <td className="px-3 py-2"><input type="checkbox" aria-label={"Include row "+item.row}
-                            disabled={!item.lead || existingNumbers.has(item.row) || busy || Boolean(result)} checked={Boolean(item.lead)&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)}
-                            onChange={e=>{setReviewReady(false);setSkipRows(previous=>e.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <ScrollCue axis="y" label="Recruiter import preview rows" viewportClassName="max-h-56">
+                  <DataTable rows={previewRows} getRowKey={item=>String(item.row)} caption="Recruiter import preview"
+                    empty={<p>No rows in this group.</p>}
+                    columns={[
+                      {key:"name",header:"Name",mobilePriority:"primary",cell:item=>item.name||"Unnamed"},
+                      {key:"row",header:"File row",mobilePriority:"secondary",cell:item=>item.row},
+                      {key:"status",header:"Validation",mobilePriority:"secondary",cell:item=><span>
+                        {item.error??(existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}
+                        {existing.find(entry=>entry.row===item.row)?
+                          <Link className="ml-2 inline-flex min-h-11 items-center text-primary-text underline" href={"/tpo/recruiters/"+existing.find(entry=>entry.row===item.row)!.leadId}>Open</Link>:null}
+                      </span>},
+                      {key:"include",header:"Include",mobilePriority:"action",cell:item=><input type="checkbox" aria-label={"Include row "+item.row}
+                        disabled={!item.lead||existingNumbers.has(item.row)||busy||Boolean(result)}
+                        checked={Boolean(item.lead)&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)}
+                        onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/>},
+                    ]}/>
+                </ScrollCue>
                 {reviewReady&&!result ? <p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-foreground">
                   Import {newRows} recruiter lead row(s) from {fileName}. {preview.invalid} invalid row(s) will be skipped. Existing contacts will be reported as duplicates. Each created lead receives an audit entry.
                 </p>:null}
@@ -301,33 +272,19 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   {result.counts.created} created, {result.counts.duplicate} duplicate,
                   {" "}{result.counts.invalid} invalid, {result.counts.skipped??0} skipped. {result.counts.total} rows processed.
                 </p>
-                <div className="max-h-56 overflow-auto rounded-lg border border-border">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-surface-secondary">
-                      <tr>
-                        <th scope="col" className="px-3 py-2">File row</th>
-                        <th scope="col" className="px-3 py-2">Status</th>
-                        <th scope="col" className="px-3 py-2">Details</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {result.results.map(item => (
-                        <tr key={item.row} className="border-t border-border">
-                          <td className="px-3 py-2">{item.row}</td>
-                          <td className="px-3 py-2">{item.status}</td>
-                          <td className="px-3 py-2">
-                            {item.leadId ? (
-                              <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
-                                className="font-semibold text-primary-text hover:underline">
-                                Open created lead
-                              </Link>
-                            ) : (item.reason ?? "—")}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <ScrollCue axis="y" label="Recruiter import result rows" viewportClassName="max-h-56">
+                  <DataTable rows={result.results} getRowKey={item=>String(item.row)} caption="Recruiter import results"
+                    empty={<p>No import results to display.</p>}
+                    columns={[
+                      {key:"row",header:"File row",mobilePriority:"primary",cell:item=>item.row},
+                      {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
+                      {key:"details",header:"Details",mobilePriority:"secondary",cell:item=>item.leadId?
+                        <Link href={"/tpo/recruiters/"+encodeURIComponent(item.leadId)}
+                          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+                          Open created lead
+                        </Link>:(item.reason??"—")},
+                    ]}/>
+                </ScrollCue>
               </div>
             ) : null}
             <p className="text-xs text-muted-foreground">
@@ -336,8 +293,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
               does not leave half-written lead/audit pairs.
             </p>
           </section>
-        </div>
-      ) : null}
+      </Dialog>
     </>
   );
 }
