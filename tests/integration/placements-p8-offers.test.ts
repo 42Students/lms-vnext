@@ -33,7 +33,7 @@ import {
   stagePlacementRoundResult,
 } from "@/modules/placements/result-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
-import { recordTpoDriveSelections } from "@/modules/placements/tpo-drive-selection-service";
+import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -622,6 +622,36 @@ describe("Placement P8 offers and joining", () => {
       "select count(*)::integer as count from placement_offer_status_history where offer_id=any($1::uuid[]) and to_status='ACCEPTED'",
       [ids]);
     expect(history.rows[0]?.count).toBe(0);
+  });
+
+  it("PLACEMENTS-SELECTION-RECONCILE-DB-03 never treats an issued LOI as a released official OFFER",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const entry={applicationId:application.id,roleTitle:"Engineer",annualCtcInr:900_000};
+    const selected=await recordTpoDriveSelections(tpo,job.id,{action:"RECORD",entries:[entry]});
+    const selectionId=selected.selectionIds[0]!;
+    await pool.query(`
+      update placement_drive_selections
+      set status='VERIFIED',verified_by_user_id=$1,verified_at=now(),updated_at=now()
+      where id=$2`,[SEED_IDS.facultyUser,selectionId]);
+    const saved=await pool.query<{recorded_at:Date}>(
+      "select recorded_at from placement_drive_selections where id=$1",[selectionId]);
+    const letter=await issuePlacementOffer(tpo,application.id,{
+      kind:"LOI",roleTitle:entry.roleTitle,annualCtcInr:entry.annualCtcInr,
+    });
+    expect(letter.kind).toBe("LOI");
+    const attempt=await verifyAndReleaseTpoSelections(tpo,job.id,{
+      action:"VERIFY_AND_RELEASE",confirmed:true,selectionIds:[selectionId],
+      expectedRecordedAt:{[selectionId]:saved.rows[0]!.recorded_at.toISOString()},
+    });
+    expect(attempt.released).toBe(0);
+    expect(attempt.skipped).toBe(1);
+    const after=await pool.query<{status:string;released_offer_id:string|null}>(
+      "select status,released_offer_id from placement_drive_selections where id=$1",[selectionId]);
+    expect(after.rows).toEqual([{status:"VERIFIED",released_offer_id:null}]);
+    const releasedAudit=await pool.query<{n:number}>(
+      "select count(*)::integer as n from activity_events where subject_id=$1 and event_type=$2",
+      [job.id,"PLACEMENTS_TPO_SELECTION_RELEASED"]);
+    expect(releasedAudit.rows[0]?.n).toBe(0);
   });
 
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
