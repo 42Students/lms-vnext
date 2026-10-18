@@ -52,9 +52,9 @@ describe("Super Admin placement lookup — real service orchestration of bounded
       company:"Example",submittedAt:new Date("2099-01-01T00:00:00.000Z"),
       applicationStatus:"SUBMITTED",offerStatus:null,joining:null,
     }));
-    const select=vi.fn((fields:Record<string,unknown>)=>new SelectRows(
-      "jobId" in fields?details:people,
-    ));
+    const select=vi.fn((fields:Record<string,unknown>)=>
+      "jobId" in fields ? new SelectRows(details) : new SelectRows(people),
+    );
     const selectDistinct=vi.fn(()=>new SelectRows([
       {membershipId:people[0]!.membershipId},
     ]));
@@ -83,9 +83,9 @@ describe("Super Admin placement lookup — real service orchestration of bounded
       company:"Example",submittedAt:new Date("2099-01-01T00:00:00.000Z"),
       applicationStatus:"SUBMITTED",offerStatus:null,joining:null,
     }));
-    const select=vi.fn((fields:Record<string,unknown>)=>new SelectRows(
-      "jobId" in fields?details:people,
-    ));
+    const select=vi.fn((fields:Record<string,unknown>)=>
+      "jobId" in fields ? new SelectRows(details) : new SelectRows(people),
+    );
     mocks.getDb.mockReturnValue({
       select,
       selectDistinct:vi.fn(()=>new SelectRows([] as {membershipId:string}[])),
