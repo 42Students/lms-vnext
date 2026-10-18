@@ -61,8 +61,8 @@
 |---|---|---|---|---|
 | `src/modules/placements/tpo-student-panel-detail-service.ts` | `getTpoStudentPanelDetail` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source guard: TPO, active learner/actor, college-scoped apps, PLACEMENTS-only activity, 100/1000 capped history; real DB negative joins pending | **SOURCE** |
 | `src/modules/placements/tpo-student-notes-service.ts` | `tpoStudentNotesInput` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Strict UUIDs, no duplicate rows, max 100 IDs, note nonempty/2K limit, tenant override rejected | **BEHAVIOURAL** |
-| `src/modules/placements/tpo-student-notes-service.ts` | `addTpoStudentNotes` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source persisted actor and tenant audit guard; per-row transaction, partial selected count; concurrency and rollback pending | **SOURCE** |
-| `src/modules/placements/tpo-student-notes-service.ts` | `listTpoStudentNotes` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source guard: wrong tenant, suspended/disabled learner filtered, notes capped at 100; DB role/session race still pending | **SOURCE** |
+| `src/modules/placements/tpo-student-notes-service.ts` | `addTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked transaction: persisted permission before reads, foreign ID skip, active saved row, audit write failure; actual DB atomicity/race pending | **BEHAVIOURAL/MOCKED DB** |
+| `src/modules/placements/tpo-student-notes-service.ts` | `listTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked disappeared learner returns null without leaking old notes; production SQL checks active learner/college and caps at 100; DB role/session race still pending | **BEHAVIOURAL/MOCKED DB** |
 
 ## Critical outstanding integration tests
 
