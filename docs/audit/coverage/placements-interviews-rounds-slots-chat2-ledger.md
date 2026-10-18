@@ -63,21 +63,21 @@
 | `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsv` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyPreviewCsv` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyReportCsv` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-round-result-entry-model.ts` | `tpoRoundResultEntryFormSchema` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-round-result-entry-model.ts` | `tpoRoundResultEntryFormSchema` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `bulkTpoRoundResultSchema` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `summarizeBulkRoundResults` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `resolveBulkRoundLearnerTokens` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-bulk-round-result-service.ts` | `confirmTpoBulkRoundResults` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `confirmedTpoRoundResultSchema` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `TPO_RESULT_LABELS` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canEditTpoRoundResult` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canApplyTpoRoundResult` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `confirmedTpoRoundResultSchema` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `TPO_RESULT_LABELS` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canEditTpoRoundResult` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canApplyTpoRoundResult` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-confirmed-round-result-service.ts` | `confirmTpoRoundResult` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-live-round-search-model.ts` | `tpoLiveRoundSearchSchema` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-live-round-search-model.ts` | `filterTpoLiveRoundSearch` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-live-round-job-link-model.ts` | `tpoLiveRoundJobHref` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-live-round-timing-model.ts` | `tpoLiveRoundTiming` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-live-round-venue-model.ts` | `tpoLiveRoundVenueLabel` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-live-round-search-model.ts` | `tpoLiveRoundSearchSchema` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-live-round-search-model.ts` | `filterTpoLiveRoundSearch` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-live-round-job-link-model.ts` | `tpoLiveRoundJobHref` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-live-round-timing-model.ts` | `tpoLiveRoundTiming` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
+| `src/modules/placements/tpo-live-round-venue-model.ts` | `tpoLiveRoundVenueLabel` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundShares` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundSharesByBranch` | **No direct behavioural test** | GAP |
 | `src/modules/placements/college-interview-action-model.ts` | `collegeInterviewActionSchema` | **No direct behavioural test** | GAP (College/Admin cross-account) |
@@ -121,3 +121,10 @@ Use this ledger to assign next writes. Do not convert a GAP to complete based on
 - `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts` now additionally rejects scientific, hexadecimal, fractional, zero and overflow waitlist ranks.
 - `tests/unit/PROJ-BREAK-TPO-ROLE-01.test.ts` protects IIT Dharwad Projects role isolation: TPO scoped read only, no project mutations, deny wrong college/organization and inactive sessions, recruiter grant does not imply Projects access.
 - **OPEN:** direct DB-backed role/service journey coverage for remaining exported services, cloud typecheck+unit+PG integration execution, and phone/browser route state validation.
+
+## Follow-up: round result CSV review race (2026-10-18)
+
+- `TPO-drive-workspace-40`: `tpoRoundImportPreviewToken` now binds the uploaded bytes, round identity, current applicant list, current result IDs/statuses, email, roll and name into a deterministic SHA-256 review token; reordering an unchanged roster does not stale it.
+- `stageTpoRoundImport` re-reads the actor-scoped roster and round state **after** preview validation and refuses to write if the source/roster token or scheduling eligibility changed between the two reads. This closes one avoidable preview-to-stage time-of-check/time-of-use window. Per-result optimistic checks remain in `confirmTpoRoundResult`.
+- `parseTpoRoundImport` clears rank on PASS, FAIL and ABSENT rows, even when an unexpected numeric rank was supplied; the row continues to be flagged invalid for explicit officer review.
+- Regression evidence: `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts`, including `TPO-drive-workspace-40 refuses a stale review when the file, roster, or persisted result changes`. Tests were authored, **not executed**. Real two-actor PostgreSQL races and cloud CI remain required; this is not a complete integration proof.

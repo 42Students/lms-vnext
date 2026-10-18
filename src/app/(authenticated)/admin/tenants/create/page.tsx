@@ -5,12 +5,23 @@ import {listOrganizations} from "@/modules/organizations/service";
 import {OrganizationCreateForm} from "@/components/admin/organization-create-form";
 import {CollegeCreateForm} from "@/components/admin/college-create-form";
 import {PageHeader} from "@/components/ui/page-header";
+import {ErrorState} from "@/components/ui/error-state";
 import {preferredNewTenantOrganization} from "@/modules/colleges/admin-tenant-organization-step";
 export const dynamic="force-dynamic";
 export default async function SuperAdminTenantCreateStage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
- const organizations=await listOrganizations(context);
+ let organizations:Awaited<ReturnType<typeof listOrganizations>>;
+ try{
+  organizations=await listOrganizations(context);
+ }catch{
+  return <div className="min-w-0 space-y-5">
+   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Create the customer, then make one college launch-ready"/>
+   <ErrorState title="Organization directory unavailable"
+    description="Organization choices could not be verified. College creation remains unavailable until your authorized organizations can be loaded."
+    action={<Link href="/admin/tenants/create" className="font-semibold text-[var(--lms-teal-deep)]">Retry organization directory</Link>}/>
+  </div>;
+ }
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=can(context,"organization.manage");
  const params=await searchParams;
