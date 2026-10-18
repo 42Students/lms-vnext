@@ -107,6 +107,7 @@
 |---|---|---|---|
 | `src/modules/placements/company-share/company-history-service.ts` — `listCompanyShareHistory` | `tests/unit/chat12-tpo-company-share-history-behavior.test.ts` | Actual reader mocked DB: zero jobs return without queries, missing migration reports `ready:false`, persisted revocation/expiry/selection counts returned, static tenant join and 100-row limit; authentic tenant authorization is delegated to callers and needs end-to-end PostgreSQL proof | **BEHAVIOURAL/MOCKED DB** |
 
+- PostgreSQL actor validation executes `requireTpoJobActor` using a row `FOR SHARE` lock. Both bulk current and direct stage preview now use ordinary short transactions, **not** `READ ONLY` transactions (which forbid `FOR SHARE`). Named source regression in `chat12-tpo-bulk-preview-service-behavior.test.ts`; real PostgreSQL execution pending.
 - Actual Students bulk preview now uses an eight-wide bounded read window for up to 200 authorized learners; `chat12-tpo-bulk-preview-service-behavior.test.ts` verifies peak concurrency and signed output order without claiming database race proof. The confirm writer remains deliberately sequential for CAS/audit semantics.
 
 ## Critical outstanding integration tests

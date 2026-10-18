@@ -81,6 +81,11 @@ export default async function CollegeReadinessPage({
 
   const raw=await searchParams;
   const parsed=parseSuperAdminReadinessParams(raw);
+  // A malformed filter is a recoverable URL error. Avoid expensive scoped
+  // readiness queries until both the tenant ID and filters are valid.
+  if(!parsed)return <ErrorState title="Invalid readiness filter"
+    description="Choose a supported check status."
+    action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/readiness"}>Clear</Link>}/>;
 
 
   const result =
@@ -98,7 +103,6 @@ export default async function CollegeReadinessPage({
     evaluation,
     supplemental,
   } = result;
-  if(!parsed)return <ErrorState title="Invalid readiness filter" description="Choose a supported check status." action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>}/>;
   const shownChecks=visibleReadinessChecks(evaluation.checks,parsed.status,parsed.area);
   // SA-tenants-modules-23: distinguish measured blockers from optional
   // configuration suggestions without implying runtime acceptance.
