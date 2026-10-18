@@ -17,6 +17,7 @@ describe("HR-JOBS-API-119 read-only recruiter job portfolio",()=>{
  it("authorized empty portfolio has no fabricated drives and uses own caller identity",async()=>{
   const response=await GET();
   expect(response.status).toBe(200);
+  expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await response.json()).toEqual({jobs:[]});
   expect(m.jobs).toHaveBeenCalledWith(actor);
  });
