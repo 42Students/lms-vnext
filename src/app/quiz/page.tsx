@@ -9,7 +9,7 @@ export default function LearnerQuizAttemptPage() {
       <div className="mx-auto max-w-6xl">
         <Link
           href="/learn/allQuizzes"
-          className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           ← All Quizzes
         </Link>
