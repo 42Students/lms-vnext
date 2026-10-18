@@ -19,22 +19,22 @@ export default async function FacultyAssessmentResultsPage({
   if (!parsed.success) {
     return <section role="alert" className="space-y-3">
       <h1 className="text-xl font-semibold">Invalid assessment filters</h1>
-      <Link href="/teacher/results" className="text-primary-text underline">Clear filters</Link>
+      <Link href="/teacher/results" className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
     </section>;
   }
   const context = await getCurrentRequestContext();
   const data = await getFacultyAssessmentResults(context,parsed.data);
   const emptyState = facultyResultsEmptyState(data.query,data.sections.length);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Faculty · Assessments" title="Assessment results"
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex flex-wrap gap-2">
         <Link href="/teacher/response-followups"
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Response follow-ups
         </Link>
         <Link href="/teacher/allAssignments"
-          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
           All Assignments
         </Link>
       </div>} />
@@ -94,22 +94,22 @@ export default async function FacultyAssessmentResultsPage({
           <option value="5">5</option><option value="10">10</option>
         </select>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
         Filter
       </button>
-      <Link href="/teacher/results" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text">
+      <Link href="/teacher/results" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Clear
       </Link>
     </form>
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
       <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
        Export this page CSV (no learner names)
       </Link>
     </div>
     {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
-      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Clear result filters</Link> : null}</div>
+      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Clear result filters</Link> : null}</div>
       : <div className="grid gap-3">
         {data.items.map(item =>
           <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
@@ -139,7 +139,7 @@ export default async function FacultyAssessmentResultsPage({
                 </div>)}
             </dl>
             <Link href={item.reportHref}
-              className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
               Open Section report →
             </Link>
           </article>)}
@@ -148,9 +148,9 @@ export default async function FacultyAssessmentResultsPage({
       <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page > 1 && <Link href={facultyResultsHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Previous</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Previous</Link>}
         {data.page < data.totalPages && <Link href={facultyResultsHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Next</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">

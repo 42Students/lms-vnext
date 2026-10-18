@@ -1,9 +1,7 @@
-# UI/UX excellence — /college/classes/recurring-preview
+# UX review: /college/classes/recurring-preview
 
-Before: mobile width constraints or touch sizing needed attention in the page shell and data surfaces.
-
-Changed: page width constrained for mobile in `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`. Legacy wording and persisted business behavior are deliberately unchanged.
-
-Covered: presentation-level overflow and hit-target affordances; existing authorization, error, validation, empty and loading behavior is preserved where present. Still needs device/browser keyboard and visual acceptance.
-
-Test: `tests/unit/chat4-college-ux-round3.test.ts`, `UX-college-classes-recurring-preview-01` (authored, not run). Keep the checklist unchecked pending passing tests.
+- Route: `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`, first-half College Admin UX rollout.
+- Legacy wording and IA preserved, including action labels, filters, page title and notification/empty messages.
+- Improvements: page overflow containment.
+- States: tenant guards and pending/errors untouched; any tables belong to shared directory components with their own empty messages. Mobile controls and forms use shared UI behavior.
+- Regression test authored: `tests/unit/UX-college-college-classes-recurring-preview-01.test.ts`. CI/device/accessibility audit pending; checklist cannot be ticked until passing.

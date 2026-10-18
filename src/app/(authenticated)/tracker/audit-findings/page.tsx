@@ -5,6 +5,8 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {redirect} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
+import {ErrorState} from "@/components/ui/error-state";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
@@ -21,8 +23,11 @@ export default async function IndependentFindingsPage({searchParams}:{
  const parsed=parseIndependentFindingFilters(await searchParams);
  const header=<><AuditFindingFilterMemory/><PageHeader eyebrow="42 Tracker · Super Admin" title="Audit findings"
   description="Independent findings imported from the audit repository, not user bug reports."/><TrackerAdminNav/></>;
- if(!parsed)return <div className="space-y-5">{header}<p role="alert">Invalid audit findings filters.</p>
-  <Link href="/tracker/audit-findings?view=OPEN" className="font-semibold text-primary-text">Reset filters</Link></div>;
+ if(!parsed)return <div className="space-y-5">{header}
+  <ErrorState title="Invalid audit findings filters." description="Invalid audit findings filters."
+   action={<Link href="/tracker/audit-findings?view=OPEN"
+    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Reset filters</Link>}/>
+ </div>;
  if(!independentAuditFindingsReady())return <div className="space-y-5">{header}
   <p role="status" className="rounded-xl border border-border bg-surface p-5">
    Audit findings are unavailable until registered migration 0133 is verified and DB10_AUDIT_FINDINGS_READY=DB10_VERIFIED.
@@ -30,6 +35,24 @@ export default async function IndependentFindingsPage({searchParams}:{
   </p></div>;
  const [data,sync]=await Promise.all([listIndependentAuditFindings(ctx,parsed),readIndependentFindingSyncState(ctx)]);
  const selectClass="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
+ const refusedColumns:DataTableColumn<NonNullable<typeof sync>["refusedFiles"][number]>[]=[
+  {key:"path",header:"Source file",mobilePriority:"primary",cell:item=>
+    <span className="block min-w-0 break-all font-mono text-xs">{item.path||"Unknown file"}</span>},
+  {key:"reason",header:"Refusal reason",mobilePriority:"secondary",cell:item=>
+    <span className="break-words">{item.reason||"Reason not recorded"}</span>},
+ ];
+ const findingColumns:DataTableColumn<(typeof data.items)[number]>[]=[
+  {key:"finding",header:"Finding",mobilePriority:"primary",cell:item=><div className="min-w-0">
+    <Link href={"/tracker/audit-findings/"+encodeURIComponent(item.externalId)}
+      className="inline-flex min-h-11 items-center break-all font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{item.externalId}</Link>
+    <p className="mt-1 max-w-md break-words text-body">{item.title}</p>
+   </div>},
+  {key:"area",header:"Area / Kind",mobilePriority:"secondary",cell:item=><span>{item.area} · {item.kind}</span>},
+  {key:"severity",header:"Severity",mobilePriority:"secondary",cell:item=><StatusBadge>{item.severity}</StatusBadge>},
+  {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge>{item.status.replaceAll("_"," ")}</StatusBadge>},
+  {key:"assigned",header:"Assigned",mobilePriority:"secondary",cell:item=>item.assignee??"Unassigned"},
+  {key:"reported",header:"Reported",mobilePriority:"secondary",cell:item=><span>{item.foundBy??"Unknown"} · {item.foundAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.foundAt):"Date not recorded"}</span>},
+ ];
  return <div className="min-w-0 space-y-5">{header}
   <section aria-label="Findings import status" className="rounded-xl border border-border bg-surface p-4 text-sm">
    <h2 className="font-semibold">Findings import status</h2>
@@ -44,14 +67,9 @@ export default async function IndependentFindingsPage({searchParams}:{
    <p className="mt-1 text-xs text-muted-foreground">A manual sync is unavailable until the findings repository is accessible and import credentials are verified. No sync was performed by opening this page.</p>
    {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">
     <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
-    <div className="overflow-x-auto"><table className="w-full min-w-[28rem] text-left text-xs">
-     <thead><tr className="border-b border-border"><th scope="col" className="p-2">Source file</th>
-      <th scope="col" className="p-2">Refusal reason</th></tr></thead>
-     <tbody>{sync.refusedFiles.map((item,index)=><tr key={index} className="border-b border-border">
-      <td className="max-w-xs break-all p-2 font-mono">{item.path||"Unknown file"}</td>
-      <td className="break-words p-2">{item.reason||"Reason not recorded"}</td>
-     </tr>)}</tbody>
-    </table></div>
+    <DataTable columns={refusedColumns} rows={sync.refusedFiles}
+     getRowKey={item=>item.path+" · "+item.reason} caption="Files the importer refused or flagged"
+     empty={<p role="status" className="text-sm text-body">Review importer logs for the remaining details.</p>}/>
     {sync.refusedCount>sync.refusedFiles.length?<p role="status" className="text-xs text-muted-foreground">
      Showing the first {sync.refusedFiles.length} of {sync.refusedCount} refused files. Review importer logs for the remaining details.
     </p>:null}
@@ -60,7 +78,7 @@ export default async function IndependentFindingsPage({searchParams}:{
   <nav aria-label="Finding views" className="flex flex-wrap gap-2">
    {(["OPEN","RELEASE","ALL"] as const).map(value=><Link key={value} aria-current={parsed.view===value?"page":undefined}
      href={independentFindingHref({...parsed,view:value,page:1})}
-     className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-4 font-semibold text-primary-text">
+     className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {value==="OPEN"?"Open":value==="RELEASE"?"Release (critical & high)":"All"}
     </Link>)}
   </nav>
@@ -68,7 +86,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    <p className="font-semibold">Critical open: {data.criticalOpen}</p>
    {FINDING_STATUSES.map(status=><Link key={status}
     href={independentFindingHref({...parsed,statuses:[status],page:1})}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-[var(--lms-teal-deep)]">
     {status.replaceAll("_"," ")}: {data.statusCounts[status]??0}
    </Link>)}
   </section>
@@ -92,30 +110,18 @@ export default async function IndependentFindingsPage({searchParams}:{
     </select></label>
    <div className="flex items-end gap-3">
     <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Apply filters</button>
-    <Link href="/tracker/audit-findings?view=OPEN" className="min-h-11 inline-flex items-center font-semibold text-primary-text">Clear</Link>
+    <Link href="/tracker/audit-findings?view=OPEN" className="min-h-11 inline-flex items-center font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
    </div>
   </form>
   <p role="status" className="text-sm text-body">
    {data.total} matching independent findings · page {data.page} of {data.pages} · 50 per page.
   </p>
-  {data.items.length?<div className="overflow-x-auto rounded-xl border border-border bg-surface">
-   <table className="min-w-[48rem] w-full text-left text-sm">
-    <thead><tr className="border-b border-border">{["Finding","Area / Kind","Severity","Status","Assigned","Reported"].map(col=><th key={col} scope="col" className="p-3">{col}</th>)}</tr></thead>
-    <tbody>{data.items.map(item=><tr key={item.id} className="border-b border-border">
-     <td className="p-3"><Link href={"/tracker/audit-findings/"+encodeURIComponent(item.externalId)}
-       className="font-semibold text-primary-text underline">{item.externalId}</Link>
-      <p className="mt-1 max-w-md break-words">{item.title}</p></td>
-     <td className="p-3">{item.area} · {item.kind}</td>
-     <td className="p-3"><StatusBadge>{item.severity}</StatusBadge></td>
-     <td className="p-3"><StatusBadge>{item.status.replaceAll("_"," ")}</StatusBadge></td>
-     <td className="p-3">{item.assignee??"Unassigned"}</td>
-     <td className="p-3">{item.foundBy??"Unknown"} · {item.foundAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.foundAt):"Date not recorded"}</td>
-    </tr>)}</tbody>
-   </table>
-  </div>:<p role="status" className="rounded-xl border border-border p-5">No independent audit findings match these filters.</p>}
+  <DataTable columns={findingColumns} rows={data.items} getRowKey={item=>item.id}
+   caption="Independent audit findings"
+   empty={<p role="status" className="text-sm text-body">No independent audit findings match these filters.</p>}/>
   <nav aria-label="Audit findings pages" className="flex justify-between gap-4">
-   {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="font-semibold text-primary-text">Previous</Link>:<span/>}
-   {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="font-semibold text-primary-text">Next</Link>:null}
+   {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="font-semibold text-[var(--lms-teal-deep)]">Previous</Link>:<span/>}
+   {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="font-semibold text-[var(--lms-teal-deep)]">Next</Link>:null}
   </nav>
  </div>;
 }

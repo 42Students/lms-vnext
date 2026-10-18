@@ -8,10 +8,10 @@ export const dynamic="force-dynamic";
 export default async function TpoBatchClassesPage({params}:{params:Promise<{batchId:string}>}){
  const {batchId}=await params;
  const data=await listTpoBatchClassesForDecisions(await getCurrentRequestContext(),batchId);
- return <main className="space-y-5">
+ return <div className="space-y-5">
   <PageHeader eyebrow="TPO · Batches" title={"Classes · "+data.batch.name}
    description="Class decisions are inherited by students without a direct eligibility override."/>
-  <Link href="/tpo/batches" className="font-semibold text-primary-text underline">← All batches</Link>
+  <Link href="/tpo/batches" className="font-semibold text-[var(--lms-teal-deep)] underline">← All batches</Link>
   <TpoBatchWorkspaceTabs batchId={batchId} active="classes"/>
   {!data.ready?<p role="status" className="rounded-lg border border-border p-4 text-sm">Batch lifecycle storage is unavailable. Decisions cannot be saved.</p>:null}
   {data.finished?<p role="status" className="rounded-lg border border-border p-4 text-sm">This batch is finished. Eligibility decisions are read-only.</p>:null}
@@ -21,7 +21,7 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
     <div className="flex flex-wrap items-start justify-between gap-2">
       <div><h2 className="text-base font-semibold">{row.name}</h2><p className="text-xs text-muted-foreground">{row.code} · {row.students} student{row.students===1?"":"s"}</p></div>
       <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/students?classId="+encodeURIComponent(row.id)}
-        className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">View students →</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">View students →</Link>
     </div>
     <p className="text-sm">Effective: <strong>{row.effectiveDecision.replaceAll("_"," ")}</strong>
      {row.decision==="NOT_DECIDED"?" · Follows the batch":" · Class override"}</p>
@@ -31,5 +31,5 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
    </section>)}
   </div>:<p role="status" className="rounded-lg border border-border p-4 text-sm">No active classes exist in this batch.</p>}
   <p className="text-xs text-muted-foreground">An Eligible class does not override an explicit Ineligible student decision. A student with two active class assignments requires review rather than an inferred choice.</p>
- </main>;
+ </div>;
 }

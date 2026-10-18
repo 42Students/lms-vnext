@@ -45,7 +45,7 @@ export default async function MentorProjectActivityHistoryPage({
         className={mentorProjectActivityMobileFilters}>
         <label className="grid gap-1 text-sm font-semibold text-body">Event importance
           <select name="importance" defaultValue={data.query.importance}
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">All</option><option value="LOW">Low</option>
             <option value="NORMAL">Normal</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
@@ -53,7 +53,7 @@ export default async function MentorProjectActivityHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Event type
           <select name="view" defaultValue={data.query.view}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All recorded events</option>
             <option value="PROJECT">Project lifecycle</option>
             <option value="REVIEWS">Review decisions</option><option value="DELIVERIES">Final delivery history</option>
@@ -64,7 +64,7 @@ export default async function MentorProjectActivityHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded within
           <select name="window" defaultValue={data.query.window}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All recorded events</option>
             <option value="LAST_7_DAYS">Past 7×24 hours</option>
             <option value="LAST_30_DAYS">Past 30×24 hours</option>
@@ -74,19 +74,19 @@ export default async function MentorProjectActivityHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Chronology
           <select name="order" defaultValue={data.query.order}
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="NEWEST">Newest recorded first</option>
             <option value="OLDEST">Oldest recorded first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
           <select name="pageSize" defaultValue={String(data.query.pageSize)}
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="20">20 events</option>
             <option value="50">50 events</option>
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
         <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
@@ -99,7 +99,7 @@ export default async function MentorProjectActivityHistoryPage({
         <Link href={"/api/projects/"+encodeURIComponent(projectId)+
           "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"&&data.query.order==="NEWEST"?"":"?"+
             new URLSearchParams({importance:data.query.importance,view:data.query.view,window:data.query.window,order:data.query.order}).toString())}
-          download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Export recorded events CSV (max 200)
         </Link>
         {data.total>200?<span role="status">

@@ -111,7 +111,7 @@ async function SuperAdminDashboard({
       : "All-platform scope";
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Overview"

@@ -13,7 +13,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   if (!unassignedIdentityScopeAllowed(context.adminScope)) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin" title="Users without college memberships" />
     <EmptyState title="Clear the admin scope" description="These users have no college membership. Clear the organization and college selection in the header to inspect global identities." />
-    <Link href="/admin/people/directory" className="font-semibold text-primary-text">← Users & Roles</Link>
+    <Link href="/admin/people/directory" className="font-semibold text-[var(--lms-teal-deep)]">← Users & Roles</Link>
   </div>;
   const raw = await searchParams;
   const parsed = adminUnassignedUsersQuerySchema.safeParse({ q: raw.q, platformStatus: raw.platformStatus, role: raw.role, page: raw.page });
@@ -25,7 +25,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Global identities" title="Users without college memberships"
       description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." />
-    <Link href="/admin/people/directory" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← Users & Roles</Link>
+    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Users & Roles</Link>
     <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Name<input type="search" name="q" maxLength={100}
         defaultValue={data.query.q} className="min-h-11 rounded-md border border-border bg-surface px-3" /></label>
@@ -33,7 +33,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
         className="min-h-11 rounded-md border border-border bg-surface px-3">{statuses.map(status => <option key={status}>{status}</option>)}</select></label>
       <label className="grid gap-1 text-sm font-semibold text-body">System role<select name="role" defaultValue={data.query.role}
         className="min-h-11 rounded-md border border-border bg-surface px-3">{roles.map(role => <option key={role}>{role}</option>)}</select></label>
-      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
     </form>
     <p className="text-xs text-muted-foreground">{data.total} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">{data.items.map(row => <article key={row.id}
@@ -44,7 +44,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
       <p className="mt-3 text-xs text-muted-foreground">Created {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(row.createdAt)} IST</p>
       <p className="text-xs text-muted-foreground">Updated {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(row.updatedAt)} IST</p>
     </article>)}</div> : <EmptyState title="No matching users" description="No users without college memberships match these filters." />}
-    <nav aria-label="Unassigned user pages" className="flex flex-wrap gap-4 text-sm font-semibold text-primary-text">
+    <nav aria-label="Unassigned user pages" className="flex flex-wrap gap-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       {data.page > 1 ? <Link href={adminUnassignedUsersHref({ ...data.query, page: data.page - 1 })}>Previous</Link> : null}
       {data.page < data.totalPages ? <Link href={adminUnassignedUsersHref({ ...data.query, page: data.page + 1 })}>Next</Link> : null}
     </nav>

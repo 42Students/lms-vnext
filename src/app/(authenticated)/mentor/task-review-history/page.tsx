@@ -29,7 +29,7 @@ export default async function MentorTaskReviewHistoryPage({
   const context=await getCurrentRequestContext();
   if(!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const data=await getMentorTaskReviewHistory(context,parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Task Board" title="Reviewed task submissions"
       description="Registered task decisions on projects currently assigned to you."
       actions={<Link href="/mentor/task-reviews"
@@ -44,11 +44,11 @@ export default async function MentorTaskReviewHistoryPage({
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Task or project
           <input type="search" name="search" defaultValue={data.query.search} maxLength={120}
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Decision
           <select name="decision" defaultValue={data.query.decision}
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">All reviews</option>
             <option value="APPROVED">Approved</option>
             <option value="CHANGES_REQUESTED">Changes requested</option>
@@ -56,7 +56,7 @@ export default async function MentorTaskReviewHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Task priority
           <select name="priority" defaultValue={data.query.priority}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All priorities</option><option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
@@ -64,13 +64,13 @@ export default async function MentorTaskReviewHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
           <select name="order" defaultValue={data.query.order}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Most recently reviewed</option>
             <option value="OLDEST">Earliest reviewed first</option>
           </select>
         </label>
         <button type="submit"
-          className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
         <Link href="/mentor/task-review-history" className="px-3 py-2 text-sm font-semibold text-primary-text">
@@ -82,7 +82,7 @@ export default async function MentorTaskReviewHistoryPage({
         <Link href={"/api/mentor/task-review-history/export?"+
           new URLSearchParams({decision:data.query.decision,priority:data.query.priority,
             order:data.query.order,search:data.query.search}).toString()}
-          download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Export reviewed task decisions CSV (max 200)
         </Link>
         {data.total>200?<span role="status">
@@ -105,12 +105,12 @@ export default async function MentorTaskReviewHistoryPage({
               }).format(item.reviewedAt)+" IST" : "date not recorded"}
           </p>
           <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board"}
-            className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
             Open authorized Board →
           </Link>
           <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+
             "/tasks/"+encodeURIComponent(item.taskId)+"/feedback"}
-            className="ml-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+            className="ml-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
             Recorded feedback →
           </Link>
         </li>)}</ol>}

@@ -1,3 +1,7 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
+import {PageHeader} from "@/components/ui/page-header";
 import Link from "next/link";
 import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import {tpoRegistrationRecordedAtLabel,tpoRegistrationDaysSince} from "@/modules/placements/tpo-batch-registration-date-label-model";
@@ -23,27 +27,27 @@ export default async function BatchRegistrations({params,searchParams}:{
   if(data.filters.order!=="NAME_ASC")params.set("order",data.filters.order);
   if(data.filters.pageSize!==25)params.set("pageSize",String(data.filters.pageSize));
   params.set("page",String(page));return "/tpo/batches/"+batchId+"/registrations?"+params.toString();};
- return <main className="min-w-0 space-y-4">
-  <h1 className="text-xl font-semibold">{data.batch.name} — Registration choices</h1>
+ return <div className="min-w-0 space-y-4">
+  <PageHeader eyebrow="TPO · Batches" title={data.batch.name+" — Registration choices"}/>
   <TpoBatchWorkspaceTabs batchId={batchId} active="registrations" />
   {!data.ready?<p role="status" className="rounded border border-border p-4">Registration storage is unavailable. No learner choices were loaded.</p>:<>
    <form action={"/tpo/batches/"+batchId+"/registrations"} method="get" className="flex min-w-0 flex-wrap items-end gap-2">
     <label className="min-w-0 flex-1 text-sm">Find learner
-     <input type="search" name="q" maxLength={100} defaultValue={data.filters.q}
+     <Input type="search" name="q" maxLength={100} defaultValue={data.filters.q}
       className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"/>
     </label>
     <label className="text-sm">Choice
-     <select name="choice" defaultValue={data.filters.choice}
+     <Select name="choice" defaultValue={data.filters.choice}
       className="mt-1 min-h-11 rounded border border-border bg-surface px-3">
       <option value="ALL">All choices</option><option value="UNRECORDED">Not recorded</option>
       {TPO_REGISTRATION_CHOICES.map(choice=><option value={choice} key={choice}>{choice.replaceAll("_"," ")}</option>)}
-     </select>
+     </Select>
     </label>
-    <label className="text-sm">Recorded source<select name="source" defaultValue={data.filters.source} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any source</option><option value="SELF">Learner self-service</option><option value="TPO">Placement cell</option><option value="BACKFILL">Backfill</option><option value="UNRECORDED">Not recorded</option></select></label>
-    <label className="text-sm">Last recorded update<select name="recency" defaultValue={data.filters.recency} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any date</option><option value="UPDATED_7_DAYS">Within 7 days</option><option value="OLDER_30_DAYS">Older than 30 days</option><option value="NO_RECORD">No recorded choice</option></select></label>
-    <label className="text-sm">Order<select name="order" defaultValue={data.filters.order} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="UPDATED_NEWEST">Recently updated first</option><option value="UPDATED_OLDEST">Oldest updates first</option></select></label>
-    <label className="text-sm">Rows per page<select name="pageSize" defaultValue={String(data.filters.pageSize)} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label>
-    <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary">Filter</button>
+    <label className="text-sm">Recorded source<Select name="source" defaultValue={data.filters.source} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any source</option><option value="SELF">Learner self-service</option><option value="TPO">Placement cell</option><option value="BACKFILL">Backfill</option><option value="UNRECORDED">Not recorded</option></Select></label>
+    <label className="text-sm">Last recorded update<Select name="recency" defaultValue={data.filters.recency} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any date</option><option value="UPDATED_7_DAYS">Within 7 days</option><option value="OLDER_30_DAYS">Older than 30 days</option><option value="NO_RECORD">No recorded choice</option></Select></label>
+    <label className="text-sm">Order<Select name="order" defaultValue={data.filters.order} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="UPDATED_NEWEST">Recently updated first</option><option value="UPDATED_OLDEST">Oldest updates first</option></Select></label>
+    <label className="text-sm">Rows per page<Select name="pageSize" defaultValue={String(data.filters.pageSize)} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="25">25</option><option value="50">50</option><option value="100">100</option></Select></label>
+    <Button type="submit">Filter</Button>
    </form>
    {data.limited?<p role="status" className="rounded border border-border p-3 text-sm">Limited to the first 500 active learners. Filter totals and CSV describe this sample only.</p>:null}
    {data.summary?<section aria-label="Sampled registration evidence" className="space-y-2 rounded-xl border border-border bg-surface p-4"><h2 className="font-semibold">Registration breakdown in sampled learners</h2><dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[["Sampled",data.summary.sample],["Choices recorded",data.summary.recorded],["Unrecorded",data.summary.unrecorded],["Self-service",data.summary.bySource.SELF],["Placement cell",data.summary.bySource.TPO],["Backfill",data.summary.bySource.BACKFILL],...TPO_REGISTRATION_CHOICES.map(choice=>[choice.replaceAll("_"," "),data.summary.byChoice[choice]] as const)].map(([label,value])=><div key={label} className="rounded border border-border p-2"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold tabular-nums">{value}</dd></div>)}</dl><p className="text-xs text-muted-foreground">Counts describe up to 500 first-loaded authorized learners before view filters, never full-cohort totals when the sample cap is reached.</p></section>:null}
@@ -61,13 +65,13 @@ export default async function BatchRegistrations({params,searchParams}:{
       <span>{row.choice?.replaceAll("_"," ")??"Not recorded"}</span></div>
      <p className="text-xs text-muted-foreground">Source: {row.source??"None"} · {tpoRegistrationRecordedAtLabel(row.updatedAt)}{tpoRegistrationDaysSince(row.updatedAt,snapshotTime)!==null?" · "+tpoRegistrationDaysSince(row.updatedAt,snapshotTime)+" days ago":""}</p>
      <p className="mt-1 text-xs text-muted-foreground">{tpoPlacementConsentDescription(row.placementConsentEvidence)}</p>
-     <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations/"+encodeURIComponent(row.membershipId)+"/history"} className="mr-4 mt-2 inline-flex min-h-10 items-center text-primary-text underline">Registration change history</Link>
-     <Link href={"/tpo/students/"+row.membershipId+"/participation"} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">Review participation</Link>
+     <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations/"+encodeURIComponent(row.membershipId)+"/history"} className="mr-4 mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Registration change history</Link>
+     <Link href={"/tpo/students/"+row.membershipId+"/participation"} className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Review participation</Link>
     </li>)}</ul>}
    <nav aria-label="Registration pages" className="flex flex-wrap gap-2">
     {data.filters.page>1?<Link href={url(data.filters.page-1)} className="rounded border px-3 py-2">Previous</Link>:null}
     {data.hasMore?<Link href={url(data.filters.page+1)} className="rounded border px-3 py-2">Next</Link>:null}
    </nav>
   </>}
- </main>;
+ </div>;
 }

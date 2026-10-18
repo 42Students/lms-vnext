@@ -42,7 +42,7 @@ export default async function MentorTeamCoveragePage({
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const data = await getMentorTeamCoverage(context,parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
       actions={<Link href="/mentor/projects"
@@ -58,12 +58,12 @@ export default async function MentorTeamCoveragePage({
           className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Project search
             <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-              className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground"
+              className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"
               placeholder="Project name" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Team coverage
             <select name="filter" defaultValue={data.query.filter}
-              className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+              className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
               <option value="ALL">All projects</option>
               <option value="NO_LEARNERS">No active learners</option>
               <option value="NO_PRIMARY_MENTOR">No active primary Mentor</option>
@@ -77,24 +77,24 @@ export default async function MentorTeamCoveragePage({
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Project state
             <select name="status" defaultValue={data.query.status}
-              className="min-h-10 rounded-md border border-border bg-background px-3">
+              className="min-h-11 rounded-md border border-border bg-background px-3">
               <option value="ALL">All current assignments</option>
               <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
               <option value="COMPLETED">Completed</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
-            <select name="assignment" defaultValue={data.query.assignment} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <select name="assignment" defaultValue={data.query.assignment} className="min-h-11 rounded-md border border-border bg-background px-3">
               <option value="ALL">All assignments</option><option value="PRIMARY">Primary Mentor</option><option value="SUPPORTING">Supporting Mentor</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Team-size order
-            <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <select name="order" defaultValue={data.query.order} className="min-h-11 rounded-md border border-border bg-background px-3">
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </select>
           </label>
           <button type="submit"
-            className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
           <Link href="/mentor/team-coverage" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
         </form>
         <section aria-label="Registered team coverage summary"

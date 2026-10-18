@@ -19,7 +19,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
   if(error instanceof TpoMessagingError || error instanceof PlacementsServiceError)notFound();
   throw error;
  }
- return <main className="space-y-5">
+ return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Recruiter · Drive" title="Messages"
    description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}/>
   <Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center text-primary-text">Back to drive overview</Link>
@@ -37,5 +37,5 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
     <Link href={"/hr/conversations/"+thread.id} className="font-semibold text-primary-text">Continue discussion</Link>
    </li>)}
   </ol>:<p role="status" className="text-sm text-body">No conversation has been started for this drive.</p>}
- </main>;
+ </div>;
 }

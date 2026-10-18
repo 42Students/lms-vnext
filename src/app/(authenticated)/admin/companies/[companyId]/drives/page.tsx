@@ -14,10 +14,10 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
   const {companyId}=await params;
   const data=await listSuperAdminCompanyDriveHistory(context,companyId);
   if(!data)notFound();
-  return <div className="space-y-5">
+  return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Companies" title={data.company.name}
       description="Drive history and recorded joining outcomes within the selected college only." />
-    <Link href="/admin/companies" className="inline-flex min-h-10 items-center font-semibold text-primary-text">
+    <Link href="/admin/companies" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">
       ← Companies
     </Link>
     <section aria-label="Company history totals" className="grid gap-3 sm:grid-cols-3">
@@ -44,7 +44,7 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
             <td className="p-3">{job.publishedAt?.toISOString().slice(0,10)??"—"}</td>
             <td className="p-3">{job.deadline?.toISOString().slice(0,10)??"—"}</td>
             <td className="p-3">{job.applicants}</td><td className="p-3">{job.hired}</td>
-            <td className="p-3"><Link className="font-semibold text-primary-text"
+            <td className="p-3"><Link className="font-semibold text-[var(--lms-teal-deep)]"
               href={`/admin/placements/jobs/${job.id}`}>Open drive →</Link></td>
           </tr>)}</tbody>
         </table>

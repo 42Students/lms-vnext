@@ -18,7 +18,7 @@ export default async function SuperAdminQuizzesPage({
   if (!query.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <ErrorState title="Invalid quiz filters" description="Check search, status and page."
-      action={<Link href="/admin/quizzes" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/admin/quizzes" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-4">
@@ -29,7 +29,7 @@ export default async function SuperAdminQuizzesPage({
   const lessons=await getCollegeQuizAuthoringOptions(context);
   return <div className="space-y-4">
     <a href={"/api/admin/quizzes/export?"+new URLSearchParams({q:query.data.q,status:query.data.status}).toString()}
-     className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export quizzes.csv</a>
+     className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export quizzes.csv</a>
     <CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
     <AdminAssessmentDirectory data={data} />
   </div>;

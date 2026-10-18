@@ -1,3 +1,5 @@
+import {StatTile} from "@/components/ui/stat-tile";
+import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -49,7 +51,7 @@ export default async function TpoNoShowReportPage({
 
   return (
     <div className="space-y-6">
-      <Link href={roundHref} className="text-sm font-semibold text-primary-text hover:underline">
+      <Link href={roundHref} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Back to round overview
       </Link>
       <PageHeader
@@ -61,13 +63,13 @@ export default async function TpoNoShowReportPage({
           <div className="flex flex-wrap gap-2">
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows/export"}
-              className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+              className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground"
             >
               Export explicit no-shows CSV
             </a>
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
             >
               Export complete attendance CSV
             </a>
@@ -81,10 +83,7 @@ export default async function TpoNoShowReportPage({
           ["Awaiting attendance mark", report.awaitingMarkCount],
           ["Unrecognized statuses", report.unknownCount],
         ].map(([name, value]) => (
-          <div key={name} className="rounded-xl border border-border bg-surface p-5">
-            <p className="text-sm font-medium text-body">{name}</p>
-            <p className="mt-2 text-3xl font-bold tabular-nums text-foreground">{value}</p>
-          </div>
+          <StatTile key={String(name)} label={String(name)} value={value} />
         ))}
       </section>
       {data.round.status !== "COMPLETED" ? (
@@ -106,33 +105,20 @@ export default async function TpoNoShowReportPage({
             Based on persisted ABSENT marks among current, progression-eligible round applicants.
           </p>
         </div>
-        {report.explicitAbsences.length === 0 ? (
-          <p role="status" className="p-6 text-sm text-body">
+        <DataTable
+          caption="Explicitly absent learners"
+          rows={report.explicitAbsences}
+          getRowKey={(item) => item.applicationId}
+          empty={<p role="status" className="text-sm text-body">
             No learner is currently marked ABSENT in this round. This does not mean all
             learners attended; check the waiting/unmarked count above.
-          </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[32rem] text-left text-sm">
-              <thead className="bg-surface-subtle text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">Learner</th>
-                  <th scope="col" className="px-4 py-3">Roll number</th>
-                  <th scope="col" className="px-4 py-3">Application status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {report.explicitAbsences.map((item) => (
-                  <tr key={item.applicationId}>
-                    <td className="px-4 py-3 font-medium text-foreground">{item.displayName}</td>
-                    <td className="px-4 py-3 text-body">{item.rollNumber ?? "Not recorded"}</td>
-                    <td className="px-4 py-3 text-body">{item.applicationStatus}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+          </p>}
+          columns={[
+            {key:"learner",header:"Learner",mobileLabel:"Learner",mobilePriority:"primary",cell:(item)=>item.displayName},
+            {key:"roll",header:"Roll number",mobileLabel:"Roll number",mobilePriority:"secondary",cell:(item)=>item.rollNumber??"Not recorded"},
+            {key:"status",header:"Application status",mobileLabel:"Application status",mobilePriority:"secondary",cell:(item)=>item.applicationStatus},
+          ]}
+        />
       </section>
       <p className="text-xs text-muted-foreground">
         Round status: {data.round.status}. Scheduled: {" "}

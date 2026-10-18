@@ -109,7 +109,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Colleges"
@@ -143,7 +143,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
          {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
         </select>
        </label>
-       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Search</button>
+       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-foreground">Search</button>
        <Link href="/admin/colleges" className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Clear search</Link>
        <Link href={href(page)} className="min-h-11 inline-flex items-center text-[var(--lms-link-text)] underline">Refresh</Link>
       </form>
