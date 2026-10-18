@@ -59,6 +59,9 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-PROJ-12 | BLOCKER | College Admin member creation checked a learner/Mentor candidate through `loadEligibleMembership` outside its mutation transaction. Suspending that person's membership or revoking the role after this read could leave an unauthorized project member and notification. | `9fee976`, `39fb5e3`: read and SHARE-lock target user, active membership and role from the project transaction after actor reauthorization and before insert. | `PROJ-COL-REVOKE-04` | Two-session PostgreSQL race pending |
 
+| CHAT11-TPO-17 | MAJOR | Existing trusted-domain parser accepted invalid RFC 1035 DNS label edges (e.g. `bad-.example`) and labels exceeding 63 characters. A college could record an unusable email allowlist entry. | `fd02b14`, `2bc1328`, `17cf792`: validate canonical host labels without changing optional @ or lowercase inputs. | `TPO-settings-audit-TRUST-02` | Existing stored rows must be reviewed; Vitest pending |
+| CHAT11-TPO-18 | MAJOR | Trusted-domain POST loaded the entire JSON body without a size limit before Zod; forged large requests could impose unbounded JSON parse work. | `e78d726`, `5f80b3c`, `b8dad0b`: shared bounded stream parser with safe 400/413; actual-handler tests preserve origin, id and conflict mappings. | `TPO-settings-audit-TRUST-03` | HTTP/DB and load test pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.

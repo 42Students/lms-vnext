@@ -502,3 +502,6 @@ The same persisted actor/project Mentor grant recheck now protects meeting decis
 ### PROJ-BREAK-FACULTY-09 — Sprint creation/transition persisted actor checks
 
 `mentor-sprint-write-service.ts` now takes the same persisted authorization grant locks before creating or transitioning Sprints. `tests/unit/PROJ-BREAK-FACULTY-09.test.ts` covers revoked Mentor roles, stale tabs and archived/completed Projects; no DB mutation/audit occurs on denial. This is not a complete Sprint state-machine audit; see chat-14 and the project ledger for remaining multi-session and closeout checks.
+
+### FAC-courses-02 — assignment submission methods query safety
+`src/modules/courses/faculty-assignment-methods-query.ts` now validates exactly one UUID selector and fails closed on duplicates, forged keys or missing IDs. `src/app/api/courses/faculty/assignments/[deliveryId]/methods/route.ts` uses it before obtaining the Faculty identity; `getFacultyAssignmentMethods` retains persisted Section and assignment ownership enforcement. `tests/unit/COURSES-BREAK-FACULTY-11.test.ts` covers the actual GET handler plus parser. Browser and real database tests remain to run.
