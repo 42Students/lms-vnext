@@ -45,3 +45,36 @@ This additive learner Projects review does not replace the chat-14-owned project
 | `resourceMaterialCommandSchema`, `resourceMaterialsWriteReady` | Strict commands, URL protocol/credentials/fragment, no storage authority and verified storage-flag enforcement | `tests/unit/chat7-course-ist-materials-policy.test.ts` — `LEARNER-resource-07` |
 
 Limitations: this is an incremental coverage slice, not a complete 345-file course-service register. Real PostgreSQL, browser and cloud CI execution are outstanding; tests were authored without running them.
+
+## Learner notices, discussion mutations, quiz secrecy and Super Admin page audit — round 3
+
+| Entry point | Behaviour / attack case | Test case and status |
+|---|---|---|
+| `listLearnerCourseClassAnnouncements` | Valid Section UUID; current persisted learner/user/role; ACTIVE Section, enrollment, cohort, academic period; college-scoped official CLASS notice, bounded read; missing storage fails closed | `tests/unit/chat7-learner-announcements-scope.test.ts` — `LEARNER-COURSE-NOTICES-01`; authored, CI/PG pending |
+| `createCourseDiscussionMessage`, `deleteCourseDiscussionMessage` learner path | Re-check persisted ACTIVE learner membership, user, college and LEARNER role under `FOR SHARE` in same transaction as insert/delete, reject late revocation without creating activity | `tests/unit/chat7-learner-discussion-revocation-races.test.ts` — `LEARNER-DISCUSSIONS-RACE-01`; mocked service behavior authored, real Postgres race pending |
+| `shuffleQuizForLearner` | Deterministic shuffle preserves IDs but projects only public id/text/sequence; never outputs correct flags or arbitrary runtime secret attributes, including no-shuffle case | `tests/unit/chat7-learner-quiz-answer-key-leak.test.ts` — `LEARNER-QUIZ-KEY-01`; authored, CI pending |
+| `adminAssessmentQuerySchema`, `adminAssessmentHref`, `adminAssessmentExportHref`, `adminAssessmentStats` | Strict scoped assessment filtering, URL/page fidelity, export retains audience/course/results and removes page | `tests/unit/chat7-superadmin-courses-content-model-matrix.test.ts` — `SA-academics-people-64/65` |
+| `adminContentQuerySchema`, `adminContentHref`, `adminContentPages`, `contentTypesForKind`, `adminContentTypeLabel`, `safePublicCourseContentUrl` | Validate UUID and status, safe pagination, exclude unsafe old content links | `tests/unit/chat7-superadmin-courses-content-model-matrix.test.ts` — `SA-academics-people-61/62` |
+| `adminLearningQuerySchema`, `adminLearningHref`, `adminProgressStats` | Retain course/cohort filters; do not invent summed distinct learners across offerings | `tests/unit/chat7-superadmin-courses-content-model-matrix.test.ts` — `SA-academics-people-68` |
+| `collegeCourseCatalogueQuerySchema`, `paginateCollegeCourses` | Strict bounded paging, stable sorting, no tenant supplied in filters | `tests/unit/chat7-superadmin-courses-content-model-matrix.test.ts` — `SA-academics-people-54` |
+| `/admin/courses`, `/admin/lessons`, `/admin/videos`, `/admin/resources`, `/admin/live-classes`, `/admin/assignments`, `/admin/quizzes`, `/admin/course-progress`, `/admin/course-progress/students` | Source-verified no-college, filter error, authoring and legacy recovery affordances; detailed browser interaction remains unverified | `tests/unit/chat7-superadmin-courses-content-page-gates.test.ts` — `SA-academics-people-50/54/56/57/61/62/64/65/67` |
+
+Caveats: the unit test snapshot in `docs/orchestrator/unit-failures-latest.md` still predates these changes. The earlier delivery-roster source matcher was corrected to accept a semantically identical TypeScript trailing comma while retaining the academic-period equality assertion. Private scanned file/video imports and full Super Admin image management remain unavailable. This ledger is cumulative but still does not certify exhaustive module/page coverage.
+
+## Admin course content effective-visibility correction
+
+| Entry | Required behavior | Test |
+|---|---|---|
+| `listSuperAdminContentDirectory`, `effectiveCourseContentVisibleToStudents`, `SuperAdminContentDirectoryPage` | An active Course and Offering, PUBLISHED learning path and content, ACTIVE Lesson, and per-content visible flag must all hold before the admin says "Students Visible". Legacy published content under an unpublished path must say "Students Hidden". | `tests/unit/chat7-superadmin-effective-content-visibility.test.ts` — `SA-academics-people-62`; authored, CI pending |
+
+## Learner media and quiz-answer non-disclosure — round 4
+
+| Exported entry | Invariant | Test |
+|---|---|---|
+| `shuffleQuizForLearner` | Exact per-learner deterministic question IDs and option order, but no `correct`, `secret` or other DB/authored properties in client display objects, shuffled or unshuffled | `tests/unit/chat7-learner-quiz-answer-key-leak.test.ts` — `LEARNER-QUIZ-KEY-01` |
+| `learnerVisibleContentExternalUrl`, `learnerSafeExternalContentHref` | Scheduled LIVE_CLASS HTTPS meeting links may be offered before start, ended meeting links denied, unsafe old DB URLs sanitized before learner read output | `tests/unit/chat7-learner-media-notice-boundary.test.ts` — `LEARNER-LIVE-LINK-01` |
+| `resumePositionForGrant`, `playbackGrantRefreshDelay` | Finite nonnegative playback positions, intentionally preserved seek on renewal, refresh before expiry, invalid/expired URLs have zero delay | `tests/unit/chat7-learner-media-notice-boundary.test.ts` — `LEARNER-VIDEO-GRANT-01` |
+| `learnerDueSoonNotices` | Only distinct not-yet-submitted assignments within due-soon window, scoped links carry Section delivery | `tests/unit/chat7-learner-media-notice-boundary.test.ts` — `LEARNER-ASSIGNMENT-REMINDER-01` |
+| `learnerDiscussionDraftValid` | Trimmed, nonempty, shared 3,900-character maximum | `tests/unit/chat7-learner-media-notice-boundary.test.ts` — `LEARNER-DISCUSSION-LIMIT-01` |
+
+Authoring note: no tests were executed in this lane. CI and PostgreSQL/browser verification are not claimed complete. Certificates and the remaining non-audited learner course exports are still outside this incremental test matrix.

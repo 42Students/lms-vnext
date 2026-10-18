@@ -96,6 +96,30 @@ describe("chat-5 placements core — offer state transition matrix",()=>{
   expect(source).toContain("New expiry (IST)");
   expect(source).not.toContain("new Date(expiresAt).toISOString()");
  });
+ it("PLACEMENTS-TPO-CASCADE-17 applies the learner sibling cascade atomically with TPO evidence, attribution and rollback",()=>{
+  const helper=readFileSync("src/modules/placements/tpo-offer-acceptance-cascade.ts","utf8");
+  const service=readFileSync("src/modules/placements/tpo-offer-lifecycle-service.ts","utf8");
+  expect(helper).toContain("shouldKeepPlacementCascadeSibling({");
+  expect(helper).toContain("isPlacementInternship(");
+  expect(helper).toContain("eq(placementApplications.membershipId,input.membershipId)");
+  expect(helper).toContain("eq(placementJobs.collegeId,input.collegeId)");
+  expect(helper).toContain('inArray(placementOffers.status,["ISSUED","ACCEPTED"])');
+  expect(helper).toContain('eq(placementApplications.status,"SUBMITTED")');
+  expect(helper).toContain('reason:"placed elsewhere; cascade:"+cascadeId,cascadeId');
+  expect(helper).toContain('actorUserId:input.actorUserId');
+  expect(helper).toContain('throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS")');
+  expect(service).toContain("cascade=await cascadeTpoRecordedAcceptance(tx,{");
+  expect(service).toContain("membershipId:membershipByOffer.get(offer.id)!");
+  expect(service).toContain('reason: cascade ? "cascade:"+cascade.cascadeId : input.reason');
+  expect(service).toContain('...(cascade ? {cascadeId:cascade.cascadeId} : {})');
+  expect(service).toContain("cascadedOfferCount:cascade?.cascadedOfferCount??0");
+  expect(service).toContain("withdrawnApplicationCount:cascade?.withdrawnApplicationCount??0");
+  expect(service).toContain("if (!updated) throw new PlacementsServiceError");
+  const acceptance=service.indexOf('cascade=await cascadeTpoRecordedAcceptance(tx,{');
+  const history=service.indexOf("await tx.insert(placementOfferStatusHistory).values({",acceptance);
+  expect(acceptance).toBeGreaterThan(service.indexOf('if (!updated) throw new PlacementsServiceError',service.indexOf('} else {\n        nextStatus')));
+  expect(history).toBeGreaterThan(acceptance);
+ });
  it("PLACEMENTS-OFFER-SM-08 refuses every issued-offer transition carrying contradictory joining evidence",()=>{
   for(const status of ["PENDING","DEFERRED","JOINED","DID_NOT_JOIN"]){
    for(const action of ["EXTEND","RECORD_ACCEPTED","RECORD_DECLINED","WITHDRAW"] as const){

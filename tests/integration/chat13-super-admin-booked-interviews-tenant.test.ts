@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Pool } from "pg";
 import {
-  createPlacementCandidateFixture, createPlacementFixture,
+  createPlacementFixture,
   createPrincipal, createTenant, newHarnessPool, withProjectPg,
 } from "./support/projects-placements-pg-harness";
 
@@ -20,8 +20,22 @@ describe("SA-BOOKED-INTERVIEWS-04 registered PostgreSQL candidate/job isolation"
       const learnerB=await createPrincipal(db,collegeB,["LEARNER"]);
       const driveA=await createPlacementFixture(db,collegeA,coordinatorA);
       const driveB=await createPlacementFixture(db,collegeB,coordinatorB);
-      const candidateA=await createPlacementCandidateFixture(db,driveA,learnerA,coordinatorA);
-      const candidateB=await createPlacementCandidateFixture(db,driveB,learnerB,coordinatorB);
+      // Seed registered role_option_id explicitly. The legacy harness helper
+      // does not supply this NOT NULL FK and cannot build a valid applicant.
+      const candidate=async(jobId:string,membershipId:string,actorId:string)=>{
+        const [role]=await db.query<{id:string}>(`
+          insert into placement_job_role_options (job_id,title,employment_type,work_mode)
+          values ($1,'Harness applicant','FULL_TIME','REMOTE') returning id`,[jobId]);
+        const [application]=await db.query<{id:string}>(`
+          insert into placement_applications
+            (job_id,role_option_id,membership_id,channel,eligibility_status,
+             eligibility_snapshot,submitted_by_user_id)
+          values ($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) returning id`,
+          [jobId,role!.id,membershipId,actorId]);
+        return application!.id;
+      };
+      const candidateA=await candidate(driveA.jobId,learnerA.membershipId!,coordinatorA.userId);
+      const candidateB=await candidate(driveB.jobId,learnerB.membershipId!,coordinatorB.userId);
       // Booking FK covers round+job, not application+job. A malformed
       // historical row must never appear in the Super Admin calendar.
       const [invalid]=await db.query<{id:string}>(`
@@ -29,13 +43,13 @@ describe("SA-BOOKED-INTERVIEWS-04 registered PostgreSQL candidate/job isolation"
           (job_id,round_id,application_id,starts_at,ends_at,room,panel,status,changed_by_user_id)
         values ($1,$2,$3,'2026-10-20T10:00:00Z','2026-10-20T11:00:00Z','Room B1','Panel B','BOOKED',$4)
         returning id`,
-        [driveB.jobId,driveB.roundId,candidateA.applicationId,coordinatorB.userId]);
+        [driveB.jobId,driveB.roundId,candidateA,coordinatorB.userId]);
       const [valid]=await db.query<{id:string}>(`
         insert into placement_round_candidate_slots
           (job_id,round_id,application_id,starts_at,ends_at,room,panel,status,changed_by_user_id)
         values ($1,$2,$3,'2026-10-20T12:00:00Z','2026-10-20T13:00:00Z','Room B2','Panel B','BOOKED',$4)
         returning id`,
-        [driveB.jobId,driveB.roundId,candidateB.applicationId,coordinatorB.userId]);
+        [driveB.jobId,driveB.roundId,candidateB,coordinatorB.userId]);
       expect(invalid?.id).toBeTruthy();
       expect(valid?.id).toBeTruthy();
 

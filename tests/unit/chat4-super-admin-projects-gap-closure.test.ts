@@ -208,7 +208,9 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   const queryModel=source("src/modules/projects/admin-projects-query-model.ts");
   expect(page).toContain("parseAdminProjectsQuery(await searchParams)");
   expect(queryModel).toContain("const search = legacySearch ?? currentSearch;");
-  expect(queryModel).toContain('pageSize: z.coerce.number().int().min(10).max(100).default(20)');
+  expect(queryModel).toContain("pageSize: positiveDecimal(10, 100, 20)");
+  expect(parseAdminProjectsQuery({pageSize:"1e2"}).success).toBe(false);
+  expect(parseAdminProjectsQuery({pageSize:"0x14"}).success).toBe(false);
   expect(parseAdminProjectsQuery({search:"capstone"}).data).toMatchObject({q:"capstone",pageSize:20});
   expect(parseAdminProjectsQuery({search:"from search",q:"from q"}).success).toBe(false);
    expect(parseAdminProjectsQuery({search:"same",q:"same"}).data?.q).toBe("same");

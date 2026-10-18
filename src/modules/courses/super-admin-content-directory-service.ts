@@ -41,6 +41,8 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   endsAt:lessonContents.endsAt,
   lessonName:aliased(courseLessons.name,"admin_lesson_name"),
   lessonStatus:aliased(courseLessons.status,"admin_lesson_status"),
+  learningPathStatus:aliased(courseLearningPaths.status,"admin_learning_path_status"),
+  courseStatus:aliased(courses.status,"admin_course_status"),
   offeringId:aliased(courseOfferings.id,"admin_offering_id"),
   lessonId:courseLessons.id,
   deliveryId:lessonContents.deliveryId,
