@@ -131,3 +131,6 @@ The Projects squad lead (chat-14) must reconcile these missing exports and route
 
 | `member-service.ts` | `listProjectMentorCandidates` | MOCK SERVICE + SQL/PERMISSION | `PROJ-BREAK-mentor-93/94/95/96`: strict candidate query before lookup, selected tenant, persisted active actor, active college memberships/users and 1–100 row limit; `tests/unit/PROJ-BREAK-chat9-mentor-candidate-pii.test.ts`; real PostgreSQL role/PII read race OPEN. |
 | `validation.ts` | `projectMentorCandidateQuerySchema` | DIRECT SERVICE BEHAVIOR | `PROJ-BREAK-mentor-94`: nondecimal/empty/oversized and repeated limit values rejected instead of coerced; same test; unrelated validation exports remain owned by their lanes. |
+
+| `member-service.ts` | `listProjectMemberCandidates` | MOCK BEHAVIOR + SQL/PERMISSION | `PROJ-BREAK-members-97/98/99/100`: malformed role/limit rejected before DB, persisted revoked actor denied, parent project SHARE lock blocks archive race, active+selected-college candidates; `tests/unit/PROJ-BREAK-chat9-member-candidate-privacy.test.ts`; PostgreSQL integration OPEN. |
+| `validation.ts` | `projectMemberCandidateQuerySchema` | DIRECT SERVICE BEHAVIOR | `PROJ-BREAK-members-97`: finite decimal page size 1–50, no hex/exponent/empty/repeated values; same test; other validation exports remain separately tracked. |
