@@ -52,7 +52,7 @@ export function hashCompanyShareAccessCode(code:string,salt:string){
  return scryptSync(code,Buffer.from(salt,"hex"),32).toString("hex");
 }
 export function validCompanyShareAccessCode(code:unknown,salt:string,expected:string){
- if(!companyShareAccessCodeSchema.safeParse(code).success||!/^[a-f0-9]{64}$/.test(expected))return false;
+ if(!companyShareAccessCodeSchema.safeParse(code).success||!/^[a-f0-9]{32}$/.test(salt)||!/^[a-f0-9]{64}$/.test(expected))return false;
  const actual=hashCompanyShareAccessCode(code as string,salt);
  return timingSafeEqual(Buffer.from(actual,"hex"),Buffer.from(expected,"hex"));
 }
