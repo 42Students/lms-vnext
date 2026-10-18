@@ -61,7 +61,7 @@ describe("UX-SPILL-TPO-CLIP-01: secure college request clipboard export",()=>{
  it("removes embedded delimiters so a malicious student cannot forge extra spreadsheet rows",()=>{
   const copied=requestRowsTsv([{...rows[0]!,student:"A\tB\nC\u2028D\u2029E"}],["student","company"]);
   expect(copied.split("\n")).toHaveLength(2);
-  expect(copied.split("\t")).toHaveLength(2);
+  expect(copied.split("\n")[1]!.split("\t")).toHaveLength(2);
   expect(copied).toContain("A B C D E\tHidden Employer");
  });
 });
