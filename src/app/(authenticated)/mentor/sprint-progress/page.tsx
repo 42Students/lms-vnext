@@ -20,7 +20,7 @@ export default async function MentorSprintProgressPage({
   searchParams,
 }: { searchParams: Promise<Params> }) {
   const raw = await searchParams;
-  const parsed = mentorSprintProgressQuerySchema.safeParse({
+  const parsed = mentorSprintProgressQuerySchema.safeParse(Object.values(raw).some(Array.isArray)?null:{
     state: first(raw.state) ?? undefined,
     projectId:first(raw.projectId) ?? undefined,
     taskAttention:first(raw.taskAttention) ?? undefined,

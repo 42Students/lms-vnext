@@ -571,6 +571,7 @@ async function loadResultContext(resultId: string) {
 export async function applyPlacementRoundResult(
   context: RequestContext,
   resultIdInput: string,
+  expectedVersion?: number,
 ) {
   const resultId =
     placementResultIdSchema.parse(resultIdInput);
@@ -580,6 +581,12 @@ export async function applyPlacementRoundResult(
     context,
     current.job.collegeId,
   );
+  // A bulk-round preview is approval of the exact saved result revision.
+  // Do not apply a decision silently changed in another tab afterwards.
+  if (expectedVersion !== undefined &&
+      (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1 ||
+       current.result.version !== expectedVersion))
+    throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
 
   if (
     current.job.status === "CLOSED" ||
@@ -656,6 +663,8 @@ export async function applyPlacementRoundResult(
         "PLACEMENT_RESULT_NOT_FOUND",
       );
     }
+    if (expectedVersion !== undefined && lockedResult.version !== expectedVersion)
+      throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
     if (lockedResult.status === "APPLIED") {
       return lockedResult;
     }

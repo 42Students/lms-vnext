@@ -2,6 +2,7 @@ import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {formatTpoAuditEventType} from "../../src/modules/placements/tpo-audit-model";
+import {getTpoPrepSelectionState} from "@/modules/placements/tpo-prep-selection-model";
 const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("TPO Settings legacy copy and graceful editing",()=>{
  it("TPO-settings-audit-03 uses the original placement settings section names",()=>{
@@ -11,7 +12,13 @@ describe("TPO Settings legacy copy and graceful editing",()=>{
  it("TPO-settings-audit-06 protects edited readiness choices against accidental navigation",()=>{
   const value=source("src/components/tpo/tpo-prep-readiness-editor.tsx");
   expect(value).toContain('window.addEventListener("beforeunload",before)');
-  expect(value).toContain("const dirty=");
+  // Dirtiness now comes from a shared pure model so stale selections and
+  // order-insensitive course IDs are handled consistently across the form.
+  expect(value).toContain("const {missing,dirty,valid}=getTpoPrepSelectionState(");
+  const saved={courseIds:["course-a"],minimumCompleted:0};
+  expect(getTpoPrepSelectionState(["course-a"],saved,0,["course-a"]).dirty).toBe(false);
+  expect(getTpoPrepSelectionState(["course-a"],saved,1,["course-a"]).dirty).toBe(true);
+  expect(getTpoPrepSelectionState(["course-a","course-b"],saved,0,["course-a","course-b"]).dirty).toBe(true);
  });
  it("TPO-settings-audit-13 hides internal storage labels from college-rule explanations",()=>{
   const value=source("src/app/(authenticated)/tpo/settings/rules/page.tsx");
