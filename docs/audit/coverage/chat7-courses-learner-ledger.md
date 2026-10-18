@@ -137,3 +137,12 @@ Release safety note: `getLearnerCourseFileReference` newly denies SCHEDULED cont
 | `parseAdminContentLocalMoment`, `SuperAdminContentActions` | Browser `datetime-local` values are calendar-validated in IST and UTC before mutation, rejecting invalid leap dates, overflow days and clock values; End must be later than Start; no silent Date normalization to another meeting day. Existing unsaved edit and confirmation flow remains. Controls use 44px minimum touch height. | `tests/unit/chat7-superadmin-content-live-datetime-parity.test.ts` — `SA-academics-people-58 live meeting IST/UTC calendar integrity` (authored; CI/browser pending) |
 
 This is **link-based live content metadata** hardening only. It does not bypass blocked scanned binary video import/storage, nor create a private resource upload capability.
+
+## Learner workspace results embargo and material service behavior
+
+| Export | Invariant | Named test |
+|---|---|---|
+| `getLearnerCourseWorkspace` quiz projection | Do not return raw authoring `resultsPublished`: the Quiz must be CLOSED, explicitly released and past its due time using one server clock; learner assessment feed and attempt detail use the same release rule | `tests/unit/chat7-learner-course-quiz-release-consistency.test.ts` — `LEARNER-QUIZ-WORKSPACE-EMBARGO-01` |
+| `listOwnLearnerAssignmentMaterialLinks`, `assignmentMaterialTableReady` | Verify scoped delivery/enrolment first, deny draft/hidden/unpublished learner assignments before optional table probe, return honest disabled state when table absent, project only safe public HTTPS URLs | `tests/unit/chat7-learner-assignment-materials-service.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
+
+Both tests were authored without execution as requested. Role/tenant and scheduled embargo require later PostgreSQL/route verification for certification.
