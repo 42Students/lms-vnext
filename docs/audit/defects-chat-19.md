@@ -394,3 +394,37 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | COL-XA-08 | Current `college-projects-query-model.ts` already matches the failing test's bounded/default values and rejects duplicate keys, hexadecimal/scientific URL values. The latest failure register points to earlier CI. | No security weakening and no speculative production change; keep the existing real parser checks in `tests/unit/chat19-college-cross-audit.test.ts`. Needs fresh cloud CI to confirm. |
 
 The files were reviewed but no tests, typecheck or browser run was executed locally, per lane policy.
+
+
+## Independent HR Round Results page-level cross-audit (2026-10-18)
+
+| ID | Severity | Affected source | Finding / correction | Regression |
+|---|---|---|---|---|
+| HR-BREAK-ROUND-PRINCIPAL-26 | MAJOR | `src/app/(authenticated)/hr/round-results/page.tsx` | Page used `hasActiveRecruiter` without matching recruiter context ownership to the signed-in principal. Reject a mismatched active recruiter user ID before portfolio or workspace reads, alongside inactive accounts. | `tests/unit/HR-BREAK-chat19-round-results-principal.test.ts` checks mismatch and suspended principal, with no private reads. |
+| UX-hr-round-results-02 | UX | Same page | The outcomes and round filter pills, plus heading navigation links, had only small `py-2` touch areas, with no explicit visible keyboard focus on the filter pills. Use `inline-flex min-h-11 items-center` and focus-visible outlines on both selected and unselected links. | Same server-page test inspects real rendered action properties, invalid query recovery, authorized result, no-drives state and phone targets. |
+
+No code or tests were executed locally. Interactive focus, viewport and CI verification are pending.
+
+
+## Independent recruiter page-identity cross-audit (2026-10-18)
+
+| Gap ID | Severity | Route | Fix and regression |
+|---|---|---|---|
+| HR-BREAK-PORTFOLIO-PRINCIPAL-27 | MAJOR | `/hr/placements` | Reject mismatched signed-in user / active recruiter profile before employer job list. `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts`. |
+| HR-BREAK-JOB-PRINCIPAL-27 | MAJOR | `/hr/placements/jobs/[jobId]` | Reject mismatched recruiter before private hiring job read and legacy redirects. `tests/unit/HR-BREAK-chat19-legacy-job-aliases.test.ts`. |
+| HR-BREAK-REPORT-PRINCIPAL-27 | MAJOR | `/hr/company/reports` | Reject mismatched recruiter before reports or grant data; validate repeated filter rejection, disabled actor and empty state. `tests/unit/HR-BREAK-chat19-company-reports-principal.test.ts`. |
+| HR-BREAK-DRIVE-PRINCIPAL-27 | MAJOR | `/hr/drives/[jobId]/messages`, `/rounds/editor`, `/rounds/editor/remove/[roundId]`, `/interview-slots` | Reject mismatched recruiter before job/thread/slot/round reads. `tests/unit/HR-BREAK-chat19-drive-pages.test.ts`. |
+
+Seven source page guards, real page invocation tests and a companion UX note are authored. Existing legacy UI wording and service authorization remain intact. Cloud CI and interactive validation still pending; no local test execution.
+
+
+## HR page second-pass principal checks — additional inbox and activity routes (2026-10-18)
+
+| ID | Severity | Source and correction | Behavioral regression |
+|---|---|---|---|
+| HR-BREAK-ACTIVITY-PRINCIPAL-28 | MAJOR | `/hr/activity` now blocks a mismatched recruiter identity before employer/job activity read. | `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` |
+| HR-BREAK-CONVO-PRINCIPAL-28 | MAJOR | `/hr/conversations` and `/hr/conversations/[threadId]` now deny mismatched recruiter identities before private previews and thread reads. | `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts`, `HR-BREAK-chat19-conversation-page.test.ts` |
+| HR-BREAK-NOTIFICATIONS-PRINCIPAL-29 | MAJOR | `/hr/notifications` denies mismatched recruiter profile before per-college notification history. | `tests/unit/HR-BREAK-chat19-notifications-page.test.ts` |
+| HR-BREAK-RECORDED-PRINCIPAL-29 | MAJOR | `/hr/drives/recorded-outside` refuses a mismatched recruiter before using profile grant IDs, showing college choices or reading outside-drive confirmation. | `tests/unit/HR-BREAK-chat19-recorded-outside-principal.test.ts` |
+
+No local test or runtime execution. Existing exact wording and all service authorization remain unchanged.

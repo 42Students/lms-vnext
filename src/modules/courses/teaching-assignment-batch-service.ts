@@ -3,10 +3,12 @@ import {and,eq,inArray,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   collegeMemberships,courseSectionDeliveries,courseTeachingAssignments,
-  membershipRoles,courseOfferings,courses,departments,colleges,organizations,
+  membershipRoles,courseOfferings,courses,departments,colleges,organizations,sections,academicPeriods,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
-import {requirePermission} from "@/modules/permissions/policy";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {loadCourseMembership,loadCourseSectionDeliveryScope} from "./scope";
@@ -19,6 +21,8 @@ import {createCourseTeachingAssignmentsBatchInputSchema} from "./validation";
 export async function createCourseTeachingAssignmentsBatch(
  context:RequestContext,rawInput:unknown,
 ){
+ // Fail closed before fetching the requested delivery IDs or faculty identity.
+ const selected=requireSuperAdminSelectedCollege(context,"courses.manage");
  const input=createCourseTeachingAssignmentsBatchInputSchema.parse(rawInput);
  const ids=[...input.deliveryIds].sort();
  const [deliveries,member]=await Promise.all([
@@ -27,9 +31,9 @@ export async function createCourseTeachingAssignmentsBatch(
  ]);
  const first=deliveries[0];
  if(!first)throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
- requirePermission(context,"courses.manage",{
-  organizationId:first.organizationId,collegeId:first.collegeId,
- });
+ if(first.collegeId!==selected.collegeId||
+   (selected.organizationId&&first.organizationId!==selected.organizationId))
+   throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
  if(!deliveries.every(delivery=>
    delivery.collegeId===first.collegeId&&
    delivery.organizationId===first.organizationId&&
@@ -42,7 +46,20 @@ export async function createCourseTeachingAssignmentsBatch(
  if(!member.roles.includes("FACULTY"))throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
  try{
   return await getDb().transaction(async tx=>{
-   // Lock deliveries in stable ID order to serialize concurrent batch writers.
+   // Explicit row locks serialize overlapping writers, including same-member
+   // requests with different roles that the per-role unique index permits.
+   const lockedDeliveries=await tx.select({id:courseSectionDeliveries.id})
+    .from(courseSectionDeliveries)
+    .where(and(inArray(courseSectionDeliveries.id,ids),isNull(courseSectionDeliveries.endedAt)))
+    .orderBy(courseSectionDeliveries.id).for("update");
+   if(lockedDeliveries.length!==ids.length)
+    throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+   // The session snapshot alone is insufficient: actor suspension or role
+   // revocation in another tab must win before any assignment is persisted.
+   await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+     collegeId:first.collegeId,organizationId:first.organizationId,
+   });
+   // Lock and recheck tenant/course ancestry while still in this transaction.
    const live=await tx.select({
     id:courseSectionDeliveries.id,
     sectionId:courseSectionDeliveries.sectionId,
@@ -54,6 +71,11 @@ export async function createCourseTeachingAssignmentsBatch(
    }).from(courseSectionDeliveries)
     .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
     .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+    .innerJoin(sections,and(eq(sections.id,courseSectionDeliveries.sectionId),
+      eq(sections.cohortId,courseOfferings.cohortId),
+      eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
+    .innerJoin(academicPeriods,and(eq(academicPeriods.id,sections.academicPeriodId),
+      eq(academicPeriods.collegeId,first.collegeId)))
     .innerJoin(departments,eq(departments.id,courses.departmentId))
     .innerJoin(colleges,eq(colleges.id,departments.collegeId))
     .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
@@ -62,13 +84,19 @@ export async function createCourseTeachingAssignmentsBatch(
       eq(departments.collegeId,first.collegeId),
       eq(colleges.organizationId,first.organizationId),
       eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"),
-      eq(courseOfferings.status,"ACTIVE"),
-    )).orderBy(courseSectionDeliveries.id).for("share",{of:courseSectionDeliveries});
+      eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
+    )).orderBy(courseSectionDeliveries.id).for("share");
    if(live.length!==ids.length||!live.every(delivery=>
      delivery.sectionId===first.sectionId&&
      delivery.cohortId===first.cohortId&&
      delivery.academicPeriodId===first.academicPeriodId
    ))throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+   // Reauthorize the administrator from persisted active user and role rows.
+   // Revoking their account while the request waits on locks cannot leave
+   // an older request context authorized to issue new faculty assignments.
+   await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+    collegeId:first.collegeId,organizationId:first.organizationId,
+   });
    // Mutations also recheck the faculty's persisted actor grant.
    const [liveMember]=await tx.select({
     collegeId:collegeMemberships.collegeId,status:collegeMemberships.status,
