@@ -183,6 +183,38 @@ export async function listCourseDiscussionMessages(
   };
 }
 
+/**
+ * A preflight learner read must not survive persisted account/role revocation
+ * before the discussion write. Lock the actor under the same transaction as
+ * the post/delete; other-caller access checks are handled separately.
+ */
+async function assertLiveLearnerDiscussionWriter(
+  tx:Pick<ReturnType<typeof getDb>,"select">,
+  context:RequestContext,
+):Promise<void>{
+  const member=context.membership;
+  if(!member||member.status!=="ACTIVE"||!member.roles.includes("LEARNER")||
+     context.user.platformStatus!=="ACTIVE")
+    throw new CoursesServiceError("DISCUSSION_POST_ACCESS_DENIED");
+  const [active]=await tx.select({id:collegeMemberships.id})
+   .from(collegeMemberships)
+   .innerJoin(users,and(
+    eq(users.id,collegeMemberships.userId),
+    eq(users.platformStatus,"ACTIVE"),
+   ))
+   .innerJoin(membershipRoles,and(
+    eq(membershipRoles.membershipId,collegeMemberships.id),
+    eq(membershipRoles.role,"LEARNER"),
+   ))
+   .where(and(
+    eq(collegeMemberships.id,member.id),
+    eq(collegeMemberships.userId,context.user.id),
+    eq(collegeMemberships.collegeId,member.collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),
+   )).for("share").limit(1);
+  if(!active)throw new CoursesServiceError("DISCUSSION_POST_ACCESS_DENIED");
+}
+
 export async function createCourseDiscussionMessage(
   context: RequestContext,
   deliveryIdInput: string,
@@ -215,6 +247,7 @@ export async function createCourseDiscussionMessage(
         : "ADMIN";
 
   return getDb().transaction(async (tx) => {
+    if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context);
     const [parent]=input.replyToMessageId
       ? await tx.select().from(courseDiscussionMessages)
         .where(and(eq(courseDiscussionMessages.id,input.replyToMessageId),
@@ -372,6 +405,7 @@ export async function deleteCourseDiscussionMessage(
   if(concurrency&&!facultyDiscussionTokenMatches(message.updatedAt,concurrency.expectedUpdatedAt))
     throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
   return getDb().transaction(async (tx) => {
+    if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context);
     if (mode === "FACULTY") await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
     const [deleted] = await tx.delete(courseDiscussionMessages).where(and(
       eq(courseDiscussionMessages.id, message.id),
