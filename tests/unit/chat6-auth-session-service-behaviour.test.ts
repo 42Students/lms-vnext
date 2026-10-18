@@ -52,6 +52,16 @@ describe("AUTH-sessions-06: DB-backed device lifecycle and fail-closed revocatio
     }});
     expect(execute).toHaveBeenCalledTimes(2);
   });
+  it("AUTH-sessions-12 last-seen bookkeeping never touches revoked or expired device rows",()=>{
+    const source=readFileSync("src/modules/auth/session-service.ts","utf8");
+    const start=source.indexOf("export async function resolveSession(");
+    const end=source.indexOf("export async function revokeSessionByToken(",start);
+    const section=source.slice(start,end);
+    expect(section).toContain("WHERE id = ${row.session_id as string}");
+    expect(section).toContain("AND revoked_at IS NULL");
+    expect(section).toContain("AND expires_at > now()");
+    expect(section).toContain("AND last_seen_at < now() - interval '60 seconds'");
+  });
   it("session token is generated only after a database write succeeds",async()=>{
     execute.mockResolvedValueOnce({rows:[]});
     const session=await createSession(userId,{deviceName:"IIT Dharwad laptop",ipAddress:"203.0.113.2"});
