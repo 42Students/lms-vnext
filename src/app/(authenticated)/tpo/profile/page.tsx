@@ -41,7 +41,7 @@ export default async function TpoProfilePage() {
   const profile = await getOwnTpoProfile(context);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="TPO · Account"
         title="My profile"
@@ -49,7 +49,7 @@ export default async function TpoProfilePage() {
         actions={
           <Link
             href="/tpo/more"
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
           >
             Back to More
           </Link>
