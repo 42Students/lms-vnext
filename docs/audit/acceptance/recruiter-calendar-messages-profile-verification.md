@@ -229,3 +229,8 @@ No runtime, database or responsive browser results were claimed; retain these as
 ### HR-TEAM-RECIPIENT-45
 
 The company directory revalidates the current actor and each returned colleague: both must have ACTIVE profiles/users plus VERIFIED, unexpired college grants; an inactive colleague must not expose their email in the roster. `tests/unit/recruiter-company-team-scope.test.ts` asserts the separate recipient scope. CI and real database recipient-revocation tests remain open.
+
+
+### HR-ACTOR-STATUS-48 account-level revoke boundary
+
+Job listing, hiring rounds, private candidates and interview blocks now use persisted ACTIVE actor checks in addition to identity/relationship/expiry/capability checks. `tests/unit/HR-BREAK-chat15-persisted-user-48.test.ts` verifies disabled and cross-session actors as well as each SQL guard. The tests are unexecuted; real session-revocation workflow remains open.
