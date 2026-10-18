@@ -24,7 +24,7 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
   {rows.length===0?<p role="status">No preparation-support candidates on this page.</p>:<ul className="space-y-3">{rows.map(row=><li key={row.membershipId} className="rounded-lg border border-border bg-surface p-4">
    <h2 className="font-semibold">{row.displayName}</h2>
    <p className="text-xs text-muted-foreground">{row.branchName} · {row.cohortName} · {row.readinessSignal.replaceAll("_"," ").toLowerCase()}</p>
-   <label className="mt-3 block text-sm">Manual follow-up draft<textarea readOnly rows={3} value={tpoPreparationNudgeMessage(row)} className="mt-1 w-full rounded border border-border bg-surface p-3"/></label>
+   <label className="mt-3 block text-sm">Manual follow-up draft<textarea readOnly rows={3} value={tpoPreparationNudgeMessage(row)} className="mt-1 w-full rounded-[9px] border border-border bg-surface p-3"/></label>
    <Link href={"/tpo/students/"+row.membershipId+"/history"} className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Review recorded placement history</Link>
   </li>)}</ul>}
   <nav aria-label="Preparation candidate pages" className="flex flex-wrap gap-3">
