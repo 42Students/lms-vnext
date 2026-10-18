@@ -3,8 +3,10 @@ import {z} from "zod";
 /** The identity store has a single display name. Keep it canonical while
  * editing first and last names separately to preserve the employer UI. */
 export const hrRecruiterNameFieldsSchema=z.strictObject({
- firstName:z.string().trim().min(1,"First name is required").max(100),
- lastName:z.string().trim().max(100),
+ firstName:z.string().trim().min(1,"First name is required").max(100)
+  .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid first name"}),
+ lastName:z.string().trim().max(100)
+  .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid last name"}),
 }).superRefine((input,ctx)=>{
  const combined=[input.firstName,input.lastName].filter(Boolean).join(" ");
  if(combined.length<2||combined.length>160)ctx.addIssue({
