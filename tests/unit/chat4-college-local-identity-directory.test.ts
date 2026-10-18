@@ -41,7 +41,9 @@ describe("COL-people-local-identity-01 safe directory read and create contracts"
   expect(absent).toBeNull();
   expect(mocks.where).toHaveBeenCalledOnce();
   const condition=mocks.where.mock.calls[0]?.[0] as {queryChunks?:unknown[]};
-  expect(JSON.stringify(condition.queryChunks??[])).toContain("missing@example.edu");
+  expect((condition.queryChunks??[]).some(chunk=>
+   typeof chunk==="object"&&chunk!==null&&"value" in chunk&&
+   chunk.value==="missing@example.edu")).toBe(true);
   mocks.rows.push([stored]);
   expect((await localIdentityDirectory.findByEmail("student@example.edu"))?.uid).toBe("lms-existing");
  });
