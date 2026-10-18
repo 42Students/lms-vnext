@@ -407,7 +407,7 @@ export default async function TpoStudentsPage({
         description="Everyone in placements, from the batches you made eligible."
         actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}
       />
-      <details className="rounded-xl border border-border bg-surface p-3">
+      <details className="border-b border-border pb-3">
        <summary className="min-h-11 cursor-pointer text-sm font-semibold">More student tools</summary>
        <nav aria-label="Student roster tools" className="mt-3 flex flex-wrap items-center gap-2">
         {manageAllowed?<TpoStudentSavedViews />:null}
@@ -418,7 +418,7 @@ export default async function TpoStudentsPage({
       </details>
 
       <form action="/tpo/students" method="get"
-        className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border py-4">
         {/* Program and Class are selected in the single grid filter panel.
             Preserve them through this separate advanced-filter form. */}
         <input type="hidden" name="programId" value={query.programId??""}/>
@@ -607,7 +607,7 @@ export default async function TpoStudentsPage({
       {!data.definitions.registrationsAvailable ? (
         <section
           role="status"
-          className="rounded-xl border border-border bg-surface p-5"
+          className="border-b border-border py-5"
         >
           <h2 className="text-base font-semibold text-warning">
             Placement registration data unavailable
@@ -619,19 +619,19 @@ export default async function TpoStudentsPage({
       ) : null}
 
       {query.profileStatus&&!data.definitions.verificationAvailable?<section role="status"
-        className="rounded-xl border border-border bg-surface p-4 text-sm text-warning-text">
+        className="rounded-[9px] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning-text">
         Profile-verification records are unavailable. A missing source must not be mistaken for Not verified.
         <Link href="/tpo/students" className="ml-2 text-[var(--lms-link-text)] underline">Clear profile filter</Link>
       </section>:null}
       {query.afterCollege&&!data.definitions.afterCollegeAvailable?<section role="status"
-        className="rounded-xl border border-border bg-surface p-4 text-sm text-warning-text">
+        className="rounded-[9px] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm text-warning-text">
         Saved after-college outcome records are unavailable. The selected outcome cannot be filtered until its registered table is available.
         <Link href="/tpo/students" className="ml-2 text-[var(--lms-link-text)] underline">Clear outcome filter</Link>
       </section>:null}
       {!data.definitions.externalOffersAvailable ? (
         <section
           role="status"
-          className="rounded-xl border border-border bg-surface p-4 text-sm leading-6 text-body"
+          className="rounded-[9px] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
         >
           External offer information is unavailable. Placed counts may be incomplete.
         </section>
