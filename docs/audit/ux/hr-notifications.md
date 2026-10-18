@@ -1,8 +1,8 @@
-# HR source UX review — `/hr/notifications`
+# UX rollout — /hr/notifications
 
-- Page: `src/app/(authenticated)/hr/notifications/page.tsx`; exact legacy route/title/actions, server permissions and data integrations retained.
-- Observed UX concerns: horizontal scroll containment, 40px touch controls and nested main semantics where present.
-- Source changes: Fluid min-width page surface; Fluid min-width page surface.
-- States: existing loading, empty, partial, failure, scope, and confirmation paths preserved; no fabricated data or client-only authorization.
-- Regression: `UX-hr-hr-notifications-01` in `tests/unit/ux-chat14-hr-02.test.ts`.
-- QA: static source only; TypeScript, unit, keyboard and phone WebView audits to be run by orchestrator; inventory unticked.
+- **Route:** src/app/(authenticated)/hr/notifications/page.tsx
+- **Test:** UX-hr-notifications-01 (`tests/ux-hr-rollout-02.test.mjs`).
+- **Initial weakness:** 11 low-contrast `text-primary-text` utility occurrences and missing keyboard-visible link/button focus; some independent native fields used small phone text.
+- **Change:** Preserved all words, exact status names, API permissions and server reads/writes. Updated to readable deep-teal link utility, consistent 2px keyboard focus outlines on 11 links and 1 buttons, and 44px targets/phone input typography on 1 native fields. Kept shared page and state primitives and original guarded workflows.
+- **States:** Original authentication, no-access, invalid query, empty/loading, conflict and pagination handling is unchanged; no new implied server behavior. Capture/AT remains orchestrator-owned.
+- **Validation:** Named source invariant regression test authored; no local npm typecheck, lint, browser or device execution claimed.
