@@ -17,8 +17,15 @@ describe("REC-home-drives-21 registered formal recruiter request contract",()=>{
   const base={requestId:"550e8400-e29b-41d4-a716-446655440000",
    collegeId:"550e8400-e29b-41d4-a716-446655440001",
    expectedUpdatedAt:"2026-10-17T12:00:00Z"};
-  expect(recruiterRequestUpdateSchema.safeParse({...base,action:"EDIT"}).success).toBe(true);
-  expect(recruiterRequestUpdateSchema.safeParse({...base,action:"RESUBMIT"}).success).toBe(true);
+  const draft={...emptyHrDriveDraft(),title:"Graduate Engineer",
+   description:"An engineering job for graduates",location:"Hyderabad",ctcLpa:"10"};
+  expect(recruiterRequestUpdateSchema.safeParse({...base,action:"EDIT",draft}).success).toBe(true);
+  expect(recruiterRequestUpdateSchema.safeParse({...base,action:"RESUBMIT",draft}).success).toBe(true);
+  // The update service must not interpret a missing draft as a complete edit.
+  expect(recruiterRequestUpdateSchema.safeParse({...base,action:"EDIT"}).success).toBe(false);
+  expect(recruiterRequestUpdateSchema.safeParse({...base,action:"RESUBMIT"}).success).toBe(false);
+  expect(recruiterRequestUpdateSchema.safeParse({...base,action:"CANCEL"}).success).toBe(true);
+  expect(recruiterRequestUpdateSchema.safeParse({...base,action:"CANCEL",draft}).success).toBe(false);
  });
  it("resubmit requires a typed draft and original identity",()=>{
   expect(recruiterRequestUpdateSchema.safeParse({requestId:"bad",collegeId:"bad",action:"RESUBMIT",
