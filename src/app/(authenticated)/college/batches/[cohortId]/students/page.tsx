@@ -73,11 +73,11 @@ export default async function CollegeBatchStudentsPage({
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
         <input type="search" name="q" defaultValue={q} maxLength={100}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-base sm:text-sm" />
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm font-semibold">Class/Section
         <select name="sectionId" defaultValue={sectionId ?? ""}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-base sm:text-sm">
+          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm">
           <option value="">All classes</option>
           {classes.map(item => <option key={item.id} value={item.id}>
             {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
