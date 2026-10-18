@@ -4,9 +4,9 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | Module | Exported function or schema | Test file | Case IDs | Behaviours asserted |
 |---|---|---|---|---|
-| `src/modules/courses/faculty-marking-window.ts` | `facultyAttendanceMarkingWindow` | `tests/unit/chat3-faculty-attendance-exhaustive-r1.test.ts` | FAC-ATT-01/02 | time boundaries and fail-closed policy |
-| `src/modules/courses/faculty-correction-token-model.ts` | `facultyAttendanceCorrectionTokenMatches` | `tests/unit/chat3-faculty-attendance-exhaustive-r1.test.ts` | FAC-ATT-03 | exact persisted millisecond token and unmarked missing token |
-| `src/modules/courses/faculty-correction-token-model.ts` | `facultyAttendanceNextMarkedAt` | `tests/unit/chat3-faculty-attendance-exhaustive-r1.test.ts` | FAC-ATT-04 | strict monotonic markedAt |
+| `src/modules/attendance/faculty-marking-window.ts` | `facultyAttendanceMarkingWindow` | `tests/unit/chat3-faculty-attendance-exhaustive-r1.test.ts` | FAC-ATT-01/02 | time boundaries and fail-closed policy |
+| `src/modules/attendance/faculty-correction-token-model.ts` | `facultyAttendanceCorrectionTokenMatches` | `tests/unit/chat3-faculty-attendance-exhaustive-r1.test.ts` | FAC-ATT-03 | exact persisted millisecond token and unmarked missing token |
+| `src/modules/attendance/faculty-correction-token-model.ts` | `facultyAttendanceNextMarkedAt` | `tests/unit/chat3-faculty-attendance-exhaustive-r1.test.ts` | FAC-ATT-04 | strict monotonic markedAt |
 | `src/modules/attendance/faculty-schedule-mutation-model.ts` | `facultyAttendanceScheduleSchema` | `tests/unit/chat3-faculty-attendance-exhaustive-r1.test.ts` | FAC-ATT-05 | confirmed CREATE/RESCHEDULE, shape, UUID and time ordering |
 | `src/modules/attendance/faculty-schedule-mutation-model.ts` | `facultyScheduleFieldsChanged` | `tests/unit/chat3-faculty-attendance-exhaustive-r1.test.ts` | FAC-ATT-06 | no-op versus meaningful metadata/instant delta |
 | `src/modules/attendance/faculty-schedule-mutation-model.ts` | `facultyScheduleErrorMessage` | `tests/unit/chat3-faculty-attendance-exhaustive-r1.test.ts` | FAC-ATT-07 | whitelisted friendly errors |
