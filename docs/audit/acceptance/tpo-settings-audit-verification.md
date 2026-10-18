@@ -186,3 +186,5 @@ Round 3 scope corrections: TPO-settings-audit-56 extension supports timed grants
 
 | TPO-settings-audit-COMM-READ-10 | DONE — source and unit assertions, runtime pending | Transaction-held persisted officer authorization and ACTIVE college check before communication setting values are selected. Test `tests/unit/chat11-tpo-communication-read-revocation.test.ts` includes two ID-named cases. |
 | TPO-settings-audit-CONFIG-READ-11 | DONE — source and unit assertions, runtime pending | Four TPO settings readers enforce persisted actor/ACTIVE tenant under transaction before returning college job types, blocked dates, preparation policy, or course catalog, including unavailable-table defaults. Test `tests/unit/chat11-tpo-settings-config-read-revocation.test.ts` (six cases). |
+
+| TPO-settings-audit-PREP-ROLE-12 | DONE — source guard and test, CI pending | The TPO learner course-progress reader re-authorizes active persisted membership and college status at all nonempty response paths (ready/unconfigured/unavailable) after slow evidence joins. `tests/unit/chat11-tpo-prep-long-read-role-revocation.test.ts` (three named cases). |
