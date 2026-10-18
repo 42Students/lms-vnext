@@ -22,6 +22,8 @@ The global invisible scrollbar rule remains unchanged. Native Drawer owns body l
 | src/components/tracker/tracker-telegram-manual-panel.tsx | Enlarged all digest/test/confirm actions to 44px; confirmation and rate-limit consequence retained. | UX-chat15-overlays-second-pass |
 | src/components/activity/learner-notifications-inbox.tsx | Fixed 40px action to 44px; retained Dialog focus, guarded mark-all and explicit errors. | UX-chat15-overlays-second-pass |
 
+| src/components/shell/learner-notification-bell.tsx | Kept bell and live deadline semantics; 44px trigger/notifications and retry; focusable conditional ScrollCue for hidden vertical scrollbar, pointer-outside close, Escape with focus return. | UX-chat15-shell-activity-components-01 |
+
 ## Still pending
 
 Other HR, tracker, activity and verification surfaces in docs/audit/ui-surfaces/UI-SURFACES.md require individual scroll and motion verification. Shell source remains owned by chat-9; only non-mutating coverage is planned here. Unreviewed components are not waived.
