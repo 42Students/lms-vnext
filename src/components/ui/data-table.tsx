@@ -66,7 +66,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden sm:table-header-group sm:bg-muted">
           <tr>{columns.map(col=><th key={col.key} scope="col"
-            className={cx("border-b border-border px-4 py-3 font-semibold text-body sm:sticky sm:top-0 sm:z-10 sm:bg-muted",col.className)}>{col.header}</th>)}</tr>
+            className={cx("border-b border-border px-4 py-3 font-semibold text-body sm:sticky sm:top-0 sm:z-10 sm:bg-muted sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
         </thead>
         <tbody className="block space-y-3 sm:table-row-group sm:space-y-0">
           {prepared.map(item=><tr key={item.key}
@@ -75,7 +75,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
               return <td key={col.key} className={cx(
-                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-border sm:px-4 sm:py-3 sm:align-middle",
+                "min-w-0 break-words py-1 text-body sm:table-cell sm:border-b sm:border-border sm:px-4 sm:py-3 sm:align-middle sm:first:sticky sm:first:left-0 sm:first:z-10 sm:first:bg-surface",
                 phoneVisible?"block":"hidden",col.className,
               )}>
                 {phoneVisible && col.mobilePriority!=="action" ?
