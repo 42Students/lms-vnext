@@ -20,7 +20,7 @@ export default async function PreviewCampaign({searchParams}:PageProps){
   <nav aria-label="Audience segments" className="flex flex-wrap gap-2">
    {(["ALL_ELIGIBLE","NEW","UNASSIGNED"] as const).map(item=><Link key={item}
     href={"/tpo/recruiters/campaigns/preview?segment="+item} aria-current={query.data.segment===item?"page":undefined}
-    className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
+    className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
     {item.replaceAll("_"," ")}
    </Link>)}
   </nav>
