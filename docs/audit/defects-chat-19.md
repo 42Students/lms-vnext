@@ -562,3 +562,11 @@ Cloud CI, runtime and browser verification remain pending.
 | UX-HR-DRAFT-CLEAR-47 | MAJOR/UX | The unsent request alert used native `window.confirm`; it called `setHasDraft(false)` even when browser storage deletion failed, falsely hiding a draft that still existed. Replace with accessible consequence dialog, delete both local and session copies and verify absence before concealing the alert. Keep the draft visible with actionable failure text when storage is blocked. Normalize Continue/Discard to 44px and focus-visible. | `tests/unit/UX-HR-chat19-draft-clear.test.ts` tests both storage copies, partial failures, empty key and UI completion order. |
 
 Browser-storage failures and mobile keyboard interactions require final interactive verification.
+
+## Recruiter notification read confirmation (cross-audit)
+
+| ID | Severity | Finding/fix | Evidence |
+|---|---|---|---|
+| HR-BREAK-READ-RECEIPT-48 | MAJOR | /hr/notifications mark-read accepted any successful HTTP status, including an expired-session HTML fallback or unrelated response. Require an exact persisted notification ID and ISO readAt receipt from the already own-user/own-company authorized service, reject redirects and malformed results, leave retry possible when unconfirmed. | `tests/unit/HR-BREAK-chat19-read-receipt.test.ts` exercises the direct route, cross-origin, malformed payloads and client confirmation order. |
+
+No CI/runtime/browser execution was performed.
