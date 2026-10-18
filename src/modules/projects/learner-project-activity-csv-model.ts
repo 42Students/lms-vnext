@@ -2,7 +2,7 @@
 const MAX_ROWS=100,MAX_CELL=240;
 function csvCell(value:string):string {
  const shortened=value.slice(0,MAX_CELL);
- const guarded=/^[\s\u200B-\u200F\u2060\u2066-\u2069\uFEFF\u202A-\u202E]*[=+@\-]/u.test(shortened)?"'"+shortened:shortened;
+ const guarded=/^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+@\-]/u.test(shortened)?"'"+shortened:shortened;
  return '"'+guarded.replaceAll('"','""')+'"';
 }
 export function learnerProjectActivityCsv(rows:readonly {
