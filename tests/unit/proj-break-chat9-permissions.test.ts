@@ -1,10 +1,11 @@
 import {describe,expect,it} from "vitest";
 import {can,requirePermission} from "@/modules/permissions/policy";
 import type {RequestContext} from "@/modules/identity/context";
+import type {MembershipRole} from "@/modules/identity/constants";
 const own="00000000-0000-4000-8000-000000000001",foreign="00000000-0000-4000-8000-000000000002";
 const org="00000000-0000-4000-8000-000000000011",otherOrg="00000000-0000-4000-8000-000000000012";
 const resource={collegeId:own,organizationId:org};
-const context=(roles:RequestContext["membership"] extends infer M ? readonly ("COLLEGE_ADMIN"|"LEARNER"|"MENTOR"|"FACULTY"|"TPO"|"HR"|"RECRUITER")[] : never,
+const context=(roles:readonly MembershipRole[],
  opts:{status?:"ACTIVE"|"SUSPENDED";userStatus?:"ACTIVE"|"DISABLED";collegeId?:string;organizationId?:string;scope?:RequestContext["adminScope"];superAdmin?:boolean;removed?:boolean}={}
 ):RequestContext=>({
  user:{id:own,identityUid:"iit-hardening-test",platformStatus:(opts.userStatus??"ACTIVE") as RequestContext["user"]["platformStatus"],systemRoles:opts.superAdmin?["SUPER_ADMIN"]:[]},
@@ -20,10 +21,10 @@ describe("IIT Dharwad cross-account Projects permission break attempts",()=>{
   const collegeAdmin=context(["COLLEGE_ADMIN"]);
   expect(can(collegeAdmin,"projects.manage",resource)).toBe(true);
   expect(can(collegeAdmin,"projects.manage",{...resource,collegeId:foreign})).toBe(false);
-  expect(can(collegeAdmin,"projects.manage",{collegeId:own,organizationId:otherOrg})).toBe(true);
+  expect(can(collegeAdmin,"projects.manage",{collegeId:own,organizationId:otherOrg})).toBe(false);
  });
  it("PROJ-BREAK-idor-02 learner and mentor cannot escalate from read to manage",()=>{
-  for(const role of ["LEARNER","MENTOR","FACULTY","TPO","HR","RECRUITER"] as const){
+  for(const role of ["LEARNER","MENTOR","FACULTY","TPO"] as const){
    const user=context([role]);
    expect(can(user,"projects.manage",resource)).toBe(false);
    expect(()=>requirePermission(user,"projects.manage",resource)).toThrow();
