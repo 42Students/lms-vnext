@@ -89,6 +89,15 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `getSectionOperationsWorkspace` now denies Faculty, Mentor, Learner and inactive/nonadministrative principals **before** resolving a potentially private Section ID, while still requiring the persisted selected college's `academics.manage` permission afterward.
 - `tests/unit/chat3-sa-section-workspace-permission-matrix.test.ts` invokes the real workspace service, checks period-college SQL, all dependent roster/assignment/schedule reads, malformed IDs, disabled actors, wrong tenant and foreign academic-period denial. Cloud CI and PostgreSQL foreign-period fixture pending.
 
+## SA-PEOPLE-DIRECTORY-QUERY-02 — exact directory URL state
+
+- `/admin/people/directory` now refuses duplicate search/page/status keys and extra untrusted tenant selectors before reading any membership rows. Strict query fields remain role, membership state, platform state, search, tab and page; invalid links show the existing clear-filters UI. `tests/unit/chat3-sa-people-directory-strict-url-ssr.test.tsx` renders actual SSR invalid, empty and wrong-actor states. No CI/browser tests executed.
+
+## SA-RECRUITERS-PARTIAL-01 — recruiter summary independent failure
+
+- The canonical `/admin/hr` handler, also exported by `/admin/recruiters`, now keeps a successfully scoped recruiter directory usable if the independent account-status summary query fails. The UI displays **Unavailable**, a concise explanation and a Retry totals action instead of fabricated `0` accounts.
+- `tests/unit/chat3-sa-recruiter-directory-partial-service.test.tsx` exercises actual server-page props and legacy alias, service outage states, and wrong/disabled-role denial before private queries. CI and browser React client error flow remain pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.

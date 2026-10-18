@@ -212,3 +212,21 @@ The recruiter fixture wraps global user creation, company profile and verified r
 
 ### PROJ-HARNESS-RECRUITER-25/26: grant lifecycle and validation witnesses
 Real PostgreSQL cases now assert the active-grant unique index rejects a duplicate recruiter/relationship pair; a properly revoked grant can be reissued without leaving two ACTIVE records. They also assert database CHECK refusal for non-whitelisted grant capability, nonexistent verification status, and an expiry older than grant creation. These state/constraint witnesses help HR lanes test safe revocation and reissue, but do not replace runtime recruiter authorization checks.
+
+### PROJ-HARNESS-PLACEMENTS-25: fiscal-year date order
+The canonical placement season was inadvertently authored as 2099-10-01 through 2099-06-30, violating `placement_seasons_dates_ck` before the other PostgreSQL fixtures could start. It now spans **2098-10-01 through 2099-06-30**, with the published job deadline in June 2099; the duplicate ACTIVE season test uses a legal matching interval. Real PG case 25 asserts the interval and deadline inclusion, not merely source date strings.
+
+### PROJ-HARNESS-PLACEMENTS-26: atomic candidate graph
+Candidate creation now wraps application, screening, staged round result, offer and joining outcome in one savepoint, so a late offer/round failure does not leave an orphaned application when the caller catches the error. The PostgreSQL witness injects a failure after writes, checks all child tables for residue and retries with a valid candidate.
+
+### PROJ-HARNESS-PLACEMENTS-27: rollback whole drive graph
+`createPlacementFixture` now encloses company, college relationship, active-season selection/insertion, published job, primary role option and round in a single savepoint after coordinator authorization. A forced round-insert failure on real PostgreSQL must leave all counts unchanged, including a preexisting active season, then permit a clean retry. This prevents test graph partial data from silently contaminating unrelated assertions.
+
+### PROJ-HARNESS-PROJECT-28: whole-workspace atomicity
+The project fixture now wraps template/version publication, college assignment, project instance, release/sprint/task/resource and mentor/learner roster construction in a single SAVEPOINT. A PostgreSQL witness simulates failure of the final learner roster INSERT after all earlier writes, asserts original table counts restored and verifies a clean subsequent workspace can be constructed. This prevents caller-caught fixture setup exceptions contaminating tenant/run isolation.
+
+### PROJ-HARNESS-TENANT-29: all-or-nothing tenant fixture
+The shared tenant builder now wraps organization and college inserts in a savepoint. A failed college creation cannot leave a disposable orphan organization visible to later assertions inside the same test transaction. A real PostgreSQL witness injects a late insert failure, checks rollback and creates a subsequent valid tenant.
+
+### PROJ-HARNESS-PRINCIPAL-30: all-or-nothing role identity
+`createPrincipal` now encloses global user, optional Super Admin system role, college membership and all membership-role assignments in one SAVEPOINT. A failure on the second permission grant rolls back the first grant, membership and user; real PostgreSQL case 30 asserts identical counts before/after and verifies a valid multi-role retry. No production identity service is modified.

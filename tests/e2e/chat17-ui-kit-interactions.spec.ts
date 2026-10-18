@@ -112,6 +112,17 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(open).toBeFocused();
   });
 
+  test("UX-kit-E2E-10 scroll cue detects overflow when a second direct child resizes",async({page})=>{
+    await page.goto(route);
+    const cue=page.locator('[data-slot="scroll-cue"]').filter({has:page.getByText("First child remains small")});
+    await expect(cue).toHaveAttribute("data-scroll-end","false");
+    await page.getByRole("button",{name:"Grow second child"}).click();
+    await expect(cue).toHaveAttribute("data-scroll-end","true");
+    await expect(cue.getByRole("region",{name:"Second child resize overflow"})).toBeVisible();
+    await page.getByRole("button",{name:"Shrink second child"}).click();
+    await expect(cue).toHaveAttribute("data-scroll-end","false");
+  });
+
   test("UX-kit-HARDEN-45 mobile More details never discloses desktop-only private columns",async({page})=>{
     await page.setViewportSize({width:390,height:780});
     await page.goto(route);
@@ -193,6 +204,24 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
       document.dispatchEvent(new Event("visibilitychange"));
     });
     await expect(note).toHaveCount(0,{timeout:3500});
+  });
+
+  test("UX-kit-E2E-11 timed toasts remain readable when the tab is hidden",async({page})=>{
+    await page.goto(route);
+    await page.evaluate(()=>{
+      Object.defineProperty(document,"hidden",{configurable:true,get:()=>true});
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await page.getByRole("button",{name:"Show success notice"}).click();
+    const toast=page.getByRole("status").filter({hasText:"Saved harness result"});
+    await expect(toast).toBeVisible();
+    await page.waitForTimeout(5200);
+    await expect(toast).toBeVisible();
+    await page.evaluate(()=>{
+      Object.defineProperty(document,"hidden",{configurable:true,get:()=>false});
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await expect(toast).toHaveCount(0,{timeout:9000});
   });
 
   test("UX-kit-E2E-09 upload retains external help and Tabs honor reduced motion",async({page})=>{
