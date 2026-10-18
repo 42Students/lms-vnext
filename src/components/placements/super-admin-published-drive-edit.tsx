@@ -1,7 +1,8 @@
 "use client";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {superAdminPublishedDriveEditFeedback} from "@/modules/placements/super-admin-published-drive-edit-feedback";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 type Job={id:string;title:string;description:string;locations:string[];
@@ -39,7 +40,10 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
      }),
     });
     setOpen(false);router.refresh();
-   }catch(e){setError(e instanceof Error?e.message:"Unable to edit this drive. Refresh and retry.");}
+   }catch(e){
+    const fallback=e instanceof Error?e.message:"Unable to edit this drive. Refresh and retry.";
+    setError(superAdminPublishedDriveEditFeedback(e instanceof FriendlyFetchError?e.code:null,fallback));
+   }
   });
  }
  const cls="min-h-10 w-full rounded border border-border bg-surface p-2";
