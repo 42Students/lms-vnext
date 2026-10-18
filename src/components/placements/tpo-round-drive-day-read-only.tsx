@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TpoRoundCheckIn } from "./tpo-round-check-in";
+import { DataTable } from "@/components/ui/data-table";
 
 import {
   PageHeader,
@@ -249,106 +250,53 @@ export function TpoRoundDriveDayReadOnly({
           </p>
         </div>
 
-        {data.rows.length === 0 ? (
-          <div
-            role="status"
-            className="p-8 text-sm text-body"
-          >
-            No eligible applicants currently appear in
-            this round&apos;s roster.
-          </div>
-        ) : (
-          <div tabIndex={0} role="region" aria-label="Drive-day candidate roster, scroll horizontally for more columns" className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_0%,black_95%,transparent_100%)]">
-            <table className="w-full min-w-[46rem] text-left text-sm">
-              <thead className="bg-surface-secondary text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">
-                    Student
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Roll number
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Application
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Round attendance
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Latest result
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-border">
-                {data.rows.map((student) => (
-                  <tr key={student.applicationId}>
-                    <td className="px-4 py-3 font-semibold text-foreground">
-                      {student.displayName}
-                    </td>
-
-                    <td className="px-4 py-3 text-body">
-                      {student.rollNumber ?? "—"}
-                    </td>
-
-                    <td className="px-4 py-3">
-                      <StatusBadge>
-                        {student.applicationStatus}
-                      </StatusBadge>
-                    </td>
-
-                    <td className="px-4 py-3">
-                      <StatusBadge
-                        tone={statusTone(
-                          student.attendance,
-                        )}
-                      >
-                        {student.attendance.replaceAll(
-                          "_",
-                          " ",
-                        )}
-                      </StatusBadge>
-                      <TpoRoundCheckIn
-                        roundId={data.round.id}
-                        applicationId={student.applicationId}
-                        displayName={student.displayName}
-                        attendance={student.attendance}
-                        roundStatus={data.round.status}
-                      />
-                    </td>
-
-                    <td className="px-4 py-3">
-                      {student.resultStatus &&
-                      student.resultOutcome ? (
-                        <div className="flex flex-wrap items-center gap-2">
-                          <StatusBadge
-                            tone={statusTone(
-                              student.resultStatus,
-                            )}
-                          >
-                            {student.resultStatus}
-                          </StatusBadge>
-                          <span className="text-body">
-                            {student.resultOutcome}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">
-                          No result recorded
-                        </span>
-                      )}
-                      <TpoRoundResultRecorder
-                        roundId={data.round.id}
-                        round={{ kind: data.round.kind, status: data.round.status }}
-                        row={student}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <DataTable
+          caption="Applicants in this round"
+          rows={data.rows}
+          getRowKey={student=>student.applicationId}
+          empty={<div role="status" className="p-3 text-sm text-body">
+            No eligible applicants currently appear in this round&apos;s roster.
+          </div>}
+          columns={[
+            {key:"student",header:"Student",mobilePriority:"primary" as const,
+              cell:(student:(typeof data.rows)[number])=>student.displayName},
+            {key:"roll",header:"Roll number",mobilePriority:"secondary" as const,
+              cell:(student:(typeof data.rows)[number])=>student.rollNumber??"—"},
+            {key:"application",header:"Application",mobilePriority:"secondary" as const,
+              cell:(student:(typeof data.rows)[number])=><StatusBadge>{student.applicationStatus}</StatusBadge>},
+            {key:"attendance",header:"Round attendance",mobilePriority:"action" as const,
+              cell:(student:(typeof data.rows)[number])=><div className="min-w-0 space-y-2">
+                <span className="block text-xs font-semibold text-body sm:hidden">Round attendance</span>
+                <StatusBadge tone={statusTone(student.attendance)}>
+                  {student.attendance.replaceAll("_"," ")}
+                </StatusBadge>
+                <TpoRoundCheckIn
+                  roundId={data.round.id}
+                  applicationId={student.applicationId}
+                  displayName={student.displayName}
+                  attendance={student.attendance}
+                  roundStatus={data.round.status}
+                />
+              </div>},
+            {key:"result",header:"Latest result",mobilePriority:"action" as const,
+              cell:(student:(typeof data.rows)[number])=><div className="min-w-0 space-y-2">
+                <span className="block text-xs font-semibold text-body sm:hidden">Latest result</span>
+                {student.resultStatus && student.resultOutcome ?
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusBadge tone={statusTone(student.resultStatus)}>
+                      {student.resultStatus}
+                    </StatusBadge>
+                    <span className="text-body">{student.resultOutcome}</span>
+                  </div>
+                 :<span className="text-muted-foreground">No result recorded</span>}
+                <TpoRoundResultRecorder
+                  roundId={data.round.id}
+                  round={{kind:data.round.kind,status:data.round.status}}
+                  row={student}
+                />
+              </div>},
+          ]}
+        />
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
