@@ -203,3 +203,14 @@ All 22 cases were checked against current branch source before insertion. Every 
 |---|---|---|
 | HR-ACCOUNT-OWNER-17 | SOURCE FIX, CI PENDING | `hr-conversation-inbox-service.ts`, `hr-notifications-service.ts`; `tests/unit/HR-BREAK-chat15-conversations-10.test.ts` and `HR-BREAK-chat15-notifications-09.test.ts`. Private recruiter message and notification reads require the embedded recruiter user ID to match the authenticated session user, before accessing any college data. Multi-college users must choose scope. Verify revoked account and stale session against real DB. |
 | HR-TENANT-ID-16 | SOURCE FIX, CI PENDING | `recruiter-job-visibility-model.ts`, `tests/unit/HR-BREAK-chat15-tenant-identity-04.test.ts`. A borrowed relationship grant cannot make an unrelated session user an authorized job viewer. |
+
+
+## chat-15 recruiter account revocation and activity (2026-10-18, CI pending)
+
+| ID | Source | Acceptance evidence |
+|---|---|---|
+| HR-ACTIVITY-OWNER-28 | `hr-job-activity-service.ts` | Before college-choice disclosure or activity reads, active recruiter identity must equal authenticated session user. `tests/unit/HR-BREAK-chat15-activity-owner-28.test.ts` includes stolen recruiter context, wrong college and private-event exclusion. |
+| HR-TEAM-OWNER-30 | `recruiter-company-team-service.ts` | College grant chooser denies identity swaps before returning college names; `tests/unit/recruiter-company-team-scope.test.ts`. |
+| HR-TEAM-REVOKE-32 | `recruiter-company-team-service.ts` | After choosing an employer-college relationship, source query rechecks acting user's ACTIVE recruiter profile, persisted grant and platform status before team contacts are loaded. `tests/unit/recruiter-company-team-scope.test.ts`; real revoked-session PostgreSQL test is outstanding. |
+
+No runtime, database or responsive browser results were claimed; retain these as open acceptance gates.
