@@ -224,6 +224,48 @@ details > summary + * {
     transform: none;
   }
 }
+/* Scroll/motion kit. Duration and easing come from the signed-off tokens.
+ * These transform/opacity animations do not animate layout or scroll positions. */
+dialog[data-slot="drawer"][open] {
+  animation: lms-drawer-in var(--lms-motion-base) var(--lms-motion-ease) both;
+}
+dialog[data-slot="bottom-sheet"][open] {
+  animation: lms-sheet-in var(--lms-motion-base) var(--lms-motion-ease) both;
+}
+[data-slot="filter-bar"] [role="dialog"] {
+  animation: lms-sheet-in var(--lms-motion-base) var(--lms-motion-ease) both;
+}
+[data-slot="toast-stack"] > section {
+  animation: lms-toast-in var(--lms-motion-base) var(--lms-motion-ease) both;
+}
+@keyframes lms-drawer-in {
+  from { opacity: 0; translate: 16px 0; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes lms-sheet-in {
+  from { opacity: 0; translate: 0 16px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes lms-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+[data-slot="skeleton"] .lms-skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+[data-slot="skeleton"] .lms-skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--lms-surface) 68%, transparent), transparent);
+  animation: lms-skeleton-shimmer 1.5s linear infinite;
+}
+@keyframes lms-skeleton-shimmer {
+  to { transform: translateX(100%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
