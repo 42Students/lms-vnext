@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {z} from "zod";
+import {apiErrorResponse} from "@/lib/api-error";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
@@ -14,10 +15,10 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   threadId:(await params).threadId,body:form?.get("body"),
  });
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
- const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))
-  return NextResponse.json({error:"FORBIDDEN"},{status:403});
  try{
+  const context=await getCurrentRequestContext();
+  if(!hasActiveRecruiter(context))
+   return NextResponse.json({error:"FORBIDDEN"},{status:403});
   await sendRecruiterThreadMessage(context,parsed.data.threadId,parsed.data.body);
  }catch(error){
   if(error instanceof TpoMessagingError)
@@ -25,7 +26,7 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
     {status:error.code==="TPO_MESSAGE_FORBIDDEN"?403:404});
   if(error instanceof z.ZodError)
    return NextResponse.json({error:"INVALID_BODY"},{status:400});
-  throw error;
+  return apiErrorResponse(error);
  }
  return NextResponse.redirect(new URL("/hr/conversations/"+parsed.data.threadId,request.url),303);
 }
