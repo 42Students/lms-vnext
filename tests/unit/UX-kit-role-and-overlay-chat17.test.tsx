@@ -101,16 +101,21 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     const rows = [{id:"1",title:"Project North"},{id:"2",title:"Project South"}];
     const html=render(<DataTable columns={columns} rows={rows} getRowKey={row=>row.id}
       rowHref={()=>"//unsafe.example"} caption="College projects" empty={<p>No projects</p>}/>);
+    // The row's cell formatter must run exactly once even though DataTable
+    // renders responsive labels, details and a desktop table.
+    expect(called.mock.calls.map(([row]) => row.id)).toEqual(["1", "2"]);
     expect(called).toHaveBeenCalledTimes(2);
     expect(html).toContain("Project North");
     expect(html).toContain("Project South");
     expect(html).not.toContain('href="//unsafe.example"');
-    // ScrollCue only assigns a named region AFTER measuring real overflow in
-    // the client. SSR cannot truthfully claim it is scrollable.
-    expect(html).toContain('<caption class="sr-only">College projects</caption>');
+    expect(html).not.toContain("View details");
+    // SSR does not know whether a table actually overflows. A caption must
+    // describe it while ScrollCue exposes no false scroll region until measured.
+    expect(html).toMatch(/<caption\\b[^>]*class="sr-only"[^>]*>College projects<\\/caption>/);
     expect(html).toContain('data-slot="scroll-cue"');
+    expect(html).not.toMatch(/role="region"[^>]*aria-label="College projects scrollable columns"/);
     const scrollSource=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
-    expect(scrollSource).toContain('caption+" scrollable columns"');
+    expect(scrollSource).toMatch(/label=\\{caption\\s*\\?\\s*caption\\s*\\+\\s*["'] scrollable columns["']/);
   });
 
   it("UX-kit-HARDEN-30 rejects encoded slash/backslash row links before Next navigation", () => {
