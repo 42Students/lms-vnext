@@ -5,8 +5,11 @@
 export type ProjectAdminCsvValue = string | number | null | undefined;
 
 export function projectAdminCsvCell(value: ProjectAdminCsvValue): string {
-  const original = String(value ?? "");
-  const visible = original.replace(/^[\s\p{Cf}\p{Mn}]*/u, "");
+  // NUL and non-text C0 controls are not meaningful CSV content and can be
+  // discarded by importers before formula detection. Remove them first so
+  // hostile invisible prefixes cannot bypass the quote-prefix guard.
+  const original = String(value ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "");
+  const visible = original.replace(/^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*/u, "");
   const guarded = /^[=+@-]/u.test(visible) ? "'" + original : original;
   return '"' + guarded.replaceAll('"', '""') + '"';
 }
