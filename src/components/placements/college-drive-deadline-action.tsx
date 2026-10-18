@@ -18,7 +18,6 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
   if(!value||busy)return;
   const deadline=new Date(value+"+05:30");
   if(!Number.isFinite(deadline.getTime())){setError("Enter a valid date and time.");return;}
-  if(!window.confirm("Extend deadline for "+title+"?"))return;
   setBusy(true);setError("");setDone("");
   try{
    const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/extend-deadline",{
@@ -40,6 +39,7 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
   <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}} title={"Extend deadline — "+title} dismissible={!busy}>
     <h2 className="text-lg font-semibold">Extend deadline — {title}</h2>
     <p className="text-sm">Current deadline: {current}</p>
+    <p className="text-sm text-body">Extend deadline for {title}?</p>
     <label className="grid gap-1 text-sm">New application deadline (IST)
      <input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
       className="min-h-11 rounded border border-border bg-surface px-3"/>
