@@ -6,7 +6,7 @@ import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-follow
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type LeadChoice={id:string;name:string;companyName:string|null};
-const field="min-h-11 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground";
+const field="min-h-11 w-full rounded-md border border-border bg-background px-3 py-2 text-base text-foreground sm:text-sm";
 export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const router=useRouter();
  const [open,setOpen]=useState(false);
