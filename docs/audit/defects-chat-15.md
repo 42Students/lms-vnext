@@ -38,3 +38,5 @@ Scope: `chatgpt/chat-15-b`. Findings are source-reviewed; **test execution is pe
 
 
 | HR-REQUEST-CANCEL-INTEGRITY-07 | S1 | A CANCEL command previously permitted an optional draft payload, and the generic request update path would persist that payload even while canceling the formal request, changing what the placement cell historically reviewed. The strict schema now forbids draft on CANCEL and requires it on EDIT/RESUBMIT, so it fails before opening SQL transaction. | `16fa29f3` | `tests/unit/HR-BREAK-chat15-request-cancel-integrity-07.test.ts` (`678d100c`): cancel, edit, resubmit, malicious identity/payload. CI & PostgreSQL replay pending. |
+
+| HR-TENANT-ID-16 | S1 | A request context with a recruiter grant belonging to another user could pass the job visibility projection when college/relationship IDs matched. `isRecruiterJobVisible` now verifies `context.recruiter.userId === context.user.id` before invoking centralized permissions. | `cdb247a15f83cd2f6307a29a3847de03a055ae79` | `tests/unit/HR-BREAK-chat15-tenant-identity-04.test.ts`, `HR-TENANT-ID-16 refuses a valid grant carried in another session before permission lookup`; authored but not run. |
