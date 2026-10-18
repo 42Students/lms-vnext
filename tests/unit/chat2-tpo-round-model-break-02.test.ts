@@ -69,6 +69,22 @@ describe("TPO-BREAK-round-model-02 invalid input, permission-safe roster and res
   expect(state.rows[0]).toMatchObject({attendance:"UNKNOWN",resultOutcome:null});
   expect(state.counts).toMatchObject({total:2,inInterview:1,unknownAttendance:1,stagedResults:1,noResult:1});
  });
+ it("does not double-count duplicated joins or guess between conflicting per-application details",()=>{
+  const duplicates=buildTpoRoundDriveDayRoster([
+   {applicationId:uuid,displayName:"Ada",rollNumber:"42",attendance:"WAITING"},
+   {applicationId:uuid,displayName:"Ada",rollNumber:"42",attendance:"PRESENT"},
+  ],[{applicationId:uuid,applicationStatus:"SUBMITTED",resultStatus:null,resultOutcome:null}]);
+  expect(duplicates.rows).toHaveLength(1);
+  expect(duplicates.counts.total).toBe(1);
+  const conflicted=buildTpoRoundDriveDayRoster([
+   {applicationId:uuid,displayName:"Ada",rollNumber:"42",attendance:"WAITING"},
+  ],[
+   {applicationId:uuid,applicationStatus:"SUBMITTED",resultStatus:"STAGED",resultOutcome:"PASS"},
+   {applicationId:uuid,applicationStatus:"WITHDRAWN",resultStatus:"APPLIED",resultOutcome:"FAIL"},
+  ]);
+  expect(conflicted.rows).toHaveLength(0);
+  expect(conflicted.counts.total).toBe(0);
+ });
  it("rejects ambiguous bulk learner identities, double-identification and oversized paste",()=>{
   const roster=[{applicationId:uuid,rollNumber:"42A"},{applicationId:other,rollNumber:"42B"}];
   expect(resolveBulkRoundLearnerTokens("42A,42B",roster)).toEqual({ids:[uuid,other],error:null});
