@@ -4,7 +4,7 @@ import type {RequestContext} from "@/modules/identity/context";
 
 const A="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", B="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 const ORG_A="cccccccc-cccc-4ccc-8ccc-cccccccccccc",ORG_B="dddddddd-dddd-4ddd-8ddd-dddddddddddd";
-const base=(roles:RequestContext["membership"] extends infer M?readonly ("TPO"|"COLLEGE_ADMIN"|"MENTOR"|"FACULTY"|"LEARNER")[]:never,
+const base=(roles:NonNullable<RequestContext["membership"]>["roles"],
  collegeId=A,organizationId=ORG_A):RequestContext=>({
  user:{id:"eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",identityUid:"tpo-role-matrix",
   platformStatus:"ACTIVE",systemRoles:[]},
@@ -31,7 +31,7 @@ describe("PROJ-BREAK-TPO-role-matrix-04 production permission policy",()=>{
  it("requires active platform and membership even when the stale cookie retains TPO",()=>{
   const ctx=base(["TPO"]);
   expect(can({...ctx,user:{...ctx.user,platformStatus:"DISABLED"}},"placements.manage",subject)).toBe(false);
-  expect(can({...ctx,membership:{...ctx.membership!,status:"DISABLED"}},"projects.read",subject)).toBe(false);
+  expect(can({...ctx,membership:{...ctx.membership!,status:"SUSPENDED"}},"projects.read",subject)).toBe(false);
   expect(can({...ctx,membership:null},"projects.manage",subject)).toBe(false);
  });
  it("does not infer project management from faculty, mentor, learner or recruiter context",()=>{
