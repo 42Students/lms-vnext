@@ -24,9 +24,11 @@ export async function assertPersistedProjectMutationActor(
     project:{id:string};
     collegeId:string;
     organizationId:string;
-    access:"ADMIN"|"MENTOR";
+    access:"ADMIN"|"MENTOR"|"LEARNER"|"OBSERVER";
   },
 ):Promise<void> {
+  if(scope.access!=="ADMIN" && scope.access!=="MENTOR")
+    throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
   const permission=scope.access==="ADMIN"?"projects.manage":"projects.read";
   let persisted:RequestContext;
   try{
