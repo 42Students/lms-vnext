@@ -6,7 +6,9 @@ describe("Chat-15 learner quizzes table parity",()=>{
   const text=readFileSync(join(process.cwd(),"src/components/courses/learner-assessment-overview.tsx"),"utf8");
   for(const heading of ["Overview","Course","Lesson","Due Date","Status","Grade","Actions"])expect(text).toContain(heading);
   expect(text).toContain('item.resultsPublished?"View result":"Not released"');
-  expect(text).toContain('kind==="QUIZ"?"space-y-3 lg:hidden"');
-  expect(text).toContain("min-w-[790px]");
+  expect(text).toContain('kind==="QUIZ" ? (');
+  expect(text).toContain("<DataTable");
+  expect(text).toContain('caption="Quiz list"');
+  expect(text).toContain('mobilePriority:"primary"');
  });
 });
