@@ -72,7 +72,7 @@ describe("PROJ-BREAK-TPO-PANEL-02 notes endpoint and double-submit recovery",()=
   expect(code).toContain("inFlight.current=true;setBusy(true)");
   expect(code).toContain("finally{inFlight.current=false;setBusy(false);}");
   expect(code).toContain("void runGuarded(save)");
-  expect(code).toContain("setNote("")");
+  expect(code).toContain("setNote(\"\")");
   expect(code).toContain("catch(error){setError(");
  });
 });
