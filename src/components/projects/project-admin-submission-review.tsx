@@ -59,7 +59,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
       className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Request changes</Button>:null}
     {canAdminSettleDelivery(status,locked,projectStatus,"APPROVED")?
      <Button type="button" variant="primary" disabled={pending} onClick={()=>{void decide("APPROVED")}}
-      className="min-h-11 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground">Accept submission</Button>:null}
+      className="text-sm">Accept submission</Button>:null}
     {allowLock&&canAdminSettleDelivery(status,locked,projectStatus,"LOCK")?
      <Button type="button" variant="secondary" disabled={pending} onClick={()=>setConfirmLock(true)}
       className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Lock submission</Button>:null}
