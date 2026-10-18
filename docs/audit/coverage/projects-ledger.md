@@ -97,20 +97,31 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/instance-service.ts` | `archiveProjectInstance` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/instance-service.ts` | `getProjectInstanceWorkspace` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-attention-service.ts` | `listMyLearnerProjectAttention` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/learner-backlog-pull-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-card-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-lanes-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-priority-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-selection-notice-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-sort-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-summary-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-task-attention-tone-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-task-detail-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-task-dialog-navigation-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-task-status-label-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-board-task-workflow-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-own-task-input-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-own-task-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/learner-backlog-pull-service.ts` | `pullOwnBacklogTask` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-card-model.ts` | `learnerBoardCardMetadata` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-lanes-model.ts` | `learnerTaskLane` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-lanes-model.ts` | `groupLearnerBoardLanes` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-lanes-model.ts` | `LEARNER_BOARD_LANES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-priority-model.ts` | `learnerBoardPriorityCounts` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-priority-model.ts` | `learnerBoardPriorityFilterHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-priority-model.ts` | `LEARNER_BOARD_PRIORITY_LABELS` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-selection-notice-model.ts` | `learnerBoardTaskSelectionNotice` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-sort-model.ts` | `sortLearnerBoardTasks` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-sort-model.ts` | `learnerBoardSortSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-summary-model.ts` | `learnerBoardStatusCounts` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-summary-model.ts` | `learnerBoardStatusFilterHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-summary-model.ts` | `LEARNER_BOARD_STATUS_LABELS` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-task-attention-tone-model.ts` | `learnerBoardTaskStatusTone` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-task-attention-tone-model.ts` | `learnerBoardTaskPriorityTone` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-task-detail-model.ts` | `findOwnLearnerBoardTask` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-task-detail-model.ts` | `learnerBoardTaskHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-task-dialog-navigation-model.ts` | `createLearnerBoardTaskDialogNavigationGuard` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-task-status-label-model.ts` | `learnerBoardTaskStatusLabel` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-task-status-label-model.ts` | `learnerBoardTaskPriorityLabel` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-board-task-workflow-model.ts` | `learnerBoardTaskWorkspaceHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-own-task-input-model.ts` | `learnerOwnTaskCreateInputSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-own-task-service.ts` | `createLearnerOwnTask` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-own-task-service.ts` | `deleteLearnerOwnTask` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-project-activity-csv-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/learner-project-activity-cursor-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/learner-project-activity-empty-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
