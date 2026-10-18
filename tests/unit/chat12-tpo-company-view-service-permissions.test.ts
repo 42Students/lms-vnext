@@ -2,9 +2,10 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 
 const mocks=vi.hoisted(()=>({
- scope:vi.fn(),companies:vi.fn(),ready:vi.fn(),getDb:vi.fn(),
+ scope:vi.fn(),actor:vi.fn(),companies:vi.fn(),ready:vi.fn(),getDb:vi.fn(),
 }));
 vi.mock("@/db/client",()=>({getDb:mocks.getDb}));
+vi.mock("@/modules/placements/tpo-batch-workspace-read-service",()=>({requireTpoBatchActor:mocks.actor}));
 vi.mock("@/modules/placements/scope",()=>({requirePlacementManageScope:mocks.scope}));
 vi.mock("@/modules/placements/company-service",()=>({listPlacementCompanies:mocks.companies}));
 vi.mock("@/modules/placements/staged-tables",()=>({placementTableExists:mocks.ready}));
@@ -28,6 +29,7 @@ describe("TPO-BREAK-company-service-08 scoped company directory reads and redact
    if(collegeId!==A)throw new Error("PERMISSION_DENIED");
    return {id:A,organizationId:ORG};
   });
+  mocks.actor.mockResolvedValue(A);
   mocks.companies.mockResolvedValue([]);
   mocks.ready.mockResolvedValue(false);
   mocks.getDb.mockReturnValue({});
@@ -65,6 +67,15 @@ describe("TPO-BREAK-company-service-08 scoped company directory reads and redact
   expect(result.page).toMatchObject({page:1,pageSize:25,total:0,items:[]});
   expect(mocks.companies).toHaveBeenCalledWith(ctx,A);
   expect(mocks.ready).toHaveBeenCalledWith("placement_tpo_leads");
+ });
+ it("TPO-BREAK-company-read-actor-03 rejects a revoked or wrong-college persisted actor before CRM reads",async()=>{
+  for(const live of [Promise.reject(new Error("ROLE_REVOKED")),Promise.resolve(B)]){
+   mocks.actor.mockImplementationOnce(()=>live);
+   await expect(getTpoCompaniesView(ctx,{collegeId:A})).rejects.toBeDefined();
+  }
+  expect(mocks.companies).not.toHaveBeenCalled();
+  expect(mocks.ready).not.toHaveBeenCalled();
+  expect(mocks.getDb).not.toHaveBeenCalled();
  });
  it("a missing company ID is indistinguishable from a foreign company and has no timeline",async()=>{
   await expect(getTpoCompanyDetailView(ctx,{collegeId:A,companyId:B}))
