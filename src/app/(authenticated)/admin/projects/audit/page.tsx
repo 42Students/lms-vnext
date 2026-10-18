@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { ErrorState } from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectAdminAuditPage } from "@/components/projects/project-admin-audit-page";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
@@ -17,6 +20,15 @@ export default async function SuperAdminProjectAuditPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
+  if (!isSuperAdmin(context)) {
+    return <div className="min-w-0 space-y-6">
+      <PageHeader eyebrow="Super Admin Projects" title="Project audit" />
+      <ErrorState title="Project access denied"
+        description="Your account cannot access Super Admin project workspaces."
+        action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)] underline">Back to dashboard</Link>}
+      />
+    </div>;
+  }
   const collegeId =
     getProjectAdminCollegeId(context);
 

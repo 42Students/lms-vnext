@@ -30,6 +30,18 @@ beforeEach(()=>{
  state.stage.mockResolvedValue({staged:1,skipped:0,unmatched:0,results:[]});
 });
 
+describe("TPO-drive-workspace-40 import client graceful failure copy",()=>{
+ it("TPO-drive-workspace-40 never renders raw server codes or unsafe validation internals",async()=>{
+  const {readFileSync}=await import("node:fs");
+  const source=readFileSync("src/components/placements/tpo-round-results-import.tsx","utf8");
+  expect(source).toContain("result.message");
+  expect(source).toContain("Review the file and try again.");
+  expect(source).not.toContain("result.error??");
+  expect(source).not.toContain("result.issues?.[0]?.message");
+  expect(source).toContain("setError(e instanceof Error?e.message");
+ });
+});
+
 describe("TPO-drive-workspace-40 import-preview and confirmed staging route",()=>{
  it("TPO-drive-workspace-40 rejects cross-origin imports before fetching session or CSV",async()=>{
   state.origin.mockReturnValue(false);

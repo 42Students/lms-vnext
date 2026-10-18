@@ -141,3 +141,26 @@ No local execution. The module-wide College Admin and Super Admin coverage gate 
 | `src/modules/people/college-role-directory-export.ts` `escapeRoleDirectoryCsvCell`, `renderCollegeRoleDirectoryCsv` | Same test (`COL-people-export-formula-01`) | Escapes `= + - @` spreadsheet formulas even after Unicode format/combining marks, ordinary whitespace/control prefixes; numeric and quoted cells preserve CSV shape, active roster labels remain unmodified |
 
 This corrects the earlier blind spot in the People directory CSV encoder (which had recognized ASCII whitespace/control prefixes but not Unicode format and combining marks). **Tests were not run**. Database-role races and browser/spreadsheet import checks are still required.
+
+## Admin staff roster + devices page execution contracts
+
+| Page | New rendered regression test | Cases |
+| --- | --- | --- |
+| `/admin/colleges/[collegeId]/admins` | `tests/unit/chat4-superadmin-college-admins-list-page.test.tsx` (`SA-colleges-admins-list-01`) | Empty roster, College Admin/TPO onboarding actions, persisted suspended/role flags, scoped devices/history links, truthful 500-role cap disclosure, denied service without a rendered page |
+| `/admin/colleges/[collegeId]/admins/[userId]` | `tests/unit/chat4-superadmin-college-admin-sessions-page.test.tsx` (`SA-colleges-admins-sessions-01`) | Empty device state, persisted per-device labels, user agent HTML escaped, IP and IST timestamp, matching revoke count, no cross-tenant render after service denial |
+
+Both use isolated service mocks and server-rendered markup, **not** end-to-end browser or database races. Verification of device revocation persistence, pagination and accessibility remains outstanding. No CI execution performed.
+
+## College student import history read service
+
+| Export | Test | Coverage / outstanding |
+| --- | --- | --- |
+| `src/modules/people/college-import-history-service.ts` `listCollegeStudentImportHistory` | `tests/unit/chat4-college-student-import-history.test.ts` (`COL-people-import-history-01`) | Reject malformed/ambiguous numeric strings before SQL, deny ordinary learner/inactive College Admin, recheck persisted `people.manage` before any event rows, page by 20 with 21-row lookahead and correct offset, map metadata counts safely and suppress negative, fractional, infinite or NaN counts. No real PostgreSQL race or UI browser run. |
+
+## Faculty CSV registration and preview
+
+| Export | Behavioral test | Coverage / caveats |
+| --- | --- | --- |
+| `src/modules/people/college-faculty-csv-service.ts` `runCollegeFacultyCsv`, `FACULTY_CSV_COLUMNS` | `tests/unit/chat4-college-faculty-csv-import.test.ts` (`COL-people-faculty-csv-01`) | PREVIEW has no mutations, 500-row structural cap, explicit confirmation/unknown-field validation, wrong role/deactivated account denial, duplicate mobile/email/casefolding, invalid type, normalized +91 phone and legacy faculty title, successful College-scoped onboarding/profile, distinct safe FAILED vs PARTIAL receipts without exposing exception details. Real identity/index conflicts and cross-request rate limits remain PostgreSQL/integration gates. |
+
+New tests have not been executed.
