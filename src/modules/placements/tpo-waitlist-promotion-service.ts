@@ -89,7 +89,7 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
   activeOffers,rows,freeSeats,
  });
  return {job:{...job,updatedAt:job.updatedAt.toISOString()},lastRoundId:last?.id??null,
-  storageReady,freeSeats,activeOffers:activeOffers.length,rows,next,previewToken:token};
+  storageReady,freeSeats,activeOffers:occupiedOfferSeats,rows,next,previewToken:token};
 }
 export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unknown,raw:unknown){
  const input=tpoWaitlistPromotionSchema.parse(raw);
