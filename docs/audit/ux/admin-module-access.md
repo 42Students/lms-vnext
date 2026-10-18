@@ -5,3 +5,5 @@
 - **States reviewed:** Invalid query, no matching colleges, inherited-rule hierarchy and pagination.
 - **Regression:** `tests/unit/ux-admin-chat6-middle-third.test.ts` — `UX-admin-module-access-01`; shared-contract tests cover the affected archetype where applicable.
 - **Verification boundary:** Source contracts authored; TypeScript, unit, 320/360/390px browser, native WebView, and screen-reader checks require orchestrator execution. Not yet a browser sign-off.
+
+- **Follow-up (UX-admin-module-access-02):** Replaced manual Previous/Next-only navigation with shared Pagination (page numbers, disabled bounds, 44px focus targets); filter form now uses one-column phone layout and preserves the search query through page links. Test: `UX-admin-module-access-02`.
