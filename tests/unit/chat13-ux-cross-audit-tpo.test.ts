@@ -54,4 +54,27 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).toContain('New email campaign');
   expect(s).toContain('min-h-11');
  });
+ it("UX-cross-tpo-second-C13-009 close preview uses accessible focus-managed confirmation and safe errors",()=>{
+  const s=read("src/components/placements/tpo-drive-close-preview-form.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('title="Close this drive?"');
+  expect(s).toContain('expectedCounts:preview.counts');
+  expect(s).not.toContain("window.confirm");
+  expect(s).not.toContain("body?.error");
+ });
+ it("UX-cross-tpo-second-C13-010 round result staging uses an accessible guarded confirm dialog",()=>{
+  const s=read("src/components/placements/tpo-round-result-entry-form.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('title="Stage this round result?"');
+  expect(s).toContain("validatedPayload.current");
+  expect(s).not.toContain("window.confirm");
+  expect(s).toContain("min-h-11");
+ });
+ it("UX-cross-tpo-second-C13-011 cancellation reason options are 44px and readable",()=>{
+  const s=read("src/components/placements/tpo-drive-cancel-form.tsx");
+  expect(s).not.toContain("min-h-10");
+  expect(s).not.toContain("text-primary-text");
+  expect(s).toContain("useGuardedAction");
+  expect(s).toContain("expectedImpact: preview.impact");
+ });
 });
