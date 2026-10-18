@@ -47,18 +47,22 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/class-team-roster-service.ts` | `requireTeamCreationAuthority` | **GAP** | **GAP — behavioural test missing** |
 | `src/modules/projects/class-team-roster-service.ts` | `listProjectTeamClasses` | **GAP** | **GAP — behavioural test missing** |
 | `src/modules/projects/class-team-roster-service.ts` | `loadClassTeamRoster` | **GAP** | **GAP — behavioural test missing** |
-| `src/modules/projects/class-team-roster-snapshot.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/class-team-slug-conflict.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/class-team-slug-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/class-team-split-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/class-team-swap-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/class-team-workspace-names.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/class-team-workspace-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/cohort-creation-outcome-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/cohort-preflight-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/college-project-roster-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/college-project-roster-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/college-project-summary-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/class-team-roster-snapshot.ts` | `assertRosterStillCurrent` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/class-team-roster-snapshot.ts` | `classRosterSnapshotSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/class-team-slug-conflict.ts` | `assertWorkspaceSlugsAvailable` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/class-team-slug-model.ts` | `isValidClassTeamBaseSlug` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/class-team-split-model.ts` | `previewClassTeams` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/class-team-split-model.ts` | `movePreviewMember` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/class-team-split-model.ts` | `teamSplitInputSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/class-team-swap-model.ts` | `swapClassTeamMembers` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/class-team-workspace-names.ts` | `planClassTeamWorkspaceNames` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/class-team-workspace-service.ts` | `createClassTeamWorkspaces` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/cohort-creation-outcome-model.ts` | `cohortCreationResultRows` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/cohort-preflight-service.ts` | `getCohortCreationPreflight` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/college-project-roster-model.ts` | `replaceCollegeProjectRosterSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/college-project-roster-service.ts` | `replaceCollegeProjectLearners` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/college-project-summary-model.ts` | `collegeProjectStatusChangeAllowed` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/college-project-summary-model.ts` | `collegeProjectSummaryPatch` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/college-project-summary-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/college-projects-query-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/college-readiness-releases-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
