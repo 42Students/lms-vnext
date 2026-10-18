@@ -107,3 +107,13 @@ All newly authored tests remain pending cloud execution; migration retains the p
 
 | PROJ-HARNESS-51 | S1 (project fixture lineage) | Fixture previously assigned a DRAFT template to a college and started an ACTIVE sprint under a PLANNED release; these states were not a realistic published workspace for customer journeys. | Publish template version 1 before assignment and explicitly create IN_PROGRESS release; real PG PROJ-HARNESS-51 and source GUARD-12. | Authored; PostgreSQL CI pending |
 
+
+| UX-kit-HARDEN-53 | S2 (keyboard discoverability) | The disabled action description was on a nonfocusable span, while the disabled native button is skipped by Tab: keyboard users could not discover why the action is unavailable. | Focusable disabled-only wrapper with `role=group` and associated description, preserving child IDs; `tests/unit/UX-kit-projects-hardening-chat17.test.tsx` HARDEN-53. | Source/test authored; browser verification at final CI |
+
+| UX-kit-HARDEN-54 | S2 (form a11y) | FileUpload silently replaced a caller's external aria-describedby and aria-invalid, losing an associated validation or field hint when wrapped in larger forms. | Shared FileUpload merges external help IDs and preserves enabled invalid semantics, clears invalid for disabled states; UX-kit-HARDEN-54 test. | Source/test authored; final CI pending |
+
+| PROJ-HARNESS-PLACEMENTS-15/16 | S1 (real PG fixture integrity) | Canonical `placement_applications.role_option_id` is NOT NULL, but candidate fixture omitted it, meaning the purported real-PostgreSQL integration graph could not be inserted. A forged cross-drive role option could also pollute a suite. | Published drive creates active primary role option; candidate must link an active same-drive option; added PostgreSQL cases 15/16 plus GUARD-14. | Authored; runtime acceptance pending |
+
+| PROJ-HARNESS-TENANCY-17 | S1 (multi-college isolation) | Previously only cross-organization examples existed; a learner/administrator from a second college under the SAME organization could pass a weakened org-only authorization query unnoticed. | Added sibling-college fixture and explicit Project task/final/meeting and Placement drive/application denials in real-PG case PROJ-HARNESS-TENANCY-17. | Authored; PostgreSQL acceptance pending |
+
+| PROJ-HARNESS-PLACEMENTS-17 | S1 (placement lifecycle) | Published job + stale season can become CLOSED while the old fixture still constructs new applicants and offers. | Persisted same-college ACTIVE season required in candidate fixture; SQL test 17 closes the season and verifies no new application; source GUARD-16. | Authored; final PostgreSQL gate pending |
