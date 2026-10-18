@@ -59,7 +59,11 @@ export function collegeContactAcademicScope(collegeId:string){
        input.classPresence==="NONE"?not(placedInEnrollment):undefined)));
  };
  const inProgram=(programId:string)=>exists(db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
-  .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+  // A learner's cohort and program are independent foreign keys. They must
+  // agree before counting or filtering the learner in a college directory.
+  .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
+    eq(cohorts.programId,learnerProgramEnrollments.programId)))
+  .innerJoin(programs,eq(programs.id,cohorts.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE"),eq(programs.id,programId))));
  const inCohort=(cohortId:string)=>exists(db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
@@ -75,7 +79,11 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(departments,and(eq(departments.id,facultyProfiles.primaryDepartmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(facultyProfiles.membershipId,collegeMemberships.id),eq(departments.id,departmentId))));
  const activeEnrollment=exists(db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
-  .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+  // A learner's cohort and program are independent foreign keys. They must
+  // agree before counting or filtering the learner in a college directory.
+  .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
+    eq(cohorts.programId,learnerProgramEnrollments.programId)))
+  .innerJoin(programs,eq(programs.id,cohorts.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE"))));
  const teachingInRole=(role:"PRIMARY"|"CO_TEACHER"|"TA")=>exists(db.select({assignmentId:courseTeachingAssignments.id}).from(courseTeachingAssignments)

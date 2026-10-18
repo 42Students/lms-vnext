@@ -275,8 +275,8 @@ export async function createProjectFixture(db: PgHarness, tenant: TenantFixture,
     [template!.id,version!.id,tenant.collegeId,author.userId]);
   const [project] = await db.query<{id:string}>(`
     insert into project_instances
-      (college_id,template_id,template_version_id,slug,title,created_by_user_id)
-    values ($1,$2,$3,$4,$5,$6) returning id`,
+      (college_id,template_id,template_version_id,slug,title,status,created_by_user_id)
+    values ($1,$2,$3,$4,$5,'ACTIVE',$6) returning id`,
     [tenant.collegeId,template!.id,version!.id,"ph-workspace-"+suffix,"Harness workspace",author.userId]);
   const [release] = await db.query<{id:string}>(`
     insert into project_releases (project_id,template_key,title,sequence)
@@ -381,7 +381,7 @@ async function requireMutableFixtureProject(
 ): Promise<void> {
   const rows = await db.query<{id:string}>(`
     select id from project_instances
-     where id=$1 and status not in ('ARCHIVED','COMPLETED')
+     where id=$1 and status='ACTIVE'
      limit 1`,[projectId]);
   if (rows.length !== 1) throw new Error("PROJ-HARNESS: project " + activity + " is closed");
 }
@@ -436,7 +436,7 @@ export async function createMeeting(db: PgHarness, project: ProjectFixture,
     insert into project_meetings
       (project_id,title,starts_at,ends_at,time_zone,requested_by_membership_id,created_by_user_id)
     values ($1,'Review',$2::timestamptz,$3::timestamptz,'Asia/Kolkata',$4,$5) returning id`,
-    [project.projectId,"2026-10-20T04:30:00Z","2026-10-20T05:00:00Z",learner.membershipId,author.userId]);
+    [project.projectId,"2099-10-20T04:30:00Z","2099-10-20T05:00:00Z",learner.membershipId,author.userId]);
   return row!.id;
 }
 
@@ -458,11 +458,13 @@ export async function createPlacementFixture(db: PgHarness, tenant: TenantFixtur
   const season = existing[0] ?? (await db.query<{id:string}>(`
     insert into placement_seasons (college_id,name,code,start_date,end_date,created_by_user_id)
     values ($1,$2,$3,$4,$5,$6) returning id`,
-    [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2026-10-01","2027-06-30",author.userId]))[0]!;
+    [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2099-10-01","2099-06-30",author.userId]))[0]!;
   const [job] = await db.query<{id:string}>(`
     insert into placement_jobs (college_id,company_relationship_id,season_id,title,description,
-      employment_type,work_mode,created_by_user_id)
-    values ($1,$2,$3,'Harness drive','Fixture job','FULL_TIME','REMOTE',$4) returning id`,
+      employment_type,work_mode,openings,minimum_annual_ctc_inr,application_deadline,
+      status,published_at,created_by_user_id)
+    values ($1,$2,$3,'Harness drive','Fixture job','FULL_TIME','REMOTE',2,800000,
+      '2099-06-01T12:00:00Z','PUBLISHED',now(),$4) returning id`,
     [tenant.collegeId,relationship!.id,season.id,author.userId]);
   const [round] = await db.query<{id:string}>(`
     insert into placement_job_rounds (job_id,sequence,kind,name,created_by_user_id)
@@ -493,8 +495,10 @@ export async function createPlacementCandidateFixture(
   if (!actor.collegeId || actor.collegeId !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and coordinator must share a college");
   }
-  const [job] = await db.query<{college_id:string; round_id:string|null}>(`
-    select j.college_id,r.id as round_id
+  const [job] = await db.query<{college_id:string; round_id:string|null; accepting_applications:boolean}>(`
+    select j.college_id,r.id as round_id,
+        (j.status='PUBLISHED' and j.published_at is not null
+          and j.application_deadline>now()) as accepting_applications
       from placement_jobs j
       left join placement_job_rounds r
         on r.job_id=j.id and r.id=$2
@@ -504,6 +508,9 @@ export async function createPlacementCandidateFixture(
   }
   if (job.round_id !== drive.roundId) {
     throw new Error("PROJ-HARNESS: supplied round does not belong to this drive");
+  }
+  if (!job.accepting_applications) {
+    throw new Error("PROJ-HARNESS: drive is not open for applications");
   }
   // Roles held in fixture objects are insufficient evidence; the real
   // memberships and both users must still be active in the drive's college.

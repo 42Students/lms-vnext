@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {resolve} from "node:path";
+import {parseAdminModuleDetailPageParams} from "@/modules/module-access/admin-module-detail-query";
 
 const page=(path:string)=>readFileSync(resolve(process.cwd(),
  "src/app/(authenticated)/admin"+path+"/page.tsx"),"utf8");
@@ -42,11 +43,21 @@ describe("UX-admin-first-third-chat12 independent source cross-audit",()=>{
  it("UX-admin-features-collegeId-01 refuses malformed tenant ID and duplicate scope filters",()=>{
   const src=page("/features/[collegeId]");
   expect(src).toContain("collegeIdSchema.safeParse(collegeId)");
-  expect(src).toContain("if (Array.isArray(query.module)");
+  expect(src).toContain("parseAdminModuleDetailPageParams(await searchParams)");
+  expect(src.indexOf("if (!parsed)")).toBeLessThan(src.indexOf("getSuperAdminCollegeModuleAccess("));
+  const parse=readFileSync(resolve(process.cwd(),"src/modules/module-access/admin-module-detail-query.ts"),"utf8");
+  expect(parse).toContain("Object.values(raw).some(Array.isArray)");
+  expect(parse).toContain("Object.keys(raw).some(key=>!allowed.has(key))");
   expect(src).toContain("notFound()");
   expect(src).toContain("getSuperAdminCollegeModuleAccess(");
   expect(src).toContain("if (!result)");
   expect(src).toContain("LearnerModuleAccessDrawer");
+  expect(parseAdminModuleDetailPageParams({module:["placements","projects"]})).toBeNull();
+  expect(parseAdminModuleDetailPageParams({page:["1","2"]})).toBeNull();
+  expect(parseAdminModuleDetailPageParams({collegeId:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"})).toBeNull();
+  expect(parseAdminModuleDetailPageParams({scopeId:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"})).toBeNull();
+  expect(parseAdminModuleDetailPageParams({module:"placements",page:"0"})).toBeNull();
+  expect(parseAdminModuleDetailPageParams({module:"placements",page:"1"})?.page).toBe(1);
  });
  it("UX-admin-college-admin-history-01 validates page, keeps empty state and uses IST on export",()=>{
   const src=page("/colleges/[collegeId]/admins/[userId]/history");
