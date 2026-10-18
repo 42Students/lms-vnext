@@ -58,6 +58,18 @@ describe("AUTH-handoff-17 strict Super Admin scope and private failures",()=>{
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(response.cookies.getAll().every(cookie=>!cookie.name.includes("scope"))).toBe(true);
  });
+ it("AUTH-handoff-19 rejects oversized scope JSON without resolving or storing it",async()=>{
+  const oversized=new Request("https://platform.test/api/auth/admin-scope",{
+   method:"POST",headers:{"content-type":"application/json"},
+   body:JSON.stringify({kind:"college",collegeId:college,comment:"x".repeat(2500)}),
+  });
+  const response=await POST(oversized);
+  expect(response.status).toBe(413);
+  expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  expect(await response.json()).toEqual({error:"REQUEST_TOO_LARGE"});
+  expect(resolveAdminScopeSelection).not.toHaveBeenCalled();
+  expect(response.cookies.getAll().length).toBe(0);
+ });
  it("does not cache denied scope clearing after expired session",async()=>{
   vi.mocked(getCurrentRequestContext).mockRejectedValueOnce(new Error("Revoked identity session"));
   const response=await DELETE(request("DELETE"));
