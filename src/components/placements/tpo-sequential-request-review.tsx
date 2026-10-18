@@ -45,12 +45,12 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
     <button type="button" onClick={()=>advance(false)}
      className="min-h-10 rounded border border-border px-4 text-sm font-semibold">{position+1===sequence.length?"Finish":"Next"}</button>
     <button type="button" onClick={stop}
-     className="min-h-10 rounded border border-border px-4 text-sm font-semibold">Stop and return to queue</button>
+     className="min-h-10 rounded-[9px] border border-border px-4 text-sm font-semibold">Stop and return to queue</button>
    </div>
   </div>:<div className="space-y-2">
    <p role="status" className="text-sm">This request is no longer pending on the visible page.</p>
    <button type="button" onClick={()=>advance(false)} className="min-h-10 rounded border border-border px-4">Next</button>
-   <button type="button" onClick={stop} className="ml-2 min-h-10 rounded border border-border px-4">Finish</button>
+   <button type="button" onClick={stop} className="ml-2 min-h-10 rounded-[9px] border border-border px-4">Finish</button>
   </div>}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   <p className="text-xs text-muted-foreground">This session covers the pending requests on the visible page. Each decision is independently persisted and rechecked on the server.</p>
