@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
@@ -39,31 +42,31 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
         <form action="/admin/batches" method="get" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 w-full sm:min-w-48 gap-1 text-sm font-semibold text-body">
             Program
-            <select name="programId" defaultValue={data.query.programId ?? ""}
+            <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All programs</option>
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
             Search batches
-            <input type="search" name="q" defaultValue={data.query.q}
+            <Input type="search" name="q" defaultValue={data.query.q}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-36 gap-1 text-sm font-semibold text-body">
             Status
-            <select name="status" defaultValue={data.query.status}
+            <Select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               {statuses.map(status => <option key={status} value={status}>{status === "INACTIVE" ? "Inactive (planned / archived)" : legacyAcademicStatus(status, true)}</option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
-            <select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               {[10,25,50,100].map(n=><option value={n} key={n}>{n}</option>)}
-            </select>
+            </Select>
           </label>
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
-          <button type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</button>
+          <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</Button>
+          <Button variant="secondary" type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
           <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
         </form>
       </section>
