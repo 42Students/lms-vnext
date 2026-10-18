@@ -15,6 +15,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
  const [createdThreadId,setCreatedThreadId]=useState<string|null>(null);
  const selectRef=useRef<HTMLSelectElement>(null);
  const launchRef=useRef<HTMLButtonElement>(null);
+ const inFlightRef=useRef(false);
  const draftKey="tpo-new-recruiter-message:"+actorUserId;
 
  function editMessage(value:string){
@@ -41,7 +42,8 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
  },[open,message]);
 
  async function create(){
-  if(!id||!message.trim()||message.trim().length>4000||busy)return;
+  if(!id||!message.trim()||message.trim().length>4000||busy||inFlightRef.current)return;
+  inFlightRef.current=true;
   setBusy(true);setError("");
   try{
    let threadId=createdThreadId;
@@ -65,7 +67,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
    router.push("/tpo/messages/"+encodeURIComponent(threadId));
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Couldn't start conversation.");}
-  finally{setBusy(false);}
+  finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div>
   <button ref={launchRef} type="button" className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold"
