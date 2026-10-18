@@ -173,3 +173,12 @@ The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, 
 
 
 | `src/modules/admin-ui/super-admin-hiring-report-filters-service.ts` — `getSuperAdminHiringReportFilters` | Validate selected-college parent against selected organization before loading jobs, departments, programs or cohorts | `SA-HIRING-FILTER-ORG-21` `tests/unit/chat13-hiring-filters-selected-org.test.ts` | Executable mismatch denial and scope source contract authored; SQL/CI deferred |
+
+## 2026-10-19 — strict URL paging (chat-13 follow-up; not executed)
+
+| Entrypoint | Adversarial behavior / disposition | Named test |
+|---|---|---|
+| `src/modules/placements/admin-drive-directory-model.ts` — `adminDriveDirectoryQuerySchema` | **SA-ADMIN-DRIVE-03**, DONE in source: only unsigned canonical base-10 page / rows-per-page values or direct integer values accepted; reject URL arrays, hexadecimal, exponent, whitespace, blank, leading zero, Boolean and unexpected filter keys. Canonical valid filter links round-trip through `adminDriveDirectoryHref`. | `tests/unit/chat13-admin-directory-strict-url-paging.test.ts` / `SA-ADMIN-DRIVE-03` |
+| `src/modules/placements/admin-company-directory-model.ts` — `adminCompaniesQuerySchema` | **SA-COMPANY-DIRECTORY-03**, DONE in source: same strict canonical page values for selected-college relationship search, with original 10,000 page cap and all existing scope/relationship filters retained. | `tests/unit/chat13-admin-directory-strict-url-paging.test.ts` / `SA-COMPANY-DIRECTORY-03` |
+
+The reader pages already use `safeParse` and a recoverable invalid-filter UI. These are behavioural unit regressions authored against the parser and href, **not** executed browser/DB tests. Super Admin placement service coverage remains incomplete until every route, query, multi-session race and CSV report is exercised in PostgreSQL.
