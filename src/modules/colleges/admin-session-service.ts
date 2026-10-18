@@ -17,7 +17,10 @@ async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userId
  requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
  const [member]=await getDb().select({id:collegeMemberships.id,name:users.displayName})
   .from(collegeMemberships)
-  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  // Disabling a user must not make their remaining device sessions
+  // impossible to inspect or revoke. Target identity and role remain
+  // college-scoped, while the ACTING Super Admin must still be ACTIVE.
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"])))
   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.userId,userId),
