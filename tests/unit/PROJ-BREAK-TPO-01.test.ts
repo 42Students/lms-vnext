@@ -108,3 +108,22 @@ describe("PROJ-BREAK-TPO-02 truthful self-reported portfolio counts",()=>{
   expect(facts.phoneMasked).toBe("••••9999");
  });
 });
+
+describe("PROJ-BREAK-TPO-03 malicious learner profile links",()=>{
+ it("never counts rejected Javascript, credential-bearing or plain HTTP URLs as a valid portfolio link",async()=>{
+  const {tpoStudentProfileFacts}=await import("@/modules/placements/tpo-student-profile-facts");
+  const unsafe=tpoStudentProfileFacts({socialProfiles:{
+   githubUrl:"javascript:alert(1)",linkedinUrl:"http://insecure.example",
+   portfolioUrl:"https://user:password@example.com/secret",
+  }});
+  expect(unsafe.links).toBe(false);
+  expect(unsafe.github).toBeNull();
+  expect(unsafe.linkedIn).toBeNull();
+  expect(unsafe.portfolio).toBeNull();
+  const valid=tpoStudentProfileFacts({socialProfiles:{
+   githubUrl:"https://github.com/example",
+  }});
+  expect(valid.links).toBe(true);
+  expect(valid.github).toBe("https://github.com/example");
+ });
+});
