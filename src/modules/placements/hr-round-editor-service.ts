@@ -3,7 +3,7 @@ import {and,eq,gt,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanies,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,placementJobRoundEvents,
- placementRoundResults,activityEvents,colleges} from "@/db/schema";
+ placementRoundResults,activityEvents,colleges,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
@@ -31,6 +31,7 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
    .innerJoin(placementCompanies,and(
     eq(placementCompanies.id,placementCompanyRelationships.companyId),
     eq(placementCompanies.status,"ACTIVE")))
+   .innerJoin(users,and(eq(users.id,context.user.id),eq(users.platformStatus,"ACTIVE")))
    .innerJoin(placementRecruiterProfiles,and(
     eq(placementRecruiterProfiles.userId,context.user.id),
     eq(placementRecruiterProfiles.companyId,placementCompanyRelationships.companyId),
@@ -130,6 +131,7 @@ export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:un
   .innerJoin(placementCompanies,and(
    eq(placementCompanies.id,placementCompanyRelationships.companyId),
    eq(placementCompanies.status,"ACTIVE")))
+  .innerJoin(users,and(eq(users.id,context.user.id),eq(users.platformStatus,"ACTIVE")))
   .innerJoin(placementRecruiterProfiles,and(
    eq(placementRecruiterProfiles.userId,context.user.id),
    eq(placementRecruiterProfiles.companyId,placementCompanyRelationships.companyId),
