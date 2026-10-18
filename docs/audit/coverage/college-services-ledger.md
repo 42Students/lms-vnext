@@ -204,3 +204,6 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 | `PUT /api/admin/colleges/[collegeId]/signin` | `tests/unit/chat4-superadmin-tenant-route-guards.test.ts` | Real handler with service mock: mismatched path/body college, cross-site mutation blocked, validated success and private no-store policy |
 | `GET/POST /api/admin/colleges/[collegeId]/sessions` | same | Real handlers: GET validates userId and does not call revocation, POST enforces same-origin, exact user ID, literal confirmation, unknown-key rejection and private response |
 | `GET /api/admin/tenants/export` | same | Real handler: duplicate/unrecognized filters and forged organization rejected before read, private no-store and nosniff CSV headers, row-cap/truncation metadata and no mutation |
+
+
+| `getSectionOperationsWorkspace` role restriction | `chat4-college-section-workspace-tenant.test.ts` | College Admin `academics.manage` required before full learner/faculty pickers; learners, faculty and mentors denied even when they have generic `academics.read`; no private roster queries on denial |
