@@ -115,7 +115,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
     </div>
     {error && <p role="alert" className="text-sm text-error">{error}</p>}
     {saved && <p role="status" className="text-sm font-semibold text-primary-text">Profile updated successfully.</p>}
-    <button type="submit" disabled={saving} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+    <button type="submit" disabled={saving} className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
       {saving ? "Saving…" : "Save profile"}
     </button>
   </form>;

@@ -48,11 +48,11 @@ export function CollegeDepartmentInsights({
       actions={<>
         {attendance ? <a href={"/api/attendance/admin/departments/export" +
           (data.query.q ? "?q=" + encodeURIComponent(data.query.q) : "")}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
           Export CSV
         </a> : null}
         <Link href={attendance ? "/college/attendance" : "/college/placements"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
           {attendance ? "Attendance workspace" : "Placements workspace"}
         </Link>
       </>}
@@ -77,10 +77,10 @@ export function CollegeDepartmentInsights({
           Department name
           <input name="q" type="search" maxLength={100} defaultValue={data.query.q}
             placeholder="Search your college"
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-        <Link href={path} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
+        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+        <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
     </section>
     <section aria-label="Department evidence results" className="min-w-0 rounded-xl border border-border bg-surface">
@@ -98,10 +98,10 @@ export function CollegeDepartmentInsights({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 py-2 font-semibold text-primary-text"
           href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page - 1 })}>Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 py-2 font-semibold text-primary-text"
           href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page + 1 })}>Next</Link> : null}
       </div>
     </nav>
