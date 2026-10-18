@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -16,9 +17,9 @@ export function SuperAdminTemplateArchiveControl({templateId,title,status}:{
   }catch(e){setError(e instanceof Error?e.message:"Unable to archive template");}
   finally{setBusy(false);}
  }
- return <span><button type="button" disabled={busy} onClick={()=>void archive()}
+ return <span><Button type="button" variant="secondary" disabled={busy} onClick={()=>void archive()}
     className="text-xs">
-    {busy?"Archiving…":"Archive"}</button>
+    {busy?"Archiving…":"Archive"}</Button>
     {error?<span role="alert" className="block text-xs text-error">{error}</span>:null}
   </span>;
 }
