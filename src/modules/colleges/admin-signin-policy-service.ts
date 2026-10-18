@@ -14,15 +14,22 @@ import {signInPolicyReadState} from "./signin-policy-read-model";
 export async function readAdminCollegeSignInPolicy(context:RequestContext,collegeId:unknown){
  const college=await getSuperAdminTenantLifecycleDetail(context,collegeId);
  requirePermission(context,"college.read",{organizationId:college.organizationId,collegeId:college.id});
- const db=getDb();
- const present=await db.execute(sql<{found:boolean}>`SELECT to_regclass('public.college_signin_policies') IS NOT NULL AS found`);
- if(present.rows[0]?.found!==true)return {college,policy:signInPolicyReadState(false,null)};
- const [row]=await db.select({
-  method:collegeSignInPoliciesStaged.method,
-  version:collegeSignInPoliciesStaged.version,
-  updatedAt:collegeSignInPoliciesStaged.updatedAt,
- }).from(collegeSignInPoliciesStaged).where(eq(collegeSignInPoliciesStaged.collegeId,college.id)).limit(1);
- return {college,policy:signInPolicyReadState(true,row?.method??null),version:row?.version??null,updatedAt:row?.updatedAt??null};
+ // Even a read-only college policy can be accessed through a stale Super
+ // Admin request snapshot after the user's account/system role was disabled.
+ // Rebuild authority under locks held for the entire scoped policy read.
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"college.read",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
+  const present=await tx.execute(sql<{found:boolean}>`SELECT to_regclass('public.college_signin_policies') IS NOT NULL AS found`);
+  if(present.rows[0]?.found!==true)return {college,policy:signInPolicyReadState(false,null)};
+  const [row]=await tx.select({
+   method:collegeSignInPoliciesStaged.method,
+   version:collegeSignInPoliciesStaged.version,
+   updatedAt:collegeSignInPoliciesStaged.updatedAt,
+  }).from(collegeSignInPoliciesStaged).where(eq(collegeSignInPoliciesStaged.collegeId,college.id)).limit(1);
+  return {college,policy:signInPolicyReadState(true,row?.method??null),version:row?.version??null,updatedAt:row?.updatedAt??null};
+ });
 }
 
 export class CollegeSignInPolicyError extends Error {

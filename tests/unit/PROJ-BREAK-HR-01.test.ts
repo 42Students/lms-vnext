@@ -61,6 +61,14 @@ describe("PROJ-BREAK-HR-01: HR/Recruiter cannot traverse college project member 
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   expect(mocks.select).toHaveBeenCalledTimes(1);
  });
+ it("PROJ-BREAK-HR-ORG-02 denies mismatched organization context before project-member SQL",async()=>{
+  const forged={...tpo,membership:{...tpo.membership,
+   organizationId:"123e4567-e89b-42d3-a456-426614174099"}};
+  await expect(requireProjectReadAccess(forged as never,projectId))
+   .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  expect(mocks.select).toHaveBeenCalledTimes(1);
+  expect(mocks.moduleAccess).not.toHaveBeenCalled();
+ });
  it("denies inactive or removed college memberships before member table access",async()=>{
   for(const membership of [null,{...tpo.membership,status:"SUSPENDED"}]){
    mocks.queries=[[jobProject]];

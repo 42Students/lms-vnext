@@ -596,3 +596,26 @@ These paths require one test row **per exported function** after parsing each fi
 | `src/modules/placements/recruiter-today-waiting-model.ts` | `recruiterTodayWaitingRequests` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/recruiter-today-week-events-model.ts` | `recruiterTodayWeekEvents` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/recruiter-workspace-service.ts` | `getRecruiterPlacementWorkspace` | **OPEN** — test and role matrix not verified |
+
+
+## 2026-10-18 chat-15 additional executable-contract evidence (not CI-certified)
+
+| Gap / function or route | Test file / named assertions | Cases authored | Remaining required acceptance |
+|---|---|---|---|
+| HR-SLOT-ACTOR-01 / `canRecruiterMutateOwnSlot` | `tests/unit/hr-interview-slot-model.test.ts` / `HR-SLOT-ACTOR-01` | Exact same owner allowed; empty/whitespace/mismatched owners denied | Database-side role, membership revocation and real HTTP denial |
+| HR-SLOT-STATE-02 / `slotTransitionAllowed` | `tests/unit/hr-interview-slot-model.test.ts` / `HR-SLOT-STATE-02` | All disallowed terminal transitions; capacity exhausted; invalid booked counts; allowed OFFER/BOOK/CANCEL stages | Concurrent capacity limit enforced in PostgreSQL transaction |
+| HR-ROUND-INPUT-01 / `editHrJobRound` validation | `tests/unit/HR-BREAK-chat15-round-service-03.test.ts` / `HR-ROUND-INPUT-01` | Malformed UUID, forbidden mutation keys, invalid action/version rejected before DB | API size and same-origin request tests; HTTP error recovery |
+| HR-ROUND-CREATE-01, HR-ROUND-CREATE-02 / `editHrJobRound` | same test / `HR-ROUND-CREATE-01`, `HR-ROUND-CREATE-02` | Transactional create emits one event and notification; canonical duplicate and 12-stage cap reject writes | Real SQL uniqueness/parallel insertion, event rollback on notification failure |
+| HR-ROUND-REMOVE-01, HR-ROUND-REMOVE-02 / `editHrJobRound` | same test / `HR-ROUND-REMOVE-01`, `HR-ROUND-REMOVE-02` | Own PENDING round can cancel; existing result/slot blocks cancellation | Concurrent results arrival, SQL CAS and audit persistence in PostgreSQL |
+| HR-BREAK-profile-01 / `isExactRecruiterEmployerRow` | `tests/unit/HR-BREAK-profile-01.test.ts` / identical college ID relationship mismatch case | Fixture now statically typed to the complete `RecruiterContext.grants` shape; preserves multi-college denial checks | CI test-typecheck and revoked grant / relationship database query |
+
+The previously recorded 154-file inventory is not exhaustive behavioural certification; **OPEN** rows stay open until full role-state/tenancy/transactional assertions and CI execution are reviewed. Branch updates are not evidence of a production deploy.
+
+## IIT Dharwad Projects HR-view role boundary (2026-10-18)
+
+| Risk | Evidence | State |
+|---|---|---|
+| PROJ-BREAK-HR-ORG-02: identical college ID with foreign organization | `requireProjectReadAccess` checks membership college **and** membership organization against authoritative project-college scope before project-member lookup. `tests/unit/PROJ-BREAK-HR-01.test.ts` rejects a forged organization context and checks no project membership SELECT or module access. | SOURCE FIX + TEST AUTHORED, not executed |
+| HR/recruiter hiring grant without project membership | `PROJ-BREAK-HR-01` tests no college member, wrong tenant, suspended membership, revoked/inactive recruiter context, and lifecycle denial. | TEST AUTHORED; real database ownership and expired-session checks OPEN |
+
+No HR/Recruiter account obtains Projects access merely through employer/drive grants. Actual PostgreSQL member rows, role revocation and parallel session tests are still required for the IIT Dharwad acceptance gate.

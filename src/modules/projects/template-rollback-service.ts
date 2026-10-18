@@ -4,6 +4,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectTemplates,projectTemplateVersions} from "@/db/schema";
 import {requirePermission} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import type {RequestContext} from "@/modules/identity/context";
 import {ProjectsServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -23,6 +24,10 @@ export async function rollbackProjectTemplate(context:RequestContext,templateIdI
   const [template]=await tx.select().from(projectTemplates)
     .where(eq(projectTemplates.id,templateId)).for("update").limit(1);
   if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+  // Session roles may have been revoked since this request authenticated.
+  // Re-check the persisted Super Admin status under SHARE locks inside
+  // this same parent-row-locked transaction before inserting a new version.
+  await assertPersistedPlatformPermission(tx,context,"project-template.manage");
   if(template.status==="ARCHIVED"||template.currentVersion!==input.expectedTemplateVersion)
    throw new ProjectsServiceError("PROJECT_TEMPLATE_STALE_VERSION");
   const [prior]=await tx.select().from(projectTemplateVersions)
