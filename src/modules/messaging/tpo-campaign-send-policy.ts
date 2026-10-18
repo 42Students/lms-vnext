@@ -1,3 +1,5 @@
+import {isValidRecipient} from "./model";
+
 /** T-S2-04: the delivery gate must recheck current lead facts at dispatch. */
 export const TPO_CAMPAIGN_MAX_RECIPIENTS=500;
 export type CampaignRecipientFact={
@@ -9,7 +11,7 @@ export type CampaignRecipientFact={
 export function campaignRecipientDisposition(value:CampaignRecipientFact):
   "ELIGIBLE"|"NO_EMAIL"|"UNSUBSCRIBED"|"BOUNCED"|"NOT_NOW" {
   if(value.unsubscribedAt)return "UNSUBSCRIBED";
-  if(!value.emailNorm?.trim())return "NO_EMAIL";
+  if(!value.emailNorm?.trim() || !isValidRecipient("EMAIL",value.emailNorm.trim()))return "NO_EMAIL";
   if(value.inviteBouncedAt)return "BOUNCED";
   if(value.manualStage==="NOT_NOW")return "NOT_NOW";
   return "ELIGIBLE";

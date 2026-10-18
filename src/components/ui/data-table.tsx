@@ -38,31 +38,39 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
     columns.find(col=>col.mobilePriority===undefined || col.mobilePriority==="secondary");
   const actions=columns.filter(col=>col.mobilePriority==="action");
-  const mapped=(col:DataTableColumn<Row>)=>col.mobilePriority==="hidden" &&
-    Boolean(col.mobileHiddenReason && col.mobileDetail?.fieldKey.trim()) &&
-    rows.every(row=>{
-      if(!col.mobileDetail?.canView(row))return false;
-      const href=col.mobileDetail.href(row);
-      return isSafeInternalHref(href) && href.length>1;
-    });
-  const recoverable=columns.filter(mapped);
+  // Access is evaluated PER ROW. A single denied record must not turn a
+  // hidden field into a mobile "More details" fallback for every record.
+  const recoverable=columns.filter(col=>col.mobilePriority==="hidden" &&
+    Boolean(col.mobileHiddenReason && col.mobileDetail?.fieldKey.trim()));
   const secondary=columns.filter(col=>col.key!==primary?.key &&
     col.mobilePriority!=="action" && col.mobilePriority!=="hidden");
   const shown=secondary.slice(0,3);
   const extra=[...secondary.slice(3),
-    ...columns.filter(col=>col.mobilePriority==="hidden" && !mapped(col))];
+    ...columns.filter(col=>col.mobilePriority==="hidden" && !col.mobileDetail)];
   const visibleOnPhone=new Set([primary?.key,...shown.map(c=>c.key),...actions.map(c=>c.key)]);
   // One row/column DOM tree, one cell formatter call: no duplicated 100-row
   // responsive subtree. Only collapsed secondary fields are repeated in
   // the accessible More details disclosure where the phone requires them.
-  const prepared=rows.map(row=>({
-    key:getRowKey(row),row,
-    detailHref:(()=>{
-      const href=rowHref?.(row);
-      return href && isSafeInternalHref(href) ? href : null;
-    })(),
-    cells:new Map(columns.map(col=>[col.key,col.cell(row)] as const)),
-  }));
+  const prepared=rows.map(row=>{
+    const detailAccess=new Map(columns.filter(col=>col.mobileDetail).map(col=>
+      [col.key, col.mobileDetail!.canView(row)] as const));
+    const detailLinks=new Map(recoverable.map(col=>{
+      const href=detailAccess.get(col.key) ? col.mobileDetail!.href(row) : null;
+      return [col.key, href && isSafeInternalHref(href) && href.length>1 ? href : null] as const;
+    }));
+    return {
+      key:getRowKey(row),row,detailLinks,
+      detailHref:(()=>{
+        const href=rowHref?.(row);
+        return href && isSafeInternalHref(href) ? href : null;
+      })(),
+      // Never evaluate or serialize a hidden restricted formatter for an
+      // actor who cannot view the linked field.
+      cells:new Map(columns.map(col=>[col.key,
+        col.mobilePriority==="hidden" && col.mobileDetail && !detailAccess.get(col.key)
+          ? null : col.cell(row)] as const)),
+    };
+  });
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
   return <div data-slot="data-table" className="min-w-0">
     <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 sm:rounded-xl sm:border sm:border-border">
@@ -97,12 +105,13 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
                 </div>)}</dl>
               </Disclosure>
             </td>:null}
-            {recoverable.length ? <td className="block min-w-0 py-1 sm:hidden">
+            {[...item.detailLinks.values()].some(Boolean) ? <td className="block min-w-0 py-1 sm:hidden">
               <ul className="space-y-2" aria-label="Fields on detail page">
-                {recoverable.map(col=><li key={col.key}><Link href={col.mobileDetail!.href(item.row)}
-                  className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
-                  {col.mobileLabel??col.header} · View details
-                </Link></li>)}
+                {recoverable.filter(col=>item.detailLinks.get(col.key)).map(col=>
+                  <li key={col.key}><Link href={item.detailLinks.get(col.key)!}
+                    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+                    {col.mobileLabel??col.header} · View details
+                  </Link></li>)}
               </ul>
             </td>:null}
             {item.detailHref ? <td className="block min-w-0 py-1 sm:hidden">
