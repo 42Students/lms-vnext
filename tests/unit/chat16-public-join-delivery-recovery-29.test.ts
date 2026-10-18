@@ -23,7 +23,7 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
     const select = vi.fn(() => ({ from: vi.fn(() => ({ where })) }));
     vi.mocked(getDb).mockReturnValue({ select } as never);
     expect(await lookupDeliveredJoinCompanyName("recruiter@team.example.org"))
-      .toBe("Verified Company");
+      .toEqual({ companyName: "Verified Company" });
     const sql = new PgDialect().sqlToQuery(predicate as never);
     expect(sql.params).toContain("example.org");
     expect(sql.params).toContain("ACTIVE");
@@ -37,12 +37,14 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
       }),
     } as never);
     expect(await lookupDeliveredJoinCompanyName("recruiter@team.example.org"))
-      .toBeNull();
+      .toEqual({ companyName: null });
   });
 
   it("REC-JOIN-DELIVERY-08 invalid or personal email cannot query company directory", async () => {
-    expect(await lookupDeliveredJoinCompanyName("not-an-email")).toBeNull();
-    expect(await lookupDeliveredJoinCompanyName("personal@gmail.com")).toBeNull();
+    expect(await lookupDeliveredJoinCompanyName("not-an-email"))
+      .toEqual({ companyName: null });
+    expect(await lookupDeliveredJoinCompanyName("personal@gmail.com"))
+      .toEqual({ companyName: null });
     expect(getDb).not.toHaveBeenCalled();
   });
 
@@ -56,7 +58,7 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
     }));
     vi.mocked(getDb).mockReturnValue({ select } as never);
     expect(await lookupDeliveredJoinCompanyName("recruiter@team.example.org"))
-      .toBeNull();
+      .toEqual({ companyName: null });
   });
   it("REC-JOIN-DELIVERY-10 returns success after delivered challenge even when optional company lookup fails", async () => {
     const linkId = "11111111-1111-4111-8111-111111111111";
