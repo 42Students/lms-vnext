@@ -1,9 +1,7 @@
-# UI/UX review: /college/attendance/corrections
+# UX review: /college/attendance/corrections
 
-Before: responsive interactions and table reading needed stronger minimum sizing or overflow containment.
-
-Changed: page overflow containment at mobile widths; sticky table labels on long scrolling datasets. Existing legacy headings and actions remain unchanged. Source: `src/app/(authenticated)/college/attendance/corrections/page.tsx`.
-
-States preserved: existing loading, empty, error, validation, authorization and submit flows, where present. Outstanding browser verification: 320px widths, keyboard traversal, contrast and focus order.
-
-Regression: `tests/unit/chat4-college-ux-round2.test.ts` test `UX-college-attendance-corrections-01`. Tests not executed; checklist remains unticked.
+- Route: `src/app/(authenticated)/college/attendance/corrections/page.tsx`. Owner: chat-4, first half of /college.
+- Legacy wording: retained verbatim, including heading, controls, errors and action labels.
+- Source changes: primary foreground contrast; accessible deep-teal links; bounded table scrolling; horizontal overflow containment.
+- States: existing scoped reads, empty/error/partial notices, controls and navigation preserved. No direct DataTable; delegated directory owns its empty-state copy.
+- Test authored: `tests/unit/UX-college-college-attendance-corrections-01.test.ts`; device, WebView, CI and browser checks pending.

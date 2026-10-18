@@ -6,3 +6,7 @@
 - **Contract:** Signed-off UX Playbook; exact legacy titles and actions preserved. Use shared DataTable only with explicit caller-owned `empty` copy.
 - **Source verification:** `tests/unit/ux-admin-chat9-batch-01.test.ts`, `UX-admin-placements-student-lookup-01`.
 - **Validation:** Source test authored; TypeScript, lint, Vitest and browser/device checks pending orchestrator run. Do not mark page accepted until those pass.
+
+## Follow-up implementation
+
+Scope-missing search now disabled with input aria-describedby connected to the existing status explanation; the existing Analytics link gets a 44px keyboard target. Regression assertions in the named UX batch test now cover the shared contract. Execution remains pending orchestrator.

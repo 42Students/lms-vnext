@@ -106,9 +106,9 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
          {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </select>
        </label>
-       <button className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link>
-       <Link href={href(page)} className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Refresh</Link>
+       <button className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground">Search</button>
+       <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">Clear search</Link>
+       <Link href={href(page)} className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">Refresh</Link>
       </form>
       <p role="status" className="text-sm text-body">{q?matching.length+" of "+organizations.length:organizations.length} organizations · Page {page} of {totalPages}</p>
       {organizations.length===0 ? <EmptyState title="No organizations in this scope" description="There are no active organizations visible under the current Super Admin safety scope. Create one only when your role and scope permit it."/> : null}
@@ -126,8 +126,8 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>} columns={columns} rows={visible} getRowKey={(organization)=>organization.id}/>
       </div>
       <nav aria-label="Organization pages" className="flex flex-wrap gap-3 text-sm">
-       {page>1?<Link href={href(page-1)} className="min-h-10 rounded border border-border px-3 py-2">Previous</Link>:null}
-       {page<totalPages?<Link href={href(page+1)} className="min-h-10 rounded border border-border px-3 py-2">Next</Link>:null}
+       {page>1?<Link href={href(page-1)} className="min-h-11 rounded border border-border px-3 py-2">Previous</Link>:null}
+       {page<totalPages?<Link href={href(page+1)} className="min-h-11 rounded border border-border px-3 py-2">Next</Link>:null}
       </nav>
     </div>
   );

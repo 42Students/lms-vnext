@@ -15,7 +15,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  const params=await searchParams;
  const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status)??"NEW",q:one(params.q),recipient:one(params.recipient),page:one(params.page)});
  if(!parsed.success)return <div className="space-y-6">{header}
-   <div role="alert" className="rounded-xl border border-border p-5">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-primary-text">Reset</Link></div></div>;
+   <div role="alert" className="rounded-xl border border-border p-5">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-[var(--lms-teal-deep)]">Reset</Link></div></div>;
  const data=await listInboundMailForAdmin(context,parsed.data);
  if(!data.available)return <div className="space-y-6">{header}
   <div role="status" className="rounded-xl border border-border bg-surface p-5">
@@ -39,7 +39,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <nav aria-label="Inbound mail views" className="flex flex-wrap gap-2">{tabs.map(tab=>{
    const url=new URLSearchParams(base);url.set("status",tab.value);
    return <Link key={tab.value} href={"/admin/inbound-mail?"+url.toString()} aria-current={parsed.data.status===tab.value?"page":undefined}
-    className={parsed.data.status===tab.value?"min-h-11 rounded-md bg-primary px-4 py-3 text-sm font-semibold text-on-primary":"min-h-11 rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text"}>
+    className={parsed.data.status===tab.value?"min-h-11 rounded-md bg-primary px-4 py-3 text-sm font-semibold text-foreground":"min-h-11 rounded-md border border-border px-4 py-3 text-sm font-semibold text-[var(--lms-teal-deep)]"}>
     {tab.label}{tab.count!==null&&tab.count!==undefined?" ("+tab.count+")":""}
    </Link>})}</nav>
   <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
@@ -51,7 +51,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
     <select name="status" defaultValue={parsed.data.status} className="mt-1 min-h-11 w-full rounded-md border border-border px-3">
      <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
     </select></label>
-   <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+   <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
    <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
   </form>
   <InboundMailList rows={data.items.map(x=>({
@@ -61,9 +61,9 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <nav aria-label="Inbox pages" className="flex flex-wrap justify-between gap-3 text-sm">
    <span>{data.total===null?"Page "+data.page:data.total+" matching messages · Page "+data.page+" of "+totalPages}</span><div className="flex flex-wrap gap-3">
    {pageNumbers.map(n=><Link key={n} href={next(n)} aria-current={n===data.page?"page":undefined}
-     className={n===data.page?"min-h-10 rounded border border-primary bg-primary-subtle px-3 py-2 text-primary-text":"min-h-10 rounded border border-border px-3 py-2"}>{n}</Link>)}
-   {data.page>1?<Link className="inline-flex min-h-10 items-center rounded-md border px-3" href={next(data.page-1)}>Previous</Link>:null}
-   {data.hasMore?<Link className="inline-flex min-h-10 items-center rounded-md border px-3" href={next(data.page+1)}>Next</Link>:null}
+     className={n===data.page?"min-h-11 rounded border border-primary bg-primary-subtle px-3 py-2 text-[var(--lms-teal-deep)]":"min-h-11 rounded border border-border px-3 py-2"}>{n}</Link>)}
+   {data.page>1?<Link className="inline-flex min-h-11 items-center rounded-md border px-3" href={next(data.page-1)}>Previous</Link>:null}
+   {data.hasMore?<Link className="inline-flex min-h-11 items-center rounded-md border px-3" href={next(data.page+1)}>Next</Link>:null}
    </div>
   </nav>
  </div>;

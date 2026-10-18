@@ -37,7 +37,7 @@ export default async function MentorTeamHistoryPage({
   const context = await getCurrentRequestContext();
   const data = await getMentorTeamHistory(context, parsed.data);
   const back = "/mentor/projects/" + encodeURIComponent(projectId) + "?tab=team";
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project Team" title="Team membership history"
       description={data.title + " · Registered team join/end records"}
       actions={<Link href={back}
@@ -54,25 +54,25 @@ export default async function MentorTeamHistoryPage({
           <input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-1 text-sm font-semibold text-body">Registered role
             <select name="role" defaultValue={data.query.role}
-              className="min-h-10 rounded-md border border-border bg-background px-3">
+              className="min-h-11 rounded-md border border-border bg-background px-3">
               <option value="ALL">All roles</option>
               <option value="MENTOR">Mentors</option><option value="LEARNER">Learners</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Primary Mentor record
             <select name="primary" defaultValue={data.query.primary}
-              className="min-h-10 rounded-md border border-border bg-background px-3">
+              className="min-h-11 rounded-md border border-border bg-background px-3">
               <option value="ALL">All team records</option><option value="PRIMARY">Recorded primary Mentors only</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Assignment chronology
             <select name="order" defaultValue={data.query.order}
-              className="min-h-10 rounded-md border border-border bg-background px-3">
+              className="min-h-11 rounded-md border border-border bg-background px-3">
               <option value="OLDEST">Earliest started first</option>
               <option value="NEWEST">Most recent started first</option>
             </select>
           </label>
-          <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
             Filter role
           </button>
         </form>

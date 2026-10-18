@@ -5,6 +5,6 @@
 - **Changes:** reviewed and tightened this route's page-level spacing/containment, responsive minimum width, applicable 44px control targets and 4.5:1 deep-teal text-link colour. Corrected nested landmarks where present. The existing title, field names, help text, return destinations, role and tenant checks, mutation confirmation and server-side effects remain unchanged.
 - **States:** existing route `loading.tsx` retains the loading contract; route-specific not-found, read-only and recorded-data empty/partial cases continue to use the established server checks rather than fabricated records. No new optimistic action or silent data hiding.
 - **Tests:** `tests/unit/chat5-ux-tpo-middle-third.test.ts` — `UX-tpo-placements-jobs-jobid-candidate-schedule-01`. Source and accessible presentation checks; browser/320px native-WebView, keyboard/screen-reader and full Vitest evidence must be supplied by orchestrator before page-list checkoff.
-- **DataTable contract:** no `DataTable` is instantiated directly in this route; if moved to it later, pass explicit legacy-scoped `empty` copy.
+- **DataTable contract:** migrated the former min-width 50rem schedule table to the approved responsive `DataTable`, preserving all six recorded fields on phone via its labelled card and More details disclosure; passed explicit existing empty copy rather than relying on a default message.
 
-**Status:** Source update or existing-route preservation authored on branch; runtime and device acceptance pending.
+**Status:** Responsive schedule table migration authored on branch; Vitest/strict TypeScript and device acceptance pending.

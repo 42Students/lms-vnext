@@ -33,11 +33,11 @@ export default async function MentorReportsPage({searchParams}:{
     ["Meeting requests",data.attentionCounts.REQUESTED],
     ["Meetings soon",data.attentionCounts.MEETING_SOON],
   ] as const;
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Reports" title="Assigned Project reports"
       description="Persisted project states and actionable attention across your current assigned workspaces."
       actions={<Link href="/mentor/projects"
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Projects list
       </Link>}/>
     {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
@@ -75,18 +75,18 @@ export default async function MentorReportsPage({searchParams}:{
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Project title
           <input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-10 rounded-md border border-border bg-background px-3"/>
+            className="min-h-11 rounded-md border border-border bg-background px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Status
           <select name="status" defaultValue={data.query.status}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             {(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Attention
           <select name="attention" defaultValue={data.query.attention}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All</option>
             <option value="REVIEW">Review</option>
             <option value="STALLED">Stalled</option>
@@ -96,14 +96,14 @@ export default async function MentorReportsPage({searchParams}:{
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded tasks
-          <select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All tasks</option><option value="NO_TASKS">No tracked tasks</option>
             <option value="OPEN_TASKS">Unfinished tasks</option><option value="ALL_DONE">All registered tasks done</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Mentor assignment
           <select name="assignment" defaultValue={data.query.assignment}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All assigned projects</option>
             <option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
@@ -111,14 +111,14 @@ export default async function MentorReportsPage({searchParams}:{
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Report order
           <select name="order" defaultValue={data.query.order}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="UPDATED">Recently updated</option>
             <option value="TITLE_AZ">Project title A–Z</option>
             <option value="TITLE_ZA">Project title Z–A</option>
             <option value="TASK_PROGRESS">Least registered task progress first</option>
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
         <Link href="/mentor/reports" className="text-sm font-semibold text-primary-text underline">Clear</Link>
@@ -131,7 +131,7 @@ export default async function MentorReportsPage({searchParams}:{
             assignment:data.query.assignment,order:data.query.order,
             search:data.query.search,
           }).toString()} download
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
           Export filtered project report CSV (max 100)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -160,9 +160,9 @@ export default async function MentorReportsPage({searchParams}:{
             </p>
             <div className="mt-3 flex flex-wrap gap-3 text-sm">
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)}
-                className="min-h-10 font-semibold text-primary-text underline">Open project</Link>
+                className="min-h-11 font-semibold text-primary-text underline">Open project</Link>
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)+"/risk-readiness"}
-                className="min-h-10 font-semibold text-primary-text underline">Risk / readiness</Link>
+                className="min-h-11 font-semibold text-primary-text underline">Risk / readiness</Link>
             </div>
           </li>)}</ol>}
       <nav aria-label="Mentor report pages" className="flex items-center justify-between gap-3">

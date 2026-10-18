@@ -210,7 +210,7 @@ function RecruiterCalendarEventCard({
       {href ? (
         <Link
           href={href}
-          className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
         >
           Open hiring drive →
         </Link>
@@ -291,7 +291,7 @@ export default async function HrCalendarPage({
       : monthLabel(anchor);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         eyebrow="Recruiter"
         title="Calendar"
@@ -299,7 +299,7 @@ export default async function HrCalendarPage({
         actions={
           <Link
             href="/hr/placements"
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
           >
             Drives →
           </Link>
@@ -327,7 +327,7 @@ export default async function HrCalendarPage({
 
           <Link
             href="/hr/home"
-            className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
+            className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
           >
             Return to Today →
           </Link>
@@ -429,8 +429,8 @@ export default async function HrCalendarPage({
                     }
                     className={
                       view === option
-                        ? "inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold capitalize text-on-primary"
-                        : "inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-primary-text"
+                        ? "inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold capitalize text-on-primary"
+                        : "inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-primary-text"
                     }
                   >
                     {option}
@@ -451,14 +451,14 @@ export default async function HrCalendarPage({
                     ? "Previous week"
                     : "Previous month"
                 }
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 ← Previous
               </Link>
 
               <Link
                 href={calendarHref(today, view, category)}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Today
               </Link>
@@ -470,7 +470,7 @@ export default async function HrCalendarPage({
                     ? "Next week"
                     : "Next month"
                 }
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Next →
               </Link>
@@ -724,7 +724,7 @@ export default async function HrCalendarPage({
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due</p>
                         <h4 className="mt-2 font-semibold text-foreground">{item.roundName}</h4>
                         <p className="mt-1 text-sm text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</p>
-                        <Link href={hrResultsDueHref(item.jobId,item.id)} className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+                        <Link href={hrResultsDueHref(item.jobId,item.id)} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
                           Open hiring rounds →
                         </Link>
                       </article>

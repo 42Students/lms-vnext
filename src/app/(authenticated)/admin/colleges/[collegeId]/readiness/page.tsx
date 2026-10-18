@@ -114,10 +114,10 @@ export default async function CollegeReadinessPage({
 
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <Link
         href="/admin/colleges"
-        className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
       >
         ← Colleges
       </Link>
@@ -139,12 +139,12 @@ export default async function CollegeReadinessPage({
         }
       />
 
-      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export all persisted readiness checks (CSV) →</Link>
+      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export all persisted readiness checks (CSV) →</Link>
       <p className="text-xs text-muted-foreground">Export includes all ten persisted checks even when the page filter hides some; runtime verification is not certified.</p>
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
         >
           Recheck persisted readiness →
         </Link>
@@ -189,7 +189,7 @@ export default async function CollegeReadinessPage({
         ))}
       </section>
 
-      <section aria-label="Must fix before launch" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section aria-label="Must fix before launch" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-lg font-semibold text-foreground">Must fix before launch</h2>
         {mustFix.length===0
           ?<p role="status" className="text-sm text-body">All persisted readiness checks pass. Runtime DNS, login, teaching and placement verification are still required before launch.</p>
@@ -197,7 +197,7 @@ export default async function CollegeReadinessPage({
             {mustFix.map(check=><li key={check.id}>
               <span className="font-semibold">{check.label} — {check.status==="FAIL"?"Not ready":"Unverified"}</span>
               <p className="mt-1">{check.remediation}</p>
-              <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text underline"
+              <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline"
                href={readinessRemediationLink(check.id,college.id)}>Fix or verify this requirement →</Link>
             </li>)}
           </ul>}
@@ -234,8 +234,8 @@ export default async function CollegeReadinessPage({
             <select name="area" defaultValue={parsed.area} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </select>
-          </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
-          <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
+          </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
+          <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
         </form>
         <p className="mt-2 text-xs text-muted-foreground">Showing {shownChecks.length} of {evaluation.checks.length} required checks; the overall verdict always uses all ten.</p>
         <p className="mt-2 text-sm leading-6 text-body">
@@ -282,7 +282,7 @@ export default async function CollegeReadinessPage({
                 {check.status !== "PASS" ? (
                   <p className="mb-0 mt-3 text-xs leading-5 text-muted-foreground">
                     Next step: {check.remediation}
-                    <Link href={readinessRemediationLink(check.id,college.id)} className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open related setup →</Link>
+                    <Link href={readinessRemediationLink(check.id,college.id)} className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Open related setup →</Link>
                   </p>
                 ) : null}
               </li>

@@ -36,13 +36,13 @@ export default async function CollegeDepartmentsPage() {
   });
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
         eyebrow="College Admin"
         title="Departments"
         description="Create, find, export and manage the departments in your college."
       />
-      <Link href="/college/academics" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Academic periods and sections →</Link>
+      <Link href="/college/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Academic periods and sections →</Link>
       <DepartmentCreateForm collegeId={membership.collegeId} />
       <DepartmentDirectory rows={rows} />
     </div>

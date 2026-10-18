@@ -12,10 +12,10 @@ export default async function CollegeContactDetail({params}:{params:Promise<{mem
  const contact=await getCollegeContactById(await getCurrentRequestContext(),membershipId);
  if(!contact)notFound();
  const date=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(contact.joinedAt);
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 overflow-x-clip space-y-5">
   <PageHeader eyebrow="College Admin · Contacts" title={contact.name}
    description="College-scoped public contact details. Private learner identity and contact data are not displayed."
-   actions={<Link href="/college/contacts" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Back to contacts</Link>}/>
+   actions={<Link href="/college/contacts" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Back to contacts</Link>}/>
   <section aria-label="Contact record" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-5">
    <p className="text-sm"><strong>Roles:</strong> {contact.roles.join(", ")||"None recorded"}</p>
    <p className="text-sm"><strong>College membership:</strong> {contact.status}</p>

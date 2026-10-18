@@ -79,7 +79,7 @@ export default async function CollegeGroupDetailPage({
   })) ?? [];
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
         eyebrow="Student groups"
         title={group.name}
@@ -87,7 +87,7 @@ export default async function CollegeGroupDetailPage({
         actions={
           <Link
             href="/college/groups"
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)]"
           >
             All groups
           </Link>
@@ -146,7 +146,7 @@ export default async function CollegeGroupDetailPage({
       {rule ? (
         <section className="rounded-xl border border-border bg-surface p-4">
           <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
-            className="font-semibold text-primary-text hover:underline">
+            className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
             Preview persisted membership rule (read-only)
           </Link>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -189,7 +189,7 @@ export default async function CollegeGroupDetailPage({
       {group.kind === "STUDY_GROUP" ? <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Manage members</h2>
         <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Validate member CSV (dry run)
         </Link>
         <CollegeStudyMemberActions groupId={group.id} name={group.name}

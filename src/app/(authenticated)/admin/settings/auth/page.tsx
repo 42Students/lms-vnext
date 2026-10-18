@@ -8,7 +8,7 @@ export default async function SuperAdminAuthSettings(){
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
  return <div className="min-w-0 space-y-6">
-  <Link href="/admin/settings" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← Platform settings</Link>
+  <Link href="/admin/settings" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Platform settings</Link>
   <PageHeader eyebrow="Super Admin · Platform Security" title="Authentication settings"
    description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication."/>
   <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
@@ -29,7 +29,7 @@ export default async function SuperAdminAuthSettings(){
     <code className="break-all text-xs">{spec.key}</code>
     {spec.dangerous?<span className="ml-2 text-warning-text">High impact · deployment gated</span>:null}
    </li>)}</ul>
-   <Link href="/admin/settings" className="inline-flex min-h-10 items-center text-primary-text underline">Open Global Tenant Settings editor</Link>
+   <Link href="/admin/settings" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Open Global Tenant Settings editor</Link>
   </section>
   <p className="text-xs text-muted-foreground">No credentials, cookie secrets, signing keys, permitted IPs, provider tokens or environment values are displayed or editable.</p>
  </div>;

@@ -1,6 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { useEffect,useRef,useState } from "react";
 import type { PublicJoinPreview } from "@/modules/placements/public-join/preview-model";
 import { publicJoinErrorCopy,validatePublicJoinClient } from "@/modules/placements/public-join/client-error-model";
@@ -15,6 +19,8 @@ export function PublicRecruiterJoinForm({
   token, scope, preview, blockedReason,
 }: { token: string; scope: "COLLEGE" | "COMPANY"; preview: PublicJoinPreview; blockedReason?:string|null }) {
   const hasRecordedOpen=useRef(false);
+  const submittingRef=useRef(false);
+  const errorSummaryRef=useRef<HTMLDivElement>(null);
   useEffect(()=>{
     if(preview.kind!=="READY"||hasRecordedOpen.current)return;
     hasRecordedOpen.current=true;
@@ -34,18 +40,21 @@ export function PublicRecruiterJoinForm({
   const [signInEmail,setSignInEmail]=useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+  useEffect(()=>{if(error)errorSummaryRef.current?.focus();},[error]);
   const college = preview.kind === "READY" ? preview.collegeName : "";
   const company = preview.kind === "READY" ? preview.companyDomain ?? "" : "";
   const companyLabel = preview.kind === "READY"
     ? preview.companyName?.trim() || preview.companyDomain || "your company" : "your company";
 
   async function sendCode() {
+    if(submittingRef.current)return;
     const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope,stage:"SEND"});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
     if (validation || !parsed.success) {
       setError(validation??"Enter your work email and name before requesting a code.");
       return;
     }
+    submittingRef.current=true;
     setPending(true);
     setError("");
     try {
@@ -67,17 +76,20 @@ export function PublicRecruiterJoinForm({
     } catch {
       setError(joinErrorMessage(null,"SEND"));
     } finally {
+      submittingRef.current=false;
       setPending(false);
     }
   }
 
   async function join() {
+    if(submittingRef.current)return;
     const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
     if (validation||!parsed.success||!/^[0-9]{6}$/.test(code)) {
       setError(validation??(!code.trim()?"Enter the 6-digit code":"The code has 6 digits"));
       return;
     }
+    submittingRef.current=true;
     setPending(true);
     setError("");
     try {
@@ -98,13 +110,14 @@ export function PublicRecruiterJoinForm({
     } catch {
       setError(joinErrorMessage(null));
     } finally {
+      submittingRef.current=false;
       setPending(false);
     }
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10">
-      <section className="min-w-0 rounded-xl border border-border bg-surface p-5 sm:p-6">
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center px-4 py-8 sm:py-12">
+      <Card as="section" className="w-full">
         {preview.kind !== "READY" ? (
           <>
             <h1 className="text-2xl font-semibold text-foreground">This link is no longer valid</h1>
@@ -123,7 +136,7 @@ export function PublicRecruiterJoinForm({
                 ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
                 : "Sign in with your work email, "+signInEmail+". We'll email you a code each time."}
             </p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 items-center text-primary-text underline">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Sign in</Link>
           </>
         ) : (
           <>
@@ -139,9 +152,9 @@ export function PublicRecruiterJoinForm({
             }}>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Work email
-                <input type="email" required autoComplete="email" value={email} disabled={Boolean(sentTo)}
+                <Input type="email" required autoComplete="email" value={email} disabled={Boolean(sentTo)}
                   onChange={event => setEmail(event.target.value)} maxLength={254}
-                  className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+                  className="w-full min-w-0" />
                 <span className="text-xs font-normal text-muted-foreground">
                   {scope === "COMPANY"
                     ? "Your " + companyLabel + " email. You'll sign in with it."
@@ -150,21 +163,21 @@ export function PublicRecruiterJoinForm({
               </label>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Your name
-                <input type="text" required autoComplete="name" value={name} maxLength={150}
+                <Input type="text" required autoComplete="name" value={name} maxLength={150}
                   onChange={event => setName(event.target.value)}
-                  className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+                  className="w-full min-w-0" />
               </label>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Designation (optional)
-                <input type="text" value={designation} maxLength={100}
+                <Input type="text" value={designation} maxLength={100}
                   onChange={event => setDesignation(event.target.value)}
-                  className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+                  className="w-full min-w-0" />
               </label>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Mobile (optional)
-                <input type="tel" autoComplete="tel" value={phone} maxLength={14}
+                <Input type="tel" autoComplete="tel" value={phone} maxLength={14}
                   onChange={event => setPhone(event.target.value)}
-                  className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+                  className="w-full min-w-0" />
                 <span className="text-xs font-normal text-muted-foreground">
                   Only for the placement cell to call you. You never sign in with it.
                 </span>
@@ -173,43 +186,33 @@ export function PublicRecruiterJoinForm({
               {scope === "COLLEGE"&&!knownCompany&&sentTo ? (
                 <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                   Company name
-                  <input type="text" value={companyName} maxLength={200}
+                  <Input type="text" value={companyName} maxLength={200}
                     onChange={event => setCompanyName(event.target.value)}
-                    className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+                    className="w-full min-w-0" />
                 </label>
               ) : null}
               {!sentTo ? (
-                <button type="submit" disabled={pending}
-                  className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
-                  Send me a code
-                </button>
+                <Button type="submit" loading={pending} className="w-full sm:w-auto">Send me a code</Button>
               ) : (
                 <>
                   <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                     Code sent to {sentTo}
-                    <input value={code} required autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
+                    <Input value={code} required autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
                       onChange={event => setCode(event.target.value)}
-                      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+                      className="w-full min-w-0" />
                     <span className="text-xs font-normal text-muted-foreground">This proves the email is yours.</span>
                   </label>
                   <div className="flex flex-wrap gap-3">
-                    <button type="submit" disabled={pending}
-                      className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
-                      Join {college} placements
-                    </button>
-                    <button type="button" disabled={pending}
-                      onClick={()=>void sendCode()}
-                      className="min-h-11 rounded-md border border-border px-4 font-semibold text-foreground">
-                      Send a new code
-                    </button>
+                    <Button type="submit" loading={pending} className="w-full sm:w-auto">Join {college} placements</Button>
+                    <Button type="button" variant="secondary" disabled={pending} onClick={()=>void sendCode()} className="w-full sm:w-auto">Send a new code</Button>
                   </div>
                 </>
               )}
-              {error ? <p role="alert" className="text-sm text-danger">{error}</p> : null}
+              {error ? <div ref={errorSummaryRef} tabIndex={-1} className="focus:outline-none"><InlineNotice tone="error" message={error} /></div> : null}
             </form>
           </>
         )}
-      </section>
+      </Card>
     </main>
   );
 }

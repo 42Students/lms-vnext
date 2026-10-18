@@ -1,9 +1,6 @@
-# UI/UX excellence: /college/departments
+# UX review: /college/departments
 
-Before: mobile overflow or undersized touch targets in this route's presentation.
-
-Changed: mobile width containment. Implementation `src/app/(authenticated)/college/departments/page.tsx`.
-
-States: no business logic, validation, URL filter, legacy copy, permissions or persisted data behavior changed. Page remains subject to browser verification of empty/error/loading cases, 320px layout, keyboard and screen reader.
-
-Test: `tests/unit/chat4-college-ux-round5.test.ts` (`UX-college-departments-01`); not run; do not tick route until green.
+- Audited route: `src/app/(authenticated)/college/departments/page.tsx`; existing scoped auth, exact copy, navigation and successful data unchanged.
+- Changes: accessible deep teal links; 44px targets; no page horizontal scroll.
+- State checks: read-only/permission/error and empty paths retained. No direct DataTable; downstream shared directory owns empty states. Focus targets and responsive containment follow the signed-off playbook.
+- Regression: `tests/unit/UX-college-college-departments-01.test.ts` (authored, not executed); browser WebView and screen-reader evidence pending.

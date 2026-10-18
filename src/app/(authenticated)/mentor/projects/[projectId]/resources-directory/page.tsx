@@ -21,11 +21,11 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  const base="/mentor/projects/"+encodeURIComponent(projectId);
  const current=mentorResourceDirectoryHref({...data.query,page:1});
  const filters=current.includes("?")?"?"+current.split("?")[1]:"";
- return <div className="space-y-5">
+ return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Mentor · Project resources" title="Registered resource links"
    description={data.projectTitle}
    actions={<Link href={base+"?tab=resources"}
-    className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
      Project resources
    </Link>}/>
   {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
@@ -39,36 +39,36 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     className={mentorResourceDirectoryFilterLayout}>
     <label className="grid gap-1 text-sm font-semibold text-body">Resource title or description
      <input type="search" name="search" maxLength={100} defaultValue={data.query.search}
-      className="min-h-10 rounded-md border border-border bg-background px-3"/>
+      className="min-h-11 rounded-md border border-border bg-background px-3"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Requirement
      <select name="required" defaultValue={data.query.required}
-      className="min-h-10 rounded-md border border-border bg-background px-3">
+      className="min-h-11 rounded-md border border-border bg-background px-3">
       <option value="ALL">All</option><option value="REQUIRED">Required</option>
       <option value="OPTIONAL">Optional</option>
      </select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">HTTPS link availability
      <select name="link" defaultValue={data.query.link}
-      className="min-h-10 rounded-md border border-border bg-background px-3">
+      className="min-h-11 rounded-md border border-border bg-background px-3">
       <option value="ALL">All</option><option value="HTTPS">Safe HTTPS link</option>
       <option value="UNAVAILABLE">No safe HTTPS link</option>
      </select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Description recorded
      <select name="description" defaultValue={data.query.description}
-      className="min-h-10 rounded-md border border-border bg-background px-3">
+      className="min-h-11 rounded-md border border-border bg-background px-3">
       <option value="ALL">Any</option><option value="RECORDED">Has a description</option>
       <option value="MISSING">No written description</option>
      </select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Resource order
      <select name="order" defaultValue={data.query.order}
-      className="min-h-10 rounded-md border border-border bg-background px-3">
+      className="min-h-11 rounded-md border border-border bg-background px-3">
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
      </select>
     </label>
-    <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
      Filter
     </button>
     <Link href={base+"/resources-directory" } className="text-sm font-semibold text-primary-text underline">
@@ -78,7 +78,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    <div className="flex flex-wrap items-center gap-3">
     <Link href={"/api/projects/"+encodeURIComponent(projectId)+
       "/mentor-resources-export"+filters}
-      download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
      Export resource metadata CSV (max 200)
     </Link>
     {data.exportOmitted>0?<p role="status" className="text-xs text-body">
@@ -102,7 +102,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      {resource.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
       {resource.description}</p>:null}
      {resource.safeUrl?<Link href={resource.safeUrl} target="_blank" rel="noopener noreferrer"
-      className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+      className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
       Open HTTPS resource
      </Link>:<p className="mt-2 text-xs text-muted-foreground">
       No safe HTTPS link recorded.
