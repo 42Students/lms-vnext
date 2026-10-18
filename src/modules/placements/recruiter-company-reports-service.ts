@@ -30,6 +30,7 @@ import {
   buildRecruiterCompanyReportRows,
   recruiterCompanyReportsQuerySchema,
   summarizeRecruiterReportPortfolio,
+  clampRecruiterCompanyReportPage,
 } from "./recruiter-company-reports-model";
 import {
   getRecruiterCompanyTeam,
@@ -109,11 +110,7 @@ export async function getRecruiterCompanyReports(
           eq(placementJobs.status, query.status),
         );
 
-  const [
-    portfolioCounts,
-    selectedCounts,
-    pageJobs,
-  ] = await Promise.all([
+  const [portfolioCounts, selectedCounts] = await Promise.all([
     db
       .select({
         total: count(),
@@ -136,8 +133,13 @@ export async function getRecruiterCompanyReports(
         total: count(),
       })
       .from(placementJobs)
-      .where(selectedCondition),
-
+      .where(selectedCondition)
+  ]);
+  const selectedTotal=Number(selectedCounts[0]?.total??0);
+  const effectivePage=clampRecruiterCompanyReportPage(
+    query.page,selectedTotal,query.pageSize,
+  );
+  const pageJobs=await
     db
       .select({
         id: placementJobs.id,
@@ -155,10 +157,9 @@ export async function getRecruiterCompanyReports(
       )
       .limit(query.pageSize)
       .offset(
-        (query.page - 1) * query.pageSize,
-      ),
-  ]);
-
+        (effectivePage - 1) * query.pageSize,
+      );
+  
   const jobIds = pageJobs.map((job) => job.id);
 
   /**
@@ -313,9 +314,7 @@ export async function getRecruiterCompanyReports(
   const totalFunnel=funnelRows.rows[0]??{applied:0,shortlisted:0,assessment:0,
     interview:0,offered:0,hired:0};
 
-  const matchedTotal = Number(
-    selectedCounts[0]?.total ?? 0,
-  );
+  const matchedTotal = selectedTotal;
 
   return {
     status: "READY" as const,
@@ -329,7 +328,7 @@ export async function getRecruiterCompanyReports(
     summary,
     funnel:totalFunnel,
     matchedTotal,
-    page: query.page,
+    page: effectivePage,
     pageSize: query.pageSize,
     totalPages: Math.ceil(
       matchedTotal / query.pageSize,
