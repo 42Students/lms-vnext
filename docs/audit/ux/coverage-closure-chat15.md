@@ -10,4 +10,6 @@
 - HR raw tables: tests/unit/UX-hr-data-tables-chat15-01.test.ts verifies single responsive DataTable, 10 company report fields, 5 grant fields and explicit empty states.
 - HR slot, schedules, offers, drafts, deadlines, messaging, team search: tests/unit/hr-recruiter-exhaustive-chat15-02.test.ts covers state transitions, validation, calendar, masking, safe CSV and optimistic proposals.
 
+- Canonical HR pages: tests/unit/UX-hr-page-states-chat15-01.test.ts names all 22 /hr routes and checks role-gating, alternate-state copy, and safe legacy redirects/aliases.
+
 **Remaining:** all other overlays in matrix, database-backed handler security tests, HR/tracker page-level partial and denied state verification, and full audit against the 21-point rubric. /recruiter route aliases and redirected /hr pages should not be marked complete solely for importing/redirecting. No owner waiver is claimed.
