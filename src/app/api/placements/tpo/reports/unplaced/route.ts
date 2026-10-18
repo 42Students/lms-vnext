@@ -3,6 +3,7 @@ import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-serv
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
+import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import {getPlacementReportDetails} from "@/modules/placements/report-service";
 import {getTpoUnplacedAcademicEvidence} from "@/modules/placements/tpo-unplaced-academic-evidence-service";
 import {formatUnplacedPercentage} from "@/modules/placements/tpo-unplaced-academic-evidence-model";
@@ -16,7 +17,11 @@ export async function GET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"TPO"))return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
-  const input=unplacedFilteredExportQuerySchema.parse(Object.fromEntries(new URL(request.url).searchParams.entries()));
+  const params=new URL(request.url).searchParams;
+  if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
+   status:400,headers:{"Cache-Control":"private, no-store"},
+  });
+  const input=unplacedFilteredExportQuerySchema.parse(Object.fromEntries(params.entries()));
   const collegeId=context.membership.collegeId;
   if(input.batchId){
    const batches=await listTpoBatches(context);

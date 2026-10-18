@@ -88,3 +88,10 @@ No CI green or database-side multi-session verification is claimed for these aut
 | --- | --- | --- | --- | --- | --- |
 | CH2-027 | Medium | TPO-campaigns-public-12 | Draft and selected-recipient preview POST handlers parsed arbitrarily large JSON bodies using `request.json()`. A shared streamed parser now enforces an 8KiB selection limit and separate 64KiB Unicode-friendly authored draft limit, including requests with absent Content-Length. | `ce0fddb`, `4e3a80e`, `ef86288` | `tests/unit/chat2-campaign-bounded-json.test.ts` |
 | CH2-028 | Medium | TPO-campaigns-public-12 | Private campaign receipt CSV silently selected the first `purpose` value and ignored unknown keys. Repeated/smuggled query keys now return 400; CSV explicitly disables content sniffing. | `30a9e4a` | `tests/unit/chat2-campaign-history-export-route.test.ts` |
+
+### Additional CSV export abuse
+
+| ID | Severity | Gap | Finding | Commit(s) | Test |
+| --- | --- | --- | --- | --- | --- |
+
+| CH2-029 | Medium | UX-tpo-last-third-CSV-01/02/03 | Six TPO private CSV export GET routes accepted repeated query keys with `Object.fromEntries` or `URLSearchParams.get`, silently selecting one value and diverging from on-screen filters. All now reject repeated parameters before private read; after-college also refuses unknown keys. | `7bd1c61`, `ab3f3c4`, `1765269`, `f6f359d`, `a403b62`, `2ca39fd` | `tests/unit/chat2-tpo-six-csv-route-query-security.test.ts` |

@@ -110,3 +110,39 @@ See `docs/audit/ux/scroll-motion-courses.md` for the changed containers. Backend
 | `SuperAdminCourseBulkVisibility` | Shows current-content-only caveat; provides actionable “Select fewer courses” / “Refresh and select current courses” recovery on typed errors | `tests/unit/chat7-superadmin-course-bulk-typed-boundaries.test.ts` — UI source review; browser pending |
 
 This still does **not** implement a persisted future whole-course visibility override (SA-53 remains PARTIAL). The owner deferred running all CI; therefore new tests are authored evidence and not a green-verification claim.
+
+## Private course file / signed-download security — next learner entry
+
+| Export / route | Authorization and failure behavior | Regression |
+|---|---|---|
+| `getLearnerCourseFileReference` | Strict delivery/content UUID; current learner entitlement including historical enrollment policy; published path/content, visible Lesson and content, exact offering/Section audience; `startsAt <= now()` or unscheduled enforced in PostgreSQL before private storage key leaves the service | `tests/unit/chat7-learner-course-file-embargo.test.ts` — `LEARNER-COURSE-FILE-EMBARGO-01`; authored, PostgreSQL scheduled-content negative witness pending |
+| `GET /api/courses/deliveries/[deliveryId]/contents/[contentId]/file` | Strict `download=0/1`, no duplicate/unknown query keys; authorization before storage `HEAD`, before presigned 900-second GET; signed 302 no-store/no-referrer; absent file 404, storage outage 503 with no raw credentials, attachment filename sanitized | `tests/unit/chat7-learner-course-file-route-boundaries.test.ts` — `LEARNER-COURSE-FILE-ROUTE-02` |
+
+These are unit-authored rather than CI-green. No live R2/storage object was touched. A browser's hidden `storageKey` while SCHEDULED is now backed by a server read constraint, not just UI masking.
+
+## Learner quiz review and assignment material read — source coverage extension
+
+| Function | Valid and invalid behavior | Named regression |
+|---|---|---|
+| `learnerQuizReviewRows` | Only selections belonging to current option IDs count, duplicates collapse, inherited browser draft answer properties never count; no answer-key correctness or points leave this projection | `tests/unit/chat7-learner-quiz-review-inherited-answers.test.ts` — `LEARNER-QUIZ-REVIEW-03` |
+| `facultyAssignmentMaterialLinkSchema`, `safeLearnerAssignmentMaterialLink` | Public credential-free HTTPS links only; no hash fragments, localhost loopback, javascript/file/data, extra tenant or private-storage keys; learner read gets null for malformed historic links | `tests/unit/chat7-learner-course-material-link-safety.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
+| `selectLearnerAssignmentFile` | Clearing the selected file leaves no error; malformed delivery ID drops file before upload-grant request | `tests/unit/chat7-learner-course-material-link-safety.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
+
+Release safety note: `getLearnerCourseFileReference` newly denies SCHEDULED content using DB `now()` even when the learner is enrolled; the client hidden-key presentation by itself never suffices as authorization. All test evidence here was authored without CI/PG execution per owner priority.
+
+## Super Admin live-class authoring — calendar-exact validation
+
+| Function and component | Boundary and behavior | Named regression |
+|---|---|---|
+| `parseAdminContentLocalMoment`, `SuperAdminContentActions` | Browser `datetime-local` values are calendar-validated in IST and UTC before mutation, rejecting invalid leap dates, overflow days and clock values; End must be later than Start; no silent Date normalization to another meeting day. Existing unsaved edit and confirmation flow remains. Controls use 44px minimum touch height. | `tests/unit/chat7-superadmin-content-live-datetime-parity.test.ts` — `SA-academics-people-58 live meeting IST/UTC calendar integrity` (authored; CI/browser pending) |
+
+This is **link-based live content metadata** hardening only. It does not bypass blocked scanned binary video import/storage, nor create a private resource upload capability.
+
+## Learner workspace results embargo and material service behavior
+
+| Export | Invariant | Named test |
+|---|---|---|
+| `getLearnerCourseWorkspace` quiz projection | Do not return raw authoring `resultsPublished`: the Quiz must be CLOSED, explicitly released and past its due time using one server clock; learner assessment feed and attempt detail use the same release rule | `tests/unit/chat7-learner-course-quiz-release-consistency.test.ts` — `LEARNER-QUIZ-WORKSPACE-EMBARGO-01` |
+| `listOwnLearnerAssignmentMaterialLinks`, `assignmentMaterialTableReady` | Verify scoped delivery/enrolment first, deny draft/hidden/unpublished learner assignments before optional table probe, return honest disabled state when table absent, project only safe public HTTPS URLs | `tests/unit/chat7-learner-assignment-materials-service.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
+
+Both tests were authored without execution as requested. Role/tenant and scheduled embargo require later PostgreSQL/route verification for certification.

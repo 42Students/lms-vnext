@@ -147,3 +147,9 @@ The overall `HR-COV-15` work remains **OPEN**: remaining exported functions and 
 | `/api/placements/recruiter/drives/requests` GET/POST/PATCH; shared unexpected-error handler | `tests/unit/HR-BREAK-chat15-request-api-71.test.ts` (HR-DRIVE-API-71) | Cross-origin POST/PATCH rejected before service, valid vs replay status, exact GET college validation and no writes, unexpected service outage produces sanitized request-id response | Genuine logged-in HTTP cookie/CSRF, database write rollback, parallel nonce conflict and rate limits |
 
 Tests were authored only, not executed. No CI run was requested; HR release certification remains open.
+
+
+| `summarizeRecruiterUnread`, `hrConversationPageBounds`, `scopeRecruiterConversations`, `onlyUnreadRecruiterThreads`, `orderRecruiterConversations`, `recruiterMessageSearchLimit` | `tests/unit/HR-BREAK-chat15-messaging-counts-72.test.ts` (HR-MESSAGING-DEPTH-72) | NaN, Infinity, negative and fractional read counts ignored; large totals saturate safely; paging boundary; general/drive and unread filters; deterministic order; result limit from distinct authorized thread IDs | Cloud unit run, large persisted message-table query and live bell page |
+
+
+| `/api/placements/recruiter/drives/[jobId]/rounds` POST | `tests/unit/HR-BREAK-chat15-round-api-73.test.ts` (HR-ROUND-API-73) | Actual form handler denies cross-origin before actor/DB; strict round create/edit/remove payload and optimistic token parsing; own create 303 target; stale/used round 409; foreign ID non-enumerating 404 | Live HR form POST and PostgreSQL sequential/concurrent author checks |

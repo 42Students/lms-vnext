@@ -8,7 +8,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 type Preview={id:string;expectedUpdatedAt:string;counts:{applications:number;rounds:number;offers:number}};
 export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  const router=useRouter(),[pending,setPending]=useState(false),[error,setError]=useState<string|null>(null);
- const {run}=useGuardedAction({timeoutMs:35000});
+ const {run}=useGuardedAction({timeoutMs:40000});
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [confirmedReason,setConfirmedReason]=useState("");
  function submit(event:FormEvent<HTMLFormElement>){
@@ -19,7 +19,8 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  }
  async function performClose(){
   if(pending||!confirmedReason)return;
-  await run(async()=>{
+  try{
+   await run(async()=>{
     setPending(true);setError(null);
     try{
       await apiFetch("/api/placements/tpo/jobs/"+encodeURIComponent(preview.id)+"/close-preview",{
@@ -36,7 +37,12 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
       // apiFetch maps HTML, network, provider and timeout failures to safe text.
       setError(error instanceof Error?error.message:friendlyApiError({}));
     }finally{setPending(false);}
-  });
+   });
+  }catch(error){
+   // The outer guarded deadline can reject even if the request is still pending.
+   setPending(false);setConfirmOpen(false);
+   setError(error instanceof Error?error.message:friendlyApiError({}));
+  }
  }
 
  const consequences=[

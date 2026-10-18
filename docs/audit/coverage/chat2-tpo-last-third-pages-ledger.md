@@ -51,3 +51,9 @@ Status: **baseline authored; exhaustive state/DB/browser coverage not yet comple
 ## Follow-on work
 
 The rows above are a truthful **first pass only** and must not be marked complete in the UI/UX page list. Prioritize role journeys for `/tpo/requests`, `/tpo/students`, `/tpo/team`, all reports and legacy settings, then exhaustive write route permission/CAS/rollback tests. A source-level identity assertion does **not** substitute for an active-versus-revoked principal integration test. Individual page loading/error/partial/mobile screenshots remain unverified; CI intentionally deferred by owner.
+
+## Cross-route CSV filters and bounds
+
+| Routes | Test evidence | Verified source behaviour | Remaining |
+| --- | --- | --- | --- |
+| `/api/placements/tpo/reports/{after-college,branch-season/export,engagement,intelligence/export,round-failures,unplaced}` | `tests/unit/chat2-tpo-six-csv-route-query-security.test.ts` — UX-tpo-last-third-CSV-01/02/03 | Reject repeated query selectors before private scoped report reads; after-college also rejects unrecognized fields; reuse shared URLSearchParams ambiguity helper | Runtime invalid-query 400 verification, data DB isolation, oversized exports, phone download UX |

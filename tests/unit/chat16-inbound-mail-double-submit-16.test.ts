@@ -26,11 +26,16 @@ describe("chat-16 inbound-mail exactly-once browser action guards",()=>{
   const code=readFileSync("src/components/admin/inbound-mail-list.tsx","utf8");
   expect(code).toContain("useRef(createInboundMailTriageGate())");
   expect(code).toContain("if(!triageGate.current.tryBegin())return;");
-  expect(code).toContain("finally{triageGate.current.end();setBusy(false);}");
+  expect(code).toContain("finally{window.clearTimeout(timeout);triageGate.current.end();setBusy(false);}");
   expect(code).toContain('method:"PATCH",credentials:"same-origin"');
   expect(code).toContain("expectedStatus:current.status,expectedVersion:current.version");
   expect(code).toContain("Message was changed elsewhere. Refresh before retrying.");
   expect(code).toContain("disabled={busy}");
   expect(code).toContain('role="status"');
+  expect(code).toContain("const controller=new AbortController()");
+  expect(code).toContain("controller.abort(),15000");
+  expect(code).toContain("signal:controller.signal");
+  expect(code).toContain("window.clearTimeout(timeout)");
+  expect(code).toContain("Request timed out. Refresh the inbox before trying again.");
  });
 });
