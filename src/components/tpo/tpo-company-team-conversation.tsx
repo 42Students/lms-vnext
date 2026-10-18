@@ -4,6 +4,7 @@ import {useCallback,useEffect,useRef,useState,type FormEvent} from "react";
 import Link from "next/link";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {parseTpoCompanyTeamDraft,tpoCompanyTeamDraftSendKey,type TpoCompanyTeamDraft} from "@/modules/placements/tpo-company-team-draft-model";
 
 type TeamMessage={
  id:string;body:string;decision:boolean;authorMembershipId:string;authorName:string|null;
@@ -56,6 +57,26 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
  const [editBody,setEditBody]=useState("");
  const [deleting,setDeleting]=useState<string|null>(null);
  const url="/api/placements/tpo/company-team/"+encodeURIComponent(companyId);
+ const draftKey="tpo-company-team:"+actorMembershipId+":"+companyId;
+ function updateDraft(next:Pick<TpoCompanyTeamDraft,"body"|"decision"|"assignee"|"dueAt">){
+  setBody(next.body);setDecision(next.decision);
+  setAssignee(next.assignee);setDueAt(next.dueAt);
+  sendKey.current=null;
+  try{sessionStorage.setItem(draftKey,JSON.stringify({...next,pending:null}));}
+  catch{/* Browsers can disable session storage; the in-memory draft remains. */}
+ }
+ useEffect(()=>{
+  const restore=window.setTimeout(()=>{
+   try{
+    const saved=parseTpoCompanyTeamDraft(sessionStorage.getItem(draftKey));
+    if(!saved)return;
+    setBody(saved.body);setDecision(saved.decision);
+    setAssignee(saved.assignee);setDueAt(saved.dueAt);
+    sendKey.current=saved.pending;
+   }catch{/* A private browser may disallow session storage. */}
+  },0);
+  return ()=>window.clearTimeout(restore);
+ },[draftKey]);
  const load=useCallback(async()=>{
   try{
    const response=await fetch(url,{cache:"no-store",credentials:"same-origin"});
@@ -94,11 +115,16 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   const fingerprint=JSON.stringify([body.trim(),decision,assignee||null,due]);
   // Keep the same key after a lost response. Edits to the unsent content
   // create a different key so the server never replays an unrelated message.
-  if(sendKey.current?.fingerprint!==fingerprint)
-    sendKey.current={fingerprint,key:crypto.randomUUID()};
+  sendKey.current=tpoCompanyTeamDraftSendKey(sendKey.current,fingerprint,()=>crypto.randomUUID());
+  try{sessionStorage.setItem(draftKey,JSON.stringify({
+   body,decision,assignee,dueAt,pending:sendKey.current,
+  }));}catch{/* The in-memory retry key remains valid. */}
   const ok=await mutate({action:"SEND",body:body.trim(),decision,
    assigneeId:assignee||null,dueAt:due,idempotencyKey:sendKey.current.key});
-  if(ok){sendKey.current=null;setBody("");setDecision(false);setAssignee("");setDueAt("");}
+  if(ok){
+   sendKey.current=null;setBody("");setDecision(false);setAssignee("");setDueAt("");
+   try{sessionStorage.removeItem(draftKey);}catch{/* Already cleared in memory. */}
+  }
  }
  return <section aria-label={"Company Team conversation for "+companyName}
    className="space-y-4 rounded-xl border border-border bg-surface p-4">
@@ -180,7 +206,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     <label className="grid gap-1 text-sm font-semibold text-body">
      Write to the team. @ to mention, # to link a drive, company or student.
      <textarea required maxLength={4000} rows={3} value={body} disabled={busy}
-       onChange={event=>setBody(event.target.value)}
+       onChange={event=>updateDraft({body:event.target.value,decision,assignee,dueAt})}
        onKeyDown={event=>{if(event.key==="Enter"&&!event.shiftKey&&!event.nativeEvent.isComposing){
         event.preventDefault();event.currentTarget.form?.requestSubmit();
        }}}
@@ -189,7 +215,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     <label className="grid gap-1 text-sm">Mention a teammate
       <select disabled={busy} defaultValue="" className="min-h-10 rounded border border-border bg-surface px-2"
         onChange={event=>{if(event.target.value){
-          setBody(current=>(current.trimEnd()+" @member:"+event.target.value+" ").slice(0,4000));
+          updateDraft({body:(body.trimEnd()+" @member:"+event.target.value+" ").slice(0,4000),decision,assignee,dueAt});
           event.currentTarget.value="";
         }}}>
         <option value="">Choose a colleague to @mention</option>
@@ -200,7 +226,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     <p className="text-xs text-muted-foreground">Use @team to notify the placement team or #drive:&lt;UUID&gt; and #company:&lt;UUID&gt; to link authorized records.</p>
     <div className="grid gap-3 sm:grid-cols-2">
      <label className="grid gap-1 text-sm">Ask someone (optional)
-       <select value={assignee} disabled={busy} onChange={event=>setAssignee(event.target.value)}
+       <select value={assignee} disabled={busy} onChange={event=>updateDraft({body,decision,assignee:event.target.value,dueAt:event.target.value?dueAt:""})}
         className="min-h-10 rounded border border-border bg-surface px-2">
         <option value="">No ask attached</option>
         {data.members.filter(member=>member.membershipId!==actorMembershipId).map(member=>
@@ -208,12 +234,12 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        </select>
      </label>
      {assignee?<label className="grid gap-1 text-sm">By (IST, optional)
-       <input type="datetime-local" value={dueAt} onChange={event=>setDueAt(event.target.value)}
+       <input type="datetime-local" value={dueAt} onChange={event=>updateDraft({body,decision,assignee,dueAt:event.target.value})}
         className="min-h-10 rounded border border-border bg-surface px-2"/>
      </label>:null}
     </div>
     <label className="flex items-center gap-2 text-sm">
-      <input type="checkbox" checked={decision} disabled={busy} onChange={event=>setDecision(event.target.checked)}/>
+      <input type="checkbox" checked={decision} disabled={busy} onChange={event=>updateDraft({body,decision:event.target.checked,assignee,dueAt})}/>
       Mark as decision
     </label>
     <div className="flex items-center justify-between gap-3">
