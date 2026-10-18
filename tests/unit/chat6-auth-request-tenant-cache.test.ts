@@ -42,6 +42,12 @@ describe("AUTH-tenant-binding-02 resolve host cache and outage fallback",()=>{
   await expect(resolveRequestTenant("college.test")).resolves.toMatchObject({kind:"college",collegeId:"B"});
   expect(look).toHaveBeenCalledTimes(2);
  });
+ it("AUTH-tenant-host-20 rejects invalid hostnames as unknown, without resolving domains or claiming DB outage",async()=>{
+  for(const bad of ["bad..campus.test","bad/campus.test","user@campus.test","campus.test?x=y","-wrong.campus.test"]){
+    await expect(resolveRequestTenant(bad)).resolves.toEqual({kind:"unknown",host:bad});
+  }
+  expect(look).not.toHaveBeenCalled();
+ });
  it("never turns blank/unverified host into a usable college",async()=>{
   await expect(resolveRequestTenant("")).resolves.toEqual({kind:"unknown",host:""});
   look.mockResolvedValueOnce(null);
