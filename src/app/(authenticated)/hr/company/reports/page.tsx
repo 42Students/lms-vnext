@@ -44,7 +44,7 @@ export default async function RecruiterCompanyReportsPage({
 }) {
   const context = await getCurrentRequestContext();
 
-  if (!hasActiveRecruiter(context)) {
+  if (!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id) {
     redirect("/dashboard");
   }
 

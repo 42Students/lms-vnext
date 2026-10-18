@@ -8,9 +8,11 @@ import {
 import { z } from "zod";
 
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
   placementJobEligibilityPolicies,
   placementJobs,
+  colleges,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -40,6 +42,20 @@ const rulesPageSchema = z
   .strict();
 
 const JOB_PAGE_SIZE = 25;
+
+/** All work done after preflight still has to survive a role or college
+ * archival race before private settings leave the service. */
+async function assertLiveTpoSettingsRead(context:RequestContext,collegeId:string){
+ await getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.manage");
+  const actor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  if(!hasMembershipRole(actor,"TPO"))throw new AuthorizationError("placements.manage");
+ });
+}
 
 /**
  * The target college always comes from the active
@@ -97,6 +113,7 @@ export async function getTpoPlacementSeasonSettings(
     })),
   );
 
+  await assertLiveTpoSettingsRead(context,collegeId);
   return {
     seasons,
     summary: summarizeTpoSettingsSeasons(
@@ -193,6 +210,7 @@ export async function getTpoPlacementRulesSettings(
         ),
     ]);
 
+  await assertLiveTpoSettingsRead(context,collegeId);
   const totalJobs = counts[0]?.total ?? 0;
 
   return {

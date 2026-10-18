@@ -10,14 +10,18 @@ import {inboundMailListQuerySchema} from "@/modules/inbound-mail/message-model";
 import {InboundMailList} from "@/components/admin/inbound-mail-list";
 
 type Params=Record<string,string|string[]|undefined>;
-const one=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+const one=(value:string|string[]|undefined)=>typeof value==="string"?value:undefined;
 export default async function InboundMailPage({searchParams}:{searchParams:Promise<Params>}) {
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
  const header=<PageHeader eyebrow="Super Admin" title="Inbound mail" description="Private incoming messages. No automatic replies or outbound sends are performed."/>;
  const params=await searchParams;
+ // Duplicate/repeated query keys are ambiguous across proxies and URLs.
+ // Reject them instead of choosing a different filter value by render order.
+ const repeated=["status","q","recipient","page"].some(key=>
+   Array.isArray(params[key]));
  const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status)??"NEW",q:one(params.q),recipient:one(params.recipient),page:one(params.page)});
- if(!parsed.success)return <div className="space-y-6">{header}
+ if(repeated||!parsed.success)return <div className="space-y-6">{header}
    <div role="alert" className="rounded-xl border border-border p-5">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-[var(--lms-teal-deep)]">Reset</Link></div></div>;
  const data=await listInboundMailForAdmin(context,parsed.data);
  if(!data.available)return <div className="space-y-6">{header}
