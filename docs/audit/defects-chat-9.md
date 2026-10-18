@@ -84,6 +84,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-048 · PROJ-BREAK-grading-02/04 / idor-57 | Behavioral verification | Previously source-only rubric evaluation reads now exercise admin and mentor visibility, project/submission binding, hidden learner access before DB, cross-tenant denial, invalid IDs and empty/no-evaluation results without a second item query. No new production defect was required for these read contracts. | Test-only `0ff73da` | `tests/unit/PROJ-BREAK-chat9-evaluation-read.test.ts` demonstrates mocked read behavior; true PostgreSQL authorization and grade publication policy OPEN |
 
+| PROJ9-049 · SA-tenants-ux-09/11 | Medium | Super Admin /admin/tenants directory previously awaited persisted lifecycle data without error handling. An outage or stale scope failure could display a raw route error; it must not be treated as no tenants. Added a recoverable unavailable state preserving strict, validated filter values; invalid/repeated query filters continue to terminate before the service and permission checks remain before any tenant PII read. | `5943cc5` | `tests/unit/PROJ-BREAK-chat9-sa-tenant-directory-page.test.tsx` (`2806bb5`) covers failed, invalid, denied and genuinely empty; real browser/PG proof OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
