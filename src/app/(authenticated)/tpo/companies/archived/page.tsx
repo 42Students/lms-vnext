@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { listArchivedTpoCompanyRelationships } from "@/modules/placements/tpo-company-lifecycle-service";
@@ -10,6 +11,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     redirect("/dashboard");
   }
+  await requireTpoBatchActor(context);
   const { rows, truncated } = await listArchivedTpoCompanyRelationships(context);
   return <div className="space-y-5">
     <Link href="/tpo/companies" className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
