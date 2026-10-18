@@ -1,4 +1,6 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {useMemo,useState} from "react";
 type Workspace={id:string;title:string;status:string};
 export function AdminReadinessWorkspacePicker({items,selected,action}:{
@@ -13,7 +15,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
  const rows=matching.slice((current-1)*pageSize,current*pageSize);
  return <form method="get" action={action} className="space-y-3">
   <label className="block text-sm font-semibold">Search workspace title or ID
-   <input value={search} onChange={e=>{setSearch(e.target.value);setPage(1)}}
+   <Input value={search} onChange={e=>{setSearch(e.target.value);setPage(1)}}
     placeholder="Search workspace" className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3"/></label>
   <fieldset className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
    <legend className="sr-only">Select a workspace</legend>
@@ -28,13 +30,13 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
   <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span>{matching.length} matching · Page {current} of {count}</span>
    <div className="flex gap-2">
-    <button type="button" disabled={current===1} onClick={()=>setPage(x=>Math.max(1,x-1))}
-      className="rounded-md border border-border px-3 py-2 disabled:opacity-50">Previous</button>
-    <button type="button" disabled={current===count} onClick={()=>setPage(x=>Math.min(count,x+1))}
-      className="rounded-md border border-border px-3 py-2 disabled:opacity-50">Next</button>
+    <Button type="button" variant="secondary" disabled={current===1} onClick={()=>setPage(x=>Math.max(1,x-1))}
+      className="rounded-md border border-border px-3 py-2 disabled:opacity-50">Previous</Button>
+    <Button type="button" variant="secondary" disabled={current===count} onClick={()=>setPage(x=>Math.min(count,x+1))}
+      className="rounded-md border border-border px-3 py-2 disabled:opacity-50">Next</Button>
    </div>
   </div>
-  <button type="submit" disabled={!choice} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
-   View readiness</button>
+  <Button type="submit" disabled={!choice} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
+   View readiness</Button>
  </form>;
 }
