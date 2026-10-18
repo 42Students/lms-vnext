@@ -19,9 +19,9 @@ export function projectHrNotifications(rows:readonly HrNotificationRecord[],jobs
 
 export const HR_INBOX_PAGE_SIZE=25;
 export function hrInboxPageBounds(page:number,total:number){
+ const first=total===0||(page-1)*HR_INBOX_PAGE_SIZE>=total?0:(page-1)*HR_INBOX_PAGE_SIZE+1;
  return {page,total,pageSize:HR_INBOX_PAGE_SIZE,pages:Math.ceil(total/HR_INBOX_PAGE_SIZE),
-  first:total===0||(page-1)*HR_INBOX_PAGE_SIZE>=total?0:(page-1)*HR_INBOX_PAGE_SIZE+1,
-  last:Math.min(total,page*HR_INBOX_PAGE_SIZE)};
+  first,last:first===0?0:Math.min(total,page*HR_INBOX_PAGE_SIZE)};
 }
 
 export function filterHrNotificationJobs<T extends {title:string}>(jobs:readonly T[],q:string):T[]{
