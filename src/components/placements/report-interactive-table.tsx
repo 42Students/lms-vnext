@@ -43,11 +43,24 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
   }catch{setMessage("Could not copy rows. Use CSV export instead.");}
  }
  function saveCsv(){
-  const blob=new Blob(["\uFEFF"+textRows],{type:"text/csv;charset=utf-8"});
-  const url=URL.createObjectURL(blob);
-  const link=document.createElement("a");link.href=url;
-  link.download=safeReportDownloadName(title);
-  link.click();URL.revokeObjectURL(url);setMessage("Exported "+showing.length+" shown rows.");
+  let url:string|null=null;
+  let link:HTMLAnchorElement|null=null;
+  try{
+   const blob=new Blob(["\uFEFF"+textRows],{type:"text/csv;charset=utf-8"});
+   url=URL.createObjectURL(blob);
+   link=document.createElement("a");
+   link.href=url;
+   link.download=safeReportDownloadName(title);
+   document.body.appendChild(link);
+   link.click();
+   setMessage("Exported "+showing.length+" shown rows.");
+  }catch{
+   setMessage("Could not export shown rows. Try copying the report or refresh and try again.");
+  }finally{
+   link?.remove();
+   // Some browsers consume the Blob only after the click event completes.
+   if(url!==null)window.setTimeout(()=>URL.revokeObjectURL(url),0);
+  }
  }
  return <section className="space-y-3" aria-label={title}>
   <h2 className="text-lg font-semibold text-foreground">{title}</h2>
