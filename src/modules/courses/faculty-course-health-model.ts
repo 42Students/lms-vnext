@@ -20,7 +20,7 @@ export function selectFacultyCourseHealthCandidates<T extends FacultyCourseHealt
 ) {
   const matches = rows.filter(row =>
     row.deliveryId === query.deliveryId &&
-    row.status === "PUBLISHED" &&
+    (row.status === "PUBLISHED" || (row.kind === "QUIZ" && row.status === "CLOSED")) &&
     (query.kind === "ALL" || row.kind === query.kind),
   ).sort((a,b) =>
     (b.dueAt?.getTime() ?? 0) - (a.dueAt?.getTime() ?? 0) ||
