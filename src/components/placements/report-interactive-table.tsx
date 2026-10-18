@@ -52,7 +52,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
    revokeUrl:url=>URL.revokeObjectURL(url),
   });
   setMessage(saved
-   ?"Exported "+showing.length+" shown rows."
+   ?"Started CSV download for "+showing.length+" shown rows."
    :"Could not export shown rows. Try copying the report or refresh and try again.");
  }
  return <section className="space-y-3" aria-label={title}>
