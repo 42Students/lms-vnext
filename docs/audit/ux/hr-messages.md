@@ -1,8 +1,8 @@
-# HR source UX review — `/hr/messages`
+# UX rollout — /hr/messages
 
-- Page: `src/app/(authenticated)/hr/messages/page.tsx`; exact legacy route/title/actions, server permissions and data integrations retained.
-- Observed UX concerns: horizontal scroll containment, 40px touch controls and nested main semantics where present.
-- Source changes: Route delegates to canonical shared implementation; kept in place..
-- States: existing loading, empty, partial, failure, scope, and confirmation paths preserved; no fabricated data or client-only authorization.
-- Regression: `UX-hr-hr-messages-01` in `tests/unit/ux-chat14-hr-02.test.ts`.
-- QA: static source only; TypeScript, unit, keyboard and phone WebView audits to be run by orchestrator; inventory unticked.
+- **Route:** src/app/(authenticated)/hr/messages/page.tsx
+- **Test:** UX-hr-messages-01 (`tests/ux-hr-rollout-02.test.mjs`).
+- **Initial weakness:** Messages alias risks diverging from the actual conversations inbox.
+- **Change:** Kept the direct messages-to-conversations re-export and existing exact legacy copy.
+- **States:** Original authentication, no-access, invalid query, empty/loading, conflict and pagination handling is unchanged; no new implied server behavior. Capture/AT remains orchestrator-owned.
+- **Validation:** Named source invariant regression test authored; no local npm typecheck, lint, browser or device execution claimed.
