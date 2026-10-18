@@ -76,8 +76,16 @@ export async function resolveRequestTenant(
       if(entry.expiresAt<=now)cache.delete(key);
     }
     if(cache.size >= CACHE_LIMIT){
-      const oldest=cache.keys().next().value;
-      if(oldest!==undefined)cache.delete(oldest);
+      // A flood of never-verified Host headers must not evict verified tenants.
+      // Prefer discarding an existing negative-cache entry. If every slot is
+      // verified, return the unknown result without storing it.
+      const negative=[...cache].find(([,entry])=>entry.value.kind==="unknown");
+      if(negative)cache.delete(negative[0]);
+      else if(value.kind==="unknown")return value;
+      else {
+        const oldest=cache.keys().next().value;
+        if(oldest!==undefined)cache.delete(oldest);
+      }
     }
   }
   // Refreshing an existing hostname also refreshes its insertion order.

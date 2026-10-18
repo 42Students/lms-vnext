@@ -217,3 +217,15 @@ The College Admin Faculty/Student directory had two independently maintained row
 ## COL-people-faculty-csv-RACE-03 — S1 preview of a replaced CSV could enable registration
 
 The faculty bulk-registration form did not bind an async preview response to its source CSV. Editing the textarea or choosing a new file while a slow validation was in flight could allow the old `report.preview` to reappear next to new contents, then register a different set of people than the preview showed. The form now increments a CSV draft revision on every file/text edit, accepts only same-revision previews and file reads, resets preview/confirmation immediately, disables editing during pending operations, and uses safe generic network errors. `facultyCsvResponseBelongsToDraft` carries the cross-request decision and is behavior-tested; browser/API race execution pending.
+
+## PROJ-BREAK-COLLEGE-04-ARCHIVE-07 — S1 stale tab could archive freshly edited workspace
+
+The College Admin archive button received `expectedUpdatedAt` but discarded it before sending the archive request; the endpoint accepted no version. Another tab's edit could be silently archived. The UI now passes the exact timestamp, the POST endpoint accepts only a bounded strict body, and `archiveProjectInstance` checks it under the row lock before transitioning and notifying. Already-archived retries are idempotent; old internal service callers still permit omitted tokens, which is tracked for all-caller CAS hardening. `tests/unit/chat4-project-archive-cas-handler.test.ts` covers route/contract scenarios; database race proof pending.
+
+## PROJ-BREAK-COLLEGE-04-ARCHIVE-08 — S2 double archive/restore submit during first render
+
+`ProjectArchiveControl` previously relied only on asynchronous React `pending` state and left the dialog dismissible during the write. Two rapid clicks in one frame could submit twice, or dismiss the modal while a mutation remained in flight. Both Archive and Restore now use an immediate `inFlight` ref guard, unlock in `finally` and block Escape/backdrop/cancel while committing. Server archive remains idempotent and CAS-protected; frontend test authored, browser race pending.
+
+## COL-UX-TERM-MAPPINGS-04 — S2 raw semester table and raw API error leaks
+
+College semester-course mappings used a scroll-only native table that required finding end-of-row Edit/Remove on a phone, although keyboard reordering buttons existed. The mapping list is now a shared `DataTable` with phone-visible action cells and accessible headers while retaining drag and keyboard controls. Duplicate submissions are stopped by a synchronous request guard; unknown API errors no longer show raw provider strings. Source and pure order behavior tests authored; not executed.
