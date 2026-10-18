@@ -1,3 +1,5 @@
+import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
+import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
@@ -42,6 +44,7 @@ export default async function TpoByBranchReportPage({
   }
 
   const query = await searchParams;
+  if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/by-branch"/>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
     seasonId: first(query.seasonId) || undefined,

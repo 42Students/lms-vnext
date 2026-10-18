@@ -1,6 +1,6 @@
 import "server-only";
 import type {RequestContext} from "@/modules/identity/context";
-import {COLLEGE_ASSESSMENT_PAGE_SIZE,type CollegeAssessmentKind} from "./college-assessment-aggregate-model";
+import {COLLEGE_ASSESSMENT_PAGE_SIZE,parseCollegeAssessmentQuery,type CollegeAssessmentKind} from "./college-assessment-aggregate-model";
 import {listCollegeAssessmentAggregate} from "./college-assessment-aggregate-service";
 import {COLLEGE_ASSESSMENT_EXPORT_CAP,collegeAssessmentExportQuerySchema,renderCollegeAssessmentCsv} from "./college-assessment-export-model";
 
@@ -11,6 +11,9 @@ import {COLLEGE_ASSESSMENT_EXPORT_CAP,collegeAssessmentExportQuerySchema,renderC
  */
 export async function exportCollegeAssessments(context:RequestContext,kind:CollegeAssessmentKind,raw:unknown){
  const query=collegeAssessmentExportQuerySchema.parse(raw);
+ // An assignment cannot request a quiz-only results filter or CLOSED status.
+ // Share the same kind-aware validation as the paged directory before any read.
+ parseCollegeAssessmentQuery(kind,{...query,page:1});
  const first=await listCollegeAssessmentAggregate(context,kind,{...query,page:1});
  const rows=[...first.items];
  const lastPage=Math.min(first.totalPages,Math.ceil(COLLEGE_ASSESSMENT_EXPORT_CAP/COLLEGE_ASSESSMENT_PAGE_SIZE));

@@ -43,6 +43,17 @@ describe("HR-ROLE-MATRIX-13 role separation and cross-tenant authorization",()=>
    {placementCompanyRelationshipId:relationship},
   ])expect(can(recruiter,"placements.recruiter.read",scope)).toBe(false);
  });
+ it("HR-GRANT-OWNER-20 central policy forbids a valid college grant attached to a different recruiter session",()=>{
+  const swapped={...recruiter,recruiter:{...recruiter.recruiter!,userId:otherRelationship}};
+  for(const permission of ["placements.recruiter.read","placements.recruiter.round.manage",
+    "placements.recruiter.slot.manage","placements.recruiter.outside.record",
+    "placements.recruiter.result.stage","placements.recruiter.note"] as const){
+    expect(can(swapped,permission,companyScope)).toBe(false);
+    expect(can(recruiter,permission,{...companyScope,collegeId:" "})).toBe(false);
+    expect(can(recruiter,permission,{...companyScope,placementCompanyRelationshipId:" "})).toBe(false);
+    expect(can(recruiter,permission,companyScope)).toBe(true);
+  }
+ });
  it("TPO can manage placement flow but cannot invoke recruiter-only round or slot writes",()=>{
   const tpo=membership("TPO");
   expect(can(tpo,"placements.manage",collegeScope)).toBe(true);
