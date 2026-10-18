@@ -26,6 +26,7 @@ export default async function TpoCompanyFeedbackPage({
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   await requireTpoBatchActor(context);
   const [{ companyId }, search] = await Promise.all([params, searchParams]);
+  if (Array.isArray(search.page)) notFound();
   const parsed = tpoCompanyFeedbackQuerySchema.safeParse({
     companyId,
     ...(first(search.page) ? { page: first(search.page) } : {}),

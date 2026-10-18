@@ -10,7 +10,9 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  searchParams:Promise<{offeringId?:string|string[]}>
 }){
  const query=await searchParams;
- const offeringId=Array.isArray(query.offeringId)?query.offeringId[0]:query.offeringId;
+ // Duplicate offeringId query parameters are ambiguous; never silently pick
+ // the first identifier from a hostile or stale link.
+ const offeringId=typeof query.offeringId==="string"?query.offeringId:null;
  const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Back to Course Progress</Link>;
  if(!offeringId)return <div className="space-y-5">
   <PageHeader title="Student Course Progress" eyebrow="Super Admin · Courses"/>

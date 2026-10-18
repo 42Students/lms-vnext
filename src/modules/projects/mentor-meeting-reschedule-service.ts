@@ -22,12 +22,13 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
   const membership=context.membership;
   if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
+  // A tenant without Projects entitlement cannot probe project IDs via rescheduling.
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const scope=await requireProjectReadAccess(context,params.projectId);
   if(scope.access!=="MENTOR"||!can(context,"projects.read",{
     organizationId:scope.organizationId,collegeId:scope.collegeId,
   }))throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
-  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
-    throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const start=new Date(input.startsAt),end=new Date(input.endsAt),
     expected=new Date(input.expectedUpdatedAt);
   if(start.getTime()<=Date.now())
