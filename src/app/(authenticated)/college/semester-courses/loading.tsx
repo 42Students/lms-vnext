@@ -1,8 +1,4 @@
-import {Skeleton} from "@/components/ui/skeleton";
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 export default function SemesterCoursesLoading(){
- return <div className="min-w-0 space-y-4">
-  <Skeleton variant="line" label="Loading course mappings"/>
-  <Skeleton variant="form" label="Loading course mappings"/>
-  <Skeleton variant="row" count={3} label="Loading course mappings"/>
- </div>;
+ return <GracefulPageLoading label="Loading course mappings" shape="directory" />;
 }
