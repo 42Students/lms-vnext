@@ -19,13 +19,13 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
  }
  return <>
   <button type="button" onClick={()=>setOpen(true)}
-   className="mt-2 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+   className="mt-2 min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
    Review applicant
   </button>
   <Drawer open={open} onOpenChange={setOpen} title={app.student??"Name unavailable"}>
    <div onKeyDown={move} className="min-w-0 space-y-4">
     <div className="flex justify-end"><button type="button" onClick={()=>setOpen(false)}
-     className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold">Close</button></div>
+     className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold">Close</button></div>
    <dl className="mb-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
     <div><dt className="text-body">Role</dt><dd className="break-words">{app.role}</dd></div>
     <div><dt className="text-body">Application</dt><dd>{app.applicationStatus}</dd></div>
@@ -39,12 +39,12 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
      expectedUpdatedAt={app.screeningUpdatedAt}/>:
     <p role="status" className="text-sm text-body">This application is read-only. Review requires a published drive and a pending or held submitted application.</p>}
    <nav aria-label="Review neighbours" className="flex flex-wrap gap-3 text-sm">
-    {previousId?<Link href={applicantHref(previousId)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">← Previous applicant</Link>:null}
-    {nextId?<Link href={applicantHref(nextId)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Next applicant →</Link>:null}
+    {previousId?<Link href={applicantHref(previousId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">← Previous applicant</Link>:null}
+    {nextId?<Link href={applicantHref(nextId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">Next applicant →</Link>:null}
    </nav>
    <p className="text-xs text-body">Use left and right arrows outside form controls to open the previous or next applicant.</p>
    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+app.id}
-    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+    className="mt-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
     Open full applicant detail →
    </Link>
    </div>
