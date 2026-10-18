@@ -42,7 +42,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   <div className="flex items-center justify-between">
    <h2 className="font-semibold">Template resources</h2>
    <Button type="button" variant="secondary" onClick={()=>setOpen(v=>!v)}
-    className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
+    className="">
     {open?"Close editor":"Edit resources"}</Button>
   </div>
   {open?<div className="space-y-4">
@@ -76,17 +76,17 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
       checked={row.pinned??false} onChange={e=>change(i,{pinned:e.target.checked})}/>Pinned</label>
     <div className="flex flex-wrap gap-2 sm:col-span-2">
       <Button type="button" variant="secondary" disabled={i===0} onClick={()=>setRows(r=>{const n=[...r];[n[i-1],n[i]]=[n[i],n[i-1]];return n;})}
-       className="rounded border border-border px-3 py-2 text-xs">Move up</Button>
+       className="text-xs">Move up</Button>
       <Button type="button" variant="secondary" disabled={i===rows.length-1} onClick={()=>setRows(r=>{const n=[...r];[n[i+1],n[i]]=[n[i],n[i+1]];return n;})}
-       className="rounded border border-border px-3 py-2 text-xs">Move down</Button>
+       className="text-xs">Move down</Button>
       <Button type="button" variant="danger" onClick={()=>setRows(r=>r.filter((_,at)=>at!==i))}
-       className="rounded border border-error px-3 py-2 text-xs text-error">Remove</Button>
+       className="text-xs">Remove</Button>
     </div>
    </fieldset>)}
    <div className="flex gap-3">
-    <Button type="button" variant="secondary" onClick={add} className="min-h-10 rounded border border-border px-3 text-sm">Add resource</Button>
+    <Button type="button" variant="secondary" onClick={add} className="">Add resource</Button>
     <Button type="button" variant="primary" disabled={pending} onClick={()=>void save()}
-     className="min-h-10 rounded bg-primary px-3 text-sm font-semibold text-primary-foreground">
+     className="">
      {pending?"Saving…":"Save as new version"}</Button>
    </div>
   </div>:null}
