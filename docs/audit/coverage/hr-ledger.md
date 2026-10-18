@@ -629,3 +629,5 @@ No HR/Recruiter account obtains Projects access merely through employer/drive gr
 | HR-SLOT-VERSION-01/ACTOR-02 stale tab and wrong creator | Same test requires no update/no TPO notification | No | Parallel locked row races in PostgreSQL |
 | HR-SLOT-STATE-03/04 valid OFFER and capacity/terminal/past enforcement | Same test verifies exactly one TPO action, no writes on invalid stage | No | Real capacity with two simultaneous bookers, rollback behavior |
 | HR-SLOT-INPUT-01 strict tenant/action/version input | Same test requires rejection before transaction | No | HTTP 400/403/409 state and same-origin behavior on real requests |
+
+| HR-SLOT-READ-01/02 / `listHrInterviewSlots` | `tests/unit/HR-BREAK-chat15-interview-slots-03.test.ts`: returns own editable slot, marks another creator's slot read-only; revocation denies before private row read, no side effects | No | Real revocation mid-session, database wrong-college row and alternate account browser flow |
