@@ -23,7 +23,7 @@ function links(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(links);
  if(!isValidElement(node))return [];
  const props=node.props as {children?:ReactNode;href?:unknown};
- return [...typeof props.href==="string"?[props.href]:[],...links(props.children)];
+ return [...(typeof props.href==="string"?[props.href]:[]),...links(props.children)];
 }
 const job="123e4567-e89b-42d3-a456-426614174001";
 const round="123e4567-e89b-42d3-a456-426614174002";
