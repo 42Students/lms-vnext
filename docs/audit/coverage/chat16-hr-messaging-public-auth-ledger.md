@@ -320,3 +320,7 @@ New direct model suite `tests/unit/chat16-messaging-remaining-model-exports-16.t
 | `unsubscribe-model.ts` | `issueUnsubscribeToken`, `verifyUnsubscribeToken`, `unsubscribeConfirmation` | `MESSAGING-UNSUB-TOKEN-16`: HMAC binding, expiry boundary, noncanonical/forged input, GET read-only semantics |
 
 Types/interfaces are compile-time contracts rather than runnable exports; they are represented by the values and functions above. Other exported service functions are covered in the prior ledger sections or need additional verification, and this suite does not claim network or real database execution.
+
+### TPO messaging aggregate detail and draft storage gates
+
+`tests/unit/chat16-messaging-receipt-detail-readiness-16.test.ts` now invokes previously underlisted exported services. `getTpoMessagingBatch` cases `MESSAGING-DETAIL-16`–`19` check batch UUID/role denial before storage, college permission denial, persisted permission check inside transaction, aggregate-only receipt projection, and absent-batch null (never a guessed tenant result). `tpoCampaignDraftStorageReady` case `MESSAGING-DRAFT-READY-16` confirms a disabled deployment never queries DB and registered/not-registered/transport failure returns correct readiness without fabricating success. These use mocked SQL builders and error pathways; they are **not** substitute PostgreSQL tenant or concurrency results.
