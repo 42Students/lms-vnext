@@ -11,6 +11,11 @@ export async function GET(request:Request,{params}:{params:Promise<{jobId:string
   const query=hrApplicantFilterSchema.parse({
    tab:"offers",offerState:url.searchParams.get("offerState")??undefined,offerPage:1,
   });
+  // Pre-issue selection ledger states are not issued offers. Exporting them
+  // through the offer reader would produce a falsely empty CSV with unrelated
+  // offer counts. Do not query applicant information for these filters.
+  if(["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(query.offerState))
+   return Response.json({error:"OFFER_STATE_NOT_EXPORTABLE"},{status:400});
   const context=await getCurrentRequestContext();
   const first=await getHrJobRead(context,jobId,query);
   const total=first.offersPage.total;
