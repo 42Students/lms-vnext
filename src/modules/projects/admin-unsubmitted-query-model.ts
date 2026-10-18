@@ -8,6 +8,7 @@ const positiveDecimal=(min:number,max:number,fallback:number)=>z.union([
 ]).default(fallback);
 export const adminUnsubmittedQuerySchema=z.strictObject({
  q:z.string().trim().max(120).optional(),
+ status:z.enum(["PLANNED","ACTIVE","COMPLETED"]).optional(),
  page:positiveDecimal(1,100000,1),
  pageSize:positiveDecimal(10,100,25),
 });
