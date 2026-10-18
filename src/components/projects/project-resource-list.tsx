@@ -153,10 +153,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       "Resource reordering is available when no filters are active."}
   </p>:null}
   {reorderError?<p role="alert" className="text-sm text-error">{reorderError}</p>:null}
-  {rows.length===0?<p className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
+  {rows.length===0?<p className="border-b border-border py-5 text-sm text-muted-foreground">
     {mode==="LEARNER"?"No resources yet. Share the first link or file with your team."
       :"No resources yet. Add the briefs, templates and reference links your team will need."}
-  </p>:filtered.length===0?<p role="status" className="rounded-xl border border-border p-5 text-sm text-body">
+  </p>:filtered.length===0?<p role="status" className="border-b border-border py-5 text-sm text-body">
     No resources match these filters. Clear filters to see all resources.
   </p>:<div className="space-y-3">{[...filtered].sort((a,b)=>
       Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||currentOrder(a)-currentOrder(b)).map(resource=>{
@@ -196,10 +196,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      <ProjectResourceOpenLink url={resource.url} linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}/>
      {canReorder&&resource.status==="ACTIVE"?<div className="mt-2 flex flex-wrap gap-2">
        <Button variant="secondary" type="button" disabled={stableOrder[0]===resource.id}
-         className="min-h-9 rounded border border-border px-3 text-xs font-semibold disabled:opacity-50"
+         className="text-xs"
          onClick={()=>moveRelative(resource.id,-1)}>Move up</Button>
        <Button variant="secondary" type="button" disabled={stableOrder.at(-1)===resource.id}
-         className="min-h-9 rounded border border-border px-3 text-xs font-semibold disabled:opacity-50"
+         className="text-xs"
          onClick={()=>moveRelative(resource.id,1)}>Move down</Button>
      </div>:null}
      {mode!=="LEARNER"&&!readOnly&&resource.status!=="ARCHIVED"?<ProjectResourceActions
