@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import { facultyRosterCsv, facultyRosterFileName } from "@/modules/courses/faculty-roster-export";
 import {Dialog} from "@/components/ui/dialog";
 import {sortFacultyRosterByRollThenName,facultyRosterPhotoPreview,facultyRosterMetrics} from "@/modules/courses/faculty-roster-display-model";
@@ -188,160 +189,43 @@ export function FacultyCourseRoster({
         />
       ) : (
         <>
-          <div className="hidden md:block"><ScrollCue axis="x" label="Student roster contact table" className="rounded-xl border border-border bg-surface">
-            <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
-              <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">
-                    Student
-                  </th>
-                  <th className="px-4 py-3">
-                    Phone
-                  </th>
-                  <th className="px-4 py-3">
-                    Email
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {rows.map((learner) => {
-                  const name = nameOf(learner);
-                  return (
-                    <tr key={learner.membershipId}>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <button type="button" onClick={()=>setPreview(learner)}
-                            aria-label={"Preview avatar for "+name}
-                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
-                            {initials(name)}
-                          </button>
-                          <div>
-                            <p className="m-0 font-semibold text-foreground">
-                              {name}
-                            </p>
-                            {deliveryId ? (
-                              <Link
-                                href={"/teacher/courses/" + encodeURIComponent(deliveryId) +
-                                  "/students/" + encodeURIComponent(learner.membershipId)}
-                                className="mt-1 inline-flex text-xs font-semibold text-primary-text hover:underline"
-                              >
-                                View student details →
-                              </Link>
-                            ) : null}
-                            <p className="mt-1 text-xs text-muted-foreground">
-                              {learner.rollNumber
-                                ? `Roll ${learner.rollNumber}`
-                                : "Roll not assigned"}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        {learner.phoneE164 ? (
-                          <a
-                            href={`tel:${learner.phoneE164}`}
-                            className="font-semibold text-primary-text hover:underline"
-                            aria-label={`Call ${name}`}
-                          >
-                            {learner.phoneE164}
-                          </a>
-                        ) : (
-                          <span className="text-muted-foreground">
-                            No number
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        {learner.email ? (
-                          <a
-                            href={`mailto:${learner.email}`}
-                            className="font-semibold text-primary-text hover:underline"
-                            aria-label={`Email ${name}`}
-                          >
-                            {learner.email}
-                          </a>
-                        ) : (
-                          <span className="text-muted-foreground">
-                            No email
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table></ScrollCue>
-          </div>
-
-          <div className="space-y-3 md:hidden">
-            {rows.map((learner) => {
-              const name = nameOf(learner);
-              return (
-                <article
-                  key={learner.membershipId}
-                  className="rounded-xl border border-border bg-surface p-4"
-                >
-                  <div className="flex items-start gap-3">
-                    <button type="button" onClick={()=>setPreview(learner)}
-                      aria-label={"Preview avatar for "+name}
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
-                      {initials(name)}
-                    </button>
-                    <div className="min-w-0">
-                      <p className="m-0 font-semibold text-foreground">
-                        {name}
-                      </p>
-                      <StatusBadge
-                        className="mt-2"
-                        tone={
-                          learner.rollNumber
-                            ? "info"
-                            : "warning"
-                        }
-                      >
-                        {learner.rollNumber
-                          ? `Roll ${learner.rollNumber}`
-                          : "Roll not assigned"}
-                      </StatusBadge>
-                    </div>
-                  </div>
-                  {deliveryId ? (
-                    <Link
-                      href={"/teacher/courses/" + encodeURIComponent(deliveryId) +
-                        "/students/" + encodeURIComponent(learner.membershipId)}
-                      className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
-                    >
+          <DataTable
+            caption="Students in this class"
+            rows={rows}
+            getRowKey={learner=>learner.membershipId}
+            empty={<EmptyState title="No students match this search" description="Try another name, roll number, phone number or email." />}
+            columns={[
+              {key:"student",header:"Student",mobilePriority:"primary" as const,
+                cell:(learner)=><div className="flex min-w-0 items-center gap-3">
+                  <button type="button" onClick={()=>setPreview(learner)}
+                    aria-label={"Preview avatar for "+nameOf(learner)}
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
+                    {initials(nameOf(learner))}
+                  </button>
+                  <div className="min-w-0">
+                    <p className="m-0 break-words font-semibold text-foreground">{nameOf(learner)}</p>
+                    <StatusBadge tone={learner.rollNumber?"info":"warning"}>
+                      {learner.rollNumber?`Roll ${learner.rollNumber}`:"Roll not assigned"}
+                    </StatusBadge>
+                    {deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
+                      "/students/"+encodeURIComponent(learner.membershipId)}
+                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline">
                       View student details →
-                    </Link>
-                  ) : null}
-                  <div className="mt-4 grid gap-2 text-sm">
-                    {learner.phoneE164 ? (
-                      <a
-                        href={`tel:${learner.phoneE164}`}
-                        className="font-semibold text-primary-text"
-                      >
-                        {learner.phoneE164}
-                      </a>
-                    ) : null}
-                    {learner.email ? (
-                      <a
-                        href={`mailto:${learner.email}`}
-                        className="break-all font-semibold text-primary-text"
-                      >
-                        {learner.email}
-                      </a>
-                    ) : null}
-                    {!learner.phoneE164 &&
-                    !learner.email ? (
-                      <span className="text-muted-foreground">
-                        Contact details unavailable
-                      </span>
-                    ) : null}
+                    </Link>:null}
                   </div>
-                </article>
-              );
-            })}
-          </div>
+                </div>},
+              {key:"phone",header:"Phone",mobilePriority:"secondary" as const,
+                cell:(learner)=>learner.phoneE164?<a href={`tel:${learner.phoneE164}`}
+                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text"
+                  aria-label={`Call ${nameOf(learner)}`}>{learner.phoneE164}</a>:
+                  <span className="text-muted-foreground">No number</span>},
+              {key:"email",header:"Email",mobilePriority:"secondary" as const,
+                cell:(learner)=>learner.email?<a href={`mailto:${learner.email}`}
+                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text"
+                  aria-label={`Email ${nameOf(learner)}`}>{learner.email}</a>:
+                  <span className="text-muted-foreground">No email</span>},
+            ]}
+          />
 
           {totalPages > 1 ? (
             <nav
