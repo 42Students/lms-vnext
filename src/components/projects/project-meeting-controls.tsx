@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { mentorMeetingCeremonyLabel, mentorMeetingScheduleError } from "@/modules/projects/mentor-meeting-form-model";
 import {emptyMentorMeetingFacilitation,mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
+import {projectMeetingTransitionPayload} from "@/modules/projects/project-meeting-transition-payload-model";
 
 type Meeting = {
   id: string;
@@ -768,19 +769,7 @@ export function ProjectMeetingTransitionActions({
       await projectMutation(
         mode === "MENTOR" ? `/api/projects/${projectId}/meetings/${meeting.id}/mentor-decision` : `/api/projects/${projectId}/meetings/${meeting.id}/transition`,
         "POST",
-        action === "COMPLETE"
-          ? {
-              action,
-              ...(mode==="MENTOR"?{expectedUpdatedAt:new Date(meeting.updatedAt).toISOString(),confirmed:true}:{}),
-              outcome:
-                note.trim() || undefined,
-            }
-          : {
-              action,
-              ...(mode==="MENTOR"?{expectedUpdatedAt:new Date(meeting.updatedAt).toISOString(),confirmed:true}:{}),
-              note:
-                note.trim() || undefined,
-            },
+        projectMeetingTransitionPayload(action,mode,meeting.updatedAt,note),
       );
       setOpen(null);
       setNote("");

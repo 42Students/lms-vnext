@@ -870,6 +870,7 @@ export const projectMeetingTransitionInputSchema =
     z
       .object({
         action: z.literal("COMPLETE"),
+        expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
         outcome: z
           .string()
           .trim()
@@ -881,6 +882,7 @@ export const projectMeetingTransitionInputSchema =
     z
       .object({
         action: z.literal("CANCEL"),
+        expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
         note: z
           .string()
           .trim()
