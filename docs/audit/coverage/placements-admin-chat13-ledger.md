@@ -20,7 +20,16 @@
 | `src/modules/placements/super-admin-published-drive-edit-service.ts` | No edits to historic eligibility, strict CTC/date and optimistic token | `SA-PUBLISHED-DRIVE-EDIT-01` | Runtime schema + source contract; DB pending |
 | `src/modules/placements/super-admin-bulk-drive-service.ts` | Max 25, duplicate rejection, explicit confirmation, persisted actor and failure ledger | `SA-BULK-DRIVE-01` | Source contract; DB pending |
 | `src/modules/placements/super-admin-hr-service.ts` | HR accounts/college grant read/write, company identity and query scope | `SA-HR-ACCOUNTS-01/02` validation and status model | Runtime unit on validation; DB pending |
-| `src/modules/placements/super-admin-booked-interviews-service.ts` | Booking tenant scope | Not covered in this branch | Follow-up integration |
+| `src/modules/placements/super-admin-booked-interviews-service.ts` | Booking tenant scope | `SA-BOOKED-INTERVIEWS-01/02` | Runtime day model plus source guards; PostgreSQL integration open |
+
+| `src/modules/placements/super-admin-booked-interviews-range.ts` — `superAdminBookedInterviewWindow` | Strict actual YYYY-MM-DD, 2024 leap day, invalid rollover, 1-day IST midnight | `SA-BOOKED-INTERVIEWS-01` in `chat13-super-admin-booked-interviews-window.test.ts` | Runtime pure-model test authored; not executed |
+| `src/modules/placements/super-admin-booked-interviews-service.ts` — `listSuperAdminBookedInterviews` | SA-only selected college, round/job and application/job relation, relationship tenant, 2000 row cap | `SA-BOOKED-INTERVIEWS-02` in same test | Source contracts; real A/B tenant joins remain pending |
+| `src/modules/placements/platform-placement-policy-model.ts` — `placementPolicyValidate`, `platformPlacementPolicyInput` | Default valid, all boundaries, nonfinite, integer, decimal, strict shape and version | `SA-PLACEMENT-POLICY-03` in `chat13-platform-placement-policy-adversarial.test.ts` | Runtime unit authored; not executed |
+| `src/modules/placements/platform-placement-policy-service.ts` — `setPlatformPlacementPolicy` | Persisted current SA role, revoked user, per-key CAS, concurrent min/max invariant | `SA-PLACEMENT-POLICY-01/02` in same test | Source-contract regression; two-session PostgreSQL race still pending |
+| `src/modules/placements/platform-placement-policy-service.ts` — `listPlatformPlacementPolicy` | Active SA read, returned global keys and version | Existing indirect UI coverage; **no execution-level scope mock** | **Open test hole** (must not claim exhaustive) |
+| `src/modules/placements/report-extra-model.ts` — `normalizePlacementFailureReason`, `summarizePlacementFailureReasons`, `summarizePlacementLeads` | Deduplication of joined outcome events; rate denominator and empty reason | Existing model tests, not re-audited in this pass | **Open audit hole** |
+| `src/modules/placements/report-accreditation-service.ts` — `getPlacementAccreditationReport` | SA selected college, same-tenant membership, restricted season and job | Existing source/route checks; real DB samples pending | **Open integration hole** |
+| `src/modules/placements/report-accreditation-model.ts` — `buildAccreditationExport` | No invented statutory denominator, formula-safe CSV, season scope | Existing suite only; must add counterfactual cases | **Open audit hole** |
 
 ## Defects
 
@@ -35,3 +44,9 @@
 ## Acceptance limitations
 
 The unit test file includes execution-level checks of pure models plus source contract assertions of services. Source assertions do **not** prove runtime database security. Actual coverage percentages, Vitest status, linter and TS typecheck are unknown until orchestrator executes the suite. No numeric coverage claim is made.
+
+## Post-merge hardening addendum (2026-10-18)
+
+The lane fast-forwarded `chatgpt/chat-13-b` to `main` at `3273bbbc` before these changes. The Projects state predicate contained a literal escaped newline after a single-line comment, silently disabling the archived/locked protection; fixed with `PROJ-BREAK-SA-09`. All four chat-13 failures in `unit-failures-latest.md` were reconciled against semantically equivalent source (actual `ScrollCue` scrolling, native `Drawer.showModal`, current class capacity variable, equivalent whitespace) while adding assertions. Those test changes are not a green CI run.
+
+The biggest remaining admin-placement release gates are a real PostgreSQL two-session global min/max update race, a role-revoked administrator attempting a policy write, data rows with incorrect joined IDs, accepted-offer versus archive races, report vs export reconciliation, and failure of downstream notification channels. No claim of exhaustive testing or production acceptance is made.
