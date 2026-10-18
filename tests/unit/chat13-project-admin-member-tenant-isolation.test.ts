@@ -1,0 +1,64 @@
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { can } from "@/modules/permissions/policy";
+import { projectAdminCsv } from "@/modules/projects/project-admin-csv-model";
+import type { RequestContext } from "@/modules/identity/context";
+
+const source = () => readFileSync(
+  "src/modules/projects/admin-insights-service.ts", "utf8",
+);
+const context: RequestContext = {
+  user: {
+    id: "admin-a",
+    identityUid: "identity-a",
+    platformStatus: "ACTIVE",
+    systemRoles: ["SUPER_ADMIN"],
+  },
+  adminScope: { organizationId: "organization-a", collegeId: "college-a" },
+  membership: null,
+};
+
+describe("IIT Dharwad Super Admin Projects: tenant-safe mentor projections", () => {
+  it("PROJ-BREAK-SA-30 enforces college and active membership in both visible mentor queries", () => {
+    // The project itself is already scoped; its relationship to the
+    // mentor must ALSO be scoped, otherwise a malformed imported member
+    // row can leak a foreign-college user name into admin cards/risk queue.
+    const code = source();
+    const scopedJoins = code.match(
+      /\.innerJoin\(\s*collegeMemberships,\s*and\(\s*eq\(collegeMemberships\.id,\s*projectMembers\.membershipId\),\s*eq\(collegeMemberships\.collegeId,\s*college\.id\),\s*eq\(collegeMemberships\.status,\s*"ACTIVE"\)/g,
+    );
+    expect(scopedJoins).toHaveLength(2);
+    expect(code).not.toMatch(
+      /\.innerJoin\(\s*collegeMemberships,\s*eq\(\s*collegeMemberships\.id,\s*projectMembers\.membershipId/,
+    );
+    expect(can(context, "projects.manage", {
+      organizationId: "organization-a", collegeId: "college-a",
+    })).toBe(true);
+    expect(can(context, "projects.manage", {
+      organizationId: "organization-b", collegeId: "college-b",
+    })).toBe(false);
+  });
+
+  it("PROJ-BREAK-SA-31 does not expose foreign or suspended primary mentor IDs in submissions", () => {
+    const code = source();
+    const subquery = code.slice(code.indexOf("mentorMembershipId:"));
+    expect(subquery).toContain("select 1 from college_memberships cm");
+    expect(subquery).toContain("cm.id=pm.membership_id");
+    expect(subquery).toContain("cm.college_id=${college.id}");
+    expect(subquery).toContain("cm.status='ACTIVE'");
+    expect(subquery).toContain("pm.ended_at is null");
+    expect(subquery).toContain("pm.is_primary=true");
+  });
+
+  it("PROJ-BREAK-SA-32 does not turn adversarial mentor labels into formulas in Projects CSV", () => {
+    const csv = projectAdminCsv([
+      ["Project", "Mentor"],
+      ["Capstone", "\u200B=HYPERLINK(\"https://bad.example\",\"open\")"],
+      ["Team Alpha", "\t+1+2"],
+    ]);
+    expect(csv).toContain("'\u200B=HYPERLINK");
+    expect(csv).toContain("'\t+1+2");
+    expect(csv).toContain('""https://bad.example""');
+    expect(csv).toContain("\r\n");
+  });
+});
