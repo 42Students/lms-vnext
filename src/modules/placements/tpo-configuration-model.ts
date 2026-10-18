@@ -7,6 +7,7 @@ export const tpoJobTypeNameSchema=z.string().trim().min(2).max(40).regex(/^[\p{L
 export const tpoBlockedDaySchema=z.iso.date();
 
 export const tpoPrepConfigSchema=z.object({
- courseIds:z.array(z.string().uuid()).max(40),
+ courseIds:z.array(z.string().uuid()).max(40)
+  .refine(ids=>new Set(ids).size===ids.length,"Select each preparation course only once."),
  minimumCompleted:z.number().int().min(0).max(40),
 }).passthrough().refine(x=>x.minimumCompleted<=x.courseIds.length);

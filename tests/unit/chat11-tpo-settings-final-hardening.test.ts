@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { tpoRulesChangeSchema } from "@/modules/placements/tpo-season-write-model";
+import { tpoPrepConfigSchema } from "@/modules/placements/tpo-configuration-model";
 import { tpoRuleBoundsValid } from "@/modules/placements/tpo-rule-limits";
 import { deriveTpoPrepCourseOutcome } from "@/modules/placements/tpo-prep-readiness-derivation";
 import {
@@ -56,6 +57,20 @@ describe("TPO settings final-sprint hardening (chat-11)", () => {
       partial)).toBe("UNAVAILABLE");
     expect(deriveTpoPrepCourseOutcome({ ...policy, progressThresholdPct: 101 },
       partial)).toBe("UNAVAILABLE");
+  });
+
+  it("TPO-settings-audit-41 rejects duplicate configured course IDs before saving", () => {
+    const c1 = "11111111-1111-4111-8111-111111111111";
+    const c2 = "22222222-2222-4222-8222-222222222222";
+    expect(tpoPrepConfigSchema.safeParse({
+      courseIds: [c1, c2], minimumCompleted: 1,
+    }).success).toBe(true);
+    expect(tpoPrepConfigSchema.safeParse({
+      courseIds: [c1, c1], minimumCompleted: 1,
+    }).success).toBe(false);
+    expect(tpoPrepConfigSchema.safeParse({
+      courseIds: [c1], minimumCompleted: 2,
+    }).success).toBe(false);
   });
 
   it("TPO-settings-audit-41 never confuses missing course evidence with being unprepared", () => {
