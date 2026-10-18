@@ -46,7 +46,7 @@ export function verifyCollegeLogoPngChunks(bytes:Uint8Array):boolean{
   }else{
    if(idat)closedIdat=true;
    if(iend||type==="acTL"||type==="fcTL"||type==="fdAT")return false;
-   if(type==="PLTE"&&(length===0||length%3!==0||length>768))return false;
+   if(type==="PLTE"&&(idat||length===0||length%3!==0||length>768))return false;
    // Unknown critical chunks are not supported by the small PNG upload
    // contract. Ancillary chunks are allowed only with valid CRC.
    if(type[0]===type[0]?.toUpperCase()&&type!=="PLTE")return false;
