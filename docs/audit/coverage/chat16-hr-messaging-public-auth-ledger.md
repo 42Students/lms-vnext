@@ -406,3 +406,15 @@ All cases are **authored but unexecuted**. Existing tests are retained. No actua
 | `deliverBatch` (initial policy failure branch) | `tests/unit/chat16-messaging-initial-policy-outage-14.test.ts` (`MSG-POLICY-INITIAL-14`, `MSG-POLICY-INITIAL-15`) | A failing initial authorization/suppression policy read records `FAILED/policy-read-failed` with opaque recipient key before any send. A later eligible contact can still send and complete aggregate audit; an all-recipient policy outage leaves no queued/unconfirmed sends and records exact failed totals. Errors and recipient addresses are not copied to receipts. |
 
 Fix `src/modules/messaging/service.ts`: the previous unhandled initial `policyFor` exception could abort a partially-sent batch before calling `repository.auditBatch`, even when the preceding recipient had already been accepted by the provider. The new fail-closed branch continues the remaining recipients and emits complete receipt counts. Existing retryless provider POST and secondary live-policy recheck stay unchanged. This is unit-level test authorship, **not executed**; multi-worker PostgreSQL concurrency still needs acceptance.
+
+
+### 2026-10-19 continued: public recruitment and code API hardened against oversized and partial failures
+
+| Boundary | Behavioral tests | Cases |
+|---|---|---|
+| `POST /api/public/recruit-from-us/send-code` | `tests/unit/chat16-public-recruit-enquiry-route-guards-16.test.ts` (`PUBLIC-ENQUIRY-FAIL-16..21`, `PUBLIC-ENQUIRY-SIZE-24/25`) | Deny cross-origin before private lookup, unknown college 404, tenant DB/provider 503 with no private stack, normal success, trustworthy IP only when proxy verified, status 429/503, invalid UTF-8/JSON 400, UTF-8 byte cap 413 before sending |
+| `POST /api/public/recruit-from-us/recruit` | same | Same-origin, active verified tenant, 404/503/error mapping, no untrusted proxy IP, bounded POST before enquiry transaction |
+| `readPublicRecruitEnquiryBody` | same (route-through tests) | 8,192-byte UTF-8 body guard, parsed unknown JSON for existing strict Zod service schemas, invalid/oversized body never accesses storage or sends mail |
+| `readBoundedUtf8Body` / `readBoundedRecruiterInboundBody` | `tests/unit/chat16-recruiter-mail-body-bounds-01.test.ts`, route-through tests above | Single shared bounded streaming implementation handles signed internal 20 KB and anonymous 8 KB ingress; raw signed bytes (including BOM) are preserved |
+
+Bug fixes: both public recruitment POST routes previously let unexpected tenancy or service exceptions bubble as unhandled request errors, and read anonymous JSON with unbounded `request.json()`. They now return a cache-disabled, generic no-private-data error on dependency failure and reject oversized/malformed payloads before recruiter onboarding service work. This is authored source only; browser/provider and PostgreSQL runtime verification remain **not run**.
