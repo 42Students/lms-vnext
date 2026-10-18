@@ -42,7 +42,7 @@ function istDate(date:Date){
  return part("year")+"-"+part("month")+"-"+part("day");
 }
 const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
+  "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-base text-foreground outline-none motion-safe:transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
 
 export async function ProjectAdminAuditPage({
   basePath,

@@ -22,21 +22,21 @@ export default async function CollegeSemestersPage({
   const params = academicDirectorySearchParams(await searchParams);
   const parsed = collegeSemesterDirectorySchema.safeParse(params);
   if (!parsed.success) {
-    return <div className="space-y-4">
+    return <main className="min-w-0 space-y-4">
       <PageHeader eyebrow="College Admin · Academic Setup" title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
-        action={<Link href="/college/semesters" className="font-semibold text-primary-text">Clear filters</Link>} />
+        action={<Link href="/college/semesters" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>} />
     </div>;
   }
   return <div className="space-y-4">
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={academicExportHref("SEMESTERS",parsed.data)}
-      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Export CSV
     </Link>
     <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching semesters; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
     </div>
     <CollegeAcademicDirectory data={await listCollegeSemesters(context, parsed.data)} />
-  </div>;
+  </main>;
 }

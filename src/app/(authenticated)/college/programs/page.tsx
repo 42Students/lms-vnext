@@ -22,12 +22,13 @@ export default async function CollegeProgramsPage() {
   const contents = await listProgramContents(context, collegeId, programs.map(program => program.id));
 
   return (
-    <div className="space-y-6">
+    <main className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="College Admin"
         title="Programs"
         description="Create, find and manage the programs in your college."
       />
+      <section aria-label="Active programs" className="min-w-0">
       <AdminProgramDirectory
         programs={programs.map((program) => ({
           id: program.id,
@@ -43,7 +44,10 @@ export default async function CollegeProgramsPage() {
           name: department.name,
         }))}
       />
-      <CollegeArchivedPrograms programs={archived} />
-    </div>
+      </section>
+      <section aria-label="Archived programs" className="min-w-0">
+        <CollegeArchivedPrograms programs={archived} />
+      </section>
+    </main>
   );
 }
