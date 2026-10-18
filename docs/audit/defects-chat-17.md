@@ -33,3 +33,5 @@
 - **Unverified:** actual cloud execution of this new suite and browser keyboard/focus/visual viewport tests. Run `npm run test:db:projects-harness` on a migrated disposable `TEST_DATABASE_URL` and `npm run test:ux:kit:hardening` in CI; never report a suite as green merely because tests are checked in.
 
 **Browser follow-up:** `UX-kit-HARDEN-35` now also has a real Chromium URL-parser witness in `tests/e2e/ux-safe-internal-href-chat17.spec.ts`, authored but not executed in the GitHub-only connector environment.
+
+- **PROJ-HARNESS-33..35:** An in-memory fixture role claim previously could create a project or placement graph with a wrong-role or revoked author because the constructor only compared tenant IDs; the SQL schema permits these actors and would not automatically reject them. The harness now verifies active user, membership and role rows before writing, and `tests/integration/projects-placements-pg-harness-boundaries.test.ts` includes negative role/suspension examples. Commits `3322dd9d`, `384361bb`. Cloud PostgreSQL execution pending.
