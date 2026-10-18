@@ -71,7 +71,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       <p>{venue?"Venue: "+venue:"Venue to be told"}</p>
       <div className="flex flex-wrap gap-3">
         {join&&/^https:\/\//i.test(join)?<ThirdPartyLink href={join} label="Join online round" />:null}
-        {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<ThirdPartyLink href={row.testUrl} label="Open test" />:null}
+        {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<ThirdPartyLink href={row.testUrl} label="Open test" ariaLabel="Open test · Take online assessment" />:null}
         {row.testUrl&&row.assessmentDueAt&&(row.roundKind==="TEST"||row.roundKind==="VENDOR_TEST")?<span className="font-semibold text-body">Take it by {fmt(row.assessmentDueAt)}</span>:null}
       </div>
       {row.exception ? (
