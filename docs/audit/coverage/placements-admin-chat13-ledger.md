@@ -83,3 +83,6 @@ The biggest remaining admin-placement release gates are a real PostgreSQL two-se
 
 
 | `src/modules/placements/super-admin-booked-interviews-service.ts` — foreign program department joining | Selected-college interview must not reveal a department belonging to another college even if the learner enrollment's program reference was malformed | `SA-BOOKED-INTERVIEWS-03` in `chat13-super-admin-booked-interviews-window.test.ts` | Scoped final department join fixed in `63bd8118`; source regression authored; two-college PostgreSQL fixture **not executed** |
+
+
+| `src/modules/placements/admin-company-directory-export-model.ts` + `src/modules/admin-ui/super-admin-scoped-csv-model.ts` — CSV formula escaping | Formula injection prefixed by Unicode `Mn` combining marks, arbitrary `Cf` controls, whitespace and bidi text | `SA-ADMIN-CSV-04` in `chat13-admin-export-unicode-formula.test.ts` (six malicious prefixes per export and safe-text preservation) | Fixed `c7bca430` / `4fa85596`; pure model behavior authored, no CI executed |
