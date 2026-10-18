@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {resolveBulkRoundLearnerTokens} from "@/modules/placements/tpo-bulk-round-result-model";
 
 type Row = {
@@ -39,6 +40,7 @@ export function TpoBulkRoundResultRecorder({
   const [firstWaitlistRank,setFirstWaitlistRank]=useState(1);
   const [failUnselected,setFailUnselected]=useState(false);
   const [busy, setBusy] = useState(false);
+  const [confirmOpen,setConfirmOpen]=useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Result[]>([]);
   const [reportedOutcomeByApplicant,setReportedOutcomeByApplicant]=useState<Record<string,string>>({});
@@ -61,7 +63,7 @@ export function TpoBulkRoundResultRecorder({
     );
   }
 
-  async function stageSelected() {
+  async function stageSelected(confirmed=false) {
     if (busy || selected.length === 0 || pendingTotal > 25 ||
       ((outcome !== "PASS" || failUnselected) && message.trim().length === 0) ||
       (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000))) {
@@ -91,14 +93,7 @@ export function TpoBulkRoundResultRecorder({
       setError("The selected rows changed; refresh before staging.");
       return;
     }
-    if (!window.confirm(
-      "Stage " + entries.length + " result(s) as " +
-      ({PASS:"Shortlisted",FAIL:"Not selected",HOLD:"Waitlisted",ABSENT:"Marked absent"}[outcome]) +
-      "? " + (failUnselected?unselected.length+" additional unmarked applicants will be staged Not cleared. ":"") +
-      "Each successful result will be audited individually. " +
-      "This does NOT publish results; a completed round requires separate APPLY confirmation. " +
-      "Some rows may succeed even if others fail. Continue?",
-    )) return;
+    if(!confirmed){setConfirmOpen(true);return;}
 
     setReportedOutcomeByApplicant(Object.fromEntries(entries.map(entry=>[entry.result.applicationId,entry.result.outcome])));
     setBusy(true);
@@ -115,8 +110,7 @@ export function TpoBulkRoundResultRecorder({
         },
       );
       if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(body?.error ?? "Bulk staging was rejected.");
+        throw new Error("Bulk staging was rejected.");
       }
       const body = (await response.json()) as { results: Result[] };
       setResults(body.results);
@@ -128,7 +122,7 @@ export function TpoBulkRoundResultRecorder({
         "refresh the page and check individual statuses before retrying.",
       );
     } finally {
-      setBusy(false);
+      setBusy(false);setConfirmOpen(false);
     }
   }
 
@@ -156,20 +150,20 @@ export function TpoBulkRoundResultRecorder({
             <label className="block text-sm font-semibold text-body">Find unmarked learner
               <input type="search" maxLength={100} value={search} onChange={event=>setSearch(event.target.value)}
                placeholder="Search name, roll or application ID"
-               className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3 text-foreground"/>
+               className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3 text-foreground"/>
             </label>
             <div className="flex flex-wrap gap-3 text-sm">
               <button type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
-                className="font-semibold text-primary-text">Select first 25 unmarked</button>
+                className="font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked</button>
               <button type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
-                className="font-semibold text-primary-text">Clear selection</button>
+                className="font-semibold text-[var(--lms-teal-deep)]">Clear selection</button>
             </div>
             <details className="rounded border border-border p-3">
               <summary className="cursor-pointer text-sm font-semibold">Paste application IDs from a spreadsheet</summary>
               <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
               <textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
                 className="mt-2 block w-full rounded border border-border bg-surface p-2 text-sm"/>
-              <button type="button" disabled={busy} className="mt-2 min-h-9 rounded border border-border px-3 text-sm"
+              <button type="button" disabled={busy} className="mt-2 min-h-11 rounded border border-border px-3 text-sm"
                 onClick={()=>{
                   const resolved=resolveBulkRoundLearnerTokens(pastedIds,available);
                   if(resolved.error){setError(resolved.error);return;}
@@ -178,7 +172,7 @@ export function TpoBulkRoundResultRecorder({
             </details>
             <div className="max-h-52 overflow-auto rounded-md border border-border p-2">
               {visible.map((row) => (
-                <label key={row.applicationId} className="flex min-h-10 items-center gap-3 px-2 text-sm text-body">
+                <label key={row.applicationId} className="flex min-h-11 items-center gap-3 px-2 text-sm text-body">
                   <input
                     type="checkbox"
                     checked={selected.includes(row.applicationId)}
@@ -197,7 +191,7 @@ export function TpoBulkRoundResultRecorder({
               value={outcome}
               onChange={(event) => setOutcome(event.target.value as "PASS" | "FAIL" | "HOLD" | "ABSENT")}
               disabled={busy}
-              className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal text-foreground"
+              className="mt-1 block min-h-11 w-full rounded-md border border-border bg-surface px-3 font-normal text-foreground"
             >
               <option value="PASS">Shortlisted for next round (PASS)</option>
               <option value="FAIL">Not selected (FAIL)</option>
@@ -233,7 +227,7 @@ export function TpoBulkRoundResultRecorder({
             First waitlist rank (in checkbox selection order)
             <input type="number" min={1} max={100000} value={firstWaitlistRank}
               onChange={e=>setFirstWaitlistRank(Number(e.target.value))}
-              className="mt-1 block min-h-10 w-40 rounded border border-border bg-surface px-3"/>
+              className="mt-1 block min-h-11 w-40 rounded border border-border bg-surface px-3"/>
             <span className="mt-1 block text-xs font-normal text-body">Chosen learners are assigned consecutive ranks. Check existing waitlisted results to avoid duplicate ranks.</span>
           </label>:null}
           {selected.length>0?<div role="status" className="rounded-md border border-border bg-surface-subtle p-3 text-sm text-body">
@@ -250,13 +244,17 @@ export function TpoBulkRoundResultRecorder({
               ((outcome !== "PASS" || failUnselected) && !message.trim()) ||
               pendingTotal > 25 ||
               (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1))}
-            className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
+            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50"
           >
             {busy ? "Staging..." : "Review and confirm staged results"}
           </button>
         </>
       )}
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
+        title={"Stage "+pendingTotal+" result(s) as "+({PASS:"Shortlisted",FAIL:"Not selected",HOLD:"Waitlisted",ABSENT:"Marked absent"}[outcome])+"?"}
+        description={(failUnselected?unselected.length+" additional unmarked applicants will be staged Not cleared. ":"")+"Each successful result will be audited individually. This does NOT publish results; a completed round requires separate APPLY confirmation. Some rows may succeed even if others fail. Continue?"}
+        confirmLabel="Review and confirm staged results" onConfirm={()=>void stageSelected(true)}/>
+      {error ? <p role="alert" className="text-sm text-foreground">{error}</p> : null}
       {results.length > 0 ? (
         <div role="status" className="space-y-2 text-sm text-body">
           <button type="button" onClick={()=>{
@@ -271,7 +269,7 @@ export function TpoBulkRoundResultRecorder({
             const url=URL.createObjectURL(new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}));
             const link=document.createElement("a");link.href=url;
             link.download="round-"+roundId+"-bulk-results.csv";link.click();URL.revokeObjectURL(url);
-          }} className="min-h-9 rounded border border-border px-3 font-semibold text-primary-text">
+          }} className="min-h-11 rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
             Export per-learner staging report (CSV)
           </button>
           <p className="font-semibold">Per-learner outcomes</p>
