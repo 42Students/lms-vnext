@@ -278,25 +278,25 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-pending-task-review-export.ts` | `mentorPendingTaskReviewCsv` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorPendingTaskReviewCsv); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-portfolio-activity-export-model.ts` | `mentorPortfolioActivityExportHref` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorPortfolioActivityExportHref); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-portfolio-activity-export-model.ts` | `mentorPortfolioActivityCsv` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorPortfolioActivityCsv); **not run**; service / tenant / PostgreSQL acceptance remains open |
-| `src/modules/projects/mentor-portfolio-model.ts` | `pageMentorPortfolio` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-portfolio-model.ts` | `selectMentorReviewQueue` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-portfolio-model.ts` | `safeMentorProjectEventLabel` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-portfolio-model.ts` | `mentorPortfolioHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `pageMentorPortfolio` | `tests/unit/mentor-portfolio-model.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
+| `src/modules/projects/mentor-portfolio-model.ts` | `selectMentorReviewQueue` | `tests/unit/mentor-portfolio-model.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
+| `src/modules/projects/mentor-portfolio-model.ts` | `safeMentorProjectEventLabel` | `tests/unit/mentor-portfolio-model.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorPortfolioHref` | `tests/unit/mentor-portfolio-model.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
 | `src/modules/projects/mentor-portfolio-model.ts` | `mentorPortfolioActivityCutoff` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityPagination` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityProjectTitleMatch` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityImportanceLabel` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-portfolio-model.ts` | `mentorReviewQuerySchema` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityQuerySchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityImportanceLabel` | `tests/unit/mentor-activity-importance-visibility.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorReviewQuerySchema` | `tests/unit/mentor-portfolio-model.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
+| `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityQuerySchema` | `tests/unit/mentor-portfolio-model.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
 | `src/modules/projects/mentor-portfolio-model.ts` | `mentorActivityFormLayout` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-portfolio-model.ts` | `mentorDeliveryReviewMobileForm` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-portfolio-service.ts` | `getMentorReviewQueue` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-portfolio-service.ts` | `getMentorPortfolioActivity` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-activity-export-model.ts` | `mentorActivityCsv` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityEventTypes` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-export-model.ts` | `mentorActivityCsv` | `tests/unit/mentor-project-activity-export.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityEventTypes` | `tests/unit/mentor-project-activity-model.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
 | `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityPage` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorProjectActivityPage); **not run**; service / tenant / PostgreSQL acceptance remains open |
-| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivitySince` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivitySince` | `tests/unit/mentor-project-activity-model.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
+| `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityHref` | `tests/unit/mentor-project-activity-model.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
 | `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityQuerySchema` | `tests/unit/PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Behavioural regression authored (mentorProjectActivityQuerySchema); **not run**; service / tenant / PostgreSQL acceptance remains open |
 | `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityMobileLayout` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-activity-model.ts` | `mentorProjectActivityMobileFilters` | **GAP** | **GAP — behaviour untested** |
@@ -315,7 +315,7 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/mentor-project-timeline-model.ts` | `mentorTimelineHref` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-timeline-model.ts` | `mentorTimelineQuerySchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-timeline-service.ts` | `getMentorProjectTimeline` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/mentor-project-work-model.ts` | `matchesMentorProjectWork` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-project-work-model.ts` | `matchesMentorProjectWork` | `tests/unit/mentor-project-filter-call-types.test.ts` | Existing behavioural runtime assertions inspected: query validation, paging, event allowlist or CSV privacy; **CI not independently verified**; full permission/DB edge cases remain GAP |
 | `src/modules/projects/mentor-project-work-model.ts` | `mentorTaskProgress` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-project-work-service.ts` | `getMentorProjectWorkCounts` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-reassignment-workload-service.ts` | `listCollegeProjectMentorWorkload` | **GAP** | **GAP — behaviour untested** |
