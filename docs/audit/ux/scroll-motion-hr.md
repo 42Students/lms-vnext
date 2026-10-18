@@ -14,3 +14,11 @@ Owner rule: global scrollbars remain invisible, but overflowing content must adv
 Related regression assertions: `tests/unit/chat19-hr-page-contracts.test.ts`, `HR-XA-01`, `HR-XA-05`, `HR-XA-06`. Shared `ScrollCue` uses `ResizeObserver`, passive scroll listener, edge fades and `overscroll-contain` with no independent motion duration. Existing CSS `prefers-reduced-motion` token settings remain unchanged.
 
 **Pending:** Real 320/360/390px verification; test keyboard Page Up/Down and wheel/touch scrolling, focus/selection, virtual keyboard in reply forms, and reduced-motion. Only these changed containers are claimed; other authored HR nested widgets require a separate exhaustive visit.
+
+## Shared shell notification drawer, added to chat-19 scroll pass
+
+| Surface | Scrolling | Visible affordance and keyboard semantics | Regression |
+|---|---|---|---|
+| `HrRecruiterBell` (active recruiter shell) | Vertical notice list up to 80 sizing units | Replaced invisible bare `overflow-auto` with named `ScrollCue axis="y"`; focusable/edge fade when scrollable; 44px links; Escape closes and restores trigger focus | `HR-BREAK-ACTIVE-BELL-34` and `HR-BREAK-BELL-PAYLOAD-35` |
+
+Opening remains a read-only action. Browser wheel, touch and screen-reader validation are pending.
