@@ -8,6 +8,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireProjectLifecycleMutationAccess } from "./access";
+import { assertPersistedProjectMutationActor } from "./persisted-mentor-mutation";
 import { ProjectsServiceError } from "./errors";
 import {
   mentorTaskDetailsParamsSchema,mentorTaskDetailsInputSchema,taskDetailsChangedFields,
@@ -29,6 +30,7 @@ export async function updateMentorTaskDetails(
       .for("update").limit(1);
     if(!project||!["PLANNED","ACTIVE"].includes(project.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    await assertPersistedProjectMutationActor(tx,context,scope);
 
     const [task]=await tx.select().from(projectTasks)
       .where(and(eq(projectTasks.id,params.taskId),
