@@ -282,6 +282,38 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("PLACEMENTS-EXPIRY-NOTIFY-30 DB records and notifies exactly once after offer deadline, never from a GET",async()=>{
+    const {application}=await preparePassedApplication();
+    const expiresAt=new Date("2099-10-24T18:29:59.000Z");
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Expiry notice engineer",annualCtcInr:900_000,expiresAt,
+    });
+    const before=await pool.query<{count:number}>(`
+      select count(*)::int as count from activity_events where
+      dedupe_key=$1`,["placement-offer-expired:"+issued.id]);
+    expect(before.rows[0]?.count).toBe(0);
+    expect(await sweepExpiredPlacementOffers(SEED_IDS.facultyUser,expiresAt,100)).toBe(1);
+    expect(await sweepExpiredPlacementOffers(SEED_IDS.facultyUser,
+      new Date(expiresAt.getTime()+3600_000),100)).toBe(0);
+    const persisted=await pool.query<{status:string}>(`
+      select status from placement_offers where id=$1`,[issued.id]);
+    expect(persisted.rows).toEqual([{status:"EXPIRED"}]);
+    const history=await pool.query<{count:number}>(`
+      select count(*)::int as count from placement_offer_status_history
+      where offer_id=$1 and to_status='EXPIRED'`,[issued.id]);
+    expect(history.rows[0]?.count).toBe(1);
+    const events=await pool.query<{id:string;subject_id:string}>(`
+      select id,subject_id from activity_events where
+      event_type='PLACEMENTS_OFFER_EXPIRED' and dedupe_key=$1`,
+      ["placement-offer-expired:"+issued.id]);
+    expect(events.rows).toHaveLength(1);
+    expect(events.rows[0]?.subject_id).toBe(issued.id);
+    const notices=await pool.query<{user_id:string}>(`
+      select user_id from in_app_notifications where event_id=$1`,
+      [events.rows[0]!.id]);
+    expect(notices.rows).toEqual([{user_id:SEED_IDS.learnerUser}]);
+  });
+
   it("PLACEMENTS-EXPIRY-RACE-05 DB serializes sweep versus same-offer learner acceptance into one terminal outcome",async()=>{
     const {application}=await preparePassedApplication();
     const expiry=new Date("2099-10-19T18:29:59.000Z");
