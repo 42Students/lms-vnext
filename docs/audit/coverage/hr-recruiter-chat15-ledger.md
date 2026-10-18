@@ -137,3 +137,13 @@ CI was explicitly deferred by the owner. Every line below is **authored but unex
 | 14 legacy `/recruiter/**` server aliases; two legacy redirects | `tests/unit/HR-BREAK-chat15-recruiter-alias-pages-69.test.ts` (HR-RECRUITER-PAGES-69) | Actual server page export identity with secure canonical HR routes; legacy entrypoints redirect to Today | End-to-end navigation, loading/error states and responsive screens |
 
 The overall `HR-COV-15` work remains **OPEN**: remaining exported functions and HTTP route handlers still need individually documented success/validation/security/concurrency cases and real PostgreSQL run. None of these edits touches production or replaces central authorization.
+
+
+## Subsequent HR export and API failure-mode coverage
+
+| Export / route | Named behavioral evidence | Invariants | Still missing |
+|---|---|---|---|
+| `buildHrApplicantCsv` (`src/modules/placements/hr-applicant-export-model.ts`) | `tests/unit/HR-BREAK-chat15-applicant-export-70.test.ts` (HR-APPLICANT-EXPORT-70) | CSV formula injection guarded, private contact masked, 200-row cap, malformed persisted date does not crash export, invalid aggregate totals do not print NaN/Infinity | Real SQL export counts agree with visible recruiter shortlist, Excel and 1k-row database fixtures |
+| `/api/placements/recruiter/drives/requests` GET/POST/PATCH; shared unexpected-error handler | `tests/unit/HR-BREAK-chat15-request-api-71.test.ts` (HR-DRIVE-API-71) | Cross-origin POST/PATCH rejected before service, valid vs replay status, exact GET college validation and no writes, unexpected service outage produces sanitized request-id response | Genuine logged-in HTTP cookie/CSRF, database write rollback, parallel nonce conflict and rate limits |
+
+Tests were authored only, not executed. No CI run was requested; HR release certification remains open.
