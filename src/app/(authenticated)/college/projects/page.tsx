@@ -61,7 +61,7 @@ export default async function CollegeProjectsPage({
   const items=result.items.map(project=>({
    id:project.id,title:project.title,summary:project.summary,status:project.status,
    updatedAt:project.updatedAt,mentorName:project.mentorName,memberCount:project.memberCount,
-   templateTitle:templateTitles.get(project.templateId)??null,
+   templateTitle:project.templateId ? (templateTitles.get(project.templateId)??null) : null,
    progressPercent:project.progressPercent,
    riskReasons:project.riskReasons,
   }));
