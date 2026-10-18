@@ -29,7 +29,7 @@ const rows:TpoStudentRow[]=[
  {...base,membershipId:B,displayName:"Bala",rollNumber:"CS002",participationStatus:"INELIGIBLE",
   registrationChoice:null,registeredForPlacements:false,journeyState:"NEEDS_READINESS_SUPPORT",
   cgpa:null,marksVerified:false,offersAwaitingAnswer:0,offerCount:0,activeBacklogs:null,
-  profileFacts:{...base.profileFacts!,projects:0,skills:0,hasResume:false,resume:false},
+  profileFacts:{...base.profileFacts!,projects:0,skills:0,resume:false},
   verification:{status:"WAITING",waitingSections:["EDUCATION"],verifiedSections:[]},
   fromFinishedBatch:true,interviewedCompanies:[],maximumAppliedRoundSequence:null},
 ];
