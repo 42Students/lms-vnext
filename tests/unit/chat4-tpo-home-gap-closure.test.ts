@@ -151,7 +151,11 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   const s=source("src/app/(authenticated)/tpo/home/loading.tsx");
   expect(s).toContain("Loading placement home");
   expect(s).toContain('<PageLoading label="Loading placement home…" variant="kpi" count={4} />');
-  expect(source("src/components/ui/skeleton.tsx")).toContain("animate-pulse");
+  const skeleton=source("src/components/ui/skeleton.tsx");
+  expect(skeleton).toContain("lms-skeleton-shimmer");
+  expect(skeleton).toContain("motion-reduce:animate-none");
+  expect(skeleton).toContain('role="status" aria-live="polite"');
+  expect(skeleton).toContain('aria-hidden="true"');
 
  });
  it("TPO-home-21 verified legacy and graceful behavior",()=>{
