@@ -7,6 +7,18 @@ const activeOverlayStack: string[] = [];
 let pendingCleanupPops = 0;
 const ignoredPopEvents = new WeakSet<Event>();
 
+/** Pure per-event consumption used by all mounted overlay listeners. */
+export function consumeOverlayCleanupPop(event: Event): boolean {
+  if (ignoredPopEvents.has(event)) return true;
+  if (pendingCleanupPops <= 0) return false;
+  pendingCleanupPops -= 1;
+  ignoredPopEvents.add(event);
+  return true;
+}
+export function queueOverlayCleanupPop(): void {
+  pendingCleanupPops += 1;
+}
+
 /**
  * Host: dispatch cancelable "lms:native-back" before route navigation.
  * If dispatchEvent returns false the overlay consumed Back. History markers
@@ -14,11 +26,13 @@ const ignoredPopEvents = new WeakSet<Event>();
  * own marker. Pending nondismissible overlays restore the marker.
  */
 export function useOverlayWebview({
-  open, dismissible, onDismiss,
-}: { open: boolean; dismissible: boolean; onDismiss: () => void }) {
+  open, dismissible, onDismiss, historyMode = "marker",
+}: { open: boolean; dismissible: boolean; onDismiss: () => void; historyMode?: "marker" | "route" }) {
   const id = useId();
   const callback = useRef(onDismiss);
   callback.current = onDismiss;
+  const dismissibleRef = useRef(dismissible);
+  dismissibleRef.current = dismissible;
   const [availableHeight, setAvailableHeight] = useState<string>();
   const [viewportTop, setViewportTop] = useState<string>();
   useEffect(() => {
@@ -26,23 +40,19 @@ export function useOverlayWebview({
     const marker = `lms-overlay:${id}`;
     if (!activeOverlayStack.includes(marker)) activeOverlayStack.push(marker);
     const originalState = window.history.state as Record<string, unknown> | null;
-    if (originalState?.lmsOverlay !== marker) {
+    if (historyMode === "marker" && originalState?.lmsOverlay !== marker) {
       window.history.pushState({ ...(originalState ?? {}), lmsOverlay: marker }, "", window.location.href);
     }
     function hostBack(event: Event) {
       if (activeOverlayStack[activeOverlayStack.length - 1] !== marker) return;
       event.preventDefault();
-      if (dismissible) callback.current();
+      if (dismissibleRef.current) callback.current();
     }
     function popstate(event: PopStateEvent) {
-      if (ignoredPopEvents.has(event)) return;
-      if (pendingCleanupPops > 0) {
-        pendingCleanupPops -= 1;
-        ignoredPopEvents.add(event);
-        return;
-      }
+      if (consumeOverlayCleanupPop(event)) return;
+      if (historyMode === "route") return; // URL-selected detail: let browser history navigate naturally.
       if (activeOverlayStack[activeOverlayStack.length - 1] !== marker) return;
-      if (dismissible) callback.current();
+      if (dismissibleRef.current) callback.current();
       else {
         // Refuse navigation away from a pending, nondismissible action.
         window.history.pushState({ ...(window.history.state ?? {}), lmsOverlay: marker }, "", window.location.href);
@@ -69,12 +79,12 @@ export function useOverlayWebview({
       const index = activeOverlayStack.lastIndexOf(marker);
       if (index >= 0) activeOverlayStack.splice(index, 1);
       const latest = window.history.state as Record<string, unknown> | null;
-      if (latest?.lmsOverlay === marker) {
+      if (historyMode === "marker" && latest?.lmsOverlay === marker) {
         // The next popstate belongs to this explicit close, NOT to the parent.
-        pendingCleanupPops += 1;
+        queueOverlayCleanupPop();
         window.history.back();
       }
     };
-  }, [open, dismissible, id]);
+  }, [open, id, historyMode]);
   return { availableHeight, viewportTop };
 }
