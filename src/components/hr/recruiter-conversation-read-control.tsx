@@ -5,6 +5,7 @@ import {hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-fee
 export function RecruiterConversationReadControl({threadId}:{threadId:string}){
  const router=useRouter();
  const [busy,setBusy]=useState(false);
+ const acknowledgePending=useRef(false);
  const [notice,setNotice]=useState("");
  const acknowledgedOnOpen=useRef(false);
  useEffect(()=>{
@@ -19,7 +20,8 @@ export function RecruiterConversationReadControl({threadId}:{threadId:string}){
   }).catch(()=>setNotice("Read status could not be saved. Use the button below to retry."));
  },[threadId,router]);
  async function acknowledge(){
-  if(busy)return;
+  if(acknowledgePending.current)return;
+  acknowledgePending.current=true;
   setBusy(true);
   setNotice("");
   let success=false;
@@ -32,9 +34,10 @@ export function RecruiterConversationReadControl({threadId}:{threadId:string}){
     new URL(response.url).pathname==="/hr/conversations/"+threadId;
    if(!success)feedback=hrReplyErrorMessage(response.status);
   }catch{feedback="Connection unavailable. Read status has not been confirmed.";}
-  if(success){setNotice("Read status updated.");router.refresh();}
-  else setNotice(feedback);
-  setBusy(false);
+  try{
+   if(success){setNotice("Read status updated.");router.refresh();}
+   else setNotice(feedback);
+  }finally{acknowledgePending.current=false;setBusy(false);}
  }
  return <div className="space-y-2">
   <button type="button" disabled={busy} onClick={acknowledge}
