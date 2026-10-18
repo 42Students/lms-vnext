@@ -137,3 +137,5 @@ The selected-college batch overview now requires a persisted `membership_roles.r
 - The previous unit-failure report's `TPO-drives-51`, `COL-people-20`, and `COL-people-24` expectations all match the current exact source strings. Cloud CI rerun is still required; see `docs/audit/defects-chat-3.md`.
 
 | `src/modules/people/super-admin-person-audit-service.ts` | `listSuperAdminPersonAudit` | `tests/unit/chat3-sa-people-audit-service-live-scope.test.ts` | SA3-PEOPLE-AUDIT-SERVICE-01 | selected college/membership preflight, no read after persisted role revocation, exact same-college actor/subject audit SQL, transactional projection and DB outage propagation; tests authored, not executed |
+
+| `src/app/(authenticated)/admin/people/directory/page.tsx` | `SuperAdminUserDirectory` | `tests/unit/chat3-sa-people-directory-auth-before-query.test.tsx` | SA3-PEOPLE-PREFLIGHT-01 | Super Admin role checks execute before hostile/pending URL parsing; Faculty, Mentor, Learner and disabled platform identities redirect without data read; valid Super Admin receives recoverable invalid-filter state; not executed |
