@@ -74,7 +74,11 @@ function isSameMembershipCollege(
   return Boolean(
     context.membership?.collegeId &&
       resource.collegeId &&
-      context.membership.collegeId === resource.collegeId,
+      context.membership.collegeId === resource.collegeId &&
+      // Both scope dimensions must agree when the target includes an organization.
+      // A matching college UUID cannot authorize a mismatched organization.
+      (!resource.organizationId ||
+        context.membership?.organizationId === resource.organizationId),
   );
 }
 
