@@ -21,7 +21,8 @@ describe("SA-academics-people-101 multi-course faculty assignment",()=>{
  it("performs a single transaction, stable row locks, rechecks same class/semester/college and authorizes faculty again",()=>{
   const service=read("src/modules/courses/teaching-assignment-batch-service.ts");
   expect(service).toContain("createCourseTeachingAssignmentsBatchInputSchema.parse(rawInput)");
-  expect(service).toContain('requirePermission(context,"courses.manage"');
+  expect(service).toContain('requireSuperAdminSelectedCollege(context,"courses.manage")');
+  expect(service.indexOf("requireSuperAdminSelectedCollege(")).toBeLessThan(service.indexOf("loadCourseSectionDeliveryScope("));
   expect(service).toContain("delivery.sectionId===first.sectionId");
   expect(service).toContain("delivery.academicPeriodId===first.academicPeriodId");
   expect(service).toContain("delivery.organizationId===first.organizationId");
