@@ -401,12 +401,22 @@ export async function createTaskSubmission(db: PgHarness, project: ProjectFixtur
       ["DONE","IN_REVIEW"].includes(tasks[0]!.status)) {
     throw new Error("PROJ-HARNESS: task sprint or task state cannot accept a submission");
   }
-  const [row] = await db.query<{id:string}>(`
-    insert into project_task_submissions
-      (project_id,task_id,version,submitted_by_membership_id,submission_url)
-    values ($1,$2,1,$3,$4) returning id`,
-    [project.projectId,project.taskId,learner.membershipId,"https://example.test/proof"]);
-  return row!.id;
+  // Product submission transitions the persisted task to IN_REVIEW.
+  // Keep insert + task CAS in one SAVEPOINT so a competing status transition
+  // cannot leave a partial submission when the caller catches an error.
+  return db.savepoint(async()=>{
+    const [row] = await db.query<{id:string}>(`
+      insert into project_task_submissions
+        (project_id,task_id,version,submitted_by_membership_id,submission_url)
+      values ($1,$2,1,$3,$4) returning id`,
+      [project.projectId,project.taskId,learner.membershipId,"https://example.test/proof"]);
+    const changed = await db.query<{id:string}>(`
+      update project_tasks set status='IN_REVIEW',updated_at=now()
+      where id=$1 and project_id=$2 and status in ('TODO','IN_PROGRESS','BLOCKED')
+      returning id`,[project.taskId,project.projectId]);
+    if (changed.length !== 1) throw new Error("PROJ-HARNESS: task state changed while submitting");
+    return row!.id;
+  });
 }
 async function requireMutableFixtureProject(
   db: PgHarness, projectId: string, activity: "task submissions" | "final delivery" | "meetings",
