@@ -236,3 +236,6 @@ A 2098-2099 season has valid start/end order but is not yet in its date window o
 
 ### PROJ-HARNESS-PLACEMENTS-32: archived employer relationship gating
 A published drive may outlive an archived global company or archived college-company relationship. The candidate fixture now joins both persisted records with the job's college and refuses a new applicant when either is inactive; PostgreSQL case -32 verifies zero new applications across both valid archive transitions, and GUARD-21 protects the same-college company relationship join. This guards fixture realism, not the production TPO/HR service behavior.
+
+### PROJ-HARNESS-RECRUITER-33: persisted HR capability gate witness
+`fixtureRecruiterCanAccess(db,recruiter,capability)` is a test-only helper to determine expected access using registered profile/grant/relationship/company/college/organization records, live account status, verification, validity and capability. Real PG case -33 changes a verified grant through pending verification, disabled account, archived recruiter profile, expiration and revocation, asserting that no stale fixture claims it can still use DRIVES. This does **not** replace product recruiter permission service testing.

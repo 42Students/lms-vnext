@@ -588,6 +588,30 @@ export async function createRecruiterFixture(
   });
 }
 
+/** Fixture-only persisted witness for HR grant state. Product authorization
+ * lives in the recruiter services; never import this helper into an app route.
+ */
+export async function fixtureRecruiterCanAccess(
+  db: PgHarness, recruiter: RecruiterFixture,
+  capability: "DRIVES" | "INTERVIEWS" | "MESSAGES" | "APPLICANT_EXPORT",
+): Promise<boolean> {
+  const rows=await db.query<{id:string}>(`
+    select g.id from placement_recruiter_college_grants g
+      join placement_recruiter_profiles p
+        on p.user_id=g.recruiter_user_id and p.company_id=$4 and p.status='ACTIVE'
+      join users u on u.id=p.user_id and u.platform_status='ACTIVE'
+      join placement_company_relationships rel
+        on rel.id=g.company_relationship_id and rel.company_id=p.company_id and rel.status='ACTIVE'
+      join placement_companies company on company.id=p.company_id and company.status='ACTIVE'
+      join colleges college on college.id=rel.college_id and college.status='ACTIVE'
+      join organizations org on org.id=college.organization_id and org.status='ACTIVE'
+     where g.id=$1 and g.recruiter_user_id=$2 and g.company_relationship_id=$3
+       and g.status='ACTIVE' and g.verification_status='VERIFIED'
+       and g.valid_until>now() and $5=any(g.capabilities)
+     limit 1`,[recruiter.grantId,recruiter.userId,recruiter.relationshipId,recruiter.companyId,capability]);
+  return rows.length===1;
+}
+
 export async function createPlacementCandidateFixture(
   db: PgHarness, drive: PlacementFixture, learner: PrincipalFixture,
   actor: PrincipalFixture,

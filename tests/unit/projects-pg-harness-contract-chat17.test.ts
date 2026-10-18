@@ -171,6 +171,13 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("on rel.id=j.company_relationship_id and rel.college_id=j.college_id");
  });
 
+ it("PROJ-HARNESS-GUARD-22 reusable recruiter grant witness fails closed on persisted state",()=>{
+   expect(helper).toContain("export async function fixtureRecruiterCanAccess");
+   expect(helper).toContain("g.status='ACTIVE' and g.verification_status='VERIFIED'");
+   expect(helper).toContain("g.valid_until>now()");
+   expect(helper).toContain("u.platform_status='ACTIVE'");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");
