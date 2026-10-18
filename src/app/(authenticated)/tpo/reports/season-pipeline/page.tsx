@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -39,16 +40,16 @@ export default async function TpoSeasonPipelinePage({
   return (
     <div data-tpo-presentation-report className="space-y-6">
       <TpoReportPresentation />
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/season-pipeline" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/season-pipeline" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader eyebrow="TPO · Reports" title="Season pipeline"
         description="Recorded application, screening, offer and joining evidence for one placement season."
         actions={report.season ? (
           <a href={"/api/placements/reports/season-pipeline?" + csvQuery.toString()}
-            className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
             Export funnel CSV
           </a>
         ) : null} />
-      <Link href="/tpo/reports" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+      <Link href="/tpo/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
         ← All reports
       </Link>
       <form action="/tpo/reports/season-pipeline" method="get"

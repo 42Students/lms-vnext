@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
@@ -14,6 +15,7 @@ export default async function TpoRecruiterPublicLinkPage() {
   return (
     <div className="space-y-6">
       <TpoSettingsNav active="public-link" />
+      <PageHeader eyebrow="TPO · Settings" title="Public recruiter link" />
       <TpoPublicJoinLinkCard initial={initial} scope="COLLEGE" />
     </div>
   );
