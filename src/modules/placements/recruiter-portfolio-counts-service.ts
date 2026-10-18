@@ -33,6 +33,9 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
   eq(collegeMemberships.collegeId,collegeId),
   eq(collegeMemberships.status,"ACTIVE"),
   eq(users.platformStatus,"ACTIVE"),
+  // Withdrawn/deactivated applications cannot remain in employer-visible totals
+  // merely because an old shortlist or offer row was retained for audit.
+  eq(placementApplications.status,"SUBMITTED"),
   eq(placementApplicationScreenings.status,"SHORTLISTED"));
  // Every job is re-scoped against the same college grant in the parent call.
  requirePermission(context,"placements.recruiter.read",{

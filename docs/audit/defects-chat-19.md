@@ -538,3 +538,11 @@ Cloud/browser/PostgreSQL executions pending; no tests were run.
 | HR-BREAK-PROFILE-SCOPE-44 | MAJOR | The HR profile page rendered two long-lived client editors with initial values held in `useState`: personal contact details and visible college grants. Switching signed-in actors, or receiving a grant change on refresh without remount, risked continuing to display a prior recruiter's sensitive unsent details or old grant choices. Key the profile editor on the exact signed-in user ID and the grant control on user + current granted IDs; preserve unsaved state for unrelated same-actor UI refreshes. The API remains the final actor/tenant authority. | Expanded `tests/unit/HR-BREAK-chat19-profile-page.test.ts` with actor-switch projection and page key contract. |
 
 No browser session switch or CI run was performed in this lane.
+
+## HR portfolio withdrawn-application aggregate privacy
+
+| ID | Severity | Defect / correction | Test |
+|---|---|---|---|
+| HR-BREAK-PORTFOLIO-WITHDRAWN-45 | MAJOR | The employer Portfolio counts revalidated SHORTLISTED screening, membership and user but omitted the current `placement_applications.status`; a withdrawn applicant with historical shortlist/offer remained in recruiter-visible shared applicant and offer totals. Use `status=SUBMITTED` in the shared SQL scope for both aggregates, matching HR Today's authorized offer follow-up projection. Deny forged recruiter principals, foreign colleges and inactive users before DB access. | `tests/unit/HR-BREAK-chat19-portfolio-withdrawn.test.ts` checks access failures, no-IDs behavior and both aggregate SQL boundary predicates. |
+
+No PostgreSQL replay or CI execution here. Existing offers remain in persistence for audit; only employer-visible aggregate eligibility changes.
