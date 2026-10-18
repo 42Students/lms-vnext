@@ -27,7 +27,7 @@ export default async function CollegeSemestersPage({
       <ErrorState title="Invalid semester filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
         action={<Link href="/college/semesters" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>} />
-    </div>;
+    </main>;
   }
   return <div className="space-y-4">
     <div className="flex flex-wrap items-center gap-3">
