@@ -26,6 +26,9 @@ describe("PROJ-HARNESS source and environment guard",()=>{
  });
  it.each([
    "postgresql://localhost:5432/lms_prod",
+   "postgresql://localhost:5432/contest_users",
+   "postgresql://localhost:5432/financial_records",
+   "postgresql://localhost:5432/lms_staging_test",
    "postgresql://localhost:5432/lms_live_test",
    "postgresql://localhost:5432/postgres",
    "postgresql://localhost:5432/production",
