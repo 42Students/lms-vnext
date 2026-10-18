@@ -66,7 +66,7 @@ function companyHref(company: TpoCompanyRow) {
 /** Reject ambiguous multi-valued deep-links without silently choosing one. */
 function invalidCompanyFilters(){
  return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-  <h1 className="text-xl font-semibold text-foreground">Invalid companies filters</h1>
+  <h1 className="text-[30px] font-semibold leading-9 text-[#172033]">Invalid companies filters</h1>
   <p className="mt-2 text-sm text-body">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
@@ -153,7 +153,7 @@ export default async function TpoCompanyMemoryPage({
       {!data.contactsAvailable ? (
         <section
           role="status"
-          className="rounded-xl border border-border bg-surface p-4 text-sm leading-6 text-body"
+          className="rounded-[9px] border border-border bg-[var(--lms-gold-subtle)] px-4 py-3 text-sm leading-6 text-body"
         >
           Recruiter CRM tables are not available in the registered
           database. Contact counts and companies known only from
