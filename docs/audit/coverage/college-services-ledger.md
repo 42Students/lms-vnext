@@ -54,3 +54,42 @@
 | `collegePersonDetailQuerySchema`, `collegeStudentEnrollmentQuerySchema`, `recordedAttendanceSummary`, `CollegePersonNotFoundError` | `college-person-detail-model.ts` | strict filters, explicit denominator, zero unknown |
 | `collegeFacultyLifecycleSchema`, `facultyLifecycleConfirmation` | `college-faculty-lifecycle-model.ts` | guardian and confirmation lifecycle |
 | `studentCsvRequestSchema`, `tokenizeStudentCsv`, `parseStudentCsv`, `neutralStudentCsvCell`, `studentImportReportCsv` | `college-student-csv-model.ts` | rows, strict structure, duplicate phone, formula neutralization |
+
+
+## College Admin Projects role journeys — IIT Dharwad hardening
+
+**Scope:** targeted new break-it tests added in chat-4, not a claim that the overall Projects ledger is complete (chat-14 owns `projects-ledger.md`).
+
+| Export or route | Tests and behavioural cases |
+|---|---|
+| `collegeProjectSummaryPatch` | `PROJ-BREAK-chat4-college-summary.test.ts`: valid state, malformed versions and dates, unknown keys, invalid numeric progress, invalid tenant identifiers |
+| `collegeProjectSummaryMatchesCurrent` | same: identical no-op retries plus each of fourteen independently modified fields cannot bypass CAS |
+| `collegeProjectStatusChangeAllowed` | same: planned→active mentor guard; active→completed approval guard; forbidden archive/reopen/historical states |
+| `updateCollegeProjectSummary` | same: transaction/row-lock/CAS ordering, tenant/section restriction, per-write audit and notifications (source guard; PostgreSQL integration outstanding) |
+| `getProjectAdminCollegeId` | `PROJ-BREAK-chat4-college-create-scope.test.ts`: wrong tenant, missing membership, suspended/ended membership, wrong role, disabled user and unscoped/organization-only Super Admin |
+| `requireTeamCreationAuthority` | same: selected-college gate before mutable service access, persisted user/membership and college checks (source guard; PostgreSQL integration outstanding) |
+| `createClassTeamWorkspacesSchema` | same: valid request; unknown organization field, hostile slug, invalid team member list, malformed preview token, limits |
+| `createClassTeamWorkspaces` | same: serializable transaction, optimistic roster/preview guards, duplicate-slug mapping, atomic activity (source guard; PostgreSQL integration outstanding) |
+| `POST /api/projects/class-team-workspaces` | same: CSRF/same-origin check before reading the JSON body and friendly API failure routing (source guard; full HTTP integration outstanding) |
+
+**Pending:** real PostgreSQL integration for persisted membership revocation, concurrent writes, interrupted audit/notification transactions, 1000+ roster rows and query plans; comprehensive per-export coverage across colleges, academics, groups, people; all College pages and Super Admin tenancy pages. Do not mark master-queue chat-4 complete until these are exercised.
+
+
+## Added College + Super Admin tenants coverage (chat-4, 2026-10-18)
+
+| Export/page | Behavioural / adversarial test | Known limitation |
+|---|---|---|
+| `listOrganizations(context)` | `PROJ-BREAK-chat4-superadmin-tenants.test.ts` SA-colleges-tenants-BREAK-02: selected college must join active persisted organization, restrict result to one, reject stale selected organization | SQL/source guard; database integration pending |
+| `listColleges(context, organizationId?)` | same, BREAK-03: selected college always intersects persisted organization, active parent and requested organization | SQL/source guard; DB integration pending |
+| `parseAdminDirectorySearchParams` | same, BREAK-01: duplicated, unauthorized, invalid page-size/query filters fail before DB call | Pure behavioural assertions |
+| `canManageCollegeDirectoryRow` | same, BREAK-04: disabled user, foreign college, foreign organization, wrong selected scope deny actions | Pure behavioural assertions |
+| `preferredNewTenantOrganization`, `createdOrganizationStepHref` | same, BREAK-05: only allowlisted UUIDs preselect; malformed response rejected | Pure behavioural assertions |
+| `tenantSetupLinksAvailable`, `tenantLifecycleHref` | same, BREAK-06: archived organization/college blocks setup and malformed states rejected | Pure behavioural assertions |
+| `saveAdminCollegeSignInPolicy`, `updateCollegeSignInSchema` | `chat4-college-export-signin-ledger.test.ts`: schema rejects tampering; unchanged retry under locks skips second audit; changed request still uses CAS | SQL/source guard; DB integration pending |
+| `effectiveCollegeSignInMethod`, `effectiveCollegeSignInCapabilities` | same: verified-host ID and corrupt-policy rejection source guards | Real provider flow pending |
+| `collegeAdminHistoryCsv`, `escapeRoleDirectoryCsvCell` | same: formula prefixes, embedded quotes, IST date, CSV line breaks | Pure behavioural assertions |
+| `exportParams`, `buildCollegeDirectoryCsv`, `collectCollegeExportRows` | same: duplicate filter rejection, cap/truncation, zero/NaN/infinite inputs rejected before any read | Pure behavioural assertions |
+| `/admin/colleges`, `/admin/organizations`, `/admin/colleges/[collegeId]` | `PROJ-BREAK-chat4-superadmin-tenants.test.ts`: bad-input fast-fail, safe row controls and active-parent restore | Server-render integration pending |
+| Five legacy `/college` redirect routes and `components/college` responsive lists | `chat4-college-ux-redirect-coverage.test.ts`: canonical destinations, encoded URL parameters, downstream authorization, labelled scroll cue | Actual browser keyboard/focus/screen-reader tests pending |
+
+The College, academics, groups and people exported-function inventory remains **incomplete**. This section records newly covered symbols without claiming that the master-queue's exhaustive coverage requirement is satisfied. A dedicated PostgreSQL fixture run is required before release.

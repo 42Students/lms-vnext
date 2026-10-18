@@ -84,6 +84,13 @@ const columns: DataTableColumn<CollegeRow>[] = [
 
 export default async function CollegesPage({searchParams}:{searchParams:Promise<{q?:string|string[];page?:string|string[];pageSize?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
+  const filters=parseAdminDirectorySearchParams(await searchParams);
+  if (!filters) return <div className="min-w-0 space-y-6">
+    <PageHeader eyebrow="Super Admin" title="Colleges"/>
+    <ErrorState title="Invalid college directory filters"
+      description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
+      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold underline">Clear filters</Link>}/>
+  </div>;
   const [colleges, organizations] = await Promise.all([
     listColleges(context),
     listOrganizations(context),
@@ -94,13 +101,6 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     organizationName:organizationNames.get(college.organizationId)??"—",
     canManage:canManageCollegeDirectoryRow(context,college),
   }));
-  const filters=parseAdminDirectorySearchParams(await searchParams);
-  if (!filters) return <div className="min-w-0 space-y-6">
-    <PageHeader eyebrow="Super Admin" title="Colleges"/>
-    <ErrorState title="Invalid college directory filters"
-      description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold underline">Clear filters</Link>}/>
-  </div>;
   const {q,pageSize}=filters;
   const normalized=q.toLocaleLowerCase("en-IN");
   const matches=rows.filter(item=>[item.name,item.code,item.city,item.organizationName].some(

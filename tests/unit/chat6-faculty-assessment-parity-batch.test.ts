@@ -17,7 +17,9 @@ describe("Faculty assessment legacy parity follow-up",()=>{
   expect(quiz).not.toContain('if(!confirmed){setError("Confirm the action before saving.")');
   expect(assignment).not.toContain('if(!confirmed){setError("Confirm the selected action first.")');
   expect(quiz).toContain("confirmed:true");
-  expect(quiz).toContain('if((action==="ARCHIVE"||action==="CLOSE")&&!window.confirm(warning))return;');
+  expect(quiz).toContain('if((action==="ARCHIVE"||action==="CLOSE")&&!confirmed){askConfirm(warning,()=>void submit(action,true));return;}');
+  expect(quiz).toContain('<ConfirmDialog open={confirmRequest!==null}');
+  expect(quiz).not.toContain('window.confirm(');
   expect(assignment).toContain("confirmed:true");
   expect(assignment).toContain("facultyAssignmentArchiveWarning");
  });

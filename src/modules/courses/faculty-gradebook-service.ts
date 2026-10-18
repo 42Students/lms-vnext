@@ -29,8 +29,8 @@ async function loadFacultyPublishedGradebook(context:RequestContext,raw:unknown)
   const quizzes=overview.quizzes.filter(row=>
     row.deliveryId===query.deliveryId&&
     (row.status==="PUBLISHED"||row.status==="CLOSED"));
-  if(assignments.length+quizzes.length>100)throw new Error(
-    "GRADEBOOK_TOO_MANY_PUBLISHED_ASSESSMENTS",
+  if(assignments.length+quizzes.length>100)throw new CoursesServiceError(
+    "FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS",
   );
   const scores:GradebookScore[]=[];
   const assessments:FacultyGradebookAssessment[]=[];

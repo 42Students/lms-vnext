@@ -7,7 +7,7 @@ import {ProjectsServiceError} from "./errors";
 import {requireProjectManageAccess} from "./access";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {collegeProjectSummaryPatch,collegeProjectStatusChangeAllowed} from "./college-project-summary-model";
+import {collegeProjectSummaryPatch,collegeProjectStatusChangeAllowed,collegeProjectSummaryMatchesCurrent} from "./college-project-summary-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 export async function updateCollegeProjectSummary(context:RequestContext,projectId:string,raw:unknown){
  const scope=await requireProjectManageAccess(context,projectId);
@@ -17,7 +17,13 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
    .where(and(eq(projectInstances.id,scope.project.id),
     eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
   if(!row||row.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
-  if(row.title!==input.expectedTitle||row.summary!==input.expectedSummary||row.status!==input.expectedStatus||row.updatedAt.toISOString()!==input.expectedUpdatedAt)
+  // A completed request can be retried after its response was lost. Only
+  // exact equality of *all* persisted fields is an idempotent no-op; every
+  // actual change still requires the caller's original optimistic token.
+  // This check must remain inside the project row lock and after the
+  // archived-state gate so it cannot resurrect an archived project.
+  if(collegeProjectSummaryMatchesCurrent(row,input))return row;
+  if(row.title!==input.expectedTitle||row.summary!==input.expectedSummary||row.status!==input.expectedStatus||row.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   const [mentor]=await tx.select({id:projectMembers.id}).from(projectMembers)
    .where(and(eq(projectMembers.projectId,row.id),eq(projectMembers.role,"MENTOR"),
@@ -35,13 +41,6 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
         eq(departments.collegeId,scope.collegeId),eq(sections.status,"ACTIVE"))).limit(1);
     if(!valid)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
-  if(row.title===input.title&&row.summary===input.summary&&row.status===input.status&&
-    row.progressPercent===input.progressPercent&&row.phase===input.phase&&
-    row.dueLabel===input.dueLabel&&row.courseLabel===input.courseLabel&&
-    row.sectionId===input.sectionId&&row.blocker===input.blocker&&
-    row.nextAction===input.nextAction&&row.startDate===input.startDate&&
-    row.endDate===input.endDate&&row.sprintLengthWeeks===input.sprintLengthWeeks&&
-    row.estimationUnit===input.estimationUnit)return row;
   const [updated]=await tx.update(projectInstances).set({
    title:input.title,summary:input.summary,status:input.status,
    progressPercent:input.progressPercent,phase:input.phase,dueLabel:input.dueLabel,

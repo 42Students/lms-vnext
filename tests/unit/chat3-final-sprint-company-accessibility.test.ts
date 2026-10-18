@@ -13,11 +13,16 @@ describe("chat-3 final sprint companies accessibility, exporting and safety",()=
   expect(read("src/components/shell/legacy-sidebar-active-model.ts")).toContain("pathname.startsWith(\"/tpo/companies/\")");
  });
  it("TPO-companies-26 preserves scoped company UI and privacy guarantees",()=>{
-  expect(read("src/components/tpo/tpo-company-create-form.tsx")).toContain("role=\"dialog\"");
-  expect(read("src/components/tpo/tpo-company-create-form.tsx")).toContain("aria-modal=\"true\"");
-  expect(read("src/components/tpo/tpo-company-create-form.tsx")).toContain("e.key===\"Escape\"");
-  expect(read("src/components/tpo/tpo-company-create-form.tsx")).toContain("e.key!==\"Tab\"");
-  expect(read("src/components/tpo/tpo-company-create-form.tsx")).toContain("launchRef.current?.focus()");
+  const form=read("src/components/tpo/tpo-company-create-form.tsx");
+  const dialog=read("src/components/ui/dialog.tsx");
+  expect(form).toContain("<Dialog open={open}");
+  expect(form).toContain("if(pending)return;");
+  expect(form).toContain("onOpenChange={next=>{if(!next)close();}}");
+  expect(dialog).toContain("<dialog data-slot=\"dialog\"");
+  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("onCancel={event =>");
+  expect(dialog).toContain("aria-labelledby={titleId}");
+  expect(dialog).toContain("opener.current?.focus()");
  });
  it("TPO-companies-27 preserves scoped company UI and privacy guarantees",()=>{
   expect(read("src/app/(authenticated)/tpo/companies/page.tsx")).toContain("Sort by");
@@ -26,7 +31,7 @@ describe("chat-3 final sprint companies accessibility, exporting and safety",()=
  });
  it("TPO-companies-28 preserves scoped company UI and privacy guarantees",()=>{
   expect(read("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx")).toContain("Hiring history");
-  expect(read("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx")).toContain("hiringHistory.map");
+  expect(read("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx")).toContain("rows={hiringHistory}");
   expect(read("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx")).toContain("offer.roleTitle");
   expect(read("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx")).toContain("offer.status");
   expect(read("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx")).toContain("Joining");

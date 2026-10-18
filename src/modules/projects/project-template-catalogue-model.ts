@@ -29,7 +29,7 @@ export function projectTemplateSectionCounts(value: unknown): TemplateSectionCou
 function csvCell(value: string | number) {
   // Spreadsheet engines may ignore leading invisible or bidi controls before a formula.
   // Match the same defensive prefix handling used by class-team exports.
-  const raw = String(value).replace(/^[\s\u200B-\u200F\u2060\uFEFF\u202A-\u202E]*/u, "");
+  const raw = String(value).replace(/^[\s\u200B-\u200F\u2060\u2066-\u2069\uFEFF\u202A-\u202E]*/u, "");
   const safe = /^[=+@-]/.test(raw) ? "'" + String(value) : String(value);
   return '"' + safe.replace(/"/g, '""') + '"';
 }
