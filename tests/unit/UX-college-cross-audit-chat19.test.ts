@@ -38,12 +38,17 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
   "faculty-assignment","faculty/[membershipId]",
  ];
  for(const route of tables){
-  it("COL-XA-03 "+(route||"index")+" retains a scrollable sticky identity column",()=>{
+  it("COL-XA-03 "+(route||"index")+" retains mobile identity cards and sticky desktop columns",()=>{
    const source=page(route);
-   expect(source,route).toContain("[&_th:first-child]:sticky");
-   expect(source,route).toContain("[&_td:first-child]:sticky");
-   expect(source,route).toMatch(/overflow-(?:x-auto|auto)/);
-   expect(source,route).toContain("<table");
+   expect(source,route).toContain("<DataTable");
+   expect(source,route).toMatch(/mobilePriority:\\s*["']primary["']/);
+   expect(source,route).not.toContain("<table");
+   const shared=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
+   expect(shared).toContain("sm:first:sticky");
+   expect(shared).toContain("sm:first:left-0");
+   expect(shared).toContain("const visibleOnPhone");
+   expect(shared).toContain("<Disclosure");
+   expect(shared).toContain('<ScrollCue axis="x"');
   });
  }
  const inputRoutes=[

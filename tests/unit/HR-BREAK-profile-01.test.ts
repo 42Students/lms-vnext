@@ -33,7 +33,7 @@ describe("HR-BREAK-profile-01: employer profile, grants and wrong-tenant visibil
   expect(sameHrNameVersion(new Date(time),"not-a-date")).toBe(false);
  });
  it("identical college IDs with different company relationships or employer do not widen access",()=>{
-  const owner={companyId:"firm-a",grants:[{collegeId:college,companyRelationshipId:"rel-a"}]};
+  const owner={companyId:"firm-a",grants:[{id:"grant-a",organizationId:"org-a",collegeId:college,collegeName:"College A",companyRelationshipId:"rel-a"}]};
   expect(isExactRecruiterEmployerRow(owner,{companyId:"firm-a",collegeId:college,relationshipId:"rel-a"})).toBe(true);
   expect(isExactRecruiterEmployerRow(owner,{companyId:"firm-b",collegeId:college,relationshipId:"rel-a"})).toBe(false);
   expect(isExactRecruiterEmployerRow(owner,{companyId:"firm-a",collegeId:college,relationshipId:"rel-b"})).toBe(false);
