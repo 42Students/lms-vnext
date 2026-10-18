@@ -73,6 +73,8 @@ describe("SA-ACADEMICS-BATCH-COUNT-01 scoped active batch learner census",()=>{
   expect(sql).toContain('"college_memberships"."status"');
   expect(sql).toContain('"learner_program_enrollments"."status"');
   expect(sql).toContain('"section_enrollments"."status"');
+  expect(sql).toContain('"section_enrollments"."academic_period_id"');
+  expect(sql).toContain('"sections"."academic_period_id"');
   expect(sql).toContain('"membership_roles"."membership_id"');
   expect(joins.flatMap(x=>x.params)).toContain("LEARNER");
   expect(joins.flatMap(x=>x.params)).toContain("ACTIVE");
@@ -80,6 +82,8 @@ describe("SA-ACADEMICS-BATCH-COUNT-01 scoped active batch learner census",()=>{
   const rosterWhere=state.joins.filter(x=>x.table==="roster");
   expect(rosterWhere.map(x=>x.sql).join("\n")).toContain('"membership_roles"."role"');
   expect(rosterWhere.flatMap(x=>x.params)).toContain("LEARNER");
+  expect(rosterWhere.map(x=>x.sql).join("\n")).toContain('"sections"."cohort_id"');
+  expect(rosterWhere.map(x=>x.sql).join("\n")).toContain('"sections"."academic_period_id"');
  });
  it("SA-ACADEMICS-BATCH-EMPTY-03 skips private learner reads when no scoped Sections exist",async()=>{
   state.rows.classes=[];
