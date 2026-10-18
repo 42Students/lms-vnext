@@ -1,0 +1,126 @@
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import type { Pool } from "pg";
+import {
+  createPlacementCandidateFixture, createPlacementFixture, createPrincipal,
+  createTenant, newHarnessPool, withProjectPg,
+  type PgHarness,
+} from "./support/projects-placements-pg-harness";
+
+let pool: Pool;
+beforeAll(() => { pool = newHarnessPool(); });
+afterAll(async () => { if (pool) await pool.end(); });
+
+async function withPlacementCase(fn: (f: {
+  db: PgHarness;
+  tenant: Awaited<ReturnType<typeof createTenant>>;
+  outsiderTenant: Awaited<ReturnType<typeof createTenant>>;
+  actor: Awaited<ReturnType<typeof createPrincipal>>;
+  learner: Awaited<ReturnType<typeof createPrincipal>>;
+  outsider: Awaited<ReturnType<typeof createPrincipal>>;
+  drive: Awaited<ReturnType<typeof createPlacementFixture>>;
+  candidate: Awaited<ReturnType<typeof createPlacementCandidateFixture>>;
+}) => Promise<void>) {
+  await withProjectPg(pool, async db => {
+    const tenant = await createTenant(db, "IIT Dharwad placement");
+    const outsiderTenant = await createTenant(db, "Other college placement");
+    const actor = await createPrincipal(db,tenant,["TPO"]);
+    const learner = await createPrincipal(db,tenant,["LEARNER"]);
+    const outsider = await createPrincipal(db,outsiderTenant,["LEARNER"]);
+    const drive = await createPlacementFixture(db,tenant,actor);
+    const candidate = await createPlacementCandidateFixture(db,drive,learner,actor);
+    await fn({db,tenant,outsiderTenant,actor,learner,outsider,drive,candidate});
+  });
+}
+
+describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
+  it("PROJ-HARNESS-PLACEMENTS-01 constructs season → drive → round → application → offer in the correct college",async()=>{
+    await withPlacementCase(async({db,tenant,learner,drive,candidate})=>{
+      const chain=await db.query<{college_id:string,season_id:string,member_college:string,offer_id:string}>(`
+        select j.college_id,j.season_id,m.college_id as member_college,o.id as offer_id
+        from placement_jobs j
+        join placement_applications a on a.job_id=j.id
+        join college_memberships m on m.id=a.membership_id
+        join placement_offers o on o.application_id=a.id
+        where j.id=$1 and a.id=$2`,[drive.jobId,candidate.applicationId]);
+      expect(chain).toHaveLength(1);
+      expect(chain[0]).toMatchObject({college_id:tenant.collegeId,season_id:drive.seasonId,
+        member_college:learner.collegeId,offer_id:candidate.offerId});
+    });
+  });
+  it("PROJ-HARNESS-PLACEMENTS-02 season prevents second active season in same college",async()=>{
+    await withPlacementCase(async({db,tenant,actor})=>{
+      await db.expectSqlState(()=>db.query(`
+        insert into placement_seasons(college_id,name,code,start_date,end_date,created_by_user_id)
+        values ($1,'Concurrent season','ALTERNATE','2026-10-01','2027-06-30',$2)`,
+        [tenant.collegeId,actor.userId]),"23505");
+    });
+  });
+  it("PROJ-HARNESS-PLACEMENTS-03 application and screening enforce one candidate per drive and decision shape",async()=>{
+    await withPlacementCase(async({db,learner,drive,candidate})=>{
+      await db.expectSqlState(()=>db.query(`
+        insert into placement_applications
+        (job_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
+        values ($1,$2,'INTERNAL','ELIGIBLE','{}'::jsonb,$3)`,
+        [drive.jobId,learner.membershipId,learner.userId]),"23505");
+      await db.expectSqlState(()=>db.query(`
+        update placement_application_screenings set status='HOLD' where application_id=$1`,
+        [candidate.applicationId]),"23514");
+      const rows=await db.query<{status:string}>(`
+        select status from placement_application_screenings where application_id=$1`,[candidate.applicationId]);
+      expect(rows[0]?.status).toBe("PENDING");
+    });
+  });
+  it("PROJ-HARNESS-PLACEMENTS-04 round result enforces current version and waitlist rank",async()=>{
+    await withPlacementCase(async({db,actor,drive,candidate})=>{
+      await db.expectSqlState(()=>db.query(`
+        insert into placement_round_results
+        (round_id,application_id,version,outcome,submitted_by_user_id)
+        values ($1,$2,2,'HOLD',$3)`,[drive.roundId,candidate.applicationId,actor.userId]),"23514");
+      await db.expectSqlState(()=>db.query(`
+        insert into placement_round_results
+        (round_id,application_id,version,outcome,submitted_by_user_id)
+        values ($1,$2,2,'PASS',$3)`,[drive.roundId,candidate.applicationId,actor.userId]),"23505");
+      expect((await db.query("select id from placement_round_results where id=$1",
+        [candidate.roundResultId]))).toHaveLength(1);
+    });
+  });
+  it("PROJ-HARNESS-PLACEMENTS-05 offer accepts no duplicate active version and rejects false acceptance",async()=>{
+    await withPlacementCase(async({db,actor,candidate})=>{
+      await db.expectSqlState(()=>db.query(`
+        insert into placement_offers (application_id,version,role_title,issued_by_user_id)
+        values ($1,2,'Duplicated offer',$2)`,[candidate.applicationId,actor.userId]),"23505");
+      await db.expectSqlState(()=>db.query(`
+        update placement_offers set status='ACCEPTED' where id=$1`,[candidate.offerId]),"23514");
+      await db.expectSqlState(()=>db.query(`
+        update placement_offers set expires_at=issued_at-interval '1 second' where id=$1`,
+        [candidate.offerId]),"23514");
+    });
+  });
+  it("PROJ-HARNESS-PLACEMENTS-06 joining outcome requires recorded actor and date",async()=>{
+    await withPlacementCase(async({db,candidate})=>{
+      await db.expectSqlState(()=>db.query(`
+        update placement_joining_outcomes set status='JOINED' where offer_id=$1`,[candidate.offerId]),"23514");
+      const status=await db.query<{status:string}>(`
+        select status from placement_joining_outcomes where offer_id=$1`,[candidate.offerId]);
+      expect(status[0]?.status).toBe("PENDING");
+    });
+  });
+  it("PROJ-HARNESS-PLACEMENTS-07 prevents hard deleting a drive with applications and rounds",async()=>{
+    await withPlacementCase(async({db,drive,candidate})=>{
+      await db.expectSqlState(()=>db.query("delete from placement_jobs where id=$1",[drive.jobId]),"23503");
+      expect((await db.query("select id from placement_applications where id=$1",
+        [candidate.applicationId]))).toHaveLength(1);
+    });
+  });
+  it("PROJ-HARNESS-PLACEMENTS-08 fixture refuses other-college applicant before any write",async()=>{
+    await withPlacementCase(async({db,outsider,drive,actor})=>{
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      await expect(createPlacementCandidateFixture(db,drive,outsider,actor))
+        .rejects.toThrow(/college/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      expect(after[0]?.n).toBe(before[0]?.n);
+    });
+  });
+});
