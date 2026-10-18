@@ -51,8 +51,8 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
        {documented?<p className="text-xs text-warning-text">Never read here — this key is read at {documented.scope} scope.</p>:null}
        <p className="mt-1 break-all text-body">{entry.value==="[redacted]"?"[redacted]":entry.value}</p>
       </div>
-      <Button variant="primary" type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
-       className="min-h-10 rounded-md border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+      <Button variant="secondary" type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
+       className="">
        Remove</Button>
      </li>;
     })}
@@ -62,15 +62,15 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
    <label className="grid gap-1 text-sm">Key
     <Input value={key} onChange={event=>setKey(event.target.value)} maxLength={120}
      placeholder="custom.settingName" autoComplete="off"
-     className="min-h-11 rounded-md border border-border bg-background px-3"/>
+     className="w-full"/>
    </label>
    <label className="grid gap-1 text-sm">Value
     <Textarea rows={2} value={value} onChange={event=>setValue(event.target.value)}
-     maxLength={4096} className="rounded-md border border-border bg-background p-3"/>
+     maxLength={4096} className="w-full"/>
    </label>
    <p className="text-xs text-body">Use letters, digits, dots, dashes and underscores. Typos create unused keys. Documented settings must be edited in their section above.</p>
    <Button variant="primary" type="button" disabled={!ready||busy||!/^[A-Za-z][A-Za-z0-9._-]*$/.test(key)||!value.trim()}
-    onClick={()=>void apply("POST")} className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+    onClick={()=>void apply("POST")} className="">
     {busy?"Saving…":"Add setting"}</Button>
   </fieldset>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
