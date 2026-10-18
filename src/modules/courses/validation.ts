@@ -136,6 +136,12 @@ export const createCourseTeachingAssignmentInputSchema =
     role: z.enum(COURSE_TEACHING_ROLES),
   }).strict();
 
+/** A stale browser must not silently overwrite another administrator's role edit. */
+export const changeCourseTeachingAssignmentRoleInputSchema = z.object({
+  role: z.enum(COURSE_TEACHING_ROLES),
+  expectedUpdatedAt: z.string().datetime({offset:true}),
+}).strict();
+
 export type CreateCourseInput = z.infer<
   typeof createCourseInputSchema
 >;
