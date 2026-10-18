@@ -43,7 +43,7 @@ test.describe("UX-HR-BROWSER-57 authenticated Recruiter phone and keyboard journ
    "/recruiter/drives/123e4567-e89b-42d3-a456-426614174001",
   ]){
    await page.goto(route);
-   await expect(page).toHaveURL(/\\/dashboard(?:[?#].*)?$/);
+   await expect(page).toHaveURL(/\/dashboard(?:[?#].*)?$/);
    await expectNoRawErrors(page);
   }
  });
