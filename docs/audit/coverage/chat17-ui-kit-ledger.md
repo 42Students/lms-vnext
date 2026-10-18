@@ -147,3 +147,5 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-HARDEN-58:** DataTable treats exceptions from per-row hidden-column permission and optional mobile-detail navigation callbacks as **deny/no-link**, not a crash or implicit access grant. A denied formatter is not evaluated, and an authorized cell remains visible even when its optional detail link fails. Unit behavior case 58 covers both.
 
 - **UX-kit-E2E-12:** PageLoading and GracefulPageLoading now restart their 12-second slow-recovery timer when the request identity/shape changes, rather than displaying a stale timeout from the previous request. Playwright's clock tests the PageLoading handoff at 11+2+11 seconds without real waiting. Source uses effect cleanup on label/variant/count and label/shape respectively.
+
+- **UX-kit-HARDEN-59:** `enqueueToast` replaces a notice with the same event ID instead of generating duplicated React keys and duplicate accessibility announcements; a non-finite timed cap falls back to the documented limit 3. Provider-issued IDs remain unique by default.

@@ -11,9 +11,12 @@ export function enqueueToast(current: readonly ToastItem[], incoming: ToastItem,
 } {
   // Errors are persistent: only a user can dismiss them. Limit informational
   // toasts independently without dropping persistent errors.
-  const combined = [...current, incoming];
+  // Repeated event IDs update an existing message instead of introducing
+  // duplicate React keys or leaving two dismissable copies of one event.
+  const combined = [...current.filter(item => item.id !== incoming.id), incoming];
+  const limit = Number.isFinite(timedLimit) ? Math.max(0, Math.trunc(timedLimit)) : 3;
   const timed = combined.filter(item => item.tone !== "error");
-  const drop = new Set(timed.slice(0, Math.max(0, timed.length - timedLimit)).map(item => item.id));
+  const drop = new Set(timed.slice(0, Math.max(0, timed.length - limit)).map(item => item.id));
   return { items: combined.filter(item => !drop.has(item.id)), evictedIds: [...drop] };
 }
 type ToastInput = Omit<ToastItem, "id">;
