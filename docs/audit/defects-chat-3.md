@@ -111,6 +111,13 @@ Rapidly switching a Faculty editor between different assignments triggered overl
 **Evidence:** `src/components/courses/faculty-assignment-editor.tsx`, `src/modules/courses/faculty-assignment-method-load-model.ts`, `tests/unit/COURSES-BREAK-FACULTY-13.test.ts` (stale async requests, retry invalidation, malformed methods). React/browser network-race acceptance and CI remain outstanding.
 
 
+### FAC-ASSIGNMENT-BODY-019 — unbounded Faculty assignment authoring request input (S1)
+
+The Faculty assignment mutation route previously called `request.json()` directly. Unlike its sibling quiz command route, this allowed an arbitrarily large request body to be buffered before the Zod schema and teaching-scope service could reject it. An authenticated user or stale authoring page could force needless application memory consumption or error on malformed UTF-8.
+
+**Fix:** The route now delegates to `readFacultyAssignmentCommandBody`, a 128 KiB maximum streaming JSON parser with both trustworthy declared-length preflight and measured byte enforcement. Strict content type, malformed Content-Length, invalid UTF-8 and empty/incomplete JSON fail before the assignment write, with customer-safe recovery messages and a request ID. Existing cross-site POST rejection and canonical service authorization are unchanged.
+
+**Tests:** `tests/unit/chat3-faculty-assignment-body-route.test.ts` cases FAC-assignment-body-01 and FAC-assignment-body-02 cover unicode, stream limit, forged origin, no-service-call on failed parse and safe error mapping. CI, PostgreSQL, and actual browser attempts remain unexecuted.
 ### FAC-SCHEDULE-018 — revoked Faculty could create/reschedule attendance classes (S1)
 
 `commandFacultyAttendanceSchedule` checked the Faculty role and Section ownership before the transaction but, after advisory-locking the actor and Section, proceeded to insert/update session rows without rebuilding the persisted user/membership/teaching grant. Removing the Faculty role or ending the teaching assignment between those steps could leave a new schedule and activity from a revoked account.
