@@ -110,7 +110,7 @@ export default async function TpoCompanyMemoryPage({
         </p>
         <Link
           href="/tpo/companies"
-          className="mt-4 inline-block font-semibold text-primary-text hover:underline"
+          className="mt-4 inline-block font-semibold text-[var(--lms-teal-deep)] hover:underline"
         >
           Clear filters
         </Link>
@@ -133,13 +133,13 @@ export default async function TpoCompanyMemoryPage({
             <TpoCompanyCreateForm />
             <Link
               href="/tpo/companies/archived"
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               Archived relationships
             </Link>
             <Link
               href="/tpo/recruiters"
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               Recruiter leads
             </Link>
@@ -221,7 +221,7 @@ export default async function TpoCompanyMemoryPage({
 
           <button
             type="submit"
-            className="self-end inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="self-end inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-foreground hover:bg-primary-hover"
           >
             Search
           </button>
@@ -232,7 +232,7 @@ export default async function TpoCompanyMemoryPage({
             href={"/api/placements/tpo/companies/export?"+new URLSearchParams({
               ...(query.search?{search:query.search}:{}),sort:query.sort,
             }).toString()}
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Export companies CSV ({page.total})
           </Link>:<p role="status" className="text-xs text-muted-foreground">
             Narrow your search to 2,000 companies to export all matching rows.
@@ -245,7 +245,7 @@ export default async function TpoCompanyMemoryPage({
           </p>
           <Link
             href="/tpo/companies"
-            className="text-sm font-semibold text-primary-text hover:underline"
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
           >
             Clear filters
           </Link>
@@ -264,7 +264,7 @@ export default async function TpoCompanyMemoryPage({
                 pageSize: query.pageSize,
                 sort: query.sort,
               })}
-              className="mt-3 inline-block font-semibold text-primary-text hover:underline"
+              className="mt-3 inline-block font-semibold text-[var(--lms-teal-deep)] hover:underline"
             >
               First page
             </Link>
@@ -274,7 +274,7 @@ export default async function TpoCompanyMemoryPage({
             <ul aria-label="Companies on this page" className="divide-y divide-border md:hidden">
               {page.items.map(company=><li key={company.companyId??"unlinked:"+company.name}
                className="space-y-3 p-4 text-sm">
-                <Link className="block break-words font-semibold text-primary-text underline"
+                <Link className="block break-words font-semibold text-[var(--lms-teal-deep)] underline"
                  href={companyHref(company)}>{company.name}</Link>
                 <dl className="grid grid-cols-2 gap-3 text-body">
                   {([["Contacts",company.contacts??"Unavailable"],["Drives",company.drives],
@@ -285,7 +285,7 @@ export default async function TpoCompanyMemoryPage({
                       <dd className="font-medium tabular-nums">{value}</dd>
                     </div>)}
                 </dl>
-                {company.companyId?<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+                {company.companyId?<Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline"
                  href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}>Create drive</Link>:
                  <span className="text-xs text-muted-foreground">Link company first</span>}
               </li>)}
@@ -314,7 +314,7 @@ export default async function TpoCompanyMemoryPage({
                     <td className="px-4 py-4">
                       <Link
                         href={companyHref(company)}
-                        className="font-semibold text-primary-text hover:underline"
+                        className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
                       >
                         {company.name}
                       </Link>
@@ -356,7 +356,7 @@ export default async function TpoCompanyMemoryPage({
                     <td className="px-4 py-4">
                       {company.companyId?<Link
                         href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-                        className="whitespace-nowrap font-semibold text-primary-text underline">Create drive</Link>:
+                        className="whitespace-nowrap font-semibold text-[var(--lms-teal-deep)] underline">Create drive</Link>:
                         <span className="text-xs text-muted-foreground">Link company first</span>}
                     </td>
                   </tr>
@@ -382,7 +382,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page - 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Previous
               </Link>
@@ -396,7 +396,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page + 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Next
               </Link>

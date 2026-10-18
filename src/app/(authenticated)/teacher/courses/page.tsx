@@ -11,12 +11,12 @@ export default async function TeacherCoursesPage({searchParams}: {
 }) {
   const context = await getCurrentRequestContext();
   const query=parseFacultyCourseListLocation(await searchParams);
-  if(!query)return <div className="space-y-6">
+  if(!query)return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="My Courses" />
     <div role="alert" className="rounded-xl border border-border bg-surface p-5">
       The Course filters could not be understood. No other Section has been loaded.
       <Link href="/teacher/courses"
-        className="ml-2 font-semibold text-primary-text underline">
+        className="ml-2 font-semibold text-[var(--lms-teal-deep)] underline">
         Reset filters
       </Link>
     </div>
@@ -28,7 +28,7 @@ export default async function TeacherCoursesPage({searchParams}: {
     return workspace ? [{ course, workspace }] : [];
   });
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title="My Courses"
       />
