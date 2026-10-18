@@ -98,3 +98,9 @@ No route/page has been marked release-complete merely because its module export 
 | `src/modules/colleges/admin-signin-policy-service.ts` `readAdminCollegeSignInPolicy` | `tests/unit/chat4-superadmin-college-signin-service-cas.test.ts` (`SA-colleges-signin-02`) | Service mock: persisted actor scope before reading, migration-pending, unconfigured, configured and corrupt policy states, revoked actor and wrong selected tenant; real DB race/integration remains open |
 
 All newly added test cases are authored, **not executed** by this lane.
+
+### Disposable PostgreSQL cross-tenant fixture (authored; not executed)
+
+`tests/integration/chat4-college-academic-cross-tenant-pg.test.ts` contains `COL-academics-scope-tenant-PG-01` cases under the repository's standard disposable DB03 guard. It creates two legitimate colleges' academic program/cohort/section/period chains plus independent synthetic learners, then inserts **foreign-key-valid but semantically corrupt** relationships directly: a learner linked to a foreign program's cohort, own enrollment placed in a foreign section, another college's learner placed on the authorized roster, a foreign faculty assignment, and a section whose period belongs to a different college.
+
+Its three ID-named cases assert that healthy rows remain visible while those forged associations fail closed in `loadLearnerEnrollmentScope`, `loadSectionEnrollmentScope`, `listSectionRoster`, `listLearnerSectionHistory`, `loadFacultyAssignmentScope`, and `loadScheduleEventScope`. The fixture has independent IDs and dependency-ordered cleanup. **No PostgreSQL test execution or passing result is claimed**. A parallel role-revocation/transaction-race fixture remains unimplemented.
