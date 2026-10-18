@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {collegeProjectStatusChangeAllowed} from "@/modules/projects/college-project-summary-model";
@@ -24,28 +28,28 @@ export function CollegeProjectSummaryEditor({project}:{project:Project}){
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to save");}
   finally{setBusy(false);}
  }
- return <section className="rounded border border-border bg-surface p-4">
-  <button className="min-h-10 rounded border px-3 text-sm" type="button" onClick={()=>setOpen(value=>!value)}>
-   Edit workspace summary</button>
+ return <section className="border-b border-border pb-5">
+  <Button variant="secondary" className="min-h-10" type="button" onClick={()=>setOpen(value=>!value)}>
+   Edit workspace summary</Button>
   {open&&<div className="mt-3 grid gap-3">
    <label className="text-sm">Workspace title
-    <input className="mt-1 w-full rounded border bg-background p-2" maxLength={200}
+    <Input className="mt-1 w-full rounded border bg-background p-2" maxLength={200}
      value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="text-sm">Summary
-    <textarea className="mt-1 w-full rounded border bg-background p-2" maxLength={4000}
+    <Textarea className="mt-1 w-full rounded border bg-background p-2" maxLength={4000}
      value={summary} onChange={e=>setSummary(e.target.value)}/></label>
    <label className="text-sm">Status
-    <select className="mt-1 w-full rounded border bg-background p-2" value={status}
+    <Select className="mt-1 w-full rounded border bg-background p-2" value={status}
      onChange={e=>setStatus(e.target.value)}>
      <option value={project.status}>{project.status}</option>
      {project.status==="PLANNED"&&<option value="ACTIVE">Active</option>}
      {project.status==="ACTIVE"&&<option value="COMPLETED">Completed</option>}
-    </select></label>
+    </Select></label>
    <p className="text-xs text-muted-foreground">Activating requires a Mentor; completing requires an approved final submission.</p>
-   <div className="flex gap-2"><button type="button" className="rounded bg-primary px-3 py-2 text-on-primary"
-    disabled={busy||!title.trim()} onClick={()=>void save()}>{busy?"Saving…":"Save changes"}</button>
-    <button type="button" className="rounded border px-3 py-2" disabled={busy}
-     onClick={()=>setOpen(false)}>Cancel</button></div>
+   <div className="flex gap-2"><Button type="button" className="rounded bg-primary px-3 py-2 text-on-primary"
+    disabled={busy||!title.trim()} onClick={()=>void save()}>{busy?"Saving…":"Save changes"}</Button>
+    <Button type="button" variant="secondary" className="min-h-10" disabled={busy}
+     onClick={()=>setOpen(false)}>Cancel</Button></div>
   </div>}
   {error&&<p role="alert" className="mt-2 text-error">{error}</p>}
   {success&&<p role="status" className="mt-2">{success}</p>}
