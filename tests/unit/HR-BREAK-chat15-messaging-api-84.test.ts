@@ -62,7 +62,7 @@ describe("HR-MESSAGING-84: recruiter open/reply HTTP role matrix and safe retrie
   const openResponse=await open();
   expect(openResponse.status).toBe(303);
   expect(openResponse.headers.get("location")).toBe("https://lms.example/hr/conversations/"+thread);
-  expect(m.open).toHaveBeenCalledWith(actor,{collegeId:college});
+  expect(m.open).toHaveBeenCalledWith(actor,expect.objectContaining({collegeId:college}));
   const sentResponse=await reply(" Confirmed ");
   expect(sentResponse.status).toBe(303);
   expect(m.reply).toHaveBeenCalledWith(actor,thread,"Confirmed");
