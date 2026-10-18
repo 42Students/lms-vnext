@@ -5,6 +5,7 @@ import {learnerProjectActivityCsv} from "@/modules/projects/learner-project-acti
 import {mentorPendingTaskReviewCsv} from "@/modules/projects/mentor-pending-task-review-export";
 import {mentorCalendarCsv} from "@/modules/projects/mentor-calendar-export-model";
 import {mentorReviewExportCsv} from "@/modules/projects/mentor-review-export-model";
+import {exportClassTeamsCsv} from "@/modules/projects/class-team-csv-export";
 import {resourceFilePreflight} from "@/modules/projects/resource-file-preflight-model";
 import {createProjectEvaluationInputSchema} from "@/modules/projects/validation";
 import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar-view";
@@ -13,7 +14,7 @@ const src=(path:string)=>readFileSync(path,"utf8");
 const id="11111111-1111-4111-8111-111111111111";
 describe("IIT Dharwad Projects breaker — CSV security, performance, rubric and notifications",()=>{
  it("PROJ-BREAK-export-01 protects formulas hidden by BOM, zero-width and directional characters",()=>{
-  for(const prefix of [""," ","\t","\uFEFF","\u200B","\u200F","\u202E","\u2060"]){
+  for(const prefix of [""," ","\t","\uFEFF","\u200B","\u200F","\u202E","\u2060","\u2066","\u2069"]){
    for(const symbol of ["=","+","-","@"]){
     const payload=prefix+symbol+"SUM(1,1)";
     expect(csvSafeCell(payload)).toBe('"'+"'"+payload+'"');
@@ -108,4 +109,13 @@ describe("IIT Dharwad Projects breaker — CSV security, performance, rubric and
   expect(api).toContain("getCurrentRequestContext()");
   expect(api).toContain("apiErrorResponse(error)");
  });
+ it("PROJ-BREAK-export-06 class team membership CSV defuses Unicode-hidden formulas",()=>{
+  const team=[{name:"\u2066=HYPERLINK(1)",membershipIds:[id]}];
+  const rolls=new Map([[id,"\u2069+SUM(1,2)"]]);
+  const csv=exportClassTeamsCsv(team,rolls);
+  expect(csv).toContain('"\'\u2066=HYPERLINK(1)"');
+  expect(csv).toContain('"\'\u2069+SUM(1,2)"');
+  expect(csv.split("\r\n")).toHaveLength(3);
+ });
+
 });
