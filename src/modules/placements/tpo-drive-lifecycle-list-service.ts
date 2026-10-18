@@ -121,6 +121,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       approvedJobId:placementRecruiterDriveRequests.approvedJobId,
       recruiterUserId:placementRecruiterDriveRequests.recruiterUserId,
       relationshipId:placementRecruiterDriveRequests.companyRelationshipId,
+      relationshipStatus:placementCompanyRelationships.status,
       recruiterEmail:users.email,recruiterPhone:users.phoneE164,
       recruiterPlatformStatus:users.platformStatus,
     }).from(placementRecruiterDriveRequests)
@@ -169,7 +170,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       recruiterEmail:row.recruiterEmail,recruiterPhone:row.recruiterPhone,
       recruiterUserId:row.recruiterUserId,
       verificationStatus:grant?.verificationStatus??"PENDING",
-      accessEnded:tpoRecruiterRequestAccessEnded(grant??null,row.recruiterPlatformStatus,now),
+      accessEnded:row.relationshipStatus!=="ACTIVE"||
+       tpoRecruiterRequestAccessEnded(grant??null,row.recruiterPlatformStatus,now),
       changes:revisionByRequest.has(row.id)?tpoDriveRequestDifferences(
        revisionByRequest.get(row.id)!.previousDraft,revisionByRequest.get(row.id)!.currentDraft):null,
       };
