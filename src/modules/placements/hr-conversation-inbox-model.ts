@@ -21,11 +21,12 @@ export function filterRecruiterConversations<T extends {jobId:string|null;id:str
 
 export const HR_CONVERSATION_PAGE_SIZE=20;
 export function hrConversationPageBounds(page:number,total:number){
- const pages=Math.max(1,Math.ceil(total/HR_CONVERSATION_PAGE_SIZE));
- const currentPage=Math.max(1,Math.min(page,pages));
+ const safeTotal=Number.isSafeInteger(total)&&total>=0?total:0;
+ const pages=Math.max(1,Math.ceil(safeTotal/HR_CONVERSATION_PAGE_SIZE));
+ const currentPage=Number.isSafeInteger(page)?Math.max(1,Math.min(page,pages)):1;
  return {page:currentPage,pages,
-  first:total?(currentPage-1)*HR_CONVERSATION_PAGE_SIZE+1:0,
-  last:Math.min(total,currentPage*HR_CONVERSATION_PAGE_SIZE)};
+  first:safeTotal?(currentPage-1)*HR_CONVERSATION_PAGE_SIZE+1:0,
+  last:Math.min(safeTotal,currentPage*HR_CONVERSATION_PAGE_SIZE)};
 }
 
 export function onlyUnreadRecruiterThreads<T extends {id:string}>(

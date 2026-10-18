@@ -9,3 +9,5 @@ These routes are intentional HTTP redirects with no rendered page, interaction t
 | `/college/projects/workspaces/[workspaceId]` — `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx` | URL-preserving redirect to canonical workspace detail | Pending |
 | `/college/projects/workspaces/[workspaceId]/[section]` — `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx` | URL-preserving redirect to canonical workspace section | Pending |
 | `/college/projects/[projectId]` — `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Redirect to canonical workspace summary | Pending |
+| `/college-admin/departments` — `src/app/(authenticated)/college-admin/departments/page.tsx` | Role-guarded HTTP redirect to `/college/departments` or dashboard; no rendered page or independent scroll | Pending |
+| `/college-admin/programs` — `src/app/(authenticated)/college-admin/programs/page.tsx` | Role-guarded HTTP redirect to `/college/programs` or dashboard; no rendered page or independent scroll | Pending |
