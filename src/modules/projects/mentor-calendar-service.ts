@@ -20,7 +20,8 @@ export async function listMyMentorCalendarMeetings(
   context: RequestContext,
 ): Promise<MentorMeetingCalendarItem[]> {
   const membership = context.membership;
-  if (!hasActiveMembership(context) || !hasMembershipRole(context, "MENTOR") ||
+  if (context.user.platformStatus !== "ACTIVE" ||
+      !hasActiveMembership(context) || !hasMembershipRole(context, "MENTOR") ||
       !membership || !can(context,"projects.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       })) {
