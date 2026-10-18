@@ -15,6 +15,8 @@ export async function deliverPublicRecruiterJoinCode(
   try {
     const response = await fetchImpl(config.apiUrl, {
       method: "POST",
+      // Never forward recruiter join codes or provider credentials via an HTTP redirect.
+      redirect: "error",
       headers: { Authorization: config.token, "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
         template_key: config.otpTemplateKey,
