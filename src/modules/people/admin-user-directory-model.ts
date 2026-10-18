@@ -6,7 +6,8 @@ export const adminUsersQuerySchema = z.object({
   role: z.union([z.enum(MEMBERSHIP_ROLES), z.literal("ALL")]).default("ALL"),
   membershipStatus: z.union([z.enum(MEMBERSHIP_STATUSES), z.literal("ALL")]).default("ALL"),
   platformStatus: z.union([z.enum(USER_PLATFORM_STATUSES), z.literal("ALL")]).default("ALL"),
-  page: z.coerce.number().int().min(1).max(100000).default(1),
+  page: z.union([z.number().int(), z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int())])
+    .pipe(z.number().int().min(1).max(100000)).default(1),
 }).strict();
 export const ADMIN_USERS_PAGE_SIZE = 30;
 export function adminUsersHref(query:z.infer<typeof adminUsersQuerySchema>) {
