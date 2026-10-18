@@ -521,6 +521,12 @@ export async function archiveProjectInstance(
         "PROJECT_NOT_FOUND",
       );
     }
+    // The context can be revoked after the initial project read. Persisted
+    // user/role SHARE locks must be held before even an idempotent archive
+    // response, so suspended actors cannot mutate or reconfirm a project.
+    await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+    });
 
     if (project.status === "ARCHIVED") {
       return project;

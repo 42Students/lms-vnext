@@ -48,7 +48,7 @@ export async function updateLearnerProjectTaskProgress(
     const [release] = await tx.select({ status: projectReleases.status }).from(projectReleases)
       .where(and(eq(projectReleases.id, sprint.releaseId), eq(projectReleases.projectId, scope.project.id)))
       .for("share").limit(1);
-    if (!release || release.status === "SHIPPED")
+    if (!release || !["PLANNED","IN_PROGRESS"].includes(release.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
     const siblings = await tx.select().from(projectTasks).where(and(

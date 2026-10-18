@@ -12,23 +12,40 @@ vi.mock("@/modules/module-access/service",()=>({resolveOptionalModuleAccess:mock
 import {requireProjectReadAccess,requireProjectManageAccess,requireProjectLifecycleAccess}
  from "@/modules/projects/access";
 
+const mocks=vi.hoisted(()=>({
+ getDb:vi.fn(),can:vi.fn(),college:vi.fn(),moduleAccess:vi.fn(),
+ select:vi.fn(),rows:[] as unknown[][],
+}));
+vi.mock("@/db/client",()=>({getDb:mocks.getDb}));
+vi.mock("@/modules/permissions/policy",async(importOriginal)=>{
+ const real=await importOriginal<typeof import("@/modules/permissions/policy")>();
+ return {...real,can:mocks.can};
+});
+vi.mock("@/modules/projects/scope",()=>({loadProjectCollegeScope:mocks.college}));
+vi.mock("@/modules/module-access/service",()=>({resolveOptionalModuleAccess:mocks.moduleAccess}));
+
+import {
+ requireProjectReadAccess,requireProjectManageAccess,requireProjectLifecycleAccess,
+} from "@/modules/projects/access";
+
 const college="11111111-1111-4111-8111-111111111111";
 const other="22222222-2222-4222-8222-222222222222";
 const org="33333333-3333-4333-8333-333333333333";
 const otherOrg="44444444-4444-4444-8444-444444444444";
+const PROJECT="77777777-7777-4777-8777-777777777777";
+const COLLEGE=college,ORG=org,FOREIGN=other;
 const actor=(roles:("TPO"|"COLLEGE_ADMIN"|"MENTOR"|"LEARNER")[],opts:{
  status?:"ACTIVE"|"SUSPENDED";platform?:"ACTIVE"|"DISABLED";collegeId?:string;orgId?:string;superAdmin?:boolean;
 }={}):RequestContext=>({
  user:{id:"55555555-5555-4555-8555-555555555555",identityUid:"actor",platformStatus:opts.platform??"ACTIVE",systemRoles:opts.superAdmin?["SUPER_ADMIN"]:[]},
- membership:{id:"66666666-6666-4666-8666-666666666666",collegeId:opts.collegeId??college,organizationId:opts.orgId??org,status:opts.status??"ACTIVE",roles},
+ membership:{id:"66666666-6666-4666-8666-666666666666",collegeId:opts.collegeId??college,
+  organizationId:opts.orgId??org,status:opts.status??"ACTIVE",roles},
 });
-const PROJECT="77777777-7777-4777-8777-777777777777";
-const COLLEGE=college, ORG=org, FOREIGN=other;
-const tpo=(overrides:Partial<RequestContext>={}):RequestContext=>({
- ...actor(["TPO"]),...overrides,
+const tpo=(override:Partial<RequestContext>={})=>({...actor(["TPO"]),...override});
+const query=(rows:unknown[])=>({
+ from(){return this;},where(){return this;},innerJoin(){return this;},
+ limit(){return Promise.resolve(rows);},
 });
-const query=(rows:unknown[])=>({from(){return this;},where(){return this;},
- innerJoin(){return this;},limit(){return Promise.resolve(rows);}});
 
 describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility alone",()=>{
  beforeEach(()=>{
@@ -41,8 +58,10 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
  });
  it("TPO student-directory permission does not expose unassigned project workspace",async()=>{
   const context=tpo();
-  await expect(requireProjectReadAccess(context,PROJECT)).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  expect(can(context,"projects.manage",{organizationId:ORG,collegeId:COLLEGE})).toBe(false);
+  await expect(requireProjectReadAccess(context,PROJECT))
+   .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  expect(mocks.can).toHaveBeenCalledWith(context,"projects.manage",
+   {organizationId:ORG,collegeId:COLLEGE});
   expect(mocks.select).toHaveBeenCalledTimes(2);
   expect(mocks.moduleAccess).not.toHaveBeenCalled();
  });
@@ -50,7 +69,8 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
   mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}],[{
    id:"member",role:"MENTOR",roleKind:"MENTOR",canMutate:true,isPrimary:true,
   }]];
-  await expect(requireProjectReadAccess(tpo(),PROJECT)).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  await expect(requireProjectReadAccess(tpo(),PROJECT))
+   .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   expect(mocks.moduleAccess).not.toHaveBeenCalled();
  });
  it("foreign college and foreign organization cannot infer assigned project-membership records",async()=>{
@@ -65,21 +85,26 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
   }
   expect(mocks.select).toHaveBeenCalledTimes(3);
  });
- it("PROJ-BREAK-TPO-02 denies projects and placement data from any wrong college OR organization",()=>{
-  const tpo=actor(["TPO"]);
+ it("PROJ-BREAK-TPO-02 denies projects and placement data from any wrong college OR organization",async()=>{
+  const {can:actualCan}=await vi.importActual<typeof import("@/modules/permissions/policy")>(
+   "@/modules/permissions/policy");
+  const current=actor(["TPO"]);
   for(const scope of [
    {collegeId:other,organizationId:org},
    {collegeId:college,organizationId:otherOrg},
    {collegeId:other,organizationId:otherOrg},
   ])for(const permission of ["projects.read","projects.manage","placements.read","placements.manage"] as const)
-   expect(can(tpo,permission,scope),JSON.stringify({scope,permission})).toBe(false);
+   expect(actualCan(current,permission,scope),JSON.stringify({scope,permission})).toBe(false);
+  expect(mocks.select).not.toHaveBeenCalled();
  });
- it("PROJ-BREAK-TPO-03 suspended, disabled or missing memberships cannot view or manage Project data",()=>{
-  const valid={collegeId:college,organizationId:org};
-  for(const tpo of [actor(["TPO"],{status:"SUSPENDED"}),actor(["TPO"],{platform:"DISABLED"}),
+ it("PROJ-BREAK-TPO-03 suspended, disabled or missing memberships cannot view or manage Project data",async()=>{
+  const {can:actualCan}=await vi.importActual<typeof import("@/modules/permissions/policy")>(
+   "@/modules/permissions/policy");
+  const resource={collegeId:college,organizationId:org};
+  for(const current of [actor(["TPO"],{status:"SUSPENDED"}),actor(["TPO"],{platform:"DISABLED"}),
    {...actor(["TPO"]),membership:null}]){
    for(const permission of ["projects.read","projects.manage","placements.read","placements.manage"] as const)
-    expect(can(tpo,permission,valid)).toBe(false);
+    expect(actualCan(current,permission,resource)).toBe(false);
   }
   expect(mocks.select).not.toHaveBeenCalled();
  });
