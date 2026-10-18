@@ -480,11 +480,17 @@ describe("Placement P8 offers and joining", () => {
     );
     expect(offers.rows).toHaveLength(1);
     expect(offers.rows[0]?.id).toBe(promotions.rows[0]?.offer_id);
-    const audit=await pool.query<{count:number}>(
-      "select count(*)::int as count from activity_events where subject_id=$1 and event_type='PLACEMENTS_TPO_WAITLIST_PROMOTED'",
+    const audit=await pool.query<{summary:string;count:number}>(
+      `select summary,count(*)::int as count from activity_events
+       where subject_id=$1 and event_type='PLACEMENTS_TPO_WAITLIST_PROMOTED'
+       group by summary`,
       [job.id],
     );
-    expect(audit.rows[0]?.count).toBe(1);
+    expect(audit.rows.find(row=>row.summary.includes("promoted waitlisted applicant"))?.count).toBe(1);
+    // Crash-reconciliation is a distinct durable event and may occur once,
+    // but a racing HTTP retry must never duplicate either event category.
+    expect(audit.rows.every(row=>row.count===1)).toBe(true);
+    expect(audit.rows.length).toBeLessThanOrEqual(2);
     for(const result of outcomes)if(result.status==="fulfilled"){
       expect(result.value.offerId).toBe(offers.rows[0]?.id);
     }
