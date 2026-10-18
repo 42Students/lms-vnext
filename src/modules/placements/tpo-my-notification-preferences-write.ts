@@ -25,9 +25,9 @@ export async function saveMyTpoNotificationPreferences(context:RequestContext,ra
   throw new TpoPreferenceSaveError("NOT_READY");
  return getDb().transaction(async tx=>{
   // A row lock on the college serializes concurrent first writes as well as updates.
-  const [locked]=await tx.select({id:colleges.id}).from(colleges)
+  const [locked]=await tx.select({id:colleges.id,status:colleges.status}).from(colleges)
    .where(eq(colleges.id,collegeId)).for("update").limit(1);
-  if(!locked)throw new TpoPreferenceSaveError("NOT_READY");
+  if(!locked||locked.status!=="ACTIVE")throw new TpoPreferenceSaveError("NOT_READY");
   // Lock and reconstruct the actor's real roles inside the transaction so
   // a suspended/reassigned TPO cannot update preferences from a stale tab.
   const persisted=await assertPersistedPlatformPermission(tx,context,"placements.manage",{

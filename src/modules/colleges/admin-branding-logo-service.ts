@@ -53,13 +53,21 @@ export async function uploadCollegeLogo(ctx:RequestContext,rawId:unknown,file:Fi
  const config=getPrivateR2Config();
  const headers={"content-type":"image/png","x-amz-meta-college-id":college.id,
   "x-amz-meta-asset-type":"college-logo","x-amz-meta-image-width":String(width)};
- const url=presignUrl(config,{method:"PUT",key,expiresSeconds:300,headers});
- const upload=await fetch(url,{method:"PUT",headers,body:bytes,cache:"no-store"});
- if(!upload.ok)throw new CollegeLogoError("LOGO_UPLOAD_FAILED");
- const proof=await headObject(config,key);
- if(!proof||proof.sizeBytes!==bytes.length||proof.contentType!=="image/png"||
-    proof.metadata["college-id"]!==college.id||proof.metadata["asset-type"]!=="college-logo")
+ try{
+  const url=presignUrl(config,{method:"PUT",key,expiresSeconds:300,headers});
+  const upload=await fetch(url,{method:"PUT",headers,body:bytes,cache:"no-store"});
+  if(!upload.ok)throw new CollegeLogoError("LOGO_UPLOAD_FAILED");
+  const proof=await headObject(config,key);
+  if(!proof||proof.sizeBytes!==bytes.length||proof.contentType!=="image/png"||
+     proof.metadata["college-id"]!==college.id||proof.metadata["asset-type"]!=="college-logo")
+   throw new CollegeLogoError("LOGO_UPLOAD_FAILED");
+ }catch{
+  // Provider errors, lost PUT replies and failed metadata verification may
+  // leave an unreferenced private object. Best-effort removal never changes
+  // the active DB pointer and provider diagnostics must not reach the user.
+  await deleteObject(config,key).catch(()=>{});
   throw new CollegeLogoError("LOGO_UPLOAD_FAILED");
+ }
  let previous=null as string|null;
  try{
   await getDb().transaction(async tx=>{

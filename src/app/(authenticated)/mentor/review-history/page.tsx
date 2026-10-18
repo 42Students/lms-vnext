@@ -19,7 +19,7 @@ export default async function MentorReviewHistoryPage({
   searchParams,
 }: { searchParams: Promise<Search> }) {
   const raw=await searchParams;
-  const parsed=mentorReviewHistoryQuerySchema.safeParse({
+  const parsed=mentorReviewHistoryQuerySchema.safeParse(Object.values(raw).some(Array.isArray)?null:{
     decision:first(raw.decision) ?? undefined, search:first(raw.search) ?? undefined,
     projectId:first(raw.projectId) ?? undefined,
     projectState:first(raw.projectState) ?? undefined,

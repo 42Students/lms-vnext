@@ -16,12 +16,13 @@ export async function getMentorResourceDirectory(context:RequestContext,raw:unkn
   !can(context,"projects.read",{
    collegeId:membership.collegeId,organizationId:membership.organizationId,
   }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ // Disabled Projects cannot reveal project identity through resource metadata.
+ const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
+ if(!enabled)return {enabled:false as const,query,projectTitle:"",
+  ...mentorResourceDirectory([],query)};
  const scope=await requireProjectReadAccess(context,query.projectId);
  if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
- const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
- if(!enabled)return {enabled:false as const,query,projectTitle:scope.project.title,
-  ...mentorResourceDirectory([],query)};
  const resources=await listProjectResources(context,scope.project.id);
  return {enabled:true as const,query,projectTitle:scope.project.title,
   ...mentorResourceDirectory(resources,query)};
