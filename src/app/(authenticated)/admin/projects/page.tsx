@@ -15,6 +15,8 @@ import { parseAdminProjectsQuery } from "@/modules/projects/admin-projects-query
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 
 export default async function SuperAdminProjectsPage({
   searchParams,
@@ -27,8 +29,18 @@ export default async function SuperAdminProjectsPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
-  const collegeId =
-    context.adminScope?.collegeId ?? null;
+  // The /admin layout is not an authorization substitute. Reject a disabled
+  // or non-Super-Admin actor before any project or template service call.
+  if (!isSuperAdmin(context)) {
+    return <div className="min-w-0 space-y-6">
+      <PageHeader eyebrow="Super Admin" title="Project workspaces" />
+      <ErrorState title="Project access denied"
+        description="Your account cannot access Super Admin project workspaces."
+        action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)] underline">Back to dashboard</Link>}
+      />
+    </div>;
+  }
+  const collegeId = getProjectAdminCollegeId(context);
 
   if (!collegeId) {
     return (
