@@ -177,3 +177,5 @@ Round 3 scope corrections: TPO-settings-audit-56 extension supports timed grants
 | TPO-settings-audit-PREF-UI-06 | DONE — source, CI pending | Personal five-switch notification preference editor now keeps the most recently saved baseline and returned CAS token after successful saves, while preserving draft choices on conflict, preventing repeat submits and never trusting a caller-supplied user/college. `tests/unit/chat11-tpo-personal-preferences-editor-cas.test.ts`. |
 
 | TPO-settings-audit-PREP-CATALOG-07 | DONE — source and pure tests, CI pending | Preparation catalog and outcome service both require non-archived owning department in this college, so an archived course cannot supply misleading readiness evidence. `tests/unit/chat11-tpo-prep-archived-catalog.test.ts` covers unresolved course, zero published content and college scoping. |
+
+| TPO-settings-audit-PREF-HTTP-08 | DONE — HTTP-unit authored, CI pending | Actual Next.js route-unit cases now cover CSRF origin before context, bounded JSON 400/413, private no-store successful save, actor/session denial, stale CAS 409 and missing table 503. `tests/unit/chat11-tpo-preferences-http-security.test.ts`. |
