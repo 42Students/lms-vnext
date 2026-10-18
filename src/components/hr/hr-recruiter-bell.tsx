@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
-import {useCallback,useEffect,useState} from "react";
-import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,type HrBellResponse} from "@/modules/placements/hr-recruiter-bell-model";
+import {useCallback,useEffect,useRef,useState} from "react";
+import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,createHrBellMutationGate,type HrBellResponse} from "@/modules/placements/hr-recruiter-bell-model";
 export function HrRecruiterBell(){
  const [state,setState]=useState<HrBellResponse|null>(null),[open,setOpen]=useState(false),
  [loading,setLoading]=useState(false),[error,setError]=useState(""),[saveError,setSaveError]=useState("");
  const [now,setNow]=useState(()=>Date.now());
+ const markAllGate=useRef(createHrBellMutationGate());
  const load=useCallback(async()=>{
   try{
    const res=await fetch("/api/placements/recruiter/bell",{cache:"no-store"});
@@ -21,14 +22,15 @@ export function HrRecruiterBell(){
   return ()=>clearInterval(id);
  },[load]);
  async function markAll(){
-  if(loading)return;setLoading(true);setSaveError("");
+  if(!markAllGate.current.tryBegin())return;
+  setLoading(true);setSaveError("");
   try{
    const res=await fetch("/api/placements/recruiter/bell",{method:"POST",
     headers:{"Content-Type":"application/json"},body:"{}"});
    if(!res.ok)throw Error("Could not save");
    await load();
   }catch{setSaveError("Notifications loaded, but read status could not be saved");}
-  finally{setLoading(false);}
+  finally{markAllGate.current.end();setLoading(false);}
  }
  const unread=state?.unread??0;
  return <div className="relative">

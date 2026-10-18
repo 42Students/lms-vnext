@@ -28,6 +28,12 @@ describe("chat-16 recruiter email bridge security and resend policy",()=>{
   expect(makeRecruiterReplyAddress(token,"example.org@evil.test")).toBeNull();
   expect(makeRecruiterReplyAddress(token,"localhost")).toBeNull();
   expect(makeRecruiterReplyAddress("invalid","reply.example.org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,"-spoof.example.org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,"spoof-.example.org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,"a".repeat(64)+".example.org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,Array.from({length:6},()=>"a".repeat(48)).join(".")+".org")).toBeNull();
+  expect(makeRecruiterReplyAddress(token,"reply.EXAMPLE.ORG")).toBe(address);
+  expect(isRecruiterReplyAddress("r-"+token+"@-spoof.example.org","-spoof.example.org")).toBe(false);
  });
  it("email-bridge-hmac-01 authenticates exact upstream bytes, including whitespace",()=>{
   const body='{"from":"a@example.org","message":"Hi"}';
