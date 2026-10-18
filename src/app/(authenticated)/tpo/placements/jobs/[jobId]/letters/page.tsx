@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DataTable } from "@/components/ui/data-table";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -29,9 +30,10 @@ export default async function TpoOfferLettersPage({
     offerId: row.offer.id, offerStatus: row.offer.status,
     issuedAt: row.offer.issuedAt, respondedAt: row.offer.respondedAt,
   })));
+  const evidenceByOfferId=new Map(offers.map((row,index)=>[row.offer.id,projected[index]] as const));
   return <div className="min-w-0 space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
-      className="text-sm font-semibold text-[var(--lms-teal-deep)]">← Back to drive</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Back to drive</Link>
     <header>
       <h1 className="text-2xl font-bold text-foreground">{job.title} · Offer letter evidence</h1>
       <p className="mt-2 text-sm text-body">
@@ -45,31 +47,16 @@ export default async function TpoOfferLettersPage({
       record. Bulk letter-status changes are disabled until their owner-approved
       transition contract and registered persistence exist.
     </p>
-    {offers.length === 0 ?
-      <p role="status" className="rounded-xl border border-border p-6 text-sm text-body">
-        No persisted offers exist for this drive.
-      </p> :
-      <div className="overflow-auto rounded-xl border border-border bg-surface">
-        <table className="min-w-[42rem] w-full text-left text-sm">
-          <thead className="bg-surface-subtle">
-            <tr>{["Candidate", "Offer", "Offer issued", "Letter issued", "Letter acknowledged"].map(x =>
-              <th key={x} scope="col" className="px-4 py-3">{x}</th>)}</tr>
-          </thead>
-          <tbody>
-            {offers.map((row, index) => {
-              const evidence = projected[index];
-              return <tr key={row.offer.id} className="border-t border-border">
-                <td className="px-4 py-3">{row.candidate.displayName ?? "Unnamed learner"}</td>
-                <td className="px-4 py-3">{row.offer.status}</td>
-                <td className="px-4 py-3">
-                  {evidence?.persistedOfferIssuedAt ?? "Not recorded"}
-                </td>
-                <td className="px-4 py-3">Unavailable</td>
-                <td className="px-4 py-3">Unavailable</td>
-              </tr>;
-            })}
-          </tbody>
-        </table>
-      </div>}
+    <DataTable<(typeof offers)[number]> caption="Offer letter evidence"
+      rows={offers} getRowKey={row=>row.offer.id}
+      empty={<p role="status" className="text-sm text-body">No persisted offers exist for this drive.</p>}
+      columns={[
+        {key:"candidate",header:"Candidate",mobilePriority:"primary",cell:row=><strong>{row.candidate.displayName??"Unnamed learner"}</strong>},
+        {key:"offer",header:"Offer",mobilePriority:"secondary",cell:row=>row.offer.status},
+        {key:"issued",header:"Offer issued",mobilePriority:"secondary",cell:row=>evidenceByOfferId.get(row.offer.id)?.persistedOfferIssuedAt??"Not recorded"},
+        {key:"letter",header:"Letter issued",mobilePriority:"secondary",cell:()=>"Unavailable"},
+        {key:"ack",header:"Letter acknowledged",mobilePriority:"secondary",cell:()=>"Unavailable"},
+      ]}/>
+
   </div>;
 }
