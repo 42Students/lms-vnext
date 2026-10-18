@@ -16,3 +16,7 @@ The Board now fails closed for malformed/overlong filters **after** the project 
 Evidence: `tests/unit/PROJ-BREAK-chat7-learner-board-filters-and-scroll.test.ts`, `tests/unit/PROJ-BREAK-chat7-learner-progress-transition-matrix.test.ts`, `tests/unit/UX-chat7-learner-scroll-motion-01.test.ts`, `tests/unit/chat7-superadmin-course-assessment-ux-boundaries.test.ts`. No animation durations or one-off easing tokens added.
 
 Remaining verification: run 320px/375px phone and keyboard walk for all three lists after the owner’s final all-lane CI/build pass. No screenshot-based sign-off is claimed.
+
+## Learner/Faculty resource materials controls (chat-7 follow-up)
+
+`src/components/courses/lesson-resource-materials-control.tsx` keeps its existing per-material error, confirmation, retry and cancellation text, but raises editable links, Save/Remove/Edit buttons and title/HTTPS inputs to **44px** touch height. The existing external-link navigation remains `noopener noreferrer`. `tests/unit/UX-chat7-resource-material-touch-10.test.ts` captures action, confirmation, role-independent error and touch-size source checks. This was source-reviewed only; a real 320px device, keyboard focus and screen-reader walkthrough is still required.
