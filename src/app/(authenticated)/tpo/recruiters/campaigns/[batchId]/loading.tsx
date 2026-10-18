@@ -1,1 +1,6 @@
-export default function Loading(){return <main aria-busy="true" className="space-y-3 p-4"><div className="h-9 w-52 animate-pulse rounded bg-surface-secondary"/><div className="h-36 animate-pulse rounded-lg bg-surface-secondary"/></main>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+/** The route retains its own accessible loading identity and bounded retry. */
+export default function Loading(){
+ return <GracefulPageLoading label="Loading campaign delivery batch"/>;
+}
