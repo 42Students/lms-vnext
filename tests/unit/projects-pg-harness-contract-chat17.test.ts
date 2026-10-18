@@ -69,9 +69,11 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("project_sprints");
    expect(helper).toContain("project_task_submissions");
    expect(helper).toContain("placement_job_rounds");
+   expect(helper).toContain("export async function withTwoPgSessions");
+   expect(helper).toContain("SET LOCAL lock_timeout");
  });
- it("PROJ-HARNESS-GUARD-07 every expected real SQL integration example remains registered",()=>{
-   for(let i=1;i<=20;i++){
+ it("PROJ-HARNESS-GUARD-07 all 21 SQL group, rollback and two-session integration examples remain registered",()=>{
+   for(let i=1;i<=21;i++){
      expect(examples).toContain("PROJ-HARNESS-"+String(i).padStart(2,"0"));
    }
    expect(examples).toContain("23505");
