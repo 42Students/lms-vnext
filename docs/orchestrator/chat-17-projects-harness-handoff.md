@@ -148,3 +148,5 @@ The UI coverage matrix still contains other teams' page-level/raw-table entries;
 New targeted regression files are included in `npm run test:ux:kit:hardening`; tests remain **unverified until CI runs**. Refresh `docs/audit/ux/COVERAGE-MATRIX.md` from the generator after merging; do not manually edit red gap counts.
 
 - **Unowned interview operations (UX-UNOWNED-TABLE-04):** `src/components/admin/super-admin-interview-operations.tsx` now uses the shared responsive `DataTable` for all eleven interview fields with actions visible on mobile; keeps 500-row CSV cap, conflicts, IST and `.ics`. New `tests/unit/UX-admin-interviews-table-chat17.test.ts` registered under `test:ux:kit:hardening`.
+
+- **Interview browser follow-up:** The development-only fixture mounts the Super Admin interview grid with synthetic overlapping room bookings. Chromium test `UX-UNOWNED-TABLE-04` checks mobile filters/conflicts and real `.ics` download. Include `npm run test:e2e:chat17:kit` in CI, with the site running in development mode. Demo entries are not tenant data and do not test API authorization.
