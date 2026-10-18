@@ -40,7 +40,7 @@ export default async function TpoDriveCloseoutPage({
       </p>
     </header>
     <a href={"/api/placements/tpo/drives/" + encodeURIComponent(data.job.id) + "/closeout/export"}
-      className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+      className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
       Export CSV
     </a>
     <section aria-label="Close-out metrics" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
