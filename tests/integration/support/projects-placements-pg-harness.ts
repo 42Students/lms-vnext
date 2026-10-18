@@ -46,6 +46,13 @@ const REQUIRED_TABLES = [
   "placement_offers","placement_joining_outcomes",
 ] as const;
 
+function clearlyDisposableDatabaseName(name: string): boolean {
+  // Avoid substring "ci" in "financial" or "test" in "contest" accidentally
+  // authorising access to a real data store.
+  return /(?:^|[_-])(?:test|testing|ci|tmp)(?:$|[_-])/i.test(name) &&
+    !/(?:prod|production|live|staging)/i.test(name);
+}
+
 export function disposableDatabaseUrl(): string {
   const raw = process.env.TEST_DATABASE_URL;
   if (!raw) throw new Error("PROJ-HARNESS: set an explicit disposable TEST_DATABASE_URL (DATABASE_URL is never used)");
@@ -53,8 +60,7 @@ export function disposableDatabaseUrl(): string {
   try { url = new URL(raw); } catch { throw new Error("PROJ-HARNESS: TEST_DATABASE_URL must be a PostgreSQL URL"); }
   const dbName = decodeURIComponent(url.pathname.slice(1));
   if (!["postgres:","postgresql:"].includes(url.protocol) ||
-      !/(?:test|ci|tmp)/i.test(dbName) ||
-      /(?:prod|production|live)/i.test(dbName)) {
+      !clearlyDisposableDatabaseName(dbName)) {
     throw new Error("PROJ-HARNESS: refusing database without a clearly disposable test/ci/tmp name");
   }
   return raw;
@@ -66,8 +72,7 @@ export function newHarnessPool(): Pool {
 }
 export async function assertHarnessSchema(client: PoolClient): Promise<void> {
   const name = await client.query<{name: string}>("select current_database() as name");
-  if (!/(?:test|ci|tmp)/i.test(name.rows[0]?.name ?? "") ||
-      /(?:prod|production|live)/i.test(name.rows[0]?.name ?? "")) {
+  if (!clearlyDisposableDatabaseName(name.rows[0]?.name ?? "")) {
     throw new Error("PROJ-HARNESS: refusing non-test PostgreSQL database");
   }
   const tables = await client.query<{name: string; reg: string|null}>(
