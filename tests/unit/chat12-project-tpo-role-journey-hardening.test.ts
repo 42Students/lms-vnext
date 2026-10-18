@@ -17,11 +17,9 @@ function tpoContext(
   options: {
     collegeId?: string;
     organizationId?: string;
-    membershipStatus?: "ACTIVE" | "INACTIVE";
-    userStatus?: "ACTIVE" | "SUSPENDED";
-    roles?: RequestContext["membership"] extends infer T
-      ? NonNullable<T>["roles"]
-      : never;
+    membershipStatus?: "ACTIVE" | "SUSPENDED";
+    userStatus?: "ACTIVE" | "DISABLED";
+    roles?: NonNullable<RequestContext["membership"]>["roles"];
   } = {},
 ): RequestContext {
   return {
@@ -63,10 +61,10 @@ describe("PROJ-TPO-JOURNEY-01 permission and tenant boundaries", () => {
   });
 
   it("revokes a removed-role or expired-session actor without honoring an old tab", () => {
-    expect(can(tpoContext({ membershipStatus: "INACTIVE" }), "projects.read", resource)).toBe(false);
+    expect(can(tpoContext({ membershipStatus: "SUSPENDED" }), "projects.read", resource)).toBe(false);
     expect(can(tpoContext({ roles: [] }), "projects.manage", resource)).toBe(false);
     expect(can(tpoContext({ roles: [] }), "placements.manage", resource)).toBe(false);
-    expect(can(tpoContext({ userStatus: "SUSPENDED" }), "projects.read", resource)).toBe(false);
+    expect(can(tpoContext({ userStatus: "DISABLED" }), "projects.read", resource)).toBe(false);
     expect(can(null, "projects.read", resource)).toBe(false);
     expect(can(undefined, "projects.manage", resource)).toBe(false);
   });
