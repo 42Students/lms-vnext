@@ -36,3 +36,17 @@ export function tpoSelectionReleaseFailureMessage(error: unknown): string {
     return "This selection changed. Refresh before releasing.";
   return "Could not release this selection. Refresh and try again or contact your administrator.";
 }
+
+/** A lost-response retry must not re-record identical selections: it would
+ * change recordedAt, invalidate other reviewers' previews, and double-audit.
+ * The caller first locks and scopes both job and application rows.
+ */
+export function isExactTpoSelectionReplay(
+  existing: readonly {applicationId:string;roleTitle:string;annualCtcInr:number|null;status:string}[],
+  entries: readonly {applicationId:string;roleTitle:string;annualCtcInr:number|null}[],
+): boolean {
+  return entries.length>0 && entries.length===existing.length &&
+    entries.every(entry=>existing.some(row=>row.applicationId===entry.applicationId &&
+      row.status==="SELECTED" && row.roleTitle===entry.roleTitle &&
+      row.annualCtcInr===entry.annualCtcInr));
+}
