@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { Pool } from "pg";
+import type { Pool, QueryResultRow } from "pg";
 import {
-  createPlacementCandidateFixture, createPlacementFixture, createPrincipal,
+  createPlacementCandidateFixture, createPlacementFixture, createRecruiterFixture, fixtureRecruiterCanAccess, createPrincipal,
   createTenant, newHarnessPool, withProjectPg,
   type PgHarness,
 } from "./support/projects-placements-pg-harness";
@@ -47,11 +47,22 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
         member_college:learner.collegeId,offer_id:candidate.offerId});
     });
   });
+  it("PROJ-HARNESS-PLACEMENTS-25 fixture season dates are valid and encompass the job deadline",async()=>{
+    await withPlacementCase(async({db,drive})=>{
+      const dates=await db.query<{valid:boolean;active_today:boolean;deadline_in_season:boolean}>(`
+        select s.end_date >= s.start_date as valid,
+          current_date between s.start_date and s.end_date as active_today,
+          j.application_deadline::date between s.start_date and s.end_date as deadline_in_season
+        from placement_jobs j join placement_seasons s on s.id=j.season_id
+        where j.id=$1`,[drive.jobId]);
+      expect(dates).toEqual([{valid:true,active_today:true,deadline_in_season:true}]);
+    });
+  });
   it("PROJ-HARNESS-PLACEMENTS-02 season prevents second active season in same college",async()=>{
     await withPlacementCase(async({db,tenant,actor})=>{
       await db.expectSqlState(()=>db.query(`
         insert into placement_seasons(college_id,name,code,start_date,end_date,created_by_user_id)
-        values ($1,'Concurrent season','ALTERNATE','2099-10-01','2099-06-30',$2)`,
+        values ($1,'Concurrent season','ALTERNATE','2020-10-01','2099-06-30',$2)`,
         [tenant.collegeId,actor.userId]),"23505");
     });
   });
@@ -66,6 +77,189 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       expect(rows[0]?.n).toBe(1);
     });
   });
+  it("PROJ-HARNESS-RECRUITER-33 verifies every persisted recruiter capability and revocation gate",async()=>{
+    await withPlacementCase(async({db,drive,actor})=>{
+      const recruiter=await createRecruiterFixture(db,drive,actor);
+      expect(await fixtureRecruiterCanAccess(db,recruiter,"DRIVES")).toBe(true);
+      expect(await fixtureRecruiterCanAccess(db,recruiter,"MESSAGES")).toBe(true);
+      await db.query("update placement_recruiter_college_grants set verification_status='PENDING' where id=$1",
+        [recruiter.grantId]);
+      expect(await fixtureRecruiterCanAccess(db,recruiter,"DRIVES")).toBe(false);
+      await db.query("update placement_recruiter_college_grants set verification_status='VERIFIED' where id=$1",
+        [recruiter.grantId]);
+      await db.query("update users set platform_status='DISABLED' where id=$1",[recruiter.userId]);
+      expect(await fixtureRecruiterCanAccess(db,recruiter,"DRIVES")).toBe(false);
+      await db.query("update users set platform_status='ACTIVE' where id=$1",[recruiter.userId]);
+      await db.query("update placement_recruiter_profiles set status='ARCHIVED',archived_at=now() where user_id=$1",
+        [recruiter.userId]);
+      expect(await fixtureRecruiterCanAccess(db,recruiter,"DRIVES")).toBe(false);
+      await db.query("update placement_recruiter_profiles set status='ACTIVE',archived_at=null where user_id=$1",
+        [recruiter.userId]);
+      await db.query(`update placement_recruiter_college_grants
+        set created_at='2020-01-01T00:00:00Z',valid_until='2020-02-01T00:00:00Z' where id=$1`,
+        [recruiter.grantId]);
+      expect(await fixtureRecruiterCanAccess(db,recruiter,"DRIVES")).toBe(false);
+      await db.query(`update placement_recruiter_college_grants
+        set created_at=now(),valid_until='2099-12-31T23:59:00Z',
+          status='REVOKED',revoked_at=now(),revoked_by_user_id=$2 where id=$1`,
+        [recruiter.grantId,actor.userId]);
+      expect(await fixtureRecruiterCanAccess(db,recruiter,"DRIVES")).toBe(false);
+    });
+  });
+
+  it("PROJ-HARNESS-RECRUITER-22 company-bound verified recruiter grant is not a college membership",async()=>{
+    await withPlacementCase(async({db,actor,drive,tenant})=>{
+      const recruiter=await createRecruiterFixture(db,drive,actor);
+      const rows=await db.query<{
+        status:string;verification_status:string;company_id:string;college_id:string;
+        valid:boolean;membership_count:number;
+      }>(`
+        select grant.status,grant.verification_status,profile.company_id,
+          rel.college_id,grant.valid_until>now() as valid,
+          (select count(*)::int from college_memberships cm where cm.user_id=profile.user_id)
+            as membership_count
+        from placement_recruiter_college_grants grant
+        join placement_recruiter_profiles profile on profile.user_id=grant.recruiter_user_id
+        join placement_company_relationships rel on rel.id=grant.company_relationship_id
+        where grant.id=$1`,[recruiter.grantId]);
+      expect(rows).toMatchObject([{
+        status:"ACTIVE",verification_status:"VERIFIED",
+        company_id:drive.companyId,college_id:tenant.collegeId,
+        valid:true,membership_count:0,
+      }]);
+    });
+  });
+  it("PROJ-HARNESS-RECRUITER-25 duplicate active grant rejected, revoked grant can be reissued",async()=>{
+    await withPlacementCase(async({db,drive,actor})=>{
+      const recruiter=await createRecruiterFixture(db,drive,actor);
+      await db.expectSqlState(()=>db.query(`
+        insert into placement_recruiter_college_grants
+          (recruiter_user_id,company_relationship_id,granted_by_user_id,valid_until,
+           verification_status,capabilities)
+        values ($1,$2,$3,'2099-12-31T23:59:00Z','VERIFIED',ARRAY['DRIVES']::text[])`,
+        [recruiter.userId,drive.relationshipId,actor.userId]),"23505");
+      await db.query(`
+        update placement_recruiter_college_grants
+          set status='REVOKED',revoked_by_user_id=$2,revoked_at=now()
+        where id=$1`,[recruiter.grantId,actor.userId]);
+      const newGrant=await db.query<{id:string}>(`
+        insert into placement_recruiter_college_grants
+          (recruiter_user_id,company_relationship_id,granted_by_user_id,valid_until,
+           verification_status,capabilities)
+        values ($1,$2,$3,'2099-12-31T23:59:00Z','VERIFIED',ARRAY['DRIVES']::text[])
+        returning id`,[recruiter.userId,drive.relationshipId,actor.userId]);
+      expect(newGrant).toHaveLength(1);
+      const active=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_college_grants
+        where recruiter_user_id=$1 and status='ACTIVE'`,[recruiter.userId]);
+      expect(active[0]?.n).toBe(1);
+    });
+  });
+
+  it("PROJ-HARNESS-RECRUITER-26 grant capability, verification and expiry constraints fail closed",async()=>{
+    await withPlacementCase(async({db,drive,actor})=>{
+      const recruiter=await createRecruiterFixture(db,drive,actor);
+      for(const [query,values] of [
+        ["update placement_recruiter_college_grants set capabilities=ARRAY['SUPER_ADMIN']::text[] where id=$1",
+          [recruiter.grantId]],
+        ["update placement_recruiter_college_grants set verification_status='UNREVIEWED' where id=$1",
+          [recruiter.grantId]],
+        ["update placement_recruiter_college_grants set valid_until=created_at-interval '1 minute' where id=$1",
+          [recruiter.grantId]],
+      ] as const) await db.expectSqlState(()=>db.query(query,[...values]),"23514");
+      const rows=await db.query<{status:string;verification_status:string}>(`
+        select status,verification_status from placement_recruiter_college_grants
+        where id=$1`,[recruiter.grantId]);
+      expect(rows).toEqual([{status:"ACTIVE",verification_status:"VERIFIED"}]);
+    });
+  });
+
+  it("PROJ-HARNESS-PLACEMENTS-27 failed round creation rolls back company, job and role graph",async()=>{
+    await withPlacementCase(async({db,tenant,actor})=>{
+      const counts=async()=>db.query<{companies:number;relationships:number;seasons:number;jobs:number;roles:number;rounds:number}>(`
+        select
+          (select count(*)::int from placement_companies) as companies,
+          (select count(*)::int from placement_company_relationships where college_id=$1) as relationships,
+          (select count(*)::int from placement_seasons where college_id=$1) as seasons,
+          (select count(*)::int from placement_jobs where college_id=$1) as jobs,
+          (select count(*)::int from placement_job_role_options) as roles,
+          (select count(*)::int from placement_job_rounds) as rounds`,[tenant.collegeId]);
+      const before=await counts();
+      const broken:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]>{
+          if(sql.includes("insert into placement_job_rounds"))
+            throw new Error("simulated round failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createPlacementFixture(broken,tenant,actor))
+        .rejects.toThrow("simulated round failure");
+      expect(await counts()).toEqual(before);
+      await expect(createPlacementFixture(db,tenant,actor))
+        .resolves.toHaveProperty("roleOptionId");
+    });
+  });
+
+  it("PROJ-HARNESS-PLACEMENTS-26 failed offer insert rolls back application, screening and round",async()=>{
+    await withPlacementCase(async({db,drive,actor,tenant})=>{
+      const fresh=await createPrincipal(db,tenant,["LEARNER"]);
+      const broken:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]> {
+          if(sql.includes("insert into placement_offers")) throw new Error("simulated offer failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createPlacementCandidateFixture(broken,drive,fresh,actor))
+        .rejects.toThrow("simulated offer failure");
+      const graph=await db.query<{applications:number;screenings:number;results:number;offers:number}>(`
+        select
+          (select count(*)::int from placement_applications where membership_id=$1) as applications,
+          (select count(*)::int from placement_application_screenings where application_id in
+            (select id from placement_applications where membership_id=$1)) as screenings,
+          (select count(*)::int from placement_round_results where application_id in
+            (select id from placement_applications where membership_id=$1)) as results,
+          (select count(*)::int from placement_offers where application_id in
+            (select id from placement_applications where membership_id=$1)) as offers`,
+        [fresh.membershipId]);
+      expect(graph).toEqual([{applications:0,screenings:0,results:0,offers:0}]);
+      await expect(createPlacementCandidateFixture(db,drive,fresh,actor))
+        .resolves.toHaveProperty("offerId");
+    });
+  });
+
+  it("PROJ-HARNESS-RECRUITER-24 a grant failure leaves no orphaned user or company profile",async()=>{
+    await withPlacementCase(async({db,actor,drive})=>{
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_profiles`);
+      const failed:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]>{
+          if(sql.includes("insert into placement_recruiter_college_grants"))
+            throw new Error("simulated grant constraint failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createRecruiterFixture(failed,drive,actor))
+        .rejects.toThrow(/simulated grant constraint failure/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_profiles`);
+      expect(after[0]?.n).toBe(before[0]?.n);
+      await expect(createRecruiterFixture(db,drive,actor)).resolves.toHaveProperty("grantId");
+    });
+  });
+
+  it("PROJ-HARNESS-RECRUITER-23 wrong-college coordinator cannot issue an HR grant",async()=>{
+    await withPlacementCase(async({db,outsiderTenant,drive})=>{
+      const foreignAdmin=await createPrincipal(db,outsiderTenant,["COLLEGE_ADMIN"]);
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_college_grants`);
+      await expect(createRecruiterFixture(db,drive,foreignAdmin))
+        .rejects.toThrow(/actor role or college|active member/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_college_grants`);
+      expect(after[0]?.n).toBe(before[0]?.n);
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-03 application and screening enforce one candidate per drive and decision shape",async()=>{
     await withPlacementCase(async({db,learner,drive,candidate})=>{
       await db.expectSqlState(()=>db.query(`
@@ -230,6 +424,28 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       const after=await db.query<{n:number}>(`
         select count(*)::int n from placement_round_results where round_id=$1`,[drive.roundId]);
       expect(after[0]?.n).toBe(before[0]?.n);
+    });
+  });
+
+  it("PROJ-HARNESS-PLACEMENTS-32 archived employer or college relationship denies new applicants",async()=>{
+    await withPlacementCase(async({db,drive,learner,actor})=>{
+      const count=async()=>db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      const before=await count();
+      await db.query(`
+        update placement_company_relationships
+        set status='ARCHIVED',archived_at=now() where id=$1`,[drive.relationshipId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/drive is not open for applications/);
+      await db.query(`
+        update placement_company_relationships
+        set status='ACTIVE',archived_at=null where id=$1`,[drive.relationshipId]);
+      await db.query(`
+        update placement_companies set status='ARCHIVED',archived_at=now() where id=$1`,
+        [drive.companyId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/drive is not open for applications/);
+      expect(await count()).toEqual(before);
     });
   });
 

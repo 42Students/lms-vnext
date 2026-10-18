@@ -1,5 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
+import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
+import {NextResponse} from "next/server";
 import { getTpoPerformanceIntelligence } from "@/modules/placements/tpo-intelligence-service";
 import {
   tpoIntelligenceCsv,
@@ -12,6 +14,9 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   try {
     const params = new URL(request.url).searchParams;
+    if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
+      status:400,headers:{"Cache-Control":"private, no-store"},
+    });
     const raw = Object.fromEntries(params.entries());
     const query = tpoIntelligenceFiltersSchema.parse(raw);
     const context = await getCurrentRequestContext();

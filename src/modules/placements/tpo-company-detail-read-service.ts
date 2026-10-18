@@ -6,6 +6,7 @@ import { z } from "zod";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import { getTpoCompanyDetailView } from "./tpo-companies-view-service";
 import { getTpoCompanyLifecycle } from "./tpo-company-lifecycle-service";
 import { projectTpoCompanyRelationshipSummary } from "./tpo-company-relationship-summary-model";
@@ -22,6 +23,8 @@ export async function getTpoCompanyDetailReadOnly(context: RequestContext, rawCo
   const collegeId = membership.collegeId;
   if (!can(context, "placements.manage", { collegeId })) throw new AuthorizationError("placements.manage");
   requirePermission(context, "placements.manage", { collegeId });
+  const liveCollegeId=await requireTpoBatchActor(context);
+  if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
   await requirePlacementManageScope(context, collegeId);
   const [detail, stored] = await Promise.all([
     getTpoCompanyDetailView(context, { collegeId, companyId }),

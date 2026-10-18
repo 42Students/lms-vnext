@@ -29,9 +29,9 @@ async function companyScope(context: RequestContext) {
     throw new AuthorizationError("placements.manage");
   }
   requirePermission(context, "placements.manage", { collegeId });
-  const college = await requirePlacementManageScope(context, collegeId);
   const liveCollegeId=await requireTpoBatchActor(context);
-  if(liveCollegeId!==college.id)throw new AuthorizationError("placements.manage");
+  if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
+  const college = await requirePlacementManageScope(context, collegeId);
   return { collegeId, organizationId: college.organizationId,
     actorUserId: context.user.id, actorMembershipId: membership.id };
 }

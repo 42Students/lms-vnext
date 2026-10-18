@@ -110,3 +110,77 @@ See `docs/audit/ux/scroll-motion-courses.md` for the changed containers. Backend
 | `SuperAdminCourseBulkVisibility` | Shows current-content-only caveat; provides actionable “Select fewer courses” / “Refresh and select current courses” recovery on typed errors | `tests/unit/chat7-superadmin-course-bulk-typed-boundaries.test.ts` — UI source review; browser pending |
 
 This still does **not** implement a persisted future whole-course visibility override (SA-53 remains PARTIAL). The owner deferred running all CI; therefore new tests are authored evidence and not a green-verification claim.
+
+## Private course file / signed-download security — next learner entry
+
+| Export / route | Authorization and failure behavior | Regression |
+|---|---|---|
+| `getLearnerCourseFileReference` | Strict delivery/content UUID; current learner entitlement including historical enrollment policy; published path/content, visible Lesson and content, exact offering/Section audience; `startsAt <= now()` or unscheduled enforced in PostgreSQL before private storage key leaves the service | `tests/unit/chat7-learner-course-file-embargo.test.ts` — `LEARNER-COURSE-FILE-EMBARGO-01`; authored, PostgreSQL scheduled-content negative witness pending |
+| `GET /api/courses/deliveries/[deliveryId]/contents/[contentId]/file` | Strict `download=0/1`, no duplicate/unknown query keys; authorization before storage `HEAD`, before presigned 900-second GET; signed 302 no-store/no-referrer; absent file 404, storage outage 503 with no raw credentials, attachment filename sanitized | `tests/unit/chat7-learner-course-file-route-boundaries.test.ts` — `LEARNER-COURSE-FILE-ROUTE-02` |
+
+These are unit-authored rather than CI-green. No live R2/storage object was touched. A browser's hidden `storageKey` while SCHEDULED is now backed by a server read constraint, not just UI masking.
+
+## Learner quiz review and assignment material read — source coverage extension
+
+| Function | Valid and invalid behavior | Named regression |
+|---|---|---|
+| `learnerQuizReviewRows` | Only selections belonging to current option IDs count, duplicates collapse, inherited browser draft answer properties never count; no answer-key correctness or points leave this projection | `tests/unit/chat7-learner-quiz-review-inherited-answers.test.ts` — `LEARNER-QUIZ-REVIEW-03` |
+| `facultyAssignmentMaterialLinkSchema`, `safeLearnerAssignmentMaterialLink` | Public credential-free HTTPS links only; no hash fragments, localhost loopback, javascript/file/data, extra tenant or private-storage keys; learner read gets null for malformed historic links | `tests/unit/chat7-learner-course-material-link-safety.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
+| `selectLearnerAssignmentFile` | Clearing the selected file leaves no error; malformed delivery ID drops file before upload-grant request | `tests/unit/chat7-learner-course-material-link-safety.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
+
+Release safety note: `getLearnerCourseFileReference` newly denies SCHEDULED content using DB `now()` even when the learner is enrolled; the client hidden-key presentation by itself never suffices as authorization. All test evidence here was authored without CI/PG execution per owner priority.
+
+## Super Admin live-class authoring — calendar-exact validation
+
+| Function and component | Boundary and behavior | Named regression |
+|---|---|---|
+| `parseAdminContentLocalMoment`, `SuperAdminContentActions` | Browser `datetime-local` values are calendar-validated in IST and UTC before mutation, rejecting invalid leap dates, overflow days and clock values; End must be later than Start; no silent Date normalization to another meeting day. Existing unsaved edit and confirmation flow remains. Controls use 44px minimum touch height. | `tests/unit/chat7-superadmin-content-live-datetime-parity.test.ts` — `SA-academics-people-58 live meeting IST/UTC calendar integrity` (authored; CI/browser pending) |
+
+This is **link-based live content metadata** hardening only. It does not bypass blocked scanned binary video import/storage, nor create a private resource upload capability.
+
+## Learner workspace results embargo and material service behavior
+
+| Export | Invariant | Named test |
+|---|---|---|
+| `getLearnerCourseWorkspace` quiz projection | Do not return raw authoring `resultsPublished`: the Quiz must be CLOSED, explicitly released and past its due time using one server clock; learner assessment feed and attempt detail use the same release rule | `tests/unit/chat7-learner-course-quiz-release-consistency.test.ts` — `LEARNER-QUIZ-WORKSPACE-EMBARGO-01` |
+| `listOwnLearnerAssignmentMaterialLinks`, `assignmentMaterialTableReady` | Verify scoped delivery/enrolment first, deny draft/hidden/unpublished learner assignments before optional table probe, return honest disabled state when table absent, project only safe public HTTPS URLs | `tests/unit/chat7-learner-assignment-materials-service.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
+
+Both tests were authored without execution as requested. Role/tenant and scheduled embargo require later PostgreSQL/route verification for certification.
+
+## Continued security closure: signed media, upload metadata, bulk scope
+
+| Export / route | New explicit contract | Behavioral or boundary test |
+|---|---|---|
+| `playbackGrantRefreshDelay` | Expired/invalid grants renew at zero delay; a near-expiry grant does not wait beyond expiry; short grants over 1 second back off 1 second to avoid a renewal burst | `tests/unit/learner-video-grant-model.test.ts` — `LEARNER-VIDEO-GRANT-02` |
+| `getLearnerCourseFileReference` | A direct R2 file redirect is valid only for a `RESOURCE`, never a `VIDEO`; video bytes require the independent playback-grant path, even if a resource ID and delivery ID are both known | `tests/unit/chat7-learner-course-file-embargo.test.ts` — `LEARNER-COURSE-FILE-SCOPE-03` (source/authorization behavior); database type-negative verification pending |
+| `learnerAssignmentUploadHeadersSafe`, `validateLearnerAssignmentUploadGrant` | Exact six-header PUT capability; extra `x-amz-meta-*` fields rejected in addition to missing, malformed and unsafe headers | `tests/unit/learner-assignment-file-model.test.ts` — `LEARNER-FILE-GRANT-05` |
+| `bulkSuperAdminLessonVisibility`, `bulkSuperAdminCourseVisibility` | SQL counts currently published lesson contents under published paths, active offering/course/lesson, matching department and academic-period college; draft-only rows do not consume the 500-row safety cap | `tests/unit/chat7-superadmin-bulk-published-only.test.ts`, `tests/unit/chat7-superadmin-course-bulk-typed-boundaries.test.ts` — `SA-COURSES-BULK-PUBLISHED-06/SA-COURSES-BULK-SCOPE-07` |
+
+The owner has deferred CI and PostgreSQL integration until final all-lane completion. These changes are committed to the lane branch but neither a green test run nor tenant-race sign-off is claimed.
+
+## Legacy learner profile certification role journey
+
+| Export and page | Contract | Behavioral test |
+|---|---|---|
+| `learnerProfileDocumentSchema.shape.certifications`, `/learn/profile` | The profile's **Certifications** section is not an auto-awarded course-completion certificate. Credentials require a name, valid independent optional calendar dates and, when both exist, expiry strictly after issue; rejects extra injected owner/college identity. The saved profile uses the existing authenticated profile-write path. | `tests/unit/chat7-learner-certification-date-parity.test.ts` — `LEARNER-CERT-EXPIRY-01` (authored, CI/browser pending) |
+
+Source-only crosswalk: `docs/audit/legacy-vs-vnext-chat7-learner-gaps.md`. Learner source routes and legacy copy mapped, but dev and production legacy runtime sign-off are still outstanding.
+
+## Legacy lesson resource link and certificate parity — continuation
+
+| Export / read | Behavior and denied conditions | Regression |
+|---|---|---|
+| `resourceMaterialLinkSchema`, `resourceMaterialCommandSchema`, `safeLearnerResourceMaterialHref`, `resourceMaterialsWriteReady` | HTTPS only, no credentials/fragment, local/private/loopback URL targets denied; exact typed command/UUID; DB05 material authoring requires `DB05_VERIFIED`; historic invalid links map to null | `tests/unit/chat7-learner-resource-material-link-boundary.test.ts` — `LEARNER-RESOURCE-LINK-08` |
+| `listLessonResourceMaterials` | Checks learner delivery and published/visible content before querying; only LINK URLs sanitized before the response, FILE object keys never exposed | `tests/unit/chat7-learner-resource-material-link-boundary.test.ts` plus service source contract; PostgreSQL role/tenant matrix remains pending |
+
+Source-level legacy role crosswalk in `docs/audit/legacy-vs-vnext-chat7-learner-gaps.md` includes direct learner routes and profile certification expiry parity; signed browser acceptance is pending.
+
+## Courses material routes: request-scope and input-size ledger
+
+| Entry | Input/role/tenancy and state behavior | Regression evidence |
+|---|---|---|
+| `GET/POST /api/courses/lesson-contents/[contentId]/materials`, `deliveryQuerySchema` | Rejects duplicated/unknown query names, empty/non-UUID audience IDs, forged college parameters; read remains side-effect-free and no-store; write remains same-origin and delegates tenant/published authorization | `tests/unit/chat7-learner-resource-material-query-route.test.ts` — `LEARNER-RESOURCE-QUERY-09` |
+| `readResourceMaterialCommandJson` and the material POST HTTP boundary | Streams a maximum **16,384 UTF-8 bytes**, does not trust `Content-Length`, rejects malformed/array/null/primitive JSON before a transaction, then uses the strict ADD_LINK/EDIT_LINK/REMOVE schema | `tests/unit/chat7-resource-material-json-boundary.test.ts`; `tests/unit/chat7-learner-resource-material-query-route.test.ts` — `LEARNER-RESOURCE-POST-11` |
+| `LessonResourceMaterialsControl` | 44px touch targets on editable resource buttons, links and inputs; existing keyboard input, errors and confirmation remain | `tests/unit/UX-chat7-resource-material-touch-10.test.ts` — `UX-LEARN-RESOURCE-10` |
+
+The owner postponed CI/real PostgreSQL until all lanes complete; these new tests and source checks have not been executed locally. The legacy route inventory is in `docs/audit/legacy-vs-vnext-chat7-learner-gaps.md`.

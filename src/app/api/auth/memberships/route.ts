@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import {privateAuthJson} from "@/modules/auth/private-response";
+import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounded-json";
 import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
 import {
@@ -20,20 +21,25 @@ import {
 
 export const runtime = "nodejs";
 
-const switchMembershipSchema = z.object({
+const switchMembershipSchema = z.strictObject({
   membershipId: z.string().uuid(),
 });
 
+class MembershipTenantLookupUnavailable extends Error {}
+
 function authErrorResponse(error: unknown) {
+  if(error instanceof MembershipTenantLookupUnavailable){
+    return privateAuthJson({error:"TENANT_LOOKUP_UNAVAILABLE"},{status:503});
+  }
   if (error instanceof SessionAuthenticationError) {
-    return NextResponse.json(
+    return privateAuthJson(
       { error: error.code },
       { status: 401 },
     );
   }
 
   if (error instanceof ContextResolutionError) {
-    return NextResponse.json(
+    return privateAuthJson(
       { error: error.code },
       {
         status:
@@ -45,7 +51,7 @@ function authErrorResponse(error: unknown) {
     );
   }
 
-  return NextResponse.json(
+  return privateAuthJson(
     { error: "INTERNAL_ERROR" },
     { status: 500 },
   );
@@ -60,6 +66,7 @@ async function hostCollegeScope(identityUid: string) {
   const tenant = await resolveRequestTenant(
     (await headers()).get("host"),
   );
+  if(tenant.kind==="unavailable")throw new MembershipTenantLookupUnavailable();
   const context = await resolveRequestContext({
     identityUid,
     activeMembershipId: null,
@@ -79,7 +86,7 @@ export async function GET() {
       ? choices.filter((choice) => choice.collegeId === collegeScope)
       : choices;
 
-    return NextResponse.json({ memberships });
+    return privateAuthJson({ memberships });
   } catch (error) {
     return authErrorResponse(error);
   }
@@ -87,7 +94,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
+    return privateAuthJson(
       { error: "INVALID_ORIGIN" },
       { status: 403 },
     );
@@ -99,18 +106,19 @@ export async function POST(request: Request) {
 
     let body: unknown;
     try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json(
-        { error: "INVALID_REQUEST" },
-        { status: 400 },
+      body = await readBoundedAuthJson(request,2_048);
+    } catch(error) {
+      const tooLarge=error instanceof AuthRequestBodyTooLarge;
+      return privateAuthJson(
+        { error: tooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST" },
+        { status: tooLarge?413:400 },
       );
     }
 
     const parsed = switchMembershipSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json(
+      return privateAuthJson(
         { error: "INVALID_REQUEST" },
         { status: 400 },
       );
@@ -129,7 +137,7 @@ export async function POST(request: Request) {
       throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
     }
 
-    const response = NextResponse.json({
+    const response = privateAuthJson({
       ok: true,
       membership,
     });
@@ -154,13 +162,13 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
+    return privateAuthJson(
       { error: "INVALID_ORIGIN" },
       { status: 403 },
     );
   }
 
-  const response = NextResponse.json({ ok: true });
+  const response = privateAuthJson({ ok: true });
   response.cookies.set(MEMBERSHIP_COOKIE_NAME, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

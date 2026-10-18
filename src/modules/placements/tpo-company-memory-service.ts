@@ -31,6 +31,9 @@ import { tpoCrmCollegeIdSchema } from "./tpo-crm-validation";
 import {listCompanyShareHistory} from "./company-share/company-history-service";
 import {getCompanyDriveCounts} from "./tpo-company-drive-counts-service";
 import {companyPlacedCount,companyHiredByYear,type CountsAsPlacedPolicy} from "./company-placed-count-policy";
+import {companyJobIdBatches} from "./company-job-id-batches";
+import {mapTpoBulkBounded} from "./tpo-bulk-bounded-execution";
+import {latestTpoCompanyLeadActivities} from "./tpo-company-memory-activity-model";
 
 export class TpoCompanyMemoryError extends Error {
   constructor(
@@ -117,9 +120,11 @@ async function loadCompanySourceRows(
   rawCollegeId: string,
 ) {
   const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
-  await requirePlacementManageScope(context, collegeId);
+  // Verify the current persisted officer and college before any tenant-scope
+  // or CRM query can become an existence oracle to a revoked session.
   const liveCollegeId=await requireTpoBatchActor(context);
   if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
+  await requirePlacementManageScope(context, collegeId);
   const db = getDb();
 
   const [leads, jobs] = await Promise.all([
@@ -363,32 +368,26 @@ export async function getTpoCompanyMemory(
     eq(placementCompanyRelationships.status,"ACTIVE"),
   )).limit(1):[];
   const canonicalCompanyId=group.jobs[0]?.companyId??relatedCompany?.companyId??null;
-  const leadIds = group.leads.map((lead) => lead.id);
-  const activities =
-    leadIds.length === 0
-      ? []
-      : await getDb()
-          .select()
-          .from(placementTpoLeadActivities)
-          .where(and(eq(placementTpoLeadActivities.collegeId,rows.collegeId),
-            inArray(placementTpoLeadActivities.leadId, leadIds)))
-          .orderBy(
-            desc(placementTpoLeadActivities.createdAt),
-            desc(placementTpoLeadActivities.id),
-          )
-          .limit(200);
+  const leadIds=group.leads.map(lead=>lead.id);
+  const activityBatches=await mapTpoBulkBounded(companyJobIdBatches(leadIds),
+   async ids=>getDb().select().from(placementTpoLeadActivities)
+    .where(and(eq(placementTpoLeadActivities.collegeId,rows.collegeId),
+      inArray(placementTpoLeadActivities.leadId,ids)))
+    .orderBy(desc(placementTpoLeadActivities.createdAt),
+      desc(placementTpoLeadActivities.id)).limit(200),6);
+  const activities=latestTpoCompanyLeadActivities(activityBatches);
 
-  const leadById = new Map(group.leads.map((lead) => [lead.id, lead]));
-  const recruiterIds=[...new Set(group.leads.flatMap(lead=>lead.recruiterUserId?[lead.recruiterUserId]:[]))];
-  const signins=recruiterIds.length
-    ?await getDb().select({
-      userId:identityDeviceSessions.userId,
-      latest:max(identityDeviceSessions.createdAt),
-    }).from(identityDeviceSessions)
-      .where(inArray(identityDeviceSessions.userId,recruiterIds))
-      .groupBy(identityDeviceSessions.userId)
-    :[];
-  const signinByUser=new Map(signins.map(row=>[row.userId,row.latest]));
+  const leadById=new Map(group.leads.map(lead=>[lead.id,lead]));
+  const recruiterIds=[...new Set(group.leads.flatMap(lead=>
+    lead.recruiterUserId?[lead.recruiterUserId]:[]))];
+  const signins=await mapTpoBulkBounded(companyJobIdBatches(recruiterIds),
+   async ids=>getDb().select({
+    userId:identityDeviceSessions.userId,
+    latest:max(identityDeviceSessions.createdAt),
+   }).from(identityDeviceSessions)
+     .where(inArray(identityDeviceSessions.userId,ids))
+     .groupBy(identityDeviceSessions.userId),6);
+  const signinByUser=new Map(signins.flat().map(row=>[row.userId,row.latest]));
   const people = group.leads.map((lead) => ({
     id: lead.id,
     name: lead.name,

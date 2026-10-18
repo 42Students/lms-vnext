@@ -21,9 +21,11 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
   if(!triageGate.current.tryBegin())return;
   const current=overrides[row.id]??row;
   setBusy(true);setMessage("");
+  const controller=new AbortController();
+  const timeout=window.setTimeout(()=>controller.abort(),15000);
   try{
    const response=await fetch("/api/admin/inbound-mail/status",{
-    method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+    method:"PATCH",credentials:"same-origin",signal:controller.signal,headers:{"Content-Type":"application/json"},
     body:JSON.stringify({id:row.id,expectedStatus:current.status,expectedVersion:current.version,status}),
    });
    if(!response.ok)throw Error(response.status===409?"Message was changed elsewhere. Refresh before retrying.":"Could not update message status.");
@@ -31,8 +33,8 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
    setOverrides(previous=>({...previous,[row.id]:{status:saved.status,version:saved.version}}));
    setMessage(status==="RESOLVED"?"Message marked done.":status==="TRIAGED"?"Message marked being handled.":"Message moved back to To read.");
    router.refresh();
-  }catch(error){setMessage(error instanceof Error?error.message:"Could not update message status.");}
-  finally{triageGate.current.end();setBusy(false);}
+  }catch(error){setMessage(error instanceof Error&&error.name==="AbortError"?"Request timed out. Refresh the inbox before trying again.":error instanceof Error?error.message:"Could not update message status.");}
+  finally{window.clearTimeout(timeout);triageGate.current.end();setBusy(false);}
  }
 
  return <div className="min-w-0 space-y-3">

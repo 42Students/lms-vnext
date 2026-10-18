@@ -4,6 +4,7 @@ import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-serv
 import {getTpoAfterCollegeReport} from "@/modules/placements/tpo-after-college-report-service";
 import {AFTER_COLLEGE_LABELS} from "@/modules/placements/tpo-after-college-model";
 import {apiErrorResponse} from "@/lib/api-error";
+import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import {z} from "zod";
 const params=z.object({batchId:z.uuid().optional(),branchId:z.uuid().optional()}).strict();
 const csv=(v:unknown)=>{
@@ -15,6 +16,8 @@ export const runtime="nodejs";
 export async function GET(request:Request){
  try{
   const q=new URL(request.url).searchParams;
+  if(tpoReportHasRepeatedSearchParams(q)||[...q.keys()].some(key=>key!=="batchId"&&key!=="branchId"))
+   return NextResponse.json({error:"INVALID_QUERY"},{status:400,headers:{"Cache-Control":"private, no-store"}});
   const parsed=params.parse({batchId:q.get("batchId")||undefined,branchId:q.get("branchId")||undefined});
   const ctx=await getCurrentRequestContext();
   if(!ctx.membership)return NextResponse.json({error:"UNAUTHORIZED"},{status:403});

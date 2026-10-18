@@ -30,6 +30,7 @@ import {
   requirePermission,
 } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   candidateAcademicEvidenceInputSchema,
@@ -645,6 +646,9 @@ export async function upsertJobEligibilityPolicy(
   const db = getDb();
   return db.transaction(async (tx) => {
     const liveJob = await lockEligibilityJob(tx, jobId);
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:liveJob.collegeId,
+    });
     if (
       liveJob.collegeId !== job.collegeId ||
       liveJob.status !== "DRAFT"
@@ -716,8 +720,22 @@ export async function setEligibilityOverride(
 
   return db.transaction(async (tx) => {
     const liveJob = await lockEligibilityJob(tx, jobId);
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:liveJob.collegeId,
+    });
     if (liveJob.collegeId !== job.collegeId) {
       throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+    }
+    if(input.expectedOverrideId!==undefined){
+      const [current]=await tx.select({id:placementEligibilityOverrides.id})
+        .from(placementEligibilityOverrides)
+        .where(and(
+          eq(placementEligibilityOverrides.jobId,jobId),
+          eq(placementEligibilityOverrides.membershipId,membershipId),
+          isNull(placementEligibilityOverrides.revokedAt),
+        )).for("update").limit(1);
+      if((current?.id??null)!==input.expectedOverrideId)
+        throw new PlacementsServiceError("PLACEMENT_ELIGIBILITY_OVERRIDE_STALE");
     }
     await tx
       .update(placementEligibilityOverrides)
@@ -769,6 +787,9 @@ export async function revokeEligibilityOverride(
 
   return db.transaction(async (tx) => {
     const liveJob = await lockEligibilityJob(tx, jobId);
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:liveJob.collegeId,
+    });
     if (liveJob.collegeId !== job.collegeId) {
       throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
     }

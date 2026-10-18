@@ -6,7 +6,13 @@ import {apiErrorResponse} from "@/lib/api-error";
 export const runtime="nodejs";
 export async function GET(request:Request){
  try{
-  const args=Object.fromEntries(new URL(request.url).searchParams);
+  const searchParams=new URL(request.url).searchParams;
+  // A duplicate appliedFrom, jobId or academic filter is ambiguous and
+  // cannot be safely collapsed by Object.fromEntries (last value wins).
+  const keys=[...searchParams.keys()];
+  if(new Set(keys).size!==keys.length)
+    return Response.json({error:"INVALID_REPORT_FILTERS"},{status:400});
+  const args=Object.fromEntries(searchParams);
   const parsed=superAdminHiringReportQuery.safeParse(args);
   if(!parsed.success)return Response.json({error:"INVALID_REPORT_FILTERS"},{status:400});
   const data=await getSuperAdminCompanyHiringReport(await getCurrentRequestContext(),parsed.data);

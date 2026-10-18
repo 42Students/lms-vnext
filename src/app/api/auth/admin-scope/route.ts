@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
+import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounded-json";
 import {
   ADMIN_SCOPE_COOKIE_NAME,
   encodeAdminScopeCookie,
@@ -19,18 +20,18 @@ export async function GET() {
     const context = await getCurrentRequestContext();
     const choices = await listAdminScopeChoices(context);
 
-    return NextResponse.json({
+    return privateAuthJson({
       scope: context.adminScope ?? null,
       choices,
     });
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateAuthResponse(apiErrorResponse(error));
   }
 }
 
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
+    return privateAuthJson(
       { error: "INVALID_ORIGIN" },
       { status: 403 },
     );
@@ -41,11 +42,12 @@ export async function POST(request: Request) {
 
     let body: unknown;
     try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json(
-        { error: "INVALID_REQUEST" },
-        { status: 400 },
+      body = await readBoundedAuthJson(request,2_048);
+    } catch(error) {
+      const tooLarge=error instanceof AuthRequestBodyTooLarge;
+      return privateAuthJson(
+        { error: tooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST" },
+        { status: tooLarge?413:400 },
       );
     }
 
@@ -53,7 +55,7 @@ export async function POST(request: Request) {
       context,
       body,
     );
-    const response = NextResponse.json({
+    const response = privateAuthJson({
       ok: true,
       scope,
     });
@@ -72,13 +74,13 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateAuthResponse(apiErrorResponse(error));
   }
 }
 
 export async function DELETE(request: Request) {
   if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
+    return privateAuthJson(
       { error: "INVALID_ORIGIN" },
       { status: 403 },
     );
@@ -88,7 +90,7 @@ export async function DELETE(request: Request) {
     const context = await getCurrentRequestContext();
     await listAdminScopeChoices(context);
 
-    const response = NextResponse.json({
+    const response = privateAuthJson({
       ok: true,
       scope: null,
     });
@@ -103,6 +105,6 @@ export async function DELETE(request: Request) {
 
     return response;
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateAuthResponse(apiErrorResponse(error));
   }
 }

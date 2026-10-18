@@ -15,7 +15,7 @@ export TEST_DATABASE_URL='postgresql://postgres:postgres@127.0.0.1:5432/lms_vnex
 npm run test:db:projects-harness
 ```
 
-The harness requires `TEST_DATABASE_URL` explicitly and **never** reads `DATABASE_URL`. It checks the URL's database name *and* `current_database()` on the connected server before writes, verifies 32 registered canonical table names, then starts a transaction. Every invocation calls `ROLLBACK` in a `finally` and releases its connection even if assertions fail. The pool is closed by each suite. Every test generates fresh IDs; it does **not** depend on mutable seed UUIDs.
+The harness requires `TEST_DATABASE_URL` explicitly and **never** reads `DATABASE_URL`. It checks the URL's database name *and* `current_database()` on the connected server before writes, verifies 35 registered canonical table names, then starts a transaction. Every invocation calls `ROLLBACK` in a `finally` and releases its connection even if assertions fail. The pool is closed by each suite. Every test generates fresh IDs; it does **not** depend on mutable seed UUIDs.
 
 Do not bypass the disposable-database-name guard; use a properly named test database. Remote developer CI must supply credentials as secrets, never include them in logs.
 
@@ -193,7 +193,49 @@ A published drive may still belong to a season explicitly CLOSED by the TPO. Can
 The placement results fixture reads the selected round's persisted status and refuses candidate results if it is CANCELLED (the registered lifecycle check requires `cancelled_at`). PG case 18 first transitions the round to the valid cancelled shape, then asserts no new results; source guard 17 requires the status read. This is a fixture sanity check, not a substitute for the product round-results service permission/state gate.
 
 ### PROJ-HARNESS-PREFLIGHT-19: schema-version clarity
-Before any fixture transaction begins, `assertHarnessSchema` now verifies registered publication, role-option, application ancestry and lifecycle columns (including `placement_applications.role_option_id`, `placement_job_role_options.is_primary`, publish/deadline/pay, and project template/release states) in addition to its 32+ canonical table check. Missing journal migrations cause an explicit table.column error rather than a late partial fixture insert. Unit source guard PREFLIGHT-19 protects mandatory columns, while the existing integration runner exercises actual preflight against the disposable PostgreSQL database.
+Before any fixture transaction begins, `assertHarnessSchema` now verifies registered publication, role-option, application ancestry and lifecycle columns (including `placement_applications.role_option_id`, `placement_job_role_options.is_primary`, publish/deadline/pay, and project template/release states) in addition to its 35-table canonical migration check. Missing journal migrations cause an explicit table.column error rather than a late partial fixture insert. Unit source guard PREFLIGHT-19 protects mandatory columns, while the existing integration runner exercises actual preflight against the disposable PostgreSQL database.
 
 ### PROJ-HARNESS-PLACEMENTS-19: direct-SQL role ancestry (migration proposal)
 Registered migration 0029 adds separate application.job_id and role_option_id foreign keys but **no composite parent relationship**; a raw SQL caller can associate a job with another job's role option even though `createPlacementCandidateFixture` already prevents this. The Drizzle model now describes a parent unique (role_option id, job id) and application composite FK, with an explicit unnumbered SQL proposal at `docs/proposed-migrations/chat17-placement-role-option-ancestry.sql`. PostgreSQL case -19 expects SQLSTATE 23503 for that forged association and is **a blocking acceptance test until the orchestrator registers the proposal in its numbered migration journal**. No numbered migration, journal or live DB was edited by this lane.
+
+### PROJ-HARNESS-TASK-20: atomic submitted task state
+Production `submitProjectTask` updates the task to `IN_REVIEW` after writing a submission. The shared fixture previously left a submitted task as TODO. The helper now creates the submission and conditionally transitions TODO/IN_PROGRESS/BLOCKED to IN_REVIEW within a single `PgHarness.savepoint`; a racing state conflict restores both writes. A second submission is rejected before insert. PostgreSQL case TASK-20 and source GUARD-18 protect the transition; production concurrency semantics still require independent service tests.
+
+### PROJ-HARNESS-TASK-21: forced optimistic conflict rollback
+A PostgreSQL integration witness wraps only the task-status CAS result to simulate another session winning the transition, while the submission INSERT and SAVEPOINT still run against the real connection. It asserts a rejected CAS leaves no inserted submission and the original task remains TODO, then verifies the legitimate operation can retry successfully. This is not a two-session proof of production locking; those remain owned by the Projects service lanes.
+
+### PROJ-HARNESS-RECRUITER-22/23: HR identity/grant fixture
+`createRecruiterFixture(db, drive, tpoOrCollegeAdmin)` now inserts a real platform user with company recruiter profile and a verified, finite relationship grant, rather than inventing an HR membership role. It derives company/college/relationship from the persisted job, requires a live TPO/College Admin coordinator and grants bounded DRIVES/INTERVIEWS/MESSAGES/APPLICANT_EXPORT capability. Real PostgreSQL witness 22 proves identity stays outside college_memberships and retains correct company/college/expiration; 23 denies cross-college grant creation. The preflight now validates **35** canonical tables (profiles/grants added). Route-level HR authorization must independently fetch/verify grant validity and revocation.
+
+### PROJ-HARNESS-RECRUITER-24: no orphaned company profiles on grant failures
+The recruiter fixture wraps global user creation, company profile and verified relationship grant in a single SAVEPOINT. A simulated grant-insert failure in a real PostgreSQL transaction proves no orphaned profile persists and a subsequent legitimate recruiter fixture can succeed. Preflight now checks grant expiry and verification columns. Roles/grants still require independent product service tests; browser/DB CI deferred by owner.
+
+### PROJ-HARNESS-RECRUITER-25/26: grant lifecycle and validation witnesses
+Real PostgreSQL cases now assert the active-grant unique index rejects a duplicate recruiter/relationship pair; a properly revoked grant can be reissued without leaving two ACTIVE records. They also assert database CHECK refusal for non-whitelisted grant capability, nonexistent verification status, and an expiry older than grant creation. These state/constraint witnesses help HR lanes test safe revocation and reissue, but do not replace runtime recruiter authorization checks.
+
+### PROJ-HARNESS-PLACEMENTS-25: fiscal-year date order
+The canonical placement season was inadvertently authored as 2099-10-01 through 2099-06-30, violating `placement_seasons_dates_ck` before the other PostgreSQL fixtures could start. It now spans **2098-10-01 through 2099-06-30**, with the published job deadline in June 2099; the duplicate ACTIVE season test uses a legal matching interval. Real PG case 25 asserts the interval and deadline inclusion, not merely source date strings.
+
+### PROJ-HARNESS-PLACEMENTS-26: atomic candidate graph
+Candidate creation now wraps application, screening, staged round result, offer and joining outcome in one savepoint, so a late offer/round failure does not leave an orphaned application when the caller catches the error. The PostgreSQL witness injects a failure after writes, checks all child tables for residue and retries with a valid candidate.
+
+### PROJ-HARNESS-PLACEMENTS-27: rollback whole drive graph
+`createPlacementFixture` now encloses company, college relationship, active-season selection/insertion, published job, primary role option and round in a single savepoint after coordinator authorization. A forced round-insert failure on real PostgreSQL must leave all counts unchanged, including a preexisting active season, then permit a clean retry. This prevents test graph partial data from silently contaminating unrelated assertions.
+
+### PROJ-HARNESS-PROJECT-28: whole-workspace atomicity
+The project fixture now wraps template/version publication, college assignment, project instance, release/sprint/task/resource and mentor/learner roster construction in a single SAVEPOINT. A PostgreSQL witness simulates failure of the final learner roster INSERT after all earlier writes, asserts original table counts restored and verifies a clean subsequent workspace can be constructed. This prevents caller-caught fixture setup exceptions contaminating tenant/run isolation.
+
+### PROJ-HARNESS-TENANT-29: all-or-nothing tenant fixture
+The shared tenant builder now wraps organization and college inserts in a savepoint. A failed college creation cannot leave a disposable orphan organization visible to later assertions inside the same test transaction. A real PostgreSQL witness injects a late insert failure, checks rollback and creates a subsequent valid tenant.
+
+### PROJ-HARNESS-PRINCIPAL-30: all-or-nothing role identity
+`createPrincipal` now encloses global user, optional Super Admin system role, college membership and all membership-role assignments in one SAVEPOINT. A failure on the second permission grant rolls back the first grant, membership and user; real PostgreSQL case 30 asserts identical counts before/after and verifies a valid multi-role retry. No production identity service is modified.
+
+### PROJ-HARNESS-PLACEMENTS-25 follow-up: season currently active, not merely ordered
+A 2098-2099 season has valid start/end order but is not yet in its date window on today's server. The shared ACTIVE placement-season fixture now begins in **2020** and ends June 2099, so today's database date and the published job deadline are both inside the same season. PG case 25 explicitly evaluates `current_date BETWEEN start_date AND end_date`; this intentionally broad date span is test-only and not customer season policy.
+
+### PROJ-HARNESS-PLACEMENTS-32: archived employer relationship gating
+A published drive may outlive an archived global company or archived college-company relationship. The candidate fixture now joins both persisted records with the job's college and refuses a new applicant when either is inactive; PostgreSQL case -32 verifies zero new applications across both valid archive transitions, and GUARD-21 protects the same-college company relationship join. This guards fixture realism, not the production TPO/HR service behavior.
+
+### PROJ-HARNESS-RECRUITER-33: persisted HR capability gate witness
+`fixtureRecruiterCanAccess(db,recruiter,capability)` is a test-only helper to determine expected access using registered profile/grant/relationship/company/college/organization records, live account status, verification, validity and capability. Real PG case -33 changes a verified grant through pending verification, disabled account, archived recruiter profile, expiration and revocation, asserting that no stale fixture claims it can still use DRIVES. This does **not** replace product recruiter permission service testing.

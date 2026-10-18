@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {courseLessons,courseLearningPaths,courseOfferings,courses,departments} from "@/db/schema";
+import {academicPeriods,courseLessons,courseLearningPaths,courseOfferings,courses,departments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {bulkSuperAdminLessonVisibility} from "./super-admin-lesson-bulk-visibility";
@@ -30,11 +30,13 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
   .from(courseLessons)
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
+  .innerJoin(academicPeriods,eq(academicPeriods.id,courseOfferings.academicPeriodId))
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,eq(departments.id,courses.departmentId))
   .where(and(inArray(courses.id,input.courseIds),eq(departments.collegeId,acting.collegeId),
+   eq(academicPeriods.collegeId,acting.collegeId),
    eq(courses.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
-   eq(courseLessons.status,"ACTIVE")))
+   eq(courseLearningPaths.status,"PUBLISHED"),eq(courseLessons.status,"ACTIVE")))
   .limit(501);
  if(lessons.length>500)throw new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE");
  const ids=[...new Set(lessons.map(row=>row.id))];

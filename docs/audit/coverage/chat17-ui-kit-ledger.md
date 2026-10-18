@@ -139,3 +139,15 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-HARDEN-57:** Inline success notices no longer vanish while the app is backgrounded. Their dismissal timer pauses when `document.hidden` and restarts when the tab becomes visible. Error/info notices retain their original persistence and no component text changes. Source/SSR state test added; browser visibility-event behavior awaits final acceptance.
 
 - **UX-kit-E2E-07/08/09:** Development-only Chromium fixtures now exercise focus on the disabled-reason wrapper and its associated description, a hidden-tab success notice that remains readable until return, FileUpload merging external help with built-in help, and actual reduced-motion Tabs transition duration. These complement static unit contracts; browser CI deferred by owner until full task queue completion.
+
+- **UX-kit-E2E-10:** ScrollCue observes the viewport and **all direct children** for `ResizeObserver` changes. A second sibling changing width now updates overflow cues without relying on the first element resizing; a development-only Playwright resize witness checks both directions.
+
+- **UX-kit-E2E-11:** Timed success/info toast timers pause on background-tab visibility and resume on foreground return, while error toasts remain persistent. The browser case checks a success notice after more than its original timeout while hidden and verifies dismissal after foreground resume; evicted timers and duration metadata are removed together.
+
+- **UX-kit-HARDEN-58:** DataTable treats exceptions from per-row hidden-column permission and optional mobile-detail navigation callbacks as **deny/no-link**, not a crash or implicit access grant. A denied formatter is not evaluated, and an authorized cell remains visible even when its optional detail link fails. Unit behavior case 58 covers both.
+
+- **UX-kit-E2E-12:** PageLoading and GracefulPageLoading now restart their 12-second slow-recovery timer when the request identity/shape changes, rather than displaying a stale timeout from the previous request. Playwright's clock tests the PageLoading handoff at 11+2+11 seconds without real waiting. Source uses effect cleanup on label/variant/count and label/shape respectively.
+
+- **UX-kit-HARDEN-59:** `enqueueToast` replaces a notice with the same event ID instead of generating duplicated React keys and duplicate accessibility announcements; a non-finite timed cap falls back to the documented limit 3. Provider-issued IDs remain unique by default.
+
+- **UX-kit-E2E-13:** The development-only browser fixture intentionally throws from `DataTable.mobileDetail.canView` and `rowHref`. A restricted private cell must never be mounted or serialized while the authorized row label remains usable; Playwright covers this failure mode beyond SSR contracts.
