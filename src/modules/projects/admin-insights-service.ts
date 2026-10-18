@@ -183,6 +183,7 @@ export async function listProjectAdminSnapshots(
     meetings,
     resources,
     members,
+    memberMutations,
   ] = await Promise.all([
     db
       .select({
@@ -291,6 +292,18 @@ export async function listProjectAdminSnapshots(
           isNull(projectMembers.endedAt),
         ),
       ),
+    // UI labels include only active mentors, but removing or disabling a
+    // mentor is still an activity. Capture every project-member transition
+    // without exposing inactive identities or loading one row per member.
+    db
+      .select({
+        projectId: projectMembers.projectId,
+        updatedAt: sql<Date>`max(${projectMembers.updatedAt})`
+          .mapWith(projectMembers.updatedAt),
+      })
+      .from(projectMembers)
+      .where(inArray(projectMembers.projectId, ids))
+      .groupBy(projectMembers.projectId),
   ]);
 
   // Index each result set once: at 100 visible projects, rescanning all
@@ -303,6 +316,7 @@ export async function listProjectAdminSnapshots(
   const meetingsByProject = groupProjectAdminRows(meetings);
   const resourcesByProject = groupProjectAdminRows(resources);
   const membersByProject = groupProjectAdminRows(members);
+  const memberMutationByProject = new Map(memberMutations.map(row => [row.projectId,row.updatedAt]));
 
   const items = projects.map((project) => {
     const projectTasksRows = tasksByProject.get(project.id) ?? [];
@@ -400,12 +414,12 @@ export async function listProjectAdminSnapshots(
         row.updatedAt,
       );
     }
-    for (const row of projectMembersRows) {
-      lastActivityAt = latestDate(
-        lastActivityAt,
-        row.updatedAt,
-      );
-    }
+    // Historical transitions count toward recency, but only live and
+    // college-scoped mentors above may appear by name in the workspace.
+    lastActivityAt = latestDate(
+      lastActivityAt,
+      memberMutationByProject.get(project.id),
+    );
 
     const ageDays = Math.max(
       0,
