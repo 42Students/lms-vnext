@@ -19,7 +19,7 @@ export async function enrichTpoOfferFacts(
  // enrollment must not leak another college's cohort name. The joined
  // department proves both the cohort and program belong to this college.
  batch:sql<string|null>`case when ${departments.id} is not null and ${academicPeriods.id} is not null then ${cohorts.name} else null end`,
- branch:departments.name,phone:users.phoneE164,
+ branch:sql<string|null>`case when ${academicPeriods.id} is not null then ${departments.name} else null end`,phone:users.phoneE164,
  }).from(collegeMemberships)
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
