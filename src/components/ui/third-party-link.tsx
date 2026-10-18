@@ -10,7 +10,7 @@ export function ThirdPartyLink({ href, label }: { href: string; label: string })
   let safeHref: string | null = null;
   try {
     const url = new URL(href);
-    if (url.protocol === "http:" || url.protocol === "https:") safeHref = url.href;
+    if (url.protocol === "https:" && !url.username && !url.password) safeHref = url.href;
   } catch { /* Invalid destinations are never made clickable. */ }
 
   async function copyLink() {
@@ -28,6 +28,7 @@ export function ThirdPartyLink({ href, label }: { href: string; label: string })
   return <span className="inline-flex min-w-0 flex-col gap-2">
     {safeHref ? <a href={safeHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{label}</a> :
       <span role="alert" className="text-sm text-foreground">This link is unavailable.</span>}
+    {safeHref ? <span className="block select-text break-all text-xs text-body" aria-label="Destination URL">{safeHref}</span> : null}
     {safeHref ? <span className="flex flex-wrap gap-3">
       <button type="button" onClick={() => { setCopyStatus("");setShowFallback(value=>!value); }}
         aria-expanded={showFallback}
