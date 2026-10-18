@@ -39,8 +39,9 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   expect(mentorTaskReviewTokenMatches(current,current.toISOString())).toBe(true);
   expect(mentorTaskReviewTokenMatches(current,"2026-10-18T18:29:59.320Z")).toBe(false);
   expect(mentorTaskReviewTokenMatches(current,"not-a-date")).toBe(false);
-  const service=src("src/modules/projects/mentor-task-review-service.ts");
-  expect(service).toMatch(/expectedUpdatedAt|STALE_VERSION/);
+  const service=src("src/modules/projects/mentor-task-transition-service.ts");
+  expect(service).toContain("date_trunc");
+  expect(service).toContain("input.expectedUpdatedAt");
  });
  it("PROJ-BREAK-file-01 uploading cannot succeed from transfer progress alone",()=>{
   let state=initialResourceUploadUi;
@@ -119,4 +120,20 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   expect(service).toContain("db.transaction(async (tx)");
   expect(service).toContain('.for("update")');
  });
+ it("PROJ-BREAK-state-03 completed projects cannot edit, submit or review a final delivery",()=>{
+  const code=src("src/modules/projects/submission-service.ts");
+  const denied=(code.match(/project.status === "ARCHIVED" \|\| project.status === "COMPLETED"/g)??[]).length;
+  expect(denied).toBe(4);
+  for(const name of ["createProjectSubmissionDraft","updateProjectSubmissionDraft",
+    "submitProjectSubmission","reviewProjectSubmission"]){
+    const start=code.indexOf("export async function "+name+"(");
+    expect(start,name).toBeGreaterThan(-1);
+    const next=code.indexOf("export async function ",start+1);
+    const body=code.slice(start,next===-1?undefined:next);
+    expect(body,name).toContain('project.status === "COMPLETED"');
+    expect(body,name).toContain('project.status === "ARCHIVED"');
+    expect(body,name).toContain('.for("update")');
+  }
+ });
+
 });
