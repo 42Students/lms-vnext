@@ -42,8 +42,12 @@ Files updated: `chat2-company-memory-gap-parity.test.ts`, `chat2-company-trust-a
 | --- | --- | --- | --- | --- | --- |
 | CH2-018 | Medium | TPO-drive-workspace-40 | UI and CSV waitlist rank input accepted scientific/hex notation through `Number(...)`, giving unintended ranks despite precise integer-only college workflows. | `7e5d555`, `07aad2d` | `chat2-ledger-round-import-and-scheduling.test.ts`, `chat2-tpo-round-csv-and-lifecycle-break-03.test.ts` |
 | CH2-019 | Medium | TPO-drive-workspace-44 | Live interview countdown accepted NaN, infinite and fractional duration when helper called outside UI validation; unreliable remaining time rendered. | `8362d3f`, `5bf0bf0` | `chat2-tpo-round-csv-and-lifecycle-break-03.test.ts` |
-| CH2-020 | Security regression test | PROJ-BREAK-TPO-ROLE-01 | Confirmed central policy must never grant Projects management to TPO or recruiters; scoped Projects read may be available to TPO but not another tenant. No production authorization bypass identified. | Test-only `a1e6380` | `PROJ-BREAK-TPO-ROLE-01.test.ts` |
+| CH2-020 | High | PROJ-BREAK-TPO-01 | Project member read authorization checked persisted college but omitted the organization dimension of the actor membership; a malformed same-college/wrong-org context was not explicitly rejected. | `605923fd`, `7d9b13d` | `PROJ-BREAK-TPO-01.test.ts` and `PROJ-BREAK-TPO-ROLE-01.test.ts` |
 
 **Caveat:** The suite is authored and pushed; cloud CI and PostgreSQL verification remain pending. The full all-export inventory contains explicit uncovered service functions that remain release work, not fabricated green coverage.
 
+### Additional security defect
+
+| ID | Severity | Gap | Defect | Fix commits | Test |
+| --- | --- | --- | --- | --- | --- |
 | CH2-021 | High | TPO-drive-workspace-42 | Whole-round application caught arbitrary service/SQL errors and returned their raw `error.message` in the learner-by-learner report. A simulated database error could disclose internal constraints or secrets. | `a0ccf528`, `4f2fbf0` | `tests/unit/chat2-tpo-round-state-break-01.test.ts`: TPO-BREAK-round-42 (pure error mapping); service integration still required |
