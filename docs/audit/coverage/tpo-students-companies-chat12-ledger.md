@@ -13,8 +13,8 @@
 | `src/modules/placements/tpo-students-model.ts` | `tpoStudentRegisteredForPlacements` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | explicit selection vs application fallback | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `tpoStudentMatchesLegacyStage` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | verified vs waiting / legacy status | **PARTIAL** |
 | `src/modules/placements/tpo-students-model.ts` | `tpoStudentNeedsAttention` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | offer pending and verification attention | **PARTIAL** |
-| `src/modules/placements/tpo-students-service.ts` | `tpoStudentsQuerySchema` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | not covered here; strict schema checks still pending | **OPEN** |
-| `src/modules/placements/tpo-students-service.ts` | `tpoStudentRequestsQuerySchema` | **NO TARGETED TEST** | all request filters, wrong tenant, non-GET guards | **OPEN** |
+| `src/modules/placements/tpo-students-service.ts` | `tpoStudentsQuerySchema` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | not covered here; strict schema checks still pending | `tests/unit/chat12-tpo-query-schema-security.test.ts` |
+| `src/modules/placements/tpo-students-service.ts` | `tpoStudentRequestsQuerySchema` | `tests/unit/chat12-tpo-query-schema-security.test.ts` | all request filters, wrong tenant, non-GET guards | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-service.ts` | `getTpoStudentsIntelligence` | `tests/unit/chat12-tpo-students-contract.test.ts` | source assertions only; PostgreSQL authorisation and query count pending | **SOURCE** |
 | `src/modules/placements/tpo-students-service.ts` | `listTpoStudentRequests` | **NO TARGETED TEST** | query permission, cross-college IDOR, cursor and absence | **OPEN** |
 | `src/modules/placements/tpo-students-csv.ts` | `tpoStudentCsvCell` | `tests/unit/chat12-tpo-export-and-clipboard-security.test.ts` | malicious company cell formula, quoting and control chars | **BEHAVIOURAL** |
