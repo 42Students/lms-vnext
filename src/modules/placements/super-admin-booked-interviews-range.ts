@@ -5,7 +5,7 @@
 export function superAdminBookedInterviewWindow(from: string, to: string):
   { fromDate: Date; toDate: Date } | null {
   const parseDay = (day: string): Date | null => {
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(day)) return null;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return null;
     const utc = new Date(day + "T00:00:00Z");
     if (!Number.isFinite(utc.getTime()) || utc.toISOString().slice(0, 10) !== day)
       return null;
