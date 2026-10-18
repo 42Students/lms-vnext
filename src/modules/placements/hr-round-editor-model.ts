@@ -63,3 +63,13 @@ export function isVerifiedHrRoundMutation(
  return parsed.data.action===expected&&(requested==="CREATE"||
   parsed.data.id===existingRoundId);
 }
+
+/** Closing a form with unsaved round edits must require explicit discard. */
+export function hrRoundEditorHasUnsavedChanges(
+ draft:{name:string;kind:string;mode:string},
+ original:{name:string;kind:string;mode:string|null}|null,
+):boolean {
+ return draft.name!==(original?.name??"")||
+  draft.kind!==(original?.kind??"INTERVIEW")||
+  draft.mode!==(original?.mode??"");
+}
