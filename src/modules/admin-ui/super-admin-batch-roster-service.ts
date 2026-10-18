@@ -1,6 +1,6 @@
 import "server-only";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {and,asc,count,eq,inArray} from "drizzle-orm";
+import {and,asc,countDistinct,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {cohorts,departments,programs,sections,sectionEnrollments,learnerProgramEnrollments,collegeMemberships,users,learnerProfiles} from "@/db/schema";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
@@ -23,7 +23,7 @@ export async function getSuperAdminBatchRosterOverview(context:RequestContext,ra
  const classes=await db.select({
   id:sections.id,name:sections.name,code:sections.code,capacity:sections.capacity,status:sections.status,academicPeriodId:sections.academicPeriodId,
   // Match the active roster: a disabled platform account is not an attendee.
-  learnerCount:count(users.id),
+  learnerCount:countDistinct(users.id),
  }).from(sections)
   .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.sectionId,sections.id),eq(sectionEnrollments.status,"ACTIVE")))
   .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),

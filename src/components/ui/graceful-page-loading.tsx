@@ -7,9 +7,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function GracefulPageLoading({ label = "Loading your page...", shape = "card" }: { label?: string; shape?: "card" | "directory" } = {}) {
   const [slow, setSlow] = useState(false);
   useEffect(() => {
+    setSlow(false);
     const timer = setTimeout(() => setSlow(true), 12_000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [label, shape]);
   return <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
     {shape === "directory" ? <>
       <div aria-hidden="true" className="space-y-3">

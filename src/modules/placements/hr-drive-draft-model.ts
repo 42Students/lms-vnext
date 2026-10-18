@@ -13,7 +13,8 @@ export const hrDriveDraftQuerySchema = z.strictObject({
 
 const round = z.strictObject({
   kind: z.enum(["TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW"]),
-  name: z.string().trim().min(2).max(120),
+  name: z.string().trim().min(2).max(120)
+   .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid round name"}),
 });
 export const hrDriveDraftSchema = z.strictObject({
   title: z.string().trim().min(3,"Enter a role title").max(200),
@@ -51,7 +52,7 @@ export const hrDriveDraftSchema = z.strictObject({
   }
   const uniqueRoundNames = new Set<string>();
   for (const [index, item] of data.rounds.entries()) {
-    const label = item.name.trim().replace(/\s+/g," ").toLocaleLowerCase("en");
+    const label = item.name.normalize("NFKC").trim().replace(/\s+/g," ").toLocaleLowerCase("en");
     if (uniqueRoundNames.has(label)) {
       ctx.addIssue({ code:"custom",path:["rounds",index,"name"],
         message:"Give each hiring round a distinct name" });

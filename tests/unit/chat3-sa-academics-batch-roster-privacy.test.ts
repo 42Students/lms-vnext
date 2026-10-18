@@ -61,7 +61,7 @@ describe("SA-ACADEMICS-BATCH-COUNT-01 scoped active batch learner census",()=>{
   const dialect=new PgDialect();
   expect(state.classCount).not.toBeNull();
   const totalSql=dialect.sqlToQuery(state.classCount!).sql;
-  expect(totalSql).toContain("count(");
+  expect(totalSql).toContain("count(distinct ");
   expect(totalSql).toContain('"users"."id"');
   const joins=state.joins.filter(x=>x.table==="classes");
   const sql=joins.map(x=>x.sql).join("\n");

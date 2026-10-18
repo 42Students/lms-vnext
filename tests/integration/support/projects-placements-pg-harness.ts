@@ -520,7 +520,7 @@ export async function createPlacementFixture(db: PgHarness, tenant: TenantFixtur
     const season = existing[0] ?? (await db.query<{id:string}>(`
       insert into placement_seasons (college_id,name,code,start_date,end_date,created_by_user_id)
       values ($1,$2,$3,$4,$5,$6) returning id`,
-      [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2098-10-01","2099-06-30",author.userId]))[0]!;
+      [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2020-10-01","2099-06-30",author.userId]))[0]!;
     const [job] = await db.query<{id:string}>(`
       insert into placement_jobs (college_id,company_relationship_id,season_id,title,description,
         employment_type,work_mode,openings,minimum_annual_ctc_inr,application_deadline,
