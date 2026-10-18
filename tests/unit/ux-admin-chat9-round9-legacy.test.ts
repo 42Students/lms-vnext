@@ -21,7 +21,7 @@ describe("chat-9 Round 9: legacy labels survive UX rollout",()=>{
   it("UX-admin-projects-labels-01 preserves the original College Project copy and scope recovery",()=>{
     const workspaces=source("src/app/(authenticated)/college/projects/page.tsx");
     const risk=source("src/components/projects/project-admin-at-risk-page.tsx");
-    expect(workspaces.match(/title="Project workspaces"/g)).toHaveLength(3);
+    expect(workspaces.match(/title="Workspaces"/g)).toHaveLength(3);
     expect(workspaces).toContain('role="alert"');
     expect(workspaces).toContain("Bulk reassign mentor");
     expect(risk).toContain('description="Workspaces with no recent activity, an active blocker, or a pending review."');
