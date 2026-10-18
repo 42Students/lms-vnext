@@ -3,6 +3,7 @@
 import { useId, useRef, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 import Link from "next/link";
+import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 
 export type TabItem = { value: string; label: string; content?: ReactNode; disabled?: boolean; href?: string };
@@ -66,7 +67,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
           </button>
         ))}
       </div></ScrollCue> : <ScrollCue axis="x" label={`${ariaLabel} navigation`}><nav aria-label={ariaLabel} className="flex min-w-max gap-2 border-b border-border pb-1">
-        {items.map(item => item.disabled || !item.href ? <span key={item.value} aria-disabled="true" className="inline-flex min-h-11 items-center whitespace-nowrap border-b-2 border-transparent px-4 text-sm text-body opacity-60">{item.label}</span> : <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
+        {items.map(item => item.disabled || !item.href || !isSafeInternalHref(item.href) ? <span key={item.value} aria-disabled="true" className="inline-flex min-h-11 items-center whitespace-nowrap border-b-2 border-transparent px-4 text-sm text-body opacity-60">{item.label}</span> : <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
             className={cx("inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap border-b-2 px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]",
               item.value === value ? "border-[var(--lms-teal-deep)] text-foreground" : "border-transparent text-body hover:bg-primary-subtle")}>
               {item.label}</Link>)}
