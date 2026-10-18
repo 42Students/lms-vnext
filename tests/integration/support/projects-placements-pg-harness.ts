@@ -39,7 +39,7 @@ const REQUIRED_TABLES = [
   "organizations","colleges","users","college_memberships","membership_roles","system_roles",
   "project_templates","project_template_versions","project_template_college_assignments",
   "project_instances","project_releases","project_sprints","project_tasks","project_resources",
-  "project_members","project_task_submissions","project_submissions",
+  "project_members","project_task_submissions","project_submissions","project_delivery_events",
   "project_submission_reviews","project_evaluations","project_evaluation_items","project_meetings",
   "placement_companies","placement_company_relationships","placement_jobs","placement_job_rounds",
 ] as const;
@@ -123,6 +123,39 @@ export async function withProjectPg<T>(pool: Pool, action: (db: PgHarness) => Pr
     return await action(db);
   } finally {
     try { if (begun) await client.query("ROLLBACK"); } finally { client.release(); }
+  }
+}
+
+/** Two real PostgreSQL sessions for races/tenant reads against *already committed*
+ * seed records in the disposable DB. Uncommitted withProjectPg fixtures are NOT
+ * visible here. Both sessions always roll back, even when a race throws.
+ */
+export async function withTwoPgSessions<T>(
+  pool: Pool, run: (a: PoolClient, b: PoolClient) => Promise<T>,
+): Promise<T> {
+  const a = await pool.connect();
+  let b: PoolClient | undefined;
+  let aStarted = false, bStarted = false;
+  try {
+    await assertHarnessSchema(a);
+    b = await pool.connect();
+    await assertHarnessSchema(b);
+    await a.query("BEGIN"); aStarted = true;
+    await b.query("BEGIN"); bStarted = true;
+    await a.query("SET LOCAL lock_timeout = '1500ms'");
+    await b.query("SET LOCAL lock_timeout = '1500ms'");
+    return await run(a,b);
+  } finally {
+    try {
+      if (b && bStarted) await b.query("ROLLBACK");
+    } finally {
+      try {
+        if (aStarted) await a.query("ROLLBACK");
+      } finally {
+        b?.release();
+        a.release();
+      }
+    }
   }
 }
 
