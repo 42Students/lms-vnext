@@ -82,7 +82,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    onConfirm={()=>{void save(true);}}>
     <div className="space-y-2 text-sm text-body">
      <p>Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. {changed.length} changed setting(s); {changed.filter(item=>item.dangerous).length} high impact.</p>
-     <ul className="max-h-48 list-disc space-y-1 overflow-auto pl-5">
+     <ul role="region" aria-label="High-impact settings review" tabIndex={0} className="max-h-48 list-disc space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] pl-5 focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {changed.map(spec=><li key={spec.key} className="break-all">{spec.label} ({spec.key})</li>)}
      </ul>
      <p>Blank values restore the source default. These saved overrides do not automatically reconfigure deployment-managed authentication or SMS services.</p>
@@ -90,7 +90,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </ConfirmDialog>
   {results.length>0?<div role="status" className="space-y-2">
    <h3 className="font-semibold">Save results</h3>
-   <ul className="max-h-60 space-y-1 overflow-auto text-sm">{results.map(row=><li key={row.key} className="rounded border border-border p-2">
+   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] text-sm focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">{results.map(row=><li key={row.key} className="rounded border border-border p-2">
     <strong>{row.key}</strong> — {row.status}: {row.message}</li>)}</ul>
   </div>:null}
  </section>;
