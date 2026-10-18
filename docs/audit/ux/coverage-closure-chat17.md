@@ -10,6 +10,7 @@
 | Shared UI components without direct test | `tests/unit/UX-kit-scroll-motion-01.test.tsx` directly renders BottomSheet, LoadingState, Checkbox/Radio/Switch and checks use-confirm-flow safety. | **4** of 4 targeted. Added ScrollCue and Disclosure tested in same kit suite. |
 | Raw `<table>` | Teacher learner session history now uses `DataTable` with explicit empty state; horizontal scroll cue inherited and phone data always reachable. | **1** of 66 targeted. |
 | `target=_blank` without noopener | Four listed components (admin offering learning overview, learner YouTube player, placement employer relationships, recruiter result controls) now open in same tab and preserve descriptive link text, with `noopener noreferrer` and >=44px tap areas. | **4** of 4 targeted. |
+| Shared button and form-control motion | Button, Input, Select and Textarea now use the same 150ms token/ease; browser default interactive focus behavior remains unchanged. | **4** primitives harmonized. |
 | Shared scroll/motion kit | Eight directly requested surfaces and additional skeleton, selection controls, Disclosure and ScrollCue brought into token/edge-fade alignment. | See `scroll-motion-shared-kit.md`. |
 
 ## Remaining / ownership
