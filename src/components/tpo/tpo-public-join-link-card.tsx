@@ -25,6 +25,7 @@ export function TpoPublicJoinLinkCard({
 
   async function makeLink() {
     const action = status.link ? "REPLACE" : "CREATE";
+    if(busy)return;
     setFeedback("");
     setBusy(true);
     try {
@@ -34,6 +35,7 @@ export function TpoPublicJoinLinkCard({
         body: JSON.stringify({
           scope, ...(isCompany ? { companyId } : {}),
           action, confirmed: true,
+          ...(action==="REPLACE"?{expectedLinkId:status.link?.id}:{}),
         }),
       });
       if (!response.ok) {
@@ -92,10 +94,11 @@ export function TpoPublicJoinLinkCard({
     try{
       const response=await fetch("/api/placements/tpo/public-join-links/enabled",{
        method:"POST",headers:{"Content-Type":"application/json"},
-       body:JSON.stringify({scope,...(isCompany?{companyId}:{}),enabled:!status.link.enabled}),
+       body:JSON.stringify({scope,...(isCompany?{companyId}:{}),expectedLinkId:status.link.id,enabled:!status.link.enabled}),
       });
       const data=await response.json() as {enabled?:boolean;error?:string};
-      if(!response.ok)throw new Error(data.error==="NOT_REGISTERED"?"Join link storage is unavailable.":"Couldn't save");
+      if(!response.ok)throw new Error(data.error==="NOT_REGISTERED"?"Join link storage is unavailable.":
+       data.error==="STALE"?"The join link changed. Refresh and try again.":"Couldn't save");
       setStatus(prev=>({...prev,link:prev.link?{...prev.link,enabled:data.enabled===true}:null}));
       setFeedback("Link setting saved");
     }catch(error){setFeedback(error instanceof Error?error.message:"Couldn't save");}
