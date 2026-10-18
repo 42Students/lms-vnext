@@ -122,4 +122,21 @@ describe("TPO-students-14 actual preview service signed authorization and row re
   expect(result.counts).toEqual({ready:21,skipped:0});
  });
 
+ it("TPO-students-14 actor SHARE locks never run inside a PostgreSQL READ ONLY transaction",async()=>{
+  const {readFileSync}=await import("node:fs");
+  const {resolve}=await import("node:path");
+  const sourcePaths=[
+   "src/modules/placements/tpo-bulk-action-preview-service.ts",
+   "src/modules/placements/tpo-bulk-application-stage-service.ts",
+  ];
+  for(const path of sourcePaths){
+   const source=readFileSync(resolve(process.cwd(),path),"utf8");
+   expect(source).toContain("requireTpoJobActor(tx,");
+   expect(source).not.toContain('{accessMode:"read only"}');
+  }
+  const actorSource=readFileSync(resolve(process.cwd(),
+   "src/modules/placements/tpo-job-write-base.ts"),"utf8");
+  expect(actorSource).toContain('.for("share").limit(1)');
+ });
+
 });
