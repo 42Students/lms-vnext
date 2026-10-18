@@ -2,6 +2,7 @@ import {TpoReportPresentation} from "@/components/placements/tpo-report-presenta
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
+import { DataTable } from "@/components/ui/data-table";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -96,46 +97,24 @@ export default async function TpoBranchSeasonPage({
               branch evidence. Rates cannot be inferred.
             </p>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-              <table className="w-full min-w-[66rem] text-left text-sm">
-                <thead className="bg-surface-secondary text-xs font-semibold text-muted-foreground">
-                  <tr>
-                    {[
-                      "Current branch", "Applicants", "Accepted learners",
-                      "Accepted offer versions", "Accepted / applicants",
-                      "Registered pool", "Accepted registered learners",
-                      "Placed / registered",
-                    ].map((heading) => (
-                      <th key={heading} scope="col" className="px-4 py-3">{heading}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {dashboard.rows.map((row) => (
-                    <tr key={row.departmentId ?? "unknown"}>
-                      <th scope="row" className="px-4 py-3 font-semibold text-foreground">
-                        {row.departmentName}
-                      </th>
-                      <td className="px-4 py-3">{row.applicants}</td>
-                      <td className="px-4 py-3">{row.acceptedLearners}</td>
-                      <td className="px-4 py-3">{row.acceptedOfferVersions}</td>
-                      <td className="px-4 py-3">
-                        {row.acceptedPerApplicantPercent === null
-                          ? "N/A (no applicants)"
-                          : row.acceptedPerApplicantPercent.toFixed(2) + "%"}
-                      </td>
-                      <td className="px-4 py-3">{row.registered ?? "Unknown"}</td>
-                      <td className="px-4 py-3">{row.registeredPlaced ?? "Unknown"}</td>
-                      <td className="px-4 py-3">
-                        {row.placedPerRegisteredPercent === null
-                          ? "Unknown / N/A"
-                          : row.placedPerRegisteredPercent.toFixed(2) + "%"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DataTable
+              caption="Branch by placement season"
+              rows={dashboard.rows}
+              getRowKey={row=>row.departmentId??"unknown"}
+              empty={<p role="status">This season has no persisted applicant, accepted-offer or registered-pool branch evidence. Rates cannot be inferred.</p>}
+              columns={[
+                {key:"department",header:"Current branch",cell:row=>row.departmentName,mobilePriority:"primary"},
+                {key:"applicants",header:"Applicants",cell:row=>row.applicants,mobilePriority:"secondary"},
+                {key:"accepted",header:"Accepted learners",cell:row=>row.acceptedLearners,mobilePriority:"secondary"},
+                {key:"offerVersions",header:"Accepted offer versions",cell:row=>row.acceptedOfferVersions,mobilePriority:"secondary"},
+                {key:"perApplicant",header:"Accepted / applicants",cell:row=>row.acceptedPerApplicantPercent===null
+                  ?"N/A (no applicants)":row.acceptedPerApplicantPercent.toFixed(2)+"%",mobilePriority:"secondary"},
+                {key:"registered",header:"Registered pool",cell:row=>row.registered??"Unknown",mobilePriority:"secondary"},
+                {key:"registeredPlaced",header:"Accepted registered learners",cell:row=>row.registeredPlaced??"Unknown",mobilePriority:"secondary"},
+                {key:"perRegistered",header:"Placed / registered",cell:row=>row.placedPerRegisteredPercent===null
+                  ?"Unknown / N/A":row.placedPerRegisteredPercent.toFixed(2)+"%",mobilePriority:"secondary"},
+              ]}
+            />
           )}
           <p className="text-xs leading-5 text-muted-foreground">
             Accepted offers use current persisted offer status, not historical response counts.

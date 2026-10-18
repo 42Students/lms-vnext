@@ -3,6 +3,7 @@ import {TpoReportPresentation} from "@/components/placements/tpo-report-presenta
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
+import { DataTable } from "@/components/ui/data-table";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -111,18 +112,25 @@ export default async function TpoAccreditationReportPage({
         </div>:null}
         <p className="text-sm">{studentReport.rows.length} placed students in this batch.</p>
         <p className="text-sm text-muted-foreground">{studentReport.warning}</p>
-        <div className="overflow-x-auto">
-         <table className="min-w-[52rem] w-full text-left text-sm">
-          <thead><tr>{["Name","Roll no.","Programme","Branch","Batch","Employer","Employer contact","Package (best offer)","Offers held","Offer status","Joining"].map(h=>
-           <th key={h} scope="col" className="border-b px-3 py-2">{h}</th>)}</tr></thead>
-          <tbody>{studentReport.rows.slice(0,50).map(student=><tr key={student.membershipId} className="border-b">
-           {[student.name,student.rollNumber,student.programme,student.branch,student.batch,
-            student.employer,student.employerContact??"Not recorded",accreditationPackageLpa(student.packageInr),student.offersHeld,
-            accreditationOfferStatusLabel(student.offerStatus),accreditationJoiningLabel(student.joining)].map((value,index)=>
-            <td key={index} className="px-3 py-2">{value??"—"}</td>)}
-          </tr>)}</tbody>
-         </table>
-        </div>
+        <DataTable
+          caption="Placed students in this batch"
+          rows={studentReport.rows.slice(0,50)}
+          getRowKey={student=>student.membershipId}
+          empty={<p role="status">No placed students were recorded in this batch.</p>}
+          columns={[
+            {key:"name",header:"Name",cell:student=>student.name??"—",mobilePriority:"primary"},
+            {key:"roll",header:"Roll no.",cell:student=>student.rollNumber??"—",mobilePriority:"secondary"},
+            {key:"programme",header:"Programme",cell:student=>student.programme??"—",mobilePriority:"secondary"},
+            {key:"branch",header:"Branch",cell:student=>student.branch??"—",mobilePriority:"secondary"},
+            {key:"batch",header:"Batch",cell:student=>student.batch??"—",mobilePriority:"secondary"},
+            {key:"employer",header:"Employer",cell:student=>student.employer??"—",mobilePriority:"secondary"},
+            {key:"contact",header:"Employer contact",cell:student=>student.employerContact??"Not recorded",mobilePriority:"secondary"},
+            {key:"package",header:"Package (best offer)",cell:student=>accreditationPackageLpa(student.packageInr)??"—",mobilePriority:"secondary"},
+            {key:"offers",header:"Offers held",cell:student=>student.offersHeld??"—",mobilePriority:"secondary"},
+            {key:"offerStatus",header:"Offer status",cell:student=>accreditationOfferStatusLabel(student.offerStatus)??"—",mobilePriority:"secondary"},
+            {key:"joining",header:"Joining",cell:student=>accreditationJoiningLabel(student.joining)??"—",mobilePriority:"secondary"},
+          ]}
+        />
        </>}
       </section>
       <section className="rounded-xl border border-border bg-surface p-5">
@@ -172,43 +180,20 @@ export default async function TpoAccreditationReportPage({
             CSV for the explicit completeness warnings.
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-            <table className="w-full min-w-[46rem] text-left text-sm">
-              <thead className="bg-surface-subtle">
-                <tr>
-                  {[
-                    "Section",
-                    "Dimension",
-                    "Applicants",
-                    "Applications",
-                    "Accepted offers",
-                    "Placed learners",
-                  ].map((heading) => (
-                    <th
-                      key={heading}
-                      scope="col"
-                      className="border-b border-border px-4 py-3 font-semibold text-foreground"
-                    >
-                      {heading}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {overview.slice(0, 50).map((row, index) => (
-                  <tr key={index} className="border-b border-border last:border-0">
-                    {[row[0], row[4], row[6], row[7], row[9], row[10]].map(
-                      (cell, cellIndex) => (
-                        <td key={cellIndex} className="px-4 py-3 text-body">
-                          {cell ?? "—"}
-                        </td>
-                      ),
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            caption="Accreditation evidence preview"
+            rows={overview.slice(0,50).map((row,index)=>({row,index}))}
+            getRowKey={item=>String(item.index)}
+            empty={<p role="status">No reportable placement season was found. Download the CSV for the explicit completeness warnings.</p>}
+            columns={[
+              {key:"section",header:"Section",cell:item=>item.row[0]??"—",mobilePriority:"primary"},
+              {key:"dimension",header:"Dimension",cell:item=>item.row[4]??"—",mobilePriority:"secondary"},
+              {key:"applicants",header:"Applicants",cell:item=>item.row[6]??"—",mobilePriority:"secondary"},
+              {key:"applications",header:"Applications",cell:item=>item.row[7]??"—",mobilePriority:"secondary"},
+              {key:"accepted",header:"Accepted offers",cell:item=>item.row[9]??"—",mobilePriority:"secondary"},
+              {key:"placed",header:"Placed learners",cell:item=>item.row[10]??"—",mobilePriority:"secondary"},
+            ]}
+          />
         )}
         {overview.length > 50 ? (
           <p className="text-xs text-muted-foreground">
