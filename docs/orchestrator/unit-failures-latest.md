@@ -4,13 +4,82 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
 
 ## chat-2
 - tests/unit/chat2-ledger-round-import-and-scheduling.test.ts
-  - TPO-drive-workspace-40/44 round import and scheduling ledger > rejects same-meaning duplicate CSV headers and malformed blank data rows
-- tests/unit/chat2-public-join-disabled.test.ts
-  - TPO-campaigns-public-21 opt-in link gate > refuses forged company and college scopes
+  - TPO-drive-workspace-40/44 round import and scheduling ledger > rejects spreadsheet-notated or out-of-range waitlist ranks without silently n
+- tests/unit/chat2-tpo-last-third-route-matrix.test.ts
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/by-branch has a named server page, 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/by-branch reads an authenticated re
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/by-company has a named server page,
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/by-company reads an authenticated r
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/ctc has a named server page, inheri
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/ctc reads an authenticated report i
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/failure-reasons has a named server 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/failure-reasons reads an authentica
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/intelligence has a named server pag
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/intelligence reads an authenticated
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/joining-followups has a named serve
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/joining-followups reads an authenti
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/joining-status has a named server p
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/joining-status reads an authenticat
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/leads has a named server page, inhe
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/leads reads an authenticated report
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/offers-acceptance has a named serve
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/offers-acceptance reads an authenti
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/offers-expiry has a named server pa
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/offers-expiry reads an authenticate
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/placed-branch has a named server pa
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/placed-branch reads an authenticate
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/placement-summary has a named serve
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/placement-summary reads an authenti
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/season-pipeline has a named server 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/season-pipeline reads an authentica
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/unplaced has a named server page, i
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/reports/unplaced reads an authenticated rep
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/requests has a named server page, inherited
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings has a named server page, inherited
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/after-college has a named server p
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/after-college retains a navigable 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/blocked-dates has a named server p
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/blocked-dates retains a navigable 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/branding has a named server page, 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/branding retains a navigable setti
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/job-types has a named server page,
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/job-types retains a navigable sett
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/notices has a named server page, i
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/notices retains a navigable settin
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/notifications has a named server p
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/notifications retains a navigable 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/prep-readiness has a named server 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/prep-readiness retains a navigable
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/public-link has a named server pag
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/public-link retains a navigable se
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/public-page has a named server pag
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/public-page retains a navigable se
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/recruiters has a named server page
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/recruiters retains a navigable set
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/rules has a named server page, inh
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/rules retains a navigable settings
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/season has a named server page, in
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/season retains a navigable setting
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/see has a named server page, inher
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/see retains a navigable settings s
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/team has a named server page, inhe
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/team retains a navigable settings 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/templates has a named server page,
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/templates retains a navigable sett
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/trusted has a named server page, i
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/settings/trusted retains a navigable settin
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/students has a named server page, inherited
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/students/[membershipId]/history has a named
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/students/[membershipId]/participation has a
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/students/preparation-plan has a named serve
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/students/preparation-prep has a named serve
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/students/requests has a named server page, 
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/team has a named server page, inherited ten
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/team/[threadId] has a named server page, in
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/team/everyone has a named server page, inhe
+  - UX-tpo-LAST-THIRD-01: route-level security and resilient rendering > UX-tpo-LAST-THIRD-01 / /tpo/verification has a named server page, inher
 - tests/unit/chat2-tpo-public-link-settings.test.ts
   - TPO-settings-audit-55 recruiter link > TPO-settings-audit-55 is reachable through settings navigation
-- tests/unit/chat2-unsubscribe-graceful.test.ts
-  - Public unsubscribe confirmations > TPO-campaigns-public-16 uses the same success response for used or unknown tokens
 - tests/unit/HR-BREAK-company-reports-page-01.test.ts
   - HR-BREAK-company-reports-page-01: unauthorized, invalid, multiple college and retry > invalid college, stage or page params produce friendly
 - tests/unit/HR-BREAK-drives-01.test.ts
@@ -24,6 +93,14 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - HR-BREAK-tracker-pages-01: reporter-owned routes and recovery > malformed or other reporter's IDs cannot fetch report detail by guessing URL
 - tests/unit/PROJ-BREAK-SA-admin-pages-and-scope.test.ts
   - Super Admin Projects and Placements page routes ? independent security and UX audit > PROJ-BREAK-SA-16 delegates dynamic project IDs to pers
+- tests/unit/PROJ-BREAK-TPO-01.test.ts
+  - PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility alone > PROJ-BREAK-TPO-02 denies projects and placement data from any w
+  - PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility alone > PROJ-BREAK-TPO-03 suspended, disabled or missing memberships ca
+  - PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility alone > TPO student-directory permission does not expose unassigned pro
+  - PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility alone > a forged membership claim for mentor role cannot bypass persist
+  - PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility alone > foreign college and foreign organization cannot infer assigned 
+  - PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility alone > rejects non-UUID and nonexistent IDs without granting a guessed
+  - PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility alone > repeated stale-tab lifecycle and manage mutations are refused r
 - tests/unit/UX-attendance-calendar-scroll-01.test.ts
   - UX-attendance-calendar-scroll-01 large variable-width attendance calendar > admin-attendance-workspace preserves learner/day/mark grid with 
 - tests/unit/UX-college-college-batches-cohort-id-students-01.test.ts
@@ -57,10 +134,6 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - Faculty scroll and motion cues > UX-teacher-scroll-motion-03 cues desktop roster scrolling while retaining phone cards
 - tests/unit/UX-teacher-shared-surfaces.test.ts
   - Faculty shared surface mobile and focus rollout > UX-teacher-reports-shared-02 uses both phone cards and desktop report rows with 44px pagin
-- tests/unit/inbound-mail-admin-service.test.ts
-  - Super Admin inbound mail authorization > rejects wrong role before touching storage and ignores selected tenant scope
-- tests/unit/mentor-final-delivery-decision-model.test.ts
-  - Mentor final review constraints > does not re-review resolved or archived deliveries
 - tests/unit/mentor-task-transition-model.test.ts
   - Mentor Board transitions > validates mandatory confirmation, ISO token and strict path
 - tests/unit/super-admin-colleges-empty-state.test.ts
@@ -76,24 +149,14 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
   - chat-3 Drives round 4 > TPO-drives-51 college administrator has a real separate create flow
 - tests/unit/college-people-gap-closure.test.ts
   - College People legacy audited page contracts > COL-people-20 Super Admin permission guards COLLEGE_ADMIN grant and revoke before writes
-  - College People legacy audited page contracts > COL-people-24 mentor reassignment preserves selection and uses explicit confirmed legacy copy
 
 ## chat-4
-- tests/unit/chat4-college-ux-round3.test.ts
-  - Chat-4 college UX round 3 > UX-college-batches-cohortId-students-01 adds safe narrow-screen affordances
-- tests/unit/chat4-college-ux-round5.test.ts
-  - Chat-4 college UX round five > UX-college-electives-slotId-allocate-01 makes the layout or actions more readable on narrow screens
-  - Chat-4 college UX round five > UX-college-electives-slotId-offerings-offeringId-roster-01 makes the layout or actions more readable on narro
+- tests/unit/chat4-college-academic-people-gap-closure.test.ts
+  - chat-4 College academic and people gap closure > COL-academic-setup-R03 links the required academic-period setup from guides and empty state
 - tests/unit/chat4-super-admin-projects-gap-closure.test.ts
-  - chat-4 Super Admin Projects verified gap coverage > SA-placements-projects-55 uses the legacy workspaces search URL key, size 20 and page si
-
-## chat-5
-- tests/unit/chat5-delegated-policy-decisions.test.ts
-  - Chat-5 delegated decisions: safe behavior and remaining boundaries > TPO-campaigns-public-25 keeps public join links explicitly revocable in
+  - chat-4 Super Admin Projects verified gap coverage > SA-placements-projects-58 shows average-based mentor overload, not a fixed cap
 
 ## chat-6
-- tests/unit/PROJ-BREAK-chat6-role-journeys.test.ts
-  - Projects IIT Dharwad ? cross-account navigation and denial breaker > PROJ-BREAK-pages-02 College Admin without an active selected membership
 - tests/unit/chat6-college-placements-round2-verified.test.ts
   - College placement verified operational parity > COL-placements-11 retention report and college student placement lookup are accessible
 - tests/unit/chat6-faculty-quiz-report-header-r06.test.ts
@@ -108,61 +171,52 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
 - tests/unit/chat7-college-assessment-export-service-weak.test.ts
   - COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap > cannot silently export more than 1000 rows, labels truncated set and ne
   - COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap > reads paginated results using the same current context/kind, returns qu
-- tests/unit/chat7-course-delivery-roster-weak.test.ts
-  - COURSES-WEAK-DELIVERY-ROSTER-01 exact College, Section and Elective enrolment gates > source query guards both paths by persisted ACTIVE use
+- tests/unit/chat7-college-project-legacy-one-tab.test.ts
+  - College Admin Projects legacy Workspaces and one tab strip > shows legacy Projects group and single Workspaces page heading
 - tests/unit/chat7-course-resource-materials-weak.test.ts
   - COURSES-WEAK-RESOURCE-MATERIALS-01 real resource lifecycle validation > permits only titled, credential-free HTTPS resources without fragmen
-- tests/unit/learner-placements-chat7-notice-actions.test.ts
-  - Chat-7 learner notice action and audience parity > LEARNER-placements-47 renders only safe persisted TPO action links
+- tests/unit/chat7-learner-results-service-scoping.test.ts
+  - COURSES7-07 / COURSES7-08 learner owner isolation and historical submission continuity > reveals score and correctness only after CLOSED plu
 
 ## chat-9
-- tests/unit/chat9-college-projects-round4-evidence.test.ts
-  - College Projects gap closure round 4 > COL-projects-19 restores workspace, submissions and template page labels
-- tests/unit/chat9-college-projects-template-catalogue.test.ts
-  - chat-9 College Projects template catalogue > COL-projects-08 renders template tags in both list and cards without introducing a new status
-- tests/unit/chat9-phase2-college-group-tabs.test.ts
-  - college group tabs exact legacy navigation labels > COL-academic-setup-13 keeps the academic-period overview reachable without inventing a l
-  - college group tabs exact legacy navigation labels > renders academic section labels in exact dev-legacy order
-- tests/unit/chat9-round6-calendar-settings.test.ts
-  - chat-9 round 6 calendar and settings > TPO-settings-audit-03 uses the original Settings section names in the grouped navigation
-- tests/unit/chat9-round6-college-projects-parity.test.ts
-  - College Admin Projects round 6 > COL-projects-19 displays the exact Workspaces, Templates, Submission and Audit headings plus the legacy ris
-- tests/unit/chat9-super-admin-navigation-reachability.test.ts
-  - Super Admin 13-row sidebar grouped page reachability > every grouped tab is a real vNext Super Admin page with unique active state
-- tests/unit/chat9-tpo-settings-legacy-graceful.test.ts
-  - TPO Settings legacy copy and graceful editing > TPO-settings-audit-03 uses the original placement settings section names
+- tests/unit/PROJ-BREAK-chat9-admin-filters.test.ts
+  - IIT Dharwad Projects: Super Admin URL and pagination resilience > PROJ-BREAK-ux-12 array-valued URL params never bypass the same validation
+- tests/unit/PROJ-BREAK-chat9-service-bounds.test.ts
+  - IIT Dharwad Projects: hostile pagination never triggers an unbounded database offset > PROJ-BREAK-scale-21 service entrypoints enforce bound
+- tests/unit/chat9-round9-public-audit.test.ts
+  - chat9 public page, signature and audit evidence > TPO-settings-audit-76 bounds stored email signature and keeps preview distinct from actual
+- tests/unit/chat9-round9-recruiter-settings.test.ts
+  - chat-9 round9 TPO recruiter and communication settings > TPO-settings-audit-70 validates and saves optional-SMS monthly limit without claimi
+- tests/unit/chat9-unknown-report-recovery.test.ts
+  - TPO report unknown-route recovery > TPO-calendar-reports-53 announces Refreshing report instead of an unlabeled skeleton
 - tests/unit/proj-break-chat9-services.test.ts
-  - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-races-04 admin status edits serialize stale tabs before changing a
+  - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-performance-01 admin pages bound list size and publish authoring h
   - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-races-05 version publish serializes concurrent archives and reassi
-  - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-resilience-01 object-store cleanup failure cannot reverse committe
   - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-routing-01 all sampled project write routes reject foreign origins
-  - IIT Dharwad Projects adversarial service and route contracts > PROJ-BREAK-ux-01 admin and college Project screens preserve explicit empty/de
-- tests/unit/ux-admin-chat9-coverage-closure.test.ts
-  - chat-9 route coverage and native DataTable closure > UX-admin-route-coverage-04 every /admin last-third route has a named source contract an
-- tests/unit/ux-admin-chat9-round9-legacy.test.ts
-  - chat-9 Round 9: legacy labels survive UX rollout > UX-admin-legacy-academic-01 keeps only ten academic tabs and routes the overview through 
-  - chat-9 Round 9: legacy labels survive UX rollout > UX-admin-projects-labels-01 preserves the original College Project copy and scope recover
-  - chat-9 Round 9: legacy labels survive UX rollout > UX-admin-tpo-settings-label-01 keeps the exact Recruiters settings tab
 
 ## chat-11
-- tests/unit/tpo-student-quick-panel.test.ts
-  - TPO-students-02 roster student deep link and drawer > renders five panel tabs with safe detailed navigation
-
-## chat-12
-- tests/unit/chat12-round41-undo-guarded.test.ts
-  - TPO-students-16 Undo action is not rejected by its own guarded-action lock
-
-## chat-13
-- tests/unit/chat13-platform-placement-policy-adversarial.test.ts
-  - Super Admin placement policy adversarial boundaries > SA-PLACEMENT-POLICY-03 rejects NaN, infinite or fractional-integer values for every gl
-- tests/unit/chat13-ux-cross-audit-tpo-loading.test.ts
-  - UX-cross-tpo-second-C13-026-22 slow loading and recovery
+- tests/unit/tpo-drive-close-preview-model.test.ts
+  - TPO drive close preview > permits confirmed published active-season closure only against the same counts
+- tests/unit/tpo-settings-primary-nav.test.ts
+  - TPO-settings-audit-01 legacy primary Settings sections > keeps the ten legacy sections in original group order alongside linked destinations
 
 ## chat-14
-- tests/unit/projects-phase2-file-visibility-guard.test.ts
-  - PR-S2-11 no private resource file downloads > restricts list and direct signed grants independently
+- tests/unit/PROJ-BREAK-chat14-mentor-review-pages.test.tsx
+  - PROJ-BREAK-MENTOR-83..90 rendered review inbox parity and role journeys > PROJ-BREAK-MENTOR-83 invalid and duplicated filters do not query s
+- tests/unit/projects-mentor-route-guards-chat14.test.ts
+  - chat-14 mentor route guards and friendly API error handling > guards meetings/[meetingId]/mentor-decision/route.ts before decoding writes an
+  - chat-14 mentor route guards and friendly API error handling > guards meetings/[meetingId]/mentor-reschedule/route.ts before decoding writes 
+  - chat-14 mentor route guards and friendly API error handling > guards sprints/[sprintId]/mentor-transition/route.ts before decoding writes an
+  - chat-14 mentor route guards and friendly API error handling > guards tasks/[taskId]/mentor-transition/route.ts before decoding writes and de
+- tests/unit/learner-projects-gap-verification.test.ts
+  - learner/projects verified gap closure > LEARNER-projects-40 checks team confirmation and summary plus evidence
+- tests/unit/w03-project-admin-audit.test.ts
+  - W03 project admin audit parity contract > reads only PROJECTS activity and preserves legacy-style audit filters
+  - W03 project admin audit parity contract > requires an explicit college scope for the super-admin audit surface
 
 ## chat-15
+- tests/unit/chat15-missed-quiz-release.test.ts
+  - chat-15 learner missed quiz, release, and progress parity > LEARNER-course-detail-17 released missed quiz answer key is read-only
 - tests/unit/learner-assessment-state-filter-model.test.ts
   - learner assessment state filters > distinguishes submission from published feedback
 
@@ -172,13 +226,15 @@ Fix YOUR section: read the test, read the source it checks. Usually a merge drop
 - tests/unit/chat16-round3-two-unit-regressions.test.ts
   - chat-16 Round 3 canonical gap queue reconciliation > the 32 originally reassigned IDs remain one-to-one with the central register after revi
 
-## chat-17
-- tests/unit/UX-kit-role-and-overlay-chat17.test.tsx
-  - UX-kit-HARDEN-23 authorization boundaries and WebView history > UX-kit-HARDEN-27 table cells render once per row and redacts unsafe rowHref
-
 ## chat-19
-- tests/unit/chat19-college-cross-audit.test.ts
-  - chat-19 college UX cross-audit > COL-XA-09 keeps workspaces visible when optional template labels fail
-- tests/unit/chat19-college-source-coverage.test.ts
-  - chat-19 all /college route entry point source coverage > UX-college-source-coverage-02 verifies links into Projects are always scoped to /co
+- tests/unit/HR-BREAK-chat19-calendar-company-pages.test.ts
+  - HR-BREAK-chat19-calendar-company: account-deny and stable navigation > malformed calendar day, view and category use bounded fallback rather
+- tests/unit/HR-BREAK-chat19-conversation-page.test.ts
+  - HR-BREAK-chat19-conversation-page: actual async role, IDOR and recovery boundary > turns revoked college access into safe recovery, not priv
+- tests/unit/HR-BREAK-chat19-legacy-job-aliases.test.ts
+  - HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect > invalid hiring query {"applicant":"not-a-uuid"} gets inline recovery, 
+  - HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect > invalid hiring query {"offerPage":"-3"} gets inline recovery, not a ra
+  - HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect > invalid hiring query {"offerState":"private"} gets inline recovery, no
+  - HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect > invalid hiring query {"page":"0"} gets inline recovery, not a raw Zod 
+  - HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect > invalid hiring query {"stage":"SUPER_ADMIN"} gets inline recovery, not
 
