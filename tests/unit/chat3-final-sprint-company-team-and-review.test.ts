@@ -46,7 +46,7 @@ describe("Chat-3 final sprint team and review contracts",()=>{
   const sql=read("docs/proposed-migrations/chat3-tpo-company-team.sql");
   const service=read("src/modules/placements/tpo-company-team-service.ts");
   expect(schema).toContain('placement_tpo_company_team_messages');
-  expect(sql).toContain("create table if not exists placement_tpo_company_team_messages");
+  expect(sql.toLowerCase()).toContain("create table if not exists placement_tpo_company_team_messages");
   expect(sql).toContain("tpo_company_team_author_college_fk");
   expect(service).toContain('status:"NOT_REGISTERED"');
   expect(service).toContain(".limit(101)");
