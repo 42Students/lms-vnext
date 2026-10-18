@@ -96,3 +96,41 @@ Sampled core inventory: **80 runtime exports**, **38 directly referenced names**
 
 - PLACEMENTS-DEADLINE-SM-01 — tests/unit/chat5-placements-deadline-and-cascade-breakit.test.ts exercises PUBLISHED/ACTIVE-only editing, invalid dates, same/past deadlines, forged request properties, optimistic update lock and the transactional audit preflight in extendTpoDriveDeadline. **No DB runtime execution**.
 - PLACEMENTS-CASCADE-BREAK-01 — the same file tests accepted-history cascade token, joined outcome, changed sibling rejection and confirms owner college/membership row lock, exact status-history reconciliation and idempotent undo source paths in undoPlacementOfferCascade. **No DB runtime execution**.
+
+
+## 18 October continued hardening — top-priority project/TPO boundaries and selection consistency
+
+| Case | Behavioural or database test | Production guard / remaining gap |
+|---|---|---|
+| PROJ-BREAK-TPO-01..04 | `tests/unit/chat5-PROJ-BREAK-TPO-role-boundaries.test.ts` exercises actual `can()` / `requirePermission()` for TPO same college, cross college/organization, disabled user, suspended membership, Super Admin acting-college scope and TPO project-write denial | Project read may be college-scoped for TPO, but project manage/template assignment is denied. No full browser project-service IDOR run. |
+| PROJ-BREAK-TPO-05/06 | Same test exercises `projectNoticeHref` for learner/mentor destinations, percent-encoded hostile IDs, and inspects active same-college recipient/role filters and dedupe in `project-notification-service.ts` | Source fix percent-encodes project IDs. Real notification transaction with revoked TPO and duplicate event requires PostgreSQL. |
+| TPO-campaigns-public-25 | `tests/unit/chat5-delegated-policy-decisions.test.ts` updated to require actual `expectedLinkId` and reject stale/missing link version while permitting explicit disabled state | Fixed obsolete failing assertion, **not** a weakening of stale-link protection. |
+| PLACEMENTS-SELECTION-ERROR-02..05 | `tests/unit/chat5-placement-selection-safe-results.test.ts` exercises SQL/auth/internal exception masking and stale-copy mapping; source verifies both partial-release catches | Fixed raw per-row `error.message` returned by `verifyAndReleaseTpoSelections`; selected rows and partial results remain preserved. Two-transaction release crash recovery remains open. |
+| PLACEMENTS-SELECTION-IDEMP-01 | `tests/unit/chat5-selection-idempotent-record.test.ts` tests exact same selection replay, reordered rows, role/CTC/status mismatch, invalid payload and source ordering under locks | Fixed duplicate audit and `recordedAt` drift on same-payload retries in `recordTpoDriveSelections`. |
+| PLACEMENTS-SELECTION-IDEMP-DB-01 | `tests/integration/placements-p8-offers.test.ts`: seed published job, final passed learner, record selection, retry exact request; assert same row, same recorded timestamp, exactly one selection audit; wrong-college TPO and learner attempts denied, no extra DB rows | **Added PostgreSQL test, execution pending cloud CI**. Cleanup removes `placement_drive_selections` before offers/applications. |
+
+The central project ledger is managed by chat-14, so chat-5's narrowly scoped TPO/Projects crossover evidence is tracked **here**, avoiding conflicting writes. The project-notice helper now percent-encodes path identifiers without affecting normal UUID links. This does not assert a broad Projects coverage certification. The inherited Placements high-risk gaps — atomic waitlist+offer release, sweeper response competition, full 1,018 placement files, and TPO page deployed-device coverage — remain **open**.
+
+
+### Further S1 waitlist release race hardening
+
+- **PLACEMENTS-WAIT-IDEMP-01:** `decideWaitlistReleaseSettlement` is an explicit three-state pure policy: PENDING/no offer -> WRITE; RELEASED/same offer ID -> IDEMPOTENT; changed offer or state -> STALE. This prevents duplicate RELEASED reconciliation and a second audit when two TPO requests finish at nearly the same instant.
+- Both reconciliation paths in `offerToNextWaitlisted` now lock the promotion row (`FOR UPDATE`) before deciding; a second waiter on an already released *same* canonical offer returns successfully without updating `releasedAt` or appending another audit.
+- **Test:** `tests/unit/chat5-waitlist-settlement-race.test.ts` validates the state/action matrix and transaction source ordering. **Execution pending.**
+- **Still S1 release blocked:** the reservation, canonical offer issuance and settlement are different database transactions. These changes do not make that workflow crash-atomic or guarantee offer capacity under every mixed issuer. PostgreSQL chaos/retry tests and an outbox/transaction redesign may still be necessary.
+
+
+## Further TPO second-third workflow coverage (model behaviour)
+
+`tests/unit/chat5-tpo-second-third-remaining-workflows.test.ts` adds executable model assertions, complementing existing source audits:
+
+| Cases | Concrete boundary | Covered states / preserved UX |
+|---|---|---|
+| PLACEMENTS-CLOSE-SM-02/03 | `evaluateTpoDriveClosure`, `tpoDriveCloseSchema`; `/tpo/placements/jobs/[jobId]/close-preview` | PUBLISHED+ACTIVE only, unreleased selections block closure, stale counts and invalid dates reject; blocked copy identifies selections/offers rather than hiding the action. |
+| PLACEMENTS-LETTERS-01 / TPO-2ND-PAGE-letters-02 | `projectOfferLetterEvidence`; letters page | Evidence is persisted offer status/date only, never invented letter-issued or acknowledged state; TPO, permission and college checks; explicit no-storage message and empty table. |
+| PLACEMENTS-SHARE-PREVIEW-01/02 | `projectRecruiterVisibleShortlist`, `tpoShareableShortlistQuerySchema`, `tpoShareableShortlistCsv` | Three approved identity fields only, formula-neutralized CSV, explicit 500-row cap, malformed/oversized query denied. |
+| TPO-2ND-PAGE-share-preview-03 | Shortlist share-preview page | Role and scoped service, read-only warning, separate independently paginated actual company shares, empty state and no claimed delivery. |
+| PLACEMENTS-SHORTLIST-01 | `projectTpoShortlist`, `tpoShortlistQuerySchema`, `tpoShortlistCsv` | Empty names/roll/time stay unknown; invalid page rejected; dates drawn only from persisted decision. |
+| PLACEMENTS-SHARE-PAGE-01/02 | `recoverCompanyShareLinkPage`, `clampCompanyShareLinksPage`, `companySharePreviewSearchState`, `prependCompanyShareLink` | Independent link history pagination, invalid query recovery, cap 25, deduplicated newly issued share. |
+
+**Remaining:** routes' live 401/403/404/error and mobile browser states, correlated POST route actual origin checks, and PostgreSQL shared-link history/read isolation must run before closing this TPO page group.

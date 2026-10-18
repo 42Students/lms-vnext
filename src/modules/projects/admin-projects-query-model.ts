@@ -19,6 +19,7 @@ function first(value: string | string[] | undefined) {
 export function parseAdminProjectsQuery(
   params: Record<string, string | string[] | undefined>,
 ) {
+  if (Object.values(params).some(Array.isArray)) return schema.safeParse(null);
   const search = first(params.search) ?? first(params.q);
   const status = first(params.status);
   const view = first(params.view);
