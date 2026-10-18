@@ -100,7 +100,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </div>
     </div>
     {!detail&&!loading&&!error?<button type="button" onClick={()=>void reload()}
-      className="mt-4 min-h-11 rounded bg-primary px-4 text-on-primary">Open application details</button>:null}
+      className="mt-4 min-h-11 rounded bg-primary px-4 text-foreground">Open application details</button>:null}
     {loading?<p role="status" className="py-4 text-sm">Loading application details…</p>:null}
     {error?<p ref={errorRef} tabIndex={-1} role="alert" className="my-4 text-sm text-error">{error}</p>:null}
     {detail?<div className="mt-4 space-y-5">
@@ -127,14 +127,14 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <p className="mt-2 text-sm text-body">{detail.resume.reason}</p>
        {detail.resume.available&&detail.resume.url?
         <a href={detail.resume.url}  rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-primary-text">
+          className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
           Resume Preview · Open securely
         </a>:null}
        <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>
        <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No fabricated public resume URL or match score is shown.</p>
        <button type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
         onClick={()=>void rescreen()}
-        className="mt-3 min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+        className="mt-3 min-h-11 rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
         {rescreening?"Re-screening…":"Re-screen"}
        </button>
        <p className="mt-1 text-xs text-muted-foreground">Re-screen checks recorded academic eligibility under current policy. It does not fabricate a match score or reverse an existing screening decision.</p>
@@ -152,7 +152,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        {detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).length?
         <div className="mt-3 space-y-2">{detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).map(r=>
           <p key={r.id} className="text-sm"><a href={r.testUrl!} 
-            rel="noreferrer noopener" className="font-semibold text-primary-text underline">{r.name} · Open assessment</a>
+            rel="noreferrer noopener" className="font-semibold text-[var(--lms-teal-deep)] underline">{r.name} · Open assessment</a>
             <span className="mt-1 block break-all text-xs text-muted-foreground">{r.testUrl}</span>
             <button type="button" onClick={async()=>{try{await navigator.clipboard.writeText(r.testUrl!);setLinkNotice("Assessment link copied.");}catch{setLinkNotice("Copy unavailable. Select and copy the link shown above.");}}}
              className="mt-1 min-h-11 rounded border border-border px-3 font-semibold focus-visible:ring-2 focus-visible:ring-primary">Copy assessment link</button></p>)}</div>
@@ -163,7 +163,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <h3 className="font-semibold">Interview scheduling</h3>
        <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
         (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
-        className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-primary-text">
+        className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
         Schedule or view candidate interviews
        </a>
       </section>
@@ -173,7 +173,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         <li key={o.id} className="space-y-2 rounded border border-border p-2">
          <p>{o.status} · {when(o.issuedAt)}</p>
          {o.offerLetterUrl?<a href={o.offerLetterUrl}  rel="noreferrer noopener"
-           className="font-semibold text-primary-text underline">View offer letter</a>:null}
+           className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:null}
          {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
           <label className="grid gap-1">Offer-letter HTTPS link
            <input type="url" placeholder="https://..." value={letterInput[o.id]??""}
@@ -181,7 +181,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
             className="min-h-11 rounded border border-border bg-surface p-2 text-base sm:text-sm"/>
           </label>
           <button type="button" disabled={savingLetter} onClick={()=>void attachLetter(o.id)}
-           className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+           className="min-h-11 rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
            {savingLetter?"Saving…":"Attach Offer Letter"}</button>
          </div>:null}
         </li>)}</ul>:
@@ -190,11 +190,14 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Internal Notes</h3>
        <p className="mt-1 text-xs text-muted-foreground">Visible only to the college placement team; correcting a note adds a new version and preserves its history.</p>
-       <div className="mt-3 max-h-48 space-y-2 overflow-auto">{detail.notes.map(n=>
+       {detail.notes.length>3?<p id="application-notes-scroll-cue" className="mt-2 text-xs text-muted-foreground">More internal notes below ↓</p>:null}
+       <div tabIndex={0} role="region" aria-label="Internal notes history"
+        aria-describedby={detail.notes.length>3?"application-notes-scroll-cue":undefined}
+        className="mt-3 max-h-48 space-y-2 overflow-y-auto overscroll-contain pb-5 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">{detail.notes.map(n=>
         <div key={n.id} className="rounded border border-border p-2 text-sm">
          <p>{n.body}</p><p className="mt-1 text-xs text-muted-foreground">{when(n.createdAt)}</p>
          <button type="button" onClick={()=>{setAmendsNoteId(n.id);setNote(n.body);setSuccess("");}}
-          className="mt-1 min-h-11 rounded border border-border px-2 font-semibold text-primary-text">
+          className="mt-1 min-h-11 rounded border border-border px-2 font-semibold text-[var(--lms-teal-deep)]">
           Edit Internal Notes
          </button>
         </div>)}</div>
@@ -203,7 +206,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          className="rounded border border-border bg-surface p-3 text-base sm:text-sm"/></label>
        {success?<p role="status" className="text-sm text-body">{success}</p>:null}
        <button type="button" disabled={saving||!note.trim()} onClick={()=>void save()}
-        className="mt-3 min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+        className="mt-3 min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
          {saving?"Saving…":amendsNoteId?"Save correction":"Add note"}</button>
        {amendsNoteId?<button type="button" onClick={()=>{setAmendsNoteId(null);setNote("");}}
          className="ml-2 min-h-11 rounded border border-border px-3">Cancel correction</button>:null}
