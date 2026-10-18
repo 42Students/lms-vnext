@@ -319,7 +319,7 @@ export function CreateProjectControl({
               {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
             </Select>
           </label>
-          {classesError?<p role="alert" className="text-sm text-error">Classes could not load. <button type="button" className="min-h-11 underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</button></p>:null}
+          {classesError?<p role="alert" className="text-sm text-error">Classes could not load. <Button variant="ghost" type="button" className="min-h-11 underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</Button></p>:null}
           <label className="grid gap-1 text-sm font-semibold">Status
             <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="min-h-11 rounded-md border border-border bg-background px-3">
@@ -330,13 +330,13 @@ export function CreateProjectControl({
           {!mentorMembershipId?<p className="text-xs text-warning">This workspace has no mentor.</p>:null}
           {sectionId?<section className="rounded-lg border border-border p-3">
             <p className="mb-2 text-sm font-semibold">Students · {learnerMembershipIds.length} selected</p>
-            {rosterError?<p role="alert" className="text-sm text-error">Class roster could not load. <button type="button" className="min-h-11 underline" onClick={()=>{setRosterError(false);setRosterRetry(value=>value+1);}}>Try again</button></p>:null}
+            {rosterError?<p role="alert" className="text-sm text-error">Class roster could not load. <Button variant="ghost" type="button" className="min-h-11 underline" onClick={()=>{setRosterError(false);setRosterRetry(value=>value+1);}}>Try again</Button></p>:null}
             {!rosterError&&loadedRosterSectionId!==sectionId?<p role="status" className="text-sm text-body">Loading class roster…</p>:null}
             <div className="flex gap-3 text-xs">
-              <button type="button" disabled={loadedRosterSectionId!==sectionId} className="min-h-11 text-primary-text underline disabled:opacity-50"
-                onClick={()=>setLearnerMembershipIds(roster.map(x=>x.membershipId))}>Whole class</button>
-              <button type="button" className="text-primary-text underline"
-                onClick={()=>setLearnerMembershipIds([])}>Clear</button>
+              <Button variant="ghost" type="button" disabled={loadedRosterSectionId!==sectionId} className="min-h-11 text-primary-text underline disabled:opacity-50"
+                onClick={()=>setLearnerMembershipIds(roster.map(x=>x.membershipId))}>Whole class</Button>
+              <Button variant="ghost" type="button" className="text-primary-text underline"
+                onClick={()=>setLearnerMembershipIds([])}>Clear</Button>
             </div>
             <div className="mt-3 max-h-40 space-y-2 overflow-y-auto">
               {roster.map(student=><label key={student.membershipId} className="flex items-center gap-2 text-sm">
