@@ -41,10 +41,10 @@ export default async function TpoDriveRoundsPage({
     value ? new Intl.DateTimeFormat("en-IN", {
       timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
     }).format(value) + " IST" : "To be scheduled";
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="TPO · Drive workspace" title="Rounds and schedule"
       description="Plan the drive rounds, check bookings and record company results." />
-    <Link href={root + "#drive-round-actions"} className="inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+    <Link href={root + "#drive-round-actions"} className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       Manage and reorder rounds
     </Link>
     {drive.rounds.length === 0
@@ -61,7 +61,7 @@ export default async function TpoDriveRoundsPage({
                 <p className="mt-1 text-sm text-body">{round.status} · {round.mode} · {date(round.scheduledAt)}</p>
               </div>
               <Link href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}
-                className="inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
                 See who / record results
               </Link>
             </div>
@@ -82,14 +82,14 @@ export default async function TpoDriveRoundsPage({
               <div><dt className="text-body">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes + " minutes" : "Not specified"}</dd></div>
             </dl>
             {round.kind==="INTERVIEW"?<Link href={root+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
-              className="mt-3 inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+              className="mt-3 inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
               Slots and rooms · {countFor(proposals,round.id)+countFor(requests,round.id)} need review
             </Link>:null}
             {round.whatToBring ? <p className="mt-3 text-sm text-body">Bring: {round.whatToBring}</p> : null}
             {round.meetingUrl ? <a href={round.meetingUrl} target="_blank" rel="noopener noreferrer"
-              className="mt-3 inline-block text-sm font-semibold text-primary-text underline">Meeting link</a> : null}
+              className="mt-3 inline-block text-sm font-semibold text-[var(--lms-teal-deep)] underline">Meeting link</a> : null}
             {round.testUrl ? <a href={round.testUrl} target="_blank" rel="noopener noreferrer"
-              className="ml-4 mt-3 inline-block text-sm font-semibold text-primary-text underline">Test link</a> : null}
+              className="ml-4 mt-3 inline-block text-sm font-semibold text-[var(--lms-teal-deep)] underline">Test link</a> : null}
           </article>;
         })}
       </div>}
