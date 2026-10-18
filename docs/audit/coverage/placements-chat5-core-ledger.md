@@ -38,6 +38,13 @@
 | TPO round result route `/tpo/placements/jobs/[jobId]/rounds/[roundId]/results` | Same: `UX-tpo-placements-jobs-jobid-rounds-roundid-results-02` validation before read, bulk cap and separate apply | 500+ roster integration / pagination |
 | TPO selection modal `src/components/placements/tpo-drive-selection-manager.tsx` | Same: `UX-placements-scroll-motion-01`, `UX-placements-selection-targets-01`, `PLACEMENTS-SELECTION-ERROR-01` source asserts scroll cue, accessible controls, friendly error and preserved chosen | Browser focus trap, network simulation |
 
+| `external-offer-policy.nextExternalOfferStatus` | `tests/unit/chat5-placements-external-offers-and-deadlines.test.ts`: `PLACEMENTS-EXTERNAL-01/02`, allowed transitions and every forbidden action matrix | Persisted status/history race and tenant review scope |
+| `external-offer-policy.isVerifiedExternalPlacement`, `countVerifiedExternalPlacements` | Same: `PLACEMENTS-EXTERNAL-03` verification, rejection, missing reviewer/date, revocation all excluded | Real transaction with audit and retention summary |
+| `external-offer-policy.externalOfferAnnualCtcInr` | Same: `PLACEMENTS-EXTERNAL-04` precise decimal to integer INR; unknown/invalid/revoked fail closed | Overflow and DB decimal checks |
+| `application-deadline-policy.isPlacementApplicationDeadlinePassed` | Same: `PLACEMENTS-DEADLINE-01` one millisecond before, at and after exclusive instant | Serialized apply-versus-deadline race |
+| `TpoJoiningUpdateForm` client-side confirmation guard | `tests/unit/chat5-placements-ux-workflows.test.ts`: `PLACEMENTS-JOINING-CONFIRM-01` validation and explicit confirmation before PUT | Browser cancellation and double submit |
+| `TpoBulkRoundResultRecorder` bulk select shortcut | Same: `UX-placements-bulk-round-targets-01` 44px target, 25-cap and bulk confirmation guard | 320px phone interaction |
+
 ## Deliberately uncovered areas
 
 The `src/modules/placements` folder has hundreds of exports and far more handlers than listed; this is not an exhaustive generated inventory. Outstanding high-risk service branches include `tpo-waitlist-promotion-service.offerToNextWaitlisted`, `tpo-drive-selection-service`, `offer-cascade-undo-service.undoPlacementOfferCascade`, the sweep scheduler and cancellation overlap, `college-retention-report-service`, cross-tenant/role denials, CSV injection, notifications and audit dedupe, and actual transaction rollback/retry. More integration tests with isolated PostgreSQL fixtures are essential before release sign-off.
