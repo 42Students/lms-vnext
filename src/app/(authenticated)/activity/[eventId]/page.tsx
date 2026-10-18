@@ -47,7 +47,7 @@ export default async function ActivityDetailPage({
   const { event, actor } = detail;
   return (
     <div className="min-w-0 space-y-6">
-      <Breadcrumbs items={[{ label: "Activity Log", href: "/activity" }, { label: "Event detail" }]} />
+      <Breadcrumbs items={[{ label: "Activity Log", href: "/activity" }, { label: event.summary }]} />
       <PageHeader
         eyebrow="Activity Center"
         title={event.summary}
