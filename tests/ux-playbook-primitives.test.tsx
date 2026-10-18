@@ -63,6 +63,46 @@ describe("UX playbook shared behaviour", () => {
       getRowKey={row=>row.label} empty={<p>No rows</p>}/>);
     expect(formatter).toHaveBeenCalledTimes(2);
   });
+  it("RV-05 B-02 keeps hidden fields in More details without audited column mapping",()=>{
+    const rows=[{id:"one",secret:"Only on roster"}];
+    const html=renderToStaticMarkup(<DataTable rows={rows} getRowKey={row=>row.id}
+      empty={<p>No matching learners</p>} rowHref={row=>"/learners/"+row.id}
+      columns={[
+        {key:"id",header:"Student",mobilePriority:"primary",cell:row=>row.id},
+        {key:"secret",header:"Sensitive field",mobilePriority:"hidden",
+          mobileHiddenReason:"See record",cell:row=>row.secret},
+      ]}/>);
+    expect(html).toContain("More details");
+    expect(html).toContain("Only on roster");
+  });
+  it("RV-05 B-02 requires positive per-row detail authority to hide a field",()=>{
+    const rows=[{id:"one",secret:"Visible without authority"}];
+    const base=[
+      {key:"id",header:"Student",mobilePriority:"primary" as const,cell:(row:{id:string;secret:string})=>row.id},
+      {key:"secret",header:"Secret",mobilePriority:"hidden" as const,
+        mobileHiddenReason:"Verified detail field",cell:(row:{id:string;secret:string})=>row.secret,
+        mobileDetail:{fieldKey:"secret",href:(row:{id:string;secret:string})=>"/learners/"+row.id,
+          canView:(_row:{id:string;secret:string})=>false}},
+    ];
+    const denied=renderToStaticMarkup(<DataTable rows={rows} getRowKey={row=>row.id}
+      empty={<p>No learners</p>} columns={base}/>);
+    expect(denied).toContain("More details");
+    const allowed=renderToStaticMarkup(<DataTable rows={rows} getRowKey={row=>row.id}
+      empty={<p>No learners</p>} columns={[
+        base[0]!,{...base[1]!,mobileDetail:{...base[1]!.mobileDetail,canView:()=>true}},
+      ]}/>);
+    expect(allowed).toContain("Secret · View details");
+  });
+  it("E-05 100 rows serialize exactly one responsive table row each",()=>{
+    const rows=Array.from({length:100},(_,i)=>({id:"row-"+i}));
+    const formatter=vi.fn((row:{id:string})=>row.id);
+    const html=renderToStaticMarkup(<DataTable rows={rows}
+      empty={<p>No records in legacy role</p>} getRowKey={row=>row.id}
+      columns={[{key:"id",header:"Identifier",mobilePriority:"primary",cell:formatter}]}/>);
+    expect((html.match(/<tr(?: |\\>)/g)??[])).toHaveLength(101);
+    expect((html.match(/<table\\b/g)??[])).toHaveLength(1);
+    expect(formatter).toHaveBeenCalledTimes(100);
+  });
   it("UX-PLAYBOOK-07 pagination announces current page", () => {
     const markup = renderToStaticMarkup(<Pagination page={2} pageCount={3} hrefForPage={page => "/directory?page=" + page}/>);
     expect(markup).toContain("Page 2 of 3");
