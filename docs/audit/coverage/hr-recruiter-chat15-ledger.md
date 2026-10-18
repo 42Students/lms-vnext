@@ -60,3 +60,19 @@ All entries below execute imported implementation functions, not read source cod
 The generated `docs/audit/coverage/WEAK-AREAS.md` listed several unreferenced HR models and services. New **behavioral** references now cover: `hr-recruiter-name-fields-model.ts`, `hr-drive-conversation-service.ts`, `recruiter-drive-progress-model.ts`, `recruiter-today-waiting-model.ts`, `hr-today-offer-actions-service.ts`, `hr-today-open-slots-service.ts`, `hr-today-change-request-service.ts`, `bug-tracker/audit-findings-day-model.ts`, and `bug-tracker/admin-errors.ts`. These are independent of existing source-string tests.
 
 Remaining weak-area placements sources outside this subset and every unlisted HR handler/export remain OPEN. The section cannot truthfully be declared exhaustively tested without a live test runner, coverage collection, and PostgreSQL fixtures. Do not mark owner sign-off complete.
+
+### Weak HR services — second pass
+
+The following tests import live exported services and substitute only DB reads / upstream authorization with controlled test doubles. **Mocks cannot prove SQL's tenant predicates**; actual tenant isolation still requires PostgreSQL integration tests.
+
+| Exported service | Behavioral test | Tests | Open |
+|---|---|---|---|
+| countRecruiterAnswerableDriveRequests | `HR-BREAK-weak-services-01.test.ts` | Empty authorized list causes zero DB calls; persisted count coercion and per-drive mapping | SQL query actual tenant |
+| listRecruiterCollegeBranches | same | No matching grant -> no query; central permission false -> no query; authorized list returned | Active/archived departments with real DB |
+| listOwnRecruiterDecisionNotices | same | No own requests -> no notification query; authorized notices mapped with unread/href | Other-tenant/nonowner SQL protection |
+| recruiterTeamAttributedDriveCounts | same | No matching employer grant denies; own request attribution overrides TPO creator; mismatched college job absent | Real DB ownership race |
+| recruiterVisiblePortfolioCounts | same | Inactive/wrong college rejects; empty allowed job list never touches DB | Counts scoped against real shortlist |
+| MyTrackerReportsPage / MyTrackerReportDetail | `HR-BREAK-tracker-pages-01.test.ts` | Suspended reporter, runtime disabled, data loading failed, empty state, persisted list, invalid and missing detail IDs; direct server component invocation | Browser and signed-in DB IDOR |
+| RecruiterCompanyReportsPage | `HR-BREAK-company-reports-page-01.test.ts` | Wrong role redirect; invalid query reset; no college access; multiple-college chooser excludes global sum | Full READY branch and DB pagination |
+
+The Weak Areas generated report also names `recruiter-selection-staged-schema.ts`. It is explicitly staged, not live; no tenant query or write should be introduced before its orchestrator-registered migration. Treat it as **N/A to live persistence tests**, not tested and not approved for writes.
