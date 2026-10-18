@@ -15,6 +15,20 @@ const row=(i:number)=>({
 });
 beforeEach(()=>state.reader.mockReset());
 describe("Super Admin assessment export service scoped pagination",()=>{
+ it("SA-academics-people-64/65 rejects duplicate, foreign-tenant, invalid status and assignment-only result filters before reading",async()=>{
+  for(const [kind,url] of [
+   ["ASSIGNMENT","https://app.invalid/api/admin/assignments/export?status=PUBLISHED&status=ARCHIVED"],
+   ["ASSIGNMENT","https://app.invalid/api/admin/assignments/export?collegeId=another"],
+   ["ASSIGNMENT","https://app.invalid/api/admin/assignments/export?status=CLOSED"],
+   ["ASSIGNMENT","https://app.invalid/api/admin/assignments/export?results=PUBLISHED"],
+   ["QUIZ","https://app.invalid/api/admin/quizzes/export?scope=INVALID"],
+   ["QUIZ","https://app.invalid/api/admin/quizzes/export?results=HIDDEN&results=ALL"],
+  ] as const){
+   const response=await exportSuperAdminLearningDirectory(new Request(url),kind);
+   expect(response.status).toBe(400);
+  }
+  expect(state.reader).not.toHaveBeenCalled();
+ });
  it("SA-academics-people-64 passes the acting session and selected assignment filters to the authorized reader",async()=>{
   state.reader.mockResolvedValue({items:[row(0)],total:1,totalPages:1});
   const request=new Request("https://app.invalid/api/admin/assignments/export?q=Graphs&status=PUBLISHED&courseCode=CS401&scope=SECTION");
