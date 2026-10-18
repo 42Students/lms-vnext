@@ -44,7 +44,9 @@ describe("chat-19 all /college route entry point source coverage", () => {
       expect(source).not.toContain('href="//');
     }
     const projects = readFileSync(files[0], "utf8");
-    expect(projects).toContain('membership.collegeId');
-    expect(projects).toContain('listProjectAdminSnapshots(context, membership.collegeId');
+    expect(projects).toContain('getProjectAdminCollegeId(context)');
+    expect(projects).toContain('if (!collegeId)');
+    expect(projects).toContain('listProjectAdminSnapshots(context, collegeId');
+    expect(projects).toContain('listAssignedProjectTemplates(context, collegeId');
   });
 });
