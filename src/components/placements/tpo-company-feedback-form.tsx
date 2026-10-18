@@ -77,7 +77,7 @@ export function TpoCompanyFeedbackForm({
       </div>:null}
       <button type="button" disabled={busy || !leadId || note.trim().length < 3}
         onClick={() => void save()}
-        className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
+        className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50">
         {busy ? "Saving note..." : reviewing?"Confirm note save":"Review and save note"}
       </button>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
