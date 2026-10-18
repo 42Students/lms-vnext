@@ -40,7 +40,7 @@ describe("chat-13 Super Admin Placements service boundary tests", () => {
   it("SA-COMPANY-CSV-01 prevents formula injection and preserves quotes, CRLF and explicit non-sensitive columns", () => {
     const spreadsheetPayload = "=HYPERLINK(\"https://evil.example\",\"click\")";
     const csv = superAdminCompanyCsv([company(spreadsheetPayload), company(" +SUM(2,2)")]);
-    expect(csv).toContain("\"'="+'HYPERLINK(""https://evil.example"",""click"")'+"\"");
+    expect(csv).toContain(`"\'=HYPERLINK(""https://evil.example"",""click"")"`);
     expect(csv).toContain("\"' +SUM(2,2)\"");
     expect(csv.startsWith('"Company ID","Company","Primary Domain","College"')).toBe(true);
     expect(csv.endsWith("\r\n")).toBe(true);
