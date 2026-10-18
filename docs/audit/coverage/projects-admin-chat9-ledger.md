@@ -141,3 +141,5 @@ The Projects squad lead (chat-14) must reconcile these missing exports and route
 
 | `admin-reassign-mentor-query-model.ts` | `projectAdminReassignMentorHref` | PURE BEHAVIOR | `PROJ-BREAK-mentor-113`: all validated workspace, mentor, search and paging filters survive encoded retry exactly; `tests/unit/PROJ-BREAK-chat9-mentor-reassignment-page-outages.test.tsx`; browser history pending. |
 | `project-admin-reassign-mentor-page.tsx` | `ProjectAdminReassignMentorPage` | MOCK SSR BEHAVIOR | `PROJ-BREAK-mentor-114/115/116`: malformed URL fails before private reads, each workspace/mentor/workload failure disables all mutation choices and shows scoped retry, healthy route renders; same test; authenticated browser pending. |
+
+| `src/app/api/projects/reassign-mentor/route.ts` | `POST` | MOCK ROUTE BEHAVIOR | `PROJ-BREAK-routing-117/118/119/120`: same-origin 403 before auth/body, exact one successful service invocation, forbidden persisted tenant mapping, generic 500 without secrets; `tests/unit/PROJ-BREAK-chat9-bulk-reassignment-route.test.ts`; live HTTP and authenticated origin replay OPEN. |
