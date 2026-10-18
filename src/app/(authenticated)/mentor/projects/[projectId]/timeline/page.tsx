@@ -23,7 +23,7 @@ export default async function MentorProjectTimelinePage({
   const data=await getMentorProjectTimeline(
     await getCurrentRequestContext(),parsed.data,
   );
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Release &amp; Sprint timeline"
       description={data.projectTitle}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}

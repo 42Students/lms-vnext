@@ -30,7 +30,7 @@ export default async function MentorTeamMeetingsPage({
   const data=await getMentorTeamMeetings(context,parsed.data);
   const board="/mentor/projects/"+encodeURIComponent(projectId)+"?tab=team";
   const renderedAt = new Date();
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Team &amp; meeting log"
       description={data.projectTitle}
       actions={<Link href={board}
@@ -61,7 +61,7 @@ export default async function MentorTeamMeetingsPage({
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting status
           <select name="status" defaultValue={data.query.status}
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">All</option><option value="REQUESTED">Requested</option>
             <option value="SCHEDULED">Scheduled</option>
             <option value="COMPLETED">Completed</option>
@@ -70,7 +70,7 @@ export default async function MentorTeamMeetingsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting type
           <select name="type" defaultValue={data.query.type}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All types</option><option value="GENERAL">General</option>
             <option value="PLANNING">Planning</option><option value="STANDUP">Standup</option>
             <option value="REVIEW">Review</option><option value="RETRO">Retrospective</option>
@@ -78,14 +78,14 @@ export default async function MentorTeamMeetingsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded outcome
           <select name="outcome" defaultValue={data.query.outcome}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All meetings</option><option value="RECORDED">With written outcome</option>
             <option value="NOT_RECORDED">Without written outcome</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting order
           <select name="order" defaultValue={data.query.order}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Most recent first</option>
             <option value="OLDEST">Oldest first</option>
           </select>
@@ -93,10 +93,10 @@ export default async function MentorTeamMeetingsPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting title
           <input type="search" name="search" maxLength={100}
             defaultValue={data.query.search}
-            className="min-h-10 rounded-md border border-border bg-background px-3"/>
+            className="min-h-11 rounded-md border border-border bg-background px-3"/>
         </label>
         <button type="submit"
-          className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
         <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
@@ -131,7 +131,7 @@ export default async function MentorTeamMeetingsPage({
               </div>:null}
             <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
               "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
-              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
               View outcome notes
             </Link>
           </li>)}</ol>}

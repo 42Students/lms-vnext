@@ -43,13 +43,13 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     deadline:first(raw.deadline)||undefined,page:first(raw.page)||undefined,
     sort:first(raw.sort)||undefined,
   });
-  if (!query.success) return <div className="space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" />
+  if (!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" />
     <ErrorState title="Invalid drive filters" description="Review the college, lifecycle and search text."
       action={<Link href="/hr/drives" className="text-primary-text underline">Clear filters</Link>} /></div>;
   const grants = context.recruiter.grants;
   if (query.data.collegeId && !grants.some(grant => grant.collegeId === query.data.collegeId)) notFound();
   const selectedCollege = query.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
-  if (!selectedCollege) return <div className="space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" description="Choose an authorized college to open its hiring drives." />
+  if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" description="Choose an authorized college to open its hiring drives." />
     {grants.length === 0 ? <EmptyState title="No active college access" description="Your placement-cell relationship must be active before any drives are visible." /> :
     <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
       className="rounded-xl border border-border bg-surface p-5 hover:border-primary">{grant.collegeName}</Link>)}</section>}</div>;
@@ -86,7 +86,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     recruiterVisiblePortfolioCounts(context,selectedCollege,pageResult.rows.map(row=>row.job.id)),
     countRecruiterAnswerableDriveRequests(selectedCollege,pageResult.rows.map(row=>row.job.id)),
   ]);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Recruiter" title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
@@ -199,7 +199,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {query.data.view==="WAITING" && requestView.length===0
       ? <div className="rounded-xl border border-border p-5">
           <EmptyState title="No Sent for review drives" description="Choose another drive stage to see more."/>
-          <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">View all drives</Link>
+          <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">View all drives</Link>
         </div>
       : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0
         ? <div className="rounded-xl border border-border p-5">
@@ -210,7 +210,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
             : <EmptyState title={"No "+(query.data.view==="LIVE"?"Live":"Completed and cancelled")+" drives"}
               description="Choose another drive stage to see more."/>}
           <Link href={totals.all===0?recruiterDriveDraftHref({collegeId:selectedCollege}):recruiterDrivesHref({...query.data,view:"ALL",q:"",page:1})}
-            className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+            className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
             {totals.all===0?"Request a drive":query.data.q?"Clear search":"View all drives"}
           </Link>
         </div>
@@ -226,7 +226,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         {pageResult.page<pageResult.pages?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:pageResult.page+1})}
           className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
       </div></nav>:null}
-    <Link href="/hr/round-results" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary">Review round results →</Link>
+    <Link href="/hr/round-results" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary">Review round results →</Link>
     <p className="text-xs text-muted-foreground">Request history is saved. Placement-cell approval and external sending remain unavailable until the registered employer-request workflow is ready.</p>
   </div>;
 }

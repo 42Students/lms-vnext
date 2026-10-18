@@ -16,7 +16,7 @@ export default async function MentorProjectCloseoutPage({
     ["All registered Sprints Completed",data.checklist.sprintsComplete],
     ["All registered Releases Shipped",data.checklist.releasesShipped],
   ] as const;
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Project closeout"
       description={data.title+" · Current state "+data.status}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}

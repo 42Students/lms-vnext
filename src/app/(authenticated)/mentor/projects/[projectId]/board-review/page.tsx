@@ -23,7 +23,7 @@ export default async function MentorBoardReviewPage({
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
-  return <div className="space-y-5">
+  return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
       description={data.projectTitle}
       actions={<Link href={base+"?tab=board"}
@@ -49,30 +49,30 @@ export default async function MentorBoardReviewPage({
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="grid gap-1 text-sm">Search tasks or sprints
           <input type="search" name="search" maxLength={100} defaultValue={data.query.search}
-            className="min-h-10 rounded border border-border bg-background p-2"/>
+            className="min-h-11 rounded border border-border bg-background p-2"/>
         </label>
         <label className="grid gap-1 text-sm">Status
           <select name="status" defaultValue={data.query.status}
-            className="min-h-10 rounded border border-border bg-background p-2">
+            className="min-h-11 rounded border border-border bg-background p-2">
             {(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(state=>
               <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm">Priority
           <select name="priority" defaultValue={data.query.priority??"ALL"}
-            className="min-h-10 rounded border border-border bg-background p-2">
+            className="min-h-11 rounded border border-border bg-background p-2">
             {(["ALL","LOW","MEDIUM","HIGH","CRITICAL"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm">Sprint
           <select name="sprintId" defaultValue={data.query.sprintId??"ALL"}
-            className="min-h-10 rounded border border-border bg-background p-2">
+            className="min-h-11 rounded border border-border bg-background p-2">
             <option value="ALL">All sprints</option>
             {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
         <Link href={base+"/board-review"} className="px-3 py-2 text-primary-text underline">Clear</Link>
@@ -81,7 +81,7 @@ export default async function MentorBoardReviewPage({
         <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
           (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
             "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-          download className="min-h-10 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          download className="min-h-11 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Download filtered CSV (max 500)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -94,7 +94,7 @@ export default async function MentorBoardReviewPage({
           <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-            download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            download className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Download filtered Sprint summary CSV (max 100)
           </Link>
         </div>

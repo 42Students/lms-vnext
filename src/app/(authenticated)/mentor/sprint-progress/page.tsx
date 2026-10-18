@@ -35,7 +35,7 @@ export default async function MentorSprintProgressPage({
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
   const data = await getMentorSprintProgress(context, parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Sprint progress"
       description="Registered sprint, release and task status across your current project assignments."
       actions={<Link href="/mentor/projects" className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
@@ -48,39 +48,39 @@ export default async function MentorSprintProgressPage({
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Search
           <input type="search" name="search" defaultValue={data.query.search} maxLength={120}
-            placeholder="Sprint, release or project" className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
+            placeholder="Sprint, release or project" className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select name="projectId" defaultValue={data.query.projectId??""} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint status
           <select name="state" defaultValue={data.query.state}
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">All</option><option value="ACTIVE">Active</option>
             <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Registered task attention
-          <select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option><option value="DONE">Sprints with recorded Done tasks</option><option value="TODO">Sprints with recorded To Do tasks</option><option value="NO_TASKS">Sprints without recorded tasks</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Release status
           <select name="release" defaultValue={data.query.release}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All releases</option><option value="PLANNED">Planned</option>
             <option value="IN_PROGRESS">In progress</option><option value="SHIPPED">Shipped</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint order
-          <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="order" defaultValue={data.query.order} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="PROJECT">Project and Sprint order</option><option value="ACTIVE_FIRST">Active Sprints first</option>
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
         <Link href="/mentor/sprint-progress" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
@@ -92,7 +92,7 @@ export default async function MentorSprintProgressPage({
             projectId:data.query.projectId??"",taskAttention:data.query.taskAttention,
             order:data.query.order,
           }).toString()}
-          download className="min-h-10 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+          download className="min-h-11 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Export filtered sprint CSV (max 100)
         </Link>
         {data.total>100?<span role="status">
@@ -128,7 +128,7 @@ export default async function MentorSprintProgressPage({
               ? "Unknown (no tasks)" : item.tasks.completionPercent + "%"} of persisted tasks marked Done
           </p>
           <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=sprints"}
-            className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
             Open authorized sprint workspace →
           </Link>
         </article>)}</div>}

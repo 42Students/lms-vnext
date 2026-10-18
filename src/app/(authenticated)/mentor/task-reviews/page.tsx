@@ -64,25 +64,25 @@ export default async function MentorTaskReviewsPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Task or project
           <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground"
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"
             placeholder="Search pending task reviews" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Page size
           <select name="pageSize" defaultValue={String(data.pageSize)}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="20">20</option><option value="50">50</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
+          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 max-w-full rounded-md border border-border bg-background px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
           <select name="assignment" defaultValue={data.query.assignment}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All current assignments</option>
             <option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
@@ -90,7 +90,7 @@ export default async function MentorTaskReviewsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Priority
           <select name="priority" defaultValue={data.query.priority}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             {(["ALL","CRITICAL","HIGH","MEDIUM","LOW"] as const).map(priority=>
               <option key={priority} value={priority}>{priority}</option>)}
           </select>
@@ -98,22 +98,22 @@ export default async function MentorTaskReviewsPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Submission version
           <input type="number" name="version" min={1} max={100000}
             defaultValue={data.query.version ?? ""} placeholder="All versions"
-            className="min-h-10 w-32 rounded-md border border-border bg-background px-3 text-foreground" />
+            className="min-h-11 w-32 rounded-md border border-border bg-background px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Waiting since
-          <select name="age" defaultValue={data.query.age} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="age" defaultValue={data.query.age} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option><option value="OLDER_THAN_30_DAYS">Over 30 days old</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
           <select name="order" defaultValue={data.query.order}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Newest first</option>
             <option value="OLDEST">Oldest first</option><option value="PRIORITY">Critical priority first</option>
           </select>
         </label>
         <button type="submit"
-          className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
         <Link href="/mentor/task-reviews" className="px-3 py-2 text-sm font-semibold text-primary-text">
@@ -122,7 +122,7 @@ export default async function MentorTaskReviewsPage({
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={mentorTaskReviewExportHref(data.query)} download
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
           Export pending task review metadata CSV (max 200)
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching task reviews.</span>:null}

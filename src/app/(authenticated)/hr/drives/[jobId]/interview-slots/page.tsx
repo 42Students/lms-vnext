@@ -28,7 +28,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
  const action="/api/placements/recruiter/drives/"+jobId+"/interview-slots";
  const when=(d:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
   dateStyle:"medium",timeStyle:"short"}).format(d)+" IST";
- return <main className="space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Recruiter · Interview coordination" title="Interview slots"
    description={workspace.job.title+" · This schedules employer time blocks only. No learner invitation or candidate booking is created here."}/>
   <p role="status" className="rounded-lg border border-border bg-surface-secondary p-3 text-sm text-body">
@@ -74,5 +74,5 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     {!slots.items.length?<p role="status" className="text-sm text-body">No persisted employer time blocks for this drive.</p>:null}
    </section>
   </>
- </main>;
+ </div>;
 }
