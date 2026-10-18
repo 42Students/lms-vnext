@@ -152,3 +152,7 @@ All four are DONE in reviewed source. No local CI, PostgreSQL or browser run was
 
 
 | SA-JOINING-ANOMALY-09 | DONE in source; CI deferred | Super Admin joining directory now shows persisted offer status and flags JOINED outcomes without an ACCEPTED offer. Historical inconsistencies remain visible for investigation; `tests/unit/chat13-super-admin-joining-integrity.test.ts`. |
+
+
+| SA-HIRING-REPORT-MODEL-10 | DONE in source; CI deferred | Super Admin hiring-report strict filter schema and company-by-ID aggregates tested for 10 counters, invalid date/UUID filters, duplicate employer names, empty input and nonmutation; `tests/unit/chat13-super-admin-hiring-report-model-behavior.test.ts`. |
+| SA-ADMIN-SELECTED-COLLEGE-11 | DONE in source; CI deferred | Active selected-college Super Admin matrix, dual-role membership mismatch, disabled, College Admin/TPO-only and unselected actor denials in `tests/unit/chat13-super-admin-selected-college-role-matrix.test.ts`. |
