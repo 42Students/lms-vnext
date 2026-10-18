@@ -46,8 +46,10 @@ describe("Final sprint recruiter applicant review accessibility", () => {
     expect(page).toContain("focusedNavigation?.next");
     expect(shortcuts).toContain('document.querySelectorAll<HTMLDialogElement>("dialog[open]")');
     expect(shortcuts).toContain("modal.contains(document.activeElement)");
-    expect(shortcuts).toContain('e.key.toLowerCase()==="n"');
-    expect(shortcuts).toContain('e.key.toLowerCase()==="p"');
+    expect(shortcuts).toContain('e.key.toLowerCase() === "n" && nextHref');
+    expect(shortcuts).toContain('e.key.toLowerCase() === "p" && previousHref');
+    expect(shortcuts).toContain("router.push(nextHref)");
+    expect(shortcuts).toContain("router.push(previousHref)");
     expect(shortcuts).not.toContain('document.getElementById("recruiter-focused-review-dialog")');
   });
 });
