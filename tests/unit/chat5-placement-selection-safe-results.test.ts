@@ -65,6 +65,17 @@ describe("TPO release — no internal errors leak in partial results",()=>{
   expect(matchesTpoSelectionReleaseRevision({...current,annualCtcInr:null},
     {...shown,annualCtcInr:null},token)).toBe(true);
  });
+ it("PLACEMENTS-SELECTION-SEASON-06 locks the owning season before every selection mutation",()=>{
+  const service=src("src/modules/placements/tpo-drive-selection-service.ts");
+  const check=service.slice(service.indexOf("async function requireActiveTpoSelectionSeason"),service.indexOf("const pendingCode"));
+  expect(check).toContain('eq(placementJobs.collegeId,collegeId)');
+  expect(check).toContain('eq(placementSeasons.id,placementJobs.seasonId)');
+  expect(check).toContain('.for("share").limit(1)');
+  expect(check).toContain('row?.status!=="ACTIVE"');
+  expect(check).toContain('row.seasonCollegeId!==collegeId');
+  const writes=service.slice(service.indexOf("export async function recordTpoDriveSelections"));
+  expect(writes.match(/await requireActiveTpoSelectionSeason\(tx,job.id,context.membership!\.collegeId\)/g)).toHaveLength(4);
+ });
  it("PLACEMENTS-SELECTION-ERROR-05 never trusts surplus college ID or invalid release version",()=>{
   expect(recordSelectionsSchema.safeParse({action:"RECORD",entries:[],collegeId:id}).success).toBe(false);
   expect(releaseSelectionsSchema.safeParse({action:"VERIFY_AND_RELEASE",confirmed:true,
