@@ -28,6 +28,29 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(overview).toHaveAttribute("aria-selected","true");
   });
 
+  test("nested drawer/sheet owns only its own Back marker and never dismisses the parent",async({page})=>{
+    await page.goto(route);
+    await page.getByRole("button",{name:"Open harness drawer"}).click();
+    const drawer=page.getByRole("dialog",{name:"Harness drawer"});
+    const sheet=page.getByRole("dialog",{name:"Harness nested sheet"});
+    await expect(drawer).toBeVisible();
+    const drawerMarker=await page.evaluate(()=>history.state?.lmsOverlay);
+    expect(typeof drawerMarker).toBe("string");
+
+    await drawer.getByRole("button",{name:"Open nested sheet"}).click();
+    await expect(sheet).toBeVisible();
+    const sheetMarker=await page.evaluate(()=>history.state?.lmsOverlay);
+    expect(sheetMarker).not.toBe(drawerMarker);
+    await sheet.getByRole("button",{name:"Close nested sheet"}).click();
+    await expect(sheet).not.toBeVisible();
+    await expect.poll(()=>page.evaluate(()=>history.state?.lmsOverlay)).toBe(drawerMarker);
+    await expect(drawer).toBeVisible();
+
+    await page.evaluate(()=>history.back());
+    await expect(drawer).not.toBeVisible();
+    await expect(page.getByRole("button",{name:"Open harness drawer"})).toBeFocused();
+  });
+
   test("scroll cues use measured edges and filter drawer works without matchMedia",async({page})=>{
     await page.setViewportSize({width:390,height:780});
     await page.goto(route);

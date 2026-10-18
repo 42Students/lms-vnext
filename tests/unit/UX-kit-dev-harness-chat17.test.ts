@@ -11,7 +11,7 @@ describe("UX-kit-E2E-01 browser fixture cannot expose a production-only test end
     expect(page).toContain('export const dynamic = "force-dynamic"');
     expect(component.startsWith('"use client";')).toBe(true);
     for(const exported of [
-      "ToastProvider","Dialog","ScrollCue","Tabs","FilterBar","FileUpload",
+      "ToastProvider","Dialog","Drawer","BottomSheet","ScrollCue","Tabs","FilterBar","FileUpload",
     ])expect(component).toContain(exported);
   });
 });
