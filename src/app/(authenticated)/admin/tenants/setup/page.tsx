@@ -41,7 +41,7 @@ export default async function SuperAdminTenantSetup({
  const id=context.adminScope?.collegeId??null;
  const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
  const active="border-primary bg-primary-subtle text-[var(--lms-teal-deep)]";
- const inactive="border-border text-body hover:bg-surface-subtle";
+ const inactive="border-transparent text-body hover:bg-surface-subtle";
  const tabLink=(next:Tab)=>"/admin/tenants/setup?tab="+next;
  // Read failures must never present a partial college creation path as an
  // authorized empty organization directory or a safe-to-launch college.
@@ -78,15 +78,15 @@ export default async function SuperAdminTenantSetup({
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."/>
   <section aria-label="Tenant setup overview" className="grid gap-3 sm:grid-cols-3">
-   <article className="rounded-xl border border-border bg-surface p-4">
+   <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Current step</p>
     <p className="mt-2 font-semibold">{tab==="STRUCTURE"?"1. Tenant structure":"2. Launch setup"}</p>
    </article>
-   <article className="rounded-xl border border-border bg-surface p-4">
+   <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Creation</p>
     <p className="mt-2 text-sm font-semibold">{organizations.length?organizations.length+" authorized active organization(s)":tab==="LAUNCH"?"Completed separately":"Create or select an organization"}</p>
    </article>
-   <article className="rounded-xl border border-border bg-surface p-4">
+   <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">College setup</p>
     <p className="mt-2 break-words text-sm font-semibold">{college?.name??(id?"Selected college":"No college selected")}</p>
    </article>
@@ -115,7 +115,7 @@ export default async function SuperAdminTenantSetup({
     </div>
    </section>
    <section aria-label="Existing organizations and colleges" className="grid min-w-0 gap-4 lg:grid-cols-2">
-    <div className="rounded-xl border border-border bg-surface p-4">
+    <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="font-semibold">Organizations</h2>
       <Link href="/admin/organizations" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">Manage all</Link>
@@ -125,7 +125,7 @@ export default async function SuperAdminTenantSetup({
      </ul>
      {organizations.length>20?<p className="mt-2 text-xs text-muted-foreground">First 20 shown; use Manage all for the full directory.</p>:null}
     </div>
-    <div className="rounded-xl border border-border bg-surface p-4">
+    <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="font-semibold">Colleges</h2>
       <Link href="/admin/tenants" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">Manage all</Link>
@@ -143,7 +143,7 @@ export default async function SuperAdminTenantSetup({
    <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Continue to launch setup →</Link>
   </>:college?<>
    <h2 className="text-lg font-semibold">{college.name} · Launch setup</h2>
-   <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+   <p role="status" className="border-b border-border py-4 text-sm text-body">
     Persisted readiness: {summary.label}. {summary.detail}
    </p>
    <div className="grid gap-3 sm:grid-cols-3">
@@ -172,7 +172,7 @@ export default async function SuperAdminTenantSetup({
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
-  </>:<section role="status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+  </>:<section role="status" className="border-b border-border py-5">
     <h2 className="font-semibold">No college selected</h2>
     <p className="mt-2 text-sm text-body">No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant.</p>
     <Link href={tabLink("STRUCTURE")} className="mt-3 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Create or select a college →</Link>
