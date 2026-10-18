@@ -5,6 +5,7 @@ import { parseAdminProjectsQuery } from "@/modules/projects/admin-projects-query
 import { parseProjectAdminRiskQuery } from "@/modules/projects/admin-risk-query-model";
 import { parseProjectAdminSubmissionsQuery } from "@/modules/projects/admin-submissions-query-model";
 import { adminUnsubmittedQuerySchema } from "@/modules/projects/admin-unsubmitted-query-model";
+import { projectAdminServiceQuerySchema } from "@/modules/projects/admin-service-query-model";
 
 const source = (name: string) => readFileSync(
   join(process.cwd(), "src/modules/projects", name + ".ts"), "utf8",
@@ -22,8 +23,18 @@ describe("IIT Dharwad Projects: hostile pagination never triggers an unbounded d
   });
   it("PROJ-BREAK-scale-21 service entrypoints enforce bounds even if API validation is bypassed", () => {
     const snapshots = source("admin-insights-service");
-    expect(snapshots).toMatch(/page:\s*z\.coerce\.number\(\)\.int\(\)\.min\(1\)\.max\(100000\)\.default\(1\)/);
-    expect(snapshots).toMatch(/pageSize:\s*z\.coerce\s*\.number\(\)\s*\.int\(\)\s*\.min\(10\)\s*\.max\(100\)/);
+    // Direct service calls must use exactly the same strict, bounded model;
+    // accepting exponent/hex/blank input because of z.coerce would re-open
+    // the very offset and DoS class the page URL parsers now close.
+    expect(snapshots).toContain("projectAdminServiceQuerySchema.parse(rawQuery)");
+    expect(snapshots).toContain("projectSubmissionQueueQuerySchema");
+    for (const page of ["0x10", "1e2", "", " ", "-1", "0", "100001", "1.5", "NaN", "Infinity", ["1", "2"]]) {
+      expect(projectAdminServiceQuerySchema.safeParse({page}).success, JSON.stringify(page)).toBe(false);
+    }
+    for (const pageSize of ["0x20", "1e2", "", " ", "0", "9", "101", "1.5", ["10", "20"]]) {
+      expect(projectAdminServiceQuerySchema.safeParse({pageSize}).success, JSON.stringify(pageSize)).toBe(false);
+    }
+    expect(projectAdminServiceQuerySchema.safeParse({page:100000,pageSize:100}).success).toBe(true);
     const unsubmitted = source("admin-unsubmitted-service");
     expect(unsubmitted).toContain("adminUnsubmittedQuerySchema.parse(raw)");
     expect(unsubmitted.indexOf("adminUnsubmittedQuerySchema.parse(raw)"))
