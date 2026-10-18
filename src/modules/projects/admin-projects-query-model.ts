@@ -1,11 +1,18 @@
 import { z } from "zod";
 
+// URL numbers are decimal-only: coercion would also admit 0x10, 1e2 and whitespace.
+const positiveDecimal = (min: number, max: number, fallback: number) =>
+  z.union([
+    z.number().int().min(min).max(max),
+    z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(min).max(max)),
+  ]).default(fallback);
+
 const schema = z.strictObject({
   q: z.string().trim().max(120).optional(),
   status: z.enum(["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
   view: z.enum(["cards", "table"]).default("table"),
-  page: z.coerce.number().int().min(1).max(100000).default(1),
-  pageSize: z.coerce.number().int().min(10).max(100).default(20),
+  page: positiveDecimal(1, 100000, 1),
+  pageSize: positiveDecimal(10, 100, 20),
 });
 
 function first(value: string | string[] | undefined) {
@@ -19,6 +26,10 @@ function first(value: string | string[] | undefined) {
 export function parseAdminProjectsQuery(
   params: Record<string, string | string[] | undefined>,
 ) {
+  // Unknown keys must not be silently discarded when a stale or forged link
+  // reaches the Super Admin projects view.
+  if (Object.keys(params).some(key => !["search","q","status","view","page","pageSize"].includes(key)))
+    return schema.safeParse(null);
   // Duplicate values are ambiguous for every filter, including legacy
   // `search` and modern `q`. Fail closed before querying tenant data.
   if (Object.values(params).some(Array.isArray))
