@@ -63,20 +63,40 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/college-project-roster-service.ts` | `replaceCollegeProjectLearners` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/college-project-summary-model.ts` | `collegeProjectStatusChangeAllowed` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/college-project-summary-model.ts` | `collegeProjectSummaryPatch` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/college-project-summary-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/college-projects-query-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/college-readiness-releases-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/college-workspace-status-label.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/constants.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/delivery-activity-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/delivery-reopen-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/errors.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/evaluation-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/execution-readiness.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/instance-restore-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/instance-restore-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/instance-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-attention-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/college-project-summary-service.ts` | `updateCollegeProjectSummary` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/college-projects-query-model.ts` | `parseCollegeProjectsQuery` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/college-readiness-releases-service.ts` | `listCollegeReadinessWorkspaceChoices` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/college-readiness-releases-service.ts` | `listCollegeReadinessReleases` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/college-workspace-status-label.ts` | `collegeWorkspaceStatusLabel` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_TEMPLATE_STATUSES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_TASK_PRIORITIES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_STATUSES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_RELEASE_STATUSES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_SPRINT_STATUSES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_TASK_STATUSES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_MEMBER_ROLES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_TASK_SUBMISSION_STATUSES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_TASK_REVIEW_DECISIONS` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_SUBMISSION_STATUSES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_SUBMISSION_REVIEW_DECISIONS` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_MEETING_STATUSES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/constants.ts` | `PROJECT_MEETING_TYPES` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/delivery-activity-model.ts` | `projectDeliveryActivity` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/delivery-reopen-service.ts` | `reopenApprovedProjectDelivery` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/errors.ts` | `postgresConstraintName` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/errors.ts` | `isRetryableProjectTransactionError` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/evaluation-service.ts` | `createProjectEvaluation` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/evaluation-service.ts` | `getProjectEvaluation` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/evaluation-service.ts` | `listProjectEvaluations` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/execution-readiness.ts` | `deriveProjectExecutionReadiness` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/instance-restore-model.ts` | `restoredProjectStatus` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/instance-restore-model.ts` | `restoreProjectInstanceInputSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/instance-restore-service.ts` | `restoreProjectInstance` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/instance-service.ts` | `createProjectInstance` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/instance-service.ts` | `listProjectInstances` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/instance-service.ts` | `archiveProjectInstance` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/instance-service.ts` | `getProjectInstanceWorkspace` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-attention-service.ts` | `listMyLearnerProjectAttention` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-backlog-pull-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/learner-board-card-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/learner-board-lanes-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
