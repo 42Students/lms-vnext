@@ -325,12 +325,21 @@ export async function issuePlacementOffer(
     const [member] = await tx.select({
       id: collegeMemberships.id,
       collegeId: collegeMemberships.collegeId,
+      userId: collegeMemberships.userId,
+      status: collegeMemberships.status,
     }).from(collegeMemberships).where(
       eq(collegeMemberships.id, current.application.membershipId),
     ).for("update").limit(1);
     if (!member || member.collegeId !== current.job.collegeId) {
       throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
     }
+    // Screening can remain SHORTLISTED after an account is suspended.
+    // No TPO may issue a new commitment to a deactivated membership/user.
+    if(member.status!=="ACTIVE")throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+    const [candidateAccount]=await tx.select({status:users.platformStatus})
+      .from(users).where(eq(users.id,member.userId)).for("share").limit(1);
+    if(candidateAccount?.status!=="ACTIVE")
+      throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     const [lockedApplication] =
       await tx
         .select({
