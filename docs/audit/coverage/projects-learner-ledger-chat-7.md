@@ -12,20 +12,20 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-board-card-model.ts` | `learnerBoardCardMetadata` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-lanes-model.ts` | `LEARNER_BOARD_LANES` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-lanes-model.ts` | `LearnerBoardLane` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
-| `src/modules/projects/learner-board-lanes-model.ts` | `learnerTaskLane` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
-| `src/modules/projects/learner-board-lanes-model.ts` | `groupLearnerBoardLanes` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
+| `src/modules/projects/learner-board-lanes-model.ts` | `learnerTaskLane` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-board-lanes-model.ts` | `groupLearnerBoardLanes` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-board-priority-model.ts` | `LEARNER_BOARD_PRIORITY_LABELS` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-priority-model.ts` | `LearnerBoardPriorityCounts` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
-| `src/modules/projects/learner-board-priority-model.ts` | `learnerBoardPriorityCounts` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
-| `src/modules/projects/learner-board-priority-model.ts` | `learnerBoardPriorityFilterHref` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
-| `src/modules/projects/learner-board-selection-notice-model.ts` | `learnerBoardTaskSelectionNotice` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
+| `src/modules/projects/learner-board-priority-model.ts` | `learnerBoardPriorityCounts` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-board-priority-model.ts` | `learnerBoardPriorityFilterHref` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-board-selection-notice-model.ts` | `learnerBoardTaskSelectionNotice` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-board-sort-model.ts` | `learnerBoardSortSchema` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-sort-model.ts` | `LearnerBoardSort` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-sort-model.ts` | `sortLearnerBoardTasks` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-summary-model.ts` | `LEARNER_BOARD_STATUS_LABELS` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
 | `src/modules/projects/learner-board-summary-model.ts` | `LearnerBoardStatusCounts` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
-| `src/modules/projects/learner-board-summary-model.ts` | `learnerBoardStatusCounts` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
-| `src/modules/projects/learner-board-summary-model.ts` | `learnerBoardStatusFilterHref` | **OPEN — NO DIRECT TEST LINKED**; exercise wrong tenant, revoked member, stale version, state transition |
+| `src/modules/projects/learner-board-summary-model.ts` | `learnerBoardStatusCounts` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-board-summary-model.ts` | `learnerBoardStatusFilterHref` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-board-task-attention-tone-model.ts` | `learnerBoardTaskStatusTone` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-board-task-attention-tone-model.ts` | `learnerBoardTaskPriorityTone` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-board-task-detail-model.ts` | `LearnerTaskBoardUrlFilters` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
@@ -39,9 +39,9 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-own-task-input-model.ts` | `learnerOwnTaskCreateInputSchema` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-own-task-service.ts` | `createLearnerOwnTask` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-own-task-service.ts` | `deleteLearnerOwnTask` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-activity-csv-model.ts` | `learnerProjectActivityCsv` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-activity-cursor-model.ts` | `learnerProjectActivityLastFetched` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-activity-empty-model.ts` | `learnerProjectActivityEmptyMessage` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-activity-csv-model.ts` | `learnerProjectActivityCsv` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-project-activity-cursor-model.ts` | `learnerProjectActivityLastFetched` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-project-activity-empty-model.ts` | `learnerProjectActivityEmptyMessage` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityCategorySchema` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-activity-filter-model.ts` | `LearnerProjectActivityCategory` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityCategories` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
@@ -53,7 +53,7 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityDateBounds` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityPrefixes` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-activity-filter-model.ts` | `learnerProjectActivityPageHref` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-activity-page-summary-model.ts` | `learnerProjectActivityPageSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-activity-page-summary-model.ts` | `learnerProjectActivityPageSummary` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-project-activity-text-model.ts` | `filterLearnerProjectActivityText` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-archive-model.ts` | `learnerProjectArchiveState` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-board-model.ts` | `learnerBoardSearchSchema` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
@@ -72,22 +72,22 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 | `src/modules/projects/learner-project-goals-model.ts` | `learnerProjectGoalSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-goals-service.ts` | `getLearnerProjectGoals` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-list-empty-model.ts` | `LearnerProjectListEmptyState` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-list-empty-model.ts` | `learnerProjectListEmptyState` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-list-empty-model.ts` | `learnerProjectListEmptyState` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-project-mobile-filter-model.ts` | `LearnerProjectMobileFilterSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-mobile-filter-model.ts` | `learnerProjectMobileFilterSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-mobile-filter-model.ts` | `learnerProjectMobileFilterSummary` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-project-progress-model.ts` | `LearnerProjectTaskStatus` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-progress-model.ts` | `LearnerProjectProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-progress-model.ts` | `summarizeLearnerProjectProgress` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-progress-model.ts` | `summarizeLearnerProjectProgress` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-project-progress-service.ts` | `listMyLearnerProjectProgress` | **TEST AUTHORED — CI UNVERIFIED:** `tests/unit/PROJ-BREAK-LEARNER-PROGRESS-04.test.ts`; remaining PostgreSQL, mutation race, expired-session checks |
-| `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectTaskReviewNotice` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectDeliveryReviewNotice` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectDeliveryReopenedNotice` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-search-model.ts` | `learnerProjectMatchesSearch` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-sort-model.ts` | `compareNumberedTeamProjects` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-sort-model.ts` | `sortLearnerProjectRows` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectTaskReviewNotice` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectDeliveryReviewNotice` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectDeliveryReopenedNotice` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-project-search-model.ts` | `learnerProjectMatchesSearch` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-project-sort-model.ts` | `compareNumberedTeamProjects` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
+| `src/modules/projects/learner-project-sort-model.ts` | `sortLearnerProjectRows` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-project-tab-alias-model.ts` | `canonicalLearnerProjectTab` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-tab-alias-model.ts` | `LEARNER_PROJECT_DETAIL_TABS` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
-| `src/modules/projects/learner-project-tab-href-model.ts` | `learnerProjectTabHref` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
+| `src/modules/projects/learner-project-tab-href-model.ts` | `learnerProjectTabHref` | **TEST AUTHORED — NOT EXECUTED:** `tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts` (`PROJ-BREAK-LEARNER-99`, direct behavioral assertion); PostgreSQL tenant/role/races remain outstanding |
 | `src/modules/projects/learner-project-team-model.ts` | `LearnerProjectTeamMember` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-team-model.ts` | `LearnerProjectTeamSummary` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
 | `src/modules/projects/learner-project-team-model.ts` | `summarizeLearnerProjectTeams` | **OPEN — NO DIRECT TEST LINKED**; verify tenant, role, state, 409/retry and API safety |
@@ -120,3 +120,18 @@ Generated against chatgpt/chat-7-b October 18, 2026. Every named exported symbol
 - PostgreSQL integration of actor revocation/role swap, archived/project completion, release shipment, concurrent status writes, idempotency, and notification dedupe.
 - At least 90% Projects module branch coverage and independent breaker review before release. (Not yet demonstrated.)
 
+
+
+## PROJ-BREAK-LEARNER-99 incremental direct-model tests (19 October 2026)
+
+Directly exercised `21` previously unlinked exported learner model functions in
+`tests/unit/PROJ-BREAK-chat7-learner-readonly-model-matrix.test.ts`: progress denominators;
+archived-project ordering and natural team sort; task lane/state and priority filtering; board
+deep links; cursor-preserving activity paging and finite counts; CSV formula escaping and
+100-row cap; scoped project search; filtered/unassigned empty states; mobile filter notices
+and feedback-private review notifications. Source defect `learnerProjectActivityPageSummary`
+accepted NaN/Infinity and rendered nonsensical counts; fixed in `638cb1c`.
+
+**Not a coverage sign-off:** all rows still marked OPEN are outstanding; function models cannot
+prove service membership checks, PostgreSQL isolation, concurrency, browser resilience,
+or 90% branch coverage. Tests were authored but not executed.
