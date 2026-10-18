@@ -207,3 +207,6 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 
 
 | `getSectionOperationsWorkspace` role restriction | `chat4-college-section-workspace-tenant.test.ts` | College Admin `academics.manage` required before full learner/faculty pickers; learners, faculty and mentors denied even when they have generic `academics.read`; no private roster queries on denial |
+
+
+| `getSuperAdminTenantLifecycleDirectory`, `getSuperAdminTenantLifecycleDetail`, `exportSuperAdminTenantDirectory` | `tests/unit/chat4-superadmin-tenant-lifecycle-actor.test.ts` | Real service called with deterministic transaction/DB adapter: source list, detail and export deny role-revoked actors before private SELECT; explicit admin college/organization scope, page counts, options, bad UUID, no-SQL denial and capped CSV. On PostgreSQL, revocation-after-first-SELECT interleaving still pending. |

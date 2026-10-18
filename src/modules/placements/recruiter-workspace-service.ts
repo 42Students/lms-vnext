@@ -24,6 +24,7 @@ import { isRecruiterSharedCandidateAllowed } from "./recruiter-shared-candidate-
 import { PlacementsServiceError } from "./errors";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import { placementJobIdSchema } from "./validation";
+import {recruiterSharedRoundParticipantEmail} from "./recruiter-round-participant-sharing";
 
 function resultKey(
   roundId: string,
@@ -44,6 +45,7 @@ export async function getRecruiterPlacementWorkspace(
       job: placementJobs,
       relationshipId:
         placementCompanyRelationships.id,
+      shareColumnDefaults: placementCompanyRelationships.shareColumnDefaults,
       companyId: placementCompanies.id,
       companyName: placementCompanies.name,
       collegeId:
@@ -299,7 +301,7 @@ export async function getRecruiterPlacementWorkspace(
             candidate.applicationId,
           displayName:
             candidate.displayName,
-          email: candidate.email,
+          email: recruiterSharedRoundParticipantEmail(candidate.email, scope.shareColumnDefaults),
           result:
             currentResults.get(
               resultKey(
