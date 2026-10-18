@@ -52,6 +52,22 @@ describe("HR-BREAK-chat19-drive-list: selected college may never widen account d
    expect(m.drives).not.toHaveBeenCalled();
    expect(m.requests).not.toHaveBeenCalled();
   });
+ it.each([
+  {collegeId:[a,b]},{collegeId:[b,a]},
+  {q:["safe","private"]},{view:["LIVE","CLOSED"]},
+  {tab:["live","closed"]},{page:["1","10"]},
+ ])("denies duplicated drive filter %j rather than choosing one value",async query=>{
+  const result=await page(query);
+  expect(copy(result)).toContain("Invalid drive filters");
+  expect(m.drives).not.toHaveBeenCalled();
+  expect(m.requests).not.toHaveBeenCalled();
+ });
+ it("refuses a recruiter context from a different signed-in person before drive reads",async()=>{
+  m.ctx.mockResolvedValue({...base,recruiter:{...base.recruiter!,userId:"another-user"}});
+  await expect(page()).rejects.toThrow("REDIRECT");
+  expect(m.drives).not.toHaveBeenCalled();
+  expect(m.requests).not.toHaveBeenCalled();
+ });
  it("wrong college UUID is not permission even when syntactically valid",async()=>{
   await expect(page({collegeId:b})).rejects.toThrow("NOT_FOUND");
   expect(m.notFound).toHaveBeenCalled();
