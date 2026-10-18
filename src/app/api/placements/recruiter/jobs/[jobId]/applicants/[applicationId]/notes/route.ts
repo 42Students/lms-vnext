@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readRecruiterJsonBody, RecruiterJsonBodyError } from "@/modules/placements/recruiter-json-request";
 import { addRecruiterApplicantNote } from "@/modules/placements/applicant-notes-service";
 
 export const runtime = "nodejs";
@@ -19,10 +20,13 @@ export async function POST(
       await getCurrentRequestContext(),
       jobId,
       applicationId,
-      await request.json(),
+      await readRecruiterJsonBody(request,16*1024),
     );
     return NextResponse.json(result);
   } catch (error) {
+    if (error instanceof RecruiterJsonBodyError)
+      return NextResponse.json({error:"INVALID_REQUEST"},
+       {status:error.kind==="TOO_LARGE"?413:400});
     return apiErrorResponse(error);
   }
 }
