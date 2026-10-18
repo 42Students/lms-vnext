@@ -30,6 +30,14 @@ describe("Super Admin Projects: hostile state, URL, and concurrency contracts", 
     expect(checked).toBe(144);
   });
 
+  it("PROJ-BREAK-SA-17 refuses hostile unknown delivery operations even when the submission is otherwise reviewable", () => {
+    for(const input of ["DELETE", "REOPEN", "", "APPROVE", null, undefined, 0, {}, []]){
+      expect(canAdminSettleDelivery("SUBMITTED", false, "ACTIVE",
+        input as AdminDeliveryAction),String(input)).toBe(false);
+    }
+    expect(canAdminSettleDelivery("SUBMITTED", false, "ACTIVE", "APPROVED")).toBe(true);
+  });
+
   it("PROJ-BREAK-SA-10 prevents forged query parameters and oversized Super Admin result pages", () => {
     const parsers = [
       parseAdminProjectsQuery, parseProjectAdminRiskQuery, parseProjectAdminSubmissionsQuery,
