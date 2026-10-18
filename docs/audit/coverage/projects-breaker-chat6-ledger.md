@@ -80,3 +80,15 @@ The test executes the permission model, not a mocked or stubbed assertion. It do
 ## PROJ-BREAK-submissions-07 persisted evidence validation (chat-6)
 
 `savedDeliverySubmissionReadiness` now rejects a nominal `FILE` row without a valid file UUID, any FILE claiming an external link, and unsafe or malformed primary/demo URLs. This closes a client readiness mismatch where a legacy/forged persisted attachment could display a submit-ready state despite the service refusing the evidence. `tests/unit/PROJ-BREAK-chat6-saved-delivery-ui.test.ts` adds negative cases for absent/null/forged IDs, conflicting FILE URL, unsafe schemes and a valid HTTPS control. The service still remains authoritative for READY status, college ownership and file-scanner attestation. Unit test authored, cloud CI **not yet executed**.
+
+
+## 2026-10-19 new Projects adversarial coverage (chat-6)
+
+| Boundary | Attack | Authored test | Proof level / integration still pending |
+|---|---|---|---|
+| `learnerBacklogPullInputSchema` | Forged tenant/role attributes, invalid task/sprint UUID, missing/invalid optimistic revision, duplicate values | `PROJ-BREAK-backlog-12` in `tests/unit/PROJ-BREAK-chat6-backlog-readiness-cross-scope.test.ts` | Direct Zod behaviour; not a successful API integration |
+| `pullOwnBacklogTask` | Suspended learner pulling a teammate's task, stale version, archived project, inactive sprint, cross-project release, duplicate notifications | `PROJ-BREAK-backlog-13` in same file | Source contract checks transaction, live membership, row locking, ownership, version and emitted event. **Real parallel SQL and notification replay outstanding** |
+| `listCollegeActiveReadinessOverrides` | Global Super Admin scope fallthrough, foreign-college event leakage, stale actor permissions, archived projects | `PROJ-BREAK-readiness-12` in same file | Source verifies persisted permission in transaction and college-ID joins; DB IDOR replay pending |
+| Same readiness service | Older force-unlock surfaced after a reset, nondeterministic event tie, unmatched/archived resource | `PROJ-BREAK-readiness-13` in same file | Source latest-event/tie-break shape; live event-order and status fixtures pending |
+
+All four case IDs were **authored, not executed**; no new code-level Project defect was confirmed in this slice, and none of these source-only assertions merits an IIT Dharwad launch sign-off. Existing S1 work remains dependent on CI, production-like PostgreSQL/tenant fixtures, signed URLs and cross-role browser journeys.
