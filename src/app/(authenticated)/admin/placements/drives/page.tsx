@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -27,7 +28,25 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
    action={<Link href="/admin/placements/drives" className="text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
- const operations=await getPlacementTpoOperations(ctx,ctx.adminScope.collegeId);
+ // Keep an unavailable college reporting backend from crashing the entire
+ // Super Admin drive directory; preserve the validated filter on Retry.
+ const loaded=await getPlacementTpoOperations(ctx,ctx.adminScope.collegeId)
+  .then(value=>({ok:true as const,value}))
+  .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
+ if(!loaded.ok)return <div className="min-w-0 space-y-4">
+  <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
+  <ErrorState
+   title={loaded.denied?"Drive access denied":"Drives unavailable"}
+   description={loaded.denied
+    ?"Your account cannot manage drives in this college."
+    :"This college's drives could not be loaded. Your filters were preserved."}
+   action={<Link href={loaded.denied?"/dashboard":adminDriveDirectoryHref(parsed.data)}
+    className="font-semibold text-[var(--lms-teal-deep)] underline">
+    {loaded.denied?"Back to dashboard":"Retry loading drives"}
+   </Link>}
+  />
+ </div>;
+ const operations=loaded.value;
  const rows=operations.jobs.map(row=>({job:row.job,company:row.job.company,metrics:row.metrics}));
  const data=filterAdminDriveDirectory(rows,parsed.data);
  const href=(page:number)=>adminDriveDirectoryHref({...parsed.data,page});
