@@ -9,16 +9,21 @@ export type PaginationProps = {
   className?: string;
 };
 
+/** Reject NaN/Infinity rather than exposing impossible pagination links. */
+export function normalizedPageCount(count: number): number {
+  return Number.isFinite(count) ? Math.max(1, Math.trunc(count)) : 1;
+}
+
 export function paginationWindow(page: number, pageCount: number): number[] {
-  const total = Number.isFinite(pageCount) ? Math.max(1, Math.trunc(pageCount)) : 1;
+  const total = normalizedPageCount(pageCount);
   const selected = Number.isFinite(page) ? Math.min(total, Math.max(1, Math.trunc(page))) : 1;
   const start = Math.max(1, Math.min(selected - 1, total - 4));
   return Array.from({ length: Math.min(total, 5) }, (_, i) => start + i);
 }
 
 export function Pagination({ page, pageCount, hrefForPage, label = "Pages", className }: PaginationProps) {
-  const total = Math.max(1, Math.trunc(pageCount) || 1);
-  const current = Math.max(1, Math.min(total, Math.trunc(page) || 1));
+  const total = normalizedPageCount(pageCount);
+  const current = Number.isFinite(page) ? Math.max(1, Math.min(total, Math.trunc(page))) : 1;
   const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
   return (
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center gap-2", className)}>
