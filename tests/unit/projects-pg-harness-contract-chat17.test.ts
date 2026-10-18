@@ -53,7 +53,7 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("client.release()");
    expect(helper).toContain("ROLLBACK TO SAVEPOINT");
    expect(helper).toContain("RELEASE SAVEPOINT");
-   expect(helper).toContain("this.savepoint(");
+   expect(helper).toContain("db.savepoint(");
    expect(helper).not.toMatch(/client\.query\(["'`]COMMIT/);
    expect(helper).not.toMatch(/(?:truncate table|drop table|delete from [a-z_]+ cascade)/i);
  });
