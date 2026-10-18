@@ -20,7 +20,11 @@ vi.mock("@/observability/logger", () => ({
   logError: fakes.error,
 }));
 vi.mock("@/modules/auth/private-response", () => ({
-  privateAuthJson: (body: unknown, init?: ResponseInit) => Response.json(body, init),
+  privateAuthJson: (body: unknown, init?: ResponseInit) => {
+    const headers = new Headers(init?.headers);
+    headers.set("Cache-Control", "private, no-store");
+    return Response.json(body, { ...init, headers });
+  },
 }));
 
 import { auditLogin, guardLoginRequest, ipTag, loginErrorResponse } from "@/modules/auth/http";
@@ -90,7 +94,7 @@ describe("authentication guard: hostile requests and audit integrity", () => {
     fakes.resolve.mockResolvedValueOnce({ kind: "unavailable", host: "tenant.example.edu" });
     const down = await failure(loginRequest());
     expect(down.status).toBe(503);
-    expect(down.headers.get("Cache-Control")).toBe("no-store");
+    expect(down.headers.get("Cache-Control")).toBe("private, no-store");
     expect(down.headers.get("Retry-After")).toBe("30");
     expect(await down.json()).toEqual({ error: "TENANT_LOOKUP_UNAVAILABLE" });
   });
