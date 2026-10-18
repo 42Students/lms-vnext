@@ -21,12 +21,16 @@ function college(ctx:RequestContext){
 }
 export async function getFacultyScheduleReassignOptions(ctx:RequestContext,rawId:unknown){
  const m=college(ctx),id=ids.parse(rawId),db=getDb();
- const [sourceFaculty]=await db.select({id:collegeMemberships.id}).from(collegeMemberships)
+ return db.transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"academics.manage",{
+   collegeId:m.collegeId,organizationId:m.organizationId,
+  });
+ const [sourceFaculty]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
     eq(membershipRoles.role,"FACULTY")))
   .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,m.collegeId))).limit(1);
  if(!sourceFaculty)throw Error("Faculty not found in this college.");
- const people=await db.select({id:collegeMemberships.id,name:users.displayName})
+ const people=await tx.select({id:collegeMemberships.id,name:users.displayName})
  .from(collegeMemberships)
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
@@ -35,7 +39,7 @@ export async function getFacultyScheduleReassignOptions(ctx:RequestContext,rawId
   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
   ne(collegeMemberships.id,id)))
  .orderBy(asc(users.displayName)).limit(200);
- const slots=await db.select({id:sectionScheduleEvents.id})
+ const slots=await tx.select({id:sectionScheduleEvents.id})
  .from(sectionScheduleEvents)
  .innerJoin(sections,eq(sections.id,sectionScheduleEvents.sectionId))
  .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
@@ -46,6 +50,7 @@ export async function getFacultyScheduleReassignOptions(ctx:RequestContext,rawId
   eq(sectionScheduleEvents.status,"SCHEDULED"),gt(sectionScheduleEvents.startsAt,new Date())))
  .limit(201);
  return{faculty:people,upcoming:Math.min(slots.length,200),truncated:slots.length>200};
+ });
 }
 export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:unknown,raw:unknown){
  const m=college(ctx),old=ids.parse(rawId),input=scheduleReassignInput.parse(raw);
