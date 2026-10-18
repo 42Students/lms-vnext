@@ -24,7 +24,7 @@ vi.mock("@/db/client",()=>({getDb:()=>({
     return chosen?[chosen]:[];
    }
    async orderBy(){
-    return this.joins[0]==="inner"?stubs.electiveRows:stubs.sectionRows;
+    return stubs.elective?stubs.electiveRows:stubs.sectionRows;
    }
   }
   return new Query();
