@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { apiErrorResponse } from "@/lib/api-error";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
     ) {
       throw new AuthorizationError("placements.manage");
     }
+    await requireTpoBatchActor(context);
 
     const url = new URL(request.url);
 

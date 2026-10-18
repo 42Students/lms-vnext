@@ -13,8 +13,12 @@ describe("chat-15 learner missed quiz, release, and progress parity",()=>{
   expect(ui).toContain("Correct answer");
  });
  it("LEARNER-course-detail-17 released missed quiz answer key is read-only",()=>{
+  const policy=read("src/modules/courses/learner-quiz-result-release-policy.ts");
   const svc=read("src/modules/courses/quiz-service.ts");
-  expect(svc).toContain('quiz.dueAt.getTime() <= Date.now()');
+  expect(svc).toContain("learnerQuizResultsReleased");
+  expect(policy).toContain('quiz.status==="CLOSED"');
+  expect(policy).toContain("quiz.resultsPublished === true");
+  expect(policy).toContain("quiz.dueAt.getTime()<=nowMs");
   const ui=read("src/components/courses/quiz-attempt-control.tsx");
   expect(ui).toContain("You didn&apos;t attempt this quiz.");
   expect(ui).toContain("Close review");
