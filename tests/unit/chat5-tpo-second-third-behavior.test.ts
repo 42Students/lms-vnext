@@ -127,6 +127,21 @@ describe("chat-5 TPO second-third: behavioural round and offer reporting",()=>{
   expect(offerExpiryIndicator("ISSUED",new Date(Number.NaN),expiry)).toBe("UNKNOWN");
   expect(offerExpiryIndicator("ISSUED",expiry,new Date(Number.NaN))).toBe("UNKNOWN");
  });
+ it("PLACEMENTS-OFFERS-FILTER-06 preserves unbounded searches when HTML sends blank LPA inputs",()=>{
+  const empty=offerRegisterQuery.parse({
+    jobId:uuid,status:"ISSUED",minCtcLpa:"",maxCtcLpa:"",
+  });
+  expect(empty.minCtcLpa).toBeUndefined();
+  expect(empty.maxCtcLpa).toBeUndefined();
+  expect(projectOfferRegister(offerFacts,empty.status,empty.page,empty.q,empty.joining,
+    at,empty.kind,empty.expiry,empty.minCtcLpa,empty.maxCtcLpa).rows.map(row=>row.id))
+    .toEqual(["a"]);
+  for(const v of ["NaN","Infinity","-1","1001","a thousand"]){
+    expect(offerRegisterQuery.safeParse({jobId:uuid,minCtcLpa:v}).success).toBe(false);
+  }
+  const zero=offerRegisterQuery.parse({jobId:uuid,minCtcLpa:"0"});
+  expect(zero.minCtcLpa).toBe(0);
+ });
  it("PLACEMENTS-OFFERS-VIEW-02 rejects malformed filters and shares identical filters between visible rows and CSV",()=>{
   expect(offerRegisterQuery.safeParse({jobId:uuid,status:"ALL",minCtcLpa:12,maxCtcLpa:6}).success).toBe(false);
   expect(offerRegisterQuery.safeParse({jobId:uuid,status:"NONSENSE"}).success).toBe(false);
