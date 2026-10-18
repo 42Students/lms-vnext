@@ -29,4 +29,14 @@ describe("SA-HIRING-REPORT-SCOPE-03 tenant-safe job pipeline analytics",()=>{
     expect(source).toContain(".limit(SUPER_ADMIN_HIRING_EXPORT_CAP+1)");
     expect(source).toContain("truncated:result.length>SUPER_ADMIN_HIRING_EXPORT_CAP");
   });
+
+  it("SA-HIRING-ACADEMIC-04 cannot match a forged cohort unrelated to the enrollment program",()=>{
+    const s=read();
+    expect(s).toContain("eq(learnerProgramEnrollments.membershipId,placementApplications.membershipId)");
+    expect(s).toContain("eq(learnerProgramEnrollments.status,\"ACTIVE\")");
+    expect(s).toContain("eq(departments.collegeId,selected.collegeId)");
+    expect(s).toContain("eq(cohorts.id,learnerProgramEnrollments.cohortId)");
+    expect(s).toContain("eq(cohorts.programId,learnerProgramEnrollments.programId)");
+    expect(s).toContain("query.cohortId?eq(cohorts.id,query.cohortId):undefined");
+  });
 });
