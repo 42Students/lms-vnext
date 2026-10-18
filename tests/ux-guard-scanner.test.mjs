@@ -10,11 +10,12 @@ test("RV-06 scans live JSX even outside legacy allowlist and rejects dynamic pop
         <a target={unsafe} href="/">Unknown target</a>
         <a target="_self" href="/">Safe</a>
         <button className={unsafe ? "min-h-10" : "min-h-11"}>Go</button>
+        <button className={"min-h-" + (unsafe ? "10" : "11")}>Dynamic 40px</button>
         <button className={"bg-primary text-white"}>Bad contrast</button>
       </main>;
     }`;
   const found=scanUxSource("src/app/legacy/route.tsx",source);
-  expectRules(found,{"unsafe-target":2,"small-touch-target":1,"white-on-teal":1});
+  expectRules(found,{"unsafe-target":2,"small-touch-target":2,"white-on-teal":1});
 });
 test("RV-06 uses exact source fingerprints so a new identical violation exceeds the baseline count", () => {
   const old=scanUxSource("src/app/test.tsx",'<a target="_blank" href="/old">Old</a>');

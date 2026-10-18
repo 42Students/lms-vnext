@@ -74,11 +74,11 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     {pickerUnavailable ? <p role="status" className="text-sm text-body">File selection is unavailable in this app view. {fallback ? "Use the alternative below." : "Open this form in a browser that supports file selection."}</p> :
       <input {...props} ref={bindInput} id={id} type="file" accept={accept} disabled={disabled} onChange={handleChange}
         aria-invalid={Boolean(error) || Boolean(disabled)}
-        aria-describedby={error ? `${id}-error` : helper ? `${id}-help` : undefined}
+        aria-describedby={(disabled ? `${id}-unavailable` : error ? `${id}-error` : helper ? `${id}-help` : undefined)}
         className="block min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground file:mr-3 file:rounded file:border-0 file:bg-primary-subtle file:px-3 file:py-2 file:text-sm file:font-semibold file:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50" />}
     {helper ? <p id={`${id}-help`} className="text-sm leading-6 text-body">{helper}</p> : null}
     {error ? <p id={`${id}-error`} role="alert" className="text-sm text-foreground">{error}</p> : null}
     {fallback ? <div className="min-w-0 space-y-2">{fallback}</div> : null}
-    {(pickerUnavailable || disabled) && !fallback ? <p role="alert" className="text-sm text-body">This upload cannot continue in the current app view.</p> : null}
+    {(pickerUnavailable || disabled) ? <p id={`${id}-unavailable`} role="alert" className="text-sm text-body">This upload cannot continue with the file picker disabled. {fallback ? "Use the alternative provided." : "Enable file selection before continuing."}</p> : null}
   </div>;
 }

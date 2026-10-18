@@ -40,9 +40,11 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
       return href.startsWith("/") && !href.startsWith("//") && href.length>1;
     });
   const recoverable=columns.filter(mapped);
-  const secondary=columns.filter(col=>col.key!==primary?.key && col.mobilePriority!=="action" && !mapped(col));
+  const secondary=columns.filter(col=>col.key!==primary?.key &&
+    col.mobilePriority!=="action" && col.mobilePriority!=="hidden");
   const shown=secondary.slice(0,3);
-  const extra=secondary.slice(3);
+  const extra=[...secondary.slice(3),
+    ...columns.filter(col=>col.mobilePriority==="hidden" && !mapped(col))];
   const visibleOnPhone=new Set([primary?.key,...shown.map(c=>c.key),...actions.map(c=>c.key)]);
   // One row/column DOM tree, one cell formatter call: no duplicated 100-row
   // responsive subtree. Only collapsed secondary fields are repeated in
