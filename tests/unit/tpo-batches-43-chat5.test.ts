@@ -7,12 +7,17 @@ describe("TPO learner override parity",()=>{
   for(const text of ["Higher studies","Not interested in placements","Detained / year back","Discontinued","Disciplinary","Already has a job"])
    expect(source).toContain(text);
   expect(source).toContain("Pick the reason. Students never see this. You can undo it straight after.");
-  expect(source).toContain('aria-label="Mark learner ineligible"');
-  expect(source).toContain("reasonDialog.current?.showModal()");
+  expect(source).toContain('<Dialog open={reasonOpen} onOpenChange={setReasonOpen} dismissible={!busy}');
+  expect(source).toContain('title="Mark learner ineligible"');
+  expect(source).toContain('role="group" aria-label="Common ineligibility reasons"');
+  expect(source).toContain('autoFocus aria-label="Reason for ineligibility"');
   expect(source).toContain('>Other</button>');
   expect(source).toContain("reason.trim().length>=3");
   expect(source).toContain("!reviewed");
   expect(source).toContain("TpoBatchUndoControl");
   expect(source).not.toContain("window.confirm");
+  expect(source).toContain("if(!valid||busy)return");
+  expect(source).toContain("useGuardedAction");
+  expect(source).toContain('role="alert"');
  });
 });
