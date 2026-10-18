@@ -96,6 +96,10 @@ All prior failing unit tests are retained. The snapshot's failing cases have not
 
 Remaining: real PostgreSQL concurrency cases, live role revocation between preflight and transaction, the other Courses API routes, Super Admin UI page-level browser checks, all Learner certificates and discussion transitions. Do not infer execution or passing coverage from authored tests alone.
 
+## Learner assignment grade, submission and reminder integrity (2026-10-18)
+
+Fixed `src/modules/courses/learner-assignment-display.ts`: previously `gradePublished && pointsAwarded === null` fabricated a scored zero, contradicting the learner-grade visibility model. The overview now delegates to `learnerAssignmentPublishedGradeLabel`, showing "Graded · score unavailable" while keeping a genuine numeric zero distinct. `tests/unit/chat7-learner-assignment-display-and-upload-guards.test.ts` exercises that defect plus persisted submitted/late/deadline state, due-soon reminders that exclude already-submitted and expired records, rejecting malformed/oversized upload selection before signed-grant request, and historical read-only course filtering. Includes `COURSES7-06`, `COURSES7-08`, `COURSES7-09`, `LEARNER-learning-misc-05`. Tests authored, **not executed**; real PostgreSQL release/cross-tenant and upload infrastructure checks remain open.
+
 ## Learner assessment directory model batch (2026-10-18)
 
 `tests/unit/chat7-learner-assessment-list-resilience.test.ts` directly exercises the persisted-snapshot clock, bounded searchable text, deterministic due/creation/title sorting, no-data vs filtered-empty copy, and assignment drawer invalidation on delivery/tenant-filter switch. Cases named `COURSES7-06`, `COURSES7-09` and `COURSES7-10` are authored but **not executed**. This covers five additional pure-model exports; it does not close role-scoped PostgreSQL directory reads, client navigation or page-level accessibility.
