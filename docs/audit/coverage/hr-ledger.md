@@ -37,7 +37,7 @@
 | UX-HR-PAGES-01 | `/hr/**`, `/recruiter/**` pages | `UX-hr-page-states-chat15-01.test.ts`, `UX-hr-tracker-overlays-chat15-01.test.ts` | One test per route for loading/empty/error/partial/denied + phone |
 | UX-TRACKER-PAGES-01 | `/tracker/**` pages | `UX-tracker-mine-chat15-01.test.ts`, `HR-BREAK-tracker-pages-01.test.ts` | Keyboard/phone, privileged audit workflow |
 | UX-SHARED-01 | `components/tracker`, `shell`, `hr`, `activity`, `verification` | `UX-chat15-shell-activity-components-01.test.ts` | Visual/accessibility keyboard/scroll and real failure-state flows |
-| PROJ-BREAK-HR-01 | HR/Recruiter access to projects | `projects-iit-dharwad-hardening.md` requirements | **OPEN:** negative permissions and cross-college project data exposure tests |
+| PROJ-BREAK-HR-01 | `requireProjectReadAccess`, `requireProjectLifecycleAccess` in `src/modules/projects/access.ts` | New `tests/unit/PROJ-BREAK-HR-01.test.ts`: recruiter hiring grant denied, TPO without member denied, wrong-college membership denied, inactive session/membership denied | Mocked service suite **not executed**; PostgreSQL membership/IDOR and HR view still **OPEN** |
 
 ## Role and resilience acceptance matrix
 
