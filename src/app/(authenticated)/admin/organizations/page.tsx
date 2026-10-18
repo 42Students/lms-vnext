@@ -24,7 +24,6 @@ type OrganizationRow = Awaited<
 
 export default async function OrganizationsPage({searchParams}:{searchParams:Promise<{q?:string|string[];page?:string|string[];pageSize?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
-  const organizations = await listOrganizations(context);
   const filters=parseAdminDirectorySearchParams(await searchParams);
   if (!filters) return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin" title="Organizations"/>
@@ -32,6 +31,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
       action={<Link href="/admin/organizations" className="inline-flex min-h-11 items-center font-semibold underline">Clear filters</Link>}/>
   </div>;
+  const organizations = await listOrganizations(context);
   const {q,pageSize}=filters;
   const matching=organizations.filter(item=>item.name.toLocaleLowerCase("en-IN").includes(q.toLocaleLowerCase("en-IN")));
   const totalPages=Math.max(1,Math.ceil(matching.length/pageSize));

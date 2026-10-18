@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray, ne, notExists, sql } from "drizzle-orm";
+import { and, asc, eq, exists, inArray, isNull, ne, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { projectInstances, projectResourceFiles, projectResources } from "@/db/schema";
@@ -305,12 +305,16 @@ export async function listProjectFiles(context: RequestContext, projectIdInput: 
       and(
         eq(projectResourceFiles.projectId, scope.project.id),
         manager ? ne(projectResourceFiles.status, "DELETED") : eq(projectResourceFiles.status, "READY"),
-        manager ? undefined : notExists(getDb().select({id:projectResources.id})
-          .from(projectResources).where(and(
-            eq(projectResources.id,projectResourceFiles.resourceId),
-            eq(projectResources.projectId,scope.project.id),
-            eq(projectResources.visibility,"MENTOR_ONLY"),
-          ))),
+        manager ? undefined : or(
+          isNull(projectResourceFiles.resourceId),
+          exists(getDb().select({id:projectResources.id})
+            .from(projectResources).where(and(
+              eq(projectResources.id,projectResourceFiles.resourceId),
+              eq(projectResources.projectId,scope.project.id),
+              eq(projectResources.status,"ACTIVE"),
+              eq(projectResources.visibility,"TEAM"),
+            ))),
+        ),
       ),
     )
     .orderBy(asc(projectResourceFiles.createdAt));

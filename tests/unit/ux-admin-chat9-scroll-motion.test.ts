@@ -29,25 +29,29 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
  });
  it("UX-admin-scroll-motion-04 /admin/projects workspace table has a labelled, focusable horizontal cue",()=>{
   const page=read("src/components/projects/project-admin-workspace-list.tsx");
-  expect(page).toContain('aria-label="Project workspace table"');
-  expect(page).toContain("overflow-x-auto overscroll-x-contain");
-  expect(page).toContain("mask-image:linear-gradient(to_right");
-  expect(page).toContain("tabIndex={0}");
+  expect(page).toContain('caption="Project workspace table"');
+  expect(page).toContain("<DataTable");
+  const table=read("src/components/ui/data-table.tsx");
+  const cue=read("src/components/ui/scroll-cue.tsx");
+  expect(table).toContain('<ScrollCue axis="x"');
+  expect(cue).toContain("overflow-x-auto overscroll-x-contain");
+  expect(cue).toContain('tabIndex={edges.scrollable ? 0 : -1}');
+  expect(cue).toContain('data-scroll-fade="end"');
  });
  it("UX-admin-scroll-motion-05 /admin/projects/templates/[templateId]/resources shared subview tables reveal more columns",()=>{
   const page=read("src/components/projects/super-admin-template-subview-page.tsx");
-  expect(page).toContain('aria-label="Project template records table"');
-  expect(page).toContain("overflow-x-auto overscroll-x-contain");
-  expect(page).toContain("mask-image:linear-gradient(to_right");
+  expect(page).toContain('caption="Project template records"');
+  expect(page).toContain("<DataTable");
+  expect(read("src/components/ui/data-table.tsx")).toContain('<ScrollCue axis="x"');
   expect(page).not.toContain("text-primary-text");
   expect(page).not.toContain("min-h-10");
  });
  it("UX-admin-scroll-motion-06 /admin/projects/submissions unsubmitted table has horizontal edge and keyboard focus",()=>{
   const page=read("src/components/projects/project-admin-submissions-page.tsx");
-  expect(page).toContain('aria-label="Unsubmitted project workspaces table"');
-  expect(page).toContain("overflow-x-auto overscroll-x-contain");
-  expect(page).toContain("mask-image:linear-gradient(to_right");
-  expect(page).toContain("tabIndex={0}");
+  expect(page).toContain('caption="Unsubmitted project workspaces"');
+  expect(page).toContain("<DataTable");
+  expect(read("src/components/ui/data-table.tsx")).toContain('<ScrollCue axis="x"');
+  expect(read("src/components/ui/scroll-cue.tsx")).toContain('tabIndex={edges.scrollable ? 0 : -1}');
  });
  it("UX-admin-scroll-motion-07 /admin/projects/workspaces/new creator preflight and results have vertical cues",()=>{
   const page=read("src/components/projects/class-team-workspace-creator.tsx");

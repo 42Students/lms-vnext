@@ -50,6 +50,11 @@ export async function saveAdminCollegeSignInPolicy(context:RequestContext,raw:un
   const [current]=await tx.select({version:collegeSignInPoliciesStaged.version,
    method:collegeSignInPoliciesStaged.method}).from(collegeSignInPoliciesStaged)
    .where(eq(collegeSignInPoliciesStaged.collegeId,college.id)).for("update").limit(1);
+  // A retry after a successful response was lost must not increment the
+  // version or write another audit event. The policy row is locked first;
+  // any genuinely different desired method still enforces the CAS token.
+  if(current?.method===input.method)
+   return {method:current.method,version:current.version};
   if((current?.version??0)!==input.expectedVersion)throw new CollegeSignInPolicyError("SIGNIN_POLICY_STALE");
   const now=new Date();
   const [saved]=current

@@ -14,7 +14,8 @@ export function roundReorderLockMessage(input:{
 }
 export function moveRound(ids:readonly string[],id:string,toIndex:number):string[]{
  const index=ids.indexOf(id);
- if(index<0||toIndex<0||toIndex>=ids.length)return [...ids];
+ if(index<0||!Number.isSafeInteger(toIndex)||toIndex<0||toIndex>=ids.length||
+   new Set(ids).size!==ids.length)return [...ids];
  const next=[...ids];
  next.splice(index,1);
  next.splice(toIndex,0,id);
