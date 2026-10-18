@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -137,34 +140,34 @@ export default async function AnnouncementsPage({
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         {includeDeleted ? <input type="hidden" name="deleted" value="1"/> : null}
         <label className="text-sm font-semibold text-body">Visibility
-          <select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+          <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
             <option value="">All visible states</option>
             <option value="LIVE">Live</option>
             <option value="SCHEDULED">Scheduled</option>
             <option value="EXPIRED">Expired</option>
             <option value="DELETED">Deleted only</option>
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold text-body">Pinned
-          <select name="pinned" defaultValue={params.pinned ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+          <Select name="pinned" defaultValue={params.pinned ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
             <option value="">All notices</option><option value="PINNED">Pinned only</option><option value="UNPINNED">Not pinned</option>
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold text-body">Published by
-          <select name="senderType" defaultValue={params.senderType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+          <Select name="senderType" defaultValue={params.senderType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
             <option value="">All senders</option>{ANNOUNCEMENT_SENDER_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="text-sm font-semibold text-body">Audience type
-          <select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+          <Select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
             <option value="">All audiences</option>
             {(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"] as const).map(type => <option key={type} value={type}>{type}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="min-w-[14rem] flex-1 text-sm font-semibold text-body">Search announcement title or message
-          <input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+          <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Search</button>
+        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Search</Button>
         <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
       </form>
       <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
