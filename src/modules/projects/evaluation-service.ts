@@ -102,6 +102,12 @@ export async function createProjectEvaluation(
       context,
       projectIdInput,
     );
+  // The lifecycle service guards this already, but capture a narrowed access
+  // value so the transactional persisted-actor check cannot accidentally be
+  // called with a learner if a future read-access union expands.
+  const evaluatorAccess=scope.access;
+  if(evaluatorAccess!=="ADMIN"&&evaluatorAccess!=="MENTOR")
+    throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
   const input =
     createProjectEvaluationInputSchema.parse(
       rawInput,
@@ -134,7 +140,7 @@ export async function createProjectEvaluation(
           "PROJECT_EVALUATION_INVALID_STATE",
         );
       }
-      await assertCurrentEvaluationActor(tx,context,scope);
+      await assertCurrentEvaluationActor(tx,context,{...scope,access:evaluatorAccess});
 
       const [submission] = await tx
         .select({
