@@ -28,6 +28,8 @@
 
 | UX-kit-HARDEN-36 | S1 (navigation integrity) | StatTile, navigation Tabs, and Pagination previously passed any caller-supplied string into Next Link; encoded or external destinations could navigate off-site. | Use `isSafeInternalHref`; disallowed targets become inert and labeled. Unit `UX-kit-HARDEN-36`, commits `e8ad2a65`, `33b571f8`, `c8ed765e`, `5bea28ad`. | Fix pushed; cloud pending |
 
+| UX-kit-HARDEN-36 | S1 (table data disclosure) | With mixed authorized/denied rows, `mobilePriority=hidden` and a denied `mobileDetail.canView` could fall back to the `More details` disclosure, serializing restricted values; formatters were invoked regardless of permission. | Per-row access gates now redact denied formatter values and detail links, preserving allowed rows. Behavioral regression `UX-kit-HARDEN-36` in `tests/unit/UX-kit-role-and-overlay-chat17.test.tsx`. | Fix pushed; cloud verification pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
