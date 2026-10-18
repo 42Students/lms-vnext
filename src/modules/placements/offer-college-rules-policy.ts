@@ -62,5 +62,17 @@ export function isPlacementOfferResponseExpired(
   now: Date,
 ): boolean {
   return expiresAt !== null && (!Number.isFinite(expiresAt.getTime()) ||
-    now.getTime() >= expiresAt.getTime());
+    !Number.isFinite(now.getTime()) || now.getTime() >= expiresAt.getTime());
+}
+
+
+/** Placement offer acceptance must use the later of the caller's request
+ * instant and the actual time at which the offer row lock is acquired.
+ * Otherwise a response waiting on a competing transaction can cross its
+ * expiry and still be accepted as if it were received before the deadline.
+ */
+export function placementOfferLockedDecisionTime(requestTime:Date,lockedAt:Date):Date{
+ const a=requestTime.getTime(),b=lockedAt.getTime();
+ if(!Number.isFinite(a)||!Number.isFinite(b))throw new Error("Invalid offer decision clock");
+ return new Date(Math.max(a,b));
 }
