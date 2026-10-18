@@ -41,7 +41,9 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  it("UX-admin-people-01 preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/people/page.tsx");
   expect(page).toContain("DataTable");
-  expect(page).toContain("PeoplePagination");
+  expect(page).toContain('<Pagination label="People pages"');
+  expect(page).toContain("hrefForPage={href}");
+  expect(page).toContain('mobilePriority: "action"');
  });
  it("UX-admin-people-directory-01 preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/people/directory/page.tsx");
