@@ -101,7 +101,9 @@ describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()
  });
  it("REC-calendar-messages-profile-R01 uses safe send, never OTP template, and allowlist outside production",()=>{
   const provider=source("src/modules/placements/recruiter-message-email-provider.ts");
-  expect(provider).toContain('canContactRecipientAtRuntime("EMAIL",digest.recipient,env)');
+  // The provider must normalize before applying the outbound allowlist.
+  expect(provider).toContain('const recipient=normalizeRecipient("EMAIL",digest.recipient)');
+  expect(provider).toContain('canContactRecipientAtRuntime("EMAIL",recipient,env)');
   expect(provider).toContain("key===config.otpTemplateKey");
   expect(provider).toContain("reply_to");
   expect(provider).toContain("safeRecruiterDigestMessages");
