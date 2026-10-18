@@ -39,7 +39,11 @@ describe("Super Admin control-page overview final sprint",()=>{
  it("SA-tenants-modules-R01 never computes learner or override counts outside the selected authorized college page",()=>{
   const service=read("src/modules/module-access/admin-overview-metrics-service.ts");
   expect(service).toContain('requirePermission(context,"admin-scope.select")');
-  expect(service).toContain("inArray(collegeMemberships.collegeId,[...visibleCollegeIds])");
+  expect(service).toContain("parseModuleMetricsCollegeIds(visibleCollegeIds)");
+  expect(service).toContain("assertModuleMetricsCollegeScopes(context,ids,visible)");
+  expect(service).toContain("inArray(collegeMemberships.collegeId,ids)");
+  expect(service).toContain('eq(membershipRoles.role,"LEARNER")');
+  expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
   expect(service).toContain('eq(moduleAccessRules.scopeType,"MEMBERSHIP")');
   expect(service).toContain('eq(collegeMemberships.status,"ACTIVE")');
  });

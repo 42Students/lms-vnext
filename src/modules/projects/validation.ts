@@ -576,6 +576,12 @@ export const updateProjectSubmissionDraftInputSchema =
     expectedUpdatedAt: z.iso.datetime({offset:true}),
   }).strict();
 
+// Submitting must refer to the exact saved revision the learner reviewed.
+// Without this token a stale browser can finalize another teammate's edits.
+export const submitProjectSubmissionInputSchema = z.object({
+  expectedUpdatedAt:z.iso.datetime({offset:true}),
+}).strict();
+
 export const reviewProjectSubmissionInputSchema =
   z
     .object({

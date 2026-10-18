@@ -18,6 +18,16 @@ export function projectHrNotifications(rows:readonly HrNotificationRecord[],jobs
 }
 
 export const HR_INBOX_PAGE_SIZE=25;
+/** Outdated deep links must recover to the last available inbox page,
+ * rather than showing an empty result even though matching notifications exist.
+ * The existing bounds helper still reports raw out-of-range requests faithfully.
+ */
+export function clampHrInboxPage(page:number,total:number):number{
+ const safeTotal=Number.isSafeInteger(total)&&total>0?total:0;
+ const pages=Math.ceil(safeTotal/HR_INBOX_PAGE_SIZE);
+ if(!Number.isSafeInteger(page)||page<1)return 1;
+ return Math.min(page,Math.max(1,pages));
+}
 export function hrInboxPageBounds(page:number,total:number){
  const first=total===0||(page-1)*HR_INBOX_PAGE_SIZE>=total?0:(page-1)*HR_INBOX_PAGE_SIZE+1;
  return {page,total,pageSize:HR_INBOX_PAGE_SIZE,pages:Math.ceil(total/HR_INBOX_PAGE_SIZE),

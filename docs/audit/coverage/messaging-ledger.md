@@ -219,3 +219,18 @@ Remaining page E2E coverage: interactive keyboard focus, phone viewport and real
 | `createOutboundProvider:send` | `tests/unit/chat16-provider-channel-boundaries-07.test.ts`: blank Exotel authentication, DLT entity/sender and template IDs fail before sending campaign SMS | Authored; not run |
 
 **Published CI reconciliation:** two tests shown as failing by `docs/orchestrator/unit-failures-latest.md` in CI `ff6819dd` were directly observed green in completed GitHub Actions run `39120880707` on a later `main` commit. These failures require an orchestrator report refresh, not softened or deleted acceptance criteria. The overall CI run remains red due to other lanes.
+
+## 2026-10-18 public delivery configuration and opt-out dispatch gates
+
+| Export / path | Security and state behaviors covered | Test evidence | State |
+|---|---|---|---|
+| `tpoCampaignDispatchReady`, `dispatchTpoCampaign` configuration | An invalid/non-HTTPS/credentialed `ZEPTOMAIL_API_URL` cannot mark a draft as sending, and no database is queried; auth-only template, whitespace credential and malformed public origin also rejected | `tests/unit/chat16-tpo-campaign-config-gate-23.test.ts` | Authored, unrun |
+| `createZeptoMailEmailProvider.sendOtpEmail` | Missing or whitespace-only OTP template fails before writing sensitive code to external provider | `tests/unit/chat16-otp-provider-resilience-05.test.ts` | Authored, unrun |
+| `deliverPublicRecruiterJoinCode` | Insecure mail host, whitespace token or blank registered OTP template never dispatches a join code | `tests/unit/chat16-provider-channel-boundaries-07.test.ts` | Authored, unrun |
+
+**Remaining production gates:** real provider configuration/acknowledgements, DB handoff race for opt-outs and queued campaigns, and UI double-submit/human testing. No fake green claims for these newly authored tests.
+
+| `src/modules/placements/public-join/send-code-service.ts:lookupDeliveredJoinCompanyName` | Optional company lookup is active-company-only and registrable-domain scoped, handles invalid/free email and directory outages without throwing | `tests/unit/chat16-public-join-delivery-recovery-29.test.ts` | Authored, unrun |
+| `src/modules/placements/public-join/send-code-service.ts:requestPublicJoinCode` | Fully mocked signed link, verified-IP/MX, rate checks, challenge persistence, actual `deliver` callback, then failed company-name lookup returns `{ sent:true, companyName:null }` without duplicate send or false failure | Same | Authored, unrun |
+
+| `requestPublicJoinCode` anonymous preflight | Signed invitation token digest, scope, active organization/college, revocation and expiration, company work-domain match checked before performing MX resolution; the DB transaction repeats the checks under row lock, preserving revocation safety | `tests/unit/chat16-public-join-delivery-recovery-29.test.ts` | Authored, unrun |

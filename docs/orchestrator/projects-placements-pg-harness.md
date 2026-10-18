@@ -141,3 +141,7 @@ A separate high-volume seeded disposable database and `EXPLAIN ANALYZE` are requ
 - **42:** final delivery is a **collaborative project artifact**, consistent with production `submitProjectSubmission`. A second active rostered learner may submit a teammate's draft; an outsider may not, and only one DRAFT→SUBMITTED transition succeeds. It is incorrect to enforce `created_by_membership_id=submitter` on the group final-delivery transition.
 
 The fixture guards join currently active college, organization, user, membership and learner role records before writes. These are **fixture-example guards, not a substitute** for the production service's independently audited permission and state-machine checks. Run `npm run test:db:projects-harness` against a completely disposable, migrated PostgreSQL database. The local connector cannot execute it or certify a pass.
+
+## Terminal project tasks and meetings (PROJ-HARNESS-46)
+
+The shared `requireMutableFixtureProject` SQL guard rejects `project_instances.status in ('ARCHIVED','COMPLETED')` for task submissions, project final delivery (draft/new submit), and meetings. This matches the explicit terminal-state checks in `task-submission-service.ts`, `submission-service.ts` and `meeting-service.ts`. `tests/integration/projects-placements-pg-harness-boundaries.test.ts` verifies both terminal states refuse task/meeting writes and restored ACTIVE permits them. These are fixture-level examples, not equivalent to full service-layer testing.

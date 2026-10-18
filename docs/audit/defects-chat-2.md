@@ -51,3 +51,14 @@ Files updated: `chat2-company-memory-gap-parity.test.ts`, `chat2-company-trust-a
 | ID | Severity | Gap | Defect | Fix commits | Test |
 | --- | --- | --- | --- | --- | --- |
 | CH2-021 | High | TPO-drive-workspace-42 | Whole-round application caught arbitrary service/SQL errors and returned their raw `error.message` in the learner-by-learner report. A simulated database error could disclose internal constraints or secrets. | `a0ccf528`, `4f2fbf0` | `tests/unit/chat2-tpo-round-state-break-01.test.ts`: TPO-BREAK-round-42 (pure error mapping); service integration still required |
+
+## TPO access and status parameter hardening
+
+| ID | Severity | Gap | Defect | Fix commit | Test |
+| --- | --- | --- | --- | --- | --- |
+| CH2-022 | Medium | TPO-settings-audit-55 | Public join-link status GET silently selected first `scope` or `companyId` and ignored injected `collegeId`; ambiguous URLs could mask attempted tenant-selector spoofing. Explicit single-scope and allowed-key enforcement now rejects these with 400 before identity lookup. | `c1ef04f` | `chat2-tpo-public-link-route-journeys-break-05.test.ts` |
+| CH2-023 | Medium | TPO-settings-audit-55 | Recruiter college-grant directory previously accepted duplicated status/page filters by silently choosing the first. The merged shared `parseTpoRecruiterAccessParams` model on `main` now rejects duplicated/foreign selectors, with actionable invalid-filter recovery. | Shared model on `main`; reconciliation `ce039fe`; behavioral test `f2a4736` | `chat2-tpo-public-link-settings.test.ts` |
+
+No CI green or database-side multi-session verification is claimed for these authored tests.
+
+| CH2-024 | High | TPO-drive-workspace-40 | Result-import roster queries used last-write-wins `Map(applicationId,row)` on joined results: contradictory current results, emails or rolls could silently select a learner's arbitrary evidence before staging. Duplicate identical evidence is now deduplicated; conflicting evidence is excluded and not auto-staged. | `5089a4a`, `ed95eb8` | `chat2-ledger-round-import-and-scheduling.test.ts` (CI pending) |

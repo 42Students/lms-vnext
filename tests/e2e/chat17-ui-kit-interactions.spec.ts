@@ -28,6 +28,23 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(overview).toHaveAttribute("aria-selected","true");
   });
 
+  test("UX-kit-E2E-06 pending confirmation resists Escape and double-submit", async ({page}) => {
+    await page.goto(route);
+    await page.getByRole("button",{name:"Review harness deletion"}).click();
+    const dialog=page.getByRole("dialog",{name:"Delete harness workspace"});
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button",{name:"Delete",exact:true}).click();
+    await expect(dialog.getByRole("button",{name:"Working…"})).toBeDisabled();
+    await expect(dialog.getByRole("button",{name:"Cancel"})).toBeDisabled();
+    await expect(page.getByTestId("confirm-invocations")).toHaveText("Confirmation requests: 1");
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeVisible();
+    await expect(page.getByTestId("confirm-invocations")).toHaveText("Confirmation requests: 1");
+    await dialog.getByRole("button",{name:"Finish harness request"}).click();
+    await expect(dialog).not.toBeVisible();
+    await expect(page.getByRole("button",{name:"Review harness deletion"})).toBeFocused();
+  });
+
   test("nested drawer/sheet owns only its own Back marker and never dismisses the parent",async({page})=>{
     await page.goto(route);
     await page.getByRole("button",{name:"Open harness drawer"}).click();
@@ -83,6 +100,19 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await page.keyboard.press("Escape");
     await expect(drawer).not.toBeVisible();
     await expect(open).toBeFocused();
+  });
+
+  test("UX-kit-HARDEN-45 mobile More details never discloses desktop-only private columns",async({page})=>{
+    await page.setViewportSize({width:390,height:780});
+    await page.goto(route);
+    const table=page.locator('[data-slot="data-table"]');
+    await expect(table.locator("caption")).toHaveText("Project table privacy");
+    await expect(table.getByText("DESKTOP_ONLY_PRIVATE_REVIEW")).toBeHidden();
+    await table.locator("summary").filter({hasText:"More details"}).click();
+    await expect(table.locator("details").getByText("Public field 4")).toBeVisible();
+    await expect(table.getByText("DESKTOP_ONLY_PRIVATE_REVIEW")).toBeHidden();
+    await page.setViewportSize({width:1200,height:780});
+    await expect(table.getByText("DESKTOP_ONLY_PRIVATE_REVIEW")).toBeVisible();
   });
 
   test("reduced-motion skeleton and native disclosure remain keyboard accessible",async({page})=>{
