@@ -34,6 +34,9 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 
 | D12-22 | MAJOR | `getTpoStudentPanelDetail` accepted a same-college learner record even after learner membership suspension or user disable, and included `IDENTITY` and `ACADEMICS` activity summaries in a TPO-facing placement history panel despite no demonstrated need for those records. | Fixed active membership/actor predicates and restricted quick-panel event summaries to `PLACEMENTS`; additional redaction/retention acceptance remains. | `82da533f`, `PROJ-BREAK-TPO-PANEL-01.test.ts`. |
 
+| D12-23 | MAJOR | Student notes service previously allowed notes for same-college suspended learners and disabled users, including fetching private archived notes through direct ID. The POST endpoint buffered arbitrary-size JSON before Zod limits, and the client relied on asynchronous state for double-submit protection. | Active learner/role filters on both read and write; bounded stream parser before mutations; synchronous note-submit latch. | `c515ee9f`, `38196f62`, `345c7255`, `PROJ-BREAK-TPO-PANEL-01.test.ts`. |
+| D12-24 | MODERATE | Roster `hasProfileLinks` facet reported a valid link when learner profile contained only unsafe `javascript:`, HTTP, or credential-bearing URLs, even though rendered links were suppressed. | Use existing `safeHttps` policy for both link presence facet and displayed links. | `e435e4ce`, `PROJ-BREAK-TPO-03`. |
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
