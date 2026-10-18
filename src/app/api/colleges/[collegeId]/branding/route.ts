@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {readCollegeBrandingBody,CollegeBrandingBodyError} from "@/modules/colleges/admin-branding-request-body";
 import {
   CollegeBrandingNotFoundError,
+  CollegeBrandingVersionError,
   getCollegeBranding,
   saveCollegeBranding,
 } from "@/modules/colleges/branding-service";
@@ -41,17 +43,19 @@ export async function PUT(request: Request, { params }: RouteContext) {
     const context = await getCurrentRequestContext();
     const collegeId = collegeIdSchema.parse((await params).collegeId);
 
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
-    }
-
+    const body=await readCollegeBrandingBody(request);
     return NextResponse.json({
       branding: await saveCollegeBranding(context, collegeId, body),
-    });
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
+    if (error instanceof CollegeBrandingBodyError)
+      return NextResponse.json({error:"INVALID_REQUEST"},{
+       status:error.code==="BODY_TOO_LARGE"?413:400,
+       headers:{"Cache-Control":"private, no-store"},
+      });
+    if (error instanceof CollegeBrandingVersionError)
+      return NextResponse.json({error:"BRANDING_STALE"},{status:409,
+       headers:{"Cache-Control":"private, no-store"}});
     if (error instanceof CollegeBrandingNotFoundError) return notFound();
     return apiErrorResponse(error);
   }
