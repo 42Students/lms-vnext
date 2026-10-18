@@ -1,7 +1,7 @@
 import { outboundFetch } from "@/lib/outbound";
 import { writeStructuredLog } from "@/observability/logger";
 import type { EmailProvider } from "./types";
-import { isValidRecipient } from "@/modules/messaging/model";
+import { isValidRecipient, normalizeRecipient } from "@/modules/messaging/model";
 
 /**
  * ZeptoMail template email (India region), matching the legacy integration.
@@ -48,11 +48,12 @@ export function createZeptoMailEmailProvider(
 ): EmailProvider {
   return {
     async sendOtpEmail(message) {
+      const recipient = normalizeRecipient("EMAIL", message.toEmail);
       if (
         !config.token.trim() ||
         !isSecureMailProviderEndpoint(config.apiUrl) ||
         !config.otpTemplateKey.trim() ||
-        !isValidRecipient("EMAIL", message.toEmail) ||
+        !isValidRecipient("EMAIL", recipient) ||
         !/^[0-9]{4,8}$/.test(message.code)
       ) {
         writeStructuredLog("WARNING", "email.otp_not_sent", {
@@ -78,15 +79,15 @@ export function createZeptoMailEmailProvider(
             to: [
               {
                 email_address: {
-                  address: message.toEmail,
-                  name: message.toEmail,
+                  address: recipient,
+                  name: recipient,
                 },
               },
             ],
             merge_info: {
               otp: message.code,
               learnerName: message.displayName,
-              email: message.toEmail,
+              email: recipient,
               mobile: message.phoneE164 ?? "",
               expiryMinutes: "5",
             },

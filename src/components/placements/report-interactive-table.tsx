@@ -71,7 +71,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     </label>
     <details className="relative self-end rounded-md border border-border p-2 text-sm">
      <summary className="inline-flex min-h-11 cursor-pointer items-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Column filters ({Object.values(columnFilters).filter(v=>v.trim()).length})</summary>
-     <div className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] space-y-2 overflow-y-auto rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-md sm:p-3">
+     <div role="region" aria-label="Report column filters, scroll for more" tabIndex={0} className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-md sm:p-3">
       <button type="button" onClick={event=>{
         const disclosure=event.currentTarget.closest("details");
         disclosure?.removeAttribute("open");
@@ -89,7 +89,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     </details>
     <details className="relative self-end rounded-md border border-border p-2 text-sm">
      <summary className="inline-flex min-h-11 cursor-pointer items-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Columns</summary>
-     <fieldset className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] space-y-2 overflow-y-auto rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-md sm:p-3">
+     <fieldset aria-label="Report columns, scroll for more" tabIndex={0} className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-md sm:p-3">
       <legend className="sr-only">Choose report columns</legend>
       <button type="button" onClick={event=>{
         const disclosure=event.currentTarget.closest("details");

@@ -243,3 +243,15 @@ No runtime CI execution. Numeric internally validated number callers remain supp
 ### Promotion faculty readiness now holds persisted actor authorization
 
 `getPromotionFacultyReadiness` now executes the full trusted-cohort, target-term and active-faculty read inside one PostgreSQL transaction protected by `assertPersistedPlatformPermission(tx,context,"academics.read",{collegeId,organizationId})`. `tests/unit/chat4-college-promotion-faculty-service-behavior.test.ts` adds `COL-promotion-faculty-ACTOR-03`: revoking the actor between request-context scope preflight and the first database SELECT must deny with no private read. Still requires CI and real concurrent role-revocation PG integration.
+
+## Projects hardening — College Admin role journey (owner priority; 2026-10-18)
+
+| Export or UI | Behavioral test | Security / UX evidence |
+| --- | --- | --- |
+| `src/modules/projects/admin-insights-service.ts` `listProjectAdminSnapshots` | `tests/unit/chat4-project-admin-directory-persisted-actor.test.ts` (`PROJ-BREAK-COLLEGE-04-READ-01`, `PROJ-BREAK-COLLEGE-04-IDOR-05`) | College Admin own tenant and zero-row page, selected Super Admin, forbidden TPO/Learner/inactive memberships, foreign college ID refused **before** scope lookup; persisted `projects.manage` rechecked inside one transaction holding role locks through count, page, and eight aggregate reads |
+| Same service `listProjectAdminRiskQueue` | `tests/unit/chat4-project-admin-risk-submissions-live-actor.test.ts` (`PROJ-BREAK-COLLEGE-04-READ-02`, `PROJ-BREAK-COLLEGE-04-IDOR-05`) | At-risk private queue blocked on revoked College Admin and foreign IDs before data/existence read, same transaction spans query and risk evidence |
+| Same service `getProjectAdminSubmissionSummary` | Same test (`PROJ-BREAK-COLLEGE-04-READ-03`, `PROJ-BREAK-COLLEGE-04-IDOR-05`) | Persisted actor guard on summary projection, known active/review/return counts, forbidden membership and wrong tenant |
+| Same service `listProjectAdminSubmissionQueue` | Same test (`PROJ-BREAK-COLLEGE-04-READ-04`, `PROJ-BREAK-COLLEGE-04-IDOR-05`) | Persisted actor guard through count/page reads; malformed query and foreign college rejected before private SELECT |
+| `src/modules/people/college-import-history-request-model.ts` `isCurrentCollegeImportHistoryRequest` and `src/components/college/college-student-import-history.tsx` | `tests/unit/chat4-college-import-history-response-race.test.ts` (`COL-people-import-history-RACE-02`) | Rapid page changes, close/reopen, old aborted network responses never replace newer table data; explicit AbortController, page bounds, safe generic errors, existing rows remain until new page succeeds |
+
+All cases are authored, not executed. Remaining project acceptance gates: concurrent PostgreSQL role revoke/commit visibility, full mutation state-machine races and actual mobile browser interactions.
