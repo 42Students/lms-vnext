@@ -11,10 +11,14 @@ const inputSchema = z.object({
   q: z.string().trim().max(120).optional(),
   status: z.enum(["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
   fromMentorId: mentorId.optional(),
-  page: z.coerce.number().int().min(1).default(1),
+  page: z.coerce.number().int().min(1).max(10000).default(1),
   pageSize: z.coerce.number().int().min(10).max(100).default(25),
 });
 export type MentorReassignmentQuery = z.input<typeof inputSchema>;
+/** Scope-bound text search treats LIKE metacharacters as literal user input. */
+export function mentorReassignmentLiteralSearch(value:string){
+  return value.replace(/[\\\\%_]/g,"\\\\export type MentorReassignmentQuery = z.input<typeof inputSchema>;");
+}
 
 async function scopeCollege(context: RequestContext, collegeId: string) {
   const college = await loadProjectCollegeScope(collegeId);
@@ -79,13 +83,14 @@ export async function listCollegeReassignmentWorkspaces(
 ) {
   const college = await scopeCollege(context, collegeId);
   const query = inputSchema.parse(raw);
+  const literalSearch=query.q?mentorReassignmentLiteralSearch(query.q):undefined;
   const where = and(
     eq(projectInstances.collegeId, college.id),
     ne(projectInstances.status, "ARCHIVED"),
     query.status ? eq(projectInstances.status, query.status) : undefined,
-    query.q ? or(
-      ilike(projectInstances.title, "%" + query.q + "%"),
-      ilike(projectInstances.slug, "%" + query.q + "%"),
+    literalSearch ? or(
+      ilike(projectInstances.title, "%" + literalSearch + "%"),
+      ilike(projectInstances.slug, "%" + literalSearch + "%"),
     ) : undefined,
     query.fromMentorId === "UNASSIGNED" ? isNull(projectMembers.membershipId)
       : query.fromMentorId ? eq(projectMembers.membershipId, query.fromMentorId) : undefined,
