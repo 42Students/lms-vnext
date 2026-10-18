@@ -16,7 +16,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseAdminDirectorySearchParams } from "@/modules/colleges/admin-directory-query-model";
 import { Pagination } from "@/components/ui/pagination";
-import { can } from "@/modules/permissions/policy";
+import { can, requirePermission } from "@/modules/permissions/policy";
 import {canManageCollegeDirectoryRow} from "@/modules/colleges/admin-directory-access-model";
 import { listColleges } from "@/modules/colleges/service";
 import { listOrganizations } from "@/modules/organizations/service";
@@ -84,6 +84,7 @@ const columns: DataTableColumn<CollegeRow>[] = [
 
 export default async function CollegesPage({searchParams}:{searchParams:Promise<{q?:string|string[];page?:string|string[];pageSize?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
+  requirePermission(context, "admin-scope.select");
   const filters=parseAdminDirectorySearchParams(await searchParams);
   if (!filters) return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin" title="Colleges"/>
