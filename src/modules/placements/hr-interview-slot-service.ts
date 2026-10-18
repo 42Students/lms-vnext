@@ -3,7 +3,7 @@ import {and,eq,gt,ne,inArray,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanies,placementCompanyRelationships,placementRecruiterProfiles,
- placementRecruiterCollegeGrants,placementJobRounds,activityEvents,colleges} from "@/db/schema";
+ placementRecruiterCollegeGrants,placementJobRounds,activityEvents,colleges,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import type {TpoJobTx} from "./tpo-job-write-base";
@@ -28,6 +28,7 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
    eq(placementCompanyRelationships.status,"ACTIVE")))
   .innerJoin(placementCompanies,
    eq(placementCompanies.id,placementCompanyRelationships.companyId))
+  .innerJoin(users,and(eq(users.id,context.user.id),eq(users.platformStatus,"ACTIVE")))
   .innerJoin(placementRecruiterProfiles,and(
    eq(placementRecruiterProfiles.userId,context.user.id),
    eq(placementRecruiterProfiles.companyId,placementCompanyRelationships.companyId),
