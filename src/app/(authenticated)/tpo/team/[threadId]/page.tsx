@@ -75,7 +75,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
    <button type="submit"
-    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+    className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
     Mark this conversation&apos;s alerts as read
    </button>
   </form>
@@ -122,12 +122,12 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <span className="text-body">Page {result.page} of {result.pages}</span>
    {result.page < result.pages ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page+1)}
-    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-[var(--lms-link-text)]">
+    className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-[var(--lms-teal-deep)]">
     Older messages
    </Link> : null}
    {result.page > 1 ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page-1)}
-    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-[var(--lms-link-text)]">
+    className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-[var(--lms-teal-deep)]">
     Newer messages
    </Link> : null}
   </nav>
