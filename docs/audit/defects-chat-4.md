@@ -62,3 +62,6 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | COL-academics-promotion-readiness-01 | S1 readiness integrity | Semester promotion advisory counted a teaching assignment from a disabled user, suspended membership, or removed FACULTY role as staffed, creating a false launch-ready signal. Added joins to persisted actor, membership role, college and ACTIVE states. Pure summary counts distinct mapped courses, including fail-closed no-course case. | `chat4-college-promotion-faculty-readiness.test.ts` | DB fixture needed |
+
+
+| COL-faculty-reassign-ROLE-RACE-01 | S1 concurrency | Faculty reassignment originally locked only membership records, not joined replacement user or role rows. A concurrent account disable or FACULTY role revocation could race assignment after eligibility was read. Changed SELECT to FOR SHARE on joined membership, user and role rows until transaction commit. | `chat4-college-faculty-schedule-hardening.test.ts` | PostgreSQL concurrent revocation race still required |
