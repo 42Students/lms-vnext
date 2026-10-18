@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function SuperAdminFeaturesLoading() {
@@ -9,7 +9,7 @@ export default function SuperAdminFeaturesLoading() {
         title="Feature Controls"
         description="Reading persisted college module access rules."
       />
-      <LoadingState label="Loading college feature matrix…" />
+      <GracefulPageLoading label="Loading college feature matrix…" />
     </div>
   );
 }
