@@ -1,6 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
-import {ProjectsServiceError} from "@/modules/projects/errors";
 import {requireProjectReadAccess,requireProjectLifecycleMutationAccess}
   from "@/modules/projects/access";
 
