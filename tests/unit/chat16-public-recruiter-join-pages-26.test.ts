@@ -74,10 +74,10 @@ describe("chat-16 real public recruiter join page SSR and invitation failure rec
   it("UX-public-join-03 unavailable campaign is explicitly blocked instead of falsely accepting applications", async () => {
     vi.mocked(publicJoinUnavailable).mockResolvedValue(true as never);
     vi.mocked(publicJoinUnavailableCopy).mockReturnValue(
-      "Recruiter invitations are temporarily unavailable.",
+      "Recruiter verification is temporarily unavailable. The placement cell must enable verified client networking, email-code delivery and public join storage before recruiters can join.",
     );
     const html = renderToStaticMarkup(await CollegeJoinPage(params));
-    expect(html).toContain("Recruiter invitations are temporarily unavailable.");
+    expect(html).toContain("Recruiter verification is temporarily unavailable. The placement cell must enable verified client networking, email-code delivery and public join storage before recruiters can join.");
     expect(html).toContain('data-scope="COLLEGE"');
     expect(html).not.toContain("private-database-error");
   });
