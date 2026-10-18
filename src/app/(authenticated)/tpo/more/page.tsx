@@ -48,12 +48,12 @@ export default async function TpoMorePage() {
                   className="group block rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-base font-semibold text-primary-text">
+                    <h3 className="text-base font-semibold text-[var(--lms-teal-deep)]">
                       {item.label}
                     </h3>
                     <span
                       aria-hidden="true"
-                      className="text-primary-text transition group-hover:translate-x-1"
+                      className="text-[var(--lms-teal-deep)] transition group-hover:translate-x-1"
                     >
                       →
                     </span>

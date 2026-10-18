@@ -47,7 +47,7 @@ export default async function TpoNotificationsPage({
     return (
       <section role="alert" className="space-y-3">
         <h1 className="text-xl font-semibold">Invalid notification filters</h1>
-        <Link href={TPO_NOTIFICATIONS_PATH} className="text-primary-text underline">
+        <Link href={TPO_NOTIFICATIONS_PATH} className="text-[var(--lms-teal-deep)] underline">
           Return to newest notifications
         </Link>
       </section>
@@ -88,7 +88,7 @@ export default async function TpoNotificationsPage({
       {inbox.cursor.invalid ? (
         <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
           The notification page link is invalid.{" "}
-          <Link href={tpoInboxPageHref(inbox.query.view)} className="font-semibold text-primary-text underline">
+          <Link href={tpoInboxPageHref(inbox.query.view)} className="font-semibold text-[var(--lms-teal-deep)] underline">
             Return to newest notifications
           </Link>
         </div>
@@ -104,13 +104,13 @@ export default async function TpoNotificationsPage({
             {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
           </p>:null}
           {emptyNavigation?<p role="status" className="rounded-xl border border-border bg-surface p-4">
-            Your unread inbox is clear. <Link href={emptyNavigation.href} className="font-semibold text-primary-text underline">{emptyNavigation.label}</Link>
+            Your unread inbox is clear. <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link>
           </p>:null}
           {nextHref ? (
             <div className="flex justify-center">
               <Link
                 href={nextHref}
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle"
               >
                 Older notifications
               </Link>

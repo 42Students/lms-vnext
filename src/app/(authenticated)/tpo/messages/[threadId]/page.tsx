@@ -15,18 +15,18 @@ export default async function TpoRecruiterConversationPage({params}:{
   placementTableExists("placement_tpo_message_threads"),
   placementTableExists("placement_tpo_messages"),
  ]);
- if(!threadsReady||!messagesReady)return <main className="space-y-3">
+ if(!threadsReady||!messagesReady)return <div className="space-y-3">
   <h1 className="text-xl font-semibold">Recruiter conversations unavailable</h1>
   <p role="alert" className="text-sm text-body">
    Recruiter messaging tables are not registered. No messages were loaded.
   </p>
-  <Link href="/tpo/messages" className="text-primary-text underline">Back to messages</Link>
- </main>;
+  <Link href="/tpo/messages" className="text-[var(--lms-teal-deep)] underline">Back to messages</Link>
+ </div>;
  const {threadId}=await params;
  const data=await getTpoRecruiterThreadDetail(context,threadId);
  if(!data)notFound();
- return <main className="space-y-5">
-  <Link href="/tpo/messages" className="text-sm font-semibold text-primary-text">
+ return <div className="space-y-5">
+  <Link href="/tpo/messages" className="text-sm font-semibold text-[var(--lms-teal-deep)]">
    ← All conversations
   </Link>
   <h1 className="text-xl font-semibold text-foreground">Recruiter conversation</h1>
@@ -52,5 +52,5 @@ export default async function TpoRecruiterConversationPage({params}:{
   </section>
   <TpoRecruiterMessageReply threadId={threadId} actorUserId={context.user.id} unread={data.messages.some(item=>item.senderType==="RECRUITER"&&!item.readAt)} />
   <p className="text-xs text-muted-foreground">Reading and sending require explicit confirmation.</p>
- </main>;
+ </div>;
 }
