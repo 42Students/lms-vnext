@@ -21,6 +21,9 @@ export async function listRecruiterTodayOfferActions(collegeId:string,
   .where(and(inArray(placementJobs.id,ids),eq(placementJobs.collegeId,collegeId),
    eq(placementJobs.status,"PUBLISHED"),
    isNull(placementJobs.archivedAt),
+   // A withdrawn candidate must not resurface in the recruiter's queue
+   // just because old shortlisted screening and offer records remain.
+   eq(placementApplications.status,"SUBMITTED"),
    eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),
    eq(users.platformStatus,"ACTIVE"),
    eq(placementApplicationScreenings.status,"SHORTLISTED"),

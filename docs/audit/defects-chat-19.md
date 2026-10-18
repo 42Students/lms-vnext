@@ -308,3 +308,9 @@ Production, unit, database and browser verification require the next cloud cycle
 | HR-BREAK-TEAM-GRANT-14 | MAJOR | `src/modules/placements/recruiter-company-team-service.ts` rechecked an ACTIVE grant for the signed-in recruiter and company relationship, but did not require the *same grant ID* supplied by the selected trusted session context. Another active grant to the same relationship could make a revoked selected grant appear live. | Require `placementRecruiterCollegeGrants.id=scope.grant.id` alongside existing user, relationship, ACTIVE recruiter/company and tenant checks before any colleague directory query. | `tests/unit/HR-BREAK-chat19-company-team-grant-id.test.ts` covers overlapping grants, exact persisted grant identity, no fallback across college or another recruiter. |
 
 These fixes are committed on chat-19; live provider, PostgreSQL revocation races, and cloud CI verification are pending.
+
+## HR Today withdrawn-applicant offer follow-ups
+
+| ID | Before-fix severity | Source defect and correction | Test |
+|---|---|---|---|
+| HR-BREAK-OFFER-FOLLOWUP-15 | MAJOR | `src/modules/placements/hr-today-offer-actions-service.ts` counted shortlisted offers from **withdrawn applications**. The otherwise-scoped query checked job college/published/not archived and active membership, but did not check the application lifecycle. Because historic screening/offer records can remain persisted after withdrawal, recruiters could see misleading follow-ups derived from a now-private candidate. Require `placementApplications.status==="SUBMITTED"` before aggregates, matching `isRecruiterSharedCandidateAllowed` and recruiter workspace disclosure. | `tests/unit/HR-BREAK-chat19-today-offer-withdrawn.test.ts` checks withdrawal, suspended/foreign applicants, and all SQL filtering predicates without weakening existing tests. |
