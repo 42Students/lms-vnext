@@ -87,6 +87,19 @@ describe("HR-BREAK-chat19-home-portfolio-proposals: no inferred tenant or false 
    await expect(proposals(bad)).rejects.toThrow("NOT_FOUND");
    expect(m.proposals).not.toHaveBeenCalled();
  });
+ it.each([
+  {collegeId:[college,other]},{collegeId:[other,college]},
+  {q:["role","forged"]},{page:["1","9999"]},
+  {sort:["LATEST","OLDEST"]},
+ ])("rejects repeated drive-proposal URL keys %j before reading private discussion",async raw=>{
+  await expect(proposals(raw)).rejects.toThrow("NOT_FOUND");
+  expect(m.proposals).not.toHaveBeenCalled();
+ });
+ it("proposal history rejects a recruiter profile belonging to a different logged-in person",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-person"}});
+  await expect(proposals()).rejects.toThrow("REDIRECT");
+  expect(m.proposals).not.toHaveBeenCalled();
+ });
  it("proposal no-access never claims requests were sent or approved",async()=>{
   const result=await proposals();
   expect(m.proposals).toHaveBeenCalledOnce();
