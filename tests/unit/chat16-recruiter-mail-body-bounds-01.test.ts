@@ -27,6 +27,9 @@ describe("chat-16 signed recruiter email body limits",()=>{
   const body="నమస్కారం 💬\nRecruiter reply\r\n";
   await expect(readBoundedRecruiterInboundBody(request(body)))
    .resolves.toEqual({kind:"OK",body});
+  const withBom="\\uFEFF"+body;
+  await expect(readBoundedRecruiterInboundBody(request(withBom)))
+   .resolves.toEqual({kind:"OK",body:withBom});
  });
  it("HR-MAIL-INBOUND-05 rejects invalid cap arguments before allocating",async()=>{
   await expect(readBoundedRecruiterInboundBody(request("hello"),-1))
