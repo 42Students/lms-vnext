@@ -40,8 +40,9 @@ export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:
     const state=campaignRecipientDisposition(row);
     if(state!=="ELIGIBLE"){suppressed[state]++;continue;}
     const email=row.emailNorm!.trim().toLowerCase();
-    if(seen.has(email)){suppressed.DUPLICATE++;continue;}
+    if(seen.has(email)||seenIds.has(row.id)){suppressed.DUPLICATE++;continue;}
     seen.add(email);
+    seenIds.add(row.id);
     assertCampaignRecipientCap(recipientIds.length+1);
     recipientIds.push(row.id);
   }
