@@ -7,6 +7,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireProjectLifecycleMutationAccess } from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import { ProjectsServiceError } from "./errors";
 import { mentorTaskTransitionParamsSchema, mentorTaskTransitionSchema, allowedMentorTaskTransition }
   from "./mentor-task-transition-model";
@@ -24,6 +25,7 @@ export async function transitionMentorProjectTask(
       )).for("update").limit(1);
     if (!project || !["PLANNED","ACTIVE"].includes(project.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    await assertPersistedProjectMutationActor(tx,context,scope);
     const [task] = await tx.select().from(projectTasks).where(and(
       eq(projectTasks.id,params.taskId), eq(projectTasks.projectId,scope.project.id),
     )).for("update").limit(1);
