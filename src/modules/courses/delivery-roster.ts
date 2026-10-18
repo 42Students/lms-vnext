@@ -35,7 +35,15 @@ export async function listActiveDeliveryLearners(
 ) {
   const db = getDb();
   const [elective] = await db
-    .select({ groupId: electiveOfferings.groupId })
+    .select({
+      groupId: electiveOfferings.groupId,
+      offeringStatus: electiveOfferings.status,
+      offeringDeletedAt: electiveOfferings.deletedAt,
+      slotStatus: electiveSlots.status,
+      slotDeletedAt: electiveSlots.deletedAt,
+      groupStatus: lmsGroups.status,
+      groupDeletedAt: lmsGroups.deletedAt,
+    })
     .from(electiveOfferings)
     .innerJoin(
       courseSectionDeliveries,
@@ -59,15 +67,9 @@ export async function listActiveDeliveryLearners(
         eq(courseSectionDeliveries.sectionId, scope.sectionId),
         isNull(courseSectionDeliveries.endedAt),
         eq(courseOfferings.academicPeriodId, scope.academicPeriodId),
-        eq(electiveOfferings.status, "ACTIVE"),
-        isNull(electiveOfferings.deletedAt),
         eq(electiveSlots.collegeId, scope.collegeId),
-        eq(electiveSlots.status, "ACTIVE"),
-        isNull(electiveSlots.deletedAt),
         eq(lmsGroups.collegeId, scope.collegeId),
         eq(lmsGroups.kind, "ELECTIVE"),
-        eq(lmsGroups.status, "ACTIVE"),
-        isNull(lmsGroups.deletedAt),
       ),
     )
     .limit(1);
@@ -81,6 +83,14 @@ export async function listActiveDeliveryLearners(
   };
 
   if (elective) {
+    // A disabled or deleted elective is not an ordinary Section delivery.
+    // Never fall back to its entire Section roster merely because the
+    // elective audience is closed.
+    if (
+      elective.offeringStatus !== "ACTIVE" || elective.offeringDeletedAt !== null ||
+      elective.slotStatus !== "ACTIVE" || elective.slotDeletedAt !== null ||
+      elective.groupStatus !== "ACTIVE" || elective.groupDeletedAt !== null
+    ) return [];
     return db
       .select(projection)
       .from(lmsGroupMembers)
