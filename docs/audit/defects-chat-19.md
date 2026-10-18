@@ -90,3 +90,9 @@ The dedicated `docs/audit/coverage/hr-pages-chat19-ledger.md` enumerates all 22 
 | Finding ID | Before-fix severity | Source | Issue | Fix | Commit | Direct regression |
 |---|---|---|---|---|---|---|
 | HR-BREAK-JOB-02 | MAJOR | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | A valid authorized-looking job UUID with a malformed page, stage, applicant, offer or outcome filter made the underlying strict Zod parse throw to the page error boundary rather than provide actionable recovery. | Added inline recruiter-safe `ErrorState` with clear-filters action, retaining 404 for malformed job UUID, no private applicant payload or raw validation stack. | `13765dd3` | `tests/unit/HR-BREAK-chat19-legacy-job-aliases.test.ts` (`b23e24e4`) |
+
+### Navigation loop found by independent HR UX review
+
+| Finding ID | Severity | Source evidence | Defect | Fix | Commit | Regression |
+|---|---|---|---|---|---|---|
+| HR-XA-09 | MAJOR | `src/app/(authenticated)/hr/conversations/page.tsx` Notification inbox link | `/hr/messages` aliases the current `/hr/conversations` inbox. Its `Notification inbox` action therefore reopened the same page, not notifications. | Target `/hr/notifications` while keeping the legacy Messages alias. | `c4f07f41` | `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts` (`67f37ff5`) |

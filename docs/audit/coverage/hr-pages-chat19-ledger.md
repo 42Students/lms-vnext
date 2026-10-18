@@ -60,6 +60,8 @@ Scope: independently reviewed HR/recruiter page entry points and chat-15/chat-16
 ## Cross-audit boundaries and handoff
 
 - Chat-15 owns HR services, placement job transitions and the full HR ledger. Chat-16 owns messaging, email bridge, notification and inbound-mail services. This ledger does not duplicate ownership or claim their unrun coverage.
+- HR-XA-09: `/hr/conversations` Notification inbox formerly linked to its own `/hr/messages` alias. Corrected to actual `/hr/notifications`; direct page regression verifies no self-loop.
+- HR-BREAK-JOB-02: a valid URL with an invalid applicant/round/offer/page filter is a recoverable filter error, not a raw exception or hidden loss of recruiter context. Direct page tests verify clear-filters recovery; invalid job IDs still return 404.
 - Additional source-level finding HR-BREAK-CONVO-02: a contaminated job service row bearing another employer's companyId must not create a drive link; page now checks companyId alongside jobId/collegeId. Regression direct page test is in the conversation suite.
 - Additional source-level finding HR-BREAK-CONVO-03: failure of optional drive change-request retrieval must not lose a legitimate, authorized conversation. This now shows an actionable soft-failure state; test asserts message survives and raw error stays hidden.
 - `docs/design-system/audits/UX-ROLLOUT-AUDIT-college-chat-19.md` already records the 85 college page-source survey and follow-up limits. Source-level complete is not a browser accessibility PASS.
