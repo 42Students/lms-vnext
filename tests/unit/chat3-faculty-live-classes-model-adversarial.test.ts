@@ -21,6 +21,8 @@ describe("FAC-LIVE-MODEL-01 class session, URL and workload resilience", () => {
       { collegeId: deliveryB }, { deliveryId: ["one", "two"] },
       { deliveryId: "invalid" }, { view: "LIVE" },
       { view: "ALL", page: -1 }, { view: "ALL", page: "Infinity" },
+      { view: "ALL", page: ["1", "2"] }, { view: "ALL", page: true },
+      { view: "ALL", page: "001" }, { view: "ALL", page: "1e3" },
     ]) {
       expect(facultyLiveClassesQuerySchema.safeParse(raw).success).toBe(false);
     }
