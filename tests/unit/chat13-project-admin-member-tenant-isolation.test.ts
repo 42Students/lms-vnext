@@ -50,6 +50,15 @@ describe("IIT Dharwad Super Admin Projects: tenant-safe mentor projections", () 
     expect(subquery).toContain("pm.is_primary=true");
   });
 
+  it("PROJ-BREAK-SA-36 hides disabled users from every active Super Admin mentor join",()=>{
+    const code=source();
+    const joins=code.match(/\.innerJoin\(\s*users,\s*and\(eq\(users\.id,\s*collegeMemberships\.userId\),\s*eq\(users\.platformStatus,\s*"ACTIVE"\)\)/g);
+    expect(joins).toHaveLength(2);
+    expect(code).toContain('eq(collegeMemberships.status, "ACTIVE")');
+    expect(code).toContain('isNull(projectMembers.endedAt)');
+    expect(code).not.toContain('eq(users.id, collegeMemberships.userId),\n      )');
+  });
+
   it("PROJ-BREAK-SA-32 does not turn adversarial mentor labels into formulas in Projects CSV", () => {
     const csv = projectAdminCsv([
       ["Project", "Mentor"],
