@@ -1,4 +1,5 @@
 "use client";
+import {tpoStudentMarksVerificationLabel} from "@/modules/placements/tpo-student-marks-label";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useState} from "react";
@@ -54,11 +55,11 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"passingYear",label:"Passing year",read:row=>row.passingYear},
  {key:"gapYears",label:"Gap years",read:row=>row.gapYears},
  {key:"lateral",label:"Lateral entry",read:row=>row.isLateralEntry==null?"Not recorded":row.isLateralEntry?"Yes":"No"},
- {key:"marksVerified",label:"Marks verified",read:row=>row.marksVerified?"Verified":"Not verified"},
+ {key:"marksVerified",label:"Marks verified",read:row=>tpoStudentMarksVerificationLabel(row.marksVerified)},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>tpoStudentDisplayLabel(row.readinessSignal)},
  {key:"readinessNote",label:"Readiness note",read:row=>[
-  !row.profileFacts?.resume?"No resume":"",row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academics incomplete":"",
+  row.profileFacts?.resume===false?"No resume":"",row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academics incomplete":"",
   row.offersAwaitingAnswer>0?row.offersAwaitingAnswer+" offer(s) waiting on an answer":""
  ].filter(Boolean).join(" · ")||"No flags recorded"},
  {key:"eligibilityReason",label:"Eligibility reason",read:row=>row.participationReason??"Not recorded"},

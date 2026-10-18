@@ -173,3 +173,11 @@ Round 3 scope corrections: TPO-settings-audit-56 extension supports timed grants
 | TPO-settings-audit-NOTICES-04 | DONE — source, CI pending | Student notices summary reads the college-wide authorized set, never presents the first 100 as a complete total when the reader has another page, and keeps provider delivery status explicitly unverified. `src/modules/placements/tpo-student-notices-overview-model.ts`, `src/app/(authenticated)/tpo/settings/notices/page.tsx`, `tests/unit/chat11-tpo-notices-college-count.test.ts`. |
 
 | TPO-settings-audit-NOTIFY-READ-05 | DONE — source guard and unit contracts, CI pending | `getTpoMyNotifications` validates the live persisted TPO role and selected tenant at the response boundary, after fetching per-user history and preferences, so disabled/revoked roles cannot receive data from a stale tab. `tests/unit/chat11-tpo-private-notifications-revocation.test.ts` (two gap-named cases). |
+
+| TPO-settings-audit-PREF-UI-06 | DONE — source, CI pending | Personal five-switch notification preference editor now keeps the most recently saved baseline and returned CAS token after successful saves, while preserving draft choices on conflict, preventing repeat submits and never trusting a caller-supplied user/college. `tests/unit/chat11-tpo-personal-preferences-editor-cas.test.ts`. |
+
+| TPO-settings-audit-PREP-CATALOG-07 | DONE — source and pure tests, CI pending | Preparation catalog and outcome service both require non-archived owning department in this college, so an archived course cannot supply misleading readiness evidence. `tests/unit/chat11-tpo-prep-archived-catalog.test.ts` covers unresolved course, zero published content and college scoping. |
+
+| TPO-settings-audit-PREF-HTTP-08 | DONE — HTTP-unit authored, CI pending | Actual Next.js route-unit cases now cover CSRF origin before context, bounded JSON 400/413, private no-store successful save, actor/session denial, stale CAS 409 and missing table 503. `tests/unit/chat11-tpo-preferences-http-security.test.ts`. |
+
+| TPO-settings-audit-PREP-CATALOG-07 transaction | DONE — guarded writer source, CI pending | In addition to the catalog/evidence filters, `setTpoPrepReadiness` now rejects a disabled college or archived department even for direct PUT, before CAS save and activity event. `chat11-tpo-prep-archived-catalog.test.ts` covers transaction ordering. |

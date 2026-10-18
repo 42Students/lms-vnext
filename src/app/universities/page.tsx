@@ -1,9 +1,9 @@
 import type {Metadata} from "next";
 import {MarketingLayout,MarketingHero,MarketingFeatureGrid,MarketingCta} from "@/components/marketing/marketing-layout";
-export const metadata:Metadata={title:"Universities | 42 LMS",description:"Develop Employable Graduates with AI."};
+export const metadata:Metadata={title:"Universities | 42 LMS",description:"Develop employable graduates through learning and placements."};
 export default function UniversitiesPage(){
  return <MarketingLayout>
-  <MarketingHero eyebrow="For universities" title="Develop Employable Graduates with AI"
+  <MarketingHero eyebrow="For universities" title="Develop employable graduates through learning and placements"
    description="Bring academics, applied projects and campus placements together to strengthen student outcomes."/>
   <div className="min-w-0" aria-label="Campus roles"><MarketingFeatureGrid title="For the entire campus" items={[
     {title:"Students",description:"Understand what to learn next, build practical evidence and prepare for hiring."},

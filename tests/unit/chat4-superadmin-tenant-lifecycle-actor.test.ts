@@ -48,7 +48,7 @@ vi.mock("@/db/client",async()=>{
  };
  return {getDb:()=>({
   select:(projection?:unknown)=>{mocks.sourceSelect(projection);return query();},
-  transaction:async(callback:(tx:typeof tx)=>Promise<unknown>)=>{
+  transaction:async(callback:(transaction:typeof tx)=>Promise<unknown>)=>{
    mocks.transaction();
    return callback(tx);
   },

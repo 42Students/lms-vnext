@@ -179,3 +179,14 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultViewSchema` (const) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `filterTpoRoundResultRows` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-result-table-service.ts` | `getTpoRoundResultTable` (function) | `tests/unit/chat2-tpo-read-service-denial-break-10.test.ts` (entrypoint denial only; DB tests pending) | PARTIAL |
+
+## Chat-2 pure model behavioral coverage additions — 2026-10-18
+
+| Runtime exports | Unit test | Branches covered |
+| --- | --- | --- |
+| `HR_DRIVE_ROUND_PRESETS`, `applyHrRoundPreset` | `tests/unit/chat2-hr-round-schedule-and-filter-ledger.test.ts` | Exact legacy editable preset rounds, no source mutation, unknown preset unchanged |
+| `HR_ROUND_OUTCOMES`, `hrInlineRoundResultFilters`, `hrInlineRoundResultsHref` | Same test | Exact categories/counts including no-record case, encoded job+round+outcome filters |
+| `hrScheduledRoundRows`, `hrRoundConflictLabels`, `hrRoundConflictLinks` | Same test | Deterministic overlapping half-open intervals, invalid/unknown duration, adjacent windows, exact role-facing labels, encoded links |
+| `tpoInterviewRescheduleSchema`, `validInterviewWindow`, `overlappingInterviewVenue` | `tests/unit/chat2-interview-reschedule-security.test.ts` | Credential-free HTTPS-only meetings, valid duration and venue overlap guards |
+
+These records supplement existing export rows; CI and integration results are still pending. The HR round schedule model was also hardened against fractional interview durations, which previously created invented fractional-minute end times. No other module/branch was modified.
