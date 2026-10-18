@@ -56,13 +56,14 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
  it("foreign college and foreign organization cannot infer assigned project-membership records",async()=>{
   for(const member of [
    {...tpo().membership!,collegeId:FOREIGN},
+   {...tpo().membership!,organizationId:FOREIGN,collegeId:COLLEGE},
    {...tpo().membership!,organizationId:FOREIGN,collegeId:FOREIGN},
   ]){
    mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}]];
    await expect(requireProjectReadAccess(tpo({membership:member}),PROJECT))
     .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   }
-  expect(mocks.select).toHaveBeenCalledTimes(2);
+  expect(mocks.select).toHaveBeenCalledTimes(3);
  });
  it("PROJ-BREAK-TPO-02 denies projects and placement data from any wrong college OR organization",()=>{
   const tpo=actor(["TPO"]);
