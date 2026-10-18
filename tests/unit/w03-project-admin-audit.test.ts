@@ -19,6 +19,14 @@ const collegeRoute = readFileSync(
   join(root, "src/app/(authenticated)/college/projects/audit/page.tsx"),
   "utf8",
 );
+const queryModel = readFileSync(
+  join(root, "src/modules/projects/admin-audit-query-model.ts"),
+  "utf8",
+);
+const accessModel = readFileSync(
+  join(root, "src/modules/projects/admin-audit-access-model.ts"),
+  "utf8",
+);
 
 describe("W03 project admin audit parity contract", () => {
   it("keeps both legacy account audit routes behind the Projects nav", () => {
@@ -29,20 +37,25 @@ describe("W03 project admin audit parity contract", () => {
 
   it("reads only PROJECTS activity and preserves legacy-style audit filters", () => {
     expect(audit).toContain('module: "PROJECTS"');
-    expect(audit).toContain("searchParams.action");
-    expect(audit).toContain("searchParams.status");
-    expect(audit).toContain("searchParams.subjectType");
-    expect(audit).toContain("searchParams.from");
-    expect(audit).toContain("searchParams.to");
+    // The component delegates parsing to a shared validated query model.
+    expect(audit).toContain("parseProjectAdminAuditQuery(searchParams)");
+    expect(queryModel).toContain('read("action") ?? read("status") ?? read("eventType")');
+    expect(queryModel).toContain('allow("subjectType"');
+    expect(queryModel).toContain('allow("from", validCalendarDate)');
+    expect(queryModel).toContain('allow("to", validCalendarDate)');
+    expect(queryModel).toContain("ignoredInvalidFilters");
   });
 
-  it("requires an explicit college scope for the super-admin audit surface", () => {
-    // The page route now enforces college selection before the shared audit
-    // component is even rendered. That is stronger than an inner UI guard.
+  it("requires college scope except for explicitly authorized global Super Admin template audit", () => {
     expect(superRoute).toContain("getProjectAdminCollegeId(context)");
-    expect(superRoute).toContain("if (!collegeId)");
+    expect(superRoute).toContain("if (!collegeId && !mayReadGlobalProjectAudit(context))");
     expect(superRoute).toContain("Select a college scope");
-    expect(audit).toContain("isSuperAdmin(context)");
+    expect(audit).toContain("mayReadGlobalProjectAudit(context)");
+    // Clearing the scope is not sufficient on its own: global activity still
+    // requires an active Super Admin and an explicit activity.read permission.
+    expect(accessModel).toContain("if (!context || !isSuperAdmin(context)) return false");
+    expect(accessModel).toContain("context.adminScope?.collegeId || context.adminScope?.organizationId");
+    expect(accessModel).toContain('can(context, "activity.read")');
   });
 
   it("preserves cursor filters when loading older activity", () => {
