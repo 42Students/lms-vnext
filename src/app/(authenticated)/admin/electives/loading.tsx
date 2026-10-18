@@ -1,1 +1,2 @@
-export default function AdminElectivesLoading() { return <div className="animate-pulse space-y-4" role="status" aria-label="Loading elective slots"><div className="h-10 rounded bg-muted" /><div className="h-48 rounded bg-muted" /></div>; }
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+export default function AdminElectivesLoading() { return <GracefulPageLoading label="Loading elective slots"/>; }
