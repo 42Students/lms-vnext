@@ -76,6 +76,11 @@ export function movePreviewMember(groups: readonly ProjectTeam[], membershipId: 
   const origins = copies.filter(group => group.membershipIds.includes(membershipId));
   if (origins.length !== 1) throw new Error("Student must belong to exactly one team");
   const origin = origins[0];
+  const sourceIndex = copies.indexOf(origin);
+  if(sourceIndex===targetIndex)return copies;
+  // A planner must never create an empty team: the server's strict
+  // classTeamPreviewSchema rejects empty teams on apply.
+  if(origin.membershipIds.length<=1)throw new Error("TEAM_PREVIEW_EMPTY_TEAM");
   origin.membershipIds = origin.membershipIds.filter(id => id !== membershipId);
   copies[targetIndex].membershipIds.push(membershipId);
   return copies;

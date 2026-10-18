@@ -178,3 +178,12 @@ These are evidence-based test corrections against current source. The next cloud
 | HR-BREAK-MESSAGING-HISTORY-01 | COVERAGE | `src/modules/messaging/receipt-history-service.ts`, previously not referenced by unit tests | Exercised both exported service functions using transaction/authorization mocks for TPO vs recruiter vs wrong role, disabled session, persisted grant recheck, malformed filters, bounded pagination and 2001-row cap. No code defect found in reviewed path. | `133cd61c`, `0dc7ace6` | `tests/unit/HR-BREAK-chat19-messaging-receipt-history-service.test.ts` |
 
 Cloud verification of the newly authored service mocks is pending a post-merge CI cycle; this ledger distinguishes authored test coverage from a confirmed passing run.
+
+## Projects independent breaker additions
+
+| ID | Pre-fix severity | Source | Defect / correction | Commit(s) | Regression |
+|---|---|---|---|---|---|
+| PROJ-BREAK-TEAM-MOVE-01 | MAJOR | `src/modules/projects/class-team-split-model.ts` (`movePreviewMember`) | Moving the sole learner out of a team produced an empty group; `classTeamPreviewSchema` disallows empty membership arrays, so the planner could show an impossible-to-submit preview. Deny the move before mutating, preserve immutable prior plan and allow harmless same-team selection. | `eb6e9698` | `tests/unit/PROJ-BREAK-chat19-team-preview-integrity.test.ts` (`4b7229c4`) |
+| PROJ-BREAK-COLLEGE-LOCK-01 | COVERAGE | `src/modules/projects/admin-submission-lock-policy.ts` | Exercised membership FK actor policy for active College Admin, disabled/suspended, wrong org/college, TPO, learner, recruiter grants and Super Admin acting-college denial. No source defect identified. | `f14fbeb2` | `tests/unit/PROJ-BREAK-chat19-admin-delivery-lock-role.test.ts` |
+
+The new planner guard is a source change; browser and PostgreSQL verification remain orchestrator gates.
