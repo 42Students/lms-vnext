@@ -45,7 +45,8 @@ export function projectSharedApplicants(rows: readonly SharedApplicant[], stage:
     (stage === "SHORTLISTED" && row.status === "SUBMITTED") ||
     (stage === "APPLIED" && row.status === "SUBMITTED") ||
     (stage === "WITHDRAWN" && row.status === "WITHDRAWN") ||
-    ["ASSESSMENT","INTERVIEW","OFFERED","HIRED","REJECTED"].includes(stage)) };
+    (row.status === "SUBMITTED" &&
+      ["ASSESSMENT","INTERVIEW","OFFERED","HIRED","REJECTED"].includes(stage))) };
 }
 
 export const HR_APPLICANT_PAGE_SIZE = 25;
