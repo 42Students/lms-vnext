@@ -1,4 +1,5 @@
 "use client";
+import { projectAdminCsv } from "@/modules/projects/project-admin-csv-model";
 
 type SubmissionRow = {
   workspace: string;
@@ -13,19 +14,13 @@ type SubmissionRow = {
   demoUrl: string | null;
 };
 
-function csvField(input: string | number | null) {
-  const value = String(input ?? "");
-  const safe = /^[=+@\-\t\r]/.test(value) ? "'" + value : value;
-  return '"' + safe.replaceAll('"','""') + '"';
-}
-
 export function ProjectSubmissionsPageExport({ rows }: { rows: readonly SubmissionRow[] }) {
   function exportPage() {
     const headings = ["Workspace","Submission type","Review status","Pending (days)","Submitted",
       "Revisions","Reviewed by","Source link","Demo link","Version"];
     const data = rows.map(row => [row.workspace,row.submissionType,row.status,row.pendingDays,
       row.submittedAt,row.revisions,row.reviewedBy,row.sourceUrl,row.demoUrl,row.version]);
-    const csv = "\ufeff" + [headings,...data].map(row => row.map(csvField).join(",")).join("\r\n");
+    const csv = projectAdminCsv([headings,...data]);
     const objectUrl = URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
     const anchor = document.createElement("a");
     anchor.href = objectUrl;
