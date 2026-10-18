@@ -17,7 +17,7 @@ const recruiter:RequestContext={
  recruiter:{userId,companyId:"123e4567-e89b-42d3-a456-426614174009",
   companyName:"Employer A",title:null,status:"ACTIVE",grants:[grant]},
 };
-const membership=(role:"HR"|"TPO"|"COLLEGE_ADMIN"):RequestContext=>({
+const membership=(role:"FACULTY"|"TPO"|"COLLEGE_ADMIN"):RequestContext=>({
  user:recruiter.user,recruiter:null,
  membership:{id:"123e4567-e89b-42d3-a456-426614174010",collegeId:college,
   organizationId:organization,status:"ACTIVE",roles:[role]},
@@ -57,10 +57,10 @@ describe("HR-ROLE-MATRIX-13 role separation and cross-tenant authorization",()=>
   expect(can(admin,"projects.manage",collegeScope)).toBe(true);
   expect(can(admin,"placements.recruiter.read",companyScope)).toBe(false);
   expect(can(admin,"placements.manage",{collegeId:college,organizationId:otherOrganization})).toBe(false);
-  expect(can(membership("HR"),"placements.manage",collegeScope)).toBe(false);
+  expect(can(membership("FACULTY"),"placements.manage",collegeScope)).toBe(false);
  });
  it("disabled sessions and removed memberships deny both management and recruiter views",()=>{
-  const inactive={...recruiter,user:{...recruiter.user,platformStatus:"SUSPENDED" as const}};
+  const inactive={...recruiter,user:{...recruiter.user,platformStatus:"DISABLED" as const}};
   expect(can(inactive,"placements.recruiter.read",companyScope)).toBe(false);
   expect(can({...recruiter,recruiter:null},"placements.recruiter.read",companyScope)).toBe(false);
   const tpo=membership("TPO");
