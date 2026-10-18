@@ -2,6 +2,7 @@ import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
+import {safeTpoBrandLogoUrl} from "@/modules/placements/tpo-branding-model";
 const college="11111111-1111-4111-8111-111111111111";
 const org="22222222-2222-4222-8222-222222222222";
 const foreign="33333333-3333-4333-8333-333333333333";
@@ -9,6 +10,25 @@ const root:RequestContext={user:{
  id:"44444444-4444-4444-8444-444444444444",
  identityUid:"root",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"],
 },membership:null,adminScope:null};
+
+describe("SA-tenants-modules-BRAND-04 safe unsaved logo preview",()=>{
+ it("never renders embedded credentials, non-HTTPS assets or signed query/fragment URLs",()=>{
+  for(const candidate of [
+   "javascript:alert(1)","http://college.example/logo.png",
+   "https://root:secret@college.example/logo.png",
+   "https://college.example/logo.png?token=secret",
+   "https://college.example/logo.png#private",
+   "gs://private-bucket/logo.png",
+  ])expect(safeTpoBrandLogoUrl(candidate)).toBeNull();
+  expect(safeTpoBrandLogoUrl("https://college.example/logo.png"))
+   .toBe("https://college.example/logo.png");
+  const form=readFileSync("src/components/admin/college-branding-form.tsx","utf8");
+  expect(form).toContain("const previewLogoUrl=uploadedLogoUrl||safeTpoBrandLogoUrl(values.logoUrl)");
+  expect(form).toContain("src={previewLogoUrl}");
+  expect(form).toContain("referrerPolicy=\"no-referrer\"");
+  expect(form).not.toContain('^https:\\/\\/');
+ });
+});
 
 describe("SA-tenants-modules-BRAND-03 branding writes require current scoped Super Admin",()=>{
  it("denies expired, wrong organization and ordinary college roles even if they can read scoped branding",()=>{
