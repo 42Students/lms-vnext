@@ -1,12 +1,11 @@
 import {describe,expect,it} from "vitest";
 import {
  buildTpoTeamRoster,summarizeTpoTeam,buildTpoTrustedCompanies,
- buildTpoTrustedDomains,TPO_TEAM_ROLE_LABELS,
+ buildTpoTrustedDomains,TPO_TEAM_ROLE_LABELS,tpoSettingsCollegeIdSchema,
  type TpoTeamEvidenceRow,
 } from "@/modules/placements/tpo-settings-read-model";
 import {tpoPublicJoinLinkChangeSchema,tpoPublicJoinLinkToggleSchema,publicJoinLinkPath}
  from "@/modules/placements/tpo-public-join-link-model";
-import {tpoSettingsCollegeIdSchema} from "@/modules/placements/tpo-settings-people-service";
 
 const college="00000000-0000-4000-8000-000000000001",other="00000000-0000-4000-8000-000000000002";
 const person=(patch:Partial<TpoTeamEvidenceRow>):TpoTeamEvidenceRow=>({
