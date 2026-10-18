@@ -18,7 +18,7 @@ export async function readFacultyQuizCommandBody(request:Request):Promise<unknow
   const size=Number(declared);
   // Treat invalid or ambiguous Content-Length as malformed transport rather
   // than silently ignoring it and risking inconsistent proxy/body framing.
-  if(!/^\\d+$/.test(declared)||!Number.isSafeInteger(size))
+  if(!/^\d+$/.test(declared)||!Number.isSafeInteger(size))
    throw new FacultyQuizBodyError("INVALID_QUIZ_JSON",400);
   if(size>FACULTY_QUIZ_COMMAND_LIMIT_BYTES)
    throw new FacultyQuizBodyError("FACULTY_QUIZ_BODY_TOO_LARGE",413);
