@@ -10,6 +10,7 @@ import {
 import { listCollegeTeachingOptions } from "@/modules/courses/college-teaching-options-service";
 import {CollegeFacultyReassignAction} from "@/components/college/college-faculty-reassign-action";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { facultyAssignmentQuerySchema, collegeMappingHref } from "@/modules/academics/college-mapping-model";
 import { listCollegeFacultyAssignments } from "@/modules/academics/college-mapping-service";
 import { facultyAssignmentCsvHref } from "@/modules/academics/college-faculty-assignment-export-model";
@@ -111,7 +112,7 @@ export default async function CollegeFacultyAssignmentPage({
             className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
         </form>
       </section>
-      <section className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface" aria-label="Teaching assignment roster">
+      <section className="min-w-0 rounded-xl border border-border bg-surface" aria-label="Teaching assignment roster">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {total} matching teaching assignment{total === 1 ? "" : "s"}
         </p>
@@ -122,59 +123,53 @@ export default async function CollegeFacultyAssignmentPage({
               : "No assignments on this page. Choose an earlier page."}
           </p>
         ) : (
-          <table className="w-full min-w-[48rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-            <thead className="bg-muted text-muted-foreground"><tr>
-              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.faculty}</th>
-              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.course}</th>
-              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.class}</th>
-              <th scope="col" className="px-4 py-3">Period</th>
-              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.role}</th>
-              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.active}</th>
-              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.actions}</th>
-            </tr></thead>
-            <tbody>{items.map(item => <tr key={item.id} className="border-t border-border align-top">
-              <td className="px-4 py-3">
-                <p className="font-semibold text-foreground">{item.facultyName}</p>
-              </td>
-              <td className="px-4 py-3">
-                <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
-                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
-                  {item.courseName}
-                </Link>
-                <p className="mt-1 text-xs text-muted-foreground">{item.courseCode}</p>
-              </td>
-              <td className="px-4 py-3 text-body">{item.cohortName} · {item.sectionName}</td>
-              <td className="px-4 py-3 text-body">{item.periodName}</td>
-              <td className="px-4 py-3 text-body">{facultyAssignmentRoleLabel(item.role)}</td>
-              <td className="px-4 py-3 text-body">{item.state === "ACTIVE" ? FACULTY_ASSIGNMENT_COPY.yes : FACULTY_ASSIGNMENT_COPY.no}</td>
-              <td className="px-4 py-3">
-                {item.state === "ACTIVE" ? (
+          <DataTable
+            caption="Teaching assignment roster"
+            rows={items}
+            getRowKey={item => item.id}
+            empty={<p className="text-sm text-body">No persisted teaching assignments match these filters. Unassigned faculty are listed separately in the Faculty directory.</p>}
+            columns={[
+              { key: "faculty", header: FACULTY_ASSIGNMENT_COPY.columns.faculty,
+                mobilePriority: "primary", cell: item => item.facultyName },
+              { key: "course", header: FACULTY_ASSIGNMENT_COPY.columns.course,
+                mobilePriority: "secondary", cell: item => <>
+                  <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
+                    className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                    {item.courseName}
+                  </Link>
+                  <p className="mt-1 text-xs text-muted-foreground">{item.courseCode}</p>
+                </> },
+              { key: "class", header: FACULTY_ASSIGNMENT_COPY.columns.class,
+                mobilePriority: "secondary", cell: item => item.cohortName + " · " + item.sectionName },
+              { key: "period", header: "Period", mobilePriority: "secondary",
+                cell: item => item.periodName },
+              { key: "role", header: FACULTY_ASSIGNMENT_COPY.columns.role,
+                mobilePriority: "secondary", cell: item => facultyAssignmentRoleLabel(item.role) },
+              { key: "active", header: FACULTY_ASSIGNMENT_COPY.columns.active,
+                mobilePriority: "secondary", cell: item => item.state === "ACTIVE" ? FACULTY_ASSIGNMENT_COPY.yes : FACULTY_ASSIGNMENT_COPY.no },
+              { key: "actions", header: FACULTY_ASSIGNMENT_COPY.columns.actions,
+                mobilePriority: "action", cell: item => item.state === "ACTIVE" ? (
                   <div className="flex flex-wrap gap-2">
                     <CollegeFacultyAssignmentEnd
-                      assignmentId={item.id}
-                      facultyName={item.facultyName}
-                      courseName={item.courseName}
-                      role={item.role}
+                      assignmentId={item.id} facultyName={item.facultyName}
+                      courseName={item.courseName} role={item.role}
                     />
                     <CollegeFacultyReassignAction
-                      assignmentId={item.id}
-                      facultyName={item.facultyName}
-                      role={item.role}
-                      oldMembershipId={item.membershipId}
+                      assignmentId={item.id} facultyName={item.facultyName}
+                      role={item.role} oldMembershipId={item.membershipId}
                       expectedUpdatedAt={item.updatedAt.toISOString()}
                       faculty={options.faculty}
                     />
                   </div>
-                ) : <span className="text-xs text-muted-foreground">Historical</span>}
-              </td>
-            </tr>)}</tbody>
-          </table>
+                ) : <span className="text-xs text-muted-foreground">Historical</span> },
+            ]}
+          />
         )}
       </section>
       <nav aria-label="Faculty assignment pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span className="text-muted-foreground">Page {query.page} of {totalPages} · 25/page</span>
         <div className="flex gap-2">
-          {query.page > 1 ? <Link className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]"
+          {query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page - 1 })}>Previous</Link> : null}
           {query.page < totalPages ? <Link className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page + 1 })}>Next</Link> : null}
