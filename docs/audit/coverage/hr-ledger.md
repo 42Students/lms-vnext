@@ -570,3 +570,29 @@ These paths require one test row **per exported function** after parsing each fi
 | `src/modules/placements/recruiter-request-list-model.ts` | `filterOwnRecruiterRequests` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/recruiter-round-results-read-model.ts` | `projectRecruiterRoundResults` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/recruiter-round-results-read-model.ts` | `recruiterResultTableHref` | **OPEN** — test and role matrix not verified |
+
+## Exported functions inventory offset 140 (14 files; 21 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/recruiter-route-alias-model.ts` | `recruiterDriveDetailHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-selection-list-model.ts` | `recruiterSelectionRangeWarning` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-selection-list-model.ts` | `recruiterSelectionListInputSchema` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-selection-staged-schema.ts` | `stagedRecruiterSelectionItems` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-self-grants-model.ts` | `buildRecruiterSelfGrantRows` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-self-grants-service.ts` | `getRecruiterSelfGrantOverview` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-service.ts` | `listPlacementRecruiterGrants` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-service.ts` | `grantPlacementRecruiter` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-service.ts` | `revokePlacementRecruiterGrant` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-service.ts` | `listOwnRecruiterPlacementJobs` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-shared-candidate-policy.ts` | `isRecruiterSharedCandidateAllowed` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-shell-navigation-model.ts` | `recruiterLegacyMobileNavigation` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-shell-navigation-model.ts` | `recruiterLegacyHeaderCollege` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-team-drive-count-service.ts` | `recruiterTeamAttributedDriveCounts` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-today-greeting-model.ts` | `recruiterTodayGreeting` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-today-model.ts` | `recruiterTodayWeek` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-today-model.ts` | `recruiterTodayEightDayWindow` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-today-model.ts` | `buildRecruiterToday` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-today-waiting-model.ts` | `recruiterTodayWaitingRequests` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-today-week-events-model.ts` | `recruiterTodayWeekEvents` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-workspace-service.ts` | `getRecruiterPlacementWorkspace` | **OPEN** — test and role matrix not verified |
