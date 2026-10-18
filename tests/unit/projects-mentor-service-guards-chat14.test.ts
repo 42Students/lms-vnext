@@ -84,7 +84,11 @@ describe("chat-14 mentor project service boundaries (source compliance)",()=>{
   });
   it("final delivery mentor decision preserves version, project scope, and assigned member notification",()=>{
     const s=service("mentor-final-delivery-decision");
-    expect(s).toContain("requireProjectReadAccess");
+    // A Mentor final-delivery review is a mutation, not a read-only route;
+    // the lifecycle mutation gate is deliberately stronger than read access.
+    expect(s).toContain("requireProjectLifecycleMutationAccess");
+    expect(s).toContain('scope.access!=="MENTOR"');
+    expect(s).toContain('hasMembershipRole(context,"MENTOR")');
     expect(s).toContain("date_trunc('milliseconds'");
     expect(s).toContain("notifyActiveProjectMembers(tx,reviewedEvent.id");
     expect(s).toContain("recordActivityEventInTransaction(tx,context");
