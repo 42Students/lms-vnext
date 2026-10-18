@@ -1,1 +1,6 @@
-export default function Loading(){return <div role="status" aria-label="Loading students" className="animate-pulse space-y-3"><div className="h-12 rounded bg-muted"/><div className="h-40 rounded bg-muted"/></div>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+/** UX: bounded skeleton with retry when the connection stalls. */
+export default function Loading() {
+  return <GracefulPageLoading label="Loading students…" />;
+}
