@@ -163,31 +163,14 @@ export async function listLearnerCourseDeliveries(
     )
     .innerJoin(
       courseOfferings,
-      includeHistorical
-        ? and(
-            eq(
-              courseOfferings.id,
-              courseSectionDeliveries.offeringId,
-            ),
-            eq(
-              courseOfferings.academicPeriodId,
-              sectionEnrollments.academicPeriodId,
-            ),
-          )
-        : and(
-            eq(
-              courseOfferings.id,
-              courseSectionDeliveries.offeringId,
-            ),
-            eq(
-              courseOfferings.academicPeriodId,
-              sectionEnrollments.academicPeriodId,
-            ),
-            eq(
-              courseOfferings.status,
-              "ACTIVE",
-            ),
-          ),
+      and(
+        eq(courseOfferings.id,courseSectionDeliveries.offeringId),
+        eq(courseOfferings.cohortId,sections.cohortId),
+        eq(courseOfferings.cohortId,learnerProgramEnrollments.cohortId),
+        eq(courseOfferings.academicPeriodId,sectionEnrollments.academicPeriodId),
+        eq(courseOfferings.academicPeriodId,sections.academicPeriodId),
+        includeHistorical?undefined:eq(courseOfferings.status,"ACTIVE"),
+      ),
     )
     .innerJoin(
       courses,
@@ -384,6 +367,8 @@ export async function listLearnerCourseInstructors(
           collegeMemberships.collegeId,
           membership.collegeId,
         ),
+        eq(collegeMemberships.status,"ACTIVE"),
+        eq(users.platformStatus,"ACTIVE"),
       ),
     )
     .orderBy(

@@ -38,10 +38,14 @@ export function projectTpoJoiningFollowups(facts:readonly JoiningFollowupFact[],
 }
 export const TPO_JOINING_FOLLOWUP_CSV_LIMIT=200;
 export function tpoJoiningFollowupCsv(
- result:ReturnType<typeof projectTpoJoiningFollowups>,
+ result:ReturnType<typeof projectTpoJoiningFollowups>&{truncated?:boolean},
  seasonName:string,
 ){
- const truncated=result.rows.length>TPO_JOINING_FOLLOWUP_CSV_LIMIT;
+ // The DB reader deliberately caps at 500 accepted offers. Never describe
+ // counts from that sample as full-season totals in a downloaded CSV.
+ const sourceTruncated=result.truncated===true;
+ const rowTruncated=result.rows.length>TPO_JOINING_FOLLOWUP_CSV_LIMIT;
+ const truncated=sourceTruncated||rowTruncated;
  const data:(string|number|null)[][]=[
   ["Season total",seasonName,result.counts.accepted,result.counts.pending,result.counts.deferred,
     result.counts.joined,result.counts.didNotJoin,result.counts.dueWithRecordedDate],
@@ -51,8 +55,11 @@ export function tpoJoiningFollowupCsv(
   ["Methodology","Only currently ACCEPTED offers. Due requires a persisted joining date on/before "+result.todayIst+
     ". Missing date is unknown, not late. Joining success requires an explicit JOINED outcome.",null,null,null,null,null,null],
  ];
- if(truncated)data.push(["TRUNCATED","First "+TPO_JOINING_FOLLOWUP_CSV_LIMIT+" of "+result.rows.length+
+ if(rowTruncated)data.push(["TRUNCATED","First "+TPO_JOINING_FOLLOWUP_CSV_LIMIT+" of "+result.rows.length+
    " matching follow-up offers exported; totals are not limited.",null,null,null,null,null,null]);
+ if(sourceTruncated)data.push(["SOURCE_TRUNCATED",
+   "Only the first 500 accepted offer versions were examined. Summary totals are incomplete; no full-season total is claimed.",
+   null,null,null,null,null,null]);
  return {csv:placementReportCsv([
   "Scope","Company/drive or season","Accepted offers or student","Pending or role",
   "Deferred or recorded status","Joined or joining date","Did not join or offer ID","Date due",
