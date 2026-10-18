@@ -11,6 +11,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {CoursesServiceError} from "./errors";
+import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
 
 // Registered in migration 0129. Do not use this writer with an unregistered schema.
 const lessonTarget=z.strictObject({
@@ -99,8 +100,7 @@ export async function bulkCollegeLessonStudentVisibility(context:RequestContext,
    changed.push(saved);
   }catch(error){
    failed.push({lessonId:item.lessonId,
-    reason:error instanceof CoursesServiceError?error.code:
-     error instanceof Error?error.message:"VISIBILITY_UPDATE_FAILED"});
+    reason:safeCourseVisibilityFailure(error)});
   }
  }
  return {changed,failed};
