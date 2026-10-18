@@ -2,16 +2,16 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
-/** Topmost overlay is the only overlay allowed to consume a Back action. */
+/** Only the top overlay may intercept Back; cleanup pops never close its parent. */
 const activeOverlayStack: string[] = [];
+let pendingCleanupPops = 0;
+const ignoredPopEvents = new WeakSet<Event>();
 
 /**
- * Native host contract:
- * Before host Back navigates, dispatch a cancelable "lms:native-back" event on window.
- * If dispatchEvent returns false, the web view owns that back press. Do not navigate.
- * Browser history gets a same-URL marker so Android WebView's regular Back closes
- * the frontmost modal before leaving the route. Never prevent a pending write from
- * finishing by releasing the marker automatically.
+ * Host: dispatch cancelable "lms:native-back" before route navigation.
+ * If dispatchEvent returns false the overlay consumed Back. History markers
+ * also handle standard Android/browser Back; explicit close removes only its
+ * own marker. Pending nondismissible overlays restore the marker.
  */
 export function useOverlayWebview({
   open, dismissible, onDismiss,
@@ -20,28 +20,41 @@ export function useOverlayWebview({
   const callback = useRef(onDismiss);
   callback.current = onDismiss;
   const [availableHeight, setAvailableHeight] = useState<string>();
+  const [viewportTop, setViewportTop] = useState<string>();
   useEffect(() => {
-    if (!open) { setAvailableHeight(undefined); return; }
+    if (!open) return;
     const marker = `lms-overlay:${id}`;
     if (!activeOverlayStack.includes(marker)) activeOverlayStack.push(marker);
-    const current = window.history.state as Record<string, unknown> | null;
-    if (current?.lmsOverlay !== marker) {
-      window.history.pushState({ ...(current ?? {}), lmsOverlay: marker }, "", window.location.href);
+    const originalState = window.history.state as Record<string, unknown> | null;
+    if (originalState?.lmsOverlay !== marker) {
+      window.history.pushState({ ...(originalState ?? {}), lmsOverlay: marker }, "", window.location.href);
     }
     function hostBack(event: Event) {
       if (activeOverlayStack[activeOverlayStack.length - 1] !== marker) return;
       event.preventDefault();
       if (dismissible) callback.current();
     }
-    function popstate() {
+    function popstate(event: PopStateEvent) {
+      if (ignoredPopEvents.has(event)) return;
+      if (pendingCleanupPops > 0) {
+        pendingCleanupPops -= 1;
+        ignoredPopEvents.add(event);
+        return;
+      }
       if (activeOverlayStack[activeOverlayStack.length - 1] !== marker) return;
       if (dismissible) callback.current();
-      else window.history.pushState({ ...(window.history.state ?? {}), lmsOverlay: marker }, "", window.location.href);
+      else {
+        // Refuse navigation away from a pending, nondismissible action.
+        window.history.pushState({ ...(window.history.state ?? {}), lmsOverlay: marker }, "", window.location.href);
+      }
     }
     function resize() {
       const viewport = window.visualViewport;
-      const height = viewport ? Math.max(240, viewport.height) : window.innerHeight;
-      setAvailableHeight(`${Math.floor(height)}px`);
+      // Never impose a 240px minimum when a compact/keyboard viewport is smaller.
+      const height = viewport?.height ?? window.innerHeight;
+      const top = viewport?.offsetTop ?? 0;
+      setAvailableHeight(`${Math.max(1,Math.floor(height))}px`);
+      setViewportTop(`${Math.max(0,Math.floor(top))}px`);
     }
     resize();
     window.addEventListener("lms:native-back", hostBack);
@@ -53,11 +66,15 @@ export function useOverlayWebview({
       window.removeEventListener("popstate", popstate);
       window.visualViewport?.removeEventListener("resize", resize);
       window.visualViewport?.removeEventListener("scroll", resize);
-      const pos = activeOverlayStack.lastIndexOf(marker);
-      if (pos >= 0) activeOverlayStack.splice(pos, 1);
+      const index = activeOverlayStack.lastIndexOf(marker);
+      if (index >= 0) activeOverlayStack.splice(index, 1);
       const latest = window.history.state as Record<string, unknown> | null;
-      if (latest?.lmsOverlay === marker) window.history.back();
+      if (latest?.lmsOverlay === marker) {
+        // The next popstate belongs to this explicit close, NOT to the parent.
+        pendingCleanupPops += 1;
+        window.history.back();
+      }
     };
   }, [open, dismissible, id]);
-  return { availableHeight };
+  return { availableHeight, viewportTop };
 }
