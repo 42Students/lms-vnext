@@ -256,7 +256,7 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
   expect(slice).toHaveLength(37);
   const tests=read("tests/unit/ux-admin-chat6-middle-third.test.ts");
   for(const route of slice){
-   const slug=route.slice("/admin/".length).replace(/[\/\[\]]+/g,"-");
+   const slug=route.slice("/admin/".length).replace(/[\/\[\]]+/g,"-").replace(/-$/,"");
    const note=read("docs/audit/ux/admin-"+slug+".md");
    expect(note).toContain("# "+route+" · UX source review");
    expect(tests).toContain("UX-admin-"+slug+"-01");
