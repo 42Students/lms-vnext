@@ -75,6 +75,14 @@ Source fix `3f025d6`; tests **authored but not run**. `tests/unit/PROJ-BREAK-cha
 
 Source fixes `46e53dc` and `10a1fb3`. Monotonic `updatedAt` on transition. **Tests authored but not run.** This closes the *pre-read-to-write* lost update path in code, but **does not fully close legacy S1 stale-tab/ABA acceptance** while some old clients omit the optional version and until real PostgreSQL parallel transaction replays, backward client audit, and independent reviewer signoff.
 
+## All-role meeting version payload — PROJ-BREAK-MENTOR-395..397 (2026-10-19)
+| Export / client | Test | Behavior |
+|---|---|---|
+| `project-meeting-transition-payload-model.ts:projectMeetingTransitionPayload` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-client-version.test.ts` | `395` ADMIN completion and LEARNER cancellation submit the last displayed revision to the legacy CAS endpoint; `396` MENTOR decision keeps `confirmed:true` and revision; `397` optional empty notes and IST timestamp equivalence preserve exact Zod contracts |
+| `project-meeting-controls.tsx:ProjectMeetingTransitionActions` | Model test above and preexisting page/component tests | Both COMPLETE and CANCEL now delegate to shared payload builder; no user-role-specific omission of `expectedUpdatedAt` |
+
+Source commits `405e415`, `2c45273`, test `6fab70b`. **Authored, unrun.** Legacy non-UI clients which omit the optional token remain under the server pre-read-to-write CAS but can act on a newer server state than their unseen tab; reviewer/API compatibility check and DB/browser test are still mandatory.
+
 ## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
 - `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
 - `recruiter-chat14-message-email-bridge-contract.test.ts`: the expectation referred to the raw email string, but the provider now normalizes the recipient *before* applying the allowlist; updated the test to assert both normalization and the runtime allowlist, preserving the stronger safety invariant.
