@@ -1,12 +1,14 @@
 import "server-only";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {and,asc,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {cohorts,departments,programs,sections} from "@/db/schema";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import type {RequestContext} from "@/modules/identity/context";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 
 /** Only choices owned by the user's explicitly selected college. */
 export async function getSuperAdminStudentRegisterOptions(context:RequestContext){
+ if(!isSuperAdmin(context))throw new AuthorizationError("people.manage");
  const scope=await resolveActingCollege(context,"people.manage");
  const db=getDb();
  const [progs,batches,classes]=await Promise.all([
