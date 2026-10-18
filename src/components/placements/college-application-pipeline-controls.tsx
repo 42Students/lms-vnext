@@ -1,5 +1,6 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
+import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -70,6 +71,43 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
  }
+ const columns:DataTableColumn<Row>[]=[
+  {key:"selected",header:"Select",mobilePriority:"action",cell:row=>
+   <label className="inline-flex min-h-11 items-center gap-2 text-sm">
+    <input type="checkbox" aria-label={"Select "+(row.name??row.id)}
+     disabled={row.status!=="SUBMITTED"||busy||allMatching}
+     checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/> Select</label>},
+  {key:"name",header:"Learner Name",mobilePriority:"primary",
+   cell:row=>row.name??"Unnamed learner"},
+  {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>row.email??"—"},
+  {key:"college",header:"College",mobilePriority:"secondary",cell:row=>row.collegeName},
+  {key:"roll",header:"Roll",mobilePriority:"secondary",cell:row=>row.rollNumber??"Not recorded"},
+  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
+  {key:"source",header:"Source",mobilePriority:"secondary",cell:row=>row.source},
+  {key:"date",header:"Applied Date",mobilePriority:"secondary",
+   cell:row=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.submittedAt))},
+  {key:"age",header:"Age",mobilePriority:"secondary",cell:row=>row.ageDays+" days"},
+  {key:"match",header:"Match Score",mobilePriority:"secondary",
+   cell:()=> <span title="No persisted match score available">—</span>},
+  {key:"status",header:"Current Status",mobilePriority:"secondary",cell:row=>row.stage},
+  {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
+  {key:"actions",header:"Actions",mobilePriority:"action",cell:row=>
+   <div className="flex flex-wrap gap-2">
+    <button type="button" onClick={()=>void openDetail(row.id)}
+     className="min-h-11 rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Details</button>
+    {row.stage==="REJECTED"?
+     <button type="button" disabled={busy||row.status!=="SUBMITTED"}
+      onClick={()=>selectRow(row,"REINSTATE")}
+      className="min-h-11 rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reinstate</button>:
+     <select aria-label={"Move "+(row.name??"learner")+" to"} value=""
+      disabled={busy||row.status!=="SUBMITTED"}
+      onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
+      className="min-h-11 max-w-full rounded border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:text-sm">
+      <option value="">Move to...</option>
+      {(transitions[row.stage]??[]).map(stage=><option key={stage} value={stage}>{stage}</option>)}
+     </select>}
+   </div>},
+ ];
  return <section className="space-y-4">
   <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4 text-sm">
    <label className="flex items-center gap-2"><input type="checkbox" checked={allPage}
@@ -77,7 +115,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     Select all {eligible.length} on this page</label>
    <strong>{selectedCount} selected</strong>
    {total>eligible.length?<button type="button" disabled={busy||total>3000}
-    onClick={()=>{setAllMatching(true);setSelected([]);}} className="min-h-11 rounded border border-border px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    onClick={()=>{setAllMatching(true);setSelected([]);}} className="min-h-11 rounded border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
     Select all {total.toLocaleString("en-IN")} matching this filter</button>:null}
    {allMatching?<button type="button" onClick={()=>{setAllMatching(false);setSelected([]);}}
     className="min-h-11 rounded border border-border px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear selection</button>:null}
@@ -91,74 +129,12 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
        stage==="HIRED"?"Mark Hired":stage}</option>)}
    </select>
    <button type="button" disabled={!selectedCount||busy} onClick={()=>chooseBulk(target)}
-    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
     Act on {selectedCount} selected</button>
    <span className="text-body">Changes are tracked with per-row results and students receive in-app notifications.</span>
   </div>
-  <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-   <div className="grid gap-3 p-3 sm:hidden" aria-label="Application mobile cards">
-    {rows.map(row=><article key={row.id} className="min-w-0 space-y-2 rounded-lg border border-border bg-surface p-4">
-      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-        <h3 className="min-w-0 break-words font-semibold">{row.name??"Unnamed learner"}</h3>
-        <span className="rounded border border-border px-2 py-1 text-xs">{row.stage}</span>
-      </div>
-      <p className="break-all text-sm text-body">{row.email??"Email not recorded"}</p>
-      <p className="text-sm text-body">{row.collegeName} · {row.roleTitle}</p>
-      <p className="text-xs text-muted-foreground">{row.source} · {row.ageDays} days since applying</p>
-      <div className="flex flex-wrap items-center gap-3">
-        <label className="flex min-h-11 items-center gap-2 text-sm">
-          <input type="checkbox" disabled={row.status!=="SUBMITTED"||busy||allMatching}
-           checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/> Select
-        </label>
-        <button type="button" onClick={()=>void openDetail(row.id)}
-          className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Details</button>
-        {row.stage==="REJECTED"?<button type="button" disabled={busy||row.status!=="SUBMITTED"}
-          onClick={()=>selectRow(row,"REINSTATE")} className="min-h-11 rounded border border-border px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reinstate</button>:
-        <select aria-label={"Move "+(row.name??"learner")+" to"} value="" disabled={busy||row.status!=="SUBMITTED"}
-          onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
-          className="min-h-11 rounded border border-border bg-surface px-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
-          <option value="">Move to...</option>
-          {(transitions[row.stage]??[]).map(stage=><option key={stage} value={stage}>{stage}</option>)}
-        </select>}
-      </div>
-    </article>)}
-   </div>
-   <table className="hidden min-w-[70rem] w-full text-left text-sm sm:table">
-    <thead><tr className="border-b border-border bg-muted"><th className="p-3">Select</th>
-     <th className="p-3">Learner Name</th><th className="p-3">Email</th><th className="p-3">College</th>
-     <th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Source</th>
-     <th className="p-3">Applied Date</th><th className="p-3">Age</th><th className="p-3">Match Score</th>
-     <th className="p-3">Current Status</th><th className="p-3">Screening</th><th className="p-3">Actions</th></tr></thead>
-    <tbody>{rows.map(row=><tr key={row.id} className="border-b border-border">
-     <td className="p-3"><input type="checkbox" disabled={row.status!=="SUBMITTED"||busy||allMatching}
-      aria-label={"Select "+(row.name??row.id)} checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/></td>
-     <td className="p-3">{row.name??"Unnamed learner"}</td>
-     <td className="p-3">{row.email??"—"}</td>
-     <td className="p-3">{row.collegeName}</td>
-     <td className="p-3">{row.rollNumber??"Not recorded"}</td>
-     <td className="p-3">{row.roleTitle}</td>
-     <td className="p-3">{row.source}</td>
-     <td className="p-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.submittedAt))}</td>
-     <td className="p-3">{row.ageDays} days</td>
-     <td className="p-3" title="No persisted match score available">—</td>
-     <td className="p-3">{row.stage}</td>
-     <td className="p-3">{row.screening??"Not recorded"}</td>
-     <td className="p-3"><div className="flex flex-wrap gap-2">
-      <button type="button" onClick={()=>void openDetail(row.id)}
-       className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Details</button>
-      {row.stage==="REJECTED"?
-       <button type="button" disabled={busy||row.status!=="SUBMITTED"} onClick={()=>selectRow(row,"REINSTATE")}
-        className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reinstate</button>:
-       <select aria-label={"Move "+(row.name??"learner")+" to"} value="" disabled={busy||row.status!=="SUBMITTED"}
-        onChange={e=>{if(e.target.value)selectRow(row,e.target.value);}}
-        className="min-h-11 max-w-44 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
-        <option value="">Move to...</option>
-        {(transitions[row.stage]??[]).map(next=><option key={next} value={next}>{next}</option>)}
-       </select>}
-     </div></td>
-    </tr>)}</tbody>
-   </table>
-  </div>
+  <DataTable columns={columns} rows={rows} getRowKey={row=>row.id}
+   caption="Applications pipeline" empty={<p role="status" className="text-sm text-body">No applications match these filters.</p>}/>
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
     applicationId={detailId} initialDetail={detailPayload??undefined} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
@@ -167,7 +143,9 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       target==="REJECTED"?"Reject selected applications":"Move applications to "+target}</h2>
     <p className="text-sm text-body">{selectedCount} application(s) chosen. Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change.
       Students are notified in-app of successful actions. Changes that violate screening rules are reported as skipped.</p>
-    <ul className="max-h-28 overflow-y-auto text-sm">{selected.slice(0,8).map(id=>
+    {selected.length>5?<p id="pipeline-selected-scroll-cue" className="text-xs text-muted-foreground">More selected learners below ↓</p>:null}
+   <ul tabIndex={0} role="region" aria-label="Selected applications" aria-describedby={selected.length>5?"pipeline-selected-scroll-cue":undefined}
+    className="max-h-28 overflow-y-auto overscroll-contain pb-4 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">{selected.slice(0,8).map(id=>
       <li key={id}>{rowMap.get(id)?.name??id}</li>)}
      {selected.length>8?<li>and {selected.length-8} more</li>:null}</ul>
     <label className="grid gap-2 text-sm font-semibold">Reason
@@ -179,13 +157,15 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     </label>
     {email?<p role="alert" className="text-sm text-error">Email delivery is not registered for College Admin stage moves. Uncheck email to use in-app notifications.</p>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-    {outcome?<div role="status" className="max-h-36 overflow-auto rounded border border-border p-3 text-sm">
+    {outcome&&outcome.results.length>5?<p id="pipeline-outcome-scroll-cue" className="text-xs text-muted-foreground">More outcomes below ↓</p>:null}
+    {outcome?<div role="status" tabIndex={0} aria-label="Bulk application outcomes" aria-describedby={outcome.results.length>5?"pipeline-outcome-scroll-cue":undefined}
+     className="max-h-36 overflow-y-auto overscroll-contain rounded border border-border p-3 pb-5 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">
      <p className="font-semibold">{outcome.moved} updated, {outcome.skipped} skipped.</p>
      {outcome.results.filter(r=>r.status==="skipped").map(r=><p key={r.applicationId}>{rowMap.get(r.applicationId)?.name??r.applicationId}: {r.reason}</p>)}
     </div>:null}
     <div className="flex flex-wrap gap-3">
      <button type="button" disabled={busy||email||reason.trim().length<3||!selectedCount}
-      onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</button>
      <button type="button" disabled={busy} onClick={()=>{setDialog(false);setError("");setOutcome(null);}}
       className="min-h-11 rounded border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Close</button>
