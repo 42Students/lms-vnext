@@ -20,7 +20,7 @@ import {
 
 export const runtime = "nodejs";
 
-const switchMembershipSchema = z.object({
+const switchMembershipSchema = z.strictObject({
   membershipId: z.string().uuid(),
 });
 
