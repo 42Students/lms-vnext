@@ -28,11 +28,13 @@ export function ProjectMentorReassignment({
   workspaces,
   mentors,
   matchingWorkspaces,
+  matchingCapped=false,
   initialProjectId,
 }: {
   collegeId: string;
   initialProjectId?: string;
   matchingWorkspaces: { id: string; mentorMembershipId: string | null }[];
+  matchingCapped?:boolean;
   workspaces: Workspace[];
   mentors: Mentor[];
 }) {
@@ -186,7 +188,8 @@ export function ProjectMentorReassignment({
           <button type="button" disabled={pending || !matchingWorkspaces.length}
             onClick={() => setSelected(matchingWorkspaces.map(row => row.id))}
             className="rounded-md border border-border px-3 py-2 text-sm font-semibold">
-            Select all {matchingWorkspaces.length} matching workspaces
+            {matchingCapped?"Select first "+matchingWorkspaces.length+" matching workspaces":
+              "Select all "+matchingWorkspaces.length+" matching workspaces"}
           </button>
           <button type="button" disabled={pending || !selected.length}
             onClick={() => setSelected([])}
@@ -194,6 +197,10 @@ export function ProjectMentorReassignment({
             Clear selection
           </button>
           <span className="text-sm text-body">{selected.length} selected across pages</span>
+          {matchingCapped?<p role="status" className="w-full text-sm text-warning-text">
+            More than 1,000 workspaces match. Selection is limited to the first 1,000;
+            narrow the filters to include the remaining workspaces.
+          </p>:null}
         </div>
         {!workspaces.length ? (
           <p className="mb-0 mt-3 text-sm text-muted-foreground">
