@@ -1,17 +1,19 @@
 "use client";
 import {DataTable} from "@/components/ui/data-table";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {TPO_BUILTIN_JOB_TYPES} from "@/modules/placements/tpo-builtin-job-types";
 type Stored={label:string;active:boolean;countsAsPlaced:boolean|null;isBuiltin:boolean;updatedAt:string};
 export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly Stored[];customActive:number}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const {askConfirm,dialog}=useConfirmFlow();
  const rows=TPO_BUILTIN_JOB_TYPES.map(fixed=>({
   ...fixed,override:stored.find(item=>item.label===fixed.label),
  }));
  const activeCount=customActive+rows.filter(row=>row.override?.active??true).length;
  async function change(label:string,active:boolean,expectedVersion:string){
-  if(!window.confirm((active?"Show ":"Hide ")+label+" in the drive form? Existing drives keep their recorded employment type."))return;
+  if(busy || !await askConfirm((active?"Show ":"Hide ")+label+" in the drive form? Existing drives keep their recorded employment type."))return;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/settings/job-types/builtin",{
@@ -26,6 +28,7 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
   }catch(e){setError(e instanceof Error?e.message:"Unable to change type");}finally{setBusy(false);}
  }
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+  {dialog}
   <h3 className="font-semibold">Built-in job types</h3>
   <p className="text-sm text-muted-foreground">Their names and counts-as-placed answers are fixed. Switching off a type hides it from the college&apos;s available choices; existing drives keep their type.</p>
   <DataTable rows={rows} getRowKey={row=>row.label} caption="Built-in job types"
