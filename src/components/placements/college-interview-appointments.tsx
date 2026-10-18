@@ -145,11 +145,11 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      <label className="grid gap-1 text-sm">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
       onChange={e=>setDuration(Number(e.target.value))} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
     </div>
-    <label className="grid gap-1 text-sm">Mode<select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
+    <label className="grid gap-1 text-sm">Mode<Select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
      className="min-h-11 rounded border border-border bg-surface px-3">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></Select></label>
     <label className="grid gap-1 text-sm">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
-     <input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
+     <Input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
       className="min-h-11 rounded border border-border bg-surface px-3"/></label>
     <label className="grid gap-1 text-sm">Interviewer (optional)<Input value={interviewer}
      onChange={e=>setInterviewer(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
