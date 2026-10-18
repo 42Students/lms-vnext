@@ -52,7 +52,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
-  <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
+  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
    {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
@@ -78,15 +78,10 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </select>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Source
+    <label className="grid gap-1 text-sm font-semibold text-body">Channel
       <select name="channel" defaultValue={data.query.channel} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </select>
-    </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Source
-     <select name="source" defaultValue={data.query.source} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
-       {["ALL","INTERNAL","EXTERNAL"].map(s=><option value={s} key={s}>{s==="ALL"?"All sources":s}</option>)}
-     </select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Hiring stage
      <select name="pipelineStage" defaultValue={data.query.pipelineStage} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -134,13 +129,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <input type="hidden" name="status" value={data.query.status} />
     {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
     {data.query.pipelineStage!=="ALL"?<input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
-    {data.query.source!=="ALL"?<input type="hidden" name="source" value={data.query.source}/>:null}
     {data.query.channel!=="ALL"?<input type="hidden" name="channel" value={data.query.channel}/>:null}
     {data.query.source!=="ALL"?<input type="hidden" name="source" value={data.query.source}/>:null}
     {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
     <input type="hidden" name="page" value={String(data.query.page)} />
     <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
-    <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
+    <button type="submit" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Refresh</button>
   </form>
   {applicationFilters?<p role="status" className="text-sm text-body">
     {data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL"
@@ -162,17 +156,17 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <p className="break-words text-sm text-body">{row.subtitle}</p>
     {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground">{value}</p>)}
     {renderRowActions?<div className="border-t border-border pt-3">{renderRowActions(row)}</div>:null}
-    {row.href?<Link href={row.href} className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open details →</Link>:null}
-    {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">{row.secondaryLabel??"Manage →"}</Link>:null}
+    {row.href?<Link href={row.href} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Open details →</Link>:null}
+    {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{row.secondaryLabel??"Manage →"}</Link>:null}
    </article>)}
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
-    className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Clear search</Link>
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Clear search</Link>
   <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
    <div className="flex flex-wrap gap-3">
-    {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="font-semibold text-primary-text">Previous</Link>:null}
-    {data.query.page<data.totalPages?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page+1})} className="font-semibold text-primary-text">Next</Link>:null}
+    {data.query.page>1?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Previous</Link>:null}
+    {data.query.page<data.totalPages?<Link href={superAdminReadHref(path,{...data.query,page:data.query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Next</Link>:null}
    </div>
   </nav>
  </div>;
