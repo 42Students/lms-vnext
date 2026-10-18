@@ -78,3 +78,5 @@ These branch-level tests are authored, not executed; fixture timestamps use 2099
 | HR profile details saved-response verification | HR-BREAK-PROFILE-RECEIPT-48 | `tests/unit/HR-BREAK-chat19-profile-receipt.test.ts` | Exact persisted profile/versions, forged sign-in JSON, invalid phone/name, draft preservation |
 
 | HR recruiter reply and confirmation | HR-BREAK-CONVO-RECEIPT-49 | `tests/unit/HR-BREAK-chat19-conversation-receipt.test.ts` | Actor authorization, origin guard, persisted ID, HTML fallback denial, native 303 |
+
+| HR Company & Team stale pagination | UX-HR-TEAM-PAGINATION-49 | `tests/unit/UX-HR-chat19-team-pagination.test.ts` | Narrowed filters, out-of-range page, empty roster and malformed page input |
