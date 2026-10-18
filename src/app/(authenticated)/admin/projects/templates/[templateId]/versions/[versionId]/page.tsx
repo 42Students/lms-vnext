@@ -44,7 +44,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`} />
     <p className="text-sm text-muted-foreground">This snapshot is read-only. Publication state and college assignments are managed separately.</p>
     {detail.changes.length ? <section aria-label="Changed fields" className="space-y-4">
-      {detail.changes.map(change => <article key={change.label} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+      {detail.changes.map(change => <article key={change.label} className="min-w-0 border-b border-border py-4">
         <h2 className="text-base font-semibold text-foreground">{change.label}</h2>
         <div className="grid min-w-0 gap-4 md:grid-cols-2">
           {[{ label: "Current", value: change.current }, { label: "Selected version", value: change.selected }].map(value =>
