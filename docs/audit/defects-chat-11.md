@@ -49,6 +49,8 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-TPO-15 | MAJOR | Three settings mutation handlers (`my-notification-preferences`, `outcome-labels`, `prep-readiness`) used unbounded `request.json()`; even Content-Length-free streams could exceed the size needed by these bounded forms. | `39c3659`, `951ecef`, `2f3cf2d`, `c6b16f4`, `ffa00c4`: shared 8 KiB streaming parser, JSON media-type enforcement, explicit 400/413 and actual-handler negative tests. | `TPO-settings-audit-BODY-02` | Slow-stream/load and 401/403 HTTP pending |
 
+| CHAT11-PROJ-10 | BLOCKER | `archiveProjectInstance` used a request-time permission snapshot then locked the project, allowing a role/user revoked during the request to archive or return a privileged no-op. | `e89effc`, `c706c3a`: persisted actor role SHARE locks after project lock and before archived-state retry or mutation. | `PROJ-COL-REVOKE-02` | Two-session PostgreSQL role-revocation test pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
