@@ -105,6 +105,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-058 · SA-content-admin-05 | High | Super Admin content listing accepted section delivery references whose offering ID did not match the lesson's offering; the section dropdown joined deliveries to sections by ID without verifying the selected offering's cohort and academic period. Corrupt imported foreign-section associations could leak/offer incorrect section choices. Reject mismatching delivery in the directory query and require matching cohort and period on section choices. | `1c00b9f` | `tests/unit/PROJ-BREAK-chat9-admin-content-last-third.test.tsx` (`a93464c`): correlated SQL source assertions; adversarial PostgreSQL rows still OPEN |
 
+| PROJ9-059 · SA-content-admin-06 | High | The content directory delivery guard verified the offering FK but not the section's actual cohort/academic period. A same-offering delivery referencing an unrelated section could still be rendered as an eligible section-targeted lesson item. The read query now joins the section with both cohort and academic-period equality and hides an invalid target. | `e8832b8` | `tests/unit/PROJ-BREAK-chat9-admin-content-last-third.test.tsx` (`a74fcd3`); PostgreSQL fixture with invalid section foreign-key combinations OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
