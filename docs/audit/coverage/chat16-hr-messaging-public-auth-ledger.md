@@ -73,3 +73,11 @@ Updated 2026-10-18; source branch `chatgpt/chat-16-b`. This is an **in-progress 
 | Public marketing and recovery pages | `UX-chat16-public-home-01`, `UX-chat16-public-universities-02`, `UX-chat16-public-enterprises-03`, `UX-chat16-public-demo-04`, `UX-chat16-forbidden-05`: server-rendered HTML, navigation, CTA and safe forbidden recovery | `tests/unit/chat16-public-marketing-forbidden-pages-16.test.tsx` |
 
 These are newly authored cases, **not an executed green run**. Provider, database concurrency, invitation acceptance and session-expiry browser coverage remain explicit external verification gates. The historical two chat-16 failures named by `unit-failures-latest.md` were independently reconciled against the main-branch gap register; their original 32-ID assertions and status ownership checks were retained unchanged. The typecheck report named no chat-16 errors.
+
+### Sign-in route execution probes (new)
+
+`tests/unit/chat16-public-auth-real-pages-16.test.tsx` imports and invokes both the real `/` page and the `/login` alias rather than only inspecting source strings. Cases `UX-chat16-auth-platform-01` through `UX-chat16-auth-metadata-05` check anonymous marketing redirect, reachable sign-in, college-host branding/channel restriction, unknown-host fail-closed recovery, active-session same-origin return redirect and tenant-scoped page metadata. Network/DB collaborators are mocked; this is a unit-level route probe, not a real browser/session test.
+
+### Recruiter unsubscribe notification defect closure
+
+The in-app opt-out event now replaces control characters, collapses whitespace and truncates untrusted CRM display names at 120 characters before constructing the existing legacy wording. `messaging-unsubscribe-event-16` additionally covers newline, tab and overlong names. This does not change normal legacy notification text. Vitest, typecheck and runtime consumer tests remain to be run in cloud CI.
