@@ -12,11 +12,13 @@ describe("Mentor Board transitions",()=>{
     }
   });
   it("validates mandatory confirmation, ISO token and strict path",()=>{
-    const input={status:"BLOCKED",expectedUpdatedAt:"2026-10-14T10:00:00.000Z",confirmed:true};
+    const input={status:"BLOCKED",blockerReason:"Waiting for project review",expectedUpdatedAt:"2026-10-14T10:00:00.000Z",confirmed:true};
     expect(mentorTaskTransitionSchema.safeParse(input).success).toBe(true);
     expect(mentorTaskTransitionSchema.safeParse({...input,collegeId:"forged"}).success).toBe(false);
     expect(mentorTaskTransitionSchema.safeParse({...input,confirmed:false}).success).toBe(false);
     expect(mentorTaskTransitionSchema.safeParse({status:"BLOCKED"}).success).toBe(false);
+    expect(mentorTaskTransitionSchema.safeParse({...input,blockerReason:""}).success).toBe(false);
+    expect(mentorTaskTransitionSchema.safeParse({...input,status:"IN_PROGRESS"}).success).toBe(false);
     expect(mentorTaskTransitionParamsSchema.safeParse({projectId:"invalid",taskId:"invalid"}).success).toBe(false);
   });
 });

@@ -56,6 +56,19 @@ describe.skipIf(!enabled)("REC-calendar-messages-profile-17 recipient isolation 
    senderUserId:recruiter!.id,at:new Date(),
   }));
   expect(receipt.notified).toBeGreaterThan(0);
+  // A duplicate webhook, worker retry or stale tab cannot create a second
+  // activity event (or second recipient bell) for the same persisted message.
+  const replay=await getDb().transaction(async tx=>notifyTpoOfRecruiterMessage(tx,{
+   collegeId:SEED_IDS.collegeA,threadId,messageId,
+   senderUserId:recruiter!.id,at:new Date(),
+  }));
+  expect(replay).toEqual({notified:0});
+  const counted=await getDb().select({id:activityEvents.id})
+   .from(activityEvents).where(and(
+    eq(activityEvents.eventType,"placements.recruiter.message.received"),
+    eq(activityEvents.dedupeKey,"placements.recruiter.message.received:"+messageId),
+   ));
+  expect(counted).toHaveLength(1);
   const [event]=await getDb().select({id:activityEvents.id})
    .from(activityEvents).where(and(
     eq(activityEvents.subjectId,threadId),
