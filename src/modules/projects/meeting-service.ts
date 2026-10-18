@@ -453,6 +453,12 @@ export async function transitionProjectMeeting(
     scope.project.id,
     meetingIdInput,
   );
+  // New callers can send the version displayed in the UI. Older clients
+  // remain supported, but the pre-transaction read is still pinned to the
+  // exact persisted version by an optimistic compare-and-swap below.
+  if(input.expectedUpdatedAt &&
+     new Date(input.expectedUpdatedAt).getTime()!==meeting.updatedAt.getTime())
+    throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
 
   if (input.action === "COMPLETE") {
     if (
@@ -485,21 +491,20 @@ export async function transitionProjectMeeting(
         status: "COMPLETED",
         outcome: input.outcome ?? meeting.outcome ?? null,
         cancellationNote: null,
-        updatedAt: new Date(),
+        updatedAt: new Date(Math.max(Date.now(),meeting.updatedAt.getTime()+1)),
       })
       .where(
         and(
           eq(projectMeetings.id, meeting.id),
           eq(projectMeetings.projectId,scope.project.id),
-          inArray(projectMeetings.status, ["SCHEDULED","RESCHEDULED"]),
+          eq(projectMeetings.status,meeting.status),
+          sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${meeting.updatedAt.toISOString()}::timestamptz`,
         ),
       )
       .returning();
 
     if (!completed) {
-      throw new ProjectsServiceError(
-        "PROJECT_MEETING_INVALID_STATE",
-      );
+      throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
     }
 
     const event=await recordActivityEventInTransaction(tx,context,{
@@ -572,7 +577,7 @@ export async function transitionProjectMeeting(
     .set({
       status: "CANCELLED",
       cancellationNote: input.note ?? null,
-      updatedAt: new Date(),
+      updatedAt: new Date(Math.max(Date.now(),meeting.updatedAt.getTime()+1)),
     })
     .where(
       and(
@@ -581,7 +586,8 @@ export async function transitionProjectMeeting(
           projectMeetings.projectId,
           scope.project.id,
         ),
-        inArray(projectMeetings.status, ["DRAFT", "REQUESTED", "SCHEDULED","RESCHEDULED"]),
+        eq(projectMeetings.status,meeting.status),
+        sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${meeting.updatedAt.toISOString()}::timestamptz`,
         ...(scope.access === "LEARNER" ? [
           eq(projectMeetings.status, "REQUESTED"),
           eq(projectMeetings.requestedByMembershipId, context.membership!.id),
@@ -591,7 +597,7 @@ export async function transitionProjectMeeting(
     .returning();
 
   if (!cancelled) {
-    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
   }
   // MEN-projects-meetings-27: drafts are never sent to learners or the wider team.
   if (meeting.status === "DRAFT") return cancelled;

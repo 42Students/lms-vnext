@@ -60,6 +60,29 @@ Source fixes: `af9179c` and `99db146`. Tests are **authored, not run**; database
 | `mentor-review-completeness-model.ts:projectReviewCompleteness / mentorReviewCompletenessHref` | Same test | `385` only APPROVED/CHANGES_REQUESTED persisted decisions count, no hallucinated feedback; `386` exact project UUID/deep link |
 Source fix `3f025d6`; tests **authored but not run**. `tests/unit/PROJ-BREAK-chat14-mentor-review-evidence-boundaries.test.tsx` additionally covers `PROJ-BREAK-MENTOR-387/388`: accessible loading/failed-read boundaries without private identities, raw SQL messages, or false claims about missing submissions. True DB review duplicate rows, concurrent updates, grade-release policy, and browser offset/phone acceptance remain open.
 
+## Chat-14 handoff snapshot — 2026-10-19
+- **Authoring inventory:** 240 `src/modules/projects/mentor-*` export mapping rows in the module table and 28 Mentor account-page mapping rows currently name test files. This is an inventory of references, **not measured coverage**; all tests authored and unrun per the owner's current no-CI directive.
+- **Current lane additions:** `PROJ-BREAK-MENTOR-351..363`, `365..388` covering meeting revocation/deadlines/state machines/HTTP decoding; bounded, tenant-safe attention aggregation; Sprint Progress page/role/state and pagination/service isolation; persisted delivery-review evidence and loading/error privacy. `364` is unassigned, not presented as tested.
+- **S1/S2 defect evidence:** `PROJ-DEF-014-36..44`, updated in `docs/audit/projects-defects.md`. Source commits and test paths are documented in sections above.
+- **Required independent gates:** replay real PostgreSQL row-lock races; review SQL query plans on 1k+ workspaces; exercise distinct Learner, Mentor, College Admin and Super Admin sessions; run authored Vitest/TypeScript/HTTP/browser/375px keyboard acceptance after the owner's no-CI period; obtain non-author lane review. The legacy `transitionProjectMeeting` missing optimistic token/ABA protection remains **S1 RELEASE GAP**, not claimed closed.
+- **Other lanes:** module-wide admin, college, faculty, learner, TPO and HR rows still contain explicit `GAP` entries as shown in the inventory; chat-14 does not convert them to covered without test evidence. **No production/release sign-off.**
+
+## Legacy meeting transition CAS and stale-client optional token — PROJ-BREAK-MENTOR-389..394 (2026-10-19)
+| Export | Regression | Invariants and remaining acceptance |
+|---|---|---|
+| `validation.ts:projectMeetingTransitionInputSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-version-cas.test.ts` | `389/394` optional RFC3339 offset-aware `expectedUpdatedAt` for legacy-compatible callers; strict rejects forged fields and malformed timestamp; equivalent IST offset accepted |
+| `meeting-service.ts:transitionProjectMeeting` | Same file | `390` lock-time single transition pins exact pre-read status plus millisecond `updatedAt` using SQL compare-and-swap; `391` stale concurrent completion/cancellation fails before activity or notifications; `392` draft cancellation never broadcasts; `393` learner requester and active grant still checked |
+
+Source fixes `46e53dc` and `10a1fb3`. Monotonic `updatedAt` on transition. **Tests authored but not run.** This closes the *pre-read-to-write* lost update path in code, but **does not fully close legacy S1 stale-tab/ABA acceptance** while some old clients omit the optional version and until real PostgreSQL parallel transaction replays, backward client audit, and independent reviewer signoff.
+
+## All-role meeting version payload — PROJ-BREAK-MENTOR-395..397 (2026-10-19)
+| Export / client | Test | Behavior |
+|---|---|---|
+| `project-meeting-transition-payload-model.ts:projectMeetingTransitionPayload` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-client-version.test.ts` | `395` ADMIN completion and LEARNER cancellation submit the last displayed revision to the legacy CAS endpoint; `396` MENTOR decision keeps `confirmed:true` and revision; `397` optional empty notes and IST timestamp equivalence preserve exact Zod contracts |
+| `project-meeting-controls.tsx:ProjectMeetingTransitionActions` | Model test above and preexisting page/component tests | Both COMPLETE and CANCEL now delegate to shared payload builder; no user-role-specific omission of `expectedUpdatedAt` |
+
+Source commits `405e415`, `2c45273`, test `6fab70b`. **Authored, unrun.** Legacy non-UI clients which omit the optional token remain under the server pre-read-to-write CAS but can act on a newer server state than their unseen tab; reviewer/API compatibility check and DB/browser test are still mandatory.
+
 ## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
 - `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
 - `recruiter-chat14-message-email-bridge-contract.test.ts`: the expectation referred to the raw email string, but the provider now normalizes the recipient *before* applying the allowlist; updated the test to assert both normalization and the runtime allowlist, preserving the stronger safety invariant.
