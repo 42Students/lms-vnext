@@ -76,7 +76,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         {!cohorts.length
           ? "No planned or active batches in this college. Create a batch first."
           : <>No usable academic periods in this college. Create a period first.{" "}
-            <Link href="/college/academics" className="font-semibold text-primary-text underline">Set up academic periods</Link>
+            <Link href="/college/academics" className="font-semibold text-[var(--lms-teal-deep)] underline">Set up academic periods</Link>
           </>}
       </p>
       : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -179,7 +179,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
   return <div>
     <button type="button" disabled={pending || row.status !== "ACTIVE"}
       onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
       Edit
     </button>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
@@ -210,7 +210,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex justify-end gap-2">
           <button disabled={pending} type="button" onClick={cancel}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Cancel
           </button>
           <button disabled={pending || !changed} type="submit"

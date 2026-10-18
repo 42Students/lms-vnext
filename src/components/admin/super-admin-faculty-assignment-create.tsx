@@ -49,7 +49,7 @@ export function SuperAdminFacultyAssignmentCreate({
  return <section aria-label="Create teaching assignment" className="space-y-3">
    <button type="button" disabled={!available.length||!faculty.length||pending}
     onClick={()=>setOpen(value=>!value)} aria-expanded={open}
-    className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+    className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
     Create teaching assignment
    </button>
    {!available.length?<p role="status" className="text-sm text-body">
@@ -124,7 +124,7 @@ export function SuperAdminTeachingRoleEdit({
   });
  }
  return <div className="min-w-0 space-y-2">
-   <button type="button" className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold"
+   <button type="button" className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold"
      aria-expanded={open} disabled={pending}
      onClick={()=>{setRole(initialRole);setNotice("");setOpen(v=>!v);}}>
       Edit role
@@ -133,14 +133,14 @@ export function SuperAdminTeachingRoleEdit({
       <label className="grid gap-1 text-xs font-semibold">Teaching role
        <select value={role} disabled={pending}
         onChange={e=>setRole(e.target.value as CourseTeachingRole)}
-        className="min-h-10 rounded border border-border bg-surface px-2">
+        className="min-h-11 rounded border border-border bg-surface px-2">
         {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
           {facultyAssignmentRoleLabel(value)}</option>)}
        </select>
       </label>
       <button type="button" disabled={pending||role===initialRole}
        onClick={()=>void save()}
-       className="min-h-10 rounded border border-border px-3 text-sm font-semibold">
+       className="min-h-11 rounded border border-border px-3 text-sm font-semibold">
        {pending?"Saving…":"Save role"}
       </button>
     </div>:null}
