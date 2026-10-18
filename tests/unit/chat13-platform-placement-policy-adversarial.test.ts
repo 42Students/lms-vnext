@@ -53,6 +53,51 @@ describe("Super Admin placement policy adversarial boundaries", () => {
     expect(body).toContain('.for("update")');
   });
 
+  it("SA-PLACEMENT-POLICY-06 prevents the legacy tenant settings endpoint bypassing the shared duration lock",()=>{
+    const policy=source();
+    const legacy=readFileSync("src/modules/platform-settings/admin-editor-service.ts","utf8");
+    const signature="pg_advisory_xact_lock(42, 130038)";
+    expect(policy).toContain(signature);
+    expect(legacy).toContain(signature);
+    expect(legacy).toContain("placementPolicyValidate(placementPolicy.key,Number(value))");
+    expect(legacy).toContain('spec.key==="interview.durationMinMinutes"');
+    expect(legacy).toContain('spec.key==="interview.durationMaxMinutes"');
+    expect(legacy).toContain('placementPolicyValidate("interview.durationMinMinutes",minimum)');
+    expect(legacy).toContain('placementPolicyValidate("interview.durationMaxMinutes",maximum)');
+    const fn=legacy.split("export async function saveAdminTenantSettings")[1]?.split("export async function addUnlistedTenantSetting")[0]??"";
+    const tx=fn.indexOf("getDb().transaction(async tx=>{");
+    const lock=fn.indexOf(signature);
+    const roles=fn.indexOf("assertPersistedPlatformPermission(tx,ctx");
+    const counterpart=fn.indexOf("const [other]=await tx.select(");
+    const write=fn.indexOf("let version=current?.version??0");
+    expect(tx).toBeGreaterThanOrEqual(0);
+    expect(lock).toBeGreaterThan(tx);
+    expect(roles).toBeGreaterThan(lock);
+    expect(counterpart).toBeGreaterThan(roles);
+    expect(write).toBeGreaterThan(counterpart);
+    expect(legacy).toContain("LEGACY_TENANT_SETTING_MAP.has(key)");
+    expect(legacy).toContain('new TenantSettingEditorError("INVALID_SETTING")');
+  });
+
+  it("SA-PLACEMENT-POLICY-05 atomically audits every persisted global policy write without impersonating a college actor",()=>{
+    const svc=source();
+    const taxonomy=readFileSync("src/modules/activity/taxonomy.ts","utf8");
+    expect(taxonomy).toContain('PLACEMENTS_PLATFORM_POLICY_UPDATED: "placements.platform_policy.updated"');
+    expect(taxonomy).toContain("ACTIVITY_EVENT_TYPES.PLACEMENTS_PLATFORM_POLICY_UPDATED");
+    expect(svc).toContain('recordActivityEventInTransaction(tx,context,{');
+    expect(svc).toContain('eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_PLATFORM_POLICY_UPDATED');
+    expect(svc).toContain('subjectType:"platform_setting"');
+    expect(svc).toContain("previousVersion:existing?.version??0");
+    expect(svc).toContain("nextValue:input.value");
+    expect(svc).toContain('if(input.value!==null||existing)');
+    const body=svc.split("export async function setPlatformPlacementPolicy")[1]??"";
+    expect(body.indexOf("return db.transaction(async tx=>{")).toBeLessThan(
+      body.indexOf("recordActivityEventInTransaction(tx,context,{"));
+    expect(body.lastIndexOf("recordActivityEventInTransaction(tx,context,{")).toBeLessThan(
+      body.lastIndexOf("return {key:input.key"));
+    expect(body).not.toContain("actorMembershipId:context.membership");
+  });
+
   it("SA-PLACEMENT-POLICY-03 rejects NaN, infinite or fractional-integer values for every global policy field", () => {
     for (const field of PLACEMENT_POLICY_FIELDS) {
       expect(placementPolicyValidate(field.key,field.defaultValue), field.key).toBe(true);
