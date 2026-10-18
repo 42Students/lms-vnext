@@ -354,3 +354,13 @@ The internal `/api/internal/placements/recruiter-message-inbound` POST previousl
 | `summarizeRecruiterUnread`, `safeRecruiterEmailAddressName` | same (`HR-NOTIFICATION-UNREAD-03`, `HR-NOTIFICATION-MAIL-NAME-04`) | corrupt cached bell counts clamped, CRLF/bidi stripped and no surrogate split at 160-code-unit limit |
 
 These rows establish direct unit behaviour only. Tests, TypeScript, database concurrency, actual provider signatures and browser/API journeys **have not been run in this lane**. A complete whole-repository coverage certificate is not claimed.
+
+### 2026-10-19: reminder-worker authentication and public placement page failures
+
+| Export / route | Direct test witness | Behaviour recorded |
+|---|---|---|
+| `POST /api/internal/placements/recruiter-message-reminders` | `tests/unit/chat16-recruiter-mail-reminder-route-02.test.ts` (`HR-MAIL-REMINDERS-01..05`) | cross-origin denial, absent/forged/misformatted bearer denial, misconfigured whitespace worker secret fails closed, single valid dispatch, generic outage |
+| `PublicPlacementsPage` (`/placements`) | `tests/unit/chat16-public-placement-page-states-03.test.tsx` (`UX-chat16-public-placements-*-01..06`) | unknown host and explicitly unpublished 404, only public aggregate labels and release date, stats outage/branding outage stay safely available, failed public content read falls back without private SQL text |
+| `tpoCampaignUnsubscribeEvent` | `tests/unit/chat16-campaign-snapshot-consent-matrix-02.test.ts` (`HR-CAMPAIGN-UNSUB-NAME-06`) | untrusted long emoji-bearing names never truncate into an invalid surrogate; existing normal legacy sentence unchanged |
+
+The reminder worker route now enforces a nonblank, non-whitespace-quoted configured credential and explicit Bearer syntax before it can invoke the job. These checks complement, not replace, the worker's real recipient-grant rechecks and provider/DB verification. `readBoundedRecruiterInboundBody` now also preserves UTF-8 BOM bytes in decoded signed input instead of silently dropping them; `HR-MAIL-INBOUND-04` covers that boundary. This ledger records **authored-only** direct tests; typecheck, Vitest, browser journeys, real PostgreSQL and upstream gateway signature acceptance remain unexecuted in chat-16.
