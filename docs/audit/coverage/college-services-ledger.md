@@ -20,3 +20,18 @@
 | `/admin/colleges` and `/admin/organizations` page reads | page routes | source-level scope, permissions, DataTable, malformed-query recovery |
 
 **Outstanding:** enumerate and test the remaining exported functions in each of 40 `colleges`, 97 `academics`, 17 `groups`, and 117 `people` files (numbers include types/models and are not a function count); add PostgreSQL route/service permission, rollback, notification and concurrency tests. No claim of completion until these rows are added and executed.
+
+## Academic lifecycle and groups model batch
+
+| Exported function or schema | Source | Test and cases |
+|---|---|---|
+| `formatPromotionAcademicYear`, `collegePromotionQuerySchema`, `batchPromotionPlan` | `src/modules/academics/college-batch-promotion-model.ts` | `chat4-academics-groups-ledger.test.ts`: format, strict filters, promote/graduate/unavailable, blocked periods and unmapped terms |
+| `promotionLearnerBlockers`, `collegePromotionExecuteSchema`, `promotionReady`, `promotionPreviewMatches` | same | role/activity checks; explicit confirmation and concurrency parameters; fail-closed preview |
+| `timestampTokenIso` | `optimistic-timestamp-model.ts` | valid millisecond ISO and invalid timestamp |
+| `collegeHallBookingSchema`, `hallBookingWindow`, `hallCanFitClass`, `hallFacultyIsEligible` | `college-hall-booking-model.ts` | IST date validity, bounded room capacity, faculty eligibility, confirmation |
+| `collegeSectionLifecycleSchema`, `classLifecyclePrompt` | `college-section-lifecycle-model.ts` | guarded archive/restore and version |
+| `collegePreviewErrorLabel` | `college-recurring-preview-ui-model.ts` | no untrusted API/stack detail leak |
+| `collegeStudyGroupCreateSchema`, `collegeStudyGroupChangeSchema`, `studyGroupNextStatus`, `studyGroupConflictMessage` | `src/modules/groups/college-group-management-model.ts` | CRUD validation, state transitions, conflict copy |
+| `collegeGroupDetailWriteSchema`, `collegeWaitlistPromotionBlocker`, `collegeGroupDetailActionLabel` | `college-group-detail-write-model.ts` | waitlist identity, version, queue order, capacity and confirmation |
+| `collegeStudyMemberSchema`, `collegeStudyMemberLabel` | `college-member-management-model.ts` | guarded member role changes, lock/unlock and copy |
+| `groupRuleCriteriaSchema`, `matchesGroupRuleCandidate`, `collegeRulePreviewInputSchema`, `projectCollegeGroupRulePreview` | `rule-evaluator.ts` / `college-rule-preview-model.ts` | strict criteria, missing evidence, scoped input, partial preview totals |
