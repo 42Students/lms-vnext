@@ -101,7 +101,12 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(html).toContain("Project North");
     expect(html).toContain("Project South");
     expect(html).not.toContain('href="//unsafe.example"');
-    expect(html).toContain("College projects scrollable columns");
+    // ScrollCue only assigns a named region AFTER measuring real overflow in
+    // the client. SSR cannot truthfully claim it is scrollable.
+    expect(html).toContain('<caption class="sr-only">College projects</caption>');
+    expect(html).toContain('data-slot="scroll-cue"');
+    const scrollSource=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
+    expect(scrollSource).toContain('caption+" scrollable columns"');
   });
 
   it("UX-kit-HARDEN-28 upload prechecks fail closed for invalid sizes and untrusted types", () => {

@@ -1,6 +1,6 @@
 import "server-only";
 import { verifyUnsubscribeToken } from "@/modules/messaging/unsubscribe-model";
-import { verifyTpoCampaignRecipientToken } from "@/modules/messaging/tpo-campaign-recipient-token";
+import { verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret } from "@/modules/messaging/tpo-campaign-recipient-token";
 
 export type CampaignUnsubscribeTokenKind = "PLACEMENT_CELL" | "GLOBAL";
 
@@ -11,7 +11,7 @@ export async function campaignUnsubscribeTokenKind(
   if (token.length > 2048) return null;
   const now = Date.now();
   if (verifyTpoCampaignRecipientToken(
-    token, process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET ?? "", now,
+    token, resolveTpoCampaignRecipientSecret(process.env), now,
   )) return "PLACEMENT_CELL";
   if (verifyUnsubscribeToken(
     token, process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 ?? "", now,
