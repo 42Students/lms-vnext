@@ -351,3 +351,9 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Severity | Source | Failure and remediation | Regression |
 |---|---|---|---|---|
 | HR-BREAK-TODAY-OFFERS-18 | MAJOR | `src/modules/placements/hr-today-offer-actions-service.ts` | Grouped SQL offered no stable ordering, then truncated to 30 status/job rows. A recruiter with 40 historical accepted/declined groups could lose a later outstanding `ISSUED` offer follow-up from the Today action queue. Sort already college- and employer-authorized aggregated rows by urgency (ISSUED, ACCEPTED, DECLINED), with stable job-title/id ordering, **before** the 30-row cap. No candidate identities are exposed. | `tests/unit/HR-BREAK-chat19-today-offer-priority.test.ts`: 40 old groups plus 2 new ISSUED, stable order, zero counts, immutability, scoped query contract. |
+
+## Duplicate college-selection filters on recruiter Today
+
+| ID | Severity | Source | Finding / correction | Direct test |
+|---|---|---|---|---|
+| HR-BREAK-HOME-QUERY-19 | MAJOR | `src/app/(authenticated)/hr/home/page.tsx` | The Today route still used a `first()` helper on `collegeId:string|string[]`. A URL containing two contradictory college selections could silently select the first, unlike strict HR activity/notifications filters. Pass the original value to the existing strict Zod schema; repeated keys fail with the existing `Invalid college selection` UI without touching company, portfolio or placement-cell records. | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts`: conflicting, reversed and duplicated-same college values rejected before service access. |
