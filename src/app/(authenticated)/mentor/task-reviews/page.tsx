@@ -37,7 +37,7 @@ export default async function MentorTaskReviewsPage({
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid task review filters</h1>
-    <Link href="/mentor/task-reviews" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Clear filters
     </Link>
   </section>;
@@ -48,11 +48,11 @@ export default async function MentorTaskReviewsPage({
       description="Submitted project tasks waiting for review across your assigned projects."
       actions={<div className="flex flex-wrap items-center gap-3">
         <Link href="/mentor/task-review-history"
-          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Reviewed task history
         </Link>
         <Link href="/mentor/projects"
-          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Projects
         </Link>
       </div>}
@@ -116,7 +116,7 @@ export default async function MentorTaskReviewsPage({
         <Button type="submit" variant="primary">
           Filter
         </Button>
-        <Link href="/mentor/task-reviews" className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Clear
         </Link>
       </form>
@@ -150,7 +150,7 @@ export default async function MentorTaskReviewsPage({
               }).format(item.submittedAt)} IST
             </p>
             <Link href={mentorTaskReviewTargetHref(item.projectId,item.taskId)}
-              className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+              className="min-h-11 mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
               Open exact task review →
             </Link>
           </article>)}</div>}
@@ -162,9 +162,9 @@ export default async function MentorTaskReviewsPage({
       <nav aria-label="Task review pagination" className="flex items-center justify-between gap-3">
         <p className="text-sm text-body">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
-          {data.page > 1 && <Link className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          {data.page > 1 && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
             href={mentorTaskReviewHref({...data.query, page: data.page - 1})}>Previous</Link>}
-          {data.page < data.totalPages && <Link className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          {data.page < data.totalPages && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
             href={mentorTaskReviewHref({...data.query, page: data.page + 1})}>Next</Link>}
         </div>
       </nav>
