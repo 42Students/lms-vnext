@@ -36,6 +36,7 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
+import {sweepExpiredPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
 import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
@@ -277,6 +278,18 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("PLACEMENTS-EXPIRY-SM-04 DB entrypoint rejects an invalid sweep clock or unsafe batch limit before any writes",async()=>{
+    await expect(sweepExpiredPlacementOffers(SEED_IDS.facultyUser,new Date(Number.NaN)))
+      .rejects.toThrow("Invalid offer sweep reference date");
+    for(const limit of [0,-1,101,0.5]){
+      await expect(sweepExpiredPlacementOffers(SEED_IDS.facultyUser,new Date(),limit))
+        .rejects.toThrow("Invalid offer sweep batch size");
+    }
+    const after=await pool.query<{count:number}>(
+      "select count(*)::int as count from placement_offer_status_history where to_status='EXPIRED'");
+    expect(after.rows[0]?.count).toBe(0);
+  });
+
   it("PLACEMENTS-IDOR-01 refuses a wrong-college TPO, learner issuing an offer and TPO self-acceptance", async () => {
     const { job, application } = await preparePassedApplication();
     const foreignTpo: RequestContext = {
