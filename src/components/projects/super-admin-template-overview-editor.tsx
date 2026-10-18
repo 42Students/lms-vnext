@@ -1,4 +1,7 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -41,32 +44,32 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
   }catch(e){setError(e instanceof Error?e.message:"Could not save overview");}
   finally{setPending(false);}
  }
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section className="space-y-3 border-b border-border pb-5">
   <button type="button" onClick={()=>setOpen(x=>!x)}
    className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
    {open?"Close Overview editor":"Edit Overview"}
   </button>
   {open?<div className="grid gap-3 sm:grid-cols-2">
    <label className="text-sm font-semibold">Course label
-    <input className={field} maxLength={160} value={courseLabel} onChange={e=>setCourseLabel(e.target.value)}/></label>
+    <Input className={field} maxLength={160} value={courseLabel} onChange={e=>setCourseLabel(e.target.value)}/></label>
    <label className="text-sm font-semibold">Phase
-    <input className={field} maxLength={120} value={phase} onChange={e=>setPhase(e.target.value)}/></label>
+    <Input className={field} maxLength={120} value={phase} onChange={e=>setPhase(e.target.value)}/></label>
    <label className="text-sm font-semibold sm:col-span-2">Goal
-    <textarea className={field+" min-h-16"} maxLength={2000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
+    <Textarea className={field+" min-h-16"} maxLength={2000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
    <label className="text-sm font-semibold sm:col-span-2">Description
-    <textarea className={field+" min-h-20"} maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
+    <Textarea className={field+" min-h-20"} maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
    {([{label:"Deliverables (one per line)",value:deliverables,set:setDeliverables},
       {label:"Definition of done (one per line)",value:done,set:setDone},
       {label:"Personas (one per line)",value:personas,set:setPersonas}]).map(item=>
     <label key={item.label} className="text-sm font-semibold sm:col-span-2">{item.label}
-     <textarea className={field+" min-h-20"} value={item.value} onChange={e=>item.set(e.target.value)}/>
+     <Textarea className={field+" min-h-20"} value={item.value} onChange={e=>item.set(e.target.value)}/>
     </label>)}
    <label className="text-sm font-semibold">Submission type
-    <select className={field} value={submissionType} onChange={e=>setSubmissionType(e.target.value as typeof submissionType)}>
+    <Select className={field} value={submissionType} onChange={e=>setSubmissionType(e.target.value as typeof submissionType)}>
      <option value="LINK">Link</option><option value="FILE">File upload</option><option value="TEXT">Text</option>
-    </select></label>
+    </Select></label>
    <label className="text-sm font-semibold sm:col-span-2">Submission instructions
-    <textarea className={field+" min-h-20"} maxLength={4000} value={instructions}
+    <Textarea className={field+" min-h-20"} maxLength={4000} value={instructions}
      onChange={e=>setInstructions(e.target.value)}/></label>
    <div className="sm:col-span-2"><button type="button" disabled={pending}
      onClick={()=>void save()} className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-primary-foreground">
