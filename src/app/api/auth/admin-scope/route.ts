@@ -1,4 +1,4 @@
-import {privateAuthJson} from "@/modules/auth/private-response";
+import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
 import {
   ADMIN_SCOPE_COOKIE_NAME,
   encodeAdminScopeCookie,
@@ -24,7 +24,7 @@ export async function GET() {
       choices,
     });
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateAuthResponse(apiErrorResponse(error));
   }
 }
 
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateAuthResponse(apiErrorResponse(error));
   }
 }
 
@@ -103,6 +103,6 @@ export async function DELETE(request: Request) {
 
     return response;
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateAuthResponse(apiErrorResponse(error));
   }
 }
