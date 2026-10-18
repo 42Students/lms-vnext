@@ -24,8 +24,7 @@ vi.mock("@/components/placements/public-recruit-from-us",()=>({
 const collegeId="11111111-1111-4111-8111-111111111111";
 beforeEach(()=>{
  vi.clearAllMocks();
- vi.mocked(headers).mockResolvedValue({get:()=> "college.example.edu"}
-  as Awaited<ReturnType<typeof headers>>);
+ vi.mocked(headers).mockResolvedValue({get:()=> "college.example.edu"} as Awaited<ReturnType<typeof headers>>);
  vi.mocked(resolveRequestTenant).mockResolvedValue({
   kind:"college",host:"college.example.edu",
   collegeId,organizationId:"22222222-2222-4222-8222-222222222222",
