@@ -73,11 +73,11 @@ export function TpoCompanyFeedbackForm({
       </label>
       {reviewing?<div role="group" aria-label="Review recruiter feedback" className="rounded-lg border border-border p-3 text-sm">
         <p>Record this internal recruiter note? New CRM contacts become CONTACTED when an activity is logged.</p>
-        <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewing(false)}>Cancel review</button>
+        <button type="button" className="mt-2 text-[var(--lms-teal-deep)] underline" onClick={()=>setReviewing(false)}>Cancel review</button>
       </div>:null}
       <button type="button" disabled={busy || !leadId || note.trim().length < 3}
         onClick={() => void save()}
-        className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+        className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
         {busy ? "Saving note..." : reviewing?"Confirm note save":"Review and save note"}
       </button>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
