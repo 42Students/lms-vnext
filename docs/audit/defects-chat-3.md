@@ -176,6 +176,12 @@ The Faculty Section health model filtered assessment rows to `status === "PUBLIS
 
 **Fix:** Include `status === "CLOSED"` **only for quizzes** in the Section-scoped health selector. Draft and archived quizzes and non-published assignments remain excluded. `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts` checks the state matrix, exact delivery, five-row page cap and invalid selector, and `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` now exercises a CLOSED quiz through the actual service. Tests authored only; cloud CI and browser historical-quiz checks pending.
 
+### SA3-PEOPLE-CLASS-033 — learner class name subquery ignored selected college and enrollment relationships (S1)
+
+The selected-college People directory uses an inline learner class name subquery. It previously joined `section_enrollments`, `learner_program_enrollments` and `sections` by independent identifiers but never checked the Section's cohort, academic period, program, or owning college. A malformed transferred learner assignment could disclose the name of a Section from another college in a superficially authorized Learner row.
+
+**Fix:** The class projection now verifies Section-to-enrollment cohort and academic-period equality, joins the cohort's own program and department, matches the learner enrollment's program and requires department college ID to equal the selected college. The correlated membership check and newest-class order remain. `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` has a `SA3-PEOPLE-CLASS-01` compiled SQL projection test. Database cross-college/transfer fixtures and cloud CI pending.
+
 ### SA-PEOPLE-ROOT-032 — selected People and Faculty assignment pages lacked page-level Super Admin role gate (S2)
 
 The selected `/admin/faculty-assignment`, `/admin/people/directory`, and global `/admin/people/unassigned` pages relied on shared layouts or service authorization alone. With a stale or inconsistent session, those pages could render partial privileged UI or load administrative workspace services before their own platform role preflight. Defense in depth requires a local active Super Admin check.
