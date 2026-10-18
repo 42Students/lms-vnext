@@ -433,3 +433,11 @@ No local test or runtime execution. Existing exact wording and all service autho
 ## 22-route HR cross-audit inventory and identity regression gate
 
 All 20 non-alias recruiter pages from `docs/orchestrator/ui-ux/pages-hr.md` were independently read on chat-19; each now enforces `hasActiveRecruiter(context)` and matching `context.recruiter.userId === context.user.id` before page data loads. Two legacy aliases (`/hr/colleges`, `/hr/messages`) redirect or re-export protected routes and do not fetch protected data independently. The 20-route invariant is asserted in `tests/unit/chat19-hr-page-contracts.test.ts`; detailed per-page behavioral tests and coverage mapping are in `docs/audit/coverage/hr-pages-ledger.md`. Source audit is complete; cloud typecheck, unit/browser execution and end-to-end authorization remain verification gates.
+
+## Independent HR bell cross-audit (2026-10-18)
+
+| Gap ID | Severity | Finding and fix | Direct regression |
+|---|---|---|---|
+| HR-BREAK-BELL-RACE-30 | MAJOR | `RecruiterNotificationBell` reused the previously authorized notification drawer when a later refresh failed (including after recruiter grant revocation). Out-of-order requests from two college selections could also overwrite the current college view with an earlier response. Introduced a monotonic request gate, invalidated old in-flight requests on college change/unmount, cleared stale data on failure, and rejected mismatched college responses. Updated bell targets to 44px/focus-visible without changing wording. | `tests/unit/HR-BREAK-chat19-bell-race.test.tsx` exercises request ordering, invalidation and source response-discard guard, and SSR trigger. |
+
+Cloud browser/network/CI execution is outstanding; no test was run locally.
