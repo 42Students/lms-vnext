@@ -74,6 +74,23 @@ Read the signed-off UX Playbook, all 21 UX-AUDIT-RUBRIC checks, the 10 excellenc
 | 17–19 TS/performance/reference | No new permission bypass or unbounded list introduced; existing scopes, pagination and shared controls retained. No typecheck/browser execution claimed. |
 | 20–21 anti-drift | Added regression contracts for URL filters, modal decisions, draft restoration, copy-safe errors and optimistic version checks; redirects must always be tested through canonical destination in an authenticated browser. |
 
+## Legacy wording cross-check and ten anti-drift traps
+
+Catalogues checked: `docs/audit/legacy-copy-A.md` and `docs/audit/legacy-copy-B.md` (especially B: recruiter sidebar `recruiterNavigationMenu`, 335–343; Super Admin navigation 234–269; the `NoCollegeSession` and `recruiterRoutes` strings). Actual aliases keep the labels **Today**, **Drives**, **Calendar**, **Messages**, **Company & Team**, **Request a drive** and **Add interview slots**. The Super Admin aliases are bookmarks, not an alternate sidebar. The changes in this audit retain all affected legacy visible labels, button captions and confirmation warning strings, adding a focus-managed overlay around existing wording where needed.
+
+| Drift risk across builders | Enforceable rule |
+|---|---|
+| Redirect-only test declares a page passed | Follow the alias to its actual canonical renderer and test it |
+| Using decorative teal for small links | Use deep-teal focus-visible outline + underlined links |
+| 40px actions inside dense rows | Enforce 44px minimum on click and label targets |
+| 14px interactive fields on iOS | 16px `Input/Select/Textarea` at every breakpoint |
+| Raw API errors converted into visible copy | Map known errors; unknowns to safe existing fallback |
+| Browser confirm/prompt in native WebView | Use `ConfirmDialog` or `Dialog` with focus return |
+| Bulk mutation silently commits | Require selected-count and target-state confirmation |
+| Lost local draft on restore/reset | Preserve form state, confirm before destructive replacement |
+| Request/college scope carried from query alone | Server re-check active recruiter grant and permissions |
+| Long lists or tables overflow phone | Use DataTable mobile field mapping or named scroll region with keyboard focus |
+
 ## Verdicts and counts
 
 | Area | Routes | BLOCKER | MAJOR | MINOR | NIT | MAJOR fixed | Verdict |
