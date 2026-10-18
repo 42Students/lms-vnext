@@ -186,7 +186,7 @@ export default async function TpoReportsPage({
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary"
+            className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground"
           >
             Open management view
           </Link>
@@ -242,7 +242,7 @@ export default async function TpoReportsPage({
             </option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Search</button>
+        <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Search</button>
         <Link href={reportHref("/tpo/reports",workspace)}
           className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
           Clear
