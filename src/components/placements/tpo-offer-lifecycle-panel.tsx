@@ -111,7 +111,7 @@ export function TpoOfferLifecyclePanel({
             setIds([]);
             setReviewed(false);
           }}
-          className="mt-2 block min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal"
+          className="mt-2 block min-h-10 rounded-[9px] border border-border bg-surface px-3 text-sm font-normal"
         >
           {TPO_OFFER_ACTIONS.map((value) => (
             <option key={value} value={value}>{value.replaceAll("_", " ")}</option>
@@ -147,7 +147,7 @@ export function TpoOfferLifecyclePanel({
             value={expiresAt}
             disabled={busy}
             onChange={(event) => setExpiresAt(event.target.value)}
-            className="mt-2 block min-h-10 rounded-md border border-border bg-surface p-2"
+            className="mt-2 block min-h-10 rounded-[9px] border border-border bg-surface p-2"
           />
         </label>
       ) : null}
@@ -159,7 +159,7 @@ export function TpoOfferLifecyclePanel({
             value={joiningDate}
             disabled={busy}
             onChange={(event) => setJoiningDate(event.target.value)}
-            className="mt-2 block min-h-10 rounded-md border border-border bg-surface p-2"
+            className="mt-2 block min-h-10 rounded-[9px] border border-border bg-surface p-2"
           />
         </label>
       ) : null}
@@ -171,7 +171,7 @@ export function TpoOfferLifecyclePanel({
           value={reason}
           disabled={busy}
           onChange={(event) => setReason(event.target.value)}
-          className="mt-2 block w-full rounded-md border border-border bg-surface p-3 text-sm font-normal text-foreground"
+          className="mt-2 block w-full rounded-[9px] border border-border bg-surface p-3 text-sm font-normal text-foreground"
         />
       </label>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -186,7 +186,7 @@ export function TpoOfferLifecyclePanel({
           type="button"
           disabled={!valid || busy || !reviewed}
           onClick={() => void submit()}
-          className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
+          className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground"
         >
           {busy ? "Recording..." : "Review and confirm action"}
         </button>

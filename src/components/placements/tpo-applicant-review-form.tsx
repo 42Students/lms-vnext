@@ -53,17 +53,17 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
    }
   }
   return <form onKeyDown={shortcuts} onSubmit={event => void submit(event)}
-    className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    className="space-y-4 border-b border-border pb-5">
     <h2 className="font-semibold text-foreground">Review application</h2>
     <label className="block text-sm text-body">Decision
-      <select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
+      <select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 w-full rounded-[9px] border border-border bg-surface p-2">
         <option value="SHORTLISTED">Shortlist</option>
         <option value="REJECTED">Reject</option>
       </select>
     </label>
     <label className="block text-sm text-body">Decision note (rejections are candidate-visible)
       <textarea required name="note" value={note} disabled={pending||saved} onChange={event=>{setNote(event.target.value);setReviewed(false);}} minLength={10} maxLength={1000} rows={3}
-        className="mt-1 w-full rounded-md border border-border bg-surface p-3"/>
+        className="mt-1 w-full rounded-[9px] border border-border bg-surface p-3"/>
     </label>
     {decision==="REJECTED"?<fieldset className="space-y-2 text-sm">
       <legend className="font-semibold">Common not-selected reasons</legend>
@@ -76,7 +76,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
       <label className="block text-sm">Internal not-selected reason (not shown to the learner)
         <textarea value={internalReason} maxLength={500} rows={2}
           onChange={event=>{setInternalReason(event.target.value);setReviewed(false);}}
-          disabled={pending||saved} className="mt-1 w-full rounded-md border border-border bg-surface p-3"/>
+          disabled={pending||saved} className="mt-1 w-full rounded-[9px] border border-border bg-surface p-3"/>
       </label>
       <p className="text-xs text-body">The decision note above is learner-visible. Internal reason presets stay private; do not copy confidential employer notes into the learner message.</p>
     </fieldset>:null}

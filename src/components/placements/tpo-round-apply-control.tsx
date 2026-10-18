@@ -36,7 +36,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    setReport(value);setPreview(null);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Results could not be applied");}finally{setBusy(false);}
  }
- return <section className="space-y-3 border-t border-border pt-5">
+ return <section className="space-y-3 border-b border-border pb-6">
   <h2 className="font-semibold text-foreground">Apply results for the whole round</h2>
   <p className="text-sm text-body">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
   <button type="button" disabled={busy} onClick={()=>void load()}
@@ -65,7 +65,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    {!preview.ready?<p role="alert" className="text-sm text-foreground">Complete this evaluation round before applying results.</p>:null}
    <div className="flex flex-wrap gap-3">
     <button type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
-     className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
+     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
      Confirm and apply {preview.staged} result(s)</button>
     <button type="button" disabled={busy} onClick={()=>setPreview(null)}
      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm">Not yet</button>
