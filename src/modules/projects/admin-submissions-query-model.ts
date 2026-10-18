@@ -17,6 +17,9 @@ const schema = z.strictObject({
   ]).optional(),
   page: decimalPage(1,100000,1),
   pageSize: decimalPage(10,100,25),
+}).refine(value=>value.view!=="NOT_SUBMITTED"||value.submissionStatus===undefined,{
+  path:["submissionStatus"],
+  message:"Submission status applies only to the All submissions view",
 });
 const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
 
