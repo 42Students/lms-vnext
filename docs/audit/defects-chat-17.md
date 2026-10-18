@@ -16,8 +16,22 @@
 
 | WEAK-auth-tenant-access-08 | S1 (cross-principal stale grant) | Cached recruiter context with an active company grant but a `recruiter.userId` belonging to another account previously passed the pure tenant admission check by college ID alone. | Require the recruiter principal to match `context.user.id` before inspecting grants. Unit `WEAK-auth-tenant-access-08`. Commits `f014556a`, `70c9324e`. | Fix pushed; cloud execution pending |
 
+| UX-kit-HARDEN-33 | S2 (stale-state accessibility) | Tabs with an unavailable or disabled persisted value had no selected panel but retained a disabled selected tab/invalid label relation. | Normalize to the first enabled tab for rendered panel + one ARIA selection/tab stop. Test `UX-kit-HARDEN-33`; commit `8bad8cc2`. | Fix pushed; cloud pending |
+| UX-kit-HARDEN-34 | S2 (file-picker accessibility) | FileUpload replaced helper description with disabled/error description, preventing screen readers from accessing original size/type guidance alongside the error. | Combined describedBy IDs and SSR regression `UX-kit-HARDEN-34`; commit `87df5d46`. | Fix pushed; cloud pending |
+| WEAK-tenant-managed-26 | S2 (managed hostname mismatch) | Suffix-only matching treated invalid empty-label and reserved-label addresses as managed. | Require a canonical allocatable prefix and exact normalized host match; test `WEAK-tenant-managed-26`; commit `a00dea1c`. | Fix pushed; cloud pending |
+| PROJ-BREAK-MENTOR-40 | S2 (WebView and touch UI) | Mentor auto-assign invoked native `window.confirm` and used 40px tap targets. | Shared promise-backed confirmation with visible overlay and 44px controls; source/UX regression `PROJ-BREAK-MENTOR-40`, commit `4f664565`. | Fix pushed; browser pending |
+
+| UX-kit-HARDEN-35 | S1 (navigation integrity) | Breadcrumbs previously trusted arbitrary href values, and table/breadcrumb validation could diverge. Future model-provided URLs could become unsafe external destinations or fail to render harmless navigation as intended. | Centralized `isSafeInternalHref`, reused across both widgets, retained `isSafeDataTableHref` API; test `UX-kit-HARDEN-35`. Commits `1239d168`, `df9ec450`, `2f26054a`. | Fix pushed; cloud pending |
+| UX-project-workspaces-41 | S2 (mobile tap target) | College Admin workspace card primary navigation was 36px minimum height, below the accepted 44px mobile target. | Updated card link to min-h-11, commit `496beed0`; browser click target still needs E2E. | Fix pushed; browser pending |
+
+| UX-project-workspaces-42 | S2 (grading/report fidelity) | Invalid project progress percentages, including NaN/Infinity or beyond 100, were passed directly into `aria-valuenow`, CSS width and screen text. | `safeProjectProgressPercent` keeps valid percentages and displays `Progress unavailable` rather than a false number; test `UX-project-workspaces-42`, commits `e77e0160` / `18fb353d`. | Fix pushed; cloud pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
 - `PROJ-HARNESS-29..32`: real PostgreSQL index catalogue, restricted deletion semantics, `EXPLAIN (FORMAT JSON)` and savepoint rollback examples in `tests/integration/projects-placements-pg-harness-relations-chat17.test.ts`.
 - **Unverified:** actual cloud execution of this new suite and browser keyboard/focus/visual viewport tests. Run `npm run test:db:projects-harness` on a migrated disposable `TEST_DATABASE_URL` and `npm run test:ux:kit:hardening` in CI; never report a suite as green merely because tests are checked in.
+
+**Browser follow-up:** `UX-kit-HARDEN-35` now also has a real Chromium URL-parser witness in `tests/e2e/ux-safe-internal-href-chat17.spec.ts`, authored but not executed in the GitHub-only connector environment.
+
+- **PROJ-HARNESS-33..35:** An in-memory fixture role claim previously could create a project or placement graph with a wrong-role or revoked author because the constructor only compared tenant IDs; the SQL schema permits these actors and would not automatically reject them. The harness now verifies active user, membership and role rows before writing, and `tests/integration/projects-placements-pg-harness-boundaries.test.ts` includes negative role/suspension examples. Commits `3322dd9d`, `384361bb`. Cloud PostgreSQL execution pending.
