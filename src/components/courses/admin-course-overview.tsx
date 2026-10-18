@@ -524,6 +524,7 @@ export function AdminCourseOverview({
          No courses match these filters. Clear filters to see the whole catalogue.
         </p>:null}
         {courseBasePath.startsWith("/admin/") ? <SuperAdminCourseBulkVisibility
+          key={workspace.collegeId+":"+(catalogue?catalogue.items:workspace.courses).map(course=>course.id).join(":")}
           courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
         <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={courseColumns}
