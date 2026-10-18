@@ -33,7 +33,7 @@ import {
   TPO_RECRUITER_ACCESS_FILTERS,
   tpoRecruiterAccessHref,
   nextTpoRecruiterGrantPage,
-  tpoRecruiterAccessQuerySchema,
+  parseTpoRecruiterAccessParams,
 } from "@/modules/placements/tpo-recruiter-access-model";
 import {
   listTpoRecruiterAccess,
@@ -45,14 +45,6 @@ type SearchParams = {
   page?: string | string[];
   q?: string | string[];
 };
-
-function first(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 export default async function TpoRecruiterAccessPage({
   searchParams,
@@ -71,16 +63,9 @@ export default async function TpoRecruiterAccessPage({
 
   const params = await searchParams;
 
-  const parsed =
-    tpoRecruiterAccessQuerySchema.safeParse({
-      status:
-        first(params.status) || undefined,
-      q: first(params.q) || "",
-      page:
-        first(params.page) || undefined,
-    });
+  const parsed=parseTpoRecruiterAccessParams(params);
 
-  if (!parsed.success) {
+  if (!parsed) {
     return (
       <div className="space-y-6">
         <TpoSettingsNav active="recruiters" />
@@ -108,7 +93,7 @@ export default async function TpoRecruiterAccessPage({
   }
 
   const [data, linkedCompanies, publicLink,communication] = await Promise.all([
-    listTpoRecruiterAccess(context, parsed.data),
+    listTpoRecruiterAccess(context, parsed),
     getTpoTrustedCompanies(context, context.membership.collegeId),
     getTpoPublicJoinLinkStatus(context, "COLLEGE"),
     getTpoCommunicationSettings(context),
