@@ -12,7 +12,10 @@ export const superAdminArchiveCommandSchema=z.strictObject({
  reason:z.string().trim().min(10).max(1000),
 });
 export function canArchiveDriveWithImpact(status:string,impact:z.infer<typeof superAdminArchiveImpactSchema>){
- return status!=="ARCHIVED"&&impact.acceptedOffers===0;
+ // The DB allows exactly five job states; unknown/corrupt states never
+ // authorize a destructive transition merely because they are not ARCHIVED.
+ return ["DRAFT","PUBLISHED","CLOSED","CANCELLED"].includes(status) &&
+  impact.acceptedOffers===0;
 }
 export function sameArchiveImpact(a:z.infer<typeof superAdminArchiveImpactSchema>,
  b:z.infer<typeof superAdminArchiveImpactSchema>){
