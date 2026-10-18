@@ -23,3 +23,22 @@ Every item below was reproduced by code-path review and has a source repair on `
 - **Grading visibility requiring owner decision:** `src/modules/projects/evaluation-service.ts` authorizes project readers to fetch an evaluation after an APPROVED submission, but there is no separate persisted grade-release marker on `project_evaluations`. Do not silently equate an approval with a separate grade release without a product decision. Require an explicit release-state decision and dedicated learner/mentor integration tests before IIT Dharwad sign-off.
 - **Files requiring recovery validation:** currently upload grants can be issued before a later DB insert/quota failure; unregistered orphan objects and expired pre-signed PUT retries need storage-level test coverage (chat-17 fixtures + storage lane). Signed URLs do not grant DB read authorization without a registered file.
 - **Tracker:** this document is chat-9's defect record. Chat-14 owns `docs/audit/coverage/projects-ledger.md`; chat-9's targeted inventory is `docs/audit/coverage/projects-chat9-admin-ledger.md`. Every row marked SOURCE is **not** an executed test pass.
+
+## Chat-6 breaker findings (independent, source-fixed; execution pending)
+
+These additional defects were found by breaker lane chat-6 and committed on `chatgpt/chat-6-b`. Some source fixes were subsequently merged into main and reconciled with the chat-9 storage changes. None has an executed PostgreSQL acceptance result here.
+
+| ID | Severity | Reproduction and corrective action | Fix commits | Adversarial regression | State |
+|---|---|---|---|---|---|
+| PROJ-DEF-006-01 | S1 Security CSV | csvSafeCell in mentor-board-review-model.ts allowed invisible Unicode prefix to hide spreadsheet formula characters | `0ccaf9e6`, `49587915` | `PROJ-BREAK-export-01` | Source repair authored; CI/DB/cross-review pending |
+| PROJ-DEF-006-02 | S1 Security CSV | learner-project-activity-csv-model.ts allowed invisible Unicode-prefix formula injection | `a4e921a0`, `a75fa964` | `PROJ-BREAK-export-02` | Source repair authored; CI/DB/cross-review pending |
+| PROJ-DEF-006-03 | S2 Resilience | learner activity CSV crashed when a stored occurredAt Date was invalid | `e96e8831` | `PROJ-BREAK-resilience-01` | Source repair authored; CI/DB/cross-review pending |
+| PROJ-DEF-006-04 | S2 Exports | mentor pending-task-review CSV was unbounded and crashed for invalid stored submittedAt | `0ac5ac31` | `PROJ-BREAK-export-03` | Source repair authored; CI/DB/cross-review pending |
+| PROJ-DEF-006-05 | S2 Exports | mentor calendar CSV was unbounded and crashed on malformed stored meeting dates | `a65dd099` | `PROJ-BREAK-export-04` | Source repair authored; CI/DB/cross-review pending |
+| PROJ-DEF-006-06 | S1 Grading confidentiality | generic Project read access exposed unreleased evaluation scores and rubric items with no grade-release marker; now restrict to ADMIN/MENTOR until release mechanism exists | `089bc9cd` | `PROJ-BREAK-grading-02` | Source repair authored; CI/DB/cross-review pending |
+| PROJ-DEF-006-07 | S1 State integrity | completed project delivery update/submit/review accepted stale-tab writes while creation refused them | `c5f024d3` | `PROJ-BREAK-state-03` | Source repair authored; CI/DB/cross-review pending |
+| PROJ-DEF-006-08 | S1 Security CSV | class team export and mentor/learner CSV defenses omitted bidi-isolate U+2066..U+2069 prefixes | `1f963d82`, `49587915`, `a75fa964` | `PROJ-BREAK-export-06` | Source repair authored; CI/DB/cross-review pending |
+| PROJ-DEF-006-09 | S1 Storage race | upload completion and expiry transitions needed live parent status checks within project-locked transaction | `47eb01e4`, `6b638919`, `cb040915` | `PROJ-BREAK-file-04` | Source repair authored; CI/DB/cross-review pending |
+| PROJ-DEF-006-10 | S1 Storage race | file metadata edits and deletion needed live parent status and college/project predicate under lock, guarding concurrent archive | `19b48181`, `090fcdd3` | `PROJ-BREAK-file-05` | Source repair authored; CI/DB/cross-review pending |
+
+**IIT Dharwad release gate:** No account/tenant release sign-off before a separate reviewed grade-publication policy, all PostgreSQL race and rollback tests, signed URL expiry/scan verification tests and device-level projects journeys pass. The full module ledger is owned by chat-14; chat-6 scoped contributions are documented at `docs/audit/coverage/projects-breaker-chat6-ledger.md`.
