@@ -257,12 +257,13 @@ export async function listProjectAdminSnapshots(
       })
       .from(projectMembers)
       .innerJoin(
-        collegeMemberships,
-        eq(
-          collegeMemberships.id,
-          projectMembers.membershipId,
-        ),
-      )
+      collegeMemberships,
+      and(
+        eq(collegeMemberships.id, projectMembers.membershipId),
+        eq(collegeMemberships.collegeId, college.id),
+        eq(collegeMemberships.status, "ACTIVE"),
+      ),
+    )
       .innerJoin(
         users,
         eq(users.id, collegeMemberships.userId),
@@ -614,9 +615,10 @@ export async function listProjectAdminRiskQueue(
     .from(projectMembers)
     .innerJoin(
       collegeMemberships,
-      eq(
-        collegeMemberships.id,
-        projectMembers.membershipId,
+      and(
+        eq(collegeMemberships.id, projectMembers.membershipId),
+        eq(collegeMemberships.collegeId, college.id),
+        eq(collegeMemberships.status, "ACTIVE"),
       ),
     )
     .innerJoin(
@@ -800,6 +802,12 @@ export async function listProjectAdminSubmissionQueue(
           mentorMembershipId:sql<string|null>`(select pm.membership_id from project_members pm
             where pm.project_id=${instanceId} and pm.role='MENTOR'
               and pm.is_primary=true and pm.ended_at is null
+               and exists (
+                 select 1 from college_memberships cm
+                 where cm.id=pm.membership_id
+                   and cm.college_id=${college.id}
+                   and cm.status='ACTIVE'
+               )
             order by pm.created_at limit 1)`,
           version: projectSubmissions.version,
           status: projectSubmissions.status,
