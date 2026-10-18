@@ -56,6 +56,17 @@ describe("HR-BREAK-chat19-home-portfolio-proposals: no inferred tenant or false 
   expect(textOf(result)).toContain("Invalid college selection");
   expect(m.jobs).not.toHaveBeenCalled();
  });
+ it.each([
+  {collegeId:[college,other]},
+  {collegeId:[other,college]},
+  {collegeId:[college,college]},
+ ])("rejects duplicate collegeId query parameter %j before tenant reads",async query=>{
+  const result=await home(query);
+  expect(textOf(result)).toContain("Invalid college selection");
+  expect(m.jobs).not.toHaveBeenCalled();
+  expect(m.grants).not.toHaveBeenCalled();
+  expect(m.proposals).not.toHaveBeenCalled();
+ });
  it("zero-grant dashboard displays a recovery action instead of querying a global job list",async()=>{
   m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,grants:[]}});
   const result=await home();
