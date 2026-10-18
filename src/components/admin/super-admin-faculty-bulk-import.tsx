@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { parseFacultyBulkCsv } from "@/modules/people/faculty-bulk-import-model";
 import {canSubmitFacultyBulkImport} from "@/modules/people/faculty-bulk-import-submit-guard";
+import {facultyBulkImportResponseSchema,facultyBulkImportFailureMessage} from "@/modules/people/faculty-bulk-import-response-model";
 import { DataTable } from "@/components/ui/data-table";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 
@@ -62,9 +63,10 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
      method:"POST",headers:{"content-type":"application/json"},
      body:JSON.stringify({collegeId,csv:inputCsv,confirmed:true}),
     });
-    const result=await response.json() as {results?:Result[];error?:string};
-    if(!response.ok)throw new Error(result.error??"Bulk onboarding failed");
-    setResults(result.results??[]);router.refresh();
+    if(!response.ok)throw new Error(facultyBulkImportFailureMessage(response.status));
+    const parsed=facultyBulkImportResponseSchema.safeParse(await response.json());
+    if(!parsed.success)throw new Error("The import result could not be verified. Review the faculty roster before retrying.");
+    setResults(parsed.data.results);router.refresh();
    }catch(cause){setError(cause instanceof Error?cause.message:"Bulk import failed.");}
    finally{setBusy(false);}
   }finally{submissionInProgress.current=false;}
