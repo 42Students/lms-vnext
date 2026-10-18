@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
@@ -35,32 +38,32 @@ export default async function SuperAdminClassesPage({ searchParams }: {
       <section aria-label="Filter managed classes" className="rounded-xl border border-border bg-surface p-4">
         <form method="get" action="/admin/classes" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 w-full sm:min-w-44 gap-1 text-sm font-semibold text-body">Program
-            <select name="programId" defaultValue={data.query.programId ?? ""}
+            <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All programs</option>
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-40 gap-1 text-sm font-semibold text-body">Batch code
-            <input name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
+            <Input name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-0 w-full sm:min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search class, program or batch
-            <input name="q" type="search" defaultValue={data.query.q}
+            <Input name="q" type="search" defaultValue={data.query.q}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Status
-            <select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
-            <select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
-            </select>
+            </Select>
           </label>
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
-          <button type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</button>
+          <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</Button>
+          <Button variant="secondary" type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
           <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
         </form>
       </section>
