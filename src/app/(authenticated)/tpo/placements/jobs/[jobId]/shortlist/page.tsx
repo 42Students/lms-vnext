@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DataTable } from "@/components/ui/data-table";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -42,7 +43,7 @@ export default async function TpoDriveShortlistPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
-        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline hover:underline">
         ← Drive workspace
       </Link>
       <PageHeader
@@ -68,44 +69,22 @@ export default async function TpoDriveShortlistPage({
         subsequently rejected applications are not counted. Private screening
         comments are not exported.
       </p>
-      {data.rows.length === 0 ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
-          No currently shortlisted submitted applications appear on this page.
-          A previously shortlisted learner may have withdrawn or changed screening state.
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="w-full min-w-[38rem] text-left text-sm">
-            <thead className="bg-surface-secondary text-muted-foreground">
-              <tr>
-                {["Learner", "Roll number", "Role option", "Shortlisted at (IST)"].map((heading) => (
-                  <th key={heading} scope="col" className="px-4 py-3 font-semibold">{heading}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {data.rows.map((item) => (
-                <tr key={item.applicationId}>
-                  <td className="px-4 py-3 font-semibold text-foreground">{item.displayName}</td>
-                  <td className="px-4 py-3 text-body">{item.rollNumber ?? "Not recorded"}</td>
-                  <td className="px-4 py-3 text-body">{item.roleTitle}</td>
-                  <td className="px-4 py-3 text-body">
-                    {item.shortlistedAtIso
-                      ? dateLabel.format(new Date(item.shortlistedAtIso)) + " IST"
-                      : "Decision timestamp unavailable"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <DataTable<(typeof data.rows)[number]> caption="Current shortlist"
+        rows={data.rows} getRowKey={item=>item.applicationId}
+        empty={<p role="status" className="text-sm text-body">No currently shortlisted submitted applications appear on this page. A previously shortlisted learner may have withdrawn or changed screening state.</p>}
+        columns={[
+          {key:"learner",header:"Learner",mobilePriority:"primary",cell:item=><strong>{item.displayName}</strong>},
+          {key:"roll",header:"Roll number",mobilePriority:"secondary",cell:item=>item.rollNumber??"Not recorded"},
+          {key:"role",header:"Role option",mobilePriority:"secondary",cell:item=>item.roleTitle},
+          {key:"when",header:"Shortlisted at (IST)",mobilePriority:"secondary",cell:item=>item.shortlistedAtIso
+            ?dateLabel.format(new Date(item.shortlistedAtIso))+" IST":"Decision timestamp unavailable"},
+        ]}/>
       <nav aria-label="Shortlist pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span>Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-4">
           {data.page > 1 ? (
             <Link href={pathname + "?page=" + (data.page - 1)}
-              className="font-semibold text-[var(--lms-teal-deep)] hover:underline">← Previous</Link>
+              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline hover:underline">← Previous</Link>
           ) : null}
           {data.page < data.totalPages ? (
             <Link href={pathname + "?page=" + (data.page + 1)}
