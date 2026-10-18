@@ -713,9 +713,13 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
   requirePermission(context, "projects.manage", {
     organizationId: college.organizationId, collegeId: college.id,
   });
+  // This reference is evaluated inside a correlated subquery. Drizzle
+  // otherwise renders the bare column as "id", which binds to the inner
+  // submission table instead of the outer project_instances row.
+  const instanceId = sql.raw('"project_instances"."id"');
   const latestStatus = sql<string | null>`(
     select sub.status from project_submissions sub
-    where sub.project_id = ${projectInstances.id}
+    where sub.project_id = ${instanceId}
     order by sub.version desc limit 1
   )`;
   const [row] = await getDb().select({
@@ -751,6 +755,8 @@ export async function listProjectAdminSubmissionQueue(
     organizationId: college.organizationId,
     collegeId: college.id,
   });
+  // Keep the outer project ID qualified inside the mentor subquery.
+  const instanceId = sql.raw('"project_instances"."id"');
   const search = query.q
     ? or(
         ilike(
@@ -800,7 +806,7 @@ export async function listProjectAdminSubmissionQueue(
           projectTitle: projectInstances.title,
           projectStatus: projectInstances.status,
           mentorMembershipId:sql<string|null>`(select pm.membership_id from project_members pm
-            where pm.project_id=${projectInstances.id} and pm.role='MENTOR'
+            where pm.project_id=${instanceId} and pm.role='MENTOR'
               and pm.is_primary=true and pm.ended_at is null
             order by pm.created_at limit 1)`,
           version: projectSubmissions.version,
