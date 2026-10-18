@@ -90,7 +90,7 @@ export async function getRecruiterPlacementWorkspace(
       eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
       eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
       eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-      gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+      gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
       sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
     ))
     .where(

@@ -26,7 +26,7 @@ describe("HR-STATE-MACHINE-43 hostile recruiter round, slot and drive request tr
   for(const changed of [
    {startAt:ends,endAt:starts},
    {startAt:starts,endAt:starts},
-   {endAt:"2099-01-01T18:00:00+05:30"},
+   {endAt:"2099-01-01T18:00:01+05:30"},
    {timezone:"UTC"},{mode:"UNKNOWN"},{capacity:0},{capacity:101},
    {capacity:"1.5"},{capacity:"-1"},{roundId:owner.slice(1)},
    {learnerUserId:owner},{panelLabel:"Invalid\nLabel"},

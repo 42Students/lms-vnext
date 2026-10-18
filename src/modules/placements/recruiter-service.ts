@@ -452,7 +452,7 @@ export async function listOwnRecruiterPlacementJobs(
       eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
       eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
       // T-S1-01: null or expired grants are never effective, even if ACTIVE.
-      gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+      gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
       sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
     ))
     .innerJoin(placementRecruiterProfiles,and(
