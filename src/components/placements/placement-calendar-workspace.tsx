@@ -397,7 +397,7 @@ function CalendarEventCard({
       {href ? (
         <Link
           href={href}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           {event.leadId
             ? "Open recruiter lead"
@@ -798,10 +798,10 @@ export async function PlacementCalendarWorkspace({
       .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
       <Link key={name} href={calendarHref(basePath,audience,state,{company:name})}
        aria-current={state.company===name?"page":undefined}
-       className="inline-flex min-h-9 max-w-52 items-center truncate rounded-full border border-border px-3 text-xs text-[var(--lms-link-text)]"
+       className="inline-flex min-h-11 max-w-52 items-center truncate rounded-full border border-border px-3 text-xs text-[var(--lms-link-text)]"
        title={name}>{name}</Link>)}
     {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
-       className="inline-flex min-h-9 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
+       className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
    </div>:null}
    {isTpo?<datalist id="tpo-calendar-company-choices">
            {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
@@ -1025,7 +1025,7 @@ export async function PlacementCalendarWorkspace({
                           key={event.id}
                           href={href}
                           title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                          className="block min-h-8 rounded-md bg-primary-subtle px-2 py-1 text-xs font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                          className="block min-h-11 rounded-md bg-primary-subtle px-2 py-1 text-xs font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                         >
                           <span className="block truncate">
                             {eventTime(
