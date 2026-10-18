@@ -199,15 +199,15 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-live-editor-command.ts` | `facultyLiveEditorCommand`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-editor-command.test.ts` |
 | `src/modules/courses/faculty-live-editor-model.ts` | `facultyLiveEditorDraft`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-editor-model.test.ts` |
 | `src/modules/courses/faculty-live-editor-model.ts` | `emptyFacultyLiveDraft`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-editor-model.test.ts` |
-| `src/modules/courses/faculty-live-lock-model.ts` | `facultyLiveDeliveryLockKey`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-lock-model.test.ts` |
+| `src/modules/courses/faculty-live-lock-model.ts` | `facultyLiveDeliveryLockKey`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-lock-model.test.ts` |
 | `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveMutationParamsSchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-mutation-model.test.ts` |
-| `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveMutationSchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-mutation-model.test.ts` |
-| `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveWindow`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-mutation-model.test.ts` |
+| `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveMutationSchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-mutation-model.test.ts` |
+| `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveWindow`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-mutation-model.test.ts` |
 | `src/modules/courses/faculty-live-mutation-service.ts` | `commandFacultyLiveClass`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-live-published-policy.ts` | `facultyLivePublishedMutationAllowed`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-published-policy.test.ts` |
-| `src/modules/courses/faculty-live-save-feedback.ts` | `facultyLiveSaveFeedback`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-save-feedback.test.ts` |
-| `src/modules/courses/faculty-live-session-option.ts` | `facultyLiveSessionOption`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-session-option.test.ts` |
-| `src/modules/courses/faculty-live-success.ts` | `facultyLiveMutationSuccess`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-live-success.test.ts` |
+| `src/modules/courses/faculty-live-published-policy.ts` | `facultyLivePublishedMutationAllowed`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-published-policy.test.ts` |
+| `src/modules/courses/faculty-live-save-feedback.ts` | `facultyLiveSaveFeedback`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-save-feedback.test.ts` |
+| `src/modules/courses/faculty-live-session-option.ts` | `facultyLiveSessionOption`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-session-option.test.ts` |
+| `src/modules/courses/faculty-live-success.ts` | `facultyLiveMutationSuccess`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-live-success.test.ts` |
 | `src/modules/courses/faculty-manual-grade-receipt.ts` | `FacultyManualGradeReceiptError`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-manual-grade-receipt.ts` | `facultyManualGradeReceipt`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-manual-grade-receipt.ts` | `beginFacultyManualGradeOperation`: GAP — behavioural test needed |
@@ -215,18 +215,18 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-manual-grade-receipt.ts` | `facultyManualGradePublishPrompt`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-manual-grade-receipt.ts` | `facultyManualGradeNeedsRefresh`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-manual-grade-receipt.ts` | `facultyManualGradeSuccessMessage`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-notices-model.ts` | `facultyNoticeParamsSchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-notices-model.test.ts` |
-| `src/modules/courses/faculty-notices-model.ts` | `FACULTY_SECTION_NOTICES_BLOCKER`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-notices-model.test.ts` |
+| `src/modules/courses/faculty-notices-model.ts` | `facultyNoticeParamsSchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-notices-model.test.ts` |
+| `src/modules/courses/faculty-notices-model.ts` | `FACULTY_SECTION_NOTICES_BLOCKER`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-notices-model.test.ts` |
 | `src/modules/courses/faculty-notices-service.ts` | `getFacultySectionNotices`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-notification-link-model.ts` | `facultyNotificationActionHref`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-notification-link-model.test.ts` |
-| `src/modules/courses/faculty-profile-teaching-model.ts` | `facultyProfileTeachingQuerySchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-profile-teaching-model.test.ts` |
-| `src/modules/courses/faculty-profile-teaching-model.ts` | `pageOwnFacultyTeaching`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-profile-teaching-model.test.ts` |
-| `src/modules/courses/faculty-profile-teaching-model.ts` | `ownFacultyTeachingHref`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-profile-teaching-model.test.ts` |
+| `src/modules/courses/faculty-notification-link-model.ts` | `facultyNotificationActionHref`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-notification-link-model.test.ts` |
+| `src/modules/courses/faculty-profile-teaching-model.ts` | `facultyProfileTeachingQuerySchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-profile-teaching-model.test.ts` |
+| `src/modules/courses/faculty-profile-teaching-model.ts` | `pageOwnFacultyTeaching`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-profile-teaching-model.test.ts` |
+| `src/modules/courses/faculty-profile-teaching-model.ts` | `ownFacultyTeachingHref`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-profile-teaching-model.test.ts` |
 | `src/modules/courses/faculty-profile-teaching-service.ts` | `getOwnFacultyTeachingSection`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptsQuerySchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-attempts-model.test.ts` |
+| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptsQuerySchema`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-attempts-model.test.ts` |
 | `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptSearchSchema`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-attempts-model.test.ts` |
-| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptsPage`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-attempts-model.test.ts` |
-| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptsHref`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-attempts-model.test.ts` |
+| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptsPage`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-attempts-model.test.ts` |
+| `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultyQuizAttemptsHref`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-attempts-model.test.ts` |
 | `src/modules/courses/faculty-quiz-attempts-model.ts` | `facultySearchQuizAttempts`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-attempts-model.test.ts` |
 | `src/modules/courses/faculty-quiz-attempts-service.ts` | `getFacultyQuizAttemptDrilldown`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-quiz-authoring-model.ts` | `facultyQuizParamsSchema`: GAP — behavioural test needed |
@@ -237,8 +237,8 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-quiz-authoring-model.ts` | `facultyQuizMetadataUnchanged`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-quiz-authoring-model.ts` | `facultyQuizAttemptLimitLocked`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-quiz-authoring-service.ts` | `commandFacultyQuiz`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyAuthoringQuestionsFromResponse`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-builder-model.test.ts` |
-| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizDraftIssue`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-builder-model.test.ts` |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyAuthoringQuestionsFromResponse`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-builder-model.test.ts` |
+| `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizDraftIssue`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-builder-model.test.ts` |
 | `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyChangeQuizChoiceType`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-builder-model.test.ts` |
 | `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizDraftEditable`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-builder-model.test.ts` |
 | `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizMetadataEditable`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-builder-model.test.ts` |
@@ -284,14 +284,14 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizReadErrorMessage`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-builder-model.test.ts` |
 | `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizOptionRemovalPrompt`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-builder-model.test.ts` |
 | `src/modules/courses/faculty-quiz-builder-model.ts` | `facultyQuizReadyToPublish`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-builder-model.test.ts` |
-| `src/modules/courses/faculty-quiz-csv-cap.ts` | `FACULTY_QUIZ_CSV_MAX_ROWS`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-csv-cap.test.ts` |
-| `src/modules/courses/faculty-quiz-csv-cap.ts` | `capFacultyQuizCsvRows`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-csv-cap.test.ts` |
-| `src/modules/courses/faculty-quiz-csv-cap.ts` | `facultyQuizCsvNotice`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-csv-cap.test.ts` |
-| `src/modules/courses/faculty-quiz-csv-cap.ts` | `selectFacultyQuizCsvRows`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-csv-cap.test.ts` |
+| `src/modules/courses/faculty-quiz-csv-cap.ts` | `FACULTY_QUIZ_CSV_MAX_ROWS`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-csv-cap.test.ts` |
+| `src/modules/courses/faculty-quiz-csv-cap.ts` | `capFacultyQuizCsvRows`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-csv-cap.test.ts` |
+| `src/modules/courses/faculty-quiz-csv-cap.ts` | `facultyQuizCsvNotice`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-csv-cap.test.ts` |
+| `src/modules/courses/faculty-quiz-csv-cap.ts` | `selectFacultyQuizCsvRows`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-csv-cap.test.ts` |
 | `src/modules/courses/faculty-quiz-question-csv-service.ts` | `getFacultyQuizQuestionCsvForDownload`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-quiz-question-csv.ts` | `FACULTY_QUIZ_QUESTION_CSV_MAX_ROWS`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-question-csv.test.ts` |
 | `src/modules/courses/faculty-quiz-question-csv.ts` | `facultyQuizQuestionAccuracyCsv` — `tests/unit/COURSES-BREAK-FACULTY-04.test.ts` (not executed) |
-| `src/modules/courses/faculty-quiz-report-route-errors.ts` | `hidesFacultyQuizRouteError`: **CANDIDATE (not yet assertion-reviewed)** `tests/unit/faculty-quiz-report-route-errors.test.ts` |
+| `src/modules/courses/faculty-quiz-report-route-errors.ts` | `hidesFacultyQuizRouteError`: **DIRECT IMPORT/ASSERTION CANDIDATE (unexecuted; branch coverage unproven)** `tests/unit/faculty-quiz-report-route-errors.test.ts` |
 | `src/modules/courses/faculty-quiz-request-body.ts` | `FACULTY_QUIZ_COMMAND_LIMIT_BYTES`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-quiz-request-body.ts` | `FacultyQuizBodyError`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-quiz-request-body.ts` | `facultyQuizAcceptsContentType` — `tests/unit/COURSES-BREAK-FACULTY-02.test.ts` (not executed) |
