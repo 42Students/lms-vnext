@@ -75,6 +75,8 @@ describe("PROJ-BREAK-submissions-10 concurrent learner draft revisions",()=>{
     expect(learner).toContain("expectedUpdatedAt:lastSavedUpdatedAt.current");
     expect(learner).toContain("lastSavedUpdatedAt.current=acknowledgedDraftRevision(result)");
     expect(learner).toContain("Could not confirm the draft revision. Refresh before editing again.");
+    expect(learner).toContain("Refresh this final draft to get its latest revision before saving.");
+    expect(learner).toContain("Refresh this final draft before submitting.");
     expect(learner).toContain("const pendingRef = useRef(false)");
   });
 });
