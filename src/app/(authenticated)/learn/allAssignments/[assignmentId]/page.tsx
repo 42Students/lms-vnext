@@ -66,8 +66,8 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       </p> : null}
       {materials.links.length>0 ? <ul className="mt-3 space-y-2" aria-label="Instructor resources">
         {materials.links.map(link=><li key={link.id} className="text-sm">
-          <a href={link.href} target="_blank" rel="noopener noreferrer"
-            className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+          <a href={link.href} 
+            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline">
             Open link: {link.title}
           </a>
         </li>)}
