@@ -20,7 +20,7 @@ export default async function SuperAdminProjectReassignMentorRoute({
 
   if (!collegeId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <ProjectAdminNav
           basePath="/admin/projects"
           active="workspaces"

@@ -40,7 +40,7 @@ export default async function TpoActorAuditPage({
   if (!parsed.success) {
     return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
       <h1 className="text-lg font-semibold text-foreground">Invalid audit filters</h1>
-      <Link className="mt-2 inline-block text-primary-text underline" href="/tpo/audit/actors">
+      <Link className="mt-2 inline-block text-[var(--lms-teal-deep)] underline" href="/tpo/audit/actors">
         Clear filters
       </Link>
     </section>;
@@ -60,13 +60,13 @@ export default async function TpoActorAuditPage({
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
   });
   return <div className="space-y-6">
-    <Link href="/tpo/audit" className="text-sm font-semibold text-primary-text hover:underline">
+    <Link href="/tpo/audit" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
       ← All audit sources
     </Link>
     <PageHeader eyebrow="TPO · Oversight" title="Actor and entity audit"
       description="Canonical placement activity events with exact persisted actor, entity and IST date filters."
       actions={<a href={exportHref}
-        className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
         Export matching CSV (first 2,000)
       </a>} />
     <p className="text-sm leading-6 text-body">
@@ -84,33 +84,33 @@ export default async function TpoActorAuditPage({
         className="grid gap-1 text-sm font-semibold text-foreground">
         {label}
         <input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
-          className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
       {(["from", "to"] as const).map((name) => <label key={name}
         className="grid gap-1 text-sm font-semibold text-foreground">
         {name === "from" ? "From (IST)" : "Through (IST)"}
         <input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
-          className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
       <label className="grid gap-1 text-sm font-semibold text-foreground">
        Sort date
        <select name="sort" defaultValue={parsed.data.sort}
-        className="min-h-10 rounded-md border border-border bg-surface px-3">
+        className="min-h-11 rounded-md border border-border bg-surface px-3">
         <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
        </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-foreground">
         Page size
         <select name="pageSize" defaultValue={String(parsed.data.pageSize)}
-          className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground">
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground">
           {[25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
         </select>
       </label>
       <div className="flex flex-wrap items-end gap-3 sm:col-span-2 lg:col-span-3">
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-foreground">
           Apply filters
         </button>
-        <Link href="/tpo/audit/actors" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+        <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
           Reset filters
         </Link>
       </div>
@@ -141,7 +141,7 @@ export default async function TpoActorAuditPage({
               <td className="p-3">{row.eventType}</td>
               <td className="p-3">{row.entityType}</td>
               <td className="p-3 font-mono text-xs">{tpoAuditEntityHref(row.entityType,row.entityId)?
-                <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!} className="font-semibold text-primary-text underline">Open {row.entityType.replaceAll("_"," ")} →</Link>:
+                <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!} className="font-semibold text-[var(--lms-teal-deep)] underline">Open {row.entityType.replaceAll("_"," ")} →</Link>:
                 <span title="No safe direct page is registered for this entity type">{row.entityId}</span>}</td>
             </tr>)}</tbody>
           </table>
@@ -151,9 +151,9 @@ export default async function TpoActorAuditPage({
         <span>Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-4">
           {data.page > 1 && <Link href={urlForPage(data.page - 1)}
-            className="font-semibold text-primary-text">← Previous</Link>}
+            className="font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>}
           {data.page < data.totalPages && <Link href={urlForPage(data.page + 1)}
-            className="font-semibold text-primary-text">Next →</Link>}
+            className="font-semibold text-[var(--lms-teal-deep)]">Next →</Link>}
         </div>
       </nav>
     </section>
