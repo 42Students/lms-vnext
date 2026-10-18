@@ -107,7 +107,7 @@ export default async function CollegeProjectsPage({
         title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Create workspace
         </Link>}
       />
