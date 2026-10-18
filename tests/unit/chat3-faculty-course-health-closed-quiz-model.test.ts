@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {
  facultyCourseHealthParamsSchema,
+ responseCoverage,
  selectFacultyCourseHealthCandidates,
 } from "@/modules/courses/faculty-course-health-model";
 
@@ -48,6 +49,16 @@ describe("FAC-HEALTH-CLOSED-02 Faculty assessment lifecycle reporting",()=>{
   const empty=selectFacultyCourseHealthCandidates([],
    facultyCourseHealthParamsSchema.parse({deliveryId,page:999}));
   expect(empty).toMatchObject({page:1,total:0,totalPages:1,items:[]});
+ });
+ it("FAC-HEALTH-RATE-03 reports unknown instead of invented scores for invalid counts",()=>{
+  expect(responseCoverage(20,10)).toBe(50);
+  expect(responseCoverage(20,0)).toBe(0);
+  expect(responseCoverage(20,20)).toBe(100);
+  for(const [eligible,responded] of [
+    [0,0],[-1,0],[20,-1],[20,21],[20.5,10],
+    [20,1.5],[Number.POSITIVE_INFINITY,10],[20,Number.NaN],
+    [20,Number.NEGATIVE_INFINITY],
+  ])expect(responseCoverage(eligible,responded)).toBeNull();
  });
  it("rejects invalid Section IDs, extra tenant selectors and impossible paging",()=>{
   for(const query of [

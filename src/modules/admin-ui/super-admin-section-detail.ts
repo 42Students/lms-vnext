@@ -3,11 +3,15 @@ import "server-only";
 import { loadSectionScope } from "@/modules/academics/scope";
 import { AcademicsServiceError } from "@/modules/academics/errors";
 import { sectionIdSchema } from "@/modules/academics/validation";
-import type { RequestContext } from "@/modules/identity/context";
+import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { resourceVisibleInAdminScope } from "./super-admin-resource-scope-model";
-import { requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 
 export async function resolveSuperAdminSectionDetail(context: RequestContext, rawId: unknown) {
+  // Generic academics.read is also available to active Faculty and Learners
+  // for their own college. A Super Admin route needs an explicit platform-role
+  // gate even if a stale or forged context carries a selected adminScope.
+  if (!isSuperAdmin(context)) throw new AuthorizationError("academics.read");
   requirePermission(context, "academics.read", {
     collegeId: context.adminScope?.collegeId ?? undefined,
     organizationId: context.adminScope?.organizationId ?? undefined,
