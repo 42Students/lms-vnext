@@ -44,4 +44,32 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).not.toContain("<main");
    expect(page).not.toContain('min-w-[46rem]');
  });
+ it("UX-admin-academics-01 keeps scope-safe accessible route surface",()=>{
+   const page=read("src/app/(authenticated)/admin/academics/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toMatch(/min-h-10\\b/);
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-academics-section-01 keeps scope-safe accessible route surface",()=>{
+   const page=read("src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toMatch(/min-h-10\\b/);
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-announcements-01 keeps scope-safe accessible route surface",()=>{
+   const page=read("src/app/(authenticated)/admin/announcements/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toMatch(/min-h-10\\b/);
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
+ it("UX-admin-assignments-01 keeps scope-safe accessible route surface",()=>{
+   const page=read("src/app/(authenticated)/admin/assignments/page.tsx");
+   expect(page).not.toContain("<main");
+   expect(page).not.toMatch(/min-h-10\\b/);
+   expect(page).not.toContain("text-primary-text");
+   expect(page).toContain("min-w-0");
+ });
 });

@@ -36,15 +36,15 @@ export default async function AnnouncementsPage({
   }
   const params = parseSuperAdminAnnouncementParams(await searchParams);
   if (!params) {
-    return <div className="space-y-5">
+    return <div className="min-w-0 space-y-5">
       <PageHeader eyebrow="Super Admin" title="Announcements" description="Review and publish college notices." />
-      <p role="alert" className="rounded-xl border border-border bg-surface p-5">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline">Reset filters</Link></p>
+      <p role="alert" className="rounded-xl border border-border bg-surface p-5">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-[var(--lms-teal-deep)] underline">Reset filters</Link></p>
     </div>;
   }
 
   if (!announcementsRuntimeEnabled()) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           eyebrow="Super Admin"
           title="Announcements"
@@ -120,7 +120,7 @@ export default async function AnnouncementsPage({
     : null;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Announcements"
@@ -128,7 +128,7 @@ export default async function AnnouncementsPage({
         actions={
           <Link
             href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
@@ -176,12 +176,12 @@ export default async function AnnouncementsPage({
         ...(params.senderType ? {senderType:params.senderType} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
-      }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this filtered page (CSV)</Link>
+      }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
-      {receipts.size?<section aria-label="Placement-cell read receipts" className="space-y-2 rounded-xl border border-border bg-surface p-4">
+      {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
        <h2 className="text-lg font-semibold">Placement-cell read receipts</h2>
        <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read.</p>
-       <ul className="space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{
+       <ul className="min-w-0 space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{
         const receipt=receipts.get(row.id)!;
         return <li key={row.id} className="rounded-lg border border-border p-3 text-sm">
          <p className="font-semibold">{row.title}</p><p className="text-muted-foreground">{receipt.cellRead} of 1 placement cell read · {receipt.read}/{receipt.delivered} bell recipients read</p>
@@ -196,7 +196,7 @@ export default async function AnnouncementsPage({
         })}/>
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground">
+          <Link href={next} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground">
             Older announcements
           </Link>
         </div>
