@@ -65,7 +65,7 @@ export default async function TpoDriveJoiningPage({
         <div className="space-y-4">
           {tracker.items.map((item) => (
             <section key={item.offerId}
-              className="rounded-xl border border-border bg-surface p-5">
+              className="border-b border-border pb-6">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="font-semibold text-foreground">{item.displayName}</h2>

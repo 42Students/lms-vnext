@@ -40,7 +40,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/selections"}>Selections</Link>
    <Link className="text-[var(--lms-teal-deep)] underline" href={root+"/change-requests"}>Company change requests</Link>
   </nav>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-b border-border pb-6">
    <h2 className="text-lg font-semibold">Eligibility and reach</h2>
    <p className="mt-2 text-2xl font-semibold tabular-nums">{data.reach.eligible} students meet the current notification and eligibility rules</p>
    <p className="mt-1 text-sm text-body">{data.reach.excluded} excluded or not notified, out of {data.reach.considered} registered learners considered. Counts come from current registration, opt-in, debarment and academic evidence.</p>
@@ -55,7 +55,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
      ]}/>
    </div>
   </section>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-b border-border pb-6">
    <h2 className="font-semibold">Why learners were excluded</h2>
    <p className="mt-2 text-sm text-body">Up to 100 excluded registered learners shown; eligibility details may change as academic records are verified.</p>
    <ul className="mt-3 space-y-2 text-sm">{data.excluded.map((row,i)=>
@@ -65,7 +65,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
     {data.totalExcludedDetail-data.excluded.length} additional excluded learners not shown.</p>:null}
    {!data.excluded.length?<p className="mt-2 text-sm text-body">No excluded registered learner details were found.</p>:null}
   </section>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-b border-border pb-6">
    <h2 className="font-semibold">Eligibility rules</h2>
    <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
     {rules.map(([label,value])=><div key={label} className="rounded border border-border p-3 text-sm">
@@ -73,7 +73,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    </dl>
    <p className="mt-3 text-sm text-body">{data.policy.allowedProgramIds.length} program(s), {data.policy.allowedCohortIds.length} cohort(s), {data.policy.allowedSectionIds.length} section(s) explicitly targeted.</p>
   </section>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-b border-border pb-6">
    <h2 className="font-semibold">Drive details and employer</h2>
    <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-sm">
     {[
@@ -105,7 +105,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
     </ul>:<p className="mt-2 text-sm text-body">No recruiter request is linked to this drive.</p>}
    </div>
   </section>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-b border-border pb-6">
    <h2 className="font-semibold">Role packages</h2>
    <div className="mt-3">
     <DataTable caption="Role packages and compensation" rows={data.packages} getRowKey={pkg=>pkg.id}
@@ -119,12 +119,12 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
      ]}/>
    </div>
   </section>
-  {["CLOSED","CANCELLED"].includes(data.job.status)?<section className="rounded-xl border border-border bg-surface p-5">
+  {["CLOSED","CANCELLED"].includes(data.job.status)?<section className="border-b border-border pb-6">
    <h2 className="font-semibold">Closed drive summary</h2>
    <p className="mt-2 text-sm">{data.closeSummary.applications} recorded applications · {data.closeSummary.offers} offer versions.</p>
    <Link className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline" href={root+"/closeout"}>See the close-out report</Link>
   </section>:null}
-  <section id="activity" aria-label="Drive activity" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
+  <section id="activity" aria-label="Drive activity" className="scroll-mt-24 border-b border-border pb-6">
    <h2 className="font-semibold">Recent activity · last {data.feed.length} (maximum 100)</h2>
    {!data.feed.length?<p className="mt-3 text-sm text-body">No placement activity recorded for this drive.</p>:
    <ol className="mt-3 divide-y divide-border">{data.feed.map(event=><li key={event.id} className="py-3 text-sm">

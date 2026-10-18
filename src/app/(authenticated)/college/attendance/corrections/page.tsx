@@ -28,7 +28,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
     <PageHeader eyebrow="College Admin · Attendance" title="Attendance correction windows"
       description={"Persisted scheduled sessions and the current college policy for "+data.collegeName+"."}
       actions={<Link href="/college/attendance/settings" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Policy settings</Link>}/>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="- border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Policy evidence</h2>
       <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
         <div><dt>Eligibility threshold</dt><dd>{data.policy.eligibilityThresholdPercent}%</dd></div>
