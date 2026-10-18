@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type ChangeEvent, type ComponentPropsWithRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ChangeEvent, type ComponentPropsWithRef, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 
 export type FileUploadProps = Omit<ComponentPropsWithRef<"input">, "type" | "onChange"> & {
@@ -27,28 +27,48 @@ export function fileMatchesAccept(file: Pick<File,"name"|"type">, accept?: strin
   });
 }
 export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerUnavailable = false,
-  id: suppliedId, className, disabled, accept, ...props }: FileUploadProps) {
+  id: suppliedId, className, disabled, accept, ref: forwardedRef, ...props }: FileUploadProps) {
   const autoId = useId();
   const id = suppliedId ?? autoId;
   const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const selectedRef = useRef(false);
+  const onFilesRef = useRef(onFiles);
+  onFilesRef.current = onFiles;
+  // Clearing after a picker is disabled is necessary even if the DOM input
+  // unmounts: the form's parent must never retain a previously approved file.
+  useEffect(() => {
+    if (!(pickerUnavailable || disabled) || !selectedRef.current) return;
+    selectedRef.current = false;
+    if (inputRef.current) inputRef.current.value = "";
+    onFilesRef.current(null);
+    setError("File selection is unavailable. Choose a file again when it is enabled.");
+  }, [pickerUnavailable, disabled]);
+  function bindInput(node: HTMLInputElement | null) {
+    inputRef.current = node;
+    if (typeof forwardedRef === "function") forwardedRef(node);
+    else if (forwardedRef) forwardedRef.current = node;
+  }
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const files = event.currentTarget.files;
     const oversized = Array.from(files ?? []).some(file => !fileSizeIsValid(file.size, maxBytes));
     const wrongType = Array.from(files ?? []).some(file => !fileMatchesAccept(file,accept));
     if (oversized || wrongType) {
       setError(oversized ? "This file is larger than the allowed limit." : "This file type is not allowed.");
+      selectedRef.current = false;
       onFiles(null);
       event.currentTarget.value = "";
       return;
     }
+    selectedRef.current = Boolean(files?.length);
     setError(null);
     onFiles(files);
   }
   return <div className={cx("min-w-0 space-y-2", className)} data-slot="file-upload">
     <label htmlFor={id} className="block text-sm font-semibold text-foreground">{label}</label>
     {pickerUnavailable ? <p role="status" className="text-sm text-body">File selection is unavailable in this app view. {fallback ? "Use the alternative below." : "Open this form in a browser that supports file selection."}</p> :
-      <input {...props} id={id} type="file" accept={accept} disabled={disabled} onChange={handleChange}
-        aria-invalid={Boolean(error)}
+      <input {...props} ref={bindInput} id={id} type="file" accept={accept} disabled={disabled} onChange={handleChange}
+        aria-invalid={Boolean(error) || Boolean(disabled)}
         aria-describedby={error ? `${id}-error` : helper ? `${id}-help` : undefined}
         className="block min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground file:mr-3 file:rounded file:border-0 file:bg-primary-subtle file:px-3 file:py-2 file:text-sm file:font-semibold file:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50" />}
     {helper ? <p id={`${id}-help`} className="text-sm leading-6 text-body">{helper}</p> : null}
