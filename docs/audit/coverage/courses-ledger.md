@@ -61,3 +61,9 @@ Each cell must be tested for deactivated user, revoked membership, archived offe
 5. CI's newest lane 7 failure inventory is not fully green: export, roster, legacy copy, College Projects heading, mentor loading, learner placements and Recruiter drawer tests remain to investigate without dropping assertions.
 
 **Release recommendation:** Keep Learner/Courses marked **BLOCKED FOR RELEASE** pending CI + PostgreSQL tenant/action matrix + independent breaker review. Existing implementation progress is not the same as an unbreakable account.
+
+## Repeatable full source inventory
+
+Run `node scripts/audit/generate-chat7-coverage-ledger.mjs` in the checked-out repository to regenerate `docs/audit/coverage/chat7-generated-symbol-ledger.md`. The generator uses TypeScript AST rather than filename heuristics to enumerate exports across Courses services/models, 79 Courses API handlers, Learner/Quiz/Super Admin course pages, Courses and Attendance UI, and learner Projects services/routes. It scans test source for symbol-name references as **candidate evidence only**; it leaves every row OPEN pending direct behavioural review and passing CI. A passing symbol-name search is not branch coverage, a tenant/role test, or a service integration test.
+
+The orchestrator should commit the deterministic generated ledger after execution, then close every row only when a specific role/state/tenant/expiry/double-submit behavioural assertion and PostgreSQL fixture apply. This does not replace the independent Projects master ledger or its 90% branch-coverage gate.

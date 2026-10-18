@@ -43,7 +43,7 @@ describe("TPO-BREAK-round-03 reports, live interviews and strict result input",(
    .toEqual({elapsedMinutes:12,remainingMinutes:18});
   expect(tpoLiveRoundTiming({scheduledAt:start,durationMinutes:30},"2026-10-20T03:00:00Z"))
    .toEqual({elapsedMinutes:null,remainingMinutes:null});
-  for(const durationMinutes of [null,0,-1,Number.NaN,Number.POSITIVE_INFINITY,0.5]){
+  for(const durationMinutes of [null,0,-1,Number.NaN,Number.POSITIVE_INFINITY,0.5,1441]){
    expect(tpoLiveRoundTiming({scheduledAt:start,durationMinutes},current))
     .toEqual({elapsedMinutes:null,remainingMinutes:null});
   }
