@@ -111,3 +111,31 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `TPO_RESULT_LABELS` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canEditTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-confirmed-round-result-model.ts` | `canApplyTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-confirmed-round-result-service.ts` | `confirmTpoRoundResult` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-drive-round-presets.ts` | `TPO_DRIVE_ROUND_PRESETS` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-drive-round-presets.ts` | `TpoRoundPresetKey` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-drive-round-presets.ts` | `isTpoRoundPresetKey` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-drive-round-presets.ts` | `plannedTpoRoundRows` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-failure-round-share-model.ts` | `AppliedRoundDecision` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundShares` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-failure-round-share-model.ts` | `AppliedRoundBranchDecision` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundSharesByBranch` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-readiness-model.ts` | `tpoInterviewWindowSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-readiness-model.ts` | `InterviewRoundFact` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-interview-readiness-model.ts` | `projectTpoInterviewReadiness` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-readiness-service.ts` | `getTpoInterviewReadiness` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-reschedule-model.ts` | `tpoInterviewRescheduleSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-reschedule-model.ts` | `validInterviewWindow` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-reschedule-model.ts` | `overlappingInterviewVenue` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-reschedule-service.ts` | `rescheduleTpoInterview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-slot-model.ts` | `tpoInterviewSlotActionSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-slot-model.ts` | `sameInterviewRoom` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-slot-model.ts` | `planInterviewDay` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-slot-service.ts` | `getTpoInterviewSlotWorkspace` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-slot-service.ts` | `mutateTpoInterviewSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-live-round-job-link-model.ts` | `tpoLiveRoundJobHref` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-live-round-search-model.ts` | `tpoLiveRoundSearchSchema` (const) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-live-round-search-model.ts` | `filterTpoLiveRoundSearch` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-live-round-timing-model.ts` | `tpoLiveRoundTiming` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-live-round-venue-model.ts` | `tpoLiveRoundVenueLabel` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-recruiter-slot-review-service.ts` | `listTpoRecruiterProposedSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
