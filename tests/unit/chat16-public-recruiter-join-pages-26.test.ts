@@ -71,6 +71,24 @@ describe("chat-16 real public recruiter join page SSR and invitation failure rec
     },
   );
 
+  it.each([
+    ["COMPANY", CompanyJoinPage],
+    ["COLLEGE", CollegeJoinPage],
+  ] as const)(
+    "UX-public-join-04 %s readiness outage fails closed even when invitation preview loads",
+    async (scope, render) => {
+      vi.mocked(publicJoinUnavailable).mockRejectedValue(new Error("private provider secret"));
+      const explanation =
+        "Recruiter verification is temporarily unavailable. The placement cell must enable verified client networking, email-code delivery and public join storage before recruiters can join.";
+      vi.mocked(publicJoinUnavailableCopy).mockReturnValue(explanation);
+      const html = renderToStaticMarkup(await render(params));
+      expect(publicJoinUnavailableCopy).toHaveBeenCalledWith("RATE_TABLE_MISSING");
+      expect(html).toContain(explanation);
+      expect(html).toContain('data-scope="' + scope + '"');
+      expect(html).not.toContain("private provider secret");
+    },
+  );
+
   it("UX-public-join-03 unavailable campaign is explicitly blocked instead of falsely accepting applications", async () => {
     vi.mocked(publicJoinUnavailable).mockResolvedValue(true as never);
     vi.mocked(publicJoinUnavailableCopy).mockReturnValue(
