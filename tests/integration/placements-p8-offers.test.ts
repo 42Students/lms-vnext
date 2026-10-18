@@ -36,6 +36,7 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
+import {sweepExpiredPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
 import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
@@ -277,6 +278,52 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("PLACEMENTS-EXPIRY-RACE-05 DB serializes sweep versus same-offer learner acceptance into one terminal outcome",async()=>{
+    const {application}=await preparePassedApplication();
+    const expiry=new Date("2099-10-19T18:29:59.000Z");
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Offer expiry concurrency engineer",annualCtcInr:900_000,
+      expiresAt:expiry,
+    });
+    const responseInstant=new Date(expiry.getTime()-1);
+    const outcomes=await Promise.allSettled([
+      sweepExpiredPlacementOffers(SEED_IDS.facultyUser,expiry,100),
+      actOnPlacementOffer(learner,issued.id,{action:"ACCEPT"},responseInstant),
+    ]);
+    expect(outcomes.some(outcome=>outcome.status==="fulfilled")).toBe(true);
+    const persisted=await pool.query<{status:string}>(
+      "select status from placement_offers where id=$1",[issued.id]);
+    expect(["ACCEPTED","EXPIRED"]).toContain(persisted.rows[0]?.status);
+    const terminalHistory=await pool.query<{to_status:string;count:number}>(
+      `select to_status,count(*)::integer as count from placement_offer_status_history
+       where offer_id=$1 and to_status in ('ACCEPTED','EXPIRED')
+       group by to_status`,[issued.id],
+    );
+    expect(terminalHistory.rows.reduce((total,row)=>total+row.count,0)).toBe(1);
+    expect(terminalHistory.rows[0]?.to_status).toBe(persisted.rows[0]?.status);
+    if(persisted.rows[0]?.status==="ACCEPTED"){
+      expect(outcomes[1]?.status).toBe("fulfilled");
+      expect(outcomes[0]?.status).toBe("fulfilled");
+      if(outcomes[0]?.status==="fulfilled")expect(outcomes[0].value).toBe(0);
+    }else{
+      expect(outcomes[0]?.status).toBe("fulfilled");
+      if(outcomes[0]?.status==="fulfilled")expect(outcomes[0].value).toBe(1);
+      expect(outcomes[1]?.status).toBe("rejected");
+    }
+  });
+
+  it("PLACEMENTS-EXPIRY-SM-04 DB entrypoint rejects an invalid sweep clock or unsafe batch limit before any writes",async()=>{
+    await expect(sweepExpiredPlacementOffers(SEED_IDS.facultyUser,new Date(Number.NaN)))
+      .rejects.toThrow("Invalid offer sweep reference date");
+    for(const limit of [0,-1,101,0.5]){
+      await expect(sweepExpiredPlacementOffers(SEED_IDS.facultyUser,new Date(),limit))
+        .rejects.toThrow("Invalid offer sweep batch size");
+    }
+    const after=await pool.query<{count:number}>(
+      "select count(*)::int as count from placement_offer_status_history where to_status='EXPIRED'");
+    expect(after.rows[0]?.count).toBe(0);
+  });
+
   it("PLACEMENTS-IDOR-01 refuses a wrong-college TPO, learner issuing an offer and TPO self-acceptance", async () => {
     const { job, application } = await preparePassedApplication();
     const foreignTpo: RequestContext = {
@@ -400,6 +447,53 @@ describe("Placement P8 offers and joining", () => {
     const stillOne=await pool.query<{count:number}>(
       "select count(*)::integer as count from placement_drive_selections where job_id = $1",[job.id]);
     expect(stillOne.rows[0]?.count).toBe(1);
+  });
+
+  it("PLACEMENTS-WAIT-RACE-06 DB never releases two offers for concurrent identical waitlist previews",async()=>{
+    const {job,application,round}=await preparePassedApplication();
+    await pool.query(
+      "update placement_round_results set outcome='HOLD',waitlist_rank=1 where application_id=$1 and round_id=$2",
+      [application.id,round.id],
+    );
+    const preview=await getTpoWaitlistPreview(tpo,job.id);
+    expect(preview.next?.applicationId).toBe(application.id);
+    const input={action:"OFFER_NEXT" as const,confirmed:true,
+      expectedPreviewToken:preview.previewToken,reason:"Company has an opening for the next ranked waitlisted learner",
+    };
+    const outcomes=await Promise.allSettled([
+      offerToNextWaitlisted(tpo,job.id,input),
+      offerToNextWaitlisted(tpo,job.id,input),
+    ]);
+    expect(outcomes.some(result=>result.status==="fulfilled")).toBe(true);
+    const promotions=await pool.query<{status:string;offer_id:string|null}>(
+      "select status,offer_id from placement_waitlist_promotions where job_id=$1",
+      [job.id],
+    );
+    expect(promotions.rows).toHaveLength(1);
+    expect(promotions.rows[0]?.status).toBe("RELEASED");
+    expect(promotions.rows[0]?.offer_id).toBeTruthy();
+    const offers=await pool.query<{id:string}>(
+      `select o.id from placement_offers o
+       inner join placement_applications a on a.id=o.application_id
+       where a.job_id=$1 and o.kind='OFFER' and o.status in ('ISSUED','ACCEPTED')`,
+      [job.id],
+    );
+    expect(offers.rows).toHaveLength(1);
+    expect(offers.rows[0]?.id).toBe(promotions.rows[0]?.offer_id);
+    const audit=await pool.query<{summary:string;count:number}>(
+      `select summary,count(*)::int as count from activity_events
+       where subject_id=$1 and event_type='PLACEMENTS_TPO_WAITLIST_PROMOTED'
+       group by summary`,
+      [job.id],
+    );
+    expect(audit.rows.find(row=>row.summary.includes("promoted waitlisted applicant"))?.count).toBe(1);
+    // Crash-reconciliation is a distinct durable event and may occur once,
+    // but a racing HTTP retry must never duplicate either event category.
+    expect(audit.rows.every(row=>row.count===1)).toBe(true);
+    expect(audit.rows.length).toBeLessThanOrEqual(2);
+    for(const result of outcomes)if(result.status==="fulfilled"){
+      expect(result.value.offerId).toBe(offers.rows[0]?.id);
+    }
   });
 
   it("PLACEMENTS-WAIT-SEASON-05 DB denies waitlist promotion and seat creation after season closure",async()=>{

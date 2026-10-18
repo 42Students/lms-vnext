@@ -7,6 +7,7 @@ import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {
   tpoActorAuditQuerySchema,
   type TpoActorAuditQuery,
@@ -43,6 +44,8 @@ export async function getTpoActorAudit(
   }
   requirePermission(context, "placements.manage", { collegeId });
   await requirePlacementManageScope(context, collegeId);
+  const liveCollegeId=await requireTpoBatchActor(context);
+  if(liveCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
   const query = tpoActorAuditQuerySchema.parse(raw);
   const scope = and(...conditions(collegeId, query));
   const db = getDb();
