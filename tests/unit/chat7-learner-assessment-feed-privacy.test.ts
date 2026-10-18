@@ -39,7 +39,7 @@ beforeEach(()=>{
  state.select.mockReset();state.assignmentRows=[];state.quizRows=[];
  let index=0;
  state.select.mockImplementation(()=>{
-  const rows=index++===0?state.assignmentRows:state.quizRows;
+  const rows=index++%2===0?state.assignmentRows:state.quizRows;
   return {from(){return this;},innerJoin(){return this;},leftJoin(){return this;},
    where(){return Promise.resolve(rows);}};
  });
