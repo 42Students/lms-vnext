@@ -2,6 +2,9 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdAt:string;updatedAt:string;
@@ -39,23 +42,23 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    <p className="text-sm text-body">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
    <div className="grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-sm">Request type
-     <select value={mode} onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
-      className="min-h-11 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></select></label>
+     <Select value={mode} onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
+      className="min-h-11 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
     <label className="grid gap-1 text-sm">Field
-     <select value={field} onChange={e=>setField(e.target.value as typeof field)}
+     <Select value={field} onChange={e=>setField(e.target.value as typeof field)}
       className="min-h-11 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-      {fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>
+      {fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
    </div>
    <label className="grid gap-1 text-sm">Change or question
-    <textarea value={value} onChange={e=>setValue(e.target.value)} minLength={2} maxLength={2000} rows={3}
+    <Textarea value={value} onChange={e=>setValue(e.target.value)} minLength={2} maxLength={2000} rows={3}
      className="rounded border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
    <label className="grid gap-1 text-sm">Why is this needed?
-    <textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={1000} rows={2}
+    <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={1000} rows={2}
      className="rounded border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
-   <button type="button" disabled={busy||value.trim().length<2||reason.trim().length<3}
+   <Button type="button" disabled={busy||value.trim().length<2||reason.trim().length<3}
     onClick={()=>void send({action:"CREATE",field,mode,proposedValue:value.trim(),reason:reason.trim()})}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-    {busy?"Saving…":"Send to "+(party==="TPO"?"company":"placement cell")}</button>
+    variant="primary">
+    {busy?"Saving…":"Send to "+(party==="TPO"?"company":"placement cell")}</Button>
   </section>
   <section className="space-y-3">
    <h2 className="text-lg font-semibold">Change requests · {requests.length}</h2>
@@ -75,23 +78,23 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
       <label className="grid gap-1 text-sm">Reply or decision explanation
-       <textarea maxLength={2000} value={notes[item.id]??""} onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
+       <Textarea maxLength={2000} value={notes[item.id]??""} onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
         rows={2} className="rounded border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
       <div className="flex flex-wrap gap-2">
-       <button type="button" disabled={busy||!(notes[item.id]??"").trim()}
+       <Button type="button" disabled={busy||!(notes[item.id]??"").trim()}
         onClick={()=>void send({action:"COMMENT",requestId:item.id,body:(notes[item.id]??"").trim()})}
-        className="min-h-11 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reply</button>
+        variant="secondary">Reply</Button>
        {item.status==="OPEN"&&item.targetParty===party?(
         ["ACCEPT","ANSWER","DECLINE"] as const).map(action=>
-         <button key={action} type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
+         <Button key={action} type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
           onClick={()=>action==="ANSWER"?void send({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()}):
            setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
-          className="min-h-11 rounded border border-primary px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-          {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</button>):null}
+          variant={action==="DECLINE"?"danger":"secondary"}>
+          {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</Button>):null}
        {item.status==="OPEN"&&item.proposerParty===party&&item.createdByUserId===userId?
-        <button type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
+        <Button type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
          onClick={()=>setConfirmation({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
-         className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Withdraw</button>:null}
+         variant="danger">Withdraw</Button>:null}
       </div>
      </div>
     </article>)}
