@@ -1,0 +1,187 @@
+# UX Audit 2 — independent adversarial review (chat-19)
+
+**Verdict: BLOCKED — NOT SIGNED-OFF.** Do not start page UX rollout. Audit 1 remediation has genuine source changes, but 5 previously reported issues are reopened, 4 remain acceptance-open, and new mobile/WebView/a11y failures exist. This is an evidence-backed static audit, not a claim of executed iOS/Android/Playwright/AT verification.
+
+**Repository:** 42Students/lms-vnext. **Source:** main at ee631bb198b5c4655ce6af1bebbf998930dc2f42, 2026-10-18 (IST). **Audit branch:** chatgpt/chat-19-b. **Scope:** documentation and existing code review only, no page edits. The author was chat-17; auditor chat-19 is independent.
+
+**Method:** read UX-AUDIT-RUBRIC.md (21 checks), UX-PLAYBOOK.md §§1–18, CHANGELOG, AUDIT-1 and its 33-row crosswalk; inspect all 33 named shared UI files and two shell files, code/guards/tests/capture recipe, canonical CSS, all 25 route sources (resolving redirects/re-exports) and selected delegated critical components. Source lines below are 1-based from main. Verified browser outcomes are explicitly not claimed; no checkout or runnable browser/device test environment was available through the GitHub connection. Latest CI run on source revision, GitHub Actions run 39081122938, was **queued** on inspection, not a passed acceptance test. Existing scripts were inspected, NOT executed. Evidence claims are restricted to source.
+
+## Audit 1 re-verification — all 33
+
+Statuses: **SOURCE-FIX** = implementation/document repair present, provisional until runnable/device evidence; **PARTIAL** = meaningful repair but unresolved implementation or acceptance issue; **REOPENED** = original obligation demonstrably still violated; **OPEN-EVIDENCE** = explicit acceptance deliverable not supplied. None of these status words means user/device sign-off.
+
+| Audit 1 ID | Independent verdict | Exact source evidence | Reason |
+|---|---|---|---|
+| A-01 | SOURCE-FIX | UX-PLAYBOOK.md:236-267 | Redirect aliases are now identified; destination leaf still needs browser validation. |
+| A-02 | SOURCE-FIX | UX-PLAYBOOK.md:311-383 | Dense page phone-priority and permission matrices exist; no 320/360/390 screenshots. |
+| A-03 | PARTIAL | UX-PLAYBOOK.md:95-166,445-483; src/components/ui/file-upload.tsx:29-56 | Catalogue and examples expanded, but typed field/error and fallback usage remains opt-in. |
+| A-04 | PARTIAL | UX-PLAYBOOK.md:384-443 | lg threshold and host contract written; sample save never calls a mutation (N-08). |
+| A-05 | SOURCE-FIX | UX-PLAYBOOK.md:484-503 | Eight-state/archetype table and role routes exist, but states are not exercised. |
+| B-01 | SOURCE-FIX | src/app/globals.css:15,78,100-105; src/components/ui/button.tsx:10-20 | Canonical teal retained; on-primary ink alias corrected; live computed CSS tests outstanding. |
+| B-02 | PARTIAL | src/components/ui/data-table.tsx:28-62 | Actions and hidden-field metadata added; detail-route recoverability is not validated at runtime. |
+| B-03 | SOURCE-FIX | src/components/ui/tabs.tsx:26-69 | Disabled route link becomes inert; no-handler panel tabs disabled; roving-keyboard testing outstanding. |
+| B-04 | SOURCE-FIX | src/components/ui/filter-bar.tsx:22-78; src/app/(authenticated)/college/contacts/page.tsx:50-63 | Search separate and persistent filter form subtree; hydration/focus tests unrun. |
+| B-05 | SOURCE-FIX | src/app/globals.css:16,104-105; src/components/ui/data-table.tsx:62 | text-primary-text maps to deep-teal alias; source-site contrast sweep outstanding. |
+| B-06 | SOURCE-FIX | src/app/globals.css:148-162 | Tracker dark-scope on-primary remains dark ink; actual dark computed pairing not measured. |
+| B-07 | SOURCE-FIX | src/components/shell/app-shell.tsx:81-112,169 | lg:pl-64 and w-64 match documented 1024px shell threshold. |
+| C-01 | SOURCE-FIX | src/components/courses/learner-quiz-attempt.tsx:247,429-436 | Shared ConfirmDialogs and known learner exit replaced native confirm/router.back; host-back testing absent. |
+| C-02 | REOPENED | src/components/tpo/tpo-students-spreadsheet.tsx:209; src/components/tpo/tpo-spreadsheet-grid.tsx:143-149 | Branch intelligence cards exist, but actual student row actions are behind collapsed Actions details on phone, contrary explicit always-visible priority. |
+| C-03 | REOPENED | src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx:69-70; src/components/placements/placement-drive-workspace.tsx:409-412 | target=_blank survives in TWO named audited workflows; source guard and UX-PLAYBOOK-20 test cannot pass as written. |
+| C-04 | SOURCE-FIX | src/components/ui/filter-bar.tsx:22-78 | One filter subtree is retained through breakpoint; unsent form/focus browser scenario untested. |
+| C-05 | REOPENED | src/components/ui/use-overlay-webview.ts:31-40,51-60 | New shared hook can close underlying modal after explicitly closing nested top modal (N-02); no native host suite. |
+| C-06 | PARTIAL | src/components/ui/use-overlay-webview.ts:41-50; src/components/ui/dialog.tsx:40-51 | VisualViewport and safe-area hooks exist, but 240px clamp and keyboard positioning are unsafe/unverified (N-10). |
+| C-07 | PARTIAL | src/app/(authenticated)/mentor/calendar/page.tsx:46-110; src/app/(authenticated)/tpo/messages/page.tsx:89,167-174 | Audited targeted controls improved; expanded phone-facing pages retain many 40px targets (N-04). |
+| C-08 | PARTIAL | src/components/ui/file-upload.tsx:20-56 | MIME/extension precheck + onFiles(null) added; fallback optional even when pickerUnavailable; server/device proof absent. |
+| C-09 | SOURCE-FIX | src/app/quiz/page.tsx:8-17; src/components/ui/page-loading.tsx:9-18 | dvh and 12s bounded PageLoading exist; slow-network/attempt-draft outcome not tested. |
+| D-01 | SOURCE-FIX | src/components/shell/app-shell.tsx:81,169; src/components/shell/mobile-navigation.tsx:68-108 | Skip link/main target implemented; real tab/focus test missing. |
+| D-02 | PARTIAL | src/components/ui/form-field.tsx:3-23; src/components/ui/input.tsx:4-8 | Correct shared ARIA composition available but not enforced for existing raw controls; no screen reader/first-invalid test. |
+| D-03 | SOURCE-FIX | src/components/ui/skeleton.tsx:18-28 | Single sr-only live status child; physical AT double-announcement test absent. |
+| D-04 | PARTIAL | src/components/shell/route-announcer.tsx:7-26; src/components/ui/pagination.tsx:19-38 | Route announcer added, but query/navigation screen-reader updates and focus behaviour not observed. |
+| E-01 | OPEN-EVIDENCE | UX-PLAYBOOK-CHANGELOG.md:96-97; scripts/ux-capture-references.mjs:13-47 | Reference routes improved; no eight-state operable browser fixtures or approved screenshots. |
+| E-02 | REOPENED | src/app/(authenticated)/tpo/home/page.tsx:50-63 | Promise.all still has unguarded required/auxiliary reads; one rejected read can blank all Home despite local fallbacks. |
+| E-03 | OPEN-EVIDENCE | UX-PLAYBOOK-CHANGELOG.md:100-102; package.json:46-51 | Source tests authored, but no passing typecheck/lint/Vitest/browser/WebView/AT results on baseline; latest CI still queued. |
+| E-04 | OPEN-EVIDENCE | scripts/ux-callsite-audit.mjs:25-47; tests/ux-playbook-compatibility.test.tsx:17-65 | AST count is not 30 affected visual/interaction snapshots; compile and before/after checks unrun. |
+| E-05 | PARTIAL | src/components/ui/data-table.tsx:35-43,45-76 | Formatter called once, but two full responsive DOM subtrees still constructed; 100-row benchmark absent. |
+| F-01 | SOURCE-FIX | UX-PLAYBOOK.md:504-575 | Per-point ledger and no-evidence zero rules written; inter-rater reproducibility not empirically checked. |
+| F-02 | REOPENED | scripts/check-ux-anti-drift.mjs:10-28,50-65; src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx:69 | Guard only audits a small allowlist AND current audited paths contain prohibited attributes; lint gate would fail. |
+| F-03 | OPEN-EVIDENCE | scripts/ux-capture-references.mjs:24-48; UX-PLAYBOOK-CHANGELOG.md:100-107 | Fixture manifest recipe exists; no captured, approved, source-linked golden screenshots/hashes. |
+
+**Audit 1 verdict totals:** SOURCE-FIX: 15; PARTIAL: 9; REOPENED: 5; OPEN-EVIDENCE: 4 = 33. **Five reopened:** C-02, C-03, C-05, E-02, F-02. The crosswalk has 33 entries, but the crosswalk alone is not evidence of any functional closure.
+
+### Particular failures in previously alleged blocker repairs
+
+- **C-03:** learner assignment resource link still uses target="_blank" at line 69 with min-h-10 at line 70, and placement drive employer portal still uses target="_blank" at approximately line 411. Both paths are in scripts/check-ux-anti-drift.mjs allowlist (lines 17–18). Both are also scanned by tests/ux-audit1-source.test.mjs lines 6–24. This means the test/guard source is inconsistent with the actual main branch, independent of whether CI has executed.
+- **C-02:** branch aggregation is now mobile-card-based; the original audit's 52rem table was branch intelligence, not the student roster. However the real roster uses mobileActionsCollapsible=true, then renders rowActions only under a closed details/summary Action drawer on each mobile card. Visible student status is not equivalent to visible actionable affordance; the priority contract still fails.
+- **C-05:** newly introduced popstate cleanup bug is demonstrated in A2-02 below and must be fixed before any nested modal use.
+- **E-02:** adding .catch to the batches and operations tasks does not guard getPendingTpoRequestsCount, getTpoStudentsIntelligence, countTpoUnreadRecruiterMessages, tpoCrmTablesReady, getCollegePlacementRules, getTpoPlacementTeam or listMyTpoInternalThreads in the same Promise.all. One failure still rejects the entire route render.
+- **F-02:** even a passing narrow AST guard would not prove all pages clean; currently it cannot pass on included C-03 source. AST analysis only examines named files rather than all changed routes.
+
+## NEW Audit 2 findings — independently identified root causes
+
+### A2-01 — BLOCKER
+**Evidence:** src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx:537-556. **Defect and effect:** The recruiter applicant review overlays a manual section role=dialog with aria-modal but no showModal/inert, focus trap/return, Escape or host Back handling; h-screen/85vh and 40px close controls compound keyboard/WKWebView failure. **Required fix:** Replace with shared Drawer/Dialog, preserve URL-selected applicant and browser history, test tab containment/Escape/hardware Back, save focus and keyboard geometry at all required widths.
+
+### A2-02 — BLOCKER
+**Evidence:** src/components/ui/use-overlay-webview.ts:31-40,51-60. **Defect and effect:** On a nested modal, explicit close of top B removes B from activeOverlayStack and calls history.back(); the ensuing popstate is handled by underlying still-open A, so ONE close also dismisses A. Current hook has no suppression/ownership token for self-initiated history cleanup. **Required fix:** Do not let cleanup back be consumed by surviving overlay; track pop destination/marker ownership and suppress synthetic cleanup popstate, or use a single centralized overlay history controller; test A+B close, hardware Back B then A, and pending nondismissible nested cases.
+
+### A2-03 — MAJOR
+**Evidence:** src/app/(authenticated)/mentor/calendar/page.tsx:43-110. **Defect and effect:** Native search/select inputs inherit 14px text from parent text-sm and use min-h-10; iOS input-focus zoom can occur, and selection is difficult on 320px phones. **Required fix:** Use shared Input/Select at 16px and >=44px, redesign dense filters into persistent Search+FilterBar sheet and run iOS zoom/orientation regression.
+
+### A2-04 — MAJOR
+**Evidence:** src/app/(authenticated)/tpo/messages/page.tsx:89,167-174,268; src/app/(authenticated)/admin/module-access/page.tsx:68; src/app/(authenticated)/college/contacts/page.tsx:33-44. **Defect and effect:** Multiple live actions/tabs outside the author's targeted list still use min-h-10 or px-3 py-2 without 44px bounds. At least TPO Messages, Module Access and Contacts are direct mobile workflow surfaces. **Required fix:** Upgrade exact controls to shared Button/Link target utility min-h-11/min-w-11, measure tappable rects and spacing on 320/360/390, extend the guard to these routes.
+
+### A2-05 — MAJOR
+**Evidence:** src/components/ui/permission-action.tsx:9-23. **Defect and effect:** PermissionAction silently renders fallback=null by default whenever can() denies permission, conflicting with the playbook's visible read-only or disabled-reason rule. Important status/action context simply disappears. **Required fix:** Require an explicit denied fallback/reason for discoverable actions, or limit silent omission to audited data-security cases via typed mode and tests for absent authority.
+
+### A2-06 — MAJOR
+**Evidence:** src/components/shell/app-shell.tsx:79-82,112-114. **Defect and effect:** Outer shell uses min-h-dvh but its main layout child still uses min-h-screen; sticky shell header lacks top env(safe-area-inset-top) padding. Embedded edge-to-edge views may place header under a notch and add viewport scroll mismatch. **Required fix:** Remove remaining screen-height assumption, consume top safe-area in shell/header and test WKWebView/Android notched devices and rotation.
+
+### A2-07 — MAJOR
+**Evidence:** src/components/ui/third-party-link.tsx:11-14,28-46. **Defect and effect:** Shared ThirdPartyLink accepts http: URLs and exposes same-tab navigation to unencrypted destinations; the WebView-safe link policy otherwise requires a vetted secure external destination. Selectable fallback is only revealed after user action. **Required fix:** Default to validated HTTPS (explicit reviewed domain exceptions if needed); present the selectable safe URL before leaving restricted hosts and test blocked navigation and return.
+
+### A2-08 — MAJOR
+**Evidence:** docs/design-system/UX-PLAYBOOK.md:405-443. **Defect and effect:** The purported copy-paste guarded ProfileForm has a try body containing ONLY a comment in place of an authorized await. Copying it produces a Save button that resets pending without saving and hardcoded Required copy not mapped to legacy labels. **Required fix:** Replace with compilable real injected onSave(value) example, including API failure, version conflict and focus to invalid field, exact legacy-copy placeholder contract and a runnable sample test.
+
+### A2-09 — MAJOR
+**Evidence:** src/components/tpo/tpo-spreadsheet-grid.tsx:123-131. **Defect and effect:** The desktop/tablet column resize and pin buttons are bare rounded border px-1 with no minimum width or height (touch targets can be tiny at >=768px tablets). **Required fix:** Apply min-h-11 min-w-11, 8px separation and focus-visible ring or make them a keyboard-accessible settings menu; test at 768px touch viewport.
+
+### A2-10 — MAJOR
+**Evidence:** src/components/ui/use-overlay-webview.ts:41-45; src/components/ui/dialog.tsx:40-51. **Defect and effect:** VisualViewport resize clamps available height to AT LEAST 240px even if keyboard-reduced viewport is smaller; dialog height becomes larger than visible screen and the footer may be obscured in landscape or split-screen. **Required fix:** Respect actual usable viewport height (account for visualViewport.offsetTop), keep action footer in scrollable reachable area and device-test keyboard 320px landscape and compact viewport.
+
+### A2-11 — MINOR
+**Evidence:** src/components/ui/filter-bar.tsx:60-71. **Defect and effect:** Every FilterBar instance hardcodes id=lms-filter-panel and aria-controls references it. Two bars on a page create duplicate IDs and ambiguous accessible control relationships. **Required fix:** Generate stable useId per instance and test multiple FilterBars in the same render.
+
+### A2-12 — MINOR
+**Evidence:** src/components/ui/data-table.tsx:24-27. **Defect and effect:** When empty is omitted DataTable emits the invented universal message No records found, with no role-authorized next action, violating exact legacy copy and actionable-empty instructions. **Required fix:** Require empty prop with route-specific exact copy and authorized next step, or document a vetted per-context fallback.
+
+### A2-13 — MINOR
+**Evidence:** src/components/ui/tooltip.tsx:9-16. **Defect and effect:** InfoPopover accepts arbitrary children for its summary without a required accessible label. Icon-only callers can make an unnamed touch disclosure despite keyboard and 44px geometry. **Required fix:** Require label or aria-label when child is not text and provide a test with icon-only summary and screen reader name.
+
+### A2-14 — MINOR
+**Evidence:** src/components/ui/toast.tsx:23-28,35-47. **Defect and effect:** All toasts, including long error notifications, disappear after 4500ms regardless of message length and screen reader pace. A user can miss the only visible explanation before recovery. **Required fix:** Keep actionable/error toasts until dismissal or mirror failures in persistent InlineNotice; cover reduced motion, screen-reader reading time and retry affordance.
+
+**New finding counts:** BLOCKER 2, MAJOR 8, MINOR 4, NIT 0; **total 14**. These exclude the five Audit 1 reopened ID counts to avoid double-counting the same original acceptance obligations. A2-02 and A2-10 describe specific *new remediation defects* that additionally explain the unresolved C-05/C-06 contracts.
+
+## 25-route walk and archetype checks (static, source-based)
+
+The route sample covers all seven authenticated role families (at least 3 per role), public login and quiz, including the largest prescribed tables, calendar, inbox and hiring flows. Delegated components were followed for significant findings. NO rendered-width assertion is inferred from Tailwind class names.
+
+| # | Role | Actual route | Archetype; source finding |
+|---:|---|---|---|
+| 1 | Learner | /learn | redirect alias documented; SOURCE-FIX A-01 |
+| 2 | Learner | /learn/courses | directory delegates list; state/phone not browser-verified |
+| 3 | Learner | /learn/courses/[deliveryId] | redirect to home leaf; SOURCE-FIX A-01 |
+| 4 | Learner | /learn/allAssignments/[assignmentId] | form/detail; popup regression C-03 |
+| 5 | Faculty | /teacher/courses | directory; still custom route links |
+| 6 | Faculty | /teacher/courses/[deliveryId]/gradebook | report/filters; on-primary alias fixed; other controls custom |
+| 7 | Faculty | /teacher/profile/details | editor reference; eight-state/device evidence missing E-01 |
+| 8 | Mentor | /mentor/projects | directory bespoke controls; visual compatibility open E-04 |
+| 9 | Mentor | /mentor/projects/[projectId] | tab detail with leaf PageHeader exception; E-01 unverified |
+| 10 | Mentor | /mentor/calendar | calendar; 14px/40px controls A2-03 |
+| 11 | TPO | /tpo/students | roster/dense directory; actions collapsed C-02 |
+| 12 | TPO | /tpo/placements/jobs/[jobId] | redirect to drive workspace; check leaf popup C-03 |
+| 13 | TPO | /tpo/messages | inbox; 40px actions A2-04 |
+| 14 | TPO | /tpo/calendar | calendar route delegates workspace; no phone execution |
+| 15 | College Admin | /college/people | alias redirect; SOURCE-FIX A-01 |
+| 16 | College Admin | /college/contacts | directory uses FilterBar/DataTable, header tabs still small A2-04 |
+| 17 | College Admin | /college/branding | settings delegated uploader; file picker host proof missing |
+| 18 | Recruiter | /recruiter/drives | re-export HR drive list; reference composition unverified |
+| 19 | Recruiter | /recruiter/drives/[jobId] | re-export HR detail; custom applicant modal A2-01 |
+| 20 | Recruiter | /recruiter/home | re-export HR home dashboard; source only |
+| 21 | Super Admin | /admin/colleges | directory uses DataTable; source teal alias fixed |
+| 22 | Super Admin | /admin/module-access | settings/directories mixed; small action A2-04 |
+| 23 | Super Admin | /admin/audit | report delegate; 40px invalid-state link |
+| 24 | Public/auth | /login | alias re-export public auth; device a11y not inspected live |
+| 25 | Quiz | /quiz | wizard entry PageLoading; safe exit source repaired C-01 |
+
+## Rubric A–F / 21-check ledger
+
+| Check | Independent audit result |
+|---|---|
+| A1 concrete sections | PARTIAL: §15.5 Save snippet is not executable A2-08 |
+| A2 25 real routes | STATIC WALK COMPLETE above; no rendered/device acceptance |
+| A3 full shared-component contracts | PARTIAL: defaults and ARIA still allow silent denied/error cases A2-05/A2-13 |
+| A4 eight-state coverage | OPEN: §15.7 matrix written, no 8-state reference-route execution |
+| B5 legacy colours + pair contrast | SOURCE-FIX canonical on-primary/links, but no whole-site scoped computed AA matrix |
+| B6 consistent scale | FAIL: 40px/14px raw controls and min-h-screen exceptions |
+| B7 legacy wording/IA | PARTIAL: actual copy retained in inspected routes; generic DataTable empty fallback invented A2-12; full parity diff absent |
+| B8 source vs playbook | FAIL: host overlays, form example, permission default diverge |
+| B9 30 affected prop/callsite regressions | OPEN: AST count only, not behaviour/screenshots |
+| B10 no hover/prompt/popup/raw errors | FAIL: target=_blank in named workflows; no full-repo gate |
+| C11 320/360/390 targets/thumb reach | FAIL in source A2-03/A2-04; physical bounds not measured |
+| C12 phone card/sheet/footer | PARTIAL: DataTable/cards exist; roster actions hidden, custom applicant drawer |
+| C13 WebView back/zoom/safe areas | FAIL: nested history popstate and viewport clamp A2-02/A2-10, HTTP links A2-07 |
+| C14 slow/offline/retry | OPEN: 12s helpers authored; unguarded TPO Home fetches still fail |
+| D15 WCAG landmarks/focus/labels | FAIL: reviewer drawer lacks focus trap; silent PermissionAction; label contract opt-in |
+| D16 screen-reader async status | OPEN: DOM live labels exist, no VoiceOver/TalkBack/pagination evidence |
+| E17 strict TS/unit | OPEN: tests authored, current same-revision pass not demonstrated |
+| E18 render cost/100 rows | PARTIAL: formatter deduplicated, DOM still dual responsive render |
+| E19 four reference specimens | OPEN: no working eight-state/width/browser specimens signed by owner |
+| F20 atomized 100-point scoring | SOURCE-FIX §16.1, no inter-rater demonstration |
+| F21 anti-drift 10 pathways | FAIL: see preventative ledger; current lint source is inconsistent with prohibited links |
+
+### Top ten multi-lane drift risks and enforceable prevention
+
+| # | Likely regression | Gate / test needed |
+|---:|---|---|
+| 1 | Reintroduced target=_blank | Full-repo AST check, source guard must execute before merge, zero unwaived matches |
+| 2 | Nested overlay auto-dismisses parent | One overlay-stack history service + nested modal hardware-back integration tests |
+| 3 | Raw 40px controls in non-allowlisted routes | Scan all TSX active controls and browser measure 44x44, not named-file allowlist |
+| 4 | iOS zoom from native text-sm inputs | 16px enforced inputs and iOS 200% zoom fixture |
+| 5 | Permission action disappears silently | Type-enforced visible denied/readonly feedback |
+| 6 | Off-palette/low-contrast old aliases | Computed foreground/background pairing test both themes, not string existence |
+| 7 | Responsive data silently hidden | Mobile recoverability ledger for each column and row action |
+| 8 | Form snippets save nothing | Executable acceptance fixture for every canonical snippet |
+| 9 | Eight-state references are diagrams only | Injected-state E2E fixtures with 5 widths and owner-approved hashes |
+| 10 | Type-safe props break hydrated behaviour | Affected 30-callsite interaction + visual regression checks |
+
+## Sign-off requirements / exact next step
+
+1. Fix every reopened Audit 1 ID and A2 BLOCKER/MAJOR at the identified source lines; do not mark exceptions accepted by documentation edits alone. Re-run lint (including UX guard), strict typecheck, authored source + Vitest suites, and record command, SHA and exit code.
+2. Exercise 320/360/390/768/1280 with seeded role-scoped data, eight injected states per reference, keyboard + 200% zoom + slow/offline/failure, mutable form drafts, real 100-row table, and 30 affected component call sites. Capture approved SHA256 screenshot/interaction baselines; do not fabricate.
+3. Test Android hardware Back and WKWebView Back, notch safe area, landscape keyboard, nested/pending modals, file chooser/download and HTTP blocked links. Record focus/Escape/VO/TalkBack results on SAME commit.
+4. Independently confirm exact legacy text/role navigation against golden parity data, full token contrast including dark tracker and all interactive states, and all role routes' non-bespoke action areas.
+
+**Three riskiest unverified items:** (1) Android/iOS nested Back + overlay history integrity with unsaved/pending drafts, (2) real WCAG 2.2 AA keyboard/AT/focus/zoom behaviour at 320–390px, (3) same-revision passing typecheck/lint/Vitest/browser results and 30 affected call-site / four reference visual baselines.
+
+**FINAL VERDICT: BLOCKED.** This audit is NOT authorization for page-level UI/UX restyling or for a third-audit sign-off.
