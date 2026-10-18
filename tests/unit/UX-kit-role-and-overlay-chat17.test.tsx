@@ -7,6 +7,7 @@ import { PermissionAction } from "@/components/ui/permission-action";
 import { ownsOverlayHistoryEntry } from "@/components/ui/use-overlay-webview";
 import { DataTable, isSafeDataTableHref } from "@/components/ui/data-table";
 import { Pagination, normalizedPageCount, paginationWindow } from "@/components/ui/pagination";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { fileMatchesAccept, fileSizeIsValid } from "@/components/ui/file-upload";
 import { clearEvictedToastTimers, enqueueToast, ToastStack, type ToastItem } from "@/components/ui/toast";
 import type { RequestContext } from "@/modules/identity/context";
@@ -143,6 +144,23 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     }
     expect(normalizedPageCount(10000)).toBe(10000);
     expect(paginationWindow(10000,10000)).toEqual([9996,9997,9998,9999,10000]);
+  });
+
+  it("UX-kit-HARDEN-32 external evidence rejects backslash, trailing whitespace and embedded controls",()=>{
+    for(const href of [
+      "https://good.example.test\\@attacker.example.test",
+      "https://example.test/path\n.evil.test",
+      "https://example.test/path\t.svg",
+      "https://example.test/../../bad\\file",
+      " https://example.test", "https://example.test ",
+    ]){
+      const html=render(<ThirdPartyLink href={href} label="Evidence" />);
+      expect(html).toContain("This link is unavailable.");
+      expect(html).not.toContain("<a ");
+    }
+    const valid=render(<ThirdPartyLink href="https://example.test/proof%20one" label="Evidence" />);
+    expect(valid).toContain('href="https://example.test/proof%20one"');
+    expect(valid).not.toContain('target="_blank"');
   });
 
   it("UX-kit-HARDEN-28 upload prechecks fail closed for invalid sizes and untrusted types", () => {
