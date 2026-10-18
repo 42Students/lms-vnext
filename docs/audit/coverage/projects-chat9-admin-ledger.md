@@ -98,3 +98,15 @@ Every regression listed above is authored but **not executed**. This targeted le
 | `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx` | `Page` | `PROJ-BREAK-ux-14` | SOURCE: college-scope guard, safe retry and denied state; browser outage/revocation journey pending |
 
 | `src/components/projects/super-admin-template-subview-page.tsx` | `SuperAdminTemplateSubviewPage` | `PROJ-BREAK-ux-15; PROJ-BREAK-scale-28` | SOURCE: 404 vs safe error fallback, history-page parser; server render/outage journey pending |
+
+## Additional 2026-10-18 chat-9 breaker cases (source authored; CI pending)
+
+| Export/route/page | Test evidence | Depth and unresolved verification |
+|---|---|---|
+| `parseProjectAdminRiskQuery` (`src/modules/projects/admin-risk-query-model.ts`) | `PROJ-BREAK-ux-19`, `tests/unit/PROJ-BREAK-chat9-admin-page-query-hostility.test.ts` | PURE BEHAVIOR: default/authorized filters; arrays, extra parameters, nondecimal/empty paging fail closed. UI/browser confirmation pending. |
+| `parseProjectAdminSubmissionsQuery` (`src/modules/projects/admin-submissions-query-model.ts`) | `PROJ-BREAK-ux-20`, same test file | PURE BEHAVIOR: preserved valid views and statuses; rejects ambiguous, nondecimal and unknown request values. Browser and full service integration pending. |
+| `formatProjectAdminUpdatedDateIst` (`src/modules/projects/project-admin-date-model.ts`) | `PROJ-BREAK-resilience-20`, `tests/unit/PROJ-BREAK-chat9-admin-export-date-resilience.test.ts` | PURE BEHAVIOR: invalid stored dates render explicit unavailable text; valid IST calendar boundary covered. CI/browser pending. |
+| `projectWorkspacePageCsv` (`src/modules/projects/admin-workspace-page-export-model.ts`) | `PROJ-BREAK-resilience-20`, same test | PURE BEHAVIOR: invalid date cannot crash a page-scoped CSV; valid row, status, formula defense and column integrity retained. CI/spreadsheet importer pending. |
+| `SuperAdminTemplatePageExport` (`src/components/projects/super-admin-template-page-export.tsx`) | `PROJ-BREAK-exports-12/13/14/15`, `tests/unit/PROJ-BREAK-chat9-admin-csv-security.test.ts` | SOURCE: test updated to assert the actual named-rows sanitizer invocation, keeping exact sanitizer requirement; no runtime browser export proof. |
+
+The prior cloud failure report precedes the current-main fast-forward and may include errors already corrected by other lanes. Test authoring and GitHub source comparison are **not** a green Vitest or TypeScript run.
