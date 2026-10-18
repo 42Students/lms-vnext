@@ -1,0 +1,12 @@
+# Chat-17 UX raw-table exceptions — review required
+
+The generated `docs/audit/ux/COVERAGE-MATRIX.md` flags every literal `<table>` as a red gap, including a few legitimately spreadsheet-like or calendar-matrix views. **Do not hide a red item by deleting scanner rules.** Each exception below is provisional and requires browser/screen-reader review.
+
+| Component | Why generic DataTable is not equivalent | Existing mobile/accessibility evidence | Remaining acceptance |
+|---|---|---|---|
+| `src/components/tpo/tpo-spreadsheet-grid.tsx` | Per-column resizing, pinning, URL-backed column filters, page-wide checkbox selection and range selection are spreadsheet interactions, not a plain record list | Native desktop table has caption, column headings, horizontal `ScrollCue` and keyboard-sized controls. Separately renders labeled mobile row cards with select-all, a primary selection, optional `More student details` and a collapsible actions area. | Browser-test selection parity between desktop/mobile, data storage disabled fallback, pinned-column scroll, keyboard range selection and cross-college authorization of the underlying row queries |
+| `src/components/attendance/admin-attendance-workspace.tsx` | Columns correspond to each calendar day/session; replacing with a generic per-row card would erase day-to-day comparisons and multi-session selection | Day headings, sticky learner identity, horizontally scrollable calendar matrix, per-day status/accessible button labels, explicit no-class symbol, a Drawer for corrections | Mobile screen-reader header mapping, scroll/focus cue edges, touch target audit, cross-month state and stale-session correction CAS |
+
+The direct source invariants are in `tests/unit/UX-dense-grids-chat17.test.ts` (`UX-UNOWNED-DENSE-GRID-05`). They are source-level checks, **not** evidence that these two entries are green. The other raw tables in the generated matrix are not exceptions merely because their owner has not migrated them.
+
+For actual record lists, chat-17 has migrated `college-recurring-preview.tsx`, `academic-module-scope-inventory.tsx`, and `super-admin-interview-operations.tsx` to shared `DataTable` with legacy headings/copy preserved. Regenerate the matrix against the latest merged source before judging remaining items; several files originally listed have already been converted by other lanes.

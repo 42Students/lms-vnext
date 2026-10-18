@@ -13,7 +13,7 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
  }));
  const activeCount=customActive+rows.filter(row=>row.override?.active??true).length;
  async function change(label:string,active:boolean,expectedVersion:string){
-  if(busy || !await askConfirm((active?"Show ":"Hide ")+label+" in the drive form? Existing drives keep their recorded employment type."))return;
+  if(busy || !(await askConfirm((active?"Show ":"Hide ")+label+" in the drive form? Existing drives keep their recorded employment type.")))return;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/settings/job-types/builtin",{

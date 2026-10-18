@@ -390,7 +390,8 @@ export async function listOwnRecruiterPlacementJobs(
   collegeId?: string,
   options: {limit?:number;jobIds?:readonly string[]} = {},
 ) {
-  if (!hasActiveRecruiter(context)) {
+  if (!hasActiveRecruiter(context) ||
+      context.recruiter?.userId !== context.user.id) {
     throw new AuthorizationError(
       "placements.recruiter.read",
     );

@@ -72,6 +72,10 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-SA-05 | MAJOR | Super Admin Module Access's `adminFeatureQuerySchema` used `z.coerce.number()`, silently accepting hex, exponential and padded page encodings in URLs. | `3676e2b`, `0ff6cb7`: decimal-only bounded pagination while retaining internal numeric calls, strict URL keys, existing invalid-filter page. | `SA-tenants-modules-MOD-02` | Cloud Vitest/HTTP pending |
 
+| CHAT11-SA-06 | BLOCKER | `saveCollegeBranding` had no in-transaction persisted Super Admin and active-college authorization; a stale, revoked session could change public tenant appearance. | `60feeea`, `7a626a7`: locked persisted authority and college status. | `SA-tenants-modules-BRAND-03` | PostgreSQL session-revocation E2E pending |
+| CHAT11-SA-07 | MAJOR | Unsaved College Branding preview trusted an HTTPS prefix alone, risking early requests to credential-bearing or signed-asset URLs. | `9b32337`, `2b1916e`: hardened logo URL validation reused before browser rendering. | `SA-tenants-modules-BRAND-04` | Browser network E2E pending |
+| CHAT11-SA-08 | MAJOR | College logo POST parsed unbounded multipart bodies before session validation and allowed oversized bodies to enter the multipart decoder. | `df7adc9`, `de2a7cf`, `bcf3d7f`: auth-first body stream cap at 3 MiB with explicit 400/413 and multipart/CSRF tests. | `SA-tenants-modules-BRAND-05` | Live storage/HTTP and scanning E2E pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.

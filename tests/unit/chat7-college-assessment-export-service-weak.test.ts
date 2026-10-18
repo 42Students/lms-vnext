@@ -26,6 +26,11 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
   }
   expect(state.reader).not.toHaveBeenCalled();
  });
+ it("rejects quiz-only results filters and CLOSED state for assignment exports before querying",async()=>{
+  await expect(exportCollegeAssessments(context,"ASSIGNMENT",{results:"PUBLISHED"})).rejects.toThrow();
+  await expect(exportCollegeAssessments(context,"ASSIGNMENT",{status:"CLOSED"})).rejects.toThrow();
+  expect(state.reader).not.toHaveBeenCalled();
+ });
  it("reads paginated results using the same current context/kind, returns quoted spreadsheet and bounded pagination",async()=>{
   state.reader.mockImplementation(async (_ctx,kind,query)=>{
    expect(kind).toBe("QUIZ");
