@@ -43,7 +43,7 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
           href={`/admin/placements/jobs/${job.id}`}>Open drive →</Link>},
       ]}/>
     {data.truncated ? <p className="text-sm text-muted-foreground">
-      Showing first 500 drives. More historical records may exist.
+      Showing first 500 drives. More historical records may exist. Totals above cover the displayed drives only.
     </p> : null}
   </div>;
 }
