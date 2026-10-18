@@ -61,7 +61,7 @@ export function selectMentorTeamCoverage(
   const total = matches.length;
   const pageSize = 20;
   const totalPages = Math.max(1,Math.ceil(total/pageSize));
-  const page = Math.min(query.page,totalPages);
+  const page = Number.isSafeInteger(query.page)?Math.max(1,Math.min(query.page,totalPages)):1;
   return {
     total, page, pageSize, totalPages,
     items: matches.slice((page - 1) * pageSize,page * pageSize),

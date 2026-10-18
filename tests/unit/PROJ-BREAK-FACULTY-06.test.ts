@@ -68,9 +68,10 @@ const note=(at:string,content="Old note")=>
  updateMentorMeetingNotes(faculty,{projectId,meetingId},{
   outcome:content,expectedUpdatedAt:at,confirmed:true,
  });
-const decide=(at:string)=>
- decideMentorProjectMeeting(faculty,projectId,meetingId,{
-  action:"COMPLETE",expectedUpdatedAt:at,confirmed:true,
+const decide=(at:string,action:"COMPLETE"|"CANCEL"="COMPLETE",
+ context:RequestContext=faculty)=>
+ decideMentorProjectMeeting(context,projectId,meetingId,{
+  action,expectedUpdatedAt:at,confirmed:true,
  });
 describe("PROJ-BREAK-FACULTY-06 meeting revisions, duplicate submits and notification integrity",()=>{
  beforeEach(()=>{
@@ -102,6 +103,30 @@ describe("PROJ-BREAK-FACULTY-06 meeting revisions, duplicate submits and notific
   await expect(decide(newer)).rejects.toMatchObject({code:"PROJECT_MEETING_INVALID_STATE"});
   expect(state).toMatchObject({writes:0,events:0,notifications:0});
  });
+ it("PROJ-BREAK-FACULTY-06-07 cancelling an unsent draft cannot notify learners or create false meeting announcements",async()=>{
+  state.status="DRAFT";state.outcome="";
+  const result=await decide(newer,"CANCEL");
+  expect(result.status).toBe("CANCELLED");
+  expect(state).toMatchObject({writes:1,events:0,notifications:0});
+  await expect(decide(newer,"CANCEL")).rejects
+   .toMatchObject({code:"PROJECT_MEETING_STALE_VERSION"});
+  expect(state).toMatchObject({writes:1,events:0,notifications:0});
+ });
+ it("PROJ-BREAK-FACULTY-06-08 invalid, revoked and disabled actors cannot decide meetings",async()=>{
+  for(const mutate of [
+   (ctx:RequestContext)=>{ctx.membership!.roles=["FACULTY"];},
+   (ctx:RequestContext)=>{ctx.membership!.status="SUSPENDED";},
+   (ctx:RequestContext)=>{ctx.membership=null;},
+   (ctx:RequestContext)=>{ctx.user.platformStatus="DISABLED";},
+  ]){
+    const ctx:RequestContext={...faculty,user:{...faculty.user},
+     membership:{...faculty.membership!,roles:[...faculty.membership!.roles]}};
+    mutate(ctx);
+    await expect(decide(newer,"COMPLETE",ctx)).rejects.toBeDefined();
+  }
+  expect(state).toMatchObject({writes:0,events:0,notifications:0});
+ });
+ 
  it("PROJ-BREAK-FACULTY-06-06 a permitted COMPLETE produces one audit record and exactly two scoped recipient notifications",async()=>{
   state.status="SCHEDULED";state.outcome="";
   const response=await decide(newer);
