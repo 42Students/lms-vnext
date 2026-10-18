@@ -33,6 +33,7 @@ export const dynamic="force-dynamic";
 export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[];facetState?:string|string[];facetProgram?:string|string[];facetDepartment?:string|string[];facetFinalYear?:string|string[]}>}){
  // Authorize before even returning filter feedback to a stale or foreign actor.
 
+ const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  await requireTpoBatchActor(context);
  const raw=await searchParams;
@@ -51,7 +52,6 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  if(!programParsed.success)return <div role="alert">Invalid program filter. <Link href="/tpo/batches">Clear filters</Link></div>;
  if(!sortParsed.success)return <div role="alert">Invalid batch sorting. <Link href="/tpo/batches">Clear filters</Link></div>;
  if(!parsed.success)return <div role="alert">Invalid search. <Link href="/tpo/batches">Clear search</Link></div>;
- const context=await getCurrentRequestContext();
  const [data,unassigned]=await Promise.all([listTpoBatches(context),countTpoLearnersWithoutClass(context).catch(()=>null)]);
  const eligibility=await listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id)).catch(()=>null);
  const selected=filterTpoBatchDepartment(filterTpoBatchProgram(
