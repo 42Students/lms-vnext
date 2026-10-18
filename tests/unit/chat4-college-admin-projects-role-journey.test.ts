@@ -10,6 +10,8 @@ import {
   projectMentorWorkloadAverage,
 } from "@/modules/projects/mentor-overload-model";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
+import { parseCollegeProjectsQuery } from "@/modules/projects/college-projects-query-model";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import type { RequestContext } from "@/modules/identity/context";
 
 const college = "40000000-0000-4000-8000-000000000001";
@@ -123,5 +125,74 @@ describe("Existing chat-4 CI failure regression contracts", () => {
     expect(isProjectMentorOverloaded(151, [100, 100])).toBe(true);
     expect(isProjectMentorOverloaded(150, [100, 100])).toBe(false);
     expect(isProjectMentorOverloaded(1, [])).toBe(false);
+  });
+});
+
+describe("PROJ-BREAK-COLLEGE-04 College Admin project list URL and navigation hardening", () => {
+  it("PROJ-BREAK-COLLEGE-04-07 resolves college navigation from the active membership, never a request-supplied identifier", () => {
+    expect(getProjectAdminCollegeId(collegeAdmin())).toBe(college);
+    const admin = collegeAdmin();
+    const wrongRole: RequestContext = {
+      ...admin, membership: { ...admin.membership!, roles: ["TPO"] },
+    };
+    const disabled: RequestContext = {
+      ...admin, user: { ...admin.user, platformStatus: "DISABLED" },
+    };
+    expect(getProjectAdminCollegeId(wrongRole)).toBeNull();
+    expect(getProjectAdminCollegeId(disabled)).toBeNull();
+    expect(getProjectAdminCollegeId({ ...admin, membership: null })).toBeNull();
+  });
+
+  it("PROJ-BREAK-COLLEGE-04-08 requires an explicitly selected college before a Super Admin navigates college projects", () => {
+    const admin = collegeAdmin();
+    const base: RequestContext = {
+      ...admin, user: { ...admin.user, systemRoles: ["SUPER_ADMIN"] },
+      membership: null,
+    };
+    expect(getProjectAdminCollegeId(base)).toBeNull();
+    expect(getProjectAdminCollegeId({
+      ...base, adminScope: { collegeId: null, organizationId: organization },
+    })).toBeNull();
+    expect(getProjectAdminCollegeId({
+      ...base, adminScope: { collegeId: college, organizationId: organization },
+    })).toBe(college);
+  });
+
+  it("PROJ-BREAK-COLLEGE-04-09 preserves numeric pagination and valid college project status filters", () => {
+    const result = parseCollegeProjectsQuery({
+      q: "  semester workspace ", status: "ACTIVE", view: "table", page: "2", pageSize: "50",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toMatchObject({
+        q: "semester workspace", status: "ACTIVE", view: "table", page: 2, pageSize: 50,
+      });
+    }
+    const defaults = parseCollegeProjectsQuery({});
+    expect(defaults.success).toBe(true);
+    if (defaults.success) expect(defaults.data).toMatchObject({ view: "cards", page: 1, pageSize: 25 });
+  });
+
+  it("PROJ-BREAK-COLLEGE-04-10 refuses duplicated, foreign, malformed or exponential query filters", () => {
+    for (const params of [
+      { q: ["one", "two"] },
+      { page: ["1", "1000"] },
+      { view: ["cards", "table"] },
+      { status: ["ACTIVE", "ARCHIVED"] },
+      { pageSize: ["25", "100"] },
+      { collegeId: foreignCollege },
+      { action: "" },
+      { page: "0" },
+      { page: "-1" },
+      { page: "1.5" },
+      { page: "1e2" },
+      { page: "0x10" },
+      { pageSize: "Infinity" },
+      { pageSize: "101" },
+      { status: "DRAFT" },
+      { q: "a".repeat(121) },
+    ]) {
+      expect(parseCollegeProjectsQuery(params).success).toBe(false);
+    }
   });
 });
