@@ -252,3 +252,12 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 | ID | Severity | Source | Defect and fix | Unit evidence |
 |---|---|---|---|---|
 | PROJ-BREAK-OUTCOME-CSV-03 | MAJOR | `src/components/projects/class-team-workspace-creator.tsx` individual creation outcome export | The CSV download quoted untrusted learner display names and workspace titles but did not neutralize spreadsheet formulas (`=HYPERLINK`, invisible prefix, U+034F), allowing malicious cell values to be interpreted as spreadsheet commands. The previous download also revoked object URLs immediately, potentially racing browser Blob reading. Extracted pure, shared safely quoted/formula-neutralized serializer; export only authorized `outcome.individualResults` and roster names, preserve filename/IST page wording, defer blob cleanup and show recoverable error. | `tests/unit/PROJ-BREAK-chat19-class-team-outcome-csv.test.ts` |
+
+## Post-merge HR adversarial mutation and search follow-up
+
+| Gap ID | Severity | Source | Finding, fix and risk | Behavioral evidence |
+|---|---|---|---|---|
+| HR-BREAK-NOTIFICATION-OWNER-06 | MAJOR | `src/modules/placements/hr-notification-read-service.ts` and `hr-notification-read-model.ts` | Listing the recruiter notifications already checked `recruiter.userId===user.id`, but the write endpoint only checked active flags. A context containing a mismatched recruiter identity could reach employer job inventory before failing. Require exact signed-in user/recruiter ownership on mutation before any job lookup or DB transaction. | `tests/unit/HR-BREAK-chat19-notification-ownership.test.ts`: real service call for cross-user, disabled user and absent recruiter; assert no DB/job queries |
+| HR-BREAK-INBOX-SEARCH-07 | MAJOR | `src/modules/placements/hr-conversation-inbox-service.ts` and `hr-conversation-inbox-model.ts` | Message search selected a maximum 1000 distinct thread IDs after per-recruiter scoping, silently hiding matches at position 1001+ for large employers. The per-tenant set of authorized thread IDs already supplies the exact maximum possible distinct matches. Bound by this cardinality instead of an arbitrary global cutoff, without widening SQL scope. | `tests/unit/HR-BREAK-chat19-inbox-search-boundary.test.ts`: 1205 matches, ownership exclusions, last page and SQL scope |
+
+Cloud CI, real database tenant-isolation and scale benchmarks remain pending, and no passing run is asserted.
