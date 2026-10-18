@@ -233,7 +233,7 @@ export async function updateProjectSubmissionDraft(
       .where(eq(projectInstances.id, scope.project.id))
       .for("update")
       .limit(1);
-    if (!project || project.status === "ARCHIVED") {
+    if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
       throw new ProjectsServiceError(
         "PROJECT_SUBMISSION_INVALID_STATE",
       );
@@ -344,7 +344,7 @@ export async function submitProjectSubmission(
       .for("update")
       .limit(1);
 
-    if (!project || project.status === "ARCHIVED") {
+    if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
       throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
     }
     const [releases,sprints,tasks]=await Promise.all([
@@ -477,7 +477,7 @@ export async function reviewProjectSubmission(
         .where(eq(projectInstances.id, scope.project.id))
         .for("update")
         .limit(1);
-      if (!project || project.status === "ARCHIVED") {
+      if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
         throw new ProjectsServiceError(
           "PROJECT_SUBMISSION_INVALID_STATE",
         );
