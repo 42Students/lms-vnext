@@ -139,3 +139,7 @@ The typecheck report explicitly labels production typecheck and lint PASS. Its o
 ### Public unsubscribe SSR routes — direct tests
 
 `tests/unit/chat16-campaign-unsubscribe-ssr-pages-16.test.ts` invokes the actual `/campaign-unsubscribe/[token]` and `/campaign-unsubscribe/confirmed` server pages with the read-only token verifier mocked. Cases `UX-campaign-unsubscribe-page-16`–`20` cover global vs placement-cell suppression scope, explicit POST-only confirmation, invalid/expired token no-form state, transient verifier outage Retry with no secret leakage and scoped confirmation display. Tests are unexecuted pending CI. No GET-side persistence was added.
+
+### Legacy authentication alias and recruiter invitation page execution
+
+`tests/unit/chat16-legacy-auth-invite-alias-pages-16.test.ts` invokes all four actual legacy server page exports: `/superadmin-login`, `/e2e/superadmin-login`, `/auth/handoff`, and `/hr-invite/[token]`. Cases `UX-chat16-legacy-auth-alias-16`–`19` enforce redirect-only retirement of test/privileged sign-in bypasses, the visible handoff-retired recovery code, scoped opaque HR invite token redirect and Not Found before redirect for path traversal, external schemes, separators, escapes and short/oversized tokens. Next navigation is mocked; browser/session validation is pending cloud CI.
