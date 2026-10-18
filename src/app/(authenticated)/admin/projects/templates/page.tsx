@@ -54,8 +54,8 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
-   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">New template →</Link>:undefined}/>
-  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground">New template →</Link>:undefined}/>
+  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
