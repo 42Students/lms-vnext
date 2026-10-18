@@ -91,3 +91,8 @@ Inventory source: direct GitHub reads of the 24 named production placement files
 | tpo-drive-deadline-service.ts | ○ getTpoDriveDeadlineState, ○ extendTpoDriveDeadline | 0 / 2 |
 
 Sampled core inventory: **80 runtime exports**, **38 directly referenced names** and **42 with no direct name reference in eight sampled tests**. It is a prioritized gap map, not a certification or an exhaustive 967-file inventory. Unreferenced service exports must be assigned proper behavioural/DB tests, especially mutations and exports.
+
+### New deep negative paths added after the inventory
+
+- PLACEMENTS-DEADLINE-SM-01 — tests/unit/chat5-placements-deadline-and-cascade-breakit.test.ts exercises PUBLISHED/ACTIVE-only editing, invalid dates, same/past deadlines, forged request properties, optimistic update lock and the transactional audit preflight in extendTpoDriveDeadline. **No DB runtime execution**.
+- PLACEMENTS-CASCADE-BREAK-01 — the same file tests accepted-history cascade token, joined outcome, changed sibling rejection and confirms owner college/membership row lock, exact status-history reconciliation and idempotent undo source paths in undoPlacementOfferCascade. **No DB runtime execution**.
