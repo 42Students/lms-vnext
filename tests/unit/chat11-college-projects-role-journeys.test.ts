@@ -1,0 +1,143 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+import type { RequestContext } from "@/modules/identity/context";
+import { collegeProjectsQueryFromParams } from "@/modules/projects/college-projects-query-model";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
+import { createProjectInstanceInputSchema } from "@/modules/projects/validation";
+import { replaceCollegeProjectRosterSchema } from "@/modules/projects/college-project-roster-model";
+import { mayBeginClassTeamCreation } from "@/modules/projects/class-team-create-once-model";
+import { assertPreviewVersion, previewVersion } from "@/modules/projects/class-team-preview-token";
+import { verifyClassTeamPreview } from "@/modules/projects/class-team-preview-validation";
+
+const COLLEGE = "11111111-1111-4111-8111-111111111111";
+const OTHER_COLLEGE = "22222222-2222-4222-8222-222222222222";
+const ORGANIZATION = "33333333-3333-4333-8333-333333333333";
+const STUDENT = "44444444-4444-4444-8444-444444444444";
+const FOREIGN_STUDENT = "55555555-5555-4555-8555-555555555555";
+const MENTOR = "66666666-6666-4666-8666-666666666666";
+const TEMPLATE = "77777777-7777-4777-8777-777777777777";
+
+function adminContext(): RequestContext {
+  return {
+    user: { id: "88888888-8888-4888-8888-888888888888", identityUid: "college-admin",
+      platformStatus: "ACTIVE", systemRoles: [] },
+    membership: { id: "99999999-9999-4999-8999-999999999999",
+      collegeId: COLLEGE, organizationId: ORGANIZATION, status: "ACTIVE", roles: ["COLLEGE_ADMIN"] },
+  };
+}
+
+describe("IIT Dharwad College Admin Projects role journeys", () => {
+  it("PROJ-COL-QUERY-01 rejects malicious or stale query strings without breaking the project list", () => {
+    const input = { page: "Infinity", pageSize: "-10", status: "DROP TABLE",
+      q: "  abc  ", view: "evil" };
+    expect(collegeProjectsQueryFromParams(input)).toEqual({
+      q: "abc", view: "cards", status: undefined, page: 1, pageSize: 25,
+    });
+    for (const page of ["NaN", "-1", "0", "1.5", "10001", "99999999999999999"]) {
+      expect(collegeProjectsQueryFromParams({ page }).page).toBe(1);
+    }
+    expect(collegeProjectsQueryFromParams({ q: "x".repeat(1000) }).q).toHaveLength(120);
+  });
+
+  it("PROJ-COL-QUERY-02 retains valid filters and pagination after back/forward navigation", () => {
+    expect(collegeProjectsQueryFromParams({
+      view: ["table", "cards"], status: "ARCHIVED", page: "2", pageSize: "50", q: "  Sprint ",
+    })).toMatchObject({ view: "table", status: "ARCHIVED", page: 2, pageSize: 50, q: "Sprint" });
+  });
+
+  it("PROJ-COL-SCOPE-01 never substitutes a foreign college from a forged URL", () => {
+    const user = adminContext();
+    expect(getProjectAdminCollegeId(user)).toBe(COLLEGE);
+    expect(collegeProjectsQueryFromParams({ collegeId: OTHER_COLLEGE })).not.toHaveProperty("collegeId");
+    const page = readFileSync("src/app/(authenticated)/college/projects/page.tsx", "utf8");
+    expect(page).toContain("getProjectAdminCollegeId(context)");
+    expect(page).toContain("listProjectAdminSnapshots(");
+    expect(page).toContain("collegeId,");
+    expect(page).not.toContain("membership.collegeId");
+  });
+
+  it("PROJ-COL-SCOPE-02 declines expired, disabled and roleless sessions before loading projects", () => {
+    const active = adminContext();
+    expect(getProjectAdminCollegeId({ ...active, membership: null })).toBeNull();
+    expect(getProjectAdminCollegeId({ ...active,
+      user: { ...active.user, platformStatus: "DISABLED" },
+    })).toBeNull();
+    expect(getProjectAdminCollegeId({ ...active,
+      membership: { ...active.membership!, status: "DISABLED" },
+    })).toBeNull();
+    expect(getProjectAdminCollegeId({ ...active,
+      membership: { ...active.membership!, roles: ["LEARNER"] },
+    })).toBeNull();
+  });
+
+  it("PROJ-COL-SCOPE-03 refuses implicit Super Admin cross-tenant fallback", () => {
+    const active = adminContext();
+    const superUser = { ...active.user, systemRoles: ["SUPER_ADMIN" as const] };
+    expect(getProjectAdminCollegeId({ ...active, user: superUser,
+      adminScope: null })).toBeNull();
+    expect(getProjectAdminCollegeId({ ...active, user: superUser,
+      adminScope: { collegeId: OTHER_COLLEGE, organizationId: ORGANIZATION },
+    })).toBe(OTHER_COLLEGE);
+  });
+
+  it("PROJ-COL-BADINPUT-01 prevents a duplicate student or active unmentored workspace", () => {
+    const base = { collegeId: COLLEGE, templateId: TEMPLATE, slug: "team-alpha",
+      title: "Team Alpha", sectionId: OTHER_COLLEGE, learnerMembershipIds: [STUDENT],
+      primaryMentorMembershipId: MENTOR };
+    expect(createProjectInstanceInputSchema.safeParse(base).success).toBe(true);
+    expect(createProjectInstanceInputSchema.safeParse({
+      ...base, learnerMembershipIds: [STUDENT, STUDENT],
+    }).success).toBe(false);
+    expect(createProjectInstanceInputSchema.safeParse({
+      ...base, initialStatus: "ACTIVE", primaryMentorMembershipId: undefined,
+    }).success).toBe(false);
+    expect(createProjectInstanceInputSchema.safeParse({
+      ...base, sectionId: undefined,
+    }).success).toBe(false);
+    expect(createProjectInstanceInputSchema.safeParse({
+      ...base, collegeId: OTHER_COLLEGE, injectedOrganizationId: ORGANIZATION,
+    }).success).toBe(false);
+  });
+
+  it("PROJ-COL-DOUBLE-01 blocks a second creation while the first is in flight", () => {
+    expect(mayBeginClassTeamCreation(false, true)).toBe(true);
+    expect(mayBeginClassTeamCreation(true, true)).toBe(false);
+    expect(mayBeginClassTeamCreation(false, false)).toBe(false);
+  });
+
+  it("PROJ-COL-STALE-01 refuses stale team preview tokens and altered membership", () => {
+    const groups = [{ name: "Team 1", membershipIds: [STUDENT] }];
+    const token = previewVersion(groups);
+    expect(() => assertPreviewVersion(groups, token)).not.toThrow();
+    expect(() => assertPreviewVersion([{ name: "Team 1", membershipIds: [FOREIGN_STUDENT] }], token))
+      .toThrow("TEAM_PREVIEW_STALE");
+    expect(() => verifyClassTeamPreview(groups, [FOREIGN_STUDENT]))
+      .toThrow("Team includes an ineligible learner");
+  });
+
+  it("PROJ-COL-STALE-02 rejects stale timestamps and repeated roster members", () => {
+    const valid = { learnerMembershipIds: [STUDENT],
+      expectedUpdatedAt: "2099-04-01T12:00:00.000+05:30" };
+    expect(replaceCollegeProjectRosterSchema.safeParse(valid).success).toBe(true);
+    expect(replaceCollegeProjectRosterSchema.safeParse({
+      ...valid, learnerMembershipIds: [STUDENT, STUDENT],
+    }).success).toBe(false);
+    expect(replaceCollegeProjectRosterSchema.safeParse({
+      ...valid, expectedUpdatedAt: "yesterday",
+    }).success).toBe(false);
+    const source = readFileSync("src/modules/projects/college-project-roster-service.ts", "utf8");
+    expect(source).toContain('for("update")');
+    expect(source).toContain('PROJECT_MEMBER_CONFLICT');
+    expect(source).toContain("getDb().transaction(");
+  });
+
+  it("PROJ-COL-ORIGIN-01 protects project creation and mentor reassignment from cross-origin POSTs", () => {
+    for (const route of ["src/app/api/projects/route.ts",
+      "src/app/api/projects/reassign-mentor/route.ts"]) {
+      const text = readFileSync(route, "utf8");
+      expect(text).toContain("isSameOriginRequest(request)");
+      expect(text).toContain("getCurrentRequestContext()");
+      expect(text).toContain("apiErrorResponse(error)");
+    }
+  });
+});
