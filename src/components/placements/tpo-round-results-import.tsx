@@ -47,7 +47,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   }catch(e){setError(e instanceof Error?e.message:"Import failed");}
   finally{setBusy(false);}
  }
- return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section className="space-y-4 border-b border-border pb-6">
   <h2 className="text-lg font-semibold text-foreground">Import company round results</h2>
   <p className="text-sm text-body">Upload a CSV or Excel (.xlsx) result list. All supplied Application ID, email and roll identifiers must agree.
    Company portal IDs with no matching application are left unmatched. Contradictory IDs, email and roll must be reviewed; a manual match is audited. Nothing is applied to the round until the separate Apply results step.</p>
@@ -55,7 +55,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   <label className="block text-sm font-semibold text-body">Company results file
    <input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}
-    className="mt-2 block w-full rounded-md border border-border p-3 text-foreground"/>
+    className="mt-2 block w-full rounded-[9px] border border-border p-3 text-foreground"/>
   </label>
   <button type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
    className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
@@ -108,7 +108,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </fieldset>
    <button type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
     (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
+    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
     {busy?"Staging…":"Confirm and stage results"}</button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}

@@ -59,7 +59,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
     } finally { setBusy(false); }
   }
   return (
-    <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    <section className="space-y-4 border-b border-border pb-6">
       <h3 className="text-base font-semibold text-foreground">
         {edit ? "Edit active season" : "Start new season"}
       </h3>
@@ -77,14 +77,14 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
                 <input type={key.endsWith("Date") ? "date" : "text"}
                   value={form[key]} disabled={busy}
                   onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-                  className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
+                  className="min-h-10 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground"
                   required />
               </label>
             ))}
           </div>
           <div className="flex flex-wrap gap-3">
             <button type="button" onClick={() => void save()} disabled={busy}
-              className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
+              className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60 text-primary-foreground">
               {busy ? "Saving..." : edit ? "Review and confirm edit" : "Review and confirm new season"}
             </button>
             {edit ? <button type="button" onClick={() => select(null)}

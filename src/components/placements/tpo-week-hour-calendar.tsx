@@ -187,7 +187,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   {move?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
     onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();setMove(null);}}}>
     <section role="dialog" aria-modal="true" aria-label="Move recruiter follow-up"
-      className="w-full max-w-lg rounded-xl border border-border bg-surface p-5">
+      className="w-full max-w-lg border-b border-border pb-6">
       <h2 className="text-lg font-semibold">Move follow-up</h2>
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
       <button type="button" onClick={()=>setMove(null)}
@@ -219,7 +219,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
      <button type="button" disabled={saving} onClick={cancelDraft}
       className="min-h-11 rounded border border-border px-4 text-sm">Cancel</button>
      <button type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
-      className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{saving?"Saving…":"Add follow-up"}</button>
+      className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">{saving?"Saving…":"Add follow-up"}</button>
     </div>
    </div>
   </div>:null}
