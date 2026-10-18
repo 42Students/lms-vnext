@@ -1,4 +1,5 @@
 import { shuffleQuizForLearner } from "./learner-quiz-shuffle-model";
+import {learnerQuizResultsReleased} from "./learner-quiz-result-release-policy";
 import { commandFacultyQuiz } from "./faculty-quiz-authoring-service";
 import { facultyQuizLegacyEdit } from "./faculty-quiz-authoring-model";
 import {
@@ -309,12 +310,8 @@ export async function getCourseQuiz(
       asc(quizOptions.id),
     );
 
-  const revealCorrect =
-    access !== "LEARNER" ||
-    (quiz.status === "CLOSED" &&
-       quiz.resultsPublished &&
-       quiz.dueAt !== null &&
-       quiz.dueAt.getTime() <= Date.now());
+  const revealCorrect = access !== "LEARNER" ||
+    learnerQuizResultsReleased(quiz,Date.now());
 
   const grouped = new Map<
     string,
