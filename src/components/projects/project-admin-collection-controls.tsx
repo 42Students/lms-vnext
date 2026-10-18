@@ -80,7 +80,7 @@ export function ProjectAdminFilters({
           type="search"
           defaultValue={query.q ?? ""}
           placeholder={legacyWorkspaces ? "Search title or slug" : "Workspace title or slug"}
-          className="min-w-56 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
+          className="min-w-56"
         />
       </label>
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
@@ -88,7 +88,7 @@ export function ProjectAdminFilters({
         <Select
           name="status"
           defaultValue={query.status ?? ""}
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
+          className=""
         >
           <option value="">All statuses</option>
           {PROJECT_STATUSES.map((status) => (
@@ -105,7 +105,7 @@ export function ProjectAdminFilters({
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Sort by
           <Select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            className="">
             <option value="INACTIVE">Inactive</option>
             <option value="SEVERITY">Severity</option>
             <option value="WORKSPACE">Workspace</option>
@@ -120,7 +120,7 @@ export function ProjectAdminFilters({
             defaultValue={
               query.submissionStatus ?? ""
             }
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
+            className=""
           >
             <option value="">All submissions</option>
             {SUBMISSION_STATUSES.map((status) => (
@@ -138,7 +138,7 @@ export function ProjectAdminFilters({
           defaultValue={String(
             query.pageSize ?? (legacyWorkspaces ? 20 : 25),
           )}
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
+          className=""
         >
           {[10, 20, 25, 50, 100].filter((size) => !legacyWorkspaces || size !== 25).map((size) => (
             <option key={size} value={size}>
