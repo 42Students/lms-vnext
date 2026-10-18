@@ -107,4 +107,54 @@ describe("chat-19 college UX cross-audit", () => {
     expect(page).not.toContain("uuid.parse(groupId)");
   });
 
+  it("COL-XA-13 keeps each faculty assignment field and both guarded actions in mobile cards", () => {
+    const source = read("src/app/(authenticated)/college/faculty-assignment/page.tsx");
+    expect(source).toContain('caption="Teaching assignment roster"');
+    expect(source).toContain("<DataTable");
+    for (const key of ["faculty", "course", "class", "period", "role", "active", "actions"]) {
+      expect(source).toContain(`key: "${key}"`);
+    }
+    expect(source).toContain('<CollegeFacultyAssignmentEnd');
+    expect(source).toContain('<CollegeFacultyReassignAction');
+    expect(source).toContain('mobilePriority: "action"');
+    expect(source).not.toContain("<table");
+  });
+
+  it("COL-XA-14 keeps faculty assignment detail and history accessible without a wide table", () => {
+    const source = read("src/app/(authenticated)/college/faculty/[membershipId]/page.tsx");
+    expect(source).toContain('caption="Persisted teaching assignments"');
+    for (const key of ["course", "class", "role", "status"]) {
+      expect(source).toContain(`key: "${key}"`);
+    }
+    expect(source).toContain('No college-scoped teaching assignments recorded.');
+    expect(source).toContain('mobilePriority: "primary"');
+    expect(source).not.toContain("<table");
+  });
+
+  it("COL-XA-15 keeps elective roster actions, state and join time visible on phones", () => {
+    const source = read("src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx");
+    expect(source).toContain('caption="Elective offering roster"');
+    expect(source).toContain('mobilePriority: "action"');
+    for (const key of ["student", "state", "source", "since", "actions"]) {
+      expect(source).toContain(`key: "${key}"`);
+    }
+    expect(source).toContain('name="confirm"');
+    expect(source).toContain('required /> Confirm removal');
+    expect(source).toContain('disabled={faculty.length === 0}');
+    expect(source).toContain('Archived offerings are read-only.');
+    expect(source).not.toContain("<table");
+  });
+
+  it("COL-XA-16 stale or malformed elective and membership identifiers fail safely", () => {
+    const source = read("src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx");
+    expect(source).toContain("uuid.safeParse(slotId)");
+    expect(source).toContain("uuid.safeParse(offeringId)");
+    expect(source).toContain("if (!parsedSlot.success || !parsedOffering.success) notFound()");
+    const parseMembership = source.indexOf('uuid.parse(String(form.get("membershipId")');
+    const tryPosition = source.indexOf("    try {", source.indexOf("async function mutate("));
+    expect(parseMembership).toBeGreaterThan(tryPosition);
+    expect(source).toContain("Could not update this student. Check eligibility and capacity, then try again.");
+    expect(source).toContain('eq(electiveSlots.collegeId, context.membership.collegeId)');
+  });
+
 });
