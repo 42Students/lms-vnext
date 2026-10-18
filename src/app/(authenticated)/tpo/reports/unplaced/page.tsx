@@ -80,7 +80,7 @@ export default async function TpoUnplacedReportPage({
         eyebrow="TPO · Reports"
         title="Unplaced students"
         description="Current registered placement-pool learners with no accepted offer in the selected reporting scope."
-        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Download filtered CSV</a>:null}
+        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Download filtered CSV</a>:null}
       />
 
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/unplaced" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
@@ -99,12 +99,12 @@ export default async function TpoUnplacedReportPage({
          <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
         </select></label>
        <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Filter</button>
-       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 items-center text-primary-text underline">Clear batch and branch</Link>:null}
+       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Clear batch and branch</Link>:null}
        <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
-        className="inline-flex min-h-11 items-center text-primary-text underline">Act on them on Students</Link>
+        className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Act on them on Students</Link>
       </form>
       {!permittedBatch?<p role="alert">The selected batch does not belong to this college.</p>:null}
-      {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-primary-text underline">Clear filters</Link></p>:null}
+      {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-[var(--lms-teal-deep)] underline">Clear filters</Link></p>:null}
       <p className="text-xs text-muted-foreground">The download uses the selected season, drive, batch and branch. Changing the season/drive control below may reset the batch/branch filter; reapply it before downloading if needed.</p>
       <p className="text-xs text-muted-foreground">Applications and last-applied dates use the selected season and drive. Academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/unplaced" />
@@ -134,7 +134,7 @@ export default async function TpoUnplacedReportPage({
       <ReportScopeNote note={workspace.detailScopeNote} />
       <div className="rounded-xl border border-border bg-surface p-4">
        <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
         Act on them on Students
        </Link>
        <p className="mt-2 text-xs text-muted-foreground">
