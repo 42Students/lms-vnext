@@ -24,4 +24,22 @@ it("TPO-requests-verification-29 returns the latest 50 named audit events and fu
  ]);
  expect(drawer).toContain("Numbers show only the last four digits; compare them with the document.");
  expect(drawer).toContain("private signed link");
+ const hostile=verificationEducationRows([
+  {educationType:"UG",institutionName:"  Example Institute  ",endYear:2099,
+   grade:8.63,marksheetDocumentId:"  ",privateIdentityDocument:"do-not-copy"},
+  {educationType:"PG",institutionName:"College",endYear:NaN,grade:Infinity,
+   marksheetDocumentId:"actual-receipt"},
+  null,["unexpected"],{educationType:"School",grade:0},
+ ]);
+ expect(hostile).toEqual([
+  {id:"0",level:"UG",institution:"Example Institute",year:"2099",
+   marks:"8.63",marksheet:"Missing"},
+  {id:"1",level:"PG",institution:"College",year:"—",
+   marks:"—",marksheet:"Submitted"},
+  {id:"4",level:"School",institution:"—",year:"—",
+   marks:"0",marksheet:"Missing"},
+ ]);
+ expect(JSON.stringify(hostile)).not.toContain("do-not-copy");
+ expect(verificationEducationRows(Array.from({length:250},()=>({educationType:"School"})))).toHaveLength(100);
+ expect(verificationEducationRows({educationType:"Unknown"})).toEqual([]);
 });
