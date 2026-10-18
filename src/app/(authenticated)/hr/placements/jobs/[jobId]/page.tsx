@@ -3,6 +3,7 @@ import { z } from "zod";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
+import { RecruiterApplicantReviewDrawer } from "@/components/hr/recruiter-applicant-review-drawer";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
@@ -534,16 +535,10 @@ export default async function HrPlacementJobPage({
               </article>
             ))}
           </div> : <p className="text-sm text-muted-foreground">{applicants.counts.all===0 ? "The placement cell has not shared the applicants yet" : "No shared applicants match this stage."}</p>}
-          {selectedApplicant ? (<>
-            <div aria-hidden="true" className="fixed inset-0 z-20 bg-black/40"/>
-            <section id="recruiter-focused-review-dialog" role="dialog" aria-modal="true" aria-labelledby="hr-applicant-drawer-title"
-              className="fixed inset-x-0 bottom-0 z-30 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 shadow-xl sm:inset-x-auto sm:right-0 sm:top-0 sm:h-screen sm:max-h-screen sm:w-full sm:max-w-lg sm:rounded-none"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 id="hr-applicant-drawer-title" className="text-lg font-semibold text-foreground">{focused ? "Focused review" : "Applicant review"}</h3>
-                <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+returnQuery}
-                  className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
-              </div>
+          {selectedApplicant ? (
+            <RecruiterApplicantReviewDrawer
+              title={focused ? "Focused review" : "Applicant review"}
+              closeHref={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+returnQuery}>
               {<RecruiterFocusedReviewShortcuts
                 closeHref={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+returnQuery}
                 previousHref={focusedNavigation?.previous?focusedHref(focusedNavigation.previous):null}
@@ -554,7 +549,7 @@ export default async function HrPlacementJobPage({
                   <progress aria-label="Focused review progress" value={focusedNavigation.index+1} max={focusedNavigation.total}
                     className="h-2 min-w-20 flex-1 accent-primary"/>
                 </label>
-                {focusedNavigation.previous ? <Link className="rounded-md border border-border px-3 py-2 text-[var(--lms-link-text)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
+                {focusedNavigation.previous ? <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-[var(--lms-link-text)]" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
                 {focusedNavigation.next ? <Link className="rounded-md border border-border px-3 py-2 text-[var(--lms-link-text)]" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
               </nav> : null}
               <dl className="mt-5 grid gap-4 text-sm">
@@ -603,8 +598,8 @@ export default async function HrPlacementJobPage({
               </p>}
               <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery}
                 className="mt-4 inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
-            </section>
-          </>) : null}
+            </RecruiterApplicantReviewDrawer>
+          ) : null}
           <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {applicantsPage.first === 0 ? "No rows on this page" :

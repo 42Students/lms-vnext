@@ -121,14 +121,14 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
        <option value="">All</option>
        {col.filter.options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
       </select>:null}
-     {viewKey?<div className="mt-1 flex flex-wrap gap-1 text-xs font-normal">
+     {viewKey?<div className="mt-1 flex flex-wrap gap-2 text-xs font-normal">
       <button type="button" onClick={()=>updateLayout(col.key,{width:Math.max(100,colWidth(col.key)-40)})}
-       disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="rounded border px-1">−</button>
+       disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded border px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">−</button>
       <button type="button" onClick={()=>updateLayout(col.key,{width:Math.min(500,colWidth(col.key)+40)})}
-       disabled={colWidth(col.key)>=500} aria-label={"Widen "+col.label} className="rounded border px-1">+</button>
+       disabled={colWidth(col.key)>=500} aria-label={"Widen "+col.label} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded border px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">+</button>
       <button type="button" onClick={()=>updateLayout(col.key,{pinned:!columnView[col.key]?.pinned})}
        aria-pressed={Boolean(columnView[col.key]?.pinned)}
-       className="rounded border px-1">{columnView[col.key]?.pinned?"Unpin":"Pin"}</button>
+       className="inline-flex min-h-11 min-w-11 items-center justify-center rounded border px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{columnView[col.key]?.pinned?"Unpin":"Pin"}</button>
      </div>:null}
     </th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
     <tbody>{rows.map(row=><tr key={rowKey(row)} className="border-t border-border align-top">{selection?<td className="px-3 py-2"><input type="checkbox" checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<button type="button" className="min-h-11 text-left font-semibold text-[var(--lms-link-text)] underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>

@@ -19,7 +19,7 @@ export function BottomSheet({ open, onOpenChange, title, description, children, 
   const opener = useRef<HTMLElement | null>(null);
   const titleId = useId();
   const descriptionId = useId();
-  const { availableHeight } = useOverlayWebview({ open, dismissible, onDismiss: () => onOpenChange(false) });
+  const { availableHeight, viewportTop } = useOverlayWebview({ open, dismissible, onDismiss: () => onOpenChange(false) });
   useEffect(() => {
     const modal = ref.current;
     if (!modal) return;
@@ -36,9 +36,9 @@ export function BottomSheet({ open, onOpenChange, title, description, children, 
       onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
       onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
       onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
-      style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties}
+      style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px" } as CSSProperties}
       className="fixed inset-x-0 bottom-0 top-auto m-0 max-h-[var(--lms-visual-height)] min-h-0 w-full max-w-none rounded-t-xl border border-border bg-surface p-0 text-foreground shadow-lg backdrop:bg-foreground/30 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:w-[min(36rem,calc(100%-2rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl">
-      <div className="flex max-h-[var(--lms-visual-height)] min-h-0 flex-col pt-[env(safe-area-inset-top)]">
+      <div className="flex max-h-[var(--lms-visual-height)] min-h-0 flex-col overflow-y-auto pt-[env(safe-area-inset-top)]">
         <header className="flex items-start justify-between gap-4 border-b border-border p-4">
           <div className="min-w-0"><h2 id={titleId} className="text-lg font-semibold leading-7">{title}</h2>
             {description ? <p id={descriptionId} className="mt-1 text-sm text-body">{description}</p> : null}</div>
