@@ -24,3 +24,12 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 - Expand from model/route-guard tests to real PostgreSQL College Admin integration journeys using chat-17's fixtures: session expiry, membership revocation mid-transaction, cross-tenant IDs, concurrent PATCH and class-team creation, rollback, deduped notification delivery.
 - Review unscoped Super Admin access on other project mutations with the squad lead; this fix intentionally narrows only the College Admin class-team entrypoint rather than rewriting global Super Admin permissions.
 - Full College module ledger, Super Admin colleges/tenants audit and UX coverage remain partially open.
+
+
+## Newly discovered actor race defects
+
+| ID | Severity | Evidence and fix | Commit | Regression | Status |
+|---|---|---|---|---|---|
+| PROJ-BREAK-COL-ACTOR-01 | S1 security | `updateCollegeProjectSummary` and `replaceCollegeProjectLearners` originally checked the in-memory request context before beginning the project-row transaction. Role removal, membership suspension or user disable between authorization and mutation could still write and notify. Added `assertPersistedPlatformPermission` under project row lock and before no-op early returns. | `7cc7e95`, `0bbfd36` | `PROJ-BREAK-chat4-college-persisted-actor.test.ts` | Fix pushed; PostgreSQL race test pending |
+| PROJ-BREAK-COL-ACTOR-02 | S1 security | `createClassTeamWorkspaces` checked DB membership before the SERIALIZABLE transaction; revocation during roster preview was not checked within the write transaction. A locked reauthorization now precedes all group/project inserts, and group creator type derives from the persisted role. | `28b5110` | same | Fix pushed; PostgreSQL race test pending |
+| COL-people-export-ACTOR-01 | S1 privacy | Directory export performed private faculty profile/mobile enrichment after its original authorized directory transaction completed. Actor revocation during the gap could still expose enriched CSV. A second same-transaction persisted authorization now guards enrichment under held locks. | `195d40f` | `chat4-college-academics-people-weak-area.test.ts` | Fix pushed; DB race test pending |
