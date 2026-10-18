@@ -43,6 +43,7 @@ import {
 import { loadProjectCollegeScope } from "./scope";
 import {adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-model";
 import {latestReviewedProjectSubmissionSql} from "./admin-submission-kpi-model";
+import {isCurrentProjectSubmissionSql} from "./admin-submission-current-version-model";
 
 // Service inputs also arrive from internal callers, not only from the URL
 // parser. Never admit JS numeric coercions (hex, exponent, blanks, NaN)
@@ -826,6 +827,9 @@ export async function listProjectAdminSubmissionQueue(
     : undefined;
   const where = and(
     eq(projectInstances.collegeId, college.id),
+    // The unfiltered All view intentionally includes revision history.
+    // Operational status shortcuts must never show superseded versions.
+    query.submissionStatus?isCurrentProjectSubmissionSql():undefined,
     query.status
       ? eq(projectInstances.status, query.status)
       : undefined,

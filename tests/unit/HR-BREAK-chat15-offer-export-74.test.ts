@@ -18,7 +18,8 @@ describe("HR-OFFER-EXPORT-74: safe employer CSV with corrupt historical records"
  it("ignores corrupt optional expiry timestamps without breaking a complete export",()=>{
   const result=buildHrOfferCsv([{...offer,expiresAt:new Date(Number.NaN)}],1);
   expect(result.exported).toBe(1);
-  expect(result.csv).toContain("01/05/2099");
+  // 18:30 UTC is midnight on May 2 in the required Asia/Kolkata display.
+  expect(result.csv).toContain("02/05/2099");
   expect(result.csv).not.toContain("Invalid Date");
  });
  it("never computes nonsensical omitted counts from nonfinite or negative totals",()=>{
