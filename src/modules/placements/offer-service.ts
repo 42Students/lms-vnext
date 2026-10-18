@@ -646,7 +646,7 @@ export async function actOnPlacementOffer(
     // A caller can wait on this offer row lock past its response deadline.
     // The function-entry instant must not let an already expired offer
     // transition after a competing transaction releases the lock.
-    const lockedNow=new Date(Math.max(lockedNow.getTime(),Date.lockedNow()));
+    const lockedNow=new Date(Math.max(now.getTime(),Date.now()));
 
     // Guard selected status beneath the same offer row lock as the transition.
     if (expectedStatus && offer.status !== expectedStatus) {
