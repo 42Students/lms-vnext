@@ -10,7 +10,7 @@ export function CollegeContentPreview({data}:{data:Preview}){
   <Button variant="secondary" onClick={()=>setOpen(true)} aria-haspopup="dialog">Preview</Button>
   <Dialog open={open} onOpenChange={setOpen} title={data.title} description="Content preview"
    footer={<Button variant="secondary" onClick={()=>setOpen(false)}>Close preview</Button>}>
-   <dl className="grid gap-3 text-sm text-body">
+   <dl aria-label="Content preview" className="grid gap-3 text-sm text-body">
     {[
       ["Course",data.course],["Lesson",data.lesson],["Content type",data.type],
       ["Status",data.status],["Audience",data.scope],
