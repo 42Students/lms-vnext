@@ -35,7 +35,14 @@ export async function lockAdminProjectSubmission(ctx:RequestContext,projectIdRaw
   const [submission]=await tx.select().from(projectSubmissions)
    .where(and(eq(projectSubmissions.id,submissionId),eq(projectSubmissions.projectId,scope.project.id)))
    .for("update").limit(1);
-  if(!project||!submission||!canAdminSettleDelivery(submission.status,!!submission.lockedAt,project.status,"LOCK"))
+  if(!project||!submission)throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  // Two tabs may retry a lock after the first response was lost. Both the
+  // parent and the submission are locked, so returning the already-locked row
+  // is safe, does not rewrite its reason, and cannot duplicate audit history.
+  // An archived/completed workspace must not turn an old lock into a write.
+  if(project.status==="ACTIVE"&&submission.lockedAt&&
+     (submission.status==="SUBMITTED"||submission.status==="APPROVED"))return submission;
+  if(!canAdminSettleDelivery(submission.status,!!submission.lockedAt,project.status,"LOCK"))
    throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
   const now=new Date();
   const [saved]=await tx.update(projectSubmissions).set({lockedAt:now,updatedAt:now})

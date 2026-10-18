@@ -41,7 +41,14 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   if(error instanceof TpoMessagingError)notFound();
   throw error;
  }
- const ownDrives=result.thread.jobId ? await listOwnRecruiterPlacementJobs(context,result.thread.collegeId) : [];
+ // A drive-directory outage is ancillary to a thread already authorized by
+ // readRecruiterThreadMessages. Never trust cached titles or crash its reply UI.
+ const driveLookupResult=result.thread.jobId
+  ?await listOwnRecruiterPlacementJobs(context,result.thread.collegeId)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}))
+  :null;
+ const ownDrives=driveLookupResult?.ok?driveLookupResult.value:[];
  const matchingDrive=result.thread.jobId
   ? ownDrives.find(item=>item.job.id===result.thread.jobId&&item.collegeId===result.thread.collegeId&&
      item.companyId===context.recruiter?.companyId)
@@ -62,6 +69,10 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <RecruiterConversationLiveRefresh/>
   <PageHeader eyebrow="Recruiter · Conversations" title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
+  {driveLookupResult && !driveLookupResult.ok?
+    <p role="status" className="rounded-md border border-border bg-surface p-3 text-sm text-body">
+      Hiring drive details are temporarily unavailable. You can still read and reply to this authorized conversation.
+    </p>:null}
   {matchingDrive?<Link href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
    Open drive: {matchingDrive.job.title}
