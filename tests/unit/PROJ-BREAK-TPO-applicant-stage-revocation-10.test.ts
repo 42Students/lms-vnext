@@ -10,7 +10,7 @@ vi.mock("@/modules/placements/tpo-job-write-base",()=>({
 }));
 vi.mock("@/modules/placements/staged-tables",()=>({placementTableExists:mocks.ready}));
 vi.mock("@/db/client",()=>({getDb:mocks.db}));
-import {moveTpoBulkApplicationStage,TpoBulkStageError}
+import {moveTpoBulkApplicationStage,loadTpoBulkApplicationStages,TpoBulkStageError}
  from "@/modules/placements/tpo-bulk-application-stage-service";
 
 const COLLEGE="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
@@ -57,5 +57,13 @@ describe("PROJ-BREAK-TPO-10 bulk stage mutation rechecks persisted authorization
    .rejects.toMatchObject({code:"STAGE_NOT_ALLOWED"});
   expect(mocks.actor).toHaveBeenCalledTimes(1);
   expect(mocks.select).toHaveBeenCalledTimes(1);
+ });
+ it("direct stage preview never discloses application stages after TPO role revocation",async()=>{
+  mocks.actor.mockRejectedValue(new Error("PERSISTED_ROLE_REVOKED"));
+  await expect(loadTpoBulkApplicationStages(context,JOB,[APP],"MOVE_TEST"))
+   .rejects.toThrow("PERSISTED_ROLE_REVOKED");
+  expect(mocks.actor).toHaveBeenCalledTimes(1);
+  expect(mocks.ready).not.toHaveBeenCalled();
+  expect(mocks.select).not.toHaveBeenCalled();
  });
 });
