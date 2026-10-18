@@ -5,8 +5,10 @@
 export function prioritizeRecruiterOfferFollowups<T extends {
  jobId:string;jobTitle:string;status:string;count:number;
 }>(rows:readonly T[],maximum=30):T[]{
- const score=(status:string)=>status==="ISSUED"?0:status==="ACCEPTED"?1:status==="DECLINED"?2:3;
- return rows.filter(row=>Number.isFinite(row.count)&&row.count>0)
+ const score=(status:string)=>status==="ISSUED"?0:status==="ACCEPTED"?1:2;
+ const validStatuses=new Set(["ISSUED","ACCEPTED","DECLINED"]);
+ return rows.filter(row=>validStatuses.has(row.status)&&
+  Number.isSafeInteger(row.count)&&row.count>0)
   .sort((a,b)=>score(a.status)-score(b.status) ||
     a.jobTitle.localeCompare(b.jobTitle) || a.jobId.localeCompare(b.jobId))
   .slice(0,Math.max(0,Number.isSafeInteger(maximum)?maximum:30));

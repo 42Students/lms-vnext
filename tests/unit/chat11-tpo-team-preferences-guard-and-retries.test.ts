@@ -1,7 +1,6 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
-import {planTpoThreadPreferenceChange} from "@/modules/placements/tpo-team-preference-state-model";
-import {tpoTeamPreferenceActionSchema} from "@/modules/placements/tpo-team-preferences-service";
+import {planTpoThreadPreferenceChange,tpoTeamPreferenceActionSchema} from "@/modules/placements/tpo-team-preference-state-model";
 
 const now=new Date("2099-05-01T10:00:00.000Z");
 const later=new Date("2099-05-02T10:00:00.000Z");

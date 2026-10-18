@@ -18,6 +18,8 @@ import { listSuperAdminUsers } from "@/modules/people/admin-user-directory-servi
 export default async function SuperAdminUserDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
+ const context=await getCurrentRequestContext();
+ if(!isSuperAdmin(context))redirect("/dashboard");
  const raw=await searchParams;
  const validKeys=new Set(["tab","q","role","membershipStatus","platformStatus","page"]);
  const validShape=Object.keys(raw).every(key=>validKeys.has(key))&&
@@ -30,8 +32,6 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
    action={<Link href="/admin/people/directory" className="font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
- const context=await getCurrentRequestContext();
- if(!isSuperAdmin(context))redirect("/dashboard");
  const data=await listSuperAdminUsers(context,query.data);
  const tabs=[{id:"ALL",label:"All contacts"},{id:"FACULTY",label:"Faculty"},{id:"STUDENT",label:"Students"}] as const;
  const roleOptions = ["ALL", ...MEMBERSHIP_ROLES] as const;

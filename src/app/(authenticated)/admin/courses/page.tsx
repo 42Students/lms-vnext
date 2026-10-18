@@ -4,7 +4,7 @@ import { AdminCourseOverview } from "@/components/courses/admin-course-overview"
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
-import { collegeCourseCatalogueQuerySchema } from "@/modules/courses/college-course-catalogue-model";
+import {parseSuperAdminCourseQuery} from "@/modules/admin-ui/super-admin-course-query-model";
 import { ErrorState } from "@/components/ui/error-state";
 import {getSuperAdminCourseDependencyCounts} from "@/modules/admin-ui/super-admin-course-dependencies-service";
 
@@ -38,14 +38,13 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
   }
 
   const query=await searchParams;
-  const catalogueQuery=collegeCourseCatalogueQuerySchema.safeParse({q:query.q,sort:query.sort,page:query.page,pageSize:query.pageSize});
-  if(!catalogueQuery.success)return <div className="min-w-0 space-y-5">
+  const parsed=parseSuperAdminCourseQuery(query);
+  if(!parsed)return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin" title="Courses"/>
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
       action={<Link href="/admin/courses" className="font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>}/>
   </div>;
-  const duplicateCourseId=typeof query.duplicate==="string"&&/^[a-f0-9-]{36}$/i.test(query.duplicate)
-    ?query.duplicate:undefined;
+  const {catalogueQuery,duplicateCourseId}=parsed;
   const [workspace,lessonCountByCourse]=await Promise.all([
     getAdminCourseWorkspace(context,collegeId),
     getSuperAdminCourseDependencyCounts(context),
@@ -69,7 +68,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         workspace={workspace}
         courseBasePath="/admin/courses"
         duplicateCourseId={duplicateCourseId}
-        catalogueQuery={catalogueQuery.data}
+        catalogueQuery={catalogueQuery}
         lessonCountByCourse={lessonCountByCourse}
         offeringBasePath="/admin/courses/offerings"
       />

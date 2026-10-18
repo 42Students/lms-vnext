@@ -206,3 +206,20 @@ These are source changes with tests authored only. The source-level and PostgreS
 
 
 | `GET /api/placements/recruiter/jobs/[jobId]/applicants/export` | `tests/unit/HR-BREAK-chat15-applicant-export-api-89.test.ts` | Actual handler: invalid stage rejects before private read, valid export masks phone/email and uses no-store, 201 authorized rows capped at 200 with omitted count, mid-export loss of grant/read returns an error rather than a partial CSV | PostgreSQL active/withdrawn mixed export, authenticated HTTP, live browser and final CI |
+
+
+## Chat-15 fourth HR-depth wave — 2026-10-19 (authored, not executed)
+
+| Service function or route/page | Behavioral test | Outcome matrix and failure cases | Remaining acceptance |
+|---|---|---|---|
+| `hrApplicantPageBounds`, `hrOfferPageBounds` | `tests/unit/HR-BREAK-chat15-bounds-90.test.ts` | First/last/out-of-range/zero pages, corrupt NaN/Infinity/fractional/negative persisted counts, independent 25/15-page sizes | Actual database aggregate and UI pagination with stale snapshots |
+| `hrDriveDraftSchema` and `formatHrDriveProposal` header boundary | `tests/unit/HR-BREAK-chat15-proposal-header-91.test.ts` | No CR/LF/tab/NUL injection in role or location, preserving valid multi-line description; persisted proposal header round-trip to authorized preview | TPO discussion persistence and recruiter draft browser flow |
+| `projectHrJobActivity`, `hrActivityEventFilter`, `clampHrActivityPage` | `tests/unit/HR-BREAK-chat15-activity-dates-92.test.ts` | Filters foreign-job/unknown event, malformed stored timestamp, deterministic order, stale/zero-page recoverability | Multi-college PostgreSQL event history and page |
+| `projectHrNotifications`, `filterHrNotificationJobs`, `clampHrInboxPage` | `tests/unit/HR-BREAK-chat15-notification-dates-93.test.ts` | No unknown events, out-of-scope jobs or invalid creation dates; unread/read labels, case-insensitive titles, stale deep-link recovery | Actual received notification row and UI read acknowledgment |
+| `hrProposalHistoryWindow`, `previewHrDriveProposalMessage` | `tests/unit/HR-BREAK-chat15-proposal-pagination-94.test.ts` | Bounded 20-row offsets; NaN/invalid pages recover; corrupt totals rejected; preview redacts private proposal body and requires valid reference | Persisted pagination after account grant change and late inserted messages |
+| `prioritizeRecruiterOfferFollowups` and `HR_FOLLOWUP_JOB_STATUSES` | `tests/unit/HR-BREAK-chat15-offer-followups-95.test.ts` | ISSUED/ACCEPTED/DECLINED only; corrupt count excluded; closed job follow-up allowed; deterministic priority and cap | PostgreSQL offer status transition and Today homepage |
+| `/hr/activity` server page | `tests/unit/HR-BREAK-chat15-activity-page-96.test.tsx` | Disabled/swapped actor denied before service, duplicate/bad filters reset, no grant/empty/persisted publication state | Browser 320px and page error recovery |
+| `/hr/notifications` server page | `tests/unit/HR-BREAK-chat15-notifications-page-97.test.tsx` | Disabled/swapped actor, invalid query, no grant, empty, employer-owned unread notice and link | Browser 320px, read/retry flows |
+| `/tracker/mine` page (HR-reporter journey) | `tests/unit/HR-BREAK-chat15-tracker-mine-page-98.test.tsx` | Expired session, disabled readiness, DB error hides SQL and offers retry, empty state, own persisted report link | Real user session and PostgreSQL reporter isolation |
+
+Owner's **NO CI** directive remains in force; all behavioral tests were written but not run. Exhaustive per-export and HTTP-role matrix completion remains open.
