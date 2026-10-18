@@ -40,7 +40,7 @@ export default async function MentorTeamHistoryPage({
   const back = "/mentor/projects/" + encodeURIComponent(projectId) + "?tab=team";
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project Team" title="Team membership history"
-      description={data.title + " · Registered team join/end records"}
+      description={data.enabled?data.title + " · Registered team join/end records":"Projects access is disabled. Team history cannot be displayed."}
       actions={<Link href={back}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Team workspace
