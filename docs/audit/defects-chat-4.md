@@ -88,3 +88,6 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | SA-tenants-lifecycle-ACTOR-01 | S1 tenant isolation | Tenant directory, detail and CSV export trusted a previously captured Super Admin role at service preflight, so disabling the user or revoking the system role before the actual read could still expose tenant names and organization data. Added transaction-local `assertPersistedPlatformPermission` before each SELECT with SHARE locks held through the scoped read. Organization filter choices are loaded before the transaction to avoid deadlock on one-connection pools; the persisted denial still prevents returning them. | `chat4-superadmin-tenant-lifecycle-actor.test.ts` | PostgreSQL role race and long-running connection verification pending |
+
+
+| SA-colleges-sessions-QUERY-01 | S2 input ambiguity | GET device sessions relied on `URLSearchParams.get("userId")`, which silently accepted duplicate userId and unknown query keys. Replaced first-value parsing with strict one-element UUID array and unknown-key rejection using Zod before any private device read. | `chat4-superadmin-tenant-route-guards.test.ts` | Cloud test confirmation pending |
