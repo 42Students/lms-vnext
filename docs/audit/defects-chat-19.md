@@ -19,6 +19,9 @@ All fixes were authored on `chatgpt/chat-19-b` after synchronizing with `main` a
 | HR-XA-03 | MAJOR | `src/app/(authenticated)/hr/drives/page.tsx` | Retry button had undersized touch target | Shared accessible Button | `f150fa86` | `tests/unit/chat19-hr-page-contracts.test.ts` |
 | HR-XA-04 | MAJOR | `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | Back to Drives from error boundary used low-contrast link without focus cue | Deep teal and keyboard outline | `56742618` | `tests/unit/chat19-hr-page-contracts.test.ts` |
 
+| HR-XA-05 | MAJOR | `src/app/(authenticated)/hr/conversations/page.tsx`, `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`, `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | Hidden scrollbars gave long message/change-request histories no more-content affordance | Focusable named ScrollCue with truthful edge fades | `1eaae5e9` | `tests/unit/chat19-hr-page-contracts.test.ts` |
+| HR-XA-06 | MAJOR | `src/app/(authenticated)/hr/calendar/page.tsx` | Calendar day event overflow was invisible without scroll affordance | Named ScrollCue preserves max-height and more-content fade | `3de439aa` | `tests/unit/chat19-hr-page-contracts.test.ts` |
+
 ## Projects HR/Recruiter adversarial checks
 
 - **PROJ-HR-01:** learner project links are disclosed only if both the active college visibility setting and company relationship grant explicitly permit them; pure projection tests also deny project data if policy denies.
@@ -26,8 +29,10 @@ All fixes were authored on `chatgpt/chat-19-b` after synchronizing with `main` a
 - **PROJ-HR-03:** only active, shortlisted applications from the recruiter's company and college scope can be disclosed; inactive users, removed members and withdrawn applications are rejected by the pure policy.
 - **PROJ-HR-04:** an arbitrary or now-unshared applicant deep link is not resolved by the applicant drawer; the page also rejects unavailable authorized applicant IDs.
 - **PROJ-HR-05:** malformed learner profile JSON fails closed; eligible project previews are capped at ten items.
+- **PROJ-HR-07 (BLOCKER):** historically shortlisted **withdrawn** applicants could retain private project URLs, contact fields and resume affordance through an old authorized page or link. `src/modules/placements/hr-applicant-drawer-model.ts` now requires SUBMITTED state before opening a drawer; `src/modules/placements/hr-job-read-service.ts` retains withdrawal status records but strips profile links, resume, contacts and grades. Commits `1da9d715`, `47d52f8f`, regression `231ca3be`.
+- **PROJ-HR-08 (MAJOR):** terminal-dot hostnames like `localhost.` and `campus.local.` evaded the browser-link local-address denylist. Hostname is now normalized before private-host validation; commit `5bbd2683`, tests `3602f424`.
 
-These checks are implemented in `tests/unit/chat19-projects-recruiter-role-journey.test.ts` (commit `4c609669`). They do **not** certify HTTP/session expiry, parallel submissions, DB rollback, signed-URL behavior, or browser navigation. HR role has no direct Projects mutation exposed by the scoped pages reviewed; read-only applicant project previews are the relevant role journey.
+These checks are implemented in `tests/unit/chat19-projects-recruiter-role-journey.test.ts` (base commit `4c609669` and later `231ca3be` / `3602f424`). They do **not** certify HTTP/session expiry, parallel submissions, DB rollback, signed-URL behavior, or browser navigation. HR role has no direct Projects mutation exposed by the scoped pages reviewed; read-only applicant project previews are the relevant role journey.
 
 ## Follow-up verification and unclosed risk
 
