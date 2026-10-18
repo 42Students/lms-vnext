@@ -11,6 +11,7 @@ import {projectTemplateCatalogueCsv,projectTemplateSectionCounts} from "@/module
 import {exportClassTeamsCsv} from "@/modules/projects/class-team-csv-export";
 import {projectReadinessOverrideCsvCell} from "@/modules/projects/readiness-overrides-export-model";
 import {isRetryableProjectTransactionError} from "@/modules/projects/errors";
+import {friendlyApiError} from "@/lib/friendly-error";
 import {compareTemplateVersionSnapshots,templateVersionComparisonParamsSchema} from "@/modules/projects/template-version-comparison-model";
 import {isProjectMentorOverloaded,projectMentorWorkloadAverage} from "@/modules/projects/mentor-overload-model";
 import {createClassTeamWorkspacesSchema} from "@/modules/projects/class-team-create-request";
@@ -185,6 +186,14 @@ describe("IIT Dharwad Projects adversarial admin/college models",()=>{
   }
   expect(isRetryableProjectTransactionError(null)).toBe(false);
   expect(isRetryableProjectTransactionError({cause:{cause:{cause:null}}})).toBe(false);
+ });
+
+ it("PROJ-BREAK-ux-02 concurrent roster conflicts return an actionable next step without exposing SQLSTATE",()=>{
+  const msg=friendlyApiError({status:409,code:"PROJECT_CLASS_ROSTER_STALE"});
+  expect(msg).toContain("Refresh the roster");
+  expect(msg).not.toContain("40001");
+  expect(friendlyApiError({status:409,code:"PROJECT_TEAM_PREVIEW_STALE"})).toContain("Review the current teams");
+  expect(friendlyApiError({status:403,code:"PROJECT_ACCESS_DENIED"})).toContain("permission");
  });
 
 });
