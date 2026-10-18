@@ -586,3 +586,11 @@ No tests or browser were executed in this lane.
 | HR-BREAK-CONVO-RECEIPT-49 | MAJOR | Previously any successful redirect to the conversation thread could count as a sent message; a login/HTML fallback may imitate it. The origin-guarded, authorized POST now returns explicit persisted message and thread IDs for JSON requests, and the client verifies both before clearing a draft or showing Sent. Keep the existing native POST 303 redirect. | `tests/unit/HR-BREAK-chat19-conversation-receipt.test.ts` covers authorized response, rejected principal/origin, native form and unverified receipts. |
 
 CI/browser execution pending; no tests were run.
+
+## HR Company & Team stale page recovery
+
+| ID | Severity | Problem and correction | Regression |
+|---|---|---|---|
+| UX-HR-TEAM-PAGINATION-49 | UX/MAJOR | The authorized Team roster left `teamPage=9000` unchanged after a filter narrowed results to one page, displaying no members and misleading the recruiter that the roster was empty. Clamp requested page to the last actual page after the roster is scoped and filtered; empty total remains an explicitly empty roster. No new source reads and no change to tenant constraints. | `tests/unit/UX-HR-chat19-team-pagination.test.ts` checks paginated boundary, stale page recovery, bad input and company-page wiring. |
+
+No runtime or CI execution claimed.
