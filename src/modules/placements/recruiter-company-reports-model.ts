@@ -24,6 +24,16 @@ export const recruiterCompanyReportsQuerySchema = z
 export type RecruiterCompanyReportsQuery = z.infer<
   typeof recruiterCompanyReportsQuerySchema
 >;
+/** Recover old report tabs after a drive closes or the selected status shrinks.
+ * Only the already college/company-scoped count determines the final page.
+ */
+export function clampRecruiterCompanyReportPage(page:number,total:number,pageSize:number):number{
+ const pages=Number.isSafeInteger(total)&&total>0
+  ?Math.ceil(total/(Number.isSafeInteger(pageSize)&&pageSize>0?pageSize:25)):0;
+ if(!Number.isSafeInteger(page)||page<1)return 1;
+ return Math.min(page,Math.max(1,pages));
+}
+
 
 export type RecruiterReportJob = {
   id: string;
