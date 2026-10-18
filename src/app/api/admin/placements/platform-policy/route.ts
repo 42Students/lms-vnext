@@ -1,6 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {readAdminPlacementJson} from "@/modules/placements/admin-request-body-model";
 import { listPlatformPlacementPolicy, PlatformPlacementPolicyConflict, PlatformPlacementPolicyValidationError, setPlatformPlacementPolicy } from "@/modules/placements/platform-placement-policy-service";
 export const runtime="nodejs";
 export async function GET(){
@@ -11,9 +12,10 @@ export async function GET(){
 export async function PUT(request:Request){
  if(!isSameOriginRequest(request))return Response.json({error:"INVALID_ORIGIN"},{status:403});
  try{
+  const body=await readAdminPlacementJson(request,4096);
+  if(!body.ok)return Response.json({error:"INVALID_REQUEST"},{status:400});
   const context=await getCurrentRequestContext();
-  const body:unknown=await request.json();
-  return Response.json(await setPlatformPlacementPolicy(context,body),
+  return Response.json(await setPlatformPlacementPolicy(context,body.value),
     {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof PlatformPlacementPolicyValidationError)
