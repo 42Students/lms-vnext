@@ -48,20 +48,20 @@ export default async function TpoSeasonPipelinePage({
         description="Recorded application, screening, offer and joining evidence for one placement season."
         actions={report.season ? (
           <a href={"/api/placements/reports/season-pipeline?" + csvQuery.toString()}
-            className="inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
             Export funnel CSV
           </a>
         ) : null} />
-      <Link href="/tpo/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+      <Link href="/tpo/reports" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
         ← All reports
       </Link>
       <form action="/tpo/reports/season-pipeline" method="get"
-        className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
+        className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2">
         <label className="block text-sm font-semibold text-body">
           Placement season
           <select name="seasonId" defaultValue={report.season?.id ?? ""}
             disabled={!report.seasons.length}
-            className="mt-2 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((s) => (
               <option key={s.id} value={s.id}>{s.name} · {s.code}</option>
@@ -72,7 +72,7 @@ export default async function TpoSeasonPipelinePage({
           Drive
           <select name="jobId" defaultValue={report.selectedJobId ?? ""}
             disabled={!report.season}
-            className="mt-2 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground">
             <option value="">All drives</option>
             {report.jobs.map((job) => (
               <option key={job.id} value={job.id}>{job.companyName} · {job.title}</option>
@@ -80,7 +80,7 @@ export default async function TpoSeasonPipelinePage({
           </select>
         </label>
         <button type="submit" disabled={!report.season}
-          className="min-h-11 rounded-md border border-primary bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+          className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
           Apply filters
         </button>
       </form>
