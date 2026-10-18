@@ -6,7 +6,7 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 
 | Exported module | Exported function | Evidence tier | Test file / cases / remaining gap |
 | --- | --- | --- | --- |
-| `admin-college-scope.ts` | `getProjectAdminCollegeId` | OPEN | Requires active, scoped College Admin/Super Admin scenarios. Evidence: **OPEN — missing adequate test** |
+| `admin-college-scope.ts` | `getProjectAdminCollegeId` | BEHAVIOR | PROJ-BREAK-COL-SCOPE-01/02, PROJ-BREAK-COL-EXPIRED-01: own/foreign college, scoped Super Admin, disabled users, removed/suspended membership, wrong role. `tests/unit/PROJ-BREAK-chat4-college-create-scope.test.ts` (existing direct behavioral coverage). Live context + DB checks OPEN. |
 | `admin-insights-service.ts` | `listProjectAdminSnapshots` | SOURCE + URL | PROJ-BREAK-scale-20; PROJ-BREAK-ux-10, no DB-backed permission test. Evidence: tests/unit/PROJ-BREAK-chat9-admin-filters.test.ts, tests/unit/PROJ-BREAK-chat9-admin-risk-query.test.ts, tests/unit/PROJ-BREAK-chat9-admin-submissions-query.test.ts, tests/unit/PROJ-BREAK-chat9-service-bounds.test.ts |
 | `admin-insights-service.ts` | `listProjectAdminRiskQueue` | SOURCE + URL | PROJ-BREAK-scale-20; PROJ-BREAK-ux-14, no DB-backed permission test. Evidence: tests/unit/PROJ-BREAK-chat9-admin-filters.test.ts, tests/unit/PROJ-BREAK-chat9-admin-risk-query.test.ts, tests/unit/PROJ-BREAK-chat9-admin-submissions-query.test.ts, tests/unit/PROJ-BREAK-chat9-service-bounds.test.ts |
 | `admin-insights-service.ts` | `getProjectAdminSubmissionSummary` | SQL + permission | PROJ-BREAK-reports-08/10, PROJ-BREAK-idor-23: Drizzle renders correctly qualified outer-project correlation; pending and student-action totals count ACTIVE only; wrong tenant rejected. `tests/unit/PROJ-BREAK-chat9-admin-correlations.test.ts`. Real PostgreSQL counts-vs-list still OPEN. |
@@ -48,7 +48,7 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 | `template-rollback-service.ts` | `rollbackProjectTemplate` | OPEN | Old/new version CAS and audit PG OPEN. Evidence: **OPEN — missing adequate test** |
 | `template-subview-service.ts` | `getSuperAdminTemplateSubview` | EXISTING SOURCE | Template detail protected view, live authorization OPEN. Evidence: tests/unit/ux-admin-chat9-batch-02.test.ts |
 | `class-team-workspace-service.ts` | `createClassTeamWorkspaces` | SOURCE | PROJ-BREAK-idor-13/races-07; serializable PG fixtures OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
-| `project-resource-file-service.ts` | `toProjectFileDto` | OPEN | File redaction and signed URL expiry OPEN. Evidence: **OPEN — missing adequate test** |
+| `project-resource-file-service.ts` | `toProjectFileDto` | BEHAVIOR | PROJ-BREAK-files-20/21/22: exact redacted projection, verified metadata precedence, pending and quarantine timestamps. `tests/unit/PROJ-BREAK-chat9-file-dto.test.ts`. Signed URL expiry is independently enforced in grant service; real storage tests OPEN. |
 | `project-resource-file-service.ts` | `issueProjectFileUploadGrant` | SOURCE | PROJ-BREAK-files-04; storage failures OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `project-resource-file-service.ts` | `completeProjectFileUpload` | SOURCE | PROJ-BREAK-files-01 + retries; true DB/storage race OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `project-resource-file-service.ts` | `listProjectFiles` | OPEN | Wrong-tenant/scope and pagination OPEN. Evidence: **OPEN — missing adequate test** |
@@ -56,7 +56,7 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 | `project-resource-file-service.ts` | `removeProjectFile` | SOURCE | PROJ-BREAK-files-02/resilience-01, PG race OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `project-resource-file-service.ts` | `issueProjectFileDownloadGrant` | SOURCE | PROJ-BREAK-files-03, signed URL expiry integration OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `readiness-override-service.ts` | `readProjectReadinessOverride` | MOCK BEHAVIOR + SQL SOURCE | PROJ-BREAK-readiness-30/31/32/33, PROJ-BREAK-idor-30: no-event, audited block/unlock, clear removes note, invalid state hides confidential note; project+college scoped SQL and latest ordering. `tests/unit/PROJ-BREAK-chat9-readiness-history.test.ts`. Real DB and cache checks OPEN. |
-| `readiness-override-service.ts` | `overrideProjectReadiness` | SOURCE | PROJ-BREAK-routing-01, transaction+audit OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
+| `readiness-override-service.ts` | `overrideProjectReadiness` | MOCK BEHAVIOR + PERMISSION | PROJ-BREAK-races-12/13, PROJ-BREAK-idor-29, PROJ-BREAK-state-22: unchanged retry, changed note, clear no-op, archived project, persisted role revocation and activity count. `tests/unit/PROJ-BREAK-chat9-readiness-retries.test.ts`; PostgreSQL serialization pending. |
 | `super-admin-template-directory-service.ts` | `listSuperAdminTemplateDirectory` | OPEN | Search/page/scoping PG cases OPEN. Evidence: **OPEN — missing adequate test** |
 
 | `admin-audit-query-model.ts` | `parseProjectAdminAuditQuery` | BEHAVIOR | PROJ-BREAK-ux-22/23/24: valid date/cursor parsing and invalid action, scope, cursor and reverse date rejection. `tests/unit/PROJ-BREAK-chat9-admin-audit-query.test.ts`. Shared Super/College Admin audit component consumes it; live browser verification OPEN. |
@@ -67,6 +67,8 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 | `project-audit-page-export.tsx`, `project-submissions-page-export.tsx`, `project-admin-workspace-page-export.tsx`, `project-at-risk-page-export.tsx`, `super-admin-template-page-export.tsx`, `project-workspace-page-export.tsx` | Visible-page CSV handlers | MODEL + SOURCE CONTRACT | PROJ-BREAK-exports-11/12/13/14/15/16 all six use `projectAdminCsv` and preserve per-page field selection; `tests/unit/PROJ-BREAK-chat9-admin-csv-security.test.ts`. Browser/Blob download proof remains OPEN. |
 
 | `admin-insights-group-model.ts` | `groupProjectAdminRows` | BEHAVIOR | PROJ-BREAK-scale-22/23/24, PROJ-BREAK-idor-29: preserves original order, partitions 20k records into 100 project groups and resists object-prototype key collision; `tests/unit/PROJ-BREAK-chat9-admin-grouping.test.ts`. Used by admin snapshots and risk queue; PostgreSQL EXPLAIN OPEN. |
+
+| `super-admin-template-directory-model.ts` | `templateDirectoryPages`, `templateDirectoryHref`, `templateDirectoryQuerySchema` | BEHAVIOR | PROJ-BREAK-scale-25, PROJ-BREAK-ux-40/41: strict search/status/page, safe URL encoding, bounded page count for nonfinite input. `tests/unit/PROJ-BREAK-chat9-template-directory-query.test.ts`. |
 
 ## Route/page tests and independent audit
 
