@@ -107,3 +107,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 
 | PROJ-HARNESS-51 | S1 (project fixture lineage) | Fixture previously assigned a DRAFT template to a college and started an ACTIVE sprint under a PLANNED release; these states were not a realistic published workspace for customer journeys. | Publish template version 1 before assignment and explicitly create IN_PROGRESS release; real PG PROJ-HARNESS-51 and source GUARD-12. | Authored; PostgreSQL CI pending |
 
+
+| UX-kit-HARDEN-53 | S2 (keyboard discoverability) | The disabled action description was on a nonfocusable span, while the disabled native button is skipped by Tab: keyboard users could not discover why the action is unavailable. | Focusable disabled-only wrapper with `role=group` and associated description, preserving child IDs; `tests/unit/UX-kit-projects-hardening-chat17.test.tsx` HARDEN-53. | Source/test authored; browser verification at final CI |
