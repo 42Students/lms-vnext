@@ -521,6 +521,32 @@ describe("Placement P8 offers and joining", () => {
     expect(confirmed.rows[0]?.n).toBe(1);
   });
 
+  it("PLACEMENTS-ISSUE-ACTOR-DB-02 denies a suspended learner while retaining a legitimately shortlisted application",async()=>{
+    const {application}=await preparePassedApplication();
+    const terms={kind:"OFFER" as const,roleTitle:"Engineer",annualCtcInr:900_000};
+    try {
+      await pool.query("update college_memberships set status='SUSPENDED',suspended_at=now() where id=$1",
+        [SEED_IDS.learnerCollegeAMembership]);
+      await expect(issuePlacementOffer(tpo,application.id,terms))
+        .rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+    } finally {
+      await pool.query("update college_memberships set status='ACTIVE',suspended_at=null,suspension_reason=null where id=$1",
+        [SEED_IDS.learnerCollegeAMembership]);
+    }
+    try{
+      await pool.query("update users set platform_status='DISABLED' where id=$1",[SEED_IDS.learnerUser]);
+      await expect(issuePlacementOffer(tpo,application.id,terms))
+        .rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+    } finally {
+      await pool.query("update users set platform_status='ACTIVE' where id=$1",[SEED_IDS.learnerUser]);
+    }
+    const before=await pool.query<{n:number}>(
+      "select count(*)::integer as n from placement_offers where application_id=$1",[application.id]);
+    expect(before.rows[0]?.n).toBe(0);
+    const issued=await issuePlacementOffer(tpo,application.id,terms);
+    expect(issued.status).toBe("ISSUED");
+  });
+
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
     const { application } =
       await preparePassedApplication();
