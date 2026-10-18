@@ -29,6 +29,23 @@ export type DataTableProps<Row> = {
   rowHref?: (row: Row) => string;
 };
 
+/** Never let row URLs cross origin through slash/backslash URL ambiguity.
+ * Encoded initial slashes and backslashes are browser-normalized differently
+ * by different hosts; only unambiguous same-app absolute paths are allowed.
+ */
+export function isSafeDataTableHref(href: string): boolean {
+  if (!href.startsWith("/") || href !== href.trim() || /[\\\\\u0000-\u001f\u007f]/.test(href)) return false;
+  // Decode only the initial slash/backslash run, including double encoding.
+  let prefix = href.slice(0, 64);
+  for (let depth = 0; depth < 3; depth++) {
+    const decoded = prefix.replace(/%2f/gi, "/").replace(/%5c/gi, "\\\\")
+      .replace(/%25/gi, "%");
+    if (decoded === prefix) break;
+    prefix = decoded;
+  }
+  return !prefix.startsWith("//") && !prefix.startsWith("/\\\\");
+}
+
 export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref }: DataTableProps<Row>) {
   if(rows.length===0) return <div className="rounded-xl border border-border bg-surface p-4 sm:p-6">{empty}</div>;
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
@@ -39,7 +56,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
     rows.every(row=>{
       if(!col.mobileDetail?.canView(row))return false;
       const href=col.mobileDetail.href(row);
-      return href.startsWith("/") && !href.startsWith("//") && href.length>1;
+      return isSafeDataTableHref(href) && href.length>1;
     });
   const recoverable=columns.filter(mapped);
   const secondary=columns.filter(col=>col.key!==primary?.key &&
@@ -55,7 +72,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
     key:getRowKey(row),row,
     detailHref:(()=>{
       const href=rowHref?.(row);
-      return href && href.startsWith("/") && !href.startsWith("//") ? href : null;
+      return href && isSafeDataTableHref(href) ? href : null;
     })(),
     cells:new Map(columns.map(col=>[col.key,col.cell(row)] as const)),
   }));
