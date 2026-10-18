@@ -63,7 +63,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           <label className="text-sm">Prioritize<Select name="sort" defaultValue={sort.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
           <Button type="submit" className="self-end min-h-11 rounded bg-primary px-4 text-primary-foreground">Apply</Button>
         </form>
-        <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-[var(--lms-link-text)]">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">Reset focus</Link></div>
+        <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Reset focus</Link></div>
         <dl aria-label="Current authorized live-round snapshot" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">{[
           ["Live rounds",liveTotals.rounds],["Roster",liveTotals.roster],["Checked in",liveTotals.checkedIn],
           ["Explicit no-shows",liveTotals.explicitNoShows],["Pending",liveTotals.pending],["Unrecorded",liveTotals.unrecorded],
@@ -75,7 +75,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           </p>
         ) : null}
         {liveRows.length === 0 ? (
-          <section className="rounded-xl border border-border bg-surface p-6">
+          <section className="border-b border-border py-6">
             <h2 className="text-base font-semibold text-foreground">{snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"}</h2>
             <p className="mt-2 text-sm text-body">
               Only published scheduled rounds with a recorded start and duration count as live.
@@ -85,7 +85,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
         ) : (
           <div className="grid gap-4">
             {liveRows.map((round) => (
-              <article key={round.id} className="rounded-xl border border-border bg-surface p-5">
+              <article key={round.id} className="border-b border-border py-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h2 className="text-lg font-semibold text-foreground">{round.companyName} · {round.name}</h2>
@@ -97,9 +97,9 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     <p className="text-xs text-muted-foreground">{tpoLiveRoundVenueLabel(round.venue)}</p>
                     {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes!==null?<p className="text-xs text-muted-foreground">Elapsed {tpoLiveRoundTiming(round,snapshot.asOf).elapsedMinutes} min · approximately {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes} min scheduled remaining. This is not an actual completion state.</p>:null}
                   </div>
-                  <div className="flex flex-wrap gap-2"><Link href={tpoLiveRoundJobHref(round.jobId)} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border px-4 text-sm text-[var(--lms-link-text)]">Open drive</Link>
+                  <div className="flex flex-wrap gap-2"><Link href={tpoLiveRoundJobHref(round.jobId)} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Open drive</Link>
                   <Link href={"/tpo/drive-day/" + round.id}
-                    className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+                    className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
                     Open round
                   </Link></div>
                 </div>
@@ -136,7 +136,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
       />
 
       {rounds.length === 0 ? (
-        <section className="rounded-xl border border-border bg-surface p-6">
+        <section className="border-b border-border py-6">
           <h2 className="m-0 text-base font-semibold text-foreground">
             There is no drive day for you today.
           </h2>
@@ -149,7 +149,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           {rounds.map((round) => (
             <article
               key={round.roundId}
-              className="rounded-xl border border-border bg-surface p-5"
+              className="border-b border-border py-5"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -181,7 +181,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     "/tpo/drive-day/" +
                     round.roundId
                   }
-                  className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-primary bg-primary px-3 text-sm font-semibold transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground"
+                  className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-primary bg-primary px-3 text-sm font-semibold transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground md:min-h-9"
                 >
                   Open round
                 </Link>
