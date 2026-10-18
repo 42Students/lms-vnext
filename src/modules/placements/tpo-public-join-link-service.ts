@@ -175,10 +175,14 @@ export async function setTpoPublicJoinLinkEnabled(context:RequestContext,raw:unk
    organizationId:college.organizationId,collegeId:college.id,
   });
   const filter=linkFilter(college.id,input.scope,input.scope==="COMPANY"?input.companyId:undefined);
-  const [row]=await tx.select({id:placementPublicJoinLinks.id})
+  const [row]=await tx.select({
+   id:placementPublicJoinLinks.id,enabled:placementPublicJoinLinks.enabled,
+  })
    .from(placementPublicJoinLinks).where(and(filter,gt(placementPublicJoinLinks.expiresAt,new Date())))
    .orderBy(desc(placementPublicJoinLinks.createdAt)).for("update").limit(1);
   if(!row)throw new TpoPublicJoinLinkError("NOT_FOUND");
+  // A parallel retry of the same switch is a no-op: do not double-audit.
+  if(row.enabled===input.enabled)return {enabled:row.enabled};
   await tx.update(placementPublicJoinLinks).set({enabled:input.enabled})
    .where(eq(placementPublicJoinLinks.id,row.id));
   await tx.insert(activityEvents).values({
