@@ -1,7 +1,4 @@
-export default function CollegeVideosLoading() {
-  return <div aria-busy="true" aria-label="Loading videos" className="space-y-4">
-    <div className="h-16 animate-pulse rounded-xl bg-muted" />
-    <div className="h-24 animate-pulse rounded-xl bg-muted" />
-    <div className="h-72 animate-pulse rounded-xl bg-muted" />
-  </div>;
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
+export default function CollegeVideosLoading(){
+ return <GracefulPageLoading label="Loading videos" shape="directory" />;
 }

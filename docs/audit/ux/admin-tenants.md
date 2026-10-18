@@ -10,3 +10,9 @@
 ## Follow-up implementation
 
 The tenant lifecycle directory now uses shared Input/Select/Button controls and accessible shared Pagination with explicit page state. Regression assertions in the named UX batch test now cover the shared contract. Execution remains pending orchestrator.
+
+## Bounded loading follow-through
+
+- Tenant directory now uses bounded loading with visible retry after a slow fetch.
+- Regression: `tests/unit/ux-admin-chat9-loading-b.test.ts` case `UX-admin-tenants-02`.
+- Unverified: TypeScript, lint, Vitest, UX guard and visual/a11y device acceptance. Checklist remains open until a runner confirms them.

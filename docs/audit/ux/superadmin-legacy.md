@@ -6,3 +6,5 @@
 - **Access and state contract:** Authenticated Super Admin role remains mandatory; unknown query keys are dropped.
 - **Test:** `tests/unit/UX-superadmin-legacy-01.test.ts` (authored, not executed).
 - **Verification outstanding:** 320/360/390px, screen reader, real keyboard and typecheck/unit evidence; a source review or redirect test is not browser acceptance.
+
+- **Route boundary:** Added `loading.tsx` with a bounded shared skeleton/retry and `error.tsx` using the shared privacy-safe error/recovery UI. Canonical redirect and role guards are unchanged. Both are now checked by the route-specific UX test (not executed).
