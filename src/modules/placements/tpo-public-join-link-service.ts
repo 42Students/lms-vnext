@@ -80,14 +80,14 @@ export async function getTpoPublicJoinLinkStatus(
     : null;
   if (!await publicJoinTablesReady()) return { ready: false, domain, link: null };
   const [row] = await getDb().select({
-    createdAt: placementPublicJoinLinks.createdAt,
+    id: placementPublicJoinLinks.id,createdAt: placementPublicJoinLinks.createdAt,
     opensCount: placementPublicJoinLinks.opensCount,joinsCount: placementPublicJoinLinks.joinsCount,
     enabled:placementPublicJoinLinks.enabled,
   }).from(placementPublicJoinLinks)
     .where(and(linkFilter(college.id, scope, companyId),
       gt(placementPublicJoinLinks.expiresAt, new Date())))
     .orderBy(desc(placementPublicJoinLinks.createdAt)).limit(1);
-  return { ready: true, domain, link: row ? { createdAt: row.createdAt.toISOString(),opensCount:row.opensCount,joinsCount:row.joinsCount,enabled:row.enabled } : null };
+  return { ready: true, domain, link: row ? { id:row.id,createdAt: row.createdAt.toISOString(),opensCount:row.opensCount,joinsCount:row.joinsCount,enabled:row.enabled } : null };
 }
 
 /** The one-time URL is returned only from this authenticated, same-origin POST. */
@@ -133,7 +133,7 @@ export async function changeTpoPublicJoinLink(context: RequestContext, raw: unkn
     if (input.action === "CREATE" && existing) {
       throw new TpoPublicJoinLinkError("ALREADY_EXISTS");
     }
-    if (input.action === "REPLACE" && !existing) {
+    if (input.action === "REPLACE" && (!existing || existing.id!==input.expectedLinkId)) {
       throw new TpoPublicJoinLinkError("STALE");
     }
     const now = new Date();
@@ -160,7 +160,7 @@ export async function changeTpoPublicJoinLink(context: RequestContext, raw: unkn
     });
     return {
       path: publicJoinLinkPath(input.scope, token),
-      status: { ready: true, domain, link: { createdAt: link.createdAt.toISOString(),opensCount:link.opensCount,joinsCount:link.joinsCount,enabled:true } },
+      status: { ready: true, domain, link: { id:link.id,createdAt: link.createdAt.toISOString(),opensCount:link.opensCount,joinsCount:link.joinsCount,enabled:true } },
     };
   });
 }
@@ -181,6 +181,7 @@ export async function setTpoPublicJoinLinkEnabled(context:RequestContext,raw:unk
    .from(placementPublicJoinLinks).where(and(filter,gt(placementPublicJoinLinks.expiresAt,new Date())))
    .orderBy(desc(placementPublicJoinLinks.createdAt)).for("update").limit(1);
   if(!row)throw new TpoPublicJoinLinkError("NOT_FOUND");
+  if(row.id!==input.expectedLinkId)throw new TpoPublicJoinLinkError("STALE");
   // A parallel retry of the same switch is a no-op: do not double-audit.
   if(row.enabled===input.enabled)return {enabled:row.enabled};
   await tx.update(placementPublicJoinLinks).set({enabled:input.enabled})
