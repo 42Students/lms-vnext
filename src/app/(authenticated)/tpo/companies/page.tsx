@@ -17,6 +17,7 @@ import {
   tpoCompaniesQuerySchema,
 } from "@/modules/placements/tpo-companies-view-service";
 import type { TpoCompanyRow } from "@/modules/placements/tpo-companies-view-model";
+import {tpoCompanyFiltersShapeValid} from "@/modules/placements/tpo-company-url-validation";
 
 type PageProps = {
   searchParams: Promise<{
@@ -89,13 +90,7 @@ export default async function TpoCompanyMemoryPage({
   await requireTpoBatchActor(context);
 
   const raw = await searchParams;
-  const acceptedKeys=new Set(["name","directory","search","page","pageSize","sort"]);
-  if(Object.keys(raw).some(key=>!acceptedKeys.has(key))||
-     Object.values(raw).some(Array.isArray)||
-     (typeof raw.name==="string"&&raw.name.trim().length>160)||
-     (raw.directory!==undefined&&raw.directory!=="1")){
-    return invalidCompanyFilters();
-  }
+  if(!tpoCompanyFiltersShapeValid(raw))return invalidCompanyFilters();
   const name = first(raw.name)?.trim() ?? "";
 
   // Preserve named Company Memory deep links, but keep the legacy Engage
