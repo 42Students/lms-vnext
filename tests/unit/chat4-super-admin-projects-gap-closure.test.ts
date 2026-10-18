@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
+import {parseAdminProjectsQuery} from "@/modules/projects/admin-projects-query-model";
 
 /** Source-contract checks for earlier merged functionality and exact legacy copy.
  * Integration-level permissions, database transitions and parity still require
@@ -197,7 +198,6 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(page).toContain("parseAdminProjectsQuery(await searchParams)");
   expect(queryModel).toContain("first(params.search) ?? first(params.q)");
   expect(queryModel).toContain('pageSize: z.coerce.number().int().min(10).max(100).default(20)');
-  const {parseAdminProjectsQuery}=require("@/modules/projects/admin-projects-query-model") as typeof import("@/modules/projects/admin-projects-query-model");
   expect(parseAdminProjectsQuery({search:"capstone"}).data).toMatchObject({q:"capstone",pageSize:20});
   expect(parseAdminProjectsQuery({search:"from search",q:"from q"}).data?.q).toBe("from search");
   expect(parseAdminProjectsQuery({pageSize:"0"}).success).toBe(false);
