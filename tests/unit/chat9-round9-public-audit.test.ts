@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";import {join} from "node:path";
 import {publicPlacementContentInput,formatPublicPlacementMetric} from "@/modules/placements/public-page/content-model";
+import {tpoCommunicationChangeSchema} from "@/modules/placements/tpo-communication-change-model";
 const read=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("chat9 public page, signature and audit evidence",()=>{
  it("TPO-settings-audit-74 only previews privacy-cleared published values and validates the selected public metrics",()=>{
@@ -16,7 +17,11 @@ describe("chat9 public page, signature and audit evidence",()=>{
   const service=read("src/modules/placements/tpo-communication-settings-service.ts");
   const branding=read("src/app/(authenticated)/tpo/settings/branding/page.tsx");
   const editor=read("src/components/tpo/tpo-communication-settings-editors.tsx");
-  expect(service).toContain("emailSignature:z.string().trim().max(300)");
+  const validation=read("src/modules/placements/tpo-communication-change-model.ts");
+  expect(service).toContain("tpoCommunicationChangeSchema.parse(raw)");
+  expect(validation).toContain("emailSignature:z.string().trim().max(300)");
+  expect(tpoCommunicationChangeSchema.safeParse({section:"SIGNATURE",emailSignature:"x".repeat(300),expectedVersion:null}).success).toBe(true);
+  expect(tpoCommunicationChangeSchema.safeParse({section:"SIGNATURE",emailSignature:"x".repeat(301),expectedVersion:null}).success).toBe(false);
   expect(branding).toContain("TpoEmailSignatureEditor");
   expect(editor).toContain("How the end of an invite looks");
   expect(editor).toContain("Sending requires configured email delivery.");

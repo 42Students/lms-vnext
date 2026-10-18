@@ -7,6 +7,8 @@ export function singleValueMentorFilters(
   const allowed = new Set([
     "search", "status", "attention", "assignment", "work", "sort", "page", "pageSize",
     "view", "age", "version", "priority", "importance", "outcome", "required",
+    // Named project filters are user-selectable but must reach strict Zod UUID/state validation.
+    "projectId", "projectStatus",
     "link", "description", "order", "type",
   ]);
   const entries: [string, string | undefined][] = [];

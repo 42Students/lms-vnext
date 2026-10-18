@@ -57,3 +57,18 @@ All rows below are **implemented on the lane branch but not yet green-CI or Post
 
 ### Version control
 The current `main` was integrated into `chatgpt/chat-7-b` via PR 169 (`7824cea`) before these follow-up changes. Cloud test snapshots in `docs/orchestrator/typecheck-errors-latest.md` and `unit-failures-latest.md` are snapshots from `main`, not proof that the new branch changes passed. Retain every failing test and fix its real contract. **Do not close this lane without the exhaustive ledger's OPEN rows, new cloud verification and PostgreSQL races being resolved.**
+
+## Unit-failure triage and additional learner hardening (18 October 2026)
+
+The complete cloud unit-job logs (not just truncated `unit-failures-latest.md`) confirmed the following issues. All code fixes are on the chat-7 branch, but **CI has not reported green for this branch**.
+
+| ID / failing test | Root cause and repair | Commits |
+|---|---|---|
+| COURSES-WEAK-EXPORT-SERVICE-01 (two tests) | Aggregate mock received missing `kind` and missing `query.page`. Export now explicitly calls the context/kind/query service for every capped page, and the test's mock boundary forwards all three arguments while retaining all 1,000-row and CSV assertions. | `2561565`, `f87d639` |
+| COURSES-WEAK-DELIVERY-ROSTER-01 | Fragile single-line source substring did not match formatted `eq(sectionEnrollments.academicPeriodId, scope.academicPeriodId)`. Whitespace-insensitive regex still requires the exact equality; other tenant and learner role assertions remain. | `fe64c88` |
+| COURSES-WEAK-RESOURCE-MATERIALS-01 | Zod 4 `safeParse` executed a refinement on an invalid URL and threw `TypeError: Invalid URL`. URL refinement now catches invalid URL construction and returns false; invalid resource links are still rejected. `ProcessEnv` fixture typing also corrected. | `8329ef0`, `b4f410c` |
+| LEARNER-placements-47 | Listed in stale snapshot; the inspected newer workflow job log shows its three tests passed. Hardened URL action projection further against embedded credentials/fragments and added corresponding assertions. | `af77e88`, `544d104` |
+
+**Validation:** Draft PR [#175](https://github.com/42Students/lms-vnext/pull/175) triggered a cloud CI run, but the unit/typecheck/lint/build jobs were queued on last inspection. Until results arrive, do not claim zero failures. No test was weakened, disabled or deleted.
+
+**Projects continuation:** `PROJ-BREAK-LEARNER-SCALE-05` replaces repeated per-project task filtering/sorting with a linear earliest-due aggregation and a Set of eligible project IDs, paired with `PROJ-BREAK-LEARNER-DUE-05.test.ts` at 1,000 projects. `PROJ-BREAK-LEARNER-PROGRESS-04.test.ts` exercises revoked/wrong-role actor, forged project IDs, dedupe and empty states. `PROJ-BREAK-LEARNER-RELEASE-RACE-03` now accepts only mutable release states under row locks. PostgreSQL race and independent breaker checks remain open.
