@@ -93,3 +93,10 @@ A Faculty `GET /api/courses/faculty/assignments/[deliveryId]/methods` used `new 
 **Fix:** `assertPersistedFacultyTeachingMutation` (`src/modules/courses/faculty-persisted-teaching-guard.ts`) rechecks the persisted actor, active membership and Faculty role, college/organization and live teaching assignment under SHARE locks in the quiz publication transaction. The check runs after the quiz is locked and before a write/audit. Existing CAS and legacy wording remain unchanged.
 
 **Tests:** `tests/unit/COURSES-BREAK-FACULTY-03.test.ts` checks mid-transaction revocation causes zero writes/activity; `tests/unit/COURSES-BREAK-FACULTY-12.test.ts` checks revoked actor, changed membership, other tenant, suspended/ended member, removed Faculty role and ended teaching grant. **Open:** fresh CI and real two-session PostgreSQL race / independent reviewer.
+
+
+### FAC-QUIZ-016 — nonfinite score inflates Faculty distribution (S2)
+
+`getFacultyQuizReport` used only range comparisons for the histogram input, allowing `score=5,maxScore=Infinity` to contribute 0% even though `scoreSummary` rejects nonfinite scores. This made grade distribution disagree with valid graded count and average. The scoring projection now validates both score and maximum with `Number.isFinite` before computing percent.
+
+Behavioural evidence: `tests/unit/COURSES-BREAK-FACULTY-06.test.ts` adds NaN and Infinity variants and checks that invalid score evidence contributes no histogram count while retaining the submitted learner count. Await fresh CI and database-corruption integration tests.
