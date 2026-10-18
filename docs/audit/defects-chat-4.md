@@ -97,3 +97,6 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | COL-student-import-options-05 | S1 tenant integrity | CSV batch chooser used the cohort's program/department college, but did not validate independent `cohorts.start_period_id` belonged to that college. A corrupt cross-college start period could still be selectable. Added same-college `academicPeriods` join while retaining valid ongoing cohorts whose historical start period is CLOSED. | `chat4-college-student-import-options-hardening.test.ts` | PostgreSQL malformed FK fixture pending |
+
+
+| COL-student-import-placement-START-PERIOD-01 | S1 cross-tenant IDOR | Protecting the CSV batch-picker did not protect the direct placement action for a manually supplied section ID. The class target query validated the current period's college but not cohort's independent startPeriodId FK. Added aliased same-college start period join to the row-locked write transaction. | `chat4-college-import-placement-authorization.test.ts` | PostgreSQL direct-action adversarial fixture pending |
