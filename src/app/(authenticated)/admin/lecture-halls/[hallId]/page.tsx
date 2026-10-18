@@ -38,10 +38,10 @@ export default async function SuperAdminLectureHallAvailability({
     }
   }
 
-  return <main className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin · Lecture halls" title={result?.hall.name ?? "Room availability"}
       description="Read-only scheduled bookings. An empty schedule is not proof of a free room."
-      actions={<Link href="/admin/lecture-halls" className="font-semibold text-primary-text">Back to Lecture Halls</Link>} />
+      actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Back to Lecture Halls</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold">From (IST)
         <input name="from" type="date" required defaultValue={typeof raw.from === "string" ? raw.from : ""}
@@ -51,7 +51,7 @@ export default async function SuperAdminLectureHallAvailability({
         <input name="to" type="date" required defaultValue={typeof raw.to === "string" ? raw.to : ""}
           className="min-h-11 rounded border border-border bg-surface px-3" />
       </label>
-      <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">View schedule</button>
+      <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View schedule</button>
     </form>
     {!parsed.success
       ? raw.from !== undefined || raw.to !== undefined
@@ -76,5 +76,5 @@ export default async function SuperAdminLectureHallAvailability({
           {row.overConfiguredCapacity ? <p className="text-sm text-error">Class capacity exceeds hall capacity</p> : null}
         </li>)}</ul>
       </section>}
-  </main>;
+  </div>;
 }
