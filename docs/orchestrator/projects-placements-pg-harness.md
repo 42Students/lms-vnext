@@ -215,3 +215,6 @@ Real PostgreSQL cases now assert the active-grant unique index rejects a duplica
 
 ### PROJ-HARNESS-PLACEMENTS-25: fiscal-year date order
 The canonical placement season was inadvertently authored as 2099-10-01 through 2099-06-30, violating `placement_seasons_dates_ck` before the other PostgreSQL fixtures could start. It now spans **2098-10-01 through 2099-06-30**, with the published job deadline in June 2099; the duplicate ACTIVE season test uses a legal matching interval. Real PG case 25 asserts the interval and deadline inclusion, not merely source date strings.
+
+### PROJ-HARNESS-PLACEMENTS-26: atomic candidate graph
+Candidate creation now wraps application, screening, staged round result, offer and joining outcome in one savepoint, so a late offer/round failure does not leave an orphaned application when the caller catches the error. The PostgreSQL witness injects a failure after writes, checks all child tables for residue and retries with a valid candidate.

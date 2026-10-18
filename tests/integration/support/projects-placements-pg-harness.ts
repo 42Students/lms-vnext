@@ -615,26 +615,31 @@ export async function createPlacementCandidateFixture(
   // memberships and both users must still be active in the drive's college.
   await requireFixtureCollegePrincipal(db, job.college_id, learner, ["LEARNER"]);
   await requireFixtureCollegePrincipal(db, job.college_id, actor, ["COLLEGE_ADMIN", "TPO"]);
-  const [application] = await db.query<{id:string}>(`
-    insert into placement_applications
-      (job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
-    values ($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) returning id`,
-    [drive.jobId,drive.roleOptionId,learner.membershipId,learner.userId]);
-  await db.query(`
-    insert into placement_application_screenings(application_id) values ($1)
-    on conflict(application_id) do nothing`,[application!.id]);
-  const [result] = await db.query<{id:string}>(`
-    insert into placement_round_results
-      (round_id,application_id,version,outcome,source,status,submitted_by_user_id)
-    values ($1,$2,1,'PASS','TPO','STAGED',$3) returning id`,
-    [drive.roundId,application!.id,actor.userId]);
-  const [offer] = await db.query<{id:string}>(`
-    insert into placement_offers
-      (application_id,version,role_title,issued_by_user_id)
-    values ($1,1,'Software Engineer',$2) returning id`,
-    [application!.id,actor.userId]);
-  await db.query(`
-    insert into placement_joining_outcomes(offer_id) values ($1)`,[offer!.id]);
-  return {applicationId:application!.id,screeningApplicationId:application!.id,
-    roundResultId:result!.id,offerId:offer!.id};
+  // The application, screening, result, offer and joining outcome are one
+  // logical test fixture. A late CHECK/FK failure must not leave a partial
+  // candidate graph when the caller catches the error inside the outer TX.
+  return db.savepoint(async()=>{
+    const [application] = await db.query<{id:string}>(`
+      insert into placement_applications
+        (job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
+      values ($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) returning id`,
+      [drive.jobId,drive.roleOptionId,learner.membershipId,learner.userId]);
+    await db.query(`
+      insert into placement_application_screenings(application_id) values ($1)
+      on conflict(application_id) do nothing`,[application!.id]);
+    const [result] = await db.query<{id:string}>(`
+      insert into placement_round_results
+        (round_id,application_id,version,outcome,source,status,submitted_by_user_id)
+      values ($1,$2,1,'PASS','TPO','STAGED',$3) returning id`,
+      [drive.roundId,application!.id,actor.userId]);
+    const [offer] = await db.query<{id:string}>(`
+      insert into placement_offers
+        (application_id,version,role_title,issued_by_user_id)
+      values ($1,1,'Software Engineer',$2) returning id`,
+      [application!.id,actor.userId]);
+    await db.query(`
+      insert into placement_joining_outcomes(offer_id) values ($1)`,[offer!.id]);
+    return {applicationId:application!.id,screeningApplicationId:application!.id,
+      roundResultId:result!.id,offerId:offer!.id};
+  });
 }
