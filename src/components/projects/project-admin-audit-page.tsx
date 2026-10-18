@@ -203,7 +203,7 @@ export async function ProjectAdminAuditPage({
           <span className="mb-1 block text-xs font-semibold text-body">
             Importance
           </span>
-          <select
+          <Select
             className={inputClass}
             name="importance"
             defaultValue={importance ?? ""}
@@ -227,7 +227,7 @@ export async function ProjectAdminAuditPage({
           <span className="mb-1 block text-xs font-semibold text-body">
             Subject
           </span>
-          <input
+          <Input
             className={inputClass}
             name="subjectType"
             defaultValue={subjectType}
@@ -243,7 +243,7 @@ export async function ProjectAdminAuditPage({
           <span className="mb-1 block text-xs font-semibold text-body">
             From (IST)
           </span>
-          <input
+          <Input
             className={inputClass}
             name="from"
             type="date"
@@ -254,7 +254,7 @@ export async function ProjectAdminAuditPage({
           <span className="mb-1 block text-xs font-semibold text-body">
             To (IST)
           </span>
-          <input
+          <Input
             className={inputClass}
             name="to"
             type="date"
