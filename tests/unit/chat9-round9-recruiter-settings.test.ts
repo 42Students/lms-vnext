@@ -9,7 +9,9 @@ describe("chat-9 round9 TPO recruiter and communication settings",()=>{
   expect(route).toContain("getCurrentRequestContext()");
   expect(ui).toContain("Trust never replaces verification or recruiter access checks.");
   expect(ui).toContain("Free-mail addresses cannot be trusted.");
-  expect(ui).toContain('change("REMOVE",item)');
+  expect(ui).toContain('onClick={()=>setReview({action:"REMOVE",value:item})}');
+  expect(ui).toContain("<ConfirmDialog open={review!==null}");
+  expect(ui).toContain("if(review)void change(review.action,review.value);");
  });
  it("TPO-settings-audit-56 only extends a persisted active recruiter grant after explicit confirmation and expectedVersion",()=>{
   const ui=source("src/components/placements/tpo-recruiter-grant-controls.tsx");
