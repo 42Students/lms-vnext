@@ -438,3 +438,29 @@ These paths require one test row **per exported function** after parsing each fi
 | `src/modules/placements/hr-team-roster-message-model.ts` | `hrTeamRosterMessage` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/hr-team-search-model.ts` | `searchHrTeam` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/hr-today-action-queue-model.ts` | `buildRecruiterActionQueue` | **OPEN** — test and role matrix not verified |
+
+## Exported functions inventory offset 76 (16 files; 21 functions)
+
+| Source | Exported function | Test closure |
+|---|---|---|
+| `src/modules/placements/hr-today-change-request-service.ts` | `listRecruiterTodayChangeRequests` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-conversation-model.ts` | `hrTodayConversationSignals` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-deeplink-model.ts` | `recruiterTodayHref` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-live-drive-model.ts` | `hrTodayLiveDriveRows` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-offer-actions-service.ts` | `listRecruiterTodayOfferActions` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-open-slots-service.ts` | `listRecruiterTodayRoundsNeedingSlots` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-results-due-model.ts` | `projectHrTodayResultsDue` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-today-unread-model.ts` | `hrTodayUnreadAction` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-tpo-notification-service.ts` | `notifyTpoOfRecruiterAction` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-unsent-draft-storage-model.ts` | `hrDriveSessionStorageKey` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-unsent-draft-storage-model.ts` | `saveHrUnsentDraft` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/hr-unsent-draft-storage-model.ts` | `restoreHrUnsentDraft` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-access-defaults.ts` | `recruiterAccessMonthsOrDefault` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-applicant-resume-service.ts` | `grantRecruiterSharedResume` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-applicant-shared-links-model.ts` | `safeRecruiterExternalLink` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-applicant-shared-links-model.ts` | `projectRecruiterProfileLinks` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-approved-draft-job-service.ts` | `createRecruiterApprovedDraftJob` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-bell-model.ts` | `recruiterBellAriaLabel` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-bell-model.ts` | `recruiterBellPreview` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-board-view-model.ts` | `recruiterBoardColumn` | **OPEN** — test and role matrix not verified |
+| `src/modules/placements/recruiter-board-view-model.ts` | `shouldRenderCompaniesView` | **OPEN** — test and role matrix not verified |
