@@ -109,7 +109,9 @@ describe("College cross-audit component regressions",()=>{
   it("COL-XA-06 "+name+" offers an in-app confirmation",()=>{
    const s=placements(name);
    expect(s).not.toMatch(/window\.(?:confirm|prompt|alert)/);
-   expect(s).toContain("Confirm");
+   if(name==="college-drive-deadline-action") expect(s).toContain("Extend deadline for ");
+   else if(name==="college-drive-duplicate-action") expect(s).toContain("useCollegeConfirmation");
+   else expect(s).toContain("eligible drives?");
   });
  }
  const modals=[
