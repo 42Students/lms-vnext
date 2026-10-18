@@ -262,3 +262,21 @@ The 32-gap reconciliation failures in the older `unit-failures-latest.md` were s
 ### Source-level contract check for HTTP test fixtures
 
 The COMPANY/COLLEGE code request tests now submit exactly `{token,email}`, matching `publicJoinSendCodeSchema.strict()`. The corresponding join attempts submit `{token,email,code,name,designation,phone,companyName}`, matching `publicJoinAcceptSchema.strict()`. This avoids a falsely passing route test that used a code-bearing payload for send-code, which the real validation service would reject. The source's fail-closed handling and the tests continue to exercise the same public routes. Actual CI execution is still required.
+
+### Direct OTP provider and HR notification presentation matrix (chat-16 follow-on, 2026-10-18)
+
+| Export / boundary | Behaviour under isolated direct test | Evidence |
+|---|---|---|
+| `notifications/zeptomail-email.ts`: `readZeptoMailConfig`, `isSecureMailProviderEndpoint`, `createZeptoMailEmailProvider` | env override, unsafe URL rejection, malformed OTP/email no-send, normalized envelope and merge address, accepted HTTP, 429 and transport rejection without ambiguous retry | `tests/unit/chat16-otp-notification-provider-contract-16.test.ts` |
+| `notifications/exotel-sms.ts`: `readExotelConfig`, `createExotelSmsProvider` | missing DLT, phone/code/account validation, registered fields and OTP copy, SID plus queued acceptance only, negative provider result and broken JSON no-send | `tests/unit/chat16-otp-notification-provider-contract-16.test.ts` |
+| `placements/hr-conversation-unread-model.ts`: `summarizeRecruiterUnread` | empty and nonnegative aggregate | `tests/unit/chat16-hr-notification-display-contract-16.test.ts` |
+| `placements/hr-notification-groups-model.ts`: `groupHrNotificationPage` | stable grouping and unread tally | same |
+| `placements/hr-notification-read-feedback-model.ts`: `hrNotificationReadError` | explicit 401/403/404/409/429/503 safe copy | same |
+| `placements/hr-team-roster-message-model.ts`: `hrTeamRosterMessage` | empty, filtered, paged, sole-recruiter and populated states | same |
+| `placements/recruiter-message-tpo-notification-model.ts`: `recruiterMessageTpoRecipients`, `recruiterMessageTpoHref`, `recruiterMessageTpoPreview`, `RECRUITER_MESSAGE_TPO_TITLE` | deduplicated active recipients excluding sender, safe link fallback, bounded codepoints and exact title | same |
+
+**Fix:** OTP email provider now canonicalizes a validated address before constructing both the recipient envelope and merge payload; previously caller case/whitespace could pass inconsistently between validation and delivery. Tests were authored, **not executed**. Real network, inbox receipt, phone delivery, privileged session, browser accessibility, PostgreSQL concurrency and all outstanding broad matrix branches still require runtime validation. This table does not claim whole-module exhaustive coverage.
+
+### Legacy privileged bookmark destination fixed (chat-16, 2026-10-18)
+
+The platform root intentionally redirects anonymous visitors to the public marketing `/home` page, so old `/superadmin-login` and `/e2e/superadmin-login` aliases incorrectly sent staff toward marketing instead of the explicit OTP sign-in entry. Both now redirect directly to `/login`, preserving the privileged second factor and never accepting test-only credentials. The existing stricter legacy-redirect tests have been updated to assert `/login` rather than the broken root destination; a new invoked-page test `UX-superadmin-login-16` is in `tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts`. The real root/login route is already independently exercised by `UX-chat16-auth-platform-01`. Browser navigation and cloud CI are pending; this is a verified source-level correction, not a runtime test pass.

@@ -5,7 +5,7 @@ const read=(file:string)=>readFileSync(file,"utf8");
 describe("public legacy redirect accessibility and privacy",()=>{
  it("UX-e2e-superadmin-login-02 does not offer a privileged test-only sign-in",()=>{
   const page=read("src/app/e2e/superadmin-login/page.tsx");
-  expect(page).toContain('redirect("/")');
+  expect(page).toContain('redirect("/login")');
   expect(page).not.toContain("createSession");
   expect(page).not.toContain("SUPER_ADMIN");
  });
