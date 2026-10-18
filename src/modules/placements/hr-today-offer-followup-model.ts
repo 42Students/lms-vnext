@@ -11,3 +11,6 @@ export function prioritizeRecruiterOfferFollowups<T extends {
     a.jobTitle.localeCompare(b.jobTitle) || a.jobId.localeCompare(b.jobId))
   .slice(0,Math.max(0,Number.isSafeInteger(maximum)?maximum:30));
 }
+
+/** Follow-up on offers can continue after a drive stops accepting applicants. */
+export const HR_FOLLOWUP_JOB_STATUSES=["PUBLISHED","CLOSED"] as const;
