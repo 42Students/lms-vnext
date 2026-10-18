@@ -95,4 +95,31 @@ describe("chat-16 anonymous recruiter enquiry HTTP outage and scope safety",()=>
   expect(unavailable.status).toBe(503);
   expect(await unavailable.json()).toEqual({error:"RECRUITER_ENQUIRIES_UNAVAILABLE"});
  });
+ it("PUBLIC-ENQUIRY-SIZE-24 rejects oversize UTF-8 bytes at both public POST routes before services",async()=>{
+  const oversized=new Request("https://college.example.edu/api/public/recruit-from-us",{
+   method:"POST",headers:{host:"college.example.edu"},body:"é".repeat(5000),
+  });
+  const first=await sendCode(oversized);
+  expect(first.status).toBe(413);
+  expect(await first.json()).toEqual({error:"REQUEST_TOO_LARGE"});
+  const second=await recruit(new Request("https://college.example.edu/api/public/recruit-from-us",{
+   method:"POST",headers:{host:"college.example.edu"},body:"x".repeat(8193),
+  }));
+  expect(second.status).toBe(413);
+  expect(second.headers.get("cache-control")).toBe("no-store");
+  expect(sendPublicEnquiryCode).not.toHaveBeenCalled();
+  expect(submitPublicRecruitEnquiry).not.toHaveBeenCalled();
+ });
+ it("PUBLIC-ENQUIRY-SIZE-25 rejects malformed JSON and UTF-8 without contacting a provider",async()=>{
+  const broken=new Request("https://college.example.edu/api/public/recruit-from-us",{
+   method:"POST",headers:{host:"college.example.edu"},body:"{invalid-json",
+  });
+  expect((await sendCode(broken)).status).toBe(400);
+  const invalidUtf8=new Request("https://college.example.edu/api/public/recruit-from-us",{
+   method:"POST",headers:{host:"college.example.edu"},body:new Blob([Uint8Array.of(0xff,0xfe)]),
+  });
+  expect((await recruit(invalidUtf8)).status).toBe(400);
+  expect(sendPublicEnquiryCode).not.toHaveBeenCalled();
+  expect(submitPublicRecruitEnquiry).not.toHaveBeenCalled();
+ });
 });
