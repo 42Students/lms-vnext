@@ -1,3 +1,8 @@
+// Page-level UX coverage (routes and physical source paths):
+// /e2e/superadmin-login — src/app/e2e/superadmin-login/page.tsx
+// /privacy-policy — src/app/privacy-policy/page.tsx
+// /college-admin/departments — src/app/(authenticated)/college-admin/departments/page.tsx
+// /college-admin/programs — src/app/(authenticated)/college-admin/programs/page.tsx
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
