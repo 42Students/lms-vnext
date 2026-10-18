@@ -42,6 +42,18 @@ export function isSecureMailProviderEndpoint(value: string): boolean {
   }
 }
 
+/** Escape untrusted profile names before interpolating an OTP email template.
+ * Normal display names remain unchanged; control/BiDi formatting cannot
+ * inject markup, visual impersonation or extra mail-template lines.
+ */
+export function safeOtpEmailDisplayName(value:string):string{
+ const compact=value.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+/gu," ")
+  .replace(/\s+/gu," ").trim();
+ return Array.from(compact).slice(0,160).join("")
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
 export function createZeptoMailEmailProvider(
   config: ZeptoMailConfig = readZeptoMailConfig(),
   fetchImpl: typeof fetch = fetch,
@@ -86,9 +98,10 @@ export function createZeptoMailEmailProvider(
             ],
             merge_info: {
               otp: message.code,
-              learnerName: message.displayName,
+              learnerName: safeOtpEmailDisplayName(message.displayName),
               email: recipient,
-              mobile: message.phoneE164 ?? "",
+              mobile: message.phoneE164 && /^\+[1-9][0-9]{7,14}$/.test(message.phoneE164)
+                ? message.phoneE164 : "",
               expiryMinutes: "5",
             },
           }),

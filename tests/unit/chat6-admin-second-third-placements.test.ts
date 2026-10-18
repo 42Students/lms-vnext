@@ -89,7 +89,9 @@ describe("/admin placements second-third: scoping, filtering, counts, links", ()
     for (const bad of [
       { page: 0 }, { pageSize: 200 }, { pageSize: 3 }, { status: "PUBLISHED" },
       { q: "x".repeat(101) }, { collegeId: college },
-      { page: ["1", "2"] },
+      { page: ["1", "2"] }, { page: ["2"] }, { pageSize: ["50"] },
+      { page: "1e2" }, { page: "0x10" }, { page: "1.0" },
+      { page: true }, { pageSize: true },
     ]) expect(adminDriveDirectoryQuerySchema.safeParse(bad).success, JSON.stringify(bad)).toBe(false);
     const query = adminDriveDirectoryQuerySchema.parse({q:"&page=999",status:"ACTIVE",page:2,pageSize:50});
     const url = new URL(adminDriveDirectoryHref(query),"https://platform.example.edu");

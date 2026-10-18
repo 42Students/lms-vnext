@@ -103,3 +103,30 @@ Authored-only under the owner’s no-CI policy; phone/browser acceptance remains
 Outstanding: these unit regressions have not been run; acting-college A/B live switch, browser/network degradation,
 PostgreSQL role/tenant/race matrix, complete content builder acceptance and private scanned
 upload integration remain release gates. No CI result was invented and no existing test was weakened.
+
+
+## 2026-10-19 assessment, discussion and certification continuation
+
+| Defect | Severity | Failure and fix | Authored regression |
+|---|---|---|---|
+| LEARNER-ASSESSMENT-GRADE-17 | S2 | Assignment published grade label could display negative, nonsensical persisted marks. `75e413f` suppresses negative and nonfinite figures while preserving valid zero marks. | `tests/unit/chat7-learner-assessment-discussion-policy-matrix.test.ts` |
+| LEARNER-ASSESSMENT-PAGE-18 | S3 | Read-only course and assessment count strings could interpolate NaN or Infinity from corrupt numeric metadata. `47a4679`/`416a739` clamp nonfinite counts and invalid page metadata to bounded defaults. | Same named assessment test |
+| LEARNER-CERT-DUP-ID-19 | S2 | Profile certifications allowed two distinct credential rows with identical editable IDs; duplicate React keys could redirect edit/delete selection. `6a653e9` rejects duplicate IDs by indexed field path without relaxing the 50-entry cap. | `tests/unit/chat7-learner-certificates-role-and-input-matrix.test.ts` |
+| LEARNER-COURSE-PROGRESS-20 | S3 | Course percent card accepted positive NaN/Infinity totals and could claim a meaningful percentage with no finite denominator. `7bfc574` requires finite positive tracked total. | `tests/unit/chat7-learner-course-home-assessments-model-matrix.test.ts` |
+| LEARNER-COURSE-DEADLINE-21 | S2 | Overdue deep-link projection used strict less-than due, while submission closes exactly at due equality. `c2b72a4` aligns overdue action/link state with closed server boundary. | Same named course-home test |
+| SA-LESSON-PROGRESS-PICKER-22 | S2 | A temporary failure reading lesson-create paths or course/cohort pickers hid authorized Lessons or Course Progress directories. `f14ff6e`/`be80f37` isolate these readers and show degraded-state notices; `1c28a79` rejects repeated browser filters. | `tests/unit/chat7-admin-learning-directory-resilience.test.ts` |
+
+All entries are **source-authored only**. Per owner priority, strict compiler,
+unit tests, PostgreSQL integration, devices and CI will be run only after all
+development lanes complete. This is not a claim of test pass or deploy readiness.
+
+
+**SA-COURSES-PREVIEW-23 (S2):** Admin external course content read previews
+previously allowed credential-free HTTPS `localhost`, link-local, RFC1918
+and cloud metadata URLs from legacy DB data. Although rendered links do not
+trigger a privileged backend fetch, clicking them could contact the admin's
+private network. `e2fa3fe5` now reuses the existing material public-link
+sanitizer, and `9a9f97ac` extends
+`tests/unit/chat7-admin-courses-content-hardening.test.ts` with
+localhost, private IPv4, IPv6 loopback and metadata denial.
+Authored-only; verify in browser and with genuine legacy link fixtures.
