@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 import {useRef,useState,type FormEvent} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -164,27 +167,27 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       setDeleteTarget(null);
     }catch(error){problem(error);}finally{setBusy(false);}
   }
-  return <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
+  return <section className="space-y-4 border-b border-border pb-5">
     <h3 className="m-0 text-base font-semibold text-foreground">Attached</h3>
     {canUpload&&<form onSubmit={upload} className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm font-medium text-body">Title
-          <input className="mt-1 block w-full rounded border border-border bg-surface p-2"
+          <Input className="mt-1 block w-full rounded border border-border bg-surface p-2"
             maxLength={200} value={uploadTitle} onChange={event=>setUploadTitle(event.target.value)}
             disabled={busy} placeholder="Resource title"/>
         </label>
         <label className="text-sm font-medium text-body">Description
-          <input className="mt-1 block w-full rounded border border-border bg-surface p-2"
+          <Input className="mt-1 block w-full rounded border border-border bg-surface p-2"
             maxLength={4000} value={uploadDescription} onChange={event=>setUploadDescription(event.target.value)}
             disabled={busy} placeholder="Short note about this resource"/>
         </label>
       </div>
       {resources.length>0?<label className="block text-sm font-medium text-body">Related resource (optional)
-        <select value={linkedResourceId} disabled={busy} onChange={event=>setLinkedResourceId(event.target.value)}
+        <Select value={linkedResourceId} disabled={busy} onChange={event=>setLinkedResourceId(event.target.value)}
           className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3">
           <option value="">New standalone file</option>
           {resources.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
-        </select>
+        </Select>
       </label>:null}
       <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>
       <input id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
@@ -197,12 +200,12 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
         <progress value={progress} max={100} className="ml-2 max-w-full"/>
       </div>}
       <div className="flex flex-wrap gap-2">
-        <button type="submit" disabled={busy||!selected}
+        <Button variant="primary" type="submit" disabled={busy||!selected}
           className="rounded bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
           {busy?"Uploading…":"Upload file"}
-        </button>
-        {busy&&<button type="button" onClick={()=>xhrRef.current?.abort()}
-          className="rounded border border-border px-3 py-2 text-sm">Cancel</button>}
+        </Button>
+        {busy&&<Button variant="secondary" type="button" onClick={()=>xhrRef.current?.abort()}
+          className="rounded border border-border px-3 py-2 text-sm">Cancel</Button>}
       </div>
     </form>}
     {files.length===0?<p className="text-sm text-muted-foreground">
@@ -231,35 +234,35 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {projectFileUsable(file)&&<button type="button" disabled={busy} onClick={()=>void download(file)}
-                className="rounded border border-border px-3 py-1.5 text-sm">Open file</button>}
+              {projectFileUsable(file)&&<Button variant="secondary" type="button" disabled={busy} onClick={()=>void download(file)}
+                className="rounded border border-border px-3 py-1.5 text-sm">Open file</Button>}
               {canManage&&<>
-                {file.status==="UPLOADING"&&<button type="button" disabled={busy}
-                  onClick={()=>void retryComplete(file)} className="rounded border border-border px-3 py-1.5 text-sm">Retry</button>}
-                <button type="button" disabled={busy} onClick={()=>beginEdit(file)}
-                  className="rounded border border-border px-3 py-1.5 text-sm">Edit resource</button>
-                <button type="button" disabled={busy} onClick={()=>setDeleteTarget(file)}
-                  className="rounded border border-border px-3 py-1.5 text-sm">Delete</button>
+                {file.status==="UPLOADING"&&<Button variant="secondary" type="button" disabled={busy}
+                  onClick={()=>void retryComplete(file)} className="rounded border border-border px-3 py-1.5 text-sm">Retry</Button>}
+                <Button variant="secondary" type="button" disabled={busy} onClick={()=>beginEdit(file)}
+                  className="rounded border border-border px-3 py-1.5 text-sm">Edit resource</Button>
+                <Button variant="secondary" type="button" disabled={busy} onClick={()=>setDeleteTarget(file)}
+                  className="rounded border border-border px-3 py-1.5 text-sm">Delete</Button>
               </>}
             </div>
           </div>
           {editing===file.id&&canManage&&<form onSubmit={event=>void saveEdit(event,file)}
             className="mt-3 grid gap-2 sm:grid-cols-2">
             <label className="text-sm text-body">Title
-              <input required maxLength={200} value={editTitle} disabled={busy}
+              <Input required maxLength={200} value={editTitle} disabled={busy}
                 onChange={event=>setEditTitle(event.target.value)}
                 className="mt-1 block w-full rounded border border-border bg-surface p-2"/>
             </label>
             <label className="text-sm text-body">Description
-              <input maxLength={4000} value={editDescription} disabled={busy}
+              <Input maxLength={4000} value={editDescription} disabled={busy}
                 onChange={event=>setEditDescription(event.target.value)}
                 className="mt-1 block w-full rounded border border-border bg-surface p-2"/>
             </label>
             <div className="flex gap-2 sm:col-span-2">
-              <button type="submit" disabled={busy||!editTitle.trim()}
-                className="rounded bg-primary px-3 py-2 text-sm text-primary-foreground">Update resource</button>
-              <button type="button" disabled={busy} onClick={discardGuard.requestClose}
-                className="rounded border border-border px-3 py-2 text-sm">Cancel</button>
+              <Button variant="secondary" type="submit" disabled={busy||!editTitle.trim()}
+                className="rounded bg-primary px-3 py-2 text-sm text-primary-foreground">Update resource</Button>
+              <Button variant="secondary" type="button" disabled={busy} onClick={discardGuard.requestClose}
+                className="rounded border border-border px-3 py-2 text-sm">Cancel</Button>
             </div>
           </form>}
         </li>;
