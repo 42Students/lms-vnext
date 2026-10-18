@@ -1,4 +1,3 @@
-import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { and, eq, ilike, or } from "drizzle-orm";

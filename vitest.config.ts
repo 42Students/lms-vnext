@@ -11,7 +11,7 @@ export default defineConfig({
     name: "vitest-source-tsx-react-jsx",
     enforce: "pre",
     transform(source, id) {
-      if (!id.split("?")[0].endsWith(".tsx") || !id.includes("/src/")) return null;
+      if (!id.split("?")[0].endsWith(".tsx") || !(id.includes("/src/") || id.includes("/tests/"))) return null;
       const result = ts.transpileModule(source, {
         fileName: id,
         compilerOptions: {
@@ -26,7 +26,13 @@ export default defineConfig({
   }],
   test: {
     environment: "node",
-    include: ["tests/unit/**/*.test.ts"],
+    include: [
+      "tests/unit/**/*.test.ts",
+      "tests/unit/**/*.test.tsx",
+      "tests/ux-playbook-primitives.test.tsx",
+      "tests/ux-playbook-compatibility.test.tsx",
+      "tests/ux-color-contrast.test.ts",
+    ],
   },
   resolve: {
     alias: {

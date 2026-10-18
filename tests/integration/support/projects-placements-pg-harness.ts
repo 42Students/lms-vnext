@@ -46,6 +46,13 @@ const REQUIRED_TABLES = [
   "placement_offers","placement_joining_outcomes",
 ] as const;
 
+function clearlyDisposableDatabaseName(name: string): boolean {
+  // Avoid substring "ci" in "financial" or "test" in "contest" accidentally
+  // authorising access to a real data store.
+  return /(?:^|[_-])(?:test|testing|ci|tmp)(?:$|[_-])/i.test(name) &&
+    !/(?:prod|production|live|staging)/i.test(name);
+}
+
 export function disposableDatabaseUrl(): string {
   const raw = process.env.TEST_DATABASE_URL;
   if (!raw) throw new Error("PROJ-HARNESS: set an explicit disposable TEST_DATABASE_URL (DATABASE_URL is never used)");
@@ -53,8 +60,7 @@ export function disposableDatabaseUrl(): string {
   try { url = new URL(raw); } catch { throw new Error("PROJ-HARNESS: TEST_DATABASE_URL must be a PostgreSQL URL"); }
   const dbName = decodeURIComponent(url.pathname.slice(1));
   if (!["postgres:","postgresql:"].includes(url.protocol) ||
-      !/(?:test|ci|tmp)/i.test(dbName) ||
-      /(?:prod|production|live)/i.test(dbName)) {
+      !clearlyDisposableDatabaseName(dbName)) {
     throw new Error("PROJ-HARNESS: refusing database without a clearly disposable test/ci/tmp name");
   }
   return raw;
@@ -66,8 +72,7 @@ export function newHarnessPool(): Pool {
 }
 export async function assertHarnessSchema(client: PoolClient): Promise<void> {
   const name = await client.query<{name: string}>("select current_database() as name");
-  if (!/(?:test|ci|tmp)/i.test(name.rows[0]?.name ?? "") ||
-      /(?:prod|production|live)/i.test(name.rows[0]?.name ?? "")) {
+  if (!clearlyDisposableDatabaseName(name.rows[0]?.name ?? "")) {
     throw new Error("PROJ-HARNESS: refusing non-test PostgreSQL database");
   }
   const tables = await client.query<{name: string; reg: string|null}>(
@@ -303,20 +308,23 @@ export async function createPlacementFixture(db: PgHarness, tenant: TenantFixtur
   const [relationship] = await db.query<{id:string}>(`
     insert into placement_company_relationships (college_id,company_id,created_by_user_id)
     values ($1,$2,$3) returning id`,[tenant.collegeId,company!.id,author.userId]);
-  const [season] = await db.query<{id:string}>(`
+  const existing = await db.query<{id:string}>(`
+    select id from placement_seasons where college_id=$1 and status='ACTIVE'
+    order by created_at,id limit 1`,[tenant.collegeId]);
+  const season = existing[0] ?? (await db.query<{id:string}>(`
     insert into placement_seasons (college_id,name,code,start_date,end_date,created_by_user_id)
     values ($1,$2,$3,$4,$5,$6) returning id`,
-    [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2026-10-01","2027-06-30",author.userId]);
+    [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2026-10-01","2027-06-30",author.userId]))[0]!;
   const [job] = await db.query<{id:string}>(`
     insert into placement_jobs (college_id,company_relationship_id,season_id,title,description,
       employment_type,work_mode,created_by_user_id)
     values ($1,$2,$3,'Harness drive','Fixture job','FULL_TIME','REMOTE',$4) returning id`,
-    [tenant.collegeId,relationship!.id,season!.id,author.userId]);
+    [tenant.collegeId,relationship!.id,season.id,author.userId]);
   const [round] = await db.query<{id:string}>(`
     insert into placement_job_rounds (job_id,sequence,kind,name,created_by_user_id)
     values ($1,1,'INTERVIEW','Harness interview',$2) returning id`,
     [job!.id,author.userId]);
-  return {companyId:company!.id,relationshipId:relationship!.id,seasonId:season!.id,
+  return {companyId:company!.id,relationshipId:relationship!.id,seasonId:season.id,
     driveId:job!.id,jobId:job!.id,roundId:round!.id};
 }
 

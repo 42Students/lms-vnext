@@ -10,6 +10,8 @@ Definition of "exhaustive coverage" for a module or page group (used in every te
 5. Database-backed behaviour gets integration tests that run on PostgreSQL (see `docs/orchestrator/` local DB recipe): constraints, cascades, indexes, rollback.
 6. Tests must assert behaviour, never only existence. Name tests with the module and case.
 
+ALSO, always: read docs/orchestrator/typecheck-errors-latest.md and fix compile errors in YOUR files first, then docs/orchestrator/unit-failures-latest.md (section for your lane). Both files are refreshed by the orchestrator after every CI run. Write only to your own defect and ledger files to avoid merge conflicts.
+
 ## TOP PRIORITY (owner, 13:40): PROJECTS FOR IIT DHARWAD AND UNBREAKABLE ACCOUNTS
 The Projects module is the product we sell first. Before anything else in your Pass B section, do your part of `docs/orchestrator/briefs/projects-iit-dharwad-hardening.md` (squad and roles are listed at its end). Then use `docs/audit/coverage/WEAK-AREAS.md` (regenerate with `node scripts/audit/weak-test-areas.mjs`) to add behavioural tests in the weakest areas for your modules, starting with auth, system-roles, tenant-domains, identity, academics, admin-ui, bug-tracker, colleges, messaging. Every account (Super Admin, College Admin, TPO, HR/Recruiter, Faculty, Mentor, Learner) must be unbreakable: write role journey tests that try to break each account with bad input, double submits, stale tabs, wrong tenant, expired session. The visual check on dev is the very last step of everything; do not wait for it.
 
