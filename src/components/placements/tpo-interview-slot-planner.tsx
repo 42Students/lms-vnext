@@ -59,7 +59,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <button type="button" disabled={busy||!date||!rooms.trim()} onClick={()=>void action({
       action:"GENERATE_DAY",startsAt:new Date(date+"+05:30").toISOString(),durationMinutes:minutes,
       gapMinutes:gap,slotsPerRoom:count,rooms:rooms.split(",").map(v=>v.trim()).filter(Boolean),
-    })} className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
+    })} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
      Generate day</button>
     <button type="button" disabled={busy||!free.length} onClick={()=>setConfirmRequest({title:"Remove "+free.length+" unbooked interview slots?",description:"Existing bookings stay unchanged.",body:{action:"CLEAR_AVAILABLE"}})}
      className="min-h-11 sm:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
@@ -86,7 +86,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     Previewed · Assign room
    </button>
   </div>
-  {reschedules.length?<section className="space-y-3 border-t border-border pt-5">
+  {reschedules.length?<section className="space-y-3 border-b border-border pb-6">
    <h2 className="font-semibold">Pending reschedule requests · {reschedules.length}</h2>
    <p className="text-sm text-body">Move a learner to an available slot, or Keep the current booking and answer the request. Decisions and student notifications are recorded.</p>
    {reschedules.map(req=><div key={req.id} className="space-y-3 rounded border border-border p-3">
@@ -124,7 +124,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <button type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
      onClick={()=>void action({action:"CONFIRM_RECRUITER_PROPOSAL",proposalId:p.id,expectedVersion:p.version,
       venue:(venue[p.id]??p.meetingLocation??"").trim()})}
-     className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
+     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
      Confirm recruiter proposal
     </button>
    </div>)}
@@ -143,7 +143,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
         className="min-h-11 sm:min-h-9 rounded-[9px] border border-border bg-surface px-2 text-sm">
         <option value="">Choose student</option>{waiting.map(c=><option key={c.applicationId} value={c.applicationId}>{c.roll??""} {c.name??"Learner"}</option>)}
        </select>
-       <button type="button" disabled={busy||!pick[slot.id]} className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50"
+       <button type="button" disabled={busy||!pick[slot.id]} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground"
         onClick={()=>void action({action:"BOOK",slotId:slot.id,expectedVersion:slot.version,applicationId:pick[slot.id]})}>Book</button>
       </div>:<div className="flex flex-wrap items-center gap-2">
        <select aria-label="Move to available slot" value={move[slot.id]??""}

@@ -105,7 +105,7 @@ export function TpoRoundDriveDayReadOnly({
       <p className="text-sm text-body">
         <a
           href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-          className="inline-flex min-h-10 items-center rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary hover:bg-primary-hover"
+          className="inline-flex min-h-10 items-center rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary hover:bg-primary-hover text-primary-foreground"
         >
           Export round attendance (CSV)
         </a>
@@ -120,7 +120,7 @@ export function TpoRoundDriveDayReadOnly({
         </Link>
       </p>
 
-      <section className="border-t border-border pt-5">
+      <section className="border-b border-border pb-6">
         <h2 className="text-base font-semibold text-foreground">
           Round details
         </h2>
