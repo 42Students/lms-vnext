@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,isNull,or} from "drizzle-orm";
+import {and,eq,inArray,isNull,or,sql,lte} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {courseLearningPaths,courseLessons,lessonContents} from "@/db/schema";
@@ -34,6 +34,10 @@ export async function getLearnerCourseFileReference(
   eq(courseLessons.visibleToStudents,true),
   eq(lessonContents.status,"PUBLISHED"),
   eq(lessonContents.visibleToStudents,true),
+  // A published item may have a future release time. Do not bypass the
+  // learner workspace's SCHEDULED state by requesting its signed file URL.
+  // PostgreSQL's own clock is the authority at the authorization boundary.
+  or(isNull(lessonContents.startsAt),lte(lessonContents.startsAt,sql`now()`)),
   or(isNull(lessonContents.deliveryId),eq(lessonContents.deliveryId,deliveryId)),
  )).limit(1);
  return file?.storageKey??null;

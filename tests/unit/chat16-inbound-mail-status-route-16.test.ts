@@ -63,6 +63,18 @@ describe("chat-16 private inbound-mail status route",()=>{
    expect.objectContaining({user:expect.objectContaining({id:"admin"})}),payload,
   );
  });
+ it("inbound-mail-route-21 projects a persisted versioned TRIAGED result",async()=>{
+  const input={...payload,status:"TRIAGED"};
+  vi.mocked(changeInboundMailStatusForAdmin).mockResolvedValue({
+   kind:"UPDATED",id:payload.id,status:"TRIAGED",version:2,
+  });
+  const result=await PATCH(send(input));
+  expect(result.status).toBe(200);
+  expect(await result.json()).toMatchObject({status:"TRIAGED",version:2});
+  expect(changeInboundMailStatusForAdmin).toHaveBeenCalledWith(
+   expect.objectContaining({user:expect.objectContaining({id:"admin"})}),input,
+  );
+ });
  it("inbound-mail-route-20 uses the shared safe error response for invalid bodies and session failures",async()=>{
   vi.mocked(getCurrentRequestContext).mockRejectedValue(new Error("opaque credential"));
   const result=await PATCH(send());

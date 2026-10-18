@@ -107,3 +107,27 @@ All newly authored tests remain pending cloud execution; migration retains the p
 
 | PROJ-HARNESS-51 | S1 (project fixture lineage) | Fixture previously assigned a DRAFT template to a college and started an ACTIVE sprint under a PLANNED release; these states were not a realistic published workspace for customer journeys. | Publish template version 1 before assignment and explicitly create IN_PROGRESS release; real PG PROJ-HARNESS-51 and source GUARD-12. | Authored; PostgreSQL CI pending |
 
+
+| UX-kit-HARDEN-53 | S2 (keyboard discoverability) | The disabled action description was on a nonfocusable span, while the disabled native button is skipped by Tab: keyboard users could not discover why the action is unavailable. | Focusable disabled-only wrapper with `role=group` and associated description, preserving child IDs; `tests/unit/UX-kit-projects-hardening-chat17.test.tsx` HARDEN-53. | Source/test authored; browser verification at final CI |
+
+| UX-kit-HARDEN-54 | S2 (form a11y) | FileUpload silently replaced a caller's external aria-describedby and aria-invalid, losing an associated validation or field hint when wrapped in larger forms. | Shared FileUpload merges external help IDs and preserves enabled invalid semantics, clears invalid for disabled states; UX-kit-HARDEN-54 test. | Source/test authored; final CI pending |
+
+| PROJ-HARNESS-PLACEMENTS-15/16 | S1 (real PG fixture integrity) | Canonical `placement_applications.role_option_id` is NOT NULL, but candidate fixture omitted it, meaning the purported real-PostgreSQL integration graph could not be inserted. A forged cross-drive role option could also pollute a suite. | Published drive creates active primary role option; candidate must link an active same-drive option; added PostgreSQL cases 15/16 plus GUARD-14. | Authored; runtime acceptance pending |
+
+| PROJ-HARNESS-TENANCY-17 | S1 (multi-college isolation) | Previously only cross-organization examples existed; a learner/administrator from a second college under the SAME organization could pass a weakened org-only authorization query unnoticed. | Added sibling-college fixture and explicit Project task/final/meeting and Placement drive/application denials in real-PG case PROJ-HARNESS-TENANCY-17. | Authored; PostgreSQL acceptance pending |
+
+| PROJ-HARNESS-PLACEMENTS-17 | S1 (placement lifecycle) | Published job + stale season can become CLOSED while the old fixture still constructs new applicants and offers. | Persisted same-college ACTIVE season required in candidate fixture; SQL test 17 closes the season and verifies no new application; source GUARD-16. | Authored; final PostgreSQL gate pending |
+
+| PROJ-HARNESS-PLACEMENTS-18 | S1 (round state) | Fixture would create staged candidate results for a drive round that had already been cancelled. | Reads selected round status, refuses CANCELLED; PG case 18 and source GUARD-17. | Authored; final PostgreSQL CI pending |
+
+| UX-kit-HARDEN-55 | S2 (motion a11y) | Shared interactive Tabs used a color transition even when the user requested reduced motion. | Adds `motion-reduce:transition-none` and ARIA-preserving tab regression HARDEN-55. | Authored; final browser gate pending |
+
+| UX-kit-HARDEN-56 | S2 (pending state a11y) | `Button` rendered `aria-busy` before `...props`, allowing a stale caller-provided false value to override its actual loading state. | `aria-busy` is now derived after spreading native props; regression HARDEN-56 covers loading and idle. | Authored; final CI pending |
+
+| UX-kit-HARDEN-57 | S2 (feedback resilience) | A success notice could auto-dismiss entirely while the operator switched browser tabs, leaving no acknowledgment on return. | `InlineNotice` schedules timeout only on visible documents, resets on visibility change and cleans up listener; HARDEN-57 test. | Authored; browser gate pending |
+
+| UX-kit-E2E-07/08/09 | S2 (browser witness coverage) | SSR assertions cannot establish actual focus reachability, document visibility timers, computed reduced-motion CSS, or DOM accessibility relationships in the shipped UI. | Development-only harness and Playwright cases cover disabled action, hidden-tab notice, FileUpload external description and reduced-motion tab. | Authored; deferred end-of-sprint Chromium gate |
+
+| PROJ-HARNESS-PREFLIGHT-19 | S2 (migration preflight) | A repository whose registered PostgreSQL schema lags the new role-option/published-drive fixture would fail partway through setup with an opaque missing-column error. | Expanded `assertHarnessSchema` required-column preflight before BEGIN; test PREFLIGHT-19 checks protected column names. | Authored; final DB runner pending |
+
+| PROJ-HARNESS-PLACEMENTS-19 | S1 (registered DB ancestry gap) | Drizzle/registered 0029 contains independent FKs for application.job_id and role_option_id; direct SQL can create a job/role option pair from different jobs. Fixture checks are insufficient to enforce database invariants. | Composite parent unique and application composite FK modeled in `src/db/schema/placements.ts`; unnumbered proposed SQL; adversarial real PG case -19 demands SQLSTATE 23503. | **Pending orchestrator migration registration; expected DB test failure until then** |

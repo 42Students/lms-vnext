@@ -9,3 +9,7 @@ Behavioral page-level regressions exercise mismatched and disabled actors, valid
 ## Additional entrypoints reviewed
 
 `/hr/activity`, `/hr/conversations`, `/hr/conversations/[threadId]`, `/hr/notifications` and `/hr/drives/recorded-outside` now independently check principal ownership before any scoped query or grant-choice rendering. Existing page-level suites were expanded and a direct recorded-outside page test was added. This closes the missing recruiter principal gates found during chat-19's review of the 22 HR page entrypoints, not a claim that UI/accessibility or CI is otherwise complete.
+
+## Invariant across the full 22-route HR slice
+
+Twenty real recruiter page readers and two aliases (`/hr/colleges`, `/hr/messages`). All real pages now require recruiter profile userId equality before private data reads, covered by `tests/unit/chat19-hr-page-contracts.test.ts`. Per-route tests are mapped in `docs/audit/coverage/hr-pages-ledger.md`. This is authored coverage, not a CI-green certification.

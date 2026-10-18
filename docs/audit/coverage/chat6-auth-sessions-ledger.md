@@ -120,3 +120,7 @@ Account device enumeration and revocation now set `Cache-Control: private, no-st
 ## AUTH-OTP-14 strict OTP payload and cache safety
 
 Start, verify and email-fallback routes now reject unknown JSON properties and apply `Cache-Control: private, no-store` on successful challenges and session cookies. The shared guard/error helper sets private no-store headers on invalid origin, malformed bodies, throttling, unknown tenants and provider errors. Tests: `tests/unit/chat6-auth-tenant-failclosed.test.ts` and `tests/unit/chat6-auth-otp-strict-private-14.test.ts`. CI, live provider tests and browser verification remain pending.
+
+## AUTH-tenant-cache-15 avoid full cache eviction under unknown-host pressure
+
+The tenant resolver previously `cache.clear()`ed all verified and unverified hosts when a 501st hostname was encountered. This allowed an attacker rotating unknown hostnames to repeatedly invalidate valid college mappings and amplify DB lookups. The bounded 500-entry cache now removes expired entries first and then the oldest entry, preserving other cached verified domains. `tests/unit/chat6-auth-tenant-cache-15.test.ts` checks saturation with 498 unknown hosts, two verified college hosts and an additional unknown host, as well as fail-closed DB outages. Source authored; the owner has deferred CI until all queue work is complete.

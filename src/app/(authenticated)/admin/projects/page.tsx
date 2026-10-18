@@ -74,6 +74,11 @@ export default async function SuperAdminProjectsPage({
     </div>;
   }
   const query: ProjectAdminCollectionQuery = parsed.data;
+  // The strict service schema accepts database filters only, not the
+  // presentational view toggle. Keep cards/table navigation in the UI.
+  const serviceQuery = {
+    q: query.q, status: query.status, page: query.page, pageSize: query.pageSize,
+  };
   const view = parsed.data.view;
   const viewHref = (targetView:"table"|"cards") => {
     const params=new URLSearchParams();
@@ -89,7 +94,7 @@ export default async function SuperAdminProjectsPage({
   // authorized workspace rows; a workspace outage must not masquerade as an
   // empty directory (or leak a database exception to the customer).
   const [snapshotsResult, templatesResult] = await Promise.all([
-    listProjectAdminSnapshots(context, collegeId, query)
+    listProjectAdminSnapshots(context, collegeId, serviceQuery)
       .then(value => ({ok:true as const,value}))
       .catch(() => ({ok:false as const})),
     listAssignedProjectTemplates(context, collegeId)

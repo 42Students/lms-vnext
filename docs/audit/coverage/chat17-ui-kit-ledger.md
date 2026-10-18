@@ -127,3 +127,15 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-HARDEN-51:** The native `Switch` has both track and `::after` sliding thumb transitions. `motion-reduce:after:transition-none` prevents the thumb animating when reduced motion is requested; `UX-kit-states-chat17.test.tsx` verifies both transition gates. Live reduced-motion browser computation remains pending.
 
 - **UX-kit-HARDEN-52:** Pagination caps finite page counts at `Number.MAX_SAFE_INTEGER` instead of emitting duplicate page keys/navigation links beyond JavaScript's exact integer range. Unit case verifies distinct adjacent page links at the extreme boundary and rejects scientific-notation URLs. Actual backend pagination remains capped separately.
+
+- **UX-kit-HARDEN-53:** `DisabledReason` now gives its wrapper a keyboard tab stop only if its single child action is disabled. The native disabled Button remains disabled, while the focusable group reads the visible reason and the Button retains pre-existing `aria-describedby` IDs. Enabled actions do not gain a redundant focus stop. Tested via SSR association/keyboard-focusability contract; real screen reader validation remains a final acceptance gate.
+
+- **UX-kit-HARDEN-54:** FileUpload merges caller-supplied `aria-describedby` targets with its own helper/error/unavailable IDs instead of overwriting them. Externally validated enabled fields keep `aria-invalid`; disabled pickers never claim to be invalid. SSR test checks both states and relationships; browser FileList and assistive technology acceptance remains pending.
+
+- **UX-kit-HARDEN-55:** Interactive Tabs motion is now disabled under `prefers-reduced-motion` without changing legacy labels, role=tab, ARIA selection or focus navigation. The shared Buttons/Input/Select/Textarea were already motion-safe; tab indicator was the missing transition exception.
+
+- **UX-kit-HARDEN-56:** Loading Button's actual busy/disabled semantics can no longer be overwritten by a caller's stale `aria-busy={false}`; explicit non-loading ARIA busy values still pass through. This fixes misleading screen-reader state while guarded saves run.
+
+- **UX-kit-HARDEN-57:** Inline success notices no longer vanish while the app is backgrounded. Their dismissal timer pauses when `document.hidden` and restarts when the tab becomes visible. Error/info notices retain their original persistence and no component text changes. Source/SSR state test added; browser visibility-event behavior awaits final acceptance.
+
+- **UX-kit-E2E-07/08/09:** Development-only Chromium fixtures now exercise focus on the disabled-reason wrapper and its associated description, a hidden-tab success notice that remains readable until return, FileUpload merging external help with built-in help, and actual reduced-motion Tabs transition duration. These complement static unit contracts; browser CI deferred by owner until full task queue completion.
