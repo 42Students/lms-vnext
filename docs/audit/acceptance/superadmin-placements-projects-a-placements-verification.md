@@ -124,3 +124,12 @@ Registered SQL confirmation: `tests/unit/chat13-superadmin-company-migration-013
 | SA-HIRING-ACADEMIC-04 | Correlated cohort/program equality in academic search; `tests/unit/chat13-super-admin-hiring-report-tenant-aggregation.test.ts`. |
 
 All four are DONE in reviewed source. No local CI, PostgreSQL or browser run was performed, so test results remain unverified.
+
+
+## Supplemental Super Admin directory/export boundaries
+| ID | Source status | Evidence |
+|---|---|---|
+| SA-SCOPED-CSV-CAP-05 | DONE in source; CI pending | `src/modules/admin-ui/super-admin-scoped-csv-service.ts`; `tests/unit/chat13-scoped-csv-export-page-size.test.ts` exercises the service with 10/100 injected page sizes, 250-row cap, real headers and denied status; no execution. |
+| SA-APPLICATIONS-ACADEMIC-05 | DONE in source; CI pending | `src/modules/admin-ui/super-admin-placement-applications-service.ts`; `tests/unit/chat13-super-admin-application-academic-scope.test.ts` (active enrollment + same-program cohort); PostgreSQL mismatch test pending. |
+| SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01/02/03 | SOURCE AUDITED | `tests/unit/chat13-admin-ui-placements-tenant-matrix.test.ts` inventories the 13 dedicated read/CSV services; `docs/audit/coverage/placements-admin-chat13-ledger.md` records paths and gaps. DB/browser tests pending. |
+| SA-ADMIN-LEDGER-01 | SOURCE AUDITED | `tests/unit/chat13-placements-admin-coverage-registry.test.ts` verifies dedicated module inventory and existing 37 /admin first-third + 48 Placements/Projects page audits. Runtime test coverage pending. |
