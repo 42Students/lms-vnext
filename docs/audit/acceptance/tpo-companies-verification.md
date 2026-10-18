@@ -148,3 +148,5 @@ All 18 final-sprint IDs now have an ID-named source regression and acceptance en
 **Remaining acceptance dependency:** The proposed `chat3-tpo-company-team.sql` must be registered and applied by the orchestrator before any real company thread can be used. No browser, real-database, notification-delivery, or concurrent-write test was run by this lane. This is a source-complete proposed feature, not a claim of production deployment.
 
 TPO-companies-scale-01: One scoped company-drive read, partitioned by job ID. Behavior covered in tests/unit/chat12-tpo-company-drive-facts-scaling.test.ts. Authored; cloud validation pending.
+TPO-companies-scale-02: 500-job bounded facts batches, 1205-ID and duplicate behavioral test in tests/unit/chat12-tpo-company-drive-facts-scaling.test.ts. Authored only; load verification pending.
+UX-tpo-first-third-archived-01: Direct SSR page tests in tests/unit/chat12-tpo-archived-everyone-ssr-journey.test.tsx for role denial, persisted revocation, scoped archive count limitation, empty state, restoration link. Authored only; browser acceptance pending.
