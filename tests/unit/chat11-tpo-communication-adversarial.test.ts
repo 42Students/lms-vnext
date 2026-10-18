@@ -65,6 +65,22 @@ describe("TPO-settings-audit-CAS-01 section changes are validated and idempotent
  });
 });
 
+describe("TPO-settings-audit-DOUBLE-01 college communication editors",()=>{
+ it("SMS caps, email signatures and recruiter durations cannot issue two writes before React renders pending",()=>{
+  const source=readFileSync("src/components/tpo/tpo-communication-settings-editors.tsx","utf8");
+  const count=(str:string,needle:string)=>str.split(needle).length-1;
+  expect(count(source,"const inFlight=useRef(false)")).toBe(3);
+  expect(count(source,"inFlight.current=true;setBusy(true)")).toBe(3);
+  expect(count(source,"inFlight.current=false;setBusy(false)")).toBe(3);
+  expect(source).toContain("if(inFlight.current||busy||!Number.isInteger(value)||value<0||value>100000)return");
+  expect(source).toContain("if(inFlight.current||busy||value.length>300)return");
+  expect(source).toContain("if(inFlight.current||busy||![3,6,12,24].includes(months))return");
+  expect(source).toContain('method:"PATCH",credentials:"same-origin"');
+  expect(source).toContain("setCurrentVersion(body.version??null)");
+  expect(source).toContain("setCurrentVersion(data.version??null)");
+ });
+});
+
 describe("TPO-settings-audit-PREP-02 threshold preference retries",()=>{
  it("blocks immediate duplicate actions, preserves the accepted version and renders safe errors",()=>{
   const source=readFileSync("src/components/tpo/tpo-prep-percentage-editor.tsx","utf8");
