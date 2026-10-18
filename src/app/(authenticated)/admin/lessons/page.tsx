@@ -8,6 +8,7 @@ import {SuperAdminLessonCreate} from "@/components/courses/super-admin-lesson-cr
 import {listSuperAdminLearningPathPicker} from "@/modules/courses/super-admin-learning-path-picker";
 import {CollegeLessonVisibilityControl} from "@/components/courses/college-lesson-visibility-controls";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -30,6 +31,7 @@ export default async function SuperAdminLessonsPage({
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its lessons." />
   </div>;
+  requireSuperAdminSelectedCollege(context,"courses.manage");
   const [data,filters,paths] = await Promise.all([listCollegeLessons(context, parsed.data),getSuperAdminLearningFilterOptions(context),listSuperAdminLearningPathPicker(context)]);
   const summary = adminLessonStats(data.items);
   return <div className="space-y-5">
