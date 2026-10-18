@@ -17,13 +17,13 @@ vi.mock("@/db/client", () => ({
     select: (projection?: Record<string, unknown>) => {
       state.queries++;
       if (projection && "joinedAt" in projection) {
-        const tableQuery = {
-          innerJoin: () => tableQuery,
-          leftJoin: () => tableQuery,
-          where: () => tableQuery,
-          as: () => ({ id: projection.id, name: projection.name }),
-        };
-        return { from: () => tableQuery };
+        class TableQuery {
+          innerJoin() { return this; }
+          leftJoin() { return this; }
+          where() { return this; }
+          as() { return { id: projection.id, name: projection.name }; }
+        }
+        return { from: () => new TableQuery() };
       }
       if (projection && "total" in projection) {
         return {

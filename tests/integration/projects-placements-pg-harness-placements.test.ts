@@ -51,7 +51,7 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
     await withPlacementCase(async({db,tenant,actor})=>{
       await db.expectSqlState(()=>db.query(`
         insert into placement_seasons(college_id,name,code,start_date,end_date,created_by_user_id)
-        values ($1,'Concurrent season','ALTERNATE','2026-10-01','2027-06-30',$2)`,
+        values ($1,'Concurrent season','ALTERNATE','2099-10-01','2099-06-30',$2)`,
         [tenant.collegeId,actor.userId]),"23505");
     });
   });
