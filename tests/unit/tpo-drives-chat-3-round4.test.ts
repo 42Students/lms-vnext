@@ -153,7 +153,7 @@ describe("chat-3 Drives round 4",()=>{
  });
  it("TPO-drives-51 college administrator has a real separate create flow",()=>{
   const college=source("src/app/(authenticated)/college/placements/new/page.tsx");
-  expect(college).toContain('hasMembershipRole(\n      context,\n      "COLLEGE_ADMIN"');
+  expect(college.replace(/\s+/g,"").replace(/,\)/g,")")).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
   expect(college).toContain("<PlacementJobCreateWorkspace");
   expect(college).toContain('basePath="/college/placements"');
  });
