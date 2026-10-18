@@ -78,6 +78,14 @@ describe("chat-16 TPO personal notification preferences live mutation authorizat
   await expect(saveMyTpoNotificationPreferences(tpo,input)).rejects.toThrow("STALE");
   expect(f.tx.insert).not.toHaveBeenCalled();
  });
+ it("TPO-notifications-preferences-21 treats an identical stale retry as a no-op, without duplicate activity",async()=>{
+  const previous=new Date("2026-10-18T09:00:00Z");
+  const f=mockDb({...input,updatedAt:previous});
+  await expect(saveMyTpoNotificationPreferences(tpo,input)).resolves.toEqual({
+   saved:true,version:"2026-10-18T09:00:00.000Z",
+  });
+  expect(f.tx.insert).not.toHaveBeenCalled();
+ });
  it("TPO-notifications-preferences-20 makes one versioned first write and scoped audit event",async()=>{
   const f=mockDb(null);
   const result=await saveMyTpoNotificationPreferences(tpo,input);
