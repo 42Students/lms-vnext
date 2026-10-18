@@ -332,7 +332,7 @@ export async function getTpoCompanyMemory(
   companyNameInput: string,
 ) {
   const name = companyNameInput.trim();
-  if (!name) {
+  if (!name || name.length>160) {
     throw new TpoCompanyMemoryError("TPO_COMPANY_NAME_REQUIRED");
   }
 
