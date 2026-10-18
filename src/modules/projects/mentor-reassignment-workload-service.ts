@@ -5,14 +5,22 @@ import { collegeMemberships, projectInstances, projectMembers, users } from "@/d
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { loadProjectCollegeScope } from "./scope";
+import {getProjectAdminCollegeId} from "./admin-college-scope";
+import {ProjectsServiceError} from "./errors";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
 const mentorId = z.union([z.string().uuid(), z.literal("UNASSIGNED")]);
-const inputSchema = z.object({
+const decimalPage=(min:number,max:number,fallback:number)=>z.union([
+  z.number().int().min(min).max(max),
+  z.string().regex(/^[0-9]+$/).transform(Number)
+    .pipe(z.number().int().min(min).max(max)),
+]).default(fallback);
+const inputSchema = z.strictObject({
   q: z.string().trim().max(120).optional(),
   status: z.enum(["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
   fromMentorId: mentorId.optional(),
-  page: z.coerce.number().int().min(1).max(10000).default(1),
-  pageSize: z.coerce.number().int().min(10).max(100).default(25),
+  page: decimalPage(1,10000,1),
+  pageSize: decimalPage(10,100,25),
 });
 export type MentorReassignmentQuery = z.input<typeof inputSchema>;
 /** Scope-bound text search treats LIKE metacharacters as literal user input. */
@@ -21,6 +29,8 @@ export function mentorReassignmentLiteralSearch(value:string){
 }
 
 async function scopeCollege(context: RequestContext, collegeId: string) {
+  if(getProjectAdminCollegeId(context)!==collegeId)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college = await loadProjectCollegeScope(collegeId);
   requirePermission(context, "projects.manage", {
     organizationId: college.organizationId, collegeId: college.id,
@@ -61,7 +71,11 @@ function riskExpression() {
 export async function listCollegeProjectMentorWorkload(context: RequestContext, collegeId: string) {
   const college = await scopeCollege(context, collegeId);
   const atRisk = riskExpression();
-  const rows = await getDb().select({
+  return getDb().transaction(async db=>{
+  await assertPersistedPlatformPermission(db,context,"projects.manage",{
+    organizationId:college.organizationId,collegeId:college.id,
+  });
+  const rows = await db.select({
     mentorMembershipId: projectMembers.membershipId,
     mentorName:users.displayName,
     activeWorkspaces: count(),
@@ -75,14 +89,15 @@ export async function listCollegeProjectMentorWorkload(context: RequestContext, 
     ne(projectInstances.status, "COMPLETED"),
   )).groupBy(projectMembers.membershipId,users.displayName);
   return rows;
+  });
 }
 
 /** COL-people-22: filter on the database before pagination and preserve mentor ID. */
 export async function listCollegeReassignmentWorkspaces(
   context: RequestContext, collegeId: string, raw: MentorReassignmentQuery,
 ) {
-  const college = await scopeCollege(context, collegeId);
   const query = inputSchema.parse(raw);
+  const college = await scopeCollege(context, collegeId);
   const literalSearch=query.q?mentorReassignmentLiteralSearch(query.q):undefined;
   const where = and(
     eq(projectInstances.collegeId, college.id),
@@ -95,7 +110,10 @@ export async function listCollegeReassignmentWorkspaces(
     query.fromMentorId === "UNASSIGNED" ? isNull(projectMembers.membershipId)
       : query.fromMentorId ? eq(projectMembers.membershipId, query.fromMentorId) : undefined,
   );
-  const db = getDb();
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"projects.manage",{
+      organizationId:college.organizationId,collegeId:college.id,
+    });
   const joined = () => db.select({
     id: projectInstances.id,
     title: projectInstances.title,
@@ -126,4 +144,5 @@ export async function listCollegeReassignmentWorkspaces(
     total, page: query.page, pageSize: query.pageSize,
     totalPages: Math.max(1, Math.ceil(total / query.pageSize)),
   };
+  });
 }
