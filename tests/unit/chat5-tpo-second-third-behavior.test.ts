@@ -18,12 +18,13 @@ const page=(fragment:string)=>src("src/app/(authenticated)"+job+fragment+"/page.
 const at=new Date("2099-10-18T10:00:00Z");
 
 describe("TPO bounded mutation request contracts",()=>{
- it("PLACEMENTS-SELECTION-BODY-13 PLACEMENTS-WAIT-BODY-14 PLACEMENTS-OFFER-BODY-15 PLACEMENTS-CLOSE-BODY-16 protect origin before parsing",()=>{
+ it("PLACEMENTS-SELECTION-BODY-41 PLACEMENTS-CANCEL-BODY-42 protect every scoped TPO mutation before parsing",()=>{
   const routes=[
    "src/app/api/placements/tpo/jobs/[jobId]/selections/route.ts",
    "src/app/api/placements/tpo/jobs/[jobId]/waitlist-promote/route.ts",
    "src/app/api/placements/jobs/[jobId]/offers/lifecycle/route.ts",
    "src/app/api/placements/tpo/jobs/[jobId]/close-preview/route.ts",
+   "src/app/api/placements/tpo/jobs/[jobId]/cancel-preview/route.ts",
   ];
   for(const route of routes){
    const code=src(route);
@@ -33,9 +34,21 @@ describe("TPO bounded mutation request contracts",()=>{
    expect(origin,route).toBeGreaterThanOrEqual(0);
    expect(decode,route).toBeGreaterThan(origin);
    expect(post,route).toContain("TpoBulkBodyError");
+   expect(post,route).toContain("error instanceof TpoBulkBodyError");
    expect(post,route).toContain("apiErrorResponse(");
    expect(post,route).not.toMatch(/await (?:req|request)\.json\(\)/);
   }
+ });
+ it("PLACEMENTS-SELECTION-BODY-41 maps parser failure on POST, not in the read-only GET route",()=>{
+  const source=src("src/app/api/placements/tpo/jobs/[jobId]/selections/route.ts");
+  const get=source.slice(source.indexOf("export async function GET("),
+    source.indexOf("export async function POST("));
+  const post=source.slice(source.indexOf("export async function POST("));
+  expect(get).not.toContain("TpoBulkBodyError");
+  expect(get).not.toContain("readTpoBulkRequestBody(");
+  expect(post).toContain("const body=await readTpoBulkRequestBody(request)");
+  expect(post).toContain("if(error instanceof TpoBulkBodyError)");
+  expect(post).toContain("status:error.status");
  });
  it("PLACEMENTS-SELECTION-BODY-13 rejects chunked excess, invalid media and malformed JSON without unbounded parsing",async()=>{
   const request=(payload:string,contentType="application/json")=>new Request(
