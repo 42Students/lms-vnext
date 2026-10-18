@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,ne,asc,sql} from "drizzle-orm";
+import {and,eq,ne,asc,sql,gt,lt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,learnerProfiles,placementApplications,
  placementApplicationScreenings,placementApplicationRoundExceptions,placementLearnerRequests,placementJobRounds,placementJobs,users} from "@/db/schema";
@@ -301,7 +301,9 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    }).from(placementRoundCandidateSlots).where(and(
     eq(placementRoundCandidateSlots.roundId,info.round.id),
     ne(placementRoundCandidateSlots.id,slot.id),
-    ne(placementRoundCandidateSlots.status,"CANCELLED"))).limit(1001);
+    ne(placementRoundCandidateSlots.status,"CANCELLED"),
+    lt(placementRoundCandidateSlots.startsAt,slot.endsAt),
+    gt(placementRoundCandidateSlots.endsAt,slot.startsAt))).limit(1001);
    if(collisions.length>1000||collisions.some(other=>
     sameInterviewRoom(other.room,input.room)&&
     other.startsAt<slot.endsAt&&other.endsAt>slot.startsAt))
