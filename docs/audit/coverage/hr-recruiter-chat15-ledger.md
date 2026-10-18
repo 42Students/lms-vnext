@@ -223,3 +223,39 @@ These are source changes with tests authored only. The source-level and PostgreS
 | `/tracker/mine` page (HR-reporter journey) | `tests/unit/HR-BREAK-chat15-tracker-mine-page-98.test.tsx` | Expired session, disabled readiness, DB error hides SQL and offers retry, empty state, own persisted report link | Real user session and PostgreSQL reporter isolation |
 
 Owner's **NO CI** directive remains in force; all behavioral tests were written but not run. Exhaustive per-export and HTTP-role matrix completion remains open.
+
+
+## HR-depth CSV and route defenses — 2026-10-19 (source and behavioral tests, not run)
+
+| Export / API | Behavioral test | Cases covered by authored test | Remaining |
+|---|---|---|---|
+| `hrDriveProposalHistoryCsv` | `tests/unit/HR-BREAK-chat15-proposal-csv-99.test.ts` | Metadata-only DISCUSSION_ONLY export, whitespace-prefixed CSV formulas neutralized, invalid historical UTC date cannot throw, empty header-only export | Open in spreadsheet viewer and real authorized TPO conversation |
+| `buildHrCalendarCsv` | `tests/unit/HR-BREAK-chat15-calendar-csv-100.test.ts` | Ignore corrupt event/results due dates before IST formatting, distinct category exports, formula-safe job and event, 200-record cap | Real recruiter calendar, nested venue/time and role matrix |
+| `GET /api/placements/recruiter/drives/proposals/export` | `tests/unit/HR-BREAK-chat15-proposal-export-api-101.test.ts` | Principal equality, disabled actor, unexpected/duplicate filter denial, scope changed, 20-record CURRENT_PAGE export/no-store, private SQL failure maps to sanitized response | Real 2-college grant, PostgreSQL, browser download |
+| `buildHrActivityCsv` | `tests/unit/HR-BREAK-chat15-activity-csv-102.test.ts` | Corrupt dates cannot crash download, over-cap emits visible capped footer even without extra-page signal, formula-safe title | Database page 1/2 consistency, final CI |
+| `buildHrInboxCsv` | `tests/unit/HR-BREAK-chat15-notification-csv-103.test.ts` | Invalid date and corrupt aggregate total cannot corrupt output; 200 cap; separate read/unread status and CSV injection denial | Real notifications persisted and privacy policy |
+| `GET /api/placements/recruiter/activity/export`; `GET /api/placements/recruiter/notifications/export`; `GET /api/placements/recruiter/calendar/export`; `GET /api/placements/recruiter/jobs/[jobId]/applicants/export`; `GET /api/placements/recruiter/jobs/[jobId]/offers/export` | `tests/unit/HR-BREAK-chat15-export-query-104.test.ts` | Each real route refuses duplicated sensitive parameters and unknown parameter keys before access to any private employer reader; this closes silent first-of-many filter ambiguity | Authenticated GET valid/invalid origin rules (read only), CSV download UI, PostgreSQL role matrix |
+
+These are written source/tests only; **no tests, CI, typecheck, or database commands were run**. Full HR/recruiter/tracker exhaustive certification remains OPEN.
+
+
+## Chat-15 HR service permission matrix, October 19 (new)
+
+| Public service entrypoint | Behavioral test | Exact account/scope transitions checked | Remaining |
+|---|---|---|---|
+| `listRecruiterJobActivity` | `tests/unit/HR-BREAK-chat15-activity-service-105.test.ts` | Wrong college rejected before any job read; disabled/swapped recruiter principal denied; zero grants yield NO_ACCESS; multi-college actor requires choice; owned college without jobs reads no global activity SQL; unsupported query fails before auth lookup | PostgreSQL account/grant expiration in transaction, event pagination and browser |
+| `listHrNotifications` | `tests/unit/HR-BREAK-chat15-notifications-service-106.test.ts` | Wrong-college IDOR denied; inactive/swapped actor; no grants; multi-college chooser; empty authorized job list does not query notification tables; unexpected body flags rejected | Real employer notification rows, revocation mid-page and exactly-once read receipts |
+
+Behavioral test source has been authored, **not executed**. Existing HR per-export, HTTP, PostgreSQL and UI release gate remains OPEN.
+
+
+## Additional HR account and route-level permission checks — 2026-10-19
+
+| Export or actual HTTP/page | Behavioral case file | Account / state / concurrency claim supported by source test | Unverified gate |
+|---|---|---|---|
+| `listRecruiterCalendarEvents`, `recruiterCalendarQuerySchema` | `tests/unit/HR-BREAK-chat15-calendar-service-107.test.ts` | Invalid or inverted/oversized date range fails before grant lookup, no authorized jobs skips global SQL, draft/archived jobs never authorize event data, revoked grant failures propagate without secondary reads | PostgreSQL interview/slot data and 1k jobs, final cloud CI |
+| `/recruiter/loading`, `/recruiter/error`, `/recruiter/not-found`, `/tracker/loading`, `/tracker/error` | `tests/unit/HR-BREAK-chat15-recruiter-tracker-fallback-108.test.tsx` | Authenticated role loading delegates to bounded loading, errors pass the actual reset action through private-safe boundary, missing recruiter URL offers a return path, visible fallback retry invokes handler once | Timed browser fallback, 320px/390px and keyboard |
+| `hrRecruiterReplySchema` | `tests/unit/HR-BREAK-chat15-reply-bytes-109.test.ts` | NUL/unprintable control bytes rejected before DB TEXT storage; legitimate multiline/trimmed replies retained; strict user ID override denial and 4000-byte limit | Real recruiter HTTP and TPO receipt delivery |
+| `POST /api/placements/recruiter/drives/proposal` | `tests/unit/HR-BREAK-chat15-proposal-post-api-110.test.ts` | Same-origin before body read, valid draft and idempotent receipt statuses, cached principal swap 403, invalid draft denial, private DB/session outages map to sanitized response | PostgreSQL concurrent submission ID, notification exactly once, authenticated browser |
+
+Every test is **authored but unexecuted**; no CI was run. The larger HR, Recruiter and Tracker exhaustive queue remains OPEN.

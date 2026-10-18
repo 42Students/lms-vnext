@@ -8,15 +8,24 @@ export const mentorSprintProgressQuerySchema = z.object({
   state: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED"]).default("ALL"),
   release: z.enum(["ALL","PLANNED","IN_PROGRESS","SHIPPED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
-  page: z.coerce.number().int().min(1).max(10000).default(1),
+  // Do not accept hexadecimal, exponential, signed or whitespace-padded URL
+  // numbers. Page controls use ordinary positive decimal integers only.
+  page: z.preprocess(value =>
+    typeof value==="string" && /^[1-9][0-9]{0,4}$/.test(value)
+      ? Number(value) : value,
+    z.number().int().min(1).max(10000).default(1)),
 }).strict();
 export type MentorSprintProgressQuery = z.infer<typeof mentorSprintProgressQuerySchema>;
 
 export function mentorSprintProgressPage(total: number, requested: number) {
   const pageSize = 20;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const page = Math.min(requested, totalPages);
-  return { total, page, pageSize, totalPages };
+  // Persisted counts should be integers, but invalid database responses must
+  // never turn navigation into NaN or an unbounded negative offset.
+  const safeTotal=Number.isSafeInteger(total)&&total>=0?total:0;
+  const totalPages=Math.max(1,Math.ceil(safeTotal/pageSize));
+  const requestedPage=Number.isSafeInteger(requested)&&requested>=1?requested:1;
+  const page=Math.min(requestedPage,totalPages);
+  return {total:safeTotal,page,pageSize,totalPages};
 }
 
 export function summarizeSprintTasks(
