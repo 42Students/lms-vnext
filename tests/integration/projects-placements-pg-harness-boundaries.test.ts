@@ -36,6 +36,23 @@ async function count(db: PgHarness, table: "project_task_submissions" | "project
 }
 
 describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries", () => {
+  it("PROJ-HARNESS-TENANT-29 failure to create college cannot leave an orphaned organization",async()=>{
+    await withProjectPg(pool,async db=>{
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from organizations where name like 'Projects harness %'`);
+      const failed:PgHarness={...db,
+        async query<T extends QueryResultRow=QueryResultRow>(sql:string,values?:unknown[]):Promise<T[]>{
+          if(sql.includes("insert into colleges")) throw new Error("simulated college creation failure");
+          return db.query<T>(sql,values);
+        },
+      };
+      await expect(createTenant(failed)).rejects.toThrow("simulated college creation failure");
+      expect(await db.query<{n:number}>(`
+        select count(*)::int n from organizations where name like 'Projects harness %'`)).toEqual(before);
+      await expect(createTenant(db)).resolves.toHaveProperty("collegeId");
+    });
+  });
+
   it("PROJ-HARNESS-PROJECT-28 late learner-roster failure rolls back template, workspace and task",async()=>{
     await withProjectPg(pool,async db=>{
       const f=await actors(db);

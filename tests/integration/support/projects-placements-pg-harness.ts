@@ -209,16 +209,18 @@ export async function withTwoPgSessions<T>(
 
 /** For FK and business invariants, use truly separate orgs + colleges. */
 export async function createTenant(db: PgHarness, name = "College"): Promise<TenantFixture> {
-  const tag = randomUUID();
-  const org = await db.query<{id: string}>(
-    "insert into organizations (name) values ($1) returning id",
-    ["Projects harness " + tag],
-  );
-  const college = await db.query<{id: string}>(
-    "insert into colleges (organization_id,name,code) values ($1,$2,$3) returning id",
-    [org[0]!.id, name, "PHT-" + tag.slice(0, 12)],
-  );
-  return { organizationId: org[0]!.id, collegeId: college[0]!.id };
+  return db.savepoint(async()=>{
+    const tag = randomUUID();
+    const org = await db.query<{id: string}>(
+      "insert into organizations (name) values ($1) returning id",
+      ["Projects harness " + tag],
+    );
+    const college = await db.query<{id: string}>(
+      "insert into colleges (organization_id,name,code) values ($1,$2,$3) returning id",
+      [org[0]!.id, name, "PHT-" + tag.slice(0, 12)],
+    );
+    return { organizationId: org[0]!.id, collegeId: college[0]!.id };
+  });
 }
 
 /** Two colleges in one organization must still be isolated; this fixture
