@@ -1,5 +1,6 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { parseTpoRoundImport, roundImportActionSchema, ROUND_IMPORT_TEMPLATE, uniqueTpoRoundImportRoster } from "@/modules/placements/tpo-round-import-model";
+import { parseTpoRoundImport, roundImportActionSchema, ROUND_IMPORT_TEMPLATE, tpoRoundImportPreviewToken, uniqueTpoRoundImportRoster } from "@/modules/placements/tpo-round-import-model";
 import { parseIstRoundLocalTime, tpoRoundCalendarMutationSchema } from "@/modules/placements/tpo-round-calendar-model";
 import { tpoInterviewRescheduleSchema, validInterviewWindow, overlappingInterviewVenue } from "@/modules/placements/tpo-interview-reschedule-model";
 
@@ -36,6 +37,24 @@ describe("TPO-drive-workspace-40/44 round import and scheduling ledger",()=>{
   }
   const valid=parseTpoRoundImport(csv("Application ID,Result,Rank\n"+uuid+",HOLD,100\n"),"results.csv");
   expect(valid[0]).toMatchObject({invalidRank:false,rank:100});
+ });
+ it("TPO-drive-workspace-40 refuses a stale review when the file, roster, or persisted result changes",()=>{
+  const learner={applicationId:uuid,currentResultId:null,currentStatus:null,
+   name:"Ada",email:"ada@example.test",roll:"42"};
+  const another={...learner,applicationId:other,name:"Bob",email:"bob@example.test",roll:"43"};
+  const file=csv("Application ID,Result\n"+uuid+",HOLD\n");
+  const preview=tpoRoundImportPreviewToken(uuid,file,[learner,another]);
+  expect(preview).toMatch(/^[a-f0-9]{64}$/);
+  expect(tpoRoundImportPreviewToken(uuid,file,[another,learner])).toBe(preview);
+  expect(tpoRoundImportPreviewToken(other,file,[learner,another])).not.toBe(preview);
+  expect(tpoRoundImportPreviewToken(uuid,csv("different result"),[learner,another])).not.toBe(preview);
+  expect(tpoRoundImportPreviewToken(uuid,file,[learner])).not.toBe(preview);
+  expect(tpoRoundImportPreviewToken(uuid,file,[{...learner,currentStatus:"APPLIED"},another])).not.toBe(preview);
+  expect(tpoRoundImportPreviewToken(uuid,file,[{...learner,currentResultId:other},another])).not.toBe(preview);
+  const service=readFileSync("src/modules/placements/tpo-round-import-service.ts","utf8");
+  expect(service).toContain("tpoRoundImportPreviewToken(scoped.roundId,bytes,scoped.roster)");
+  expect(service).toContain("tpoRoundImportPreviewToken(roster.roundId,bytes,roster.roster)!==input.previewToken");
+  expect(service).toContain('throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE")');
  });
  it("never stages a guessed identity when import roster JOIN evidence is duplicated or contradictory",()=>{
   const source=[

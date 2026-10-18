@@ -1,5 +1,5 @@
 import "server-only";
-import {createHash} from "node:crypto";
+
 import {and,eq,inArray,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,placementApplications,placementApplicationScreenings,
@@ -9,7 +9,7 @@ import {PlacementsServiceError} from "./errors";
 import {confirmTpoRoundResult} from "./tpo-confirmed-round-result-service";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
-import {parseTpoRoundImport,roundImportActionSchema,uniqueTpoRoundImportRoster,type ImportRow} from "./tpo-round-import-model";
+import {parseTpoRoundImport,roundImportActionSchema,tpoRoundImportPreviewToken,uniqueTpoRoundImportRoster,type ImportRow} from "./tpo-round-import-model";
 
 type Roster=Awaited<ReturnType<typeof readRoster>>["roster"][number];
 async function readRoster(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
@@ -110,9 +110,7 @@ export async function previewTpoRoundImport(context:RequestContext,jobId:unknown
  const scoped=await readRoster(context,jobId,roundId);
  const source=parseTpoRoundImport(bytes,filename);
  const projection=previewData(source,scoped.roster);
- const rosterFingerprint=scoped.roster.map(r=>[r.applicationId,r.currentResultId,r.currentStatus,r.email,r.roll,r.name]).sort((a,b)=>String(a[0]).localeCompare(String(b[0])));
- const token=createHash("sha256").update(JSON.stringify([scoped.roundId,
-   createHash("sha256").update(bytes).digest("hex"),rosterFingerprint])).digest("hex");
+ const token=tpoRoundImportPreviewToken(scoped.roundId,bytes,scoped.roster);
  return {round:scoped.round,jobId:scoped.jobId,roundId:scoped.roundId,previewToken:token,
   sourceRows:source.length,candidateCount:scoped.roster.length,...projection};
 }
@@ -127,6 +125,13 @@ export async function stageTpoRoundImport(
   throw new PlacementsServiceError("PLACEMENT_RESULT_ROUND_NOT_READY");
  }
  const roster=await readRoster(context,jobId,roundId);
+ // Review is scoped to an exact source and roster snapshot. A second read can
+ // differ if another officer stages a result after preview but before submit.
+ if(tpoRoundImportPreviewToken(roster.roundId,bytes,roster.roster)!==input.previewToken)
+  throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+ if(roster.round.jobStatus!=="PUBLISHED"||roster.round.kind==="TALK"||
+  !["SCHEDULED","COMPLETED"].includes(roster.round.status))
+  throw new PlacementsServiceError("PLACEMENT_RESULT_ROUND_NOT_READY");
  const candidates=new Map(roster.roster.map(c=>[c.applicationId,c]));
  const inputRows=parseTpoRoundImport(bytes,filename);
  const used=new Set<string>(),entries:Array<{line:number;applicationId:string;outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT";rank:number|null;message:string|null}>=[];

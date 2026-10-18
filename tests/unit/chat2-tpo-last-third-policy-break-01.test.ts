@@ -1,6 +1,7 @@
+import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {
- tpoVerificationQuerySchema,tpoVerificationHref,tpoVerificationStatuses,
+ tpoVerificationQuerySchema,parseTpoVerificationParams,tpoVerificationHref,tpoVerificationStatuses,
  tpoVerificationWaitingDateRange,
 } from "@/modules/verification/tpo-queue-server-model";
 import {publicPlacementSettingState} from "@/modules/placements/public-page/publication-view-model";
@@ -17,6 +18,21 @@ describe("TPO-BREAK-last-third-01 verification, published stats and export filte
    {page:1.5},{pageSize:999},{pageSize:-1},{batchId:"other-campus"},
    {search:"X".repeat(101)},{collegeId:uuid},{branchId:"cross-tenant-string"}])
    expect(tpoVerificationQuerySchema.safeParse({...valid,...patch}).success).toBe(false);
+ });
+ it("UX-tpo-LAST-THIRD-01 denies ambiguous and extra URL selectors before an authorized verification read",()=>{
+  for(const invalid of [
+   {tab:["WAITING","VERIFIED"]},{page:["1","2"]},{kind:["ALL"]},
+   {search:["Ada","Bob"]},{batchId:[uuid,uuid]},{branchId:[uuid,uuid]},
+   {waitingSince:["TODAY","WEEK"]},{waitingState:["ALL","SUBMITTED"]},
+   {collegeId:uuid},{membershipId:uuid},{page:"1e6"},
+   {status:"ACTIVE"},{pageSize:"2000"},{tab:"SPOOFED"},
+  ])expect(parseTpoVerificationParams(invalid),JSON.stringify(invalid)).toBeNull();
+  expect(parseTpoVerificationParams({page:"2",tab:"WAITING",search:" Ada "}))
+   .toMatchObject({page:2,tab:"WAITING",search:"Ada"});
+  const page=readFileSync("src/app/(authenticated)/tpo/verification/page.tsx","utf8");
+  expect(page).toContain("parseTpoVerificationParams(params)");
+  expect(page).toContain("if(!parsed)return");
+  expect(page).toContain("No verification records were loaded");
  });
  it("encodes search strings and preserves all verified filters across pagination",()=>{
   const input=tpoVerificationQuerySchema.parse({
