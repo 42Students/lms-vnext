@@ -2,7 +2,7 @@ import "server-only";
 import {and,desc,eq,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,membershipRoles} from "@/db/schema";
+import {activityEvents,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {placementTpoStudentNotes} from "@/db/schema/tpo-collaboration";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
@@ -26,8 +26,11 @@ export async function addTpoStudentNotes(ctx:RequestContext,raw:unknown){
    .innerJoin(membershipRoles,and(
     eq(membershipRoles.membershipId,collegeMemberships.id),
     eq(membershipRoles.role,"LEARNER")))
+   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+    eq(users.platformStatus,"ACTIVE")))
    .where(and(inArray(collegeMemberships.id,input.membershipIds),
-    eq(collegeMemberships.collegeId,collegeId)));
+    eq(collegeMemberships.collegeId,collegeId),
+    eq(collegeMemberships.status,"ACTIVE")));
   const eligible=new Set(matched.map(r=>r.id));
   const saved:string[]=[];
   for(const id of input.membershipIds){
@@ -58,7 +61,10 @@ export async function listTpoStudentNotes(ctx:RequestContext,rawId:unknown){
   .from(collegeMemberships)
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"LEARNER")))
-  .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,collegeId)))
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+   eq(users.platformStatus,"ACTIVE")))
+  .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,collegeId),
+   eq(collegeMemberships.status,"ACTIVE")))
   .limit(1);
  if(!learner)return null;
  return db.select({id:placementTpoStudentNotes.id,note:placementTpoStudentNotes.note,
