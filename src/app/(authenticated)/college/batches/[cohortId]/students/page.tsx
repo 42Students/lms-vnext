@@ -26,7 +26,9 @@ export default async function CollegeBatchStudentsPage({
     organizationId: context.membership.organizationId,
   });
   const { cohortId: rawId } = await params;
-  const cohortId = z.string().uuid().parse(rawId);
+  const checkedId = z.string().uuid().safeParse(rawId);
+  if (!checkedId.success) notFound();
+  const cohortId = checkedId.data;
   const input = await searchParams;
   const q = typeof input.q === "string" ? input.q.trim().slice(0, 100) : "";
   const sectionId = z.string().uuid().safeParse(input.sectionId).success ? input.sectionId : null;
