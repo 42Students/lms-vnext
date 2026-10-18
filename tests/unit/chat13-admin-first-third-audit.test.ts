@@ -68,7 +68,10 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
     expect(service).toContain('resolveActingCollege(context, "placements.read")');
     expect(service).toContain("eq(placementJobs.collegeId, acting.collegeId)");
     expect(service).toContain("eq(placementCompanyRelationships.collegeId, acting.collegeId)");
-    expect(service).toContain(".limit(500)");
+    expect(service).toContain(".limit(501)");
+    expect(service).toContain("const visibleJobs=jobs.slice(0,500)");
+    expect(service).toContain("truncated:jobs.length>500");
+    expect(service).toContain("eq(collegeMemberships.collegeId,acting.collegeId)");
   });
 
   it("SA-ADMIN-FIRST-06 hides student contact details and rejects forged learner membership IDs", () => {
