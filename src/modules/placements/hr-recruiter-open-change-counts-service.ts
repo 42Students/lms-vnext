@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementDriveChangeRequests} from "@/db/schema/placement-drive-change-requests";
 import {placementJobs} from "@/db/schema";
@@ -17,6 +17,8 @@ export async function countRecruiterAnswerableDriveRequests(
   .innerJoin(placementJobs,eq(placementJobs.id,placementDriveChangeRequests.jobId))
   .where(and(inArray(placementDriveChangeRequests.jobId,ids),
    eq(placementJobs.collegeId,collegeId),
+   inArray(placementJobs.status,["PUBLISHED","CLOSED"]),
+   isNull(placementJobs.archivedAt),
    eq(placementDriveChangeRequests.status,"OPEN"),
    eq(placementDriveChangeRequests.targetParty,"COMPANY")))
   .groupBy(placementDriveChangeRequests.jobId);
