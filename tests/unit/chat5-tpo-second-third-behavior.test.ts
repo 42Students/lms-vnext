@@ -5,7 +5,7 @@ import {
  type RoundResultEntry,
 } from "@/modules/placements/tpo-round-result-table-model";
 import {
- offerRegisterQuery,projectOfferRegister,tpoDriveOfferRegisterCsv,
+ offerRegisterQuery,projectOfferRegister,tpoDriveOfferRegisterCsv,offerExpiryIndicator,
  type OfferRegisterFact,
 } from "@/modules/placements/tpo-drive-offer-register-model";
 import {tpoOfferEvidenceQuery,projectOfferEvidence} from "@/modules/placements/tpo-offer-evidence-model";
@@ -91,11 +91,41 @@ describe("chat-5 TPO second-third: behavioural round and offer reporting",()=>{
  ];
  it("PLACEMENTS-OFFERS-VIEW-01 never counts issued/declined as accepted or infers joining",()=>{
   const result=projectOfferRegister(offerFacts,"ALL",1,"","ALL",at);
-  expect(result.counts).toEqual({all:3,issued:1,accepted:1,declined:1,withdrawn:0});
+  expect(result.counts).toEqual({all:3,issued:1,accepted:1,declined:1,withdrawn:0,expired:0});
   expect(result.rows.find(row=>row.id==="a")).toMatchObject({joining:null,status:"ISSUED"});
   expect(result.rows.find(row=>row.id==="b")).toMatchObject({joining:"JOINED",status:"ACCEPTED"});
   expect(result.rows.find(row=>row.id==="c")).toMatchObject({joining:null,kind:"LOI"});
   expect(projectOfferRegister(offerFacts,"ALL",999,"","ALL",at).page).toBe(1);
+ });
+ it("PLACEMENTS-OFFERS-EXPIRED-05 filters persisted expired offers distinctly from issued-but-overdue offers",()=>{
+  const expired:OfferRegisterFact={offer:{
+    id:"expired-1",status:"EXPIRED",kind:"OFFER",roleTitle:"QA engineer",
+    annualCtcInr:800_000,issuedAt:new Date("2099-10-01T10:00:00Z"),
+    respondedAt:null,expiresAt:new Date("2099-10-10T10:00:00Z"),
+  },joining:null,candidate};
+  const all=[...offerFacts,expired];
+  const parsed=offerRegisterQuery.parse({jobId:uuid,status:"EXPIRED"});
+  const result=projectOfferRegister(all,parsed.status,1,"","ALL",at);
+  expect(result.counts).toEqual({all:4,issued:1,accepted:1,declined:1,withdrawn:0,expired:1});
+  expect(result.rows.map(row=>row.id)).toEqual(["expired-1"]);
+  const csv=tpoDriveOfferRegisterCsv(all,parsed);
+  expect(csv.totalMatching).toBe(1);
+  expect(csv.csv).toContain("expired-1");
+  expect(csv.csv).not.toContain('"a","');
+  const pageSource=src("src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx");
+  expect(pageSource).toContain('["EXPIRED","Expired",data.counts.expired]');
+  expect(offerRegisterQuery.safeParse({jobId:uuid,status:"CANCELLED"}).success).toBe(false);
+ });
+ it("PLACEMENTS-OFFERS-EXPIRY-04 distinguishes exact deadline, seven-day edge and invalid evidence",()=>{
+  const expiry=new Date("2099-10-25T10:00:00.000Z");
+  const justBefore=new Date("2099-10-18T10:00:00.000Z");
+  expect(offerExpiryIndicator("ISSUED",expiry,justBefore)).toBe("DUE_SOON");
+  expect(offerExpiryIndicator("ISSUED",expiry,new Date("2099-10-18T09:59:59.999Z"))).toBe("OPEN");
+  expect(offerExpiryIndicator("ISSUED",expiry,expiry)).toBe("EXPIRED");
+  expect(offerExpiryIndicator("ACCEPTED",expiry,expiry)).toBe("NOT_APPLICABLE");
+  expect(offerExpiryIndicator("ISSUED",null,expiry)).toBe("UNKNOWN");
+  expect(offerExpiryIndicator("ISSUED",new Date(Number.NaN),expiry)).toBe("UNKNOWN");
+  expect(offerExpiryIndicator("ISSUED",expiry,new Date(Number.NaN))).toBe("UNKNOWN");
  });
  it("PLACEMENTS-OFFERS-VIEW-02 rejects malformed filters and shares identical filters between visible rows and CSV",()=>{
   expect(offerRegisterQuery.safeParse({jobId:uuid,status:"ALL",minCtcLpa:12,maxCtcLpa:6}).success).toBe(false);

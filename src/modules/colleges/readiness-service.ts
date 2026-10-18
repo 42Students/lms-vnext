@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
   attendancePolicies,
   cohorts,
@@ -439,6 +440,15 @@ export async function getSuperAdminCollegeReadiness(
     activePlacementSeasons,
     verifiedPrimaryDomains,
   };
+
+  // Re-authorize from persisted active user/system-role rows before exposing
+  // tenant counts. A previously valid Super Admin request may finish after
+  // the officer's role has been revoked while independent counts are running.
+  await db.transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.read",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
+  });
 
   return {
     college,
