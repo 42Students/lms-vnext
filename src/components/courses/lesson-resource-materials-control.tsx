@@ -71,17 +71,17 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      {material.notes?<p className="whitespace-pre-wrap text-xs text-body">{material.notes}</p>:null}
      {material.kind==="LINK"&&facultyContentExternalHref("RESOURCE",material.externalUrl)?
       <a href={facultyContentExternalHref("RESOURCE",material.externalUrl)!} target="_blank" rel="noopener noreferrer"
-       className="text-xs font-semibold text-primary-text underline">Open link</a>:
+       className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline">Open link</a>:
       material.kind==="FILE"?<span className="text-xs text-muted-foreground">
        {material.uploadStatus==="READY"?"File ready; secure download requires a grant":"Checking file"}
       </span>:null}
     </div>
     {editable&&material.kind==="LINK"?<div className="flex gap-2">
-     <Button size="sm" type="button" variant="secondary" disabled={busy}
+     <Button size="sm" type="button" variant="secondary" className="min-h-11" disabled={busy}
       onClick={()=>{setEditing(material.id);setDraft({title:material.title,notes:material.notes??"",externalUrl:material.externalUrl??""});}}>
       Edit
      </Button>
-     <Button size="sm" type="button" variant="secondary" disabled={busy}
+     <Button size="sm" type="button" variant="secondary" className="min-h-11" disabled={busy}
       onClick={()=>void submit("REMOVE",material.id)}>Remove</Button>
     </div>:null}
    </li>)}
@@ -90,21 +90,21 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
    <p className="text-sm font-semibold">{editing?"Edit link material":"Add link material"}</p>
    <label className="grid gap-1 text-xs font-semibold">Title
     <input value={draft.title} maxLength={255} onChange={e=>setDraft(v=>({...v,title:e.target.value}))}
-     className="min-h-10 rounded border border-border p-2" disabled={busy}/>
+     className="min-h-11 rounded border border-border p-2" disabled={busy}/>
    </label>
    <label className="grid gap-1 text-xs font-semibold">HTTPS link
     <input type="url" value={draft.externalUrl} maxLength={2048} onChange={e=>setDraft(v=>({...v,externalUrl:e.target.value}))}
-     className="min-h-10 rounded border border-border p-2" disabled={busy}/>
+     className="min-h-11 rounded border border-border p-2" disabled={busy}/>
    </label>
    <label className="grid gap-1 text-xs font-semibold">Notes (optional)
     <textarea value={draft.notes} maxLength={2000} onChange={e=>setDraft(v=>({...v,notes:e.target.value}))}
      rows={2} className="rounded border border-border p-2" disabled={busy}/>
    </label>
    <div className="flex gap-2">
-    <Button size="sm" type="button" disabled={busy} onClick={()=>void submit(editing?"EDIT_LINK":"ADD_LINK",editing??undefined)}>
+    <Button size="sm" type="button" className="min-h-11" disabled={busy} onClick={()=>void submit(editing?"EDIT_LINK":"ADD_LINK",editing??undefined)}>
      {busy?"Saving…":editing?"Save material":"Add material"}
     </Button>
-    {editing?<Button size="sm" type="button" variant="secondary" disabled={busy}
+    {editing?<Button size="sm" type="button" variant="secondary" className="min-h-11" disabled={busy}
      onClick={()=>{setEditing(null);setDraft(blank);}}>Cancel edit</Button>:null}
    </div>
   </div>:null}
