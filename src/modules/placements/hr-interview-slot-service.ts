@@ -1,8 +1,8 @@
 import "server-only";
-import {and,eq,ne,inArray} from "drizzle-orm";
+import {and,eq,ne,inArray,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
+import {placementJobs,placementCompanies,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,activityEvents,colleges} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
@@ -26,6 +26,8 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
    eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
    eq(placementCompanyRelationships.status,"ACTIVE")))
+  .innerJoin(placementCompanies,
+   eq(placementCompanies.id,placementCompanyRelationships.companyId))
   .innerJoin(placementRecruiterProfiles,and(
    eq(placementRecruiterProfiles.userId,context.user.id),
    eq(placementRecruiterProfiles.companyId,placementCompanyRelationships.companyId),
@@ -35,6 +37,8 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
    eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED"),
+    isNull(placementJobs.archivedAt),
+    eq(placementCompanies.status,"ACTIVE"),eq(colleges.status,"ACTIVE"),
     recruiterOwnJobPredicate(context.user.id)))
   .for("update").limit(1);
  if(!job||!can(context,"placements.recruiter.read",{
