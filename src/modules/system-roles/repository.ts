@@ -53,19 +53,6 @@ function assertCompatibleUser(
   }
 }
 
-async function loadRoles(
-  db: ReturnType<typeof getDb>,
-  userId: string,
-): Promise<SystemRole[]> {
-  const rows = await db
-    .select({ role: systemRoles.role })
-    .from(systemRoles)
-    .where(eq(systemRoles.userId, userId))
-    .orderBy(asc(systemRoles.role));
-
-  return rows.map((row) => row.role);
-}
-
 export const drizzleSystemRoleRepository: SystemRoleRepository = {
   async persistBootstrapUser(
     input: PersistBootstrapUserInput,
