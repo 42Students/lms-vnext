@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -43,25 +44,25 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  if(!(["SUBMITTED","APPROVED"].includes(status))||locked||projectStatus==="ARCHIVED"||
    (status==="APPROVED"&&!allowLock))return null;
  return <section aria-label="Review final submission" className="mt-3">
-  <button type="button" onClick={()=>setOpen(true)}
+  <Button type="button" variant="secondary" onClick={()=>setOpen(true)}
    className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
    Review
-  </button>
+  </Button>
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
   <Dialog open={open} onOpenChange={setOpen} title={"Review — "+(workspaceTitle??"project submission")}
    description="Review the current submission and record feedback for the learner."
    footer={<>
-    <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm">Cancel</button>
+    <Button type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}
+     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm">Cancel</Button>
     {canAdminSettleDelivery(status,locked,projectStatus,"CHANGES_REQUESTED")?
-     <button type="button" disabled={pending||!feedback.trim()} onClick={()=>{void decide("CHANGES_REQUESTED")}}
-      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Request changes</button>:null}
+     <Button type="button" variant="secondary" disabled={pending||!feedback.trim()} onClick={()=>{void decide("CHANGES_REQUESTED")}}
+      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Request changes</Button>:null}
     {canAdminSettleDelivery(status,locked,projectStatus,"APPROVED")?
-     <button type="button" disabled={pending} onClick={()=>{void decide("APPROVED")}}
-      className="min-h-11 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground">Accept submission</button>:null}
+     <Button type="button" variant="primary" disabled={pending} onClick={()=>{void decide("APPROVED")}}
+      className="min-h-11 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground">Accept submission</Button>:null}
     {allowLock&&canAdminSettleDelivery(status,locked,projectStatus,"LOCK")?
-     <button type="button" disabled={pending} onClick={()=>setConfirmLock(true)}
-      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Lock submission</button>:null}
+     <Button type="button" variant="secondary" disabled={pending} onClick={()=>setConfirmLock(true)}
+      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Lock submission</Button>:null}
    </>}>
    <label className="block text-sm font-medium">Feedback for the learner
     <Textarea maxLength={6000} value={feedback} disabled={pending}
