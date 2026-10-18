@@ -51,7 +51,8 @@ describe("UX-CHAT15-SERVER-52 recruiter portfolio and reporter tracker real SSR 
  });
  it("HR-PORTFOLIO-52 sends authenticated context to the scoped job service and renders truthful empty portfolio",async()=>{
   const html=renderToStaticMarkup(await HrPlacementsPage());
-  expect(mocks.portfolio).toHaveBeenCalledExactlyOnceWith(actor);
+  expect(mocks.portfolio).toHaveBeenCalledTimes(1);
+  expect(mocks.portfolio).toHaveBeenCalledWith(actor);
   expect(html).toContain("<h1>Drives</h1>");
   expect(html).toContain('data-testid="authorized-portfolio"');
   expect(html).toContain('data-count="0"');
@@ -61,7 +62,8 @@ describe("UX-CHAT15-SERVER-52 recruiter portfolio and reporter tracker real SSR 
   const authorized=[{job:{id:"own-job"}},{job:{id:"own-job-2"}}];
   mocks.portfolio.mockResolvedValue(authorized);
   const html=renderToStaticMarkup(await HrPlacementsPage());
-  expect(mocks.portfolio).toHaveBeenCalledExactlyOnceWith(actor);
+  expect(mocks.portfolio).toHaveBeenCalledTimes(1);
+  expect(mocks.portfolio).toHaveBeenCalledWith(actor);
   expect(html).toContain('data-count="2"');
  });
  it("HR-PORTFOLIO-52 denies missing/inactive recruiter without accessing private jobs",async()=>{
@@ -95,7 +97,8 @@ describe("UX-CHAT15-SERVER-52 recruiter portfolio and reporter tracker real SSR 
  });
  it("TRACKER-REPORTER-52 gives an authorized reporter the empty and actionable state",async()=>{
   const html=renderToStaticMarkup(await MyTrackerReportsPage());
-  expect(mocks.reports).toHaveBeenCalledExactlyOnceWith(actor);
+  expect(mocks.reports).toHaveBeenCalledTimes(1);
+  expect(mocks.reports).toHaveBeenCalledWith(actor);
   expect(html).toContain("You have not reported any issues yet.");
   expect(html).toContain('href="/tracker"');
   expect(html).toContain("Report an issue");
