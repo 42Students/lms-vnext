@@ -1,6 +1,6 @@
 import "server-only";
 
-import { readZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
+import { readZeptoMailConfig, isSecureMailProviderEndpoint } from "@/modules/notifications/zeptomail-email";
 import { canContactRecipientAtRuntime } from "./runtime-safety";
 
 /** Separate join-code purpose, but still owned by the shared messaging module.
@@ -11,7 +11,7 @@ export async function deliverPublicRecruiterJoinCode(
 ): Promise<boolean> {
   if (!canContactRecipientAtRuntime("EMAIL", email)) return false;
   const config = readZeptoMailConfig();
-  if (!config.token.trim() || !config.otpTemplateKey || !/^[0-9]{6}$/.test(code)) return false;
+  if (!config.token.trim() || !isSecureMailProviderEndpoint(config.apiUrl) || !config.otpTemplateKey || !/^[0-9]{6}$/.test(code)) return false;
   try {
     const response = await fetchImpl(config.apiUrl, {
       method: "POST",
