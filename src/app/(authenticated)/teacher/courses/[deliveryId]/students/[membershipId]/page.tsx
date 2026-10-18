@@ -78,7 +78,7 @@ export default async function FacultyStudentDetailPage({
               { key:"recorded", header:"Recorded", mobileLabel:"Recorded",
                 mobilePriority:"secondary" as const,
                 cell:row=>row.markedAt?dateText(row.markedAt):"Not recorded" },
-            ]}/>
+            ]}/>}
       <Link href={root + "/attendanceDetail"}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         View monthly class attendance →
