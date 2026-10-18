@@ -489,3 +489,11 @@ No CI or runtime test was run during this priority phase.
 | HR-BREAK-PRIVATE-RATING-36 | MAJOR | `RecruiterPrivateRatingEditor` held its previous candidate's private rating, note, optimistic version and `ready=true` across a change of `jobId/applicationId` when the App Router reused the client component. Before the next GET returned, a recruiter could see the previous applicant's private note or attempt to save it against another applicant. Place the existing hook-owning inner editor behind a stable composite job+applicant React key so every candidate switch unmounts (and aborts) previous private state. | `tests/unit/HR-BREAK-chat19-private-rating-scope.test.tsx` invokes the exported wrapper, asserts per-job and per-applicant instance identity, initial disabled form and abort/CAS wiring. |
 
 No live navigation, browser or CI execution was performed.
+
+## Recruiter conversation cross-thread navigation isolation
+
+| ID | Severity | Before and after | Regression |
+|---|---|---|---|
+| HR-BREAK-CONVO-THREAD-SCOPE-37 | MAJOR | The private reply form retained an unsent body and its pending navigation/submit state if Next.js reused the same client component while navigating between `/hr/conversations/[threadId]` pages. The read control also retained `acknowledgedOnOpen=true` and could skip the new thread's read acknowledgment. Wrap the existing hook-owning components in per-thread keyed children, remounting old state and cleaning browser listeners when the thread changes. No message is automatically sent, and the backend still reauthorizes each mutation. | `tests/unit/HR-BREAK-chat19-conversation-thread-scope.test.tsx` compares actual child identities for different threads and SSR neutral states. |
+
+Interactive router transitions and cloud CI still require orchestrator verification.
