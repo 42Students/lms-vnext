@@ -26,7 +26,7 @@ export default async function MentorBoardReviewPage({
   const base="/mentor/projects/"+encodeURIComponent(projectId);
   return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
-      description={data.projectTitle}
+      description={data.enabled?data.projectTitle:"Projects access is disabled; no tasks were loaded."}
       actions={<Link href={base+"?tab=board"}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Full task workspace
