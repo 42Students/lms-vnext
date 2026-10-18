@@ -29,7 +29,12 @@ export async function listCollegeStudentImportOptions(context: RequestContext) {
     id: cohorts.id, programId: cohorts.programId, name: cohorts.name,
   }).from(cohorts).innerJoin(programs, eq(programs.id, cohorts.programId))
     .innerJoin(departments, eq(departments.id, programs.departmentId))
+    // Cohort startPeriodId is another independent foreign key, so verify
+    // ownership rather than inferring it from the program's department.
+    // Historical CLOSED start periods are valid for ongoing batches.
+    .innerJoin(academicPeriods, eq(academicPeriods.id, cohorts.startPeriodId))
     .where(and(eq(departments.collegeId, member.collegeId),
+      eq(academicPeriods.collegeId, member.collegeId),
       eq(programs.status,"ACTIVE"),
       inArray(cohorts.status, ["PLANNED", "ACTIVE"])))
     .orderBy(asc(cohorts.name)).limit(2000);
