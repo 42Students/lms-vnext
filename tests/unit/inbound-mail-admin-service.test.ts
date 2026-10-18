@@ -7,12 +7,13 @@ describe("Super Admin inbound mail authorization",()=>{
  it("permits global admin when table is registered",async()=>{
   await expect(listInboundMailForAdmin(admin,{},repository())).resolves.toMatchObject({available:true,page:1,items:[]});
  });
- it("rejects wrong role before touching storage and ignores selected tenant scope",async()=>{
+ it("rejects wrong role and selected tenant scope before touching private storage",async()=>{
   const repo=repository();
   await expect(listInboundMailForAdmin({...admin,user:{...admin.user,systemRoles:[]}}, {},repo)).rejects.toThrow();
   expect(repo.tableExists).not.toHaveBeenCalled();
- // Platform-wide Super Admin mail ignores a selected tenant scope (SA-tenants-modules-55).
-  await expect(listInboundMailForAdmin({...admin,adminScope:{organizationId:"org",collegeId:"college"}}, {},repo)).resolves.toMatchObject({available:true});
+ // Private mail is a global-only surface: an acting-college/organization context may not read it.
+  await expect(listInboundMailForAdmin({...admin,adminScope:{organizationId:"org",collegeId:"college"}}, {},repo)).rejects.toThrow();
+  expect(repo.tableExists).not.toHaveBeenCalled();
  });
  it("does not read an unregistered table",async()=>{
   const repo:InboundMailAdminRepository={tableExists:vi.fn().mockResolvedValue(false),list:vi.fn().mockResolvedValue([])};

@@ -202,6 +202,31 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(html).toContain('aria-selected="true"');
   });
 
+  it("UX-kit-HARDEN-33 recovers from disabled or deleted bookmarked tab without orphaned ARIA selection",()=>{
+    const items=[
+      {value:"overview",label:"Overview",content:<span>Project overview</span>},
+      {value:"grades",label:"Grades",disabled:true,content:<span>Private grading</span>},
+      {value:"members",label:"Members",content:<span>Project members</span>},
+    ];
+    for(const value of ["grades","no-longer-exists"]){
+      const html=render(<Tabs items={items} value={value} onValueChange={()=>{}}
+        ariaLabel="Project navigation"/>);
+      expect(html).toContain("Project overview");
+      expect(html).not.toContain("Private grading");
+      expect(html).toContain('role="tabpanel"');
+      expect((html.match(/aria-selected="true"/g)??[])).toHaveLength(1);
+      expect((html.match(/tabindex="0"/g)??[]).length).toBeGreaterThanOrEqual(1);
+      expect(html).not.toContain("tab--1");
+    }
+    const allDisabled=render(<Tabs value="grade" ariaLabel="Private tabs"
+      onValueChange={()=>{}} items={[
+        {value:"grade",label:"Grade",disabled:true,content:<span>Private</span>},
+      ]}/>);
+    expect(allDisabled).not.toContain("Private</span>");
+    expect(allDisabled).not.toContain('aria-selected="true"');
+    expect(allDisabled).not.toContain('aria-labelledby="');
+  });
+
   it("UX-kit-STATES-11 hidden filter sheet retains always-visible search and count sanitization", () => {
     const invalid=render(<FilterBar title="Candidates" activeCount={-99}
       search={<Input aria-label="Find candidates"/>}
@@ -243,6 +268,19 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     const disabled=render(<FileUpload label="Evidence" onFiles={()=>{}} disabled accept=".pdf"/>);
     expect(disabled).toContain('disabled=""');
     expect(disabled).toContain("Enable file selection");
+  });
+
+  it("UX-kit-HARDEN-34 file control keeps helper and unavailable reason connected for assistive technology",()=>{
+    const disabled=render(<FileUpload id="final-proof" label="Final proof" onFiles={()=>{}}
+      helper="PDF, at most 5 MB" disabled/>);
+    expect(disabled).toContain('aria-describedby="final-proof-help final-proof-unavailable"');
+    expect(disabled).toContain('id="final-proof-help"');
+    expect(disabled).toContain('id="final-proof-unavailable"');
+    const allowed=render(<FileUpload id="project-proof" label="Evidence" helper="PNG files only"
+      accept=".png" onFiles={()=>{}}/>);
+    expect(allowed).toContain('aria-describedby="project-proof-help"');
+    const source=moduleSource("file-upload");
+    expect(source).toContain('error ? `${id}-error` : null');
   });
 
   it("UX-kit-STATES-14 HTTPS links display fallback; script, HTTP and credential-bearing URLs never link", () => {

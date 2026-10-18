@@ -1,8 +1,10 @@
 import "server-only";
-import {and,asc,eq,gt,lt,ne,or} from "drizzle-orm";
+import {and,asc,eq,gt,lt,ne,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,membershipRoles,sectionScheduleEvents,users} from "@/db/schema";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {activityEvents,collegeMemberships,membershipRoles,sectionScheduleEvents,users,
+ sections,cohorts,programs,departments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
@@ -19,39 +21,71 @@ function college(ctx:RequestContext){
 }
 export async function getFacultyScheduleReassignOptions(ctx:RequestContext,rawId:unknown){
  const m=college(ctx),id=ids.parse(rawId),db=getDb();
- const people=await db.select({id:collegeMemberships.id,name:users.displayName})
+ return db.transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"academics.manage",{
+   collegeId:m.collegeId,organizationId:m.organizationId,
+  });
+ const [sourceFaculty]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+    eq(membershipRoles.role,"FACULTY")))
+  .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,m.collegeId))).limit(1);
+ if(!sourceFaculty)throw Error("Faculty not found in this college.");
+ const people=await tx.select({id:collegeMemberships.id,name:users.displayName})
  .from(collegeMemberships)
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
   eq(membershipRoles.role,"FACULTY")))
  .where(and(eq(collegeMemberships.collegeId,m.collegeId),
-  eq(collegeMemberships.status,"ACTIVE"),ne(collegeMemberships.id,id)))
+  eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+  ne(collegeMemberships.id,id)))
  .orderBy(asc(users.displayName)).limit(200);
- const slots=await db.select({id:sectionScheduleEvents.id})
+ const slots=await tx.select({id:sectionScheduleEvents.id})
  .from(sectionScheduleEvents)
- .where(and(eq(sectionScheduleEvents.facultyMembershipId,id),
+ .innerJoin(sections,eq(sections.id,sectionScheduleEvents.sectionId))
+ .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+ .innerJoin(programs,eq(programs.id,cohorts.programId))
+ .innerJoin(departments,eq(departments.id,programs.departmentId))
+ .where(and(eq(departments.collegeId,m.collegeId),
+  eq(sectionScheduleEvents.facultyMembershipId,id),
   eq(sectionScheduleEvents.status,"SCHEDULED"),gt(sectionScheduleEvents.startsAt,new Date())))
  .limit(201);
  return{faculty:people,upcoming:Math.min(slots.length,200),truncated:slots.length>200};
+ });
 }
 export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:unknown,raw:unknown){
  const m=college(ctx),old=ids.parse(rawId),input=scheduleReassignInput.parse(raw);
  if(old===input.replacementMembershipId)throw Error("Choose a different faculty member.");
  const db=getDb(),now=new Date();
  return db.transaction(async tx=>{
-  const principals=await tx.select({id:collegeMemberships.id,status:collegeMemberships.status})
-   .from(collegeMemberships).innerJoin(membershipRoles,
+  const principals=await tx.select({id:collegeMemberships.id,status:collegeMemberships.status,
+   userStatus:users.platformStatus})
+   .from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,
      and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"FACULTY")))
    .where(and(eq(collegeMemberships.collegeId,m.collegeId),
      or(eq(collegeMemberships.id,old),eq(collegeMemberships.id,input.replacementMembershipId))))
    .for("share",{of:collegeMemberships});
   if(!principals.some(p=>p.id===old)||
-     !principals.some(p=>p.id===input.replacementMembershipId&&p.status==="ACTIVE"))
+     !principals.some(p=>p.id===input.replacementMembershipId&&p.status==="ACTIVE"&&p.userStatus==="ACTIVE"))
     throw Error("Source or replacement faculty not available in this college.");
+  await assertPersistedPlatformPermission(tx,ctx,"academics.manage",{
+   collegeId:m.collegeId,organizationId:m.organizationId,
+  });
+  // Concurrent moves from different source faculty into the SAME replacement
+  // must serialize before checking overlap, or both can observe an empty
+  // schedule and commit clashing lectures. Advisory key collisions only
+  // over-serialize; the lock is released on transaction commit/rollback.
+  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${input.replacementMembershipId}))`);
   const sessions=await tx.select({id:sectionScheduleEvents.id,title:sectionScheduleEvents.title,
    sectionId:sectionScheduleEvents.sectionId,startsAt:sectionScheduleEvents.startsAt,
    endsAt:sectionScheduleEvents.endsAt})
-   .from(sectionScheduleEvents).where(and(
+   .from(sectionScheduleEvents)
+   .innerJoin(sections,eq(sections.id,sectionScheduleEvents.sectionId))
+   .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+   .innerJoin(programs,eq(programs.id,cohorts.programId))
+   .innerJoin(departments,eq(departments.id,programs.departmentId))
+   .where(and(eq(departments.collegeId,m.collegeId),
     eq(sectionScheduleEvents.facultyMembershipId,old),
     eq(sectionScheduleEvents.status,"SCHEDULED"),
     gt(sectionScheduleEvents.startsAt,now)))
@@ -76,6 +110,10 @@ export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:
    results.push({id:session.id,title:session.title,status:changed?"REASSIGNED":"SKIPPED",
     reason:changed?"Reassigned":"The session changed before the update"});
   }
+  // Replayed forms and collision-only attempts should return the same status
+  // without emitting a second "reassigned" audit entry for zero writes.
+  if(!results.some(row=>row.status==="REASSIGNED"))
+   return {total:results.length,reassigned:0,skipped:results.length,results};
   await tx.insert(activityEvents).values({
    organizationId:m.organizationId,collegeId:m.collegeId,
    actorUserId:ctx.user.id,actorMembershipId:m.id,

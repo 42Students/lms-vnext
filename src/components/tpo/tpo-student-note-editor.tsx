@@ -1,7 +1,7 @@
 "use client";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 export function TpoStudentNoteEditor({membershipIds,afterSave}:{
  membershipIds:readonly string[];afterSave?:()=>void;
@@ -9,12 +9,13 @@ export function TpoStudentNoteEditor({membershipIds,afterSave}:{
  const router=useRouter();
  const [note,setNote]=useState("");
  const [busy,setBusy]=useState(false);
+ const inFlight=useRef(false);
  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [message,setMessage]=useState("");
  const [error,setError]=useState("");
  async function save(){
-  if(!membershipIds.length||!note.trim()||busy)return;
-  setBusy(true);setError("");setMessage("");
+  if(!membershipIds.length||!note.trim()||busy||inFlight.current)return;
+  inFlight.current=true;setBusy(true);setError("");setMessage("");
   try{
    const data=await apiFetch<{added:number;skipped:number}>("/api/placements/tpo/students/notes",{
     method:"POST",headers:{"Content-Type":"application/json"},
@@ -23,7 +24,7 @@ export function TpoStudentNoteEditor({membershipIds,afterSave}:{
    setMessage(data.added+" note(s) saved; "+data.skipped+" skipped.");
    setNote("");afterSave?.();router.refresh();
   }catch(error){setError(error instanceof Error?error.message:"Could not save note.");}
-  finally{setBusy(false);}
+  finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-2 rounded border border-border p-3">
   <h4 className="font-semibold">Add a note</h4>

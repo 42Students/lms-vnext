@@ -52,12 +52,14 @@ export async function updateMentorMeetingNotes(context:RequestContext,
       eq(projectMeetings.projectId,scope.project.id),
     )).for("update").limit(1);
     if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
-    if(!project||!meetingNotesEditable(project.status,meeting.status)||
-      meeting.outcome?.trim()===input.outcome)
-      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    // A stale tab must be identified before no-op or terminal-state checks;
+    // otherwise a duplicate write misleadingly reports an unrelated state error.
     const expected=new Date(input.expectedUpdatedAt);
     if(meeting.updatedAt.getTime()!==expected.getTime())
       throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
+    if(!project||!meetingNotesEditable(project.status,meeting.status)||
+      meeting.outcome?.trim()===input.outcome)
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     const now=new Date(Math.max(Date.now(),meeting.updatedAt.getTime()+1));
     const [updated]=await tx.update(projectMeetings).set({
       outcome:input.outcome,updatedAt:now,

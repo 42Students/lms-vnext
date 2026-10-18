@@ -1,6 +1,6 @@
 import { outboundFetch } from "@/lib/outbound";
 import { readExotelConfig, type ExotelConfig } from "@/modules/notifications/exotel-sms";
-import { readZeptoMailConfig, type ZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
+import { readZeptoMailConfig, isSecureMailProviderEndpoint, type ZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
 import type { OutboundProvider } from "./service";
 import {outboundSendSchema,type OutboundSendRequest } from "./model";
 import { canContactRecipientAtRuntime } from "./runtime-safety";
@@ -37,7 +37,7 @@ export function createOutboundProvider(
       if (!template || !isCampaignTemplateKey(request.templateKey)) return false;
       try {
         if (request.channel === "EMAIL") {
-          if (!config.email.token.trim() || !template.zeptoTemplateKey ||
+          if (!config.email.token.trim() || !isSecureMailProviderEndpoint(config.email.apiUrl) || !template.zeptoTemplateKey ||
               !isCampaignTemplateKey(template.zeptoTemplateKey) ||
               template.zeptoTemplateKey === config.email.otpTemplateKey) return false;
           const response = await outboundFetch(config.email.apiUrl, {

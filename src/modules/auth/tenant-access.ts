@@ -1,4 +1,4 @@
-import type { RequestContext } from "@/modules/identity/context";
+import { hasActiveMembership, hasActiveRecruiter, type RequestContext } from "@/modules/identity/context";
 
 /**
  * A college host shows exactly one college. After sign-in the request must
@@ -21,12 +21,19 @@ export function isTenantAccessAllowed(
   context: RequestContext,
   tenant: TenantForAccess,
 ) {
+  // A stale session or suspended college membership must never be enough
+  // to enter a tenant just because its cached college UUID still matches.
+  if (context.user.platformStatus !== "ACTIVE") return false;
   if (tenant.kind === "platform") return true;
   if (tenant.kind === "unknown" || tenant.kind === "unavailable") return false;
 
-  if (context.membership?.collegeId === tenant.collegeId) return true;
+  if (hasActiveMembership(context) && context.membership?.collegeId === tenant.collegeId) {
+    return true;
+  }
 
   return Boolean(
+    hasActiveRecruiter(context) &&
+    context.recruiter?.userId === context.user.id &&
     context.recruiter?.grants.some(
       (grant) => grant.collegeId === tenant.collegeId,
     ),

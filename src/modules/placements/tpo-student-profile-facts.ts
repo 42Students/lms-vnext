@@ -40,5 +40,5 @@ export function tpoStudentProfileFacts(raw:unknown):TpoStudentProfileFacts{
   linkedIn:safeHttps(social.linkedinUrl),github:safeHttps(social.githubUrl),portfolio:safeHttps(social.portfolioUrl),
   skills:count("skills"),projects:count("projects"),
   certifications:count("certifications"),experiences:count("experiences"),
-  links:["linkedinUrl","githubUrl","portfolioUrl"].some(key=>nonempty(social[key])),resume,codingProfiles};
+  links:["linkedinUrl","githubUrl","portfolioUrl"].some(key=>safeHttps(social[key])!==null),resume,codingProfiles};
 }

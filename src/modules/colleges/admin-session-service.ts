@@ -85,6 +85,9 @@ export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:un
     revocation_reason='SUPER_ADMIN_SIGN_OUT_EVERYWHERE'
   WHERE user_id=${target.userId}::uuid AND revoked_at IS NULL
     AND expires_at>now() RETURNING id`);
+  // The second "sign out everywhere" retry is a no-op: there were no live
+  // sessions left to revoke. Do not emit a duplicate lifecycle audit record.
+  if(rows.rows.length===0)return {revoked:0};
   await recordActivityEventInTransaction(tx,ctx,{
    eventType:ACTIVITY_EVENT_TYPES.PLATFORM_ADMIN_SESSIONS_REVOKED,
    organizationId:target.college.organizationId,collegeId:target.college.id,
