@@ -21,6 +21,8 @@ Scope: TPO Projects read journey, TPO Students and Companies bulk operations, fi
 
 | D12-14 | MAJOR | Company Team POST parsed arbitrary-size `request.json()` before Zod max-length and lacked a streamed body cap; oversized chunked payloads could exhaust memory despite a 4,000-character message field. | Fixed: shared bounded incremental JSON decoder, byte limit 64 KiB, same-origin before parsing, explicit 400/413/415. | `5924bae9`; `chat12-tpo-team-scope-and-notifications.test.ts` route contract. Real slow-client acceptance pending. |
 
+| D12-15 | MAJOR | `/admin/attendance?month=bad` passed unvalidated search parameters to `indiaAttendanceMonthWindow`, whose parser throws a raw error, crashing a scoped attendance page rather than showing recovery. | Fixed: validate YYYY-MM before grid query and offer a scoped reset `ErrorState`; corrected escaped regex immediately during source review. | `588f0542`, `8291149a`; `chat12-admin-first-third-cross-audit.test.ts`; browser execution pending. |
+
 ## Verification status
 
 The rolling `docs/orchestrator/unit-failures-latest.md` explicitly reports two `chat-12` failures (TPO-students-51); their stale selectors were repaired but remain **unverified in CI**. The branch was fast-forwarded to main `a172b146ede1992a428dbe3e74a6d87dd3a12985` before these changes. No direct commits to main.
