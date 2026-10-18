@@ -14,7 +14,7 @@ export async function getTpoJobTypes(ctx:RequestContext){
  const ready=await placementTableExists("placement_tpo_job_types");
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
-   .from(colleges).where(eq(colleges.id,collegeId)).limit(1);
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
   if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.read");
   await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    collegeId,organizationId:college.organizationId,
@@ -31,7 +31,7 @@ export async function getTpoBlockedDates(ctx:RequestContext){
  const ready=await placementTableExists("placement_tpo_blocked_dates");
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
-   .from(colleges).where(eq(colleges.id,collegeId)).limit(1);
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
   if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.read");
   await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    collegeId,organizationId:college.organizationId,
@@ -48,7 +48,7 @@ export async function getTpoPrepReadiness(ctx:RequestContext){
  const ready=await placementTableExists("placement_tpo_prep_readiness");
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
-   .from(colleges).where(eq(colleges.id,collegeId)).limit(1);
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
   if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.read");
   await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    collegeId,organizationId:college.organizationId,
@@ -64,7 +64,7 @@ export async function listTpoPrepCourses(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
-   .from(colleges).where(eq(colleges.id,collegeId)).limit(1);
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
   if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.read");
   await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    collegeId,organizationId:college.organizationId,
