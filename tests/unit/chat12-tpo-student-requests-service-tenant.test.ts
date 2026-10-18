@@ -1,9 +1,10 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 
-const mocks=vi.hoisted(()=>({scope:vi.fn(),getDb:vi.fn(),select:vi.fn(),rows:[] as unknown[]}));
+const mocks=vi.hoisted(()=>({scope:vi.fn(),actor:vi.fn(),getDb:vi.fn(),select:vi.fn(),rows:[] as unknown[]}));
 vi.mock("@/modules/placements/scope",()=>({requirePlacementManageScope:mocks.scope}));
 vi.mock("@/db/client",()=>({getDb:mocks.getDb}));
+vi.mock("@/modules/placements/tpo-batch-workspace-read-service",()=>({requireTpoBatchActor:mocks.actor}));
 import {listTpoStudentRequests} from "@/modules/placements/tpo-students-service";
 
 const A="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",B="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
@@ -27,6 +28,7 @@ describe("TPO-BREAK-student-requests-09 safe scope and server filters",()=>{
  beforeEach(()=>{
   vi.resetAllMocks();
   mocks.rows=[];
+  mocks.actor.mockResolvedValue(A);
   mocks.scope.mockImplementation(async(_ctx:RequestContext,collegeId:string)=>{
    if(collegeId!==A)throw new Error("FOREIGN_COLLEGE");
    return {id:A,organizationId:ORG};
@@ -46,6 +48,12 @@ describe("TPO-BREAK-student-requests-09 safe scope and server filters",()=>{
   await expect(listTpoStudentRequests(ctx,{collegeId:A,actorId:B})).rejects.toBeDefined();
   await expect(listTpoStudentRequests(ctx,{collegeId:A,page:0})).rejects.toBeDefined();
   expect(mocks.getDb).not.toHaveBeenCalled();
+ });
+ it("TPO-BREAK-student-read-actor-01 denies a revoked persisted TPO role before reading records",async()=>{
+  mocks.actor.mockRejectedValue(new Error("PERSISTED_ROLE_REVOKED"));
+  await expect(listTpoStudentRequests(ctx,{collegeId:A})).rejects.toThrow("PERSISTED_ROLE_REVOKED");
+  expect(mocks.getDb).not.toHaveBeenCalled();
+  expect(mocks.actor).toHaveBeenCalledWith(ctx);
  });
  it("returns honest zero-count state with no fabricated unknown request kinds",async()=>{
   const r=await listTpoStudentRequests(ctx,{collegeId:A});
