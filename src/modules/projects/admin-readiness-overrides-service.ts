@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents, projectInstances, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
