@@ -24,6 +24,8 @@ import {RecruiterInlineOwner} from "./recruiter-inline-owner";
 import {tpoCompanyDirectoryCsv} from "@/modules/placements/tpo-company-directory-export-model";
 import {deriveLegacyCompanyCommunication} from "@/modules/placements/tpo-company-communication-legacy-model";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 type Lead = {
   id: string;
@@ -98,9 +100,9 @@ function friendlyError(status: number, payload: { error?: string }) {
   return "The request failed. Check your connection and try again.";
 }
 
-const inputStyle = "min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
-const buttonStyle = "inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
-const primaryStyle = "inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
+const inputStyle = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const buttonStyle = "inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
+const primaryStyle = "inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
 
 export function RecruiterLeadsWorkspace({
   collegeId,
@@ -202,6 +204,7 @@ export function RecruiterLeadsWorkspace({
   const [companiesPhase, setCompaniesPhase] = useState<Phase>("loading");
   const [companiesError, setCompaniesError] = useState("");
   const [adding, setAdding] = useState(initialAdd);
+  const [confirmation,setConfirmation]=useState<{kind:"CONTACTED"|"INVITE"|"DISCARD";leadId?:string}|null>(null);
   const createDialogRef=useRef<HTMLFormElement>(null);
   const createNameRef=useRef<HTMLInputElement>(null);
   const createLaunchRef=useRef<HTMLButtonElement>(null);
@@ -427,10 +430,10 @@ export function RecruiterLeadsWorkspace({
    else setQuery(value==="ALL"?"":value);
   }
 
-  async function moveBoardLeadToContacted(leadId:string){
+  async function moveBoardLeadToContacted(leadId:string,confirmed=false){
     const lead=rows.find(row=>row.id===leadId);
     if(!lead||lead.manualStage!=="NEW"||boardMoving)return;
-    if(!window.confirm("Mark "+lead.name+" as Contacted? This adds an audited stage-change entry."))return;
+    if(!confirmed){setConfirmation({kind:"CONTACTED",leadId});return;}
     setBoardMoving(true);setActionToast("");
     try{
       const response=await fetch("/api/placements/tpo/leads/bulk-stage",{
@@ -447,10 +450,10 @@ export function RecruiterLeadsWorkspace({
     finally{setBoardMoving(false);setDraggedBoardId(null);}
   }
 
-  async function createInviteLink(lead:Lead){
+  async function createInviteLink(lead:Lead,confirmed=false){
     if(invitingId||lead.recruiterUserId||lead.unsubscribedAt||
       !lead.emailNorm||!lead.companyRelationshipId)return;
-    if(lead.inviteSentAt&&!window.confirm("Make a new link? The old link stops working."))return;
+    if(lead.inviteSentAt&&!confirmed){setConfirmation({kind:"INVITE",leadId:lead.id});return;}
     setInvitingId(lead.id);setFreshInvite(null);setActionToast("");
     try{
       const response=await fetch("/api/placements/tpo/leads/"+encodeURIComponent(lead.id)+"/invite",{
@@ -509,10 +512,10 @@ export function RecruiterLeadsWorkspace({
     }
   }
 
-  function closeAddDialog() {
+  function closeAddDialog(confirmed=false) {
     if(saving)return;
     const dirty=Object.values(form).some(value=>value.trim());
-    if(dirty&&!window.confirm("Discard this recruiter draft?"))return;
+    if(dirty&&!confirmed){setConfirmation({kind:"DISCARD"});return;}
     contactCheckSeq.current++;
     setChecking(false);
     setAdding(false);setDuplicate(null);setSaveError("");setReviewingCreate(false);
@@ -638,7 +641,7 @@ export function RecruiterLeadsWorkspace({
         <>
           <section aria-label="Needs doing" className="space-y-2 rounded-lg border border-border bg-surface p-4">
             <button type="button" aria-expanded={needsExpanded}
-              className="flex min-h-10 w-full items-center justify-between gap-3 text-sm font-semibold text-foreground"
+              className="flex min-h-11 w-full items-center justify-between gap-3 text-sm font-semibold text-foreground"
               onClick={()=>setNeedsExpanded(open=>!open)}>
               Needs doing <span className="text-xs font-normal">{needsExpanded?"Hide":"Show"}</span>
             </button>
@@ -650,20 +653,20 @@ export function RecruiterLeadsWorkspace({
               ] as const).filter(([, ,count])=>count>0).map(([key,label,count])=>
                 <button key={key} type="button" aria-pressed={attention===key}
                   className={attention===key
-                   ?"min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary"
-                   :"min-h-10 rounded-md border border-border px-3 text-sm text-body"}
+                   ?"min-h-11 rounded-md bg-primary px-3 text-sm text-on-primary"
+                   :"min-h-11 rounded-md border border-border px-3 text-sm text-body"}
                   onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>{label} ({count})</button>)}
               {needCounts.unassigned>0?<button type="button"
                 aria-pressed={need==="UNASSIGNED"}
                 className={need==="UNASSIGNED"
-                  ?"min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary"
-                  :"min-h-10 rounded-md border border-border px-3 text-sm text-body"}
+                  ?"min-h-11 rounded-md bg-primary px-3 text-sm text-on-primary"
+                  :"min-h-11 rounded-md border border-border px-3 text-sm text-body"}
                 onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>
                 Unassigned ({needCounts.unassigned})</button>:null}
             </div>:null}
             {needsExpanded&&!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
              needCounts.unassigned===0?<p role="status" className="text-sm">Nothing right now.</p>:null}
-            <Link className="inline-flex min-h-10 items-center text-sm text-primary-text underline"
+            <Link className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline"
               href="/tpo/settings/recruiters">
               {rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access
             </Link>
@@ -685,7 +688,7 @@ export function RecruiterLeadsWorkspace({
             <nav role="tablist" aria-label="Engage views" className="flex flex-wrap items-center gap-2">
               {([["table","Table"],["board","Board"],["companies","Companies ("+companies.length+")"],["campaigns","Emails"]] as const).map(([key,label])=>
                 <button type="button" role="tab" key={key} aria-selected={key===view}
-                  className={key===view?"min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-on-primary":"min-h-10 rounded-md border border-border px-3 text-sm text-body"}
+                  className={key===view?"min-h-11 rounded-md bg-primary px-3 text-sm font-semibold text-on-primary":"min-h-11 rounded-md border border-border px-3 text-sm text-body"}
                   onClick={()=>{
                     const params=new URLSearchParams(window.location.search);
                     if(key==="campaigns"){params.set("view","campaigns");
@@ -929,12 +932,12 @@ export function RecruiterLeadsWorkspace({
                     <tbody>{visibleCompanies.map(company=>(
                       <tr key={company.key} className="border-b border-border last:border-0">
                         <td className="px-4 py-3">
-                          <Link className="text-primary-text underline" href={"/tpo/companies?name="+encodeURIComponent(company.name)}>{company.name}</Link>
+                          <Link className="text-[var(--lms-teal-deep)] underline" href={"/tpo/companies?name="+encodeURIComponent(company.name)}>{company.name}</Link>
                           {company.aliases.length?<p className="text-xs text-muted-foreground"><span title={company.aliases.join(", ")}>Also {company.aliases.length} other spellings</span></p>:null}
                         </td>
                         <td className="px-4 py-3">
                           <select aria-label={"Communication for "+company.name}
-                            className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm"
+                            className="min-h-11 rounded-md border border-border bg-surface px-2 text-sm"
                             value={communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
                               rows.filter(row=>company.people.some(p=>p.id===row.id)))}
                             disabled={!communicationReady}
@@ -948,9 +951,9 @@ export function RecruiterLeadsWorkspace({
                         </td>
                         <td className="px-4 py-3">
                           {company.people?.length?company.people.map(person=>
-                            <Link key={person.id} className="mr-2 text-primary-text underline"
+                            <Link key={person.id} className="mr-2 text-[var(--lms-teal-deep)] underline"
                               href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>):
-                            <button type="button" className="text-primary-text underline"
+                            <button type="button" className="text-[var(--lms-teal-deep)] underline"
                               onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</button>}
                         </td>
                         <td className="px-4 py-3">{company.drivesRan}</td>
@@ -997,7 +1000,7 @@ export function RecruiterLeadsWorkspace({
                             [...new Set([...current,lead.id])]:current.filter(id=>id!==lead.id))}/>
                       </td>
                       <td style={{display:visibleColumns.includes("Contact")?undefined:"none"}} className="px-4 py-3 font-medium">
-                        <Link className="text-primary-text underline-offset-2 hover:underline"
+                        <Link className="text-[var(--lms-teal-deep)] underline-offset-2 hover:underline"
                           href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}>{lead.name||"Unnamed contact"}</Link>
                          {lead.designation?<p className="mt-1 text-xs font-normal text-muted-foreground">{lead.designation}</p>:null}
                       </td>
@@ -1067,7 +1070,7 @@ export function RecruiterLeadsWorkspace({
                         onDragEnd={()=>setDraggedBoardId(null)}
                         title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
                         <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
-                          className="block text-primary-text underline-offset-2 hover:underline">
+                          className="block text-[var(--lms-teal-deep)] underline-offset-2 hover:underline">
                         <span className="block font-medium">{lead.name||"Unnamed contact"}</span>
                          {lead.designation?<span className="block text-xs text-muted-foreground">{lead.designation}</span>:null}
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>
@@ -1079,7 +1082,7 @@ export function RecruiterLeadsWorkspace({
                            {lead.ownerName?<span className="text-xs text-muted-foreground">Owner: {lead.ownerName}</span>:null}
                          </div>
                          <details className="mt-2 rounded-md border border-border p-2 text-xs">
-                           <summary className="cursor-pointer text-primary-text">Move to… / Actions</summary>
+                           <summary className="cursor-pointer text-[var(--lms-teal-deep)]">Move to… / Actions</summary>
                            <p className="mt-1 text-muted-foreground">
                              Invited, Joined, Drive planned and Recruited update automatically.
                              Not now requires a reason.
@@ -1087,7 +1090,7 @@ export function RecruiterLeadsWorkspace({
                            <div className="mt-2 space-y-2">
                              <RecruiterInlineStage lead={lead} onUpdated={()=>void load()} />
                              <RecruiterInlineOwner lead={lead} onUpdated={()=>void load()} />
-                             <Link className="inline-block text-primary-text underline"
+                             <Link className="inline-block text-[var(--lms-teal-deep)] underline"
                                href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
                            </div>
                          </details>
@@ -1105,20 +1108,10 @@ export function RecruiterLeadsWorkspace({
       )}
 
       {adding && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
-          <form ref={createDialogRef} role="dialog" aria-modal="true" aria-label="Add recruiter lead"
-            onSubmit={e => void create(e)}
-            onKeyDown={e=>{
-             if(e.key==="Escape"){e.preventDefault();closeAddDialog();return;}
-             if(e.key!=="Tab"||!createDialogRef.current)return;
-             const available=Array.from(createDialogRef.current.querySelectorAll<HTMLElement>(
-              'button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]'));
-             const first=available[0],last=available[available.length-1];
-             if(!first||!last)return;
-             if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
-             else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
-            }}
-            className="max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl">
+        <Dialog open={adding} onOpenChange={next=>{if(!next)closeAddDialog();}}
+          dismissible={!saving} title="Add recruiter lead">
+          <form ref={createDialogRef} onSubmit={e=>void create(e)}
+            className="min-w-0 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold">Add recruiter lead</h2>
               <button type="button" className={buttonStyle} onClick={closeAddDialog} disabled={saving}>Close</button>
@@ -1131,7 +1124,7 @@ export function RecruiterLeadsWorkspace({
               value={form.phone} onChange={e => field("phone", e.target.value)} /></label>
             <button type="button" className={buttonStyle} disabled={checking || !(form.email || form.phone)}
               onClick={() => void checkContact()}>{checking ? "Checking…" : "Check for existing contact"}</button>
-            {duplicate ? <p role="alert" className="text-sm text-destructive">
+            {duplicate ? <p role="alert" className="text-sm text-foreground">
               Contact already exists: <Link className="underline" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
             </p> : null}
             <label className="block text-sm">Company *<input className={inputStyle + " mt-1"} required maxLength={150}
@@ -1168,11 +1161,11 @@ export function RecruiterLeadsWorkspace({
                 This saves a new college contact and records an auditable creation event.
               </p>
               {form.followupDate?<p>First follow-up: {form.followupDate} (IST)</p>:null}
-              <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewingCreate(false)}>
+              <button type="button" className="mt-2 text-[var(--lms-teal-deep)] underline" onClick={()=>setReviewingCreate(false)}>
                 Edit details
               </button>
             </div>:null}
-            {saveError && <p role="alert" className="text-sm text-destructive">{saveError}</p>}
+            {saveError && <p role="alert" className="text-sm text-foreground">{saveError}</p>}
             <div className="flex justify-end">
               <button type="submit" className={primaryStyle}
                 disabled={saving || checking || Boolean(duplicate)}>
@@ -1180,8 +1173,26 @@ export function RecruiterLeadsWorkspace({
               </button>
             </div>
           </form>
-        </div>
+        </Dialog>
       )}
+      <ConfirmDialog open={confirmation!==null}
+        onOpenChange={next=>{if(!next)setConfirmation(null);}}
+        title={confirmation?.kind==="CONTACTED"
+          ?"Mark "+(rows.find(row=>row.id===confirmation.leadId)?.name??"recruiter")+" as Contacted?"
+          :confirmation?.kind==="INVITE"?"Make a new link?":"Discard this recruiter draft?"}
+        description={confirmation?.kind==="CONTACTED"?"This adds an audited stage-change entry."
+          :confirmation?.kind==="INVITE"?"The old link stops working.":"Your unsubmitted recruiter changes will be lost."}
+        confirmLabel="Confirm"
+        onConfirm={()=>{
+          const target=confirmation;
+          setConfirmation(null);
+          if(target?.kind==="DISCARD")closeAddDialog(true);
+          else if(target?.kind==="CONTACTED"&&target.leadId)void moveBoardLeadToContacted(target.leadId,true);
+          else if(target?.kind==="INVITE"&&target.leadId){
+            const lead=rows.find(row=>row.id===target.leadId);
+            if(lead)void createInviteLink(lead,true);
+          }
+        }}/>
     </section>
   );
 }
