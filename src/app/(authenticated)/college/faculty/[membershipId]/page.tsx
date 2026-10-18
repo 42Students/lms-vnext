@@ -40,7 +40,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </dl>
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">
-      <h2 className="font-semibold text-foreground">Persisted teaching assignments</h2>
+      <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
       <form method="get" className="mt-3 flex flex-wrap items-end gap-3"
         action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
         <label className="grid gap-2 text-sm font-semibold text-body">
@@ -72,7 +72,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         ? <p className="mt-4 text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>
         : <div className="mt-4">
           <DataTable
-            caption="Persisted teaching assignments"
+            caption="Faculty teaching assignments"
             rows={data.assignments}
             getRowKey={item => item.id}
             empty={<p className="text-sm text-muted-foreground">No college-scoped teaching assignments recorded.</p>}

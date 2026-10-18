@@ -114,11 +114,13 @@ describe("chat-16 campaign source, filters, recipient consent, and IST time beha
       { ...baseContact, id: "lead-c", emailNorm: "  ", unsubscribedAt: new Date(0) },
       { ...baseContact, id: "lead-d", emailNorm: "  ", manualStage: "NOT_NOW" },
       { ...baseContact, id: "lead-e", emailNorm: "eligible@example.org" },
+      { ...baseContact, id: "lead-f", emailNorm: "malformed@@" },
+      { ...baseContact, id: "lead-g", emailNorm: "bad..dots@example.org" },
     ];
     const preview = summarizeEngageAudience(contacts, "ALL_ELIGIBLE");
     const dispatch = planTpoCampaignRecipients(contacts);
     expect(preview).toMatchObject({
-      total: 5, eligible: 1, withoutEmail: 3,
+      total: 7, eligible: 1, withoutEmail: 5,
       unsubscribed: 1, bounced: 0, notNow: 0,
     });
     expect(dispatch.recipientIds).toEqual(["lead-e"]);

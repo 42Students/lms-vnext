@@ -225,6 +225,27 @@ export async function createPrincipal(db: PgHarness, tenant: TenantFixture | nul
   return {userId,membershipId,collegeId:tenant?.collegeId ?? null,roles};
 }
 
+/** Fixtures must not silently promote an inactive or wrong-role user into
+ * a product graph. Role arrays supplied by tests are hints, never authority. */
+async function requireFixtureCollegePrincipal(
+  db: PgHarness, collegeId: string, actor: PrincipalFixture, roles: readonly string[],
+): Promise<void> {
+  if (!actor.membershipId || actor.collegeId !== collegeId ||
+      !roles.some(role => actor.roles.includes(role))) {
+    throw new Error("PROJ-HARNESS: actor role or college does not match fixture");
+  }
+  const rows = await db.query<{ id: string }>(`
+    select cm.id from college_memberships cm
+      join users u on u.id = cm.user_id
+      join membership_roles mr on mr.membership_id = cm.id
+      join colleges c on c.id = cm.college_id
+     where cm.id = $1 and cm.college_id = $2 and u.id = $3
+       and cm.status = 'ACTIVE' and u.platform_status = 'ACTIVE'
+       and c.status = 'ACTIVE' and mr.role = any($4::membership_role[])
+     limit 1`, [actor.membershipId, collegeId, actor.userId, roles]);
+  if (!rows.length) throw new Error("PROJ-HARNESS: actor is not an active member in the required role");
+}
+
 /** Canonical project workspace graph, referencing the ACTUAL migration tables.
  * Cross-tenant tests should create two of these in distinct tenants.
  */
@@ -234,6 +255,9 @@ export async function createProjectFixture(db: PgHarness, tenant: TenantFixture,
       learner.collegeId !== tenant.collegeId || !mentor.membershipId || !learner.membershipId) {
     throw new Error("PROJ-HARNESS: project actors must belong to the fixture's college");
   }
+  await requireFixtureCollegePrincipal(db, tenant.collegeId, author, ["COLLEGE_ADMIN"]);
+  await requireFixtureCollegePrincipal(db, tenant.collegeId, mentor, ["MENTOR"]);
+  await requireFixtureCollegePrincipal(db, tenant.collegeId, learner, ["LEARNER"]);
   const suffix = randomUUID().slice(0,12);
   const [template] = await db.query<{id:string}>(`
     insert into project_templates (slug,title,created_by_user_id)
@@ -352,6 +376,7 @@ export async function createMeeting(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture, author: PrincipalFixture): Promise<string> {
   await requireProjectLearner(db, project.projectId, learner);
   await requireProjectCollegeActor(db, project.projectId, author);
+  await requireFixtureCollegePrincipal(db, author.collegeId!, author, ["COLLEGE_ADMIN","MENTOR"]);
   const [row] = await db.query<{id:string}>(`
     insert into project_meetings
       (project_id,title,starts_at,ends_at,time_zone,requested_by_membership_id,created_by_user_id)
@@ -364,6 +389,7 @@ export async function createMeeting(db: PgHarness, project: ProjectFixture,
 export async function createPlacementFixture(db: PgHarness, tenant: TenantFixture,
   author: PrincipalFixture): Promise<PlacementFixture> {
   if (author.collegeId !== tenant.collegeId) throw new Error("PROJ-HARNESS: drive actor wrong college");
+  await requireFixtureCollegePrincipal(db, tenant.collegeId, author, ["COLLEGE_ADMIN","TPO"]);
   const suffix = randomUUID().slice(0,12);
   const [company] = await db.query<{id:string}>(`
     insert into placement_companies (name,created_by_user_id)
@@ -417,6 +443,10 @@ export async function createPlacementCandidateFixture(
   if (job?.college_id !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and drive have different colleges");
   }
+  // Roles held in fixture objects are insufficient evidence; the real
+  // memberships and both users must still be active in the drive's college.
+  await requireFixtureCollegePrincipal(db, job.college_id, learner, ["LEARNER"]);
+  await requireFixtureCollegePrincipal(db, job.college_id, actor, ["COLLEGE_ADMIN", "TPO"]);
   const [application] = await db.query<{id:string}>(`
     insert into placement_applications
       (job_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)

@@ -76,3 +76,19 @@ export function placementOfferLockedDecisionTime(requestTime:Date,lockedAt:Date)
  if(!Number.isFinite(a)||!Number.isFinite(b))throw new Error("Invalid offer decision clock");
  return new Date(Math.max(a,b));
 }
+
+
+/** A confirmed learner response remains a read-only idempotent retry even
+ * after the deadline. It must be the same action and the original responder:
+ * expiration still forbids new acceptance/decline or a changed decision.
+ */
+export function canReplayFinalOfferResponseAfterExpiry(input: {
+  action: "ACCEPT" | "DECLINE" | "WITHDRAW";
+  status: string;
+  respondedByUserId: string | null;
+  actorUserId: string;
+}): boolean {
+  return input.respondedByUserId === input.actorUserId &&
+    ((input.action === "ACCEPT" && input.status === "ACCEPTED") ||
+     (input.action === "DECLINE" && input.status === "DECLINED"));
+}

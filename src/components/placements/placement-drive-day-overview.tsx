@@ -1,4 +1,5 @@
 import { StatusBadge } from "@/components/ui/status-badge";
+import {DataTable} from "@/components/ui/data-table";
 import type { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 
 type DriveDay = Awaited<ReturnType<typeof getPlacementDriveDay>>;
@@ -32,8 +33,38 @@ export function PlacementDriveDayOverview({ driveDay }: { driveDay: DriveDay }) 
         driveDay.rounds.map(round => <article key={round.id} id={`round-${round.id}`} className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">Round {round.sequence} · {round.kind}</p><h3 className="mt-1 text-lg font-semibold text-foreground">{round.name}</h3><p className="mt-1 text-sm text-body">{formatWhen(round.scheduledAt, round.timezone)}{round.venue ? " · "+round.venue : ""}</p></div><StatusBadge tone={tone(round.status)}>{round.status}</StatusBadge></div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{[["Participants",round.participantCount],["Staged",round.stagedResultCount],["Applied",round.appliedResultCount],["Missing",round.missingResultCount],["Passed",round.outcomes.pass]].map(([label,value]) => <div key={String(label)} className="rounded-lg border border-border bg-muted px-3 py-2"><p className="m-0 text-xs text-muted-foreground">{label}</p><p className="mt-1 font-semibold text-foreground">{value}</p></div>)}</div>
-          {round.participants.length > 0 ? <div tabIndex={0} role="region" aria-label="Round candidate progress, scroll horizontally for more columns" className="mt-4 overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_0%,black_95%,transparent_100%)]"><table className="w-full min-w-[42rem] border-collapse text-left text-sm"><thead><tr className="border-b border-border"><th scope="col" className="sticky left-0 z-10 bg-surface px-2 py-2 font-semibold text-body">Candidate</th><th className="px-2 py-2 font-semibold text-body">Membership</th><th className="px-2 py-2 font-semibold text-body">Schedule</th><th className="px-2 py-2 font-semibold text-body">Result</th></tr></thead><tbody>{round.participants.map(participant =>
-            <tr key={participant.applicationId} className="border-b border-border last:border-0"><td className="sticky left-0 z-10 bg-surface px-2 py-3 text-body"><p className="m-0 font-semibold text-foreground">{participant.displayName ?? "Learner"}</p><p className="mt-1 text-xs text-muted-foreground">{participant.roleTitle} · {participant.email ?? participant.phoneE164 ?? "No contact on profile"}</p></td><td className="px-2 py-3"><StatusBadge tone={participant.membershipStatus === "ACTIVE" ? "success" : "error"}>{participant.membershipStatus}</StatusBadge></td><td className="px-2 py-3 text-body">{participant.scheduleException ? <div><StatusBadge tone="info">Exception</StatusBadge><p className="mt-1 text-xs">{formatWhen(participant.scheduleException.scheduledAt, participant.scheduleException.timezone)}{participant.scheduleException.venue ? " · "+participant.scheduleException.venue : ""}</p></div> : <span className="text-muted-foreground">Shared round</span>}</td><td className="px-2 py-3">{participant.result ? <StatusBadge tone={participant.result.status === "STAGED" ? "warning" : participant.result.outcome === "PASS" ? "success" : "error"}>{participant.result.status} · {participant.result.outcome}</StatusBadge> : <span className="text-muted-foreground">Pending</span>}</td></tr>)}</tbody></table></div> : null}
+          {round.participants.length > 0 ?
+           <div className="mt-4">
+            <DataTable
+             caption={"Round "+round.sequence+" candidate progress"}
+             rows={round.participants}
+             getRowKey={participant=>participant.applicationId}
+             columns={[
+              {key:"candidate",header:"Candidate",mobilePriority:"primary",cell:participant=><>
+               <p className="m-0 font-semibold text-foreground">{participant.displayName??"Learner"}</p>
+               <p className="mt-1 break-words text-xs text-muted-foreground">
+                {participant.roleTitle} · {participant.email??participant.phoneE164??"No contact on profile"}
+               </p>
+              </>},
+              {key:"membership",header:"Membership",mobilePriority:"secondary",cell:participant=>
+               <StatusBadge tone={participant.membershipStatus==="ACTIVE"?"success":"error"}>{participant.membershipStatus}</StatusBadge>},
+              {key:"schedule",header:"Schedule",mobilePriority:"secondary",cell:participant=>
+               participant.scheduleException?<div>
+                <StatusBadge tone="info">Exception</StatusBadge>
+                <p className="mt-1 text-xs text-body">
+                 {formatWhen(participant.scheduleException.scheduledAt,participant.scheduleException.timezone)}
+                 {participant.scheduleException.venue?" · "+participant.scheduleException.venue:""}
+                </p>
+               </div>:<span className="text-muted-foreground">Shared round</span>},
+              {key:"result",header:"Result",mobilePriority:"secondary",cell:participant=>
+               participant.result?<StatusBadge tone={participant.result.status==="STAGED"?"warning":
+                participant.result.outcome==="PASS"?"success":"error"}>
+                {participant.result.status} · {participant.result.outcome}
+               </StatusBadge>:<span className="text-muted-foreground">Pending</span>},
+             ]}
+             empty={<p role="status" className="text-body">No candidates in this round.</p>}
+            />
+           </div>:null}
         </article>)}
     </section>
   </div>;
