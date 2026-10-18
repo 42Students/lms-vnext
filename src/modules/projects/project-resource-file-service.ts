@@ -235,18 +235,27 @@ export async function completeProjectFileUpload(
     const raced = await loadFile(scope.project.id, row.id);
     if (raced.status === "READY") return toProjectFileDto(raced);
     if (row.uploadExpiresAt.getTime() + 60_000 < Date.now()) {
-      await getDb().transaction(async tx=>{
+      const expiredOrWinner = await getDb().transaction(async tx=>{
         const [liveProject] = await tx.select({status:projectInstances.status})
           .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
           .for("share").limit(1);
         if(!liveProject)throw new StorageFileError("STORAGE_NOT_FOUND");
         requireOpenProject(liveProject.status);
-        await tx.update(projectResourceFiles)
+        const [failed] = await tx.update(projectResourceFiles)
           .set({status:"FAILED",failureCode:"STORAGE_UPLOAD_EXPIRED",updatedAt:new Date()})
           .where(and(eq(projectResourceFiles.id,row.id),
             eq(projectResourceFiles.projectId,scope.project.id),
-            eq(projectResourceFiles.status,row.status)));
+            eq(projectResourceFiles.status,row.status)))
+          .returning();
+        if(failed)return failed;
+        // A parallel verifier may have committed READY between our first
+        // reread and this expired-state CAS. Never report failed when it won.
+        const [winner]=await tx.select().from(projectResourceFiles)
+          .where(and(eq(projectResourceFiles.id,row.id),
+            eq(projectResourceFiles.projectId,scope.project.id))).limit(1);
+        return winner??null;
       });
+      if(expiredOrWinner?.status==="READY")return toProjectFileDto(expiredOrWinner);
       throw new StorageFileError("STORAGE_UPLOAD_EXPIRED");
     }
     throw new StorageFileError("STORAGE_UPLOAD_NOT_FOUND");
