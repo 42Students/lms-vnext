@@ -9,7 +9,8 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectManageAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
-import {readinessOverrideInputSchema,type ReadinessOverrideState} from "./readiness-override-model";
+import {readinessOverrideInputSchema,isDuplicateProjectReadinessOverride,type ReadinessOverrideState} from "./readiness-override-model";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
 type ReadableDb=Pick<ReturnType<typeof getDb>,"select">;
 export async function readProjectReadinessOverride(db:ReadableDb,projectId:string,collegeId:string) {
@@ -35,6 +36,15 @@ export async function overrideProjectReadiness(context:RequestContext,projectIdI
       .from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
     if(!project||project.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+    // Session roles can change between opening the dialog and submitting.
+    // Check the persisted user/membership under transactional locks before
+    // either returning a retry or recording a new audit event.
+    await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+      organizationId:scope.organizationId,collegeId:scope.collegeId,
+    });
+    const previous=await readProjectReadinessOverride(tx,project.id,scope.collegeId);
+    if(isDuplicateProjectReadinessOverride(previous,input))
+      return {state:input.state,note:"note" in input?input.note:null};
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN,
       collegeId:scope.collegeId,organizationId:scope.organizationId,
