@@ -1,4 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {readFileSync} from "node:fs";
 import {PgDialect} from "drizzle-orm/pg-core";
 import type {SQL} from "drizzle-orm";
 import type {RequestContext} from "@/modules/identity/context";
@@ -12,7 +13,7 @@ const otherCollegeId="22222222-2222-4222-8222-222222222222";
 const mentorId="33333333-3333-4333-8333-333333333333";
 const state=vi.hoisted(()=>({
   scope:0,liveChecks:0,reads:0,revoked:false,filters:[] as unknown[],
-  pages:[] as number[],offsets:[] as number[],
+  pages:[] as number[],offsets:[] as number[],total:1,
 }));
 vi.mock("@/modules/projects/scope",()=>({
   loadProjectCollegeScope:async(id:string)=>{
@@ -32,7 +33,7 @@ vi.mock("@/db/client",()=>({
     transaction:async<T>(fn:(tx:unknown)=>Promise<T>)=>{
       const select=(fields:Record<string,unknown>)=>{
         state.reads++;
-        const rows="total" in fields?[{total:1}]:
+        const rows="total" in fields?[{total:state.total}]:
           "activeWorkspaces" in fields?[{mentorMembershipId:mentorId,mentorName:"Mentor",activeWorkspaces:1,atRisk:0}]:
           [{id:"55555555-5555-4555-8555-555555555555",title:"IIT Dharwad",status:"ACTIVE",
             mentorName:"Mentor",mentorMembershipId:mentorId}];
@@ -61,7 +62,7 @@ const admin=():RequestContext=>({
 });
 beforeEach(()=>{
   state.scope=0;state.liveChecks=0;state.reads=0;state.revoked=false;
-  state.filters=[];state.pages=[];state.offsets=[];
+  state.filters=[];state.pages=[];state.offsets=[];state.total=1;
 });
 describe("IIT Dharwad Projects: mentor reassignment workload tenant and input safety",()=>{
   it("PROJ-BREAK-mentor-86 rejects hostile direct-service input before scope or DB lookup",async()=>{
@@ -108,6 +109,23 @@ describe("IIT Dharwad Projects: mentor reassignment workload tenant and input sa
     expect(rendered.some(item=>item.params.includes(collegeId))).toBe(true);
     expect(rendered.some(item=>item.params.includes(mentorId))).toBe(true);
     expect(rendered.some(item=>item.params.includes("%100\\%\\_team%"))).toBe(true);
+  });
+  it("PROJ-BREAK-scale-91 bulk selection is explicitly capped, never silently treated as all matches",async()=>{
+    state.total=1001;
+    const result=await listCollegeReassignmentWorkspaces(admin(),collegeId,{
+      page:1,pageSize:25,
+    });
+    expect(result.matchingCapped).toBe(true);
+    expect(result.total).toBe(1001);
+    expect(state.pages).toContain(1000);
+    const page=readFileSync("src/components/projects/project-admin-reassign-mentor-page.tsx","utf8");
+    const bulk=readFileSync("src/components/projects/project-mentor-reassignment.tsx","utf8");
+    expect(page).toContain("matchingCapped={projects.matchingCapped}");
+    expect(bulk).toContain("Select first ");
+    expect(bulk).toContain("narrow the filters to include the remaining workspaces.");
+    state.total=1000;
+    const exactly=await listCollegeReassignmentWorkspaces(admin(),collegeId,{});
+    expect(exactly.matchingCapped).toBe(false);
   });
   it("PROJ-BREAK-mentor-90 authorized workload remains scoped, archived-free and read-only",async()=>{
     const result=await listCollegeProjectMentorWorkload(admin(),collegeId);
