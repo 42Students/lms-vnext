@@ -27,7 +27,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
     const rawRole=row.details.find(detail=>detail.startsWith("Teaching role: "))?.slice("Teaching role: ".length);
     const role=COURSE_TEACHING_ROLES.find(value=>value===rawRole);
     return <div className="min-w-0 flex flex-wrap gap-2">
-      {role?<SuperAdminTeachingRoleEdit assignmentId={row.id} role={role}/>:null}
+      {role&&row.revision?<SuperAdminTeachingRoleEdit assignmentId={row.id} role={role} revision={row.revision}/>:null}
       <TeachingAssignmentActions legacyCopy assignment={{
         id:row.id,facultyDisplayName:row.title,courseName:row.subtitle,sectionName:row.details[0]??"Selected class",
       }}/>
