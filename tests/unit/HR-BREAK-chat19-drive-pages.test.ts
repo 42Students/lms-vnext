@@ -1,5 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
-import {isValidElement,type ReactNode} from "react";
+import {isValidElement,type ReactNode,type ReactElement} from "react";
 import type {RequestContext} from "@/modules/identity/context";
 
 const m=vi.hoisted(()=>({ctx:vi.fn(),rounds:vi.fn(),conversation:vi.fn(),
@@ -26,7 +26,7 @@ const remove=(id=jobId,round=roundId)=>HrRoundRemovalConfirm({
  params:Promise.resolve({jobId:id,roundId:round}),
 });
 const messages=(id=jobId)=>DriveConversationsPage({params:Promise.resolve({jobId:id})});
-function visit(node:ReactNode, callback:(node:React.ReactElement)=>void):void{
+function visit(node:ReactNode, callback:(node:ReactElement)=>void):void{
  if(Array.isArray(node)){node.forEach(n=>visit(n,callback));return;}
  if(!isValidElement(node))return;
  callback(node);
