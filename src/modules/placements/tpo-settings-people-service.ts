@@ -5,7 +5,6 @@ import {
   inArray,
   or,
 } from "drizzle-orm";
-import { z } from "zod";
 
 import { getDb } from "@/db/client";
 import {
@@ -37,9 +36,10 @@ import {
   summarizeTpoTeam,
   type TpoTeamEvidenceRow,
   type TpoTeamEvidenceRole,
+  tpoSettingsCollegeIdSchema,
 } from "./tpo-settings-read-model";
 
-export const tpoSettingsCollegeIdSchema = z.string().uuid();
+export {tpoSettingsCollegeIdSchema} from "./tpo-settings-read-model";
 
 /**
  * Both checks are deliberate:
