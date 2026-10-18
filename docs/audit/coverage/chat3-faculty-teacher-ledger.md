@@ -79,6 +79,8 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/courses/faculty-course-health-service.ts` | `getFacultyCourseAssessmentHealth` | `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` | FAC-HEALTH-SERVICE-01 | actual service role gate, strict query, own-delivery published items only, reported metrics, bounded five-row expansion, stale pagination and fail-closed revoked grants |
 
+| `src/modules/courses/faculty-contacts-service.ts` | `getFacultyContactDetail` | `tests/unit/chat3-faculty-contacts-detail-service-scope.test.ts` | FAC-CONTACTS-DETAIL-01 | role-tab permission, actual SQL projection excludes private contacts, persisted Faculty recheck, foreign college ID predicate, missing/disabled user denial and malformed URL selector |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.
