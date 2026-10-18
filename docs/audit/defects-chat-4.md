@@ -16,6 +16,8 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 | COL-academic-export-INPUT-03 | S2 — bad input / resource exhaustion | `collectCollegeExportRows` accepted `pageSize=0`, `NaN`, infinity and `cap>1000` which could cause unbounded export page walks. Now validates safe integers and caps before fetching any page. | `230de1d` | `tests/unit/chat4-college-export-signin-ledger.test.ts` | Fixed; CI pending |
 | SA-colleges-tenants-BREAK-01 | S3 — resilience | Invalid and repeated tenant directory filters previously still loaded college/organization DB lists before rendering validation error. Moved strict parsing before both queries. | `4f23d78`, `e09c753` | `tests/unit/PROJ-BREAK-chat4-superadmin-tenants.test.ts` | Fixed; CI pending |
 
+| PROJ-BREAK-COL-STALE-02 | S2 — optimistic timestamp | The project-summary CAS compared `Date.toISOString()` text to client `z.iso.datetime({offset:true})` text. Equivalent instants with `+05:30` vs `Z` falsely conflict. It now compares millisecond epoch time after schema validation. | `253f38e` | `tests/unit/PROJ-BREAK-chat4-college-summary.test.ts` | Fixed; CI pending |
+
 ## Open verification and risks
 
 - Run the repository's strict TypeScript check and targeted Vitest suite in cloud CI; this environment cannot perform them.
