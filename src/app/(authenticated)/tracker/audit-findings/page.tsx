@@ -6,6 +6,7 @@ import {redirect} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
+import {ErrorState} from "@/components/ui/error-state";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
@@ -22,8 +23,11 @@ export default async function IndependentFindingsPage({searchParams}:{
  const parsed=parseIndependentFindingFilters(await searchParams);
  const header=<><AuditFindingFilterMemory/><PageHeader eyebrow="42 Tracker · Super Admin" title="Audit findings"
   description="Independent findings imported from the audit repository, not user bug reports."/><TrackerAdminNav/></>;
- if(!parsed)return <div className="space-y-5">{header}<p role="alert">Invalid audit findings filters.</p>
-  <Link href="/tracker/audit-findings?view=OPEN" className="font-semibold text-primary-text">Reset filters</Link></div>;
+ if(!parsed)return <div className="space-y-5">{header}
+  <ErrorState title="Invalid audit findings filters." description="Invalid audit findings filters."
+   action={<Link href="/tracker/audit-findings?view=OPEN"
+    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Reset filters</Link>}/>
+ </div>;
  if(!independentAuditFindingsReady())return <div className="space-y-5">{header}
   <p role="status" className="rounded-xl border border-border bg-surface p-5">
    Audit findings are unavailable until registered migration 0133 is verified and DB10_AUDIT_FINDINGS_READY=DB10_VERIFIED.
@@ -81,7 +85,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    <p className="font-semibold">Critical open: {data.criticalOpen}</p>
    {FINDING_STATUSES.map(status=><Link key={status}
     href={independentFindingHref({...parsed,statuses:[status],page:1})}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-[var(--lms-teal-deep)]">
     {status.replaceAll("_"," ")}: {data.statusCounts[status]??0}
    </Link>)}
   </section>
@@ -105,7 +109,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     </select></label>
    <div className="flex items-end gap-3">
     <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Apply filters</button>
-    <Link href="/tracker/audit-findings?view=OPEN" className="min-h-11 inline-flex items-center font-semibold text-primary-text">Clear</Link>
+    <Link href="/tracker/audit-findings?view=OPEN" className="min-h-11 inline-flex items-center font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
    </div>
   </form>
   <p role="status" className="text-sm text-body">
@@ -115,8 +119,8 @@ export default async function IndependentFindingsPage({searchParams}:{
    caption="Independent audit findings"
    empty={<p role="status" className="text-sm text-body">No independent audit findings match these filters.</p>}/>
   <nav aria-label="Audit findings pages" className="flex justify-between gap-4">
-   {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="font-semibold text-primary-text">Previous</Link>:<span/>}
-   {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="font-semibold text-primary-text">Next</Link>:null}
+   {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="font-semibold text-[var(--lms-teal-deep)]">Previous</Link>:<span/>}
+   {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="font-semibold text-[var(--lms-teal-deep)]">Next</Link>:null}
   </nav>
  </div>;
 }

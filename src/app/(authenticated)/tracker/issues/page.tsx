@@ -7,6 +7,7 @@ import { TrackerIssueBulkActions } from "@/components/tracker/tracker-issue-bulk
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -55,12 +56,10 @@ export default async function TrackerIssuesPage({
       <div className="space-y-6">
         <PageHeader eyebrow="42 Tracker" title="Issues" description="Review and triage reported LMS issues." />
         <TrackerAdminNav />
-        <div role="alert" className="rounded-xl border border-border bg-surface p-5">
-          <p className="m-0 font-semibold text-foreground">Invalid issue filter.</p>
-          <Link className="mt-2 inline-block font-semibold text-primary-text underline" href="/tracker/issues">
+        <ErrorState title="Invalid issue filter." description="Review and triage reported LMS issues."
+          action={<Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline" href="/tracker/issues">
             Reset filters
-          </Link>
-        </div>
+          </Link>}/>
       </div>
     );
   }
@@ -161,7 +160,7 @@ export default async function TrackerIssuesPage({
                     <StatusBadge>{issue.environment}</StatusBadge>
                   </div>
                   <h2 className="mt-3 text-base font-semibold text-foreground">
-                    <Link className="hover:text-primary-text" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
+                    <Link className="hover:text-[var(--lms-teal-deep)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
                       {issue.publicId} · {issue.issueType}
                     </Link>
                   </h2>
