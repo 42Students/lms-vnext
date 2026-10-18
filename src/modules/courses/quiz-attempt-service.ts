@@ -497,6 +497,7 @@ export async function getMyQuizAttempts(
     .where(
       and(
         eq(quizAttempts.quizId, quizId),
+        eq(quizAttempts.deliveryId, deliveryId),
         eq(
           quizAttempts.membershipId,
           context.membership.id,
