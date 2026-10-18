@@ -150,3 +150,6 @@ Tests were authored only, not executed. No CI run was requested; HR release cert
 
 
 | `summarizeRecruiterUnread`, `hrConversationPageBounds`, `scopeRecruiterConversations`, `onlyUnreadRecruiterThreads`, `orderRecruiterConversations`, `recruiterMessageSearchLimit` | `tests/unit/HR-BREAK-chat15-messaging-counts-72.test.ts` (HR-MESSAGING-DEPTH-72) | NaN, Infinity, negative and fractional read counts ignored; large totals saturate safely; paging boundary; general/drive and unread filters; deterministic order; result limit from distinct authorized thread IDs | Cloud unit run, large persisted message-table query and live bell page |
+
+
+| `/api/placements/recruiter/drives/[jobId]/rounds` POST | `tests/unit/HR-BREAK-chat15-round-api-73.test.ts` (HR-ROUND-API-73) | Actual form handler denies cross-origin before actor/DB; strict round create/edit/remove payload and optimistic token parsing; own create 303 target; stale/used round 409; foreign ID non-enumerating 404 | Live HR form POST and PostgreSQL sequential/concurrent author checks |
