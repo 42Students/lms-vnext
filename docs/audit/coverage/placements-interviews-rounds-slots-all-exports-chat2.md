@@ -165,6 +165,7 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsv` (function) | \`tests/unit/chat2-tpo-round-model-break-02.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-import-model.ts` | `roundImportActionSchema` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-import-model.ts` | `ImportRow` (type) | N/A (compile-time only) | TYPE ONLY |
+| `src/modules/placements/tpo-round-import-model.ts` | `uniqueTpoRoundImportRoster` (function) | `tests/unit/chat2-ledger-round-import-and-scheduling.test.ts` (duplicate, conflicting evidence, no mutation; CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-import-model.ts` | `parseTpoRoundImport` (function) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-import-model.ts` | `ROUND_IMPORT_TEMPLATE` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-import-service.ts` | `previewTpoRoundImport` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
