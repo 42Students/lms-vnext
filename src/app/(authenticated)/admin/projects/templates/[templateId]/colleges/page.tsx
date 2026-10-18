@@ -52,7 +52,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <PageHeader eyebrow="Super Admin · Template college availability" title={data.template.title}
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions." />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
-    <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-3">
+    <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">College name or code
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="min-h-11 rounded-md border border-border bg-surface px-3" /></label>
       <label className="grid gap-1 text-sm font-semibold text-body">Availability
