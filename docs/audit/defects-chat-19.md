@@ -240,3 +240,9 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 |---|---|---|---|---|
 | HR/PROJ-CSV-UNICODE-03 | MAJOR | `class-team-csv-export.ts`, `admin-workspace-page-export-model.ts`, `report-interactive-table-export-model.ts`, `receipt-history-export-model.ts`, `tpo-request-page-clipboard.tsx` | Unicode combining marks, e.g. U+034F before an equals sign, were omitted from existing control/format/space prefixes and could bypass formula neutralization across Projects and placement exports. Include Unicode Mark category before formula characters; also sanitize NEL/vertical-tab in report clipboard TSV. | `tests/unit/chat19-invisible-mark-export-matrix.test.ts` |
 | UX-SPILL-TPO-CLIP-05 | MAJOR | `TpoRequestPageClipboard` | Request sorting, column chooser, reset button and option touch targets were as short as 40px or less, with missing visible keyboard-focus treatment. Set 44px minima and focus outlines without changing filter/sort semantics. | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` |
+
+## Duplicate-key HR URL parameter ambiguity
+
+| ID | Severity | Source | Defect / hardening | Regression |
+|---|---|---|---|---|
+| HR-BREAK-QUERY-05 | MAJOR | `/hr/notifications`, `/hr/conversations`, `/hr/activity` page entrypoints | Repeated query parameters (`collegeId=A&collegeId=B`, `page=1&page=2`, repeated search text) were silently reduced to the first value before Zod validation. This made a URL appear to contain one tenant/filter selection while the app acted on another. Pass raw query values to the strict schemas, rendering the existing recoverable invalid-filter state for ambiguous arrays; no private service read occurs. | `tests/unit/HR-BREAK-chat19-notifications-page.test.ts`, `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts`, `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` |
