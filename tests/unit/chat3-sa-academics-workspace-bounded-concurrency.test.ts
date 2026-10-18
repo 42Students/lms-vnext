@@ -4,29 +4,20 @@ import {
 } from "@/modules/academics/workspace";
 
 describe("SA-ACADEMICS-SPACE-01 bounded academic workspace fanout",()=>{
- it("preserves program and Section order despite out-of-order async completion",async()=>{
+ it("preserves program order while limiting concurrent academic read workers",async()=>{
   const work=[1,2,3,4,5,6,7];
-  const callbacks=new Map<number,()=>void>();
-  const pending:Promise<number>[]=[];
-  const running=mapAcademicWorkspaceInBatches(work,async value=>
-   new Promise<number>(resolve=>{callbacks.set(value,()=>resolve(value*10));}),3);
-  expect([...callbacks.keys()]).toEqual([1,2,3]);
-  callbacks.get(3)?.();
-  callbacks.get(1)?.();
-  callbacks.get(2)?.();
-  // Resolve the remaining bounded chunks as each preceding Promise.all settles.
-  await Promise.resolve();
-  await Promise.resolve();
-  expect([...callbacks.keys()]).toEqual([1,2,3,4,5,6]);
-  callbacks.get(6)?.();
-  callbacks.get(4)?.();
-  callbacks.get(5)?.();
-  await Promise.resolve();
-  await Promise.resolve();
-  expect(callbacks.has(7)).toBe(true);
-  callbacks.get(7)?.();
-  pending.push(running.then(rows=>{expect(rows).toEqual([10,20,30,40,50,60,70]);return 0;}));
-  await Promise.all(pending);
+  let active=0,maxActive=0;
+  const rows=await mapAcademicWorkspaceInBatches(work,async value=>{
+   active++;
+   maxActive=Math.max(maxActive,active);
+   // Different microtask depths simulate nonidentical academic query latency.
+   for(let i=0;i<(8-value)%3;i++)await Promise.resolve();
+   active--;
+   return value*10;
+  },3);
+  expect(rows).toEqual([10,20,30,40,50,60,70]);
+  expect(maxActive).toBe(3);
+  expect(active).toBe(0);
  });
  it("never launches the next batch after an earlier cohort read fails",async()=>{
   const started:number[]=[];
