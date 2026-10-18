@@ -189,7 +189,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      <textarea value={pastedRolls} onChange={event=>setPastedRolls(event.target.value)}
       rows={2} maxLength={40000} placeholder="23CS001, 23CS002" className="w-full rounded border border-border bg-surface p-2"/>
    </label>
-   <button type="button" disabled={busy||!pastedRolls.trim()} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
+   <button type="button" disabled={busy||!pastedRolls.trim()} className="min-h-11 rounded-[9px] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
      onClick={()=>{
       const matched=matchTpoBulkRollNumbers(availableRows,pastedRolls);
       setSelected(current=>selectTpoBulkPage([...current,...matched.ids]));
@@ -228,13 +228,13 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     }}
     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">Copy selected rows</button>:null}
    {preview&&!busy?<button type="button" onClick={invalidate}
-     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
+     className="min-h-11 rounded-[9px] border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
      Cancel preview
    </button>:null}
   </div>
   {copyFeedback?<p role="status" className="text-xs text-muted-foreground">{copyFeedback}</p>:null}
   {runAuditId&&target==="STUDENTS"?<button type="button" disabled={busy||guardedPending}
-   className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]"
+   className="min-h-11 rounded-[9px] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]"
    onClick={()=>void runGuarded(undoLastRun)}>Undo last student batch (five minutes)</button>:null}
   {undoNotice?<p role="status" aria-live="polite" className="text-sm">{undoNotice}</p>:null}
   <div className="grid gap-3 sm:grid-cols-2">
@@ -322,12 +322,12 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    {suggested?<div className="flex flex-wrap items-center gap-3">
      <p className="text-sm font-semibold">Suggested: {suggested.label}</p>
      <button type="button" disabled={busy} onClick={()=>void startPreview(suggested.action as Action)}
-       className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground">Do it</button>
+       className="min-h-11 rounded bg-primary px-4 text-sm font-[650] text-on-primary">Do it</button>
    </div>:null}
   </section>
   <button type="button" disabled={busy||safeSelected.length===0}
     onClick={()=>void startPreview()}
-    className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-semibold text-foreground disabled:opacity-50">
+    className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-[650] text-on-primary disabled:opacity-50">
     {busy?"Checking…":"Preview next "+Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)+" selected"}
   </button>
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
@@ -354,7 +354,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      </li>)}</ul>
     </div>:null}
     {safeSelected.length>0?<button type="button" disabled={busy} onClick={()=>void startPreview(plan?.action??action)}
-     className="min-h-11 rounded-md bg-primary px-3 font-semibold text-foreground">
+     className="min-h-11 rounded-md bg-primary px-3 font-[650] text-on-primary">
      Preview next batch ({Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)} of {safeSelected.length} remaining)
     </button>:null}
    {outcomes.some(item=>item.status!=="updated")?<div className="flex flex-wrap gap-2">

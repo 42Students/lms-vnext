@@ -8,7 +8,7 @@ export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,as
  return <section className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3"
   aria-label="Recruiter table display">
   <label className="text-sm">Sort by
-   <select className="mt-1 block min-h-10 rounded-[9px] border border-border bg-surface px-3"
+   <select className="mt-1 block min-h-10 rounded-[9px]-[9px] border border-border bg-surface px-3"
     value={sort} onChange={e=>onSort(e.target.value as EngageSort)}>
     <option value="LAST_ACTIVITY">Last activity</option>
     <option value="NEXT_FOLLOWUP">Next follow-up</option>

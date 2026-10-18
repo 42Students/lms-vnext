@@ -33,7 +33,7 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
       </div>)}
     </details>:null}
     <button type="button" disabled={busy || ready === 0} onClick={onConfirm}
-      className="min-h-11 w-full rounded bg-primary px-4 py-2 text-on-primary disabled:opacity-50 sm:w-auto">
+      className="min-h-11 w-full rounded-[9px] bg-primary px-4 py-2 text-on-primary disabled:opacity-50 sm:w-auto">
       {busy ? "Applying…" : "Confirm " + actionLabel}
     </button>
     {outcomes.length > 0 ? <div aria-live="polite" className="text-sm">

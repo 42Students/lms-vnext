@@ -109,7 +109,7 @@ export function TpoAcademicImportWorkspace() {
       </p>
       <a download="academic-import-template.csv"
         href="data:text/csv;charset=utf-8,studentCode%2Ccgpa%2CactiveBacklogs%0A"
-        className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-10 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">
         Download template
       </a>
       <label className="block text-sm font-semibold">Choose CSV file
@@ -157,7 +157,7 @@ export function TpoAcademicImportWorkspace() {
         </label>
         <button type="button" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
           onClick={() => setConfirmOpen(true)}
-          className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+          className="min-h-11 rounded-md bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
           Confirm import
         </button>
       </div>}

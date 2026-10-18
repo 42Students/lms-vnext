@@ -101,7 +101,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
       </button>)}
     </nav>:null}
     <label className="block text-sm">Open saved view
-     <select className="mt-1 min-h-10 w-full max-w-sm rounded-[9px] border border-border px-3"
+     <select className="mt-1 min-h-10 w-full max-w-sm rounded-[9px]-[9px] border border-border px-3"
       value={selected} onChange={e=>{
        setSelected(e.target.value);setDeleteReview(null);
        const view=views.find(item=>item.id===e.target.value);
@@ -112,8 +112,8 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
      </select>
     </label>
     {active?<div className="flex flex-wrap gap-2">
-     <label className="text-sm">Rename view<input maxLength={100} className="ml-2 min-h-10 rounded-[9px] border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
-     <label className="text-sm">Note<input maxLength={500} className="ml-2 min-h-10 rounded-[9px] border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
+     <label className="text-sm">Rename view<input maxLength={100} className="ml-2 min-h-10 rounded-[9px]-[9px] border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
+     <label className="text-sm">Note<input maxLength={500} className="ml-2 min-h-10 rounded-[9px]-[9px] border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
      <button type="button" className={button} onClick={()=>open(active)}>Open</button>
      <button type="button" className={button} disabled={busy||!editingName.trim()} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</button>
      <button type="button" className={button} disabled={busy||(!active.pinned&&views.filter(view=>view.pinned).length>=5)} onClick={()=>void apply("PIN",active)}>
