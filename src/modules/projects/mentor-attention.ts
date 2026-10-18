@@ -42,14 +42,12 @@ export function deriveMentorProjectAttention(
         occurredAt:project.submission.submittedAt.toISOString(),
       });
     }
-    // Planned projects can also be idle before activation; still exclude blocked, completed, archived.
-    // Avoid a stale alarm for records without any trustworthy activity signal.
+    // Projects become eligible for inactivity alerts only after activation.
+    // A planned project has no execution activity to stall, even after seven days.
+    // Keep the trustworthy last-event fallback for ACTIVE projects.
     const last=project.lastActivityAt ?? project.projectUpdatedAt;
     const lastMillis=last.getTime();
-    // A planned project left untouched for seven full days needs the same
-    // mentor follow-up as an active project. Blocked, completed and archived
-    // projects do not create misleading stall alarms.
-    const stalled=["PLANNED","ACTIVE"].includes(project.projectStatus) &&
+    const stalled=project.projectStatus==="ACTIVE" &&
       Number.isFinite(lastMillis) && timestamp-lastMillis >= 7*24*60*60*1000;
     if (stalled) alerts.push({
       projectId:project.projectId,
