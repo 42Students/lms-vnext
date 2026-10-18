@@ -39,7 +39,15 @@ export async function listSuperAdminTemplateDirectory(context:RequestContext,raw
   )).groupBy(projectTemplateCollegeAssignments.templateId):[];
  const versions=items.length?await db.select({templateId:projectTemplateVersions.templateId,
    version:projectTemplateVersions.version,blueprint:projectTemplateVersions.blueprint})
-   .from(projectTemplateVersions).where(inArray(projectTemplateVersions.templateId,items.map(x=>x.id))):[];
+   // Only the current snapshot is used for card counts. Fetching every
+   // historical JSON blueprint made this 20-template page unbounded as
+   // administrators revised templates over successive terms.
+   .from(projectTemplateVersions)
+   .innerJoin(projectTemplates,and(
+    eq(projectTemplateVersions.templateId,projectTemplates.id),
+    eq(projectTemplateVersions.version,projectTemplates.currentVersion),
+   ))
+   .where(inArray(projectTemplates.id,items.map(x=>x.id))):[];
  const versionByTemplate=new Map(versions.map(v=>[v.templateId+":"+v.version,v.blueprint]));
  const byId=new Map(counts.map(row=>[row.templateId,row.activeAssignments]));
  const total=totals[0]?.total??0;
