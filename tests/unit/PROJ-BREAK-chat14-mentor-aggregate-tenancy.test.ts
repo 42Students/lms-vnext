@@ -74,7 +74,8 @@ describe("PROJ-BREAK-MENTOR-136..140 aggregate source-of-truth and scope",()=>{
   expect(state.reads).toBe(0);
  });
  it("PROJ-BREAK-MENTOR-140 other-role injected rows cannot be counted as Mentors",async()=>{
-  const fake={...own,memberRole:"LEARNER"} as never;
+  const fake={memberRole:"LEARNER",project:{id:"11111111-1111-4111-8111-111111111111",
+    collegeId:"college-a"}} as never;
   for(const service of calls){
    const data=await service(actor(),[fake]);
    expect(data instanceof Map?data.size:data.length).toBe(0);
