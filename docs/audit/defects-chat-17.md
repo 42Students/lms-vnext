@@ -171,3 +171,11 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | UX-kit-HARDEN-59 | S2 (idempotent notifications) | A repeated event ID supplied to the exported toast reducer could render two indistinguishable notices with duplicate React keys and independent dismiss controls. | Incoming item replaces matching current ID; invalid timed limit defaults to 3; behavioral test HARDEN-59. | Authored; final CI pending |
 
 | UX-kit-E2E-13 | S1 (private cell rendering) | A failed permission lookup must not crash or accidentally serialize a private column into browser HTML on real client hydration. | Added development-only broken-permission table fixture and Chromium test asserting private text absent and public row still usable. | Authored; final browser gate pending |
+
+| PROJ-HARNESS-PLACEMENTS-34 | S1 (retry collision resilience) | Retrying a candidate against the same published drive could fail UNIQUE and poison the surrounding transaction, preventing follow-up tests and obscuring incomplete application graphs. | PG duplicate retry witness checks no graph count changes, original offer remains, separate learner succeeds. | Authored; final DB gate deferred |
+
+| UX-kit-E2E-14 | S2 (phone vertical scroll evidence) | Prior drawer/sheet tests checked accessible labels and safe-area classes but used short content that never actually tested vertical overflow or fade changes. | Developer harness long-content fixtures and real Chromium scroll-edge assertions for nested drawer/sheet. | Authored; browser CI deferred |
+
+| PROJ-HARNESS-MEETING-35 | S2 (IST time authority) | Merely asserting a meeting's `time_zone` text does not prove its persisted UTC start/end represent the intended India-local session or preserved duration. | PostgreSQL `AT TIME ZONE` conversion and epoch delta assertion confirms 10:00–10:30 IST. | Authored; final database gate pending |
+
+| PROJ-HARNESS-PLACEMENTS-36 | S2 (bounded-list query safety) | The integration suite had Projects EXPLAIN witnesses but no equivalent for core TPO drive and applicant list predicates, risking untested SQL plan regressions. | PostgreSQL JSON EXPLAIN for tenant-scoped drives/applicants with actual scoped candidate result; explicitly not a latency proof. | Authored; full scale gate pending |

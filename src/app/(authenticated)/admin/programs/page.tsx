@@ -1,6 +1,8 @@
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {ErrorState} from "@/components/ui/error-state";
 import { AdminProgramDirectory } from "@/components/admin/admin-program-directory";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -10,6 +12,12 @@ import { listDepartments } from "@/modules/departments/service";
 
 export default async function SuperAdminProgramsPage() {
   const context = await getCurrentRequestContext();
+  if(!isSuperAdmin(context))return <div className="min-w-0 space-y-6">
+    <PageHeader title="Programs"/>
+    <ErrorState title="Program access denied"
+      description="Your account cannot access Super Admin programs."
+      action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+  </div>;
   const collegeId = context.adminScope?.collegeId ?? null;
 
   if (!collegeId) {
@@ -23,11 +31,24 @@ export default async function SuperAdminProgramsPage() {
     );
   }
 
-  const [programs, departments] = await Promise.all([
-    listPrograms(context, collegeId),
-    listDepartments(context, collegeId),
-  ]);
-  const contents = await listProgramContents(context, collegeId, programs.map(program => program.id));
+  // A failed read must never render a false empty program directory or
+  // authoring controls backed by incomplete departmental/course choices.
+  const outcome=await (async()=>{
+    const [programs,departments]=await Promise.all([
+      listPrograms(context,collegeId),
+      listDepartments(context,collegeId),
+    ]);
+    const contents=await listProgramContents(context,collegeId,programs.map(program=>program.id));
+    return {programs,departments,contents};
+  })().then(value=>({ok:true as const,value}))
+     .catch(()=>({ok:false as const}));
+  if(!outcome.ok)return <div className="min-w-0 space-y-6">
+    <PageHeader title="Programs"/>
+    <ErrorState title="Programs unavailable"
+      description="The selected college's program directory could not be verified. No changes were made."
+      action={<Link href="/admin/programs" className="font-semibold text-primary-text underline">Retry loading programs</Link>}/>
+  </div>;
+  const {programs,departments,contents}=outcome.value;
 
   return (
     <div className="min-w-0 space-y-6">

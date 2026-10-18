@@ -57,3 +57,10 @@ All entries are **authored, not locally executed**. PostgreSQL/provider, real re
 | `recruiterDriveNextAction` | Same test | Closed, issued offer, no applicants, active rounds, default next action |
 
 These branch-level tests are authored, not executed; fixture timestamps use 2099.
+
+| Recruiter team attribution and branch suggestions | HR-BREAK-TEAM-ATTRIBUTION-40 | `tests/unit/HR-BREAK-chat19-team-attribution.test.ts` | Approved DRAFT-only attribution, duplicate/conflicting requests, foreign IDs and recruiter principal guards |
+
+| HR Today follow-up offer jobs | HR-BREAK-CLOSED-OFFER-41 | `tests/unit/HR-BREAK-chat19-closed-offer-company-touch.test.ts` | Closed/published scope with unshared/archived exclusion, priority and limits |
+| HR Company/Team phone tab links | UX-HR-COMPANY-TOUCH-42 | Same test | Minimum 44px tabs, college pills, keyboard focus and exact title |
+
+| HR profile college access revocation | HR-BREAK-LEAVE-GRANT-43 | `tests/unit/HR-BREAK-chat19-leave-grant.test.ts` | Exact persisted revocation receipt, foreign status/ID rejection, accessible confirmation and single-flight |

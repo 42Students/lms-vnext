@@ -46,6 +46,20 @@ describe("IIT Dharwad Projects: college and Super Admin page URL hostility",()=>
     expect(parseProjectAdminSubmissionsQuery({q:"",submissionStatus:""}).success).toBe(true);
   });
 
+  it("PROJ-BREAK-submissions-73 rejects a not-submitted view with a contradictory review status",()=>{
+    for(const submissionStatus of [
+      "SUBMITTED","UNDER_REVIEW","LOCKED","DRAFT_REVISING","APPROVED",
+    ]){
+      expect(parseProjectAdminSubmissionsQuery({
+        view:"NOT_SUBMITTED",submissionStatus,
+      }).success,submissionStatus).toBe(false);
+      expect(parseProjectAdminSubmissionsQuery({
+        view:"ALL",submissionStatus,
+      }).success,submissionStatus).toBe(true);
+    }
+    expect(parseProjectAdminSubmissionsQuery({view:"NOT_SUBMITTED",q:"IIT",status:"ACTIVE",page:"2"}).success).toBe(true);
+  });
+
   it("PROJ-BREAK-ux-20 rejects multiple interpretations of submissions-page URLs",()=>{
     for(const params of [
       {page:"0x10"},{page:"1e3"},{page:"1.0"},{page:"-1"},
