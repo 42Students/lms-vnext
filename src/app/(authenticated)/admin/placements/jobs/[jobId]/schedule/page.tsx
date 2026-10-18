@@ -7,6 +7,8 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { driveInterviewsHref, driveInterviewsParams, driveRoundTime } from "@/modules/placements/college-drive-interviews-model";
 import { listCollegeDriveInterviews } from "@/modules/placements/college-drive-interviews-service";
 import { getCollegeRoundSlotAppointments } from "@/modules/placements/college-round-slot-action-service";
@@ -41,24 +43,24 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
     {key:"slots",header:"Candidate slots",mobilePriority:"secondary",cell:()=> "See candidate interviews above"},
   ];
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <SuperAdminDriveTabs jobId={jobId} active="Schedule"/>
     <PageHeader eyebrow="Super Admin · Placements" title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
-      actions={<Link href={`/admin/placements/jobs/${jobId}`} className="text-[var(--lms-teal-deep)] underline">Drive overview</Link>} />
+      actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Drive overview</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-4 rounded-xl border border-border p-4">
       <label className="grid gap-1 text-sm">Round kind
-        <select name="kind" defaultValue={query.kind} className="min-h-11 rounded-md border border-border px-2">
+        <Select name="kind" defaultValue={query.kind} className="min-h-11 rounded-md border border-border px-2">
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm">Status
-        <select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-2">
+        <Select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-2">
           {["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"].map(status=>
             <option key={status} value={status}>{status}</option>)}
-        </select>
+        </Select>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
+      <Button type="submit">Filter</Button>
     </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointments.interviews}
