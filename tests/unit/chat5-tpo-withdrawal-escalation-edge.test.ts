@@ -15,6 +15,8 @@ describe("chat-5: TPO pending withdrawal escalation boundary",()=>{
   expect(range.through.getTime()-range.from.getTime()).toBe(86400000);
   expect(()=>tpoWithdrawalEscalationWindow(new Date(Number.NaN)))
    .toThrow("Invalid withdrawal escalation clock");
+  expect(()=>tpoWithdrawalEscalationWindow(new Date(8.64e15-3600_000)))
+   .toThrow("Invalid withdrawal escalation clock");
  });
  it("PLACEMENTS-TPO-ESCALATE-20 requires a pending request, submitted application, future scheduled round and safe error copy",()=>{
   const code=source();
@@ -26,6 +28,7 @@ describe("chat-5: TPO pending withdrawal escalation boundary",()=>{
   expect(code).toContain('dedupeKey:"tpo-withdrawal-escalation:"+candidate.requestId');
   expect(code).toContain('.for("update").limit(1)');
   expect(code).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(code).toContain('eq(colleges.status,"ACTIVE")');
   expect(code).toContain('reason:"Escalation could not be completed. Retry later."');
   expect(code).not.toContain("reason:e instanceof Error?e.message");
  });

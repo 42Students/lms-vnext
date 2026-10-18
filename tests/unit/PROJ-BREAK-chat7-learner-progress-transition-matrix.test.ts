@@ -67,5 +67,7 @@ describe("PROJ-BREAK-LEARNER-98 protected state-transition matrix for both learn
   expect(board).toContain("statuses.filter(status=>status===task.status||canLearnerMoveOwnTask(task.status,status))");
   expect(board).toContain("disabled={status===task.status}");
   expect(board).toContain("The task or sprint changed. Refresh before trying again.");
+  expect(board).toContain("Describe the blocker in 3 to 2,000 characters, then try again.");
+  expect(board).toContain("note.trim().length>2000");
  });
 });

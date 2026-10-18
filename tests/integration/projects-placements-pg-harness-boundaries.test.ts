@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Pool } from "pg";
 import {
-  createFinalSubmission, createMeeting, createPrincipal, createProjectFixture,
-  createPlacementFixture,
+  createFinalSubmission, createMeeting, createPrincipal, createSiblingCollege, createProjectFixture,
+  createPlacementCandidateFixture, createPlacementFixture,
   createTaskSubmission, createTenant, newHarnessPool, submitFinalSubmission,
   withProjectPg, withTwoPgSessions, type PgHarness,
 } from "./support/projects-placements-pg-harness";
@@ -46,6 +46,32 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
       expect(await count(db, "project_task_submissions")).toBe(before);
       const id = await createTaskSubmission(db, f.project, f.learner);
       expect(await db.query("select id from project_task_submissions where id=$1", [id])).toHaveLength(1);
+    });
+  });
+
+  it("PROJ-HARNESS-TENANCY-17 sibling college in the same org never inherits project or placement rights",async()=>{
+    await withProjectPg(pool,async db=>{
+      const own=await createTenant(db,"IIT Dharwad");
+      const sibling=await createSiblingCollege(db,own,"Other campus in same group");
+      expect(sibling.organizationId).toBe(own.organizationId);
+      expect(sibling.collegeId).not.toBe(own.collegeId);
+      const admin=await createPrincipal(db,own,["COLLEGE_ADMIN"]);
+      const mentor=await createPrincipal(db,own,["MENTOR"]);
+      const learner=await createPrincipal(db,own,["LEARNER"]);
+      const siblingAdmin=await createPrincipal(db,sibling,["COLLEGE_ADMIN"]);
+      const siblingLearner=await createPrincipal(db,sibling,["LEARNER"]);
+      const project=await createProjectFixture(db,own,admin,mentor,learner);
+      const drive=await createPlacementFixture(db,own,admin);
+      await expect(createTaskSubmission(db,project,siblingLearner)).rejects.toThrow(/active member/);
+      await expect(createFinalSubmission(db,project,siblingLearner)).rejects.toThrow(/active member/);
+      await expect(createMeeting(db,project,learner,siblingAdmin)).rejects.toThrow(/wrong college/);
+      await expect(createPlacementCandidateFixture(db,drive,siblingLearner,admin))
+        .rejects.toThrow(/different colleges|share a college/);
+      await expect(createPlacementFixture(db,own,siblingAdmin)).rejects.toThrow(/wrong college/);
+      expect(await db.query("select id from project_task_submissions")).toHaveLength(0);
+      expect(await db.query("select id from placement_applications")).toHaveLength(0);
+      expect(await db.query<{id:string}>(
+        "select id from project_instances where college_id=$1",[sibling.collegeId])).toHaveLength(0);
     });
   });
 

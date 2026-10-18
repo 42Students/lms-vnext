@@ -1,14 +1,16 @@
 import "server-only";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {and,asc,count,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {cohorts,departments,programs,sections,sectionEnrollments,learnerProgramEnrollments,collegeMemberships,users,learnerProfiles} from "@/db/schema";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import type {RequestContext} from "@/modules/identity/context";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {z} from "zod";
 
 /** One selected academic cohort, with per-class occupancy from persisted active enrollment. */
 export async function getSuperAdminBatchRosterOverview(context:RequestContext,rawId:unknown){
  const batchId=z.uuid().parse(rawId);
+ if(!isSuperAdmin(context))throw new AuthorizationError("academics.read");
  const scope=await resolveActingCollege(context,"academics.read");
  const db=getDb();
  const [batch]=await db.select({

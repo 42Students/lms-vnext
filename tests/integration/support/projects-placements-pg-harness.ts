@@ -32,7 +32,7 @@ export type ProjectFixture = {
   taskId: string; resourceId: string; mentorMemberId: string; learnerMemberId: string;
 };
 export type PlacementFixture = {
-  companyId: string; relationshipId: string; seasonId: string; driveId: string; jobId: string; roundId: string;
+  companyId: string; relationshipId: string; seasonId: string; driveId: string; jobId: string; roundId: string; roleOptionId: string;
 };
 
 const REQUIRED_TABLES = [
@@ -41,7 +41,7 @@ const REQUIRED_TABLES = [
   "project_instances","project_releases","project_sprints","project_tasks","project_resources",
   "project_members","project_task_submissions","project_submissions","project_delivery_events",
   "project_submission_reviews","project_evaluations","project_evaluation_items","project_meetings",
-  "placement_companies","placement_company_relationships","placement_seasons","placement_jobs","placement_job_rounds",
+  "placement_companies","placement_company_relationships","placement_seasons","placement_jobs","placement_job_role_options","placement_job_rounds",
   "placement_applications","placement_application_screenings","placement_round_results",
   "placement_offers","placement_joining_outcomes",
 ] as const;
@@ -203,6 +203,19 @@ export async function createTenant(db: PgHarness, name = "College"): Promise<Ten
     [org[0]!.id, name, "PHT-" + tag.slice(0, 12)],
   );
   return { organizationId: org[0]!.id, collegeId: college[0]!.id };
+}
+
+/** Two colleges in one organization must still be isolated; this fixture
+ * intentionally reuses only the parent organization, never memberships.
+ */
+export async function createSiblingCollege(db: PgHarness, parent: TenantFixture,
+  name = "Sibling test college"): Promise<TenantFixture> {
+  const suffix = randomUUID().slice(0, 12);
+  const [row] = await db.query<{id:string}>(`
+    insert into colleges (organization_id,name,code)
+    values ($1,$2,$3) returning id`,
+    [parent.organizationId,name,"PHS-"+suffix]);
+  return { organizationId:parent.organizationId, collegeId:row!.id };
 }
 
 export async function createPrincipal(db: PgHarness, tenant: TenantFixture | null,
@@ -476,12 +489,17 @@ export async function createPlacementFixture(db: PgHarness, tenant: TenantFixtur
     values ($1,$2,$3,'Harness drive','Fixture job','FULL_TIME','REMOTE',2,800000,
       '2099-06-01T12:00:00Z','PUBLISHED',now(),$4) returning id`,
     [tenant.collegeId,relationship!.id,season.id,author.userId]);
+  const [roleOption] = await db.query<{id:string}>(`
+    insert into placement_job_role_options
+      (job_id,title,employment_type,work_mode,openings,is_primary)
+    values ($1,'Software Engineer','FULL_TIME','REMOTE',2,true)
+    returning id`,[job!.id]);
   const [round] = await db.query<{id:string}>(`
     insert into placement_job_rounds (job_id,sequence,kind,name,created_by_user_id)
     values ($1,1,'INTERVIEW','Harness interview',$2) returning id`,
     [job!.id,author.userId]);
   return {companyId:company!.id,relationshipId:relationship!.id,seasonId:season.id,
-    driveId:job!.id,jobId:job!.id,roundId:round!.id};
+    driveId:job!.id,jobId:job!.id,roundId:round!.id,roleOptionId:roleOption!.id};
 }
 
 /** Optional placement applicant, screening, round and offer fixtures.
@@ -505,19 +523,29 @@ export async function createPlacementCandidateFixture(
   if (!actor.collegeId || actor.collegeId !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and coordinator must share a college");
   }
-  const [job] = await db.query<{college_id:string; round_id:string|null; accepting_applications:boolean}>(`
-    select j.college_id,r.id as round_id,
+  const [job] = await db.query<{college_id:string; round_id:string|null; round_status:string|null; role_option_id:string|null; accepting_applications:boolean}>(`
+    select j.college_id,r.id as round_id,r.status as round_status,
+        role.id as role_option_id,
         (j.status='PUBLISHED' and j.published_at is not null
-          and j.application_deadline>now()) as accepting_applications
+          and j.application_deadline>now() and season.status='ACTIVE') as accepting_applications
       from placement_jobs j
+      join placement_seasons season on season.id=j.season_id and season.college_id=j.college_id
       left join placement_job_rounds r
         on r.job_id=j.id and r.id=$2
-     where j.id=$1`,[drive.jobId,drive.roundId]);
+      left join placement_job_role_options role
+        on role.job_id=j.id and role.id=$3 and role.status='ACTIVE'
+     where j.id=$1`,[drive.jobId,drive.roundId,drive.roleOptionId]);
   if (!job || job.college_id !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and drive have different colleges");
   }
   if (job.round_id !== drive.roundId) {
     throw new Error("PROJ-HARNESS: supplied round does not belong to this drive");
+  }
+  if (job.round_status === "CANCELLED") {
+    throw new Error("PROJ-HARNESS: cancelled round cannot accept candidate results");
+  }
+  if (!job.role_option_id) {
+    throw new Error("PROJ-HARNESS: supplied role option is not active on this drive");
   }
   if (!job.accepting_applications) {
     throw new Error("PROJ-HARNESS: drive is not open for applications");
@@ -528,9 +556,9 @@ export async function createPlacementCandidateFixture(
   await requireFixtureCollegePrincipal(db, job.college_id, actor, ["COLLEGE_ADMIN", "TPO"]);
   const [application] = await db.query<{id:string}>(`
     insert into placement_applications
-      (job_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
-    values ($1,$2,'INTERNAL','ELIGIBLE','{}'::jsonb,$3) returning id`,
-    [drive.jobId,learner.membershipId,learner.userId]);
+      (job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
+    values ($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) returning id`,
+    [drive.jobId,drive.roleOptionId,learner.membershipId,learner.userId]);
   await db.query(`
     insert into placement_application_screenings(application_id) values ($1)
     on conflict(application_id) do nothing`,[application!.id]);
