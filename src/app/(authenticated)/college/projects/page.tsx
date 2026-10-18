@@ -107,14 +107,14 @@ export default async function CollegeProjectsPage({
         title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
-          className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Create workspace
         </Link>}
       />
 
       <nav aria-label="Project workspace tools" className="flex min-w-0 flex-wrap gap-2">
-      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
+      <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
+      <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
 
       <nav aria-label="Workspace display and archive" className="flex min-w-0 flex-wrap items-center gap-3">
        <ProjectAdminWorkspacePageExport items={items}/>
