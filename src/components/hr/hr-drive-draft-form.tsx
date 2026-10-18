@@ -66,6 +66,7 @@ export function HrDriveDraftForm({
   const [submitting,setSubmitting] = useState(false);
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
   const submittedRef=useRef(false);
+  const submittingRef=useRef(false);
   const result = hrDriveDraftSchema.safeParse(draft);
   const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
   const selectOptions = [
@@ -167,7 +168,7 @@ export function HrDriveDraftForm({
   }
 
   async function sendFormalDriveRequest(){
-    if(submitting)return;
+    if(submitting||submittingRef.current||submittedRef.current)return;
     const valid=hrDriveDraftSchema.safeParse(draft);
     if(!valid.success){
       setShowPreview(true);
@@ -177,6 +178,7 @@ export function HrDriveDraftForm({
     const signature=JSON.stringify([collegeId,sourceJobId,valid.data,fixRequestId]);
     const next=nextHrProposalAttempt(attempted.current,signature,()=>crypto.randomUUID());
     attempted.current=next;
+    submittingRef.current=true;
     setSubmitting(true);
     setNotice(fixRequestId?(editMode==="EDIT"?"Saving changes...":"Resubmitting your updated request..."):"Sending to the placement cell for review...");
     try{
@@ -218,6 +220,7 @@ export function HrDriveDraftForm({
         setNotice("Request status could not be confirmed. Your draft is preserved; check Drives before resending.");
       }
     }finally{
+      submittingRef.current=false;
       setSubmitting(false);
     }
   }
