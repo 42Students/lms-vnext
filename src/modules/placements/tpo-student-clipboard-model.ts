@@ -2,8 +2,8 @@ import type {TpoStudentRow} from "./tpo-students-model";
 
 /** Excel-safe TSV avoids command/formula evaluation when pasted into spreadsheets. */
 export function tpoStudentClipboardCell(value:unknown):string{
- const raw=String(value??"").replaceAll("\t"," ").replaceAll("\r"," ").replaceAll("\n"," ");
- return /^[\s]*[=+@-]/.test(raw)?"'"+raw:raw;
+ const raw=String(value??"").replace(/[\u0000-\u001F\u007F]/g," ");
+ return /^[\s\u200B\uFEFF]*[=+@-]/u.test(raw)?"'"+raw:raw;
 }
 export function tpoStudentClipboardTsv(rows:readonly TpoStudentRow[]):string{
  const headers=["Student","Student number","Program","Batch","Branch","Stage","Applications","Offers","Offers awaiting answer","Best so far"];
