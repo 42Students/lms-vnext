@@ -99,6 +99,15 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/app/(authenticated)/teacher/contacts/page.tsx`, `courses/[deliveryId]/page.tsx`, `courses/[deliveryId]/attendance-corrections/page.tsx`, `courses/[deliveryId]/notices/page.tsx` | four default redirect-only route pages | `tests/unit/UX-teacher-redirect-no-shared-route-journey.test.tsx` | UX-teacher-no-shared-01 | valid deep-link redirect, malformed ID 404, existing persisted Section scope before redirect and revoked teaching denial; no phantom UI/scrollbars |
 
+| `src/modules/courses/faculty-live-classes-model.ts` / `faculty-live-classes-service.ts` | `mapFacultyLiveWorkspacesInBatches`, `getFacultyLiveClasses` | `tests/unit/chat3-faculty-live-classes-scaled-service.test.ts` | FAC-LIVE-SCALE-01 | bounded 8-concurrent workspaces, stable order, malformed/foreign delivery and non-Faculty denial, no unsafe partial recovery |
+| `src/modules/courses/faculty-gradebook-report-batch.ts`, `faculty-gradebook-service.ts` | `mapFacultyGradebookReportBatch`, `getFacultyPublishedGradebook` | `tests/unit/chat3-faculty-gradebook-bounded-report-batch.test.ts`, `tests/unit/chat3-faculty-gradebook-service-journey.test.ts` | FAC-GRADEBOOK-SCALE-02 | deterministic 6-concurrent read pool, abort later batches on first report failure, no fabricated points, original 100-assessment cap |
+
+| `src/app/(authenticated)/teacher/calendar/page.tsx` | default `FacultyCalendarPage` | `tests/unit/UX-teacher-calendar-strict-scope-query.test.tsx` | FAC-CALENDAR-QUERY-01 | actual SSR strict duplicate/unknown month and Section URL shape, selected calendar, empty schedule, foreign-grant errors without fallback |
+
+| `src/modules/courses/faculty-assessment-batch-model.ts`, `faculty-assessment-service.ts` | `nextFacultyLessonContentSequence`, `facultyAssessmentVisibleToDelivery`, `getFacultyAssessmentOverview` | `tests/unit/chat3-faculty-assessment-sequence-scale.test.ts` plus existing `tests/unit/chat3-faculty-results-service-matrix.test.ts` | FAC-ASSESSMENT-SCALE-03 | >130k lesson entries no V8 spread-overflow, reject corrupt indexes and preserve shared/own-sibling delivery visibility |
+
+| `src/modules/courses/delivery-roster.ts` | `listActiveDeliveryLearners` | `tests/unit/chat3-faculty-delivery-roster-elective-fallback.test.ts` and existing `tests/unit/chat3-faculty-course-roster-cross-tenant-joins.test.ts` | FAC-DELIVERY-ROSTER-ELECTIVE-04 | active elective restricts roster to group, disabled/deleted elective gives empty, invalid/foreign backing fails closed rather than fallback to all Section learners, ordinary deliveries still use Section roster |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.

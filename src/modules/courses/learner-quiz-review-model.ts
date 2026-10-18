@@ -5,7 +5,10 @@ export function learnerQuizReviewRows(
 ):{questionId:string;selectedCount:number;answered:boolean}[]{
  return questions.map(question=>{
   const permitted=new Set(question.options.map(item=>item.id));
-  const valid=new Set((answers[question.id]??[]).filter(id=>permitted.has(id)));
+  // Question IDs originate with the quiz, but browser-restored answer maps
+  // may inherit Object.prototype keys. Only accept explicitly saved answers.
+  const selected=Object.hasOwn(answers,question.id)?answers[question.id]??[]:[];
+  const valid=new Set(selected.filter(id=>permitted.has(id)));
   return {questionId:question.id,selectedCount:valid.size,answered:valid.size>0};
  });
 }

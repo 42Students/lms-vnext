@@ -433,3 +433,75 @@ No local test or runtime execution. Existing exact wording and all service autho
 ## 22-route HR cross-audit inventory and identity regression gate
 
 All 20 non-alias recruiter pages from `docs/orchestrator/ui-ux/pages-hr.md` were independently read on chat-19; each now enforces `hasActiveRecruiter(context)` and matching `context.recruiter.userId === context.user.id` before page data loads. Two legacy aliases (`/hr/colleges`, `/hr/messages`) redirect or re-export protected routes and do not fetch protected data independently. The 20-route invariant is asserted in `tests/unit/chat19-hr-page-contracts.test.ts`; detailed per-page behavioral tests and coverage mapping are in `docs/audit/coverage/hr-pages-ledger.md`. Source audit is complete; cloud typecheck, unit/browser execution and end-to-end authorization remain verification gates.
+
+## Independent HR bell cross-audit (2026-10-18)
+
+| Gap ID | Severity | Finding and fix | Direct regression |
+|---|---|---|---|
+| HR-BREAK-BELL-RACE-30 | MAJOR | `RecruiterNotificationBell` reused the previously authorized notification drawer when a later refresh failed (including after recruiter grant revocation). Out-of-order requests from two college selections could also overwrite the current college view with an earlier response. Introduced a monotonic request gate, invalidated old in-flight requests on college change/unmount, cleared stale data on failure, and rejected mismatched college responses. Updated bell targets to 44px/focus-visible without changing wording. | `tests/unit/HR-BREAK-chat19-bell-race.test.tsx` exercises request ordering, invalidation and source response-discard guard, and SSR trigger. |
+
+Cloud browser/network/CI execution is outstanding; no test was run locally.
+
+## Independent HR hiring round false-success check
+
+| ID | Severity | Before fix and after | Direct evidence |
+|---|---|---|---|
+| HR-BREAK-ROUND-RECEIPT-31 | MAJOR | Inline recruiter round editor treated any HTTP 200 (including unrelated HTML/session fallback) or opaque redirected POST as proof of a saved round. Require an exact JSON receipt from the existing origin-guarded, authorized route: persisted id, matching action and, on update/delete, original round id. The native form's legacy 303 redirect remains unchanged. A fake receipt or sign-in redirect leaves the form open with recovery text and no success claim. | `tests/unit/HR-BREAK-chat19-round-receipt.test.ts` exercises response parser, both handler response formats, malformed receipts, foreign IDs, cross-origin refusal and UI wiring. |
+
+No CI/unit/browser run was performed here, per owner priority.
+
+## HR rounds editor unsaved-change protection
+
+| ID | Severity | Finding and correction | Test |
+|---|---|---|---|
+| UX-HR-ROUND-UNSAVED-32 | UX/MAJOR | The recruiter inline Add/Change round dialog discarded nonempty name/type/location fields immediately on Escape, backdrop click or Cancel. Preserve partially edited values until explicit confirmation; untouched forms close freely. The destructive Remove confirmation remains independent. | `tests/unit/UX-HR-chat19-round-unsaved.test.ts` runs the real dirty-state model with empty/changed/same drafts and checks dialog/Cancel wiring. |
+
+No live keyboard/browser simulation has been claimed.
+
+## HR drive request persisted receipt handoff
+
+| Gap ID | Severity | Finding / fix | Test |
+|---|---|---|---|
+| HR-BREAK-DRIVE-RECEIPT-33 | UX | The new-drive form saved the verified success flash `Sent to the placement cell for review`, but the Drives receipt display accepted only `Sent for review.`; the success confirmation disappeared on navigation. Centralized an exact allowlist that includes the real producer wording, consumes the message once, and continues to reject untrusted session/URL strings as proof of submission. | `tests/unit/HR-BREAK-chat19-drive-receipt.test.ts` checks valid/invalid receipts and source producer/consumer handoff. |
+
+The exact legacy-facing copy was preserved; no code run or CI status is asserted.
+
+## Live recruiter shell bell: unwanted acknowledgement and stale authorization
+
+| Gap ID | Severity | Finding and fix | Regression |
+|---|---|---|---|
+| HR-BREAK-ACTIVE-BELL-34 | MAJOR | The **active shell bell** `HrRecruiterBell` marked all notifications read simply on opening its panel before the recruiter could inspect them. It also preserved previously visible, possibly now-revoked college notices after a denied refresh. Opening is now strictly read-only; Mark all read requires an explicit click, verified nonredirected JSON acknowledgement, guarded double submit and fresh read. Out-of-order GET responses cannot restore stale private data. Added keyboard dismissal/focus return, 44px targets and a labelled vertical ScrollCue to compensate for invisible scrollbars. | `tests/unit/HR-BREAK-chat19-active-bell.test.tsx` checks active-shell wiring, request generation, receipt verification, focus and SSR controls. |
+
+Cloud/browser execution remains pending.
+
+## Live recruiter bell payload validation
+
+| ID | Severity | Finding / fix | Behavioral regression |
+|---|---|---|---|
+| HR-BREAK-BELL-PAYLOAD-35 | MAJOR | The long-lived HR shell bell trusted any HTTP 200 JSON as a complete `HrBellResponse`. A malformed payload could crash when `state.items.length` was accessed; a returned link could also leave the recruiter's permitted drive route. Parse finite unread counts, bounded notice rows, valid dates and same-route job UUID links before displaying the response. Fail closed and surface a recoverable error if invalid. | `tests/unit/HR-BREAK-chat19-bell-payload.test.ts` executes successful and hostile shapes and checks guarded rendering. |
+
+No CI or runtime test was run during this priority phase.
+
+## HR private applicant review cross-scope remount
+
+| Gap ID | Severity | Finding and correction | Direct regression |
+|---|---|---|---|
+| HR-BREAK-PRIVATE-RATING-36 | MAJOR | `RecruiterPrivateRatingEditor` held its previous candidate's private rating, note, optimistic version and `ready=true` across a change of `jobId/applicationId` when the App Router reused the client component. Before the next GET returned, a recruiter could see the previous applicant's private note or attempt to save it against another applicant. Place the existing hook-owning inner editor behind a stable composite job+applicant React key so every candidate switch unmounts (and aborts) previous private state. | `tests/unit/HR-BREAK-chat19-private-rating-scope.test.tsx` invokes the exported wrapper, asserts per-job and per-applicant instance identity, initial disabled form and abort/CAS wiring. |
+
+No live navigation, browser or CI execution was performed.
+
+## Recruiter conversation cross-thread navigation isolation
+
+| ID | Severity | Before and after | Regression |
+|---|---|---|---|
+| HR-BREAK-CONVO-THREAD-SCOPE-37 | MAJOR | The private reply form retained an unsent body and its pending navigation/submit state if Next.js reused the same client component while navigating between `/hr/conversations/[threadId]` pages. The read control also retained `acknowledgedOnOpen=true` and could skip the new thread's read acknowledgment. Wrap the existing hook-owning components in per-thread keyed children, remounting old state and cleaning browser listeners when the thread changes. No message is automatically sent, and the backend still reauthorizes each mutation. | `tests/unit/HR-BREAK-chat19-conversation-thread-scope.test.tsx` compares actual child identities for different threads and SSR neutral states. |
+
+Interactive router transitions and cloud CI still require orchestrator verification.
+
+## HR new-drive cross-college and edit-mode state isolation
+
+| Gap ID | Severity | Finding and correction | Regression |
+|---|---|---|---|
+| HR-BREAK-DRIVE-DRAFT-SCOPE-38 | MAJOR | `/hr/drives/new` switched between colleges, copied drive requests, edits and resubmissions while reusing the same unkeyed client `HrDriveDraftForm`. Hook state (including unsent private role details, `submittedRef`, idempotency tokens and optimistic versions) could carry into another college/source on URL-only navigation. Moreover, `?copy=REQUEST_ID` used the general NEW localStorage key, so restoring a prior unsent new request could overwrite the authorized copied template. Set a composite per-user/college/mode/request React key and isolate COPY in a source-request-specific local draft namespace. Existing page copy and backend tenant authorization are unchanged. | `tests/unit/HR-BREAK-chat19-drive-draft-scope.test.ts` exercises principal, college, request and action boundaries and source integration. |
+
+Browser navigation and storage-restore tests are pending cloud/orchestrator acceptance; no local execution.

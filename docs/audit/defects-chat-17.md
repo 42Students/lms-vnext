@@ -131,3 +131,43 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-PREFLIGHT-19 | S2 (migration preflight) | A repository whose registered PostgreSQL schema lags the new role-option/published-drive fixture would fail partway through setup with an opaque missing-column error. | Expanded `assertHarnessSchema` required-column preflight before BEGIN; test PREFLIGHT-19 checks protected column names. | Authored; final DB runner pending |
 
 | PROJ-HARNESS-PLACEMENTS-19 | S1 (registered DB ancestry gap) | Drizzle/registered 0029 contains independent FKs for application.job_id and role_option_id; direct SQL can create a job/role option pair from different jobs. Fixture checks are insufficient to enforce database invariants. | Composite parent unique and application composite FK modeled in `src/db/schema/placements.ts`; unnumbered proposed SQL; adversarial real PG case -19 demands SQLSTATE 23503. | **Pending orchestrator migration registration; expected DB test failure until then** |
+
+| PROJ-HARNESS-TASK-20 | S1 (submission fixture state) | Fixture inserted a task submission but left its parent task in TODO, contradicting production's IN_REVIEW transition and permitting unrealistic repeated fixture writes. | Nested savepoint protects submission + status CAS; real PG TASK-20 verifies IN_REVIEW and no duplicate; source GUARD-18. | Authored; final PostgreSQL CI pending |
+
+| PROJ-HARNESS-TASK-21 | S1 (fixture atomicity) | A write that inserts a task submission then loses a task-status compare-and-swap must not leave a stale submission when the caller catches the conflict. | Real connection/savepoint plus injected zero-row CAS witness proves rollback then successful retry. | Authored; final DB gate pending |
+
+| PROJ-HARNESS-RECRUITER-22/23 | S1 (HR fixture role fidelity) | The shared test harness had college roles but no real recruiter identity/profile/grant shape, tempting tests to invent HR membership or accidentally grant platform admin access. | Added company-scoped recruiter fixture with verified finite grant, same-college coordinator check, zero membership and real PostgreSQL cases 22/23. | Authored; final database CI pending |
+
+| PROJ-HARNESS-RECRUITER-24 | S1 (fixture atomicity) | A failed grant INSERT could leave the newly created recruiter user/profile behind if an integration test catches the error and continues inside its outer transaction. | Profile + grant setup now uses one SAVEPOINT, with a forced-grant-failure real DB regression and successful retry. | Authored; final PG gate pending |
+
+| PROJ-HARNESS-RECRUITER-25/26 | S1 (recruiter grant lifecycle) | HR fixture previously lacked registered-database witnesses for uniqueness, revoke/reissue lifecycle, capability whitelist, verification states and grant validity ordering. | Added real PG negative and positive grant lifecycle/constraint tests with SAVEPOINT recovery. | Authored; deferred final PostgreSQL gate |
+
+| PROJ-HARNESS-PLACEMENTS-25 | S1 (fixture impossible CHECK) | Canonical fixture inserted an ACTIVE placement season from 2099-10-01 to 2099-06-30, violating the date order CHECK and preventing every placement integration test from reaching assertions. | Set start to 2098-10-01, keep 2099-06-30 end and deadline inside season; PG case 25 verifies valid ordering. | Authored; final PostgreSQL gate pending |
+
+| PROJ-HARNESS-PLACEMENTS-26 | S1 (fixture partial writes) | Application, screening and staged results were created before an offer insert without a nested rollback boundary, leaving a partial candidate if the caller swallowed a late failure. | `createPlacementCandidateFixture` wraps the complete write chain in `savepoint`; PostgreSQL witness forces failed offer insert, checks rollback and retries. | Authored; deferred PostgreSQL gate |
+
+| PROJ-HARNESS-PLACEMENTS-27 | S1 (late graph write integrity) | Company, relationship, season, job and primary role were inserted before the round without rollback ownership; a late round failure could leave partial fixture residue in a continued test. | Wrap all persisted drive graph writes in savepoint, exercise forced late failure and count-equivalent rollback, then successful retry. | Authored; deferred PostgreSQL gate |
+
+| PROJ-HARNESS-PROJECT-28 | S1 (partial workspace fixtures) | Creating a Project failed late on learner roster INSERT but left template, workspace, task and member partial graph in the outer transaction when a caller caught the error. | Wrap all graph INSERTs in a SAVEPOINT, inject late roster failure, verify counts unchanged, retry. | Authored; PostgreSQL gate deferred |
+
+| UX-kit-E2E-10 | S2 (scroll cue correctness) | Only the first child of a scroll viewport was observed, so secondary child CSS resize could change overflow without updating fades or accessible region semantics. | Observe all direct children on mount/mutations; real browser test grows/shrinks only the second direct child. | Authored; browser CI deferred |
+
+| UX-kit-E2E-11 | S2 (toast accessibility) | ToastProvider could silently auto-dismiss success/info notifications entirely while a user worked in another tab. | Visibility-aware timer scheduling pauses while hidden, resumes on return and cleans evicted duration metadata; real browser test added. | Authored; browser CI deferred |
+
+| PROJ-HARNESS-TENANT-29 | S1 (partial tenant fixture) | Organization INSERT succeeded before college INSERT; a caught college error left an orphan organization inside the outer fixture transaction. | Wrap tenant graph in SAVEPOINT, inject college failure, assert unchanged organization count and successful retry. | Authored; deferred PostgreSQL gate |
+
+| PROJ-HARNESS-PRINCIPAL-30 | S1 (partial role fixture) | Catching a second membership role INSERT error could leave a user with only the first role and an incomplete college membership in a continuing PostgreSQL test. | Nested SAVEPOINT around entire principal graph; forced second-role failure checks no residue and successful retry. | Authored; final PostgreSQL gate deferred |
+
+| UX-kit-HARDEN-58 | S1 (restricted table failure path) | A thrown `canView` or `mobileDetail.href` resolver crashed the whole table. Permission failure should never cause a hidden private formatter to run or expose a link. | Per-row resolver exceptions now fail closed; optional link errors suppress only the link. Unit test verifies no secret formatter call and no navigation. | Authored; final CI pending |
+
+| PROJ-HARNESS-PLACEMENTS-25 time window | S1 (current workflow fidelity) | An ordered future 2098 season still makes today's published jobs out-of-season even while status is ACTIVE, masking real date-based eligibility in service tests. | Start date moved to 2020 while 2099 end remains, and PostgreSQL case 25 checks server current date and job deadline within season. | Authored; final DB gate pending |
+
+| UX-kit-E2E-12 | S2 (stale request state) | Reusing a loading component for a different route/filter kept the original 12s timer and could display a retry warning immediately for a fresh request. | Reset delayed slow flag on changing label/shape/variant/count with cleanup; browser clock witness tests handoff. | Authored; end-of-sprint CI pending |
+
+| PROJ-HARNESS-PLACEMENTS-32 | S1 (stale employer grants) | A published drive could still fabricate new applicants after its employer or college-company relationship was archived. | Persisted active company + active same-college relationship required by fixture; PG case -32 and GUARD-21. | Authored; final database gate pending |
+
+| PROJ-HARNESS-RECRUITER-33 | S1 (revoked HR identity fixture) | An ACTIVE grant alone can mislead role-journey tests into treating disabled, expired, unverified, archived, or revoked recruiter credentials as authorized. | Test-only persisted capability witness with full relational gates, real PG lifecycle test -33 and source GUARD-22. | Authored; final PostgreSQL gate deferred |
+
+| UX-kit-HARDEN-59 | S2 (idempotent notifications) | A repeated event ID supplied to the exported toast reducer could render two indistinguishable notices with duplicate React keys and independent dismiss controls. | Incoming item replaces matching current ID; invalid timed limit defaults to 3; behavioral test HARDEN-59. | Authored; final CI pending |
+
+| UX-kit-E2E-13 | S1 (private cell rendering) | A failed permission lookup must not crash or accidentally serialize a private column into browser HTML on real client hydration. | Added development-only broken-permission table fixture and Chromium test asserting private text absent and public row still usable. | Authored; final browser gate pending |

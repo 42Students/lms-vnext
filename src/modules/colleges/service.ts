@@ -138,7 +138,16 @@ export async function listColleges(
   context: RequestContext,
   organizationIdInput?: string | null,
 ) {
-  const db = getDb();
+  const resource={
+    organizationId:isSuperAdmin(context)
+      ? context.adminScope?.organizationId??undefined
+      : context.membership?.organizationId??undefined,
+    collegeId:isSuperAdmin(context)
+      ? context.adminScope?.collegeId??undefined
+      : context.membership?.collegeId??undefined,
+  };
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"college.read",resource);
 
   if (isSuperAdmin(context)) {
     const requestedOrganizationId = organizationIdInput
@@ -284,6 +293,7 @@ export async function listColleges(
       ),
     )
     .limit(1);
+  });
 }
 
 export async function resolveCollegeUsage(

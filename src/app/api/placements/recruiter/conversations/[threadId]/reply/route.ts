@@ -17,7 +17,7 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   const context=await getCurrentRequestContext();
-  if(!hasActiveRecruiter(context))
+  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
   await sendRecruiterThreadMessage(context,parsed.data.threadId,parsed.data.body);
  }catch(error){

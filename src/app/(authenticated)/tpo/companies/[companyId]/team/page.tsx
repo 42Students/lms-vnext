@@ -46,6 +46,9 @@ export default async function TpoCompanyTeamPage({params}:{
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
      </li>)}
     </ol>
+    {result.truncated?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">
+     Showing the latest 100 company Team messages. Older messages are not loaded here.
+    </p>:null}
     {!result.messages.length?<p role="status" className="text-sm text-body">
      No company Team messages yet.</p>:null}
     {result.canPost?<TpoCompanyTeamComposer companyId={companyId} actorUserId={context.user.id}/>:

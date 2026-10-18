@@ -50,3 +50,13 @@ export function restoreHrUnsentDraft(raw:string|null,now:number):HrDriveDraft|nu
   return envelope.version===2&&isEditableHrDraft(envelope.draft)?envelope.draft:null;
  }catch{return null;}
 }
+
+/** The same URL path can switch between NEW, FROM, COPY, EDIT and FIX while
+ * React preserves the page slot. Key the hook-owning draft by principal,
+ * tenant, mode and source ID to prevent cross-college or cross-request state. */
+export function hrDriveDraftFormStateKey(
+ userId:string,collegeId:string,
+ mode:"NEW"|"FROM"|"COPY"|"EDIT"|"FIX",sourceId:string|null,
+):string {
+ return [userId,collegeId,mode,sourceId??"new"].join(":");
+}

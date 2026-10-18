@@ -2,6 +2,7 @@ import "server-only";
 
 import { drizzleTenantDomainRepository } from "@/modules/tenant-domains/repository";
 import { resolveTenantFromHost } from "@/modules/tenant-domains/service";
+import {normalizeRequestHost} from "@/modules/tenant-domains/validation";
 import { getPlatformHosts } from "./config";
 
 /**
@@ -44,6 +45,9 @@ export async function resolveRequestTenant(
   if (getPlatformHosts().has(host)) {
     return { kind: "platform", host };
   }
+  // A malformed Host is a rejected request, never a transient DB outage.
+  // Validate before consulting the resolver or poisoning negative cache state.
+  try{normalizeRequestHost(host);}catch{return {kind:"unknown",host};}
 
   const hit = cache.get(host);
   if (hit && hit.expiresAt > Date.now()) return hit.value;
@@ -76,8 +80,16 @@ export async function resolveRequestTenant(
       if(entry.expiresAt<=now)cache.delete(key);
     }
     if(cache.size >= CACHE_LIMIT){
-      const oldest=cache.keys().next().value;
-      if(oldest!==undefined)cache.delete(oldest);
+      // A flood of never-verified Host headers must not evict verified tenants.
+      // Prefer discarding an existing negative-cache entry. If every slot is
+      // verified, return the unknown result without storing it.
+      const negative=[...cache].find(([,entry])=>entry.value.kind==="unknown");
+      if(negative)cache.delete(negative[0]);
+      else if(value.kind==="unknown")return value;
+      else {
+        const oldest=cache.keys().next().value;
+        if(oldest!==undefined)cache.delete(oldest);
+      }
     }
   }
   // Refreshing an existing hostname also refreshes its insertion order.

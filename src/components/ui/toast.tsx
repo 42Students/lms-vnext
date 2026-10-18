@@ -11,9 +11,12 @@ export function enqueueToast(current: readonly ToastItem[], incoming: ToastItem,
 } {
   // Errors are persistent: only a user can dismiss them. Limit informational
   // toasts independently without dropping persistent errors.
-  const combined = [...current, incoming];
+  // Repeated event IDs update an existing message instead of introducing
+  // duplicate React keys or leaving two dismissable copies of one event.
+  const combined = [...current.filter(item => item.id !== incoming.id), incoming];
+  const limit = Number.isFinite(timedLimit) ? Math.max(0, Math.trunc(timedLimit)) : 3;
   const timed = combined.filter(item => item.tone !== "error");
-  const drop = new Set(timed.slice(0, Math.max(0, timed.length - timedLimit)).map(item => item.id));
+  const drop = new Set(timed.slice(0, Math.max(0, timed.length - limit)).map(item => item.id));
   return { items: combined.filter(item => !drop.has(item.id)), evictedIds: [...drop] };
 }
 type ToastInput = Omit<ToastItem, "id">;
@@ -78,6 +81,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [viewport, setViewport] = useState<ToastViewport | null>(null);
   const itemsRef = useRef<ToastItem[]>([]);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const readingDurations = useRef<Map<string, number>>(new Map());
   // Toast IDs are React keys, not credentials. Some embedded WebViews have no
   // crypto.randomUUID; a provider-scoped monotonic counter is collision-free
   // for the life of this mounted notification stack.
@@ -86,23 +90,45 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     const timer = timers.current.get(id);
     if (timer) clearTimeout(timer);
     timers.current.delete(id);
+    readingDurations.current.delete(id);
     itemsRef.current = itemsRef.current.filter(toast => toast.id !== id);
     setToasts(itemsRef.current);
   }, []);
+  const scheduleTimedToast = useCallback((id: string, duration: number) => {
+    const existing = timers.current.get(id);
+    if (existing) clearTimeout(existing);
+    timers.current.delete(id);
+    if (!document.hidden) timers.current.set(id, setTimeout(() => dismiss(id), duration));
+  }, [dismiss]);
   const showToast = useCallback((input: ToastInput) => {
     const id = "toast-" + ++nextToastOrdinal.current;
     const { items, evictedIds } = enqueueToast(itemsRef.current, { ...input, id });
     clearEvictedToastTimers(evictedIds, timers.current);
+    for (const evictedId of evictedIds) readingDurations.current.delete(evictedId);
     itemsRef.current = items;
     setToasts(items);
     // Errors must remain readable/recoverable until explicitly dismissed.
     // Longer informational messages get time proportional to reading length.
     if (input.tone !== "error") {
       const readingTime = Math.max(4500, Math.min(15000, 2500 + (input.title.length + (input.description?.length ?? 0)) * 70));
-      const timer = setTimeout(() => dismiss(id), readingTime);
-      timers.current.set(id, timer);
+      readingDurations.current.set(id, readingTime);
+      scheduleTimedToast(id, readingTime);
     }
-  }, [dismiss]);
+  }, [scheduleTimedToast]);
+  useEffect(() => {
+    function visibilityChange() {
+      if (document.hidden) {
+        timers.current.forEach(timer => clearTimeout(timer));
+        timers.current.clear();
+      } else {
+        for (const [id, duration] of readingDurations.current) {
+          if (itemsRef.current.some(toast => toast.id === id)) scheduleTimedToast(id, duration);
+        }
+      }
+    }
+    document.addEventListener("visibilitychange", visibilityChange);
+    return () => document.removeEventListener("visibilitychange", visibilityChange);
+  }, [scheduleTimedToast]);
   useEffect(() => {
     const currentTimers = timers.current;
     return () => { currentTimers.forEach(timer => clearTimeout(timer)); currentTimers.clear(); };

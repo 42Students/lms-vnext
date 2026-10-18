@@ -82,7 +82,7 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("'ACTIVE',$6");
    expect(helper).toContain("status not in ('ARCHIVED','COMPLETED')");
    expect(helper).toContain('"2099-10-20T04:30:00Z"');
-   expect(helper).toContain('"2099-10-01"');
+   expect(helper).toContain('"2020-10-01"');
    expect(helper).not.toContain('"2026-10-20T04:30:00Z"');
  });
 
@@ -150,6 +150,32 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    ])expect(helper).toContain(pair);
    expect(helper).toContain("information_schema.columns");
    expect(helper).toContain("registered migration columns missing");
+ });
+
+ it("PROJ-HARNESS-GUARD-18 task submission and task state transition share one savepoint",()=>{
+   expect(helper).toContain("return db.savepoint(async()=>");
+   expect(helper).toContain("update project_tasks set status='IN_REVIEW'");
+   expect(helper).toContain("task state changed while submitting");
+ });
+
+ it("PROJ-HARNESS-GUARD-20 recruiter fixture uses persisted company grant, not a college role",()=>{
+   expect(helper).toContain("export async function createRecruiterFixture");
+   expect(helper).toContain("insert into placement_recruiter_profiles");
+   expect(helper).toContain("insert into placement_recruiter_college_grants");
+   expect(helper).toContain("'VERIFIED'");
+   expect(helper).toContain("await createPrincipal(db,null)");
+ });
+
+ it("PROJ-HARNESS-GUARD-21 archived company and relationship fail closed before applicant insert",()=>{
+   expect(helper).toContain("and rel.status='ACTIVE' and company.status='ACTIVE'");
+   expect(helper).toContain("on rel.id=j.company_relationship_id and rel.college_id=j.college_id");
+ });
+
+ it("PROJ-HARNESS-GUARD-22 reusable recruiter grant witness fails closed on persisted state",()=>{
+   expect(helper).toContain("export async function fixtureRecruiterCanAccess");
+   expect(helper).toContain("g.status='ACTIVE' and g.verification_status='VERIFIED'");
+   expect(helper).toContain("g.valid_until>now()");
+   expect(helper).toContain("u.platform_status='ACTIVE'");
  });
 
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{

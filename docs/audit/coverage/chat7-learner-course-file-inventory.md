@@ -225,3 +225,22 @@ Counts: 128 learner-prefixed course modules, 79 courses API routes; 14 named lea
 - Extract each named export and its public behaviour from the above sources; mark each test by the exact exported function.
 - Test allowed and forbidden tenancy, missing session/college context, bad inputs, server errors, concurrency and idempotency for each HTTP verb handler.
 - Run TypeScript, unit suite, integration and mobile browser flows. No runner is available in this connector-only environment, so no pass claim is made.
+
+## Follow-up verified-by-source subset, 2026-10-18
+
+The initial "not yet verified" table above is a baseline inventory rather than a live test-run tracker. The following files gained new **authored** behavior coverage, but no cloud CI or live PostgreSQL pass was performed:
+
+| File | Behavioral source/test evidence |
+|---|---|
+| `learner-course-file-reference-service.ts` | `chat7-learner-course-file-embargo.test.ts`: active learner/delivery access, published ancestry, scheduled-media embargo via DB clock |
+| `learner-quiz-review-model.ts` | `chat7-learner-quiz-review-inherited-answers.test.ts`: own-only browser answers, removed options, no answer-key disclosure |
+| `learner-assignment-materials-service.ts` | `chat7-learner-assignment-materials-service.test.ts`: learner publication and delivery scope before optional table probe, safe links |
+| `learner-assignment-materials-model.ts`, `learner-assignment-file-selection-model.ts` | `chat7-learner-course-material-link-safety.test.ts`: strict HTTPS link and early unsupported file guard |
+| `learner-course-service.ts`, `learner-quiz-result-release-policy.ts` | `chat7-learner-course-quiz-release-consistency.test.ts`: deadline + closure + author publication all required in workspace projection |
+| `learner-quiz-draft.ts`, `learner-quiz-draft-scope-model.ts` | `chat7-quiz-draft-embargo-security.test.ts`: oversize and prototype-poisoned session values rejected, stale options discarded |
+| `learner-course-announcements-service.ts` | `chat7-learner-announcements-scope.test.ts`: current persisted learner and matching active Section |
+| `learner-course-list-concurrency-model.ts` | `chat7-learner-course-card-concurrency.test.ts`: stable card order, eight-worker cap, nonfinite limits |
+| `learner-assessment-flat-query.ts`, `learner-assessment-service.ts` | `chat7-learner-assessment-feed-privacy.test.ts`, `chat7-learner-assessment-class-state.test.ts`: private grade masking, quiz release, authorized class filter |
+| `learner-live-link-availability-model.ts`, `learner-video-grant-model.ts` | `chat7-learner-media-notice-boundary.test.ts`: safe meeting URL and renewal timing |
+
+HTTP route audited: `/api/courses/deliveries/[deliveryId]/contents/[contentId]/file` via `chat7-learner-course-file-route-boundaries.test.ts`. Other 78+ course route handlers remain to be individually certified, as do many model exports. Do not interpret this partial update as an exhaustive manifest or passing test run.
