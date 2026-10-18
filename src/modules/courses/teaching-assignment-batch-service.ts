@@ -7,6 +7,7 @@ import {
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {loadCourseMembership,loadCourseSectionDeliveryScope} from "./scope";
@@ -82,6 +83,12 @@ export async function createCourseTeachingAssignmentsBatch(
      delivery.cohortId===first.cohortId&&
      delivery.academicPeriodId===first.academicPeriodId
    ))throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+   // Reauthorize the administrator from persisted active user and role rows.
+   // Revoking their account while the request waits on locks cannot leave
+   // an older request context authorized to issue new faculty assignments.
+   await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+    collegeId:first.collegeId,organizationId:first.organizationId,
+   });
    // Mutations also recheck the faculty's persisted actor grant.
    const [liveMember]=await tx.select({
     collegeId:collegeMemberships.collegeId,status:collegeMemberships.status,
