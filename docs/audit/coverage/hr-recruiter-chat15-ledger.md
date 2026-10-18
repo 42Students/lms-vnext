@@ -295,3 +295,6 @@ Both cases remain **authored but not executed**. Do not equate mocked behavior w
 
 
 | `GET /api/placements/recruiter/drives/export` | `tests/unit/HR-BREAK-chat15-drive-export-api-118.test.ts` | Exact role principal compared before data read, duplicate/unknown query keys 400 before auth context, wrong-college IDOR nonenumerating 404, authorized search with scoped college and bounded page size, no-store read-only export, private SQL failure sanitized | Real PostgreSQL drive cap, two companies and cross-tenant grants, live spreadsheet/view parity |
+
+
+| `GET /api/placements/recruiter/jobs` | `tests/unit/HR-BREAK-chat15-jobs-api-119.test.ts` | Actual authorized empty read, exact scoped job payload passthrough, central grant denial does not become a global listing, identity backend outage maps to safe error rather than fabricated empty portfolio; GET has no writes | Real persisted active/expired grants, two-company tenancy and API cache/ETag behavior |
