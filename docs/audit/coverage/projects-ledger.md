@@ -174,20 +174,50 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskProgressParamsSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskProgressInputSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-task-progress-service.ts` | `updateLearnerProjectTaskProgress` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/learner-task-status-policy.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-task-status-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/lifecycle-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/meeting-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/meeting-window-policy.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/member-role-kind-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/member-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-activity-display-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-attention-kind-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-attention-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-attention.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-auto-assign-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-backlog-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/mentor-board-review-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/learner-task-status-policy.ts` | `canLearnerMoveOwnTask` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-task-status-policy.ts` | `learnerTaskStatusInputSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-task-status-service.ts` | `moveOwnLearnerProjectTask` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/lifecycle-service.ts` | `startProjectSprint` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/lifecycle-service.ts` | `completeProjectSprint` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/lifecycle-service.ts` | `reopenProjectSprint` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/lifecycle-service.ts` | `updateProjectTaskStatus` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/lifecycle-service.ts` | `unshipProjectRelease` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/lifecycle-service.ts` | `shipProjectRelease` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/meeting-service.ts` | `listProjectMeetings` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/meeting-service.ts` | `requestProjectMeeting` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/meeting-service.ts` | `scheduleProjectMeeting` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/meeting-service.ts` | `transitionProjectMeeting` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/meeting-window-policy.ts` | `isFutureProjectMeetingWindow` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-role-kind-model.ts` | `mayMutateProjectWithRole` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-role-kind-model.ts` | `PROJECT_MEMBER_ROLE_KINDS` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-service.ts` | `listProjectMemberCandidates` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-service.ts` | `listProjectMentorCandidates` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-service.ts` | `reassignProjectPrimaryMentor` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-service.ts` | `bulkReassignProjectMentor` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-service.ts` | `addProjectMember` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-service.ts` | `updateProjectMember` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-service.ts` | `endProjectMember` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-service.ts` | `listProjectMembers` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/member-service.ts` | `listMyProjectInstances` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-activity-display-model.ts` | `mentorActivityLabel` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-activity-display-model.ts` | `mentorActivityCategory` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-activity-display-model.ts` | `mentorActivityRelativeTime` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-attention-kind-model.ts` | `selectMentorAttention` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-attention-kind-model.ts` | `mentorAttentionProjectOptions` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-attention-kind-model.ts` | `mentorAttentionKindSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-attention-kind-model.ts` | `mentorAttentionOrderSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-attention-kind-model.ts` | `mentorAttentionProjectSchema` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-attention-service.ts` | `listMyMentorProjectAttention` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-attention.ts` | `deriveMentorProjectAttention` | `tests/unit/projects-mentor-attention-risk-chat14.test.ts` | Runtime authored, unrun |
+| `src/modules/projects/mentor-auto-assign-service.ts` | `autoAssignProjectTasks` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-backlog-service.ts` | `moveMentorBacklogTask` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-backlog-service.ts` | `createMentorBacklogTask` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReview` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReviewHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-board-review-model.ts` | `csvSafeCell` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardExportCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorSprintSummaryCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/mentor-board-review-model.ts` | `mentorBoardReviewQuerySchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/mentor-board-review-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-calendar-export-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/mentor-calendar-filter-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
