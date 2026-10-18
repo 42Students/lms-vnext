@@ -13,3 +13,14 @@
 The owning college page constructs `items` only from `listProjectAdminSnapshots(context, collegeId, query)`, which independently checks `projects.manage` and filters persisted projects by `collegeId`. `getProjectAdminCollegeId(context)` forbids unscoped SA fallback. The export component performs **no additional query** and cannot retrieve projects absent from those authorized props. A request to export all workspaces should **not** silently increase the data scope.
 
 Explicitly outstanding: PostgreSQL persisted-role revocation races; all-college vs active-college denial at the service boundary; browser download/blob/CSP behavior; cross-spreadsheet real import; 320/360/390px visual checks. Other lanes own the Projects overall ledger; this lane's independent tests are supplementary and are not counted as full service/export integration.
+
+## IIT Dharwad Projects state-machine and authorization breaker additions
+
+| Gap ID | Export / state | Behavioral evidence | Cases and result |
+|---|---|---|---|
+| PROJ-BREAK-TEAM-PREVIEW-01 | `previewClassTeams`, `movePreviewMember`, `teamSplitInputSchema` in `class-team-split-model.ts` | `tests/unit/PROJ-BREAK-chat19-team-preview-integrity.test.ts` | Deterministic roster split, same-team no-op, invalid target and membership, immutable valid move, deny leaving empty team (source defect fixed) |
+| PROJ-BREAK-TEAM-PREVIEW-01 | `verifyClassTeamPreview`, `classTeamPreviewSchema` in `class-team-preview-validation.ts` | Same test | Missing learner, duplicate membership, unknown ID, hidden payload keys, Unicode-NFKC duplicate names, empty groups, wrong roster |
+| PROJ-BREAK-TEAM-PREVIEW-01 | `previewVersion`, `assertPreviewVersion`, `previewVersionSchema` | Same test | Stale preview version denied, malformed signature denied, valid version allowed |
+| PROJ-BREAK-COLLEGE-LOCK-01 | `mayRecordCollegeAdminDeliveryLock` in `admin-submission-lock-policy.ts` | `tests/unit/PROJ-BREAK-chat19-admin-delivery-lock-role.test.ts` | Exact active College Admin membership; cross-college/org, suspended, disabled, TPO/learner, recruiter, SA acting-tenant denied |
+
+PostgreSQL concurrent team creation, persisted membership revocation and live browser planner drag-and-drop remain separate integration gates.
