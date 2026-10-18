@@ -78,7 +78,10 @@ export async function getSectionOperationsWorkspace(
     sectionIdSchema.parse(sectionIdInput);
   const scope = await loadSectionScope(sectionId);
 
-  requirePermission(context, "academics.read", {
+  // This is an operations workspace with full college learner/faculty
+  // rosters and assignment choices. Ordinary academic read permission is
+  // intentionally insufficient for Faculty/Learner users.
+  requirePermission(context, "academics.manage", {
     organizationId: scope.organizationId,
     collegeId: scope.collegeId,
   });
@@ -121,7 +124,13 @@ export async function getSectionOperationsWorkspace(
         sections.academicPeriodId,
       ),
     )
-    .where(eq(sections.id, sectionId))
+    // The section's program supplies the trusted college scope; a section
+    // pointing at another tenant's academic period must fail closed instead
+    // of disclosing the foreign period name, dates or timetable state.
+    .where(and(
+      eq(sections.id, sectionId),
+      eq(academicPeriods.collegeId, scope.collegeId),
+    ))
     .limit(1);
 
   if (!section) {

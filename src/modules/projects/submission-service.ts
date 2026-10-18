@@ -45,6 +45,7 @@ import {
 import {
   projectSubmissionDraftInputSchema,
   updateProjectSubmissionDraftInputSchema,
+  submitProjectSubmissionInputSchema,
   projectSubmissionIdSchema,
   reviewProjectSubmissionInputSchema,
   type ProjectSubmissionDraftInput,
@@ -336,6 +337,7 @@ export async function submitProjectSubmission(
   context: RequestContext,
   projectIdInput: string,
   submissionIdInput: string,
+  rawInput:unknown,
 ) {
   const scope =
     await requireLearnerSubmissionAccess(
@@ -344,6 +346,7 @@ export async function submitProjectSubmission(
     );
   const submissionId =
     projectSubmissionIdSchema.parse(submissionIdInput);
+  const input=submitProjectSubmissionInputSchema.parse(rawInput);
   const db = getDb();
 
   return db.transaction(async (tx) => {
@@ -397,6 +400,10 @@ export async function submitProjectSubmission(
       throw new ProjectsServiceError(
         "PROJECT_SUBMISSION_INVALID_STATE",
       );
+    }
+
+    if(!projectDraftRevisionMatches(submission.updatedAt,input.expectedUpdatedAt)){
+      throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
     }
     const files=Array.isArray(submission.attachments)
       ? submission.attachments.filter((entry):entry is {kind:"FILE";fileId:string} =>
