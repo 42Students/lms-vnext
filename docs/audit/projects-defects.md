@@ -1,7 +1,7 @@
 # IIT Dharwad Projects hardening — adversarial defect register
 
 **Owner:** chat-14 for the module-wide Projects defect register and coverage ledger; chat-9 retains attribution for its admin/college breaker findings. **Dates:** 2026-10-18 through 2026-10-19.
-Every item below was reproduced by code-path review and has a source repair on `chatgpt/chat-9-b`; adversarial regressions are authored but **Vitest/PostgreSQL/browser runs and cross-lane review are still required**. These are release blockers until those checks pass.
+Entries carry their originating lane and source-commit evidence: `PROJ-DEF-009-*` originated on `chatgpt/chat-9-b`; `PROJ-DEF-014-*` include `chatgpt/chat-14-b` Mentor findings. Adversarial regressions are authored, but **Vitest/PostgreSQL/browser runs and independent cross-lane review remain required**. These are release blockers until those checks pass.
 ## Chat-14 meeting hardening findings (2026-10-19)
 
 | ID | Severity | Evidence / invariant | Fix on `chatgpt/chat-14-b` | Regression | Outstanding verification |
