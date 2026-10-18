@@ -73,6 +73,9 @@ export async function getRecruiterCompanyTeam(
       eq(placementRecruiterProfiles.status,"ACTIVE"),
     ))
     .innerJoin(placementRecruiterCollegeGrants,and(
+      // A different still-active grant for the same relationship must not
+      // silently resurrect the exact cached grant selected in this session.
+      eq(placementRecruiterCollegeGrants.id,scope.grant.id),
       eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
       eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
       eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
