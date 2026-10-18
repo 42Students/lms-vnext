@@ -1,6 +1,7 @@
 import "server-only";
 import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {collegeMemberships,users,facultyProfiles,learnerProfiles} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {listCollegeRoleDirectory} from "./college-role-directory-service";
@@ -17,7 +18,15 @@ export async function exportVisibleCollegePeople(
  const query=collegeRoleDirectoryQuerySchema.parse(raw);
  const data=await listCollegeRoleDirectory(context,kind,query);
  const ids=data.items.map(x=>x.membershipId);
- const persons=ids.length?await getDb().select({
+ // Revalidate the actor after the directory read: a revoked membership or
+ // account can race an export between list pagination and private detail
+ // enrichment. Locks remain held through the enrichment query.
+ const persons=ids.length?await getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"people.manage",{
+   collegeId:context.membership!.collegeId,
+   organizationId:context.membership!.organizationId,
+  });
+  return tx.select({
   id:collegeMemberships.id,phone:users.phoneE164,
   facultyType:facultyProfiles.employmentType,
   facultyDocument:facultyProfiles.profileDocument,
@@ -27,7 +36,8 @@ export async function exportVisibleCollegePeople(
   .leftJoin(facultyProfiles,eq(facultyProfiles.membershipId,collegeMemberships.id))
   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .where(and(eq(collegeMemberships.collegeId,context.membership!.collegeId),
-   inArray(collegeMemberships.id,ids))):[];
+   inArray(collegeMemberships.id,ids)));
+ }):[];
  const details=new Map(persons.map(p=>[p.id,p]));
  const columns=kind==="FACULTY"
   ?["Name","Mobile","Email","Type","Gender","Status"]
