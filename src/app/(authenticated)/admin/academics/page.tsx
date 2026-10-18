@@ -12,14 +12,14 @@ export default async function SuperAdminAcademicsPage() {
 
   if (!collegeId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           eyebrow="Super Admin"
           title="Academics"
           description="Academic administration requires a college safety scope."
         />
-        <Link href="/admin/electives" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Elective slots →</Link>
-        <Link href="/admin/batch-promotion" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Batch Promotion Preview →</Link>
+        <Link href="/admin/electives" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Elective slots →</Link>
+        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Batch Promotion Preview →</Link>
         <EmptyState
           title="Select a college scope"
           description="Choose a college in the Super Admin scope selector before managing Programs, Periods, Cohorts or Sections."
@@ -34,7 +34,7 @@ export default async function SuperAdminAcademicsPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="Super Admin"
         title="Academics"
@@ -42,17 +42,17 @@ export default async function SuperAdminAcademicsPage() {
       />
       <div>
         <Link href="/admin/electives"
-          className="mr-2 inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="mr-2 inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Elective slots
         </Link>
         <Link
           href="/admin/programs"
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
         >
           Open Programs directory
         </Link>
       </div>
-      <Link href="/admin/batch-promotion" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Batch Promotion Preview →</Link>
+      <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Batch Promotion Preview →</Link>
       <AcademicsOverview
         collegeId={collegeId}
         workspace={workspace}
