@@ -68,3 +68,5 @@ These are named and scope-specific tests, but full per-export coverage of all se
 
 
 | `PUT /api/placements/tpo/my-notification-preferences`, `PUT /api/placements/tpo/settings/outcome-labels`, `PUT /api/placements/tpo/settings/prep-readiness` | Same-origin before actor lookup; 8 KiB binary stream cap; malformed UTF-8/JSON 400, oversized 413; service gets authenticated context, no caller identity; 401/403 mapped by shared API boundary; no successful response echoes injected IDs | `tests/unit/chat11-tpo-settings-route-boundary.test.ts`, `TPO-settings-audit-BODY-02` | Live HTTP chunks, per-tenant DB scopes and browser retries |
+
+| `tpoConfigVersionSchema`, `hasCurrentTpoConfigVersion`, `tpoJobTypeNameSchema`, `tpoBlockedDaySchema` | RFC3339 offset token, exact persisted ISO version, valid date-only including leap-day, max 40 Unicode job-title characters with combining marks, at least one alphanumeric and punctuation injection denial | `tests/unit/chat11-tpo-config-validation.test.ts`, `TPO-settings-audit-CONFIG-01` | PostgreSQL legacy persisted labels and timezone rendering |

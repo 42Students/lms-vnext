@@ -93,3 +93,13 @@ The previous raw report `<table>` is now rendered via the shared, audited `DataT
 | HR-BREAK-JOIN-CODE-01 | `src/modules/messaging/public-join-code-delivery.ts`: `deliverPublicRecruiterJoinCode` | `tests/unit/HR-BREAK-chat19-recruiter-join-code-delivery.test.ts` | Invalid OTP and Unicode suffix rejected before network; email recipient runtime policy; empty token; insecure endpoint; missing template; correct POST/recipient/template payload; provider 429 and network rejection fail closed |
 
 This is a second-pair-of-eyes test for the chat-16-owned messaging code and fills the `public-join-code-delivery.ts` unreferenced-file gap in the previously generated WEAK-AREAS snapshot. No source change was necessary based on the boundaries inspected. A real delivery provider and device end-to-end test remain outside mocked unit scope.
+
+## Direct messaging receipt-service and CSV second-pair-of-eyes coverage
+
+| Gap | Export | Direct test and cases | Remaining |
+|---|---|---|---|
+| HR-BREAK-MESSAGING-HISTORY-01 | `src/modules/messaging/receipt-history-service.ts` → `exportTpoMessagingHistory` | `tests/unit/HR-BREAK-chat19-messaging-receipt-history-service.test.ts`: no membership, wrong role, suspended/disabled actor, persisted grant recheck within transaction, unsafe filter validation before DB, 2001-row export cap, accepted vs delivered distinction | PostgreSQL actual query isolation, transaction snapshots and large-data EXPLAIN |
+| HR-BREAK-MESSAGING-HISTORY-01 | same → `listTpoMessagingHistory` | Same direct test: role/tenant checks, page request beyond final page clamps, SQL limit 25 and offset 25, provider acceptance not delivery | Parallel role revocation DB integration |
+| HR-BREAK-MESSAGING-CSV-02 | `src/modules/messaging/receipt-history-export-model.ts` → `messagingHistoryCsv` | `tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts`: Unicode format/zero-width/paragraph separators before spreadsheet formulas, CRLF, embedded quoted CSV, aggregate-only privacy, accurate accepted counts | Imported Excel/LibreOffice validation and actual download HTTP headers |
+
+The receipt-history service had no previous direct test reference in the generated weak-areas snapshot. These are independent tests for the chat-16-owned messaging implementation, not a claim that every messaging service has full database coverage.
