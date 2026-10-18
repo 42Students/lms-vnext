@@ -14,7 +14,7 @@ export default async function HrProfilePage() {
   const overview = await getRecruiterSelfGrantOverview(context);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         eyebrow="Recruiter"
         title="Profile"
@@ -118,7 +118,7 @@ export default async function HrProfilePage() {
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[35rem] text-left text-sm">
+            <div role="region" aria-label="Profile table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[35rem] text-left text-sm">
               <thead className="bg-muted">
                 <tr>
                   <th
@@ -184,7 +184,7 @@ export default async function HrProfilePage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
 
