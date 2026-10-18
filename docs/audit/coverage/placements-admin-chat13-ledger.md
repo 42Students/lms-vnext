@@ -1,6 +1,6 @@
 # chat-13 — Placements Admin service coverage ledger
 
-**Owner:** chat-13. **Snapshot:** 2026-10-18, compared with `main` and lane branch. The master queue requires exhaustive Super Admin coverage of placement management, analytics and exports. This is an explicit work ledger, not a claim of comprehensive passing tests. Vitest, TypeScript, browser and PostgreSQL tests have **not run** in this session.
+**Owner:** chat-13. **Snapshot:** 2026-10-18, compared with `main` and lane branch. The master queue requires exhaustive Super Admin coverage of placement management, analytics and exports. This is an explicit work ledger, not a claim of comprehensive passing tests. Added a separate model/source audit suite `tests/unit/chat13-placements-admin-mutations.test.ts`. Vitest, TypeScript, browser and PostgreSQL tests have **not run** in this session.
 
 | File / exported entrypoint | Primary boundary | New test / evidence | Coverage status |
 |---|---|---|---|
@@ -14,18 +14,23 @@
 | `src/modules/placements/super-admin-drive-pipeline-service.ts` — `getSuperAdminDrivePipeline` | Scope via `getPlacementJob`, submitted records only | `SA-PIPELINE-01` source contract | Real DB joins/tenant test pending |
 | `src/modules/placements/report-service.ts` — `getPlacementReportWorkspace` | Explicit college selection, job membership isolation, selected season | `SA-REPORT-01` | Runtime strict schema + source contract, integration pending |
 | `src/modules/placements/report-model.ts` — `summarizePlacementReports`, `summarizePlacementReportDetails` | Deduplication, college placed policy, accepted packages, exports vs counts | Existing cross-role model coverage; no new wide-sample DB fixture here | Follow-up |
-| `src/modules/placements/admin-company-merge-service.ts` | Global company canonicalization and conflict handling | Not covered in this branch | Follow-up integration |
-| `src/modules/placements/super-admin-company-restore-service.ts` | Restore authority, idempotence and audit | Not covered in this branch | Follow-up integration |
-| `src/modules/placements/super-admin-company-verification-service.ts` | Verification scope, stale CAS and audit | Not covered in this branch | Follow-up integration |
-| `src/modules/placements/super-admin-published-drive-edit-service.ts` | Published state mutation and concurrent actors | Not covered in this branch | Follow-up integration |
-| `src/modules/placements/super-admin-bulk-drive-service.ts` | Bulk partial errors, idempotency | Not covered in this branch | Follow-up integration |
-| `src/modules/placements/super-admin-hr-service.ts` | HR accounts/college grant read/write | Not covered in this branch | Follow-up integration |
+| `src/modules/placements/admin-company-merge-service.ts` | Global company canonicalization; deny shared foreign-college relationships; current persisted actor | `SA-COMPANY-MERGE-01` source + persisted actor fix | Model/source contract; DB concurrency pending |
+| `src/modules/placements/super-admin-company-restore-service.ts` | Global-only archive reversal, changed-role protection | `SA-COMPANY-RESTORE-01` source + persisted role fix | Source contract; DB pending |
+| `src/modules/placements/super-admin-company-verification-service.ts` | Global-only verification and audit | `SA-COMPANY-VERIFY-01` | Runtime strict schema + source contract |
+| `src/modules/placements/super-admin-published-drive-edit-service.ts` | No edits to historic eligibility, strict CTC/date and optimistic token | `SA-PUBLISHED-DRIVE-EDIT-01` | Runtime schema + source contract; DB pending |
+| `src/modules/placements/super-admin-bulk-drive-service.ts` | Max 25, duplicate rejection, explicit confirmation, persisted actor and failure ledger | `SA-BULK-DRIVE-01` | Source contract; DB pending |
+| `src/modules/placements/super-admin-hr-service.ts` | HR accounts/college grant read/write, company identity and query scope | `SA-HR-ACCOUNTS-01/02` validation and status model | Runtime unit on validation; DB pending |
 | `src/modules/placements/super-admin-booked-interviews-service.ts` | Booking tenant scope | Not covered in this branch | Follow-up integration |
 
 ## Defects
 
 - **SA-COMPANY-SCOPE-01:** `listSuperAdminCompanyDirectory` previously scoped directory rows to the selected organization/college but computed `companyCollegeCount` across the whole database. Scoped this aggregate with the same selected college/organization to prevent leaking relationship counts across tenants.
 - **SA-DRIVE-ARCHIVE-RACE-01 (requires PG harness review):** the archive transaction locks the job, then computes offer impact, then separately locks issued offers. A concurrent offer acceptance that does not lock the job can change `ISSUED` to `ACCEPTED` between these steps. Regression requires two real DB transactions; see `docs/audit/defects-chat-13.md`. No unconditional release approval given.
+
+## Additional fixes
+
+- **SA-COMPANY-MERGE-01:** added persisted Super Admin authorization inside the company-merge transaction; previously only the request context was checked. An expired or role-revoked session must fail before mutating company identities.
+- **SA-COMPANY-RESTORE-01:** added the same persisted Super Admin authorization to global company archive reversal; restored employer identities must never be written from a stale session.
 
 ## Acceptance limitations
 
