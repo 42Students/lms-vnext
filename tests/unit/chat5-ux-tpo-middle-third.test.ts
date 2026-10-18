@@ -394,7 +394,12 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const note=source("docs/audit/ux/tpo-recruiters-leadid.md");
   expect(page).not.toContain("text-primary-text");
   expect(page).not.toMatch(/\bmin-h-10\b/);
-  expect(page).toMatch(/PageHeader|<h1|redirect\(/);
+  expect(page).toContain("RecruiterLeadDetailWorkspace");
+  const workspace=source("src/components/tpo/recruiter-lead-detail-workspace.tsx");
+  expect(workspace.trimStart().startsWith('"use client";')).toBe(true);
+  expect(workspace).toMatch(/<h1[^>]*>\{lead\.name\}<\/h1>/);
+  expect(workspace).toContain("Retry");
+  expect(workspace).toContain("min-h-11");
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
   expect(note).toContain("/tpo/recruiters/[leadId]");
   expect(note).toContain("UX-tpo-recruiters-leadid-01");
