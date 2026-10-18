@@ -112,3 +112,23 @@ Updated 2026-10-18; source branch `chatgpt/chat-16-b`. This is an **in-progress 
 | `src/app/api/auth/login/email/route.ts` | `POST` | Rate-limit rejection cannot resend; email fallback calls only server-scoped tenant attempt | `tests/unit/chat16-otp-route-tenant-session-09.test.ts` |
 
 **Still pending:** Execute those direct route/page tests under Vitest and a real Next.js browser; test actual OTP form keyboard actions, interrupted network, rapid double-POST, browser back/forward state, 2FA, mobile focus, session expiry and cookie replay under PostgreSQL. No test execution or full route coverage is asserted by these authored additions.
+
+## 2026-10-18 Projects-first notification hardening and direct route tests
+
+Source-verified test authoring only. The cloud CI report `docs/orchestrator/unit-failures-latest.md` still lists historical chat-16 gap-register reconciliation failures; the 32 IDs, source file references, queue statuses, target lane, and citations were checked directly against current main and remain consistent. A new execution is required rather than weakening these acceptance checks.
+
+| Area / boundary | Tested export or route | New behavioural assertions | Regression test | Status |
+|---|---|---|---|---|
+| Projects notification audience | `notifyActiveProjectMembers` | Fail closed on explicitly empty role set, do not expand to every project member; active membership and tenant/role SQL; deduplicate and exclude initiating actor | `tests/unit/PROJ-BREAK-chat16-notification-scope-01.test.ts` | Authored, unrun |
+| Projects membership notices | `notifyProjectMemberships` | Deduplicate membership ids; current active college scope; exclusion and zero-membership no-op | Same | Authored, unrun |
+| Projects notice links | `projectNoticeHref` | Encode hostile path/query/fragment content into a single route segment | Same | Authored, unrun |
+| Project in-app notification writer | `deliverInAppNotificationInTransaction` | Reject persisted wrong-college recipient, duplicate recipient-event retry, disabled user, invalid link/event UUID, zero-recipient no-op | `tests/unit/PROJ-BREAK-chat16-notification-writer-14.test.ts` | Authored, unrun; PostgreSQL concurrency open |
+| Inbound Super Admin list | `listInboundMailForAdmin` | Disabled user, wrong role, acting-college denial before storage; malformed filters, 50-row page, NEW global count, missing-table honesty | `tests/unit/chat16-inbound-mail-admin-journeys-10.test.ts` | Authored, unrun |
+| Inbound status CAS | `changeInboundMailStatusForAdmin` | Wrong-role and scope denial, invalid version/type rejection, expected status+version in UPDATE predicate, no false success on 0-row update | Same | Authored, unrun |
+| Inbound mail PATCH | `src/app/api/admin/inbound-mail/status/route.ts:PATCH` | Same-origin before login/body, tenant-bound actor, stale 409, unavailable 503, safe unauthorized response | `tests/unit/chat16-inbound-mail-route-11.test.ts` | Authored, unrun |
+| Inbound global scope regression | `listInboundMailForAdmin` | Selected-tenant global administrator must be denied private platform mail; old contrary expectation repaired | `tests/unit/inbound-mail-admin-service.test.ts` | Authored, unrun |
+| Recruiter mail digest | `sendRecruiterMessageDigest` | Disabled bridge, nonproduction allowlist, OTP template rejection, Reply-To host, HTTPS-only, safe HTML excerpts and last-three messages, single POST and network failure | `tests/unit/chat16-recruiter-digest-delivery-12.test.ts` | Authored, unrun |
+| Recruiter inbound email | `acceptAuthenticatedRecruiterEmailReply` | Disabled feature, signature mismatch, exact-byte HMAC, rogue fields/addresses, quoted-only history, missing PostgreSQL migration and no transaction | `tests/unit/chat16-recruiter-inbound-bridge-boundaries-15.test.ts` | Authored, unrun |
+| Public OTP form | `LoginForm` | Actual React server-rendered controls, a11y tab semantics, phone-only and email-only tenancy, consent | `tests/unit/chat16-auth-form-ssr-accessibility-13.test.ts` | Authored, unrun |
+
+**Unclosed run-required gates:** real PostgreSQL transaction/rollback, simultaneous recipient dedupe across worker instances, exact provider acknowledgements and retry semantics, complete inbox TPO vs recruiter vs other college state transitions, browser keyboard/focus/phone flows and all producer/handler export rows. The Project notification role-filter guard closes one known product defect but must not be mistaken for full project module hardening (chat-14 owns its complete ledger).
