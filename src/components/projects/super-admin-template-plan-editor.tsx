@@ -1,4 +1,7 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -115,7 +118,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
     }
   }
 
-  return <section className="rounded-xl border border-border bg-surface p-4">
+  return <section className="border-b border-border pb-5">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <h2 className="m-0 text-base font-semibold text-foreground">
@@ -141,7 +144,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         {draft.releases.length === 0 ? <p className="text-sm">No releases saved yet.</p> : null}
         {draft.releases.map((release, index) => <label key={release.key} className={label}>
           Release {index + 1} title
-          <input className={field} maxLength={200} required disabled={pending}
+          <Input className={field} maxLength={200} required disabled={pending}
             value={release.title} onChange={event => setDraft(current => ({
               ...current, releases: current.releases.map((row, at) =>
                 index === at ? { ...row, title: event.target.value } : row),
@@ -159,33 +162,33 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           <legend className="px-1 text-sm font-semibold">Sprint {index + 1}</legend>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className={label}>Key (optional)
-              <input className={field} required maxLength={64} value={sprint.key}
+              <Input className={field} required maxLength={64} value={sprint.key}
                 disabled={pending} onChange={event => updateSprint(index, { key: event.target.value })}/>
             </label>
             <label className={label}>Release key
-              <select className={field} disabled={pending} required value={sprint.releaseKey}
+              <Select className={field} disabled={pending} required value={sprint.releaseKey}
                 onChange={event => updateSprint(index, { releaseKey: event.target.value })}>
                 {draft.releases.map(release => <option key={release.key} value={release.key}>
                   {release.key}</option>)}
-              </select>
+              </Select>
             </label>
             <label className={label}>Title
-              <input className={field} required maxLength={200} disabled={pending}
+              <Input className={field} required maxLength={200} disabled={pending}
                 value={sprint.title} onChange={event => updateSprint(index, { title: event.target.value })}/>
             </label>
             <label className={label}>Due (optional)
-              <input className={field} maxLength={120} disabled={pending}
+              <Input className={field} maxLength={120} disabled={pending}
                 placeholder="e.g. Week 2" value={sprint.dueLabel ?? ""}
                 onChange={event => updateSprint(index, { dueLabel: event.target.value || undefined })}/>
             </label>
           </div>
           <label className={label}>Sprint goal (optional)
-            <textarea className={field} maxLength={1000} disabled={pending}
+            <Textarea className={field} maxLength={1000} disabled={pending}
               value={sprint.goal ?? ""} onChange={event =>
                 updateSprint(index, { goal: event.target.value || undefined })}/>
           </label>
           <label className={label}>Description
-            <textarea className={field} maxLength={4000} disabled={pending}
+            <Textarea className={field} maxLength={4000} disabled={pending}
               value={sprint.description ?? ""} onChange={event =>
                 updateSprint(index, { description: event.target.value || undefined })}/>
           </label>
@@ -213,29 +216,29 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           <legend className="px-1 text-sm font-semibold">Task {index + 1}</legend>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className={label}>Key (optional)
-              <input className={field} required maxLength={64} disabled={pending}
+              <Input className={field} required maxLength={64} disabled={pending}
                 value={task.key} onChange={event => updateTask(index, { key: event.target.value })}/>
             </label>
             <label className={label}>Sprint
-              <select className={field} disabled={pending} required value={task.sprintKey}
+              <Select className={field} disabled={pending} required value={task.sprintKey}
                 onChange={event => updateTask(index, { sprintKey: event.target.value })}>
                 {draft.sprints.map(sprint => <option key={sprint.key} value={sprint.key}>
                   {sprint.title}</option>)}
-              </select>
+              </Select>
             </label>
             <label className={label}>Title
-              <input className={field} required maxLength={200} disabled={pending}
+              <Input className={field} required maxLength={200} disabled={pending}
                 value={task.title} onChange={event => updateTask(index, { title: event.target.value })}/>
             </label>
             <label className={label}>Priority
-              <select className={field} value={task.priority} disabled={pending}
+              <Select className={field} value={task.priority} disabled={pending}
                 onChange={event => updateTask(index, { priority: event.target.value as Task["priority"] })}>
                 {(["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const).map(priority =>
                   <option key={priority} value={priority}>{priority[0] + priority.slice(1).toLowerCase()}</option>)}
-              </select>
+              </Select>
             </label>
             <label className={label}>Estimate (points)
-              <input type="number" min={1} max={13} step={1} className={field}
+              <Input type="number" min={1} max={13} step={1} className={field}
                 disabled={pending} value={task.estimatePoints ?? ""}
                 onChange={event => updateTask(index, {
                   estimatePoints: event.target.value === "" ? undefined : Number(event.target.value),
@@ -243,12 +246,12 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             </label>
           </div>
           <label className={label}>Description
-            <textarea className={field} maxLength={4000} disabled={pending}
+            <Textarea className={field} maxLength={4000} disabled={pending}
               value={task.description ?? ""} onChange={event =>
                 updateTask(index, { description: event.target.value || undefined })}/>
           </label>
           <label className={label}>What does done look like?
-            <textarea className={field} maxLength={4000} disabled={pending}
+            <Textarea className={field} maxLength={4000} disabled={pending}
               value={task.acceptanceCriteria ?? ""} onChange={event =>
                 updateTask(index, { acceptanceCriteria: event.target.value || undefined })}/>
           </label>
