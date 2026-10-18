@@ -321,6 +321,53 @@ describe("Placement P8 offers and joining", () => {
     expect(job.collegeId).toBe(SEED_IDS.collegeA);
   });
 
+  it("PLACEMENTS-JOIN-SM-04 DB refuses future joining evidence without a partial history write",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Graduate engineer",annualCtcInr:900_000,
+    });
+    await recordTpoOfferLifecycle(tpo,job.id,{
+      action:"RECORD_ACCEPTED",confirmed:true,offerIds:[issued.id],
+      expectedStatus:"ISSUED",reason:"Written candidate acceptance received from employer",
+    });
+    const futureDay=new Date(Date.now()+7*86_400_000).toISOString().slice(0,10);
+    await expect(recordTpoOfferLifecycle(tpo,job.id,{
+      action:"RECORD_JOINED",confirmed:true,offerIds:[issued.id],
+      expectedStatus:"ACCEPTED",joiningDate:futureDay,
+      reason:"Employer supplied a future planned joining date, not a completed joining",
+    })).rejects.toMatchObject({code:"PLACEMENT_JOINING_NOT_READY"});
+    const before=await pool.query<{status:string;joining_date:string|null}>(
+      "select status, joining_date::text as joining_date from placement_joining_outcomes where offer_id=$1",
+      [issued.id],
+    );
+    expect(before.rows).toEqual([{status:"PENDING",joining_date:null}]);
+    const historyBefore=await pool.query<{count:number}>(
+      "select count(*)::int as count from placement_joining_history where offer_id=$1",[issued.id]);
+    expect(historyBefore.rows[0]?.count).toBe(0);
+
+    const dayParts=new Intl.DateTimeFormat("en-GB",{
+      timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    }).formatToParts(new Date());
+    const fields=Object.fromEntries(dayParts.map(part=>[part.type,part.value]));
+    const actualDay=fields.year+"-"+fields.month+"-"+fields.day;
+    const completed=await recordTpoOfferLifecycle(tpo,job.id,{
+      action:"RECORD_JOINED",confirmed:true,offerIds:[issued.id],
+      expectedStatus:"ACCEPTED",joiningDate:actualDay,
+      reason:"Employer confirmed the learner attended and joined on the recorded date",
+    });
+    expect(completed.updated).toBe(1);
+    const final=await pool.query<{status:string;joining_date:string}>(
+      "select status, joining_date::text as joining_date from placement_joining_outcomes where offer_id=$1",
+      [issued.id],
+    );
+    expect(final.rows).toEqual([{status:"JOINED",joining_date:actualDay}]);
+    const historyAfter=await pool.query<{count:number}>(
+      "select count(*)::int as count from placement_joining_history where offer_id=$1 and to_status='JOINED'",
+      [issued.id],
+    );
+    expect(historyAfter.rows[0]?.count).toBe(1);
+  });
+
   it("PLACEMENTS-SELECTION-IDEMP-DB-01 retries an identical selection without a second audit or timestamp change",async()=>{
     const {job,application}=await preparePassedApplication();
     const request={action:"RECORD" as const,entries:[{
