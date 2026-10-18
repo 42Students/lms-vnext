@@ -12,7 +12,7 @@ import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {readOutboundProviderConfig,createOutboundProvider} from "./providers";
 import {readZeptoMailConfig,isSecureMailProviderEndpoint} from "@/modules/notifications/zeptomail-email";
-import {issueTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "./tpo-campaign-recipient-token";
+import {issueTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret,matchesTpoCampaignEmailRecipientKey} from "./tpo-campaign-recipient-token";
 import {campaignRecipientDisposition,campaignRecipientStillMatchesSnapshot} from "./tpo-campaign-send-policy";
 import {tpoCampaignDraftStorageReady,getTpoCampaignDraft} from "./tpo-campaign-draft-service";
 import {previewTpoCampaignText} from "./tpo-campaign-draft-model";
@@ -81,6 +81,7 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
  if(!claimed)throw new TpoCampaignDispatchError("ALREADY_STARTED");
  const rows=await db.select({
   id:placementTpoEmailCampaignRecipients.id,leadId:placementTpoEmailCampaignRecipients.leadId,
+  recipientKey:placementTpoEmailCampaignRecipients.recipientKey,
   email:placementTpoLeads.emailNorm,name:placementTpoLeads.name,
   company:placementTpoLeads.companyName,
   bouncedAt:placementTpoLeads.inviteBouncedAt,
@@ -103,7 +104,10 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
    emailNorm:row.email,unsubscribedAt:row.unsubscribedAt,
    inviteBouncedAt:row.bouncedAt,manualStage:row.manualStage,
   });
-  const skipped=disposition!=="ELIGIBLE" ||
+  // The draft HMAC must still describe this exact address. A change made
+  // after draft creation must not redirect the send to an unselected contact.
+  const matchesDraft=matchesTpoCampaignEmailRecipientKey(row.recipientKey,row.email,config.key);
+  const skipped=disposition!=="ELIGIBLE" || !matchesDraft ||
    !canContactRecipientAtRuntime("EMAIL",row.email??"");
   const preliminary=skipped?
    disposition==="NO_EMAIL"?"SKIPPED_NO_EMAIL":"SKIPPED_UNSUBSCRIBED":"QUEUED";

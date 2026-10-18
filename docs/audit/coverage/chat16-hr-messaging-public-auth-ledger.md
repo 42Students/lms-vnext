@@ -193,3 +193,13 @@ The orchestrator's `docs/orchestrator/unit-failures-latest.md` header still refe
 - `tests/unit/recruiter-drive-request-runtime-model.test.ts`: **4 passing tests**.
 
 This is direct cloud-log evidence that the **three historical named files** passed at that commit, not a fresh whole-repository green build. That workflow's overall unit job failed because other files failed; its separate typecheck job also failed on `report-interactive-table.tsx`, outside chat-16's scope. New chat-16 tests introduced after `41f5729cb` are still unverified and must not be labeled passing. The orchestrator report is owned by its CI refresh, not manually overwritten by this lane.
+
+### Immutable recipient snapshot binding — post-draft address substitution closed
+
+TPO campaign creation stored a purpose-specific `recipientKey` HMAC of the originally selected email, but dispatch previously selected only the lead's current `emailNorm`. A recruiter address changed **between draft creation and dispatch** could therefore receive a campaign they had never been selected for, while receipts remained keyed to the former address. `issueTpoCampaignEmailRecipientKey` and `matchesTpoCampaignEmailRecipientKey` now share the original `tpo-campaign-email-v1:` signing derivation between `tpo-campaign-draft-service.ts` and `tpo-campaign-dispatch-service.ts`. Dispatch fetches the saved `recipientKey` and verifies it in constant time against the current contact email **before** transitioning PENDING to QUEUED; a mismatch is suppressed rather than forwarded. Existing after-claim live consent and email checks remain in place. `chat16-tpo-campaign-live-consent-recheck-16.test.ts` covers canonical addresses, wrong keys/secret, invalid keys and source claim/send order.
+
+Source authored on the chat-16 branch; run unit/PostgreSQL concurrency/provider acceptance tests in CI before release.
+
+### Refreshed test-file typecheck triage — CI 39270260
+
+The refreshed `docs/orchestrator/typecheck-errors-latest.md` now identifies two chat-16 errors: `chat16-messaging-receipt-history-service-16.test.ts:22` and `chat16-tpo-campaign-draft-live-role-16.test.ts:31`. Both used `vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(undefined)` after that API's return type became `RequestContext`. Both mocks were corrected to return their actual TPO fixture context, preserving the persisted-role assertion. Three newer chat-16 service suites (`chat16-messaging-batch-detail-service-16`, `chat16-engage-audience-service-16`, `chat16-tpo-campaign-draft-create-16`) were proactively corrected in the same manner. No tests were skipped, deleted or weakened. These edits are authored and pushed; the next CI test-file typecheck must verify them.

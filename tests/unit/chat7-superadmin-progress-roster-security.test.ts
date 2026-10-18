@@ -29,6 +29,31 @@ describe("SA-academics-people-67 selected-college learner progress hardening",()
   expect(source).toContain("truncated:result.rows.length>500");
   expect(source).not.toContain("truncated:rows.length===500");
  });
+ it("SA-academics-people-67 restricts each learner's item denominator to active delivery audience",()=>{
+  const service=read("src/modules/courses/super-admin-student-course-progress.ts");
+  const page=read("src/app/(authenticated)/admin/course-progress/students/page.tsx");
+  const exportRoute=read("src/app/api/admin/course-progress/students/export/route.ts");
+  expect(service).toContain("with eligible_deliveries as (");
+  expect(service).toContain("select distinct membership_id,student_name from eligible_deliveries");
+  expect(service).toContain("select lc.id,lc.content_type,lc.delivery_id");
+  expect(service.match(/p\.status='PUBLISHED'/g)).toHaveLength(3);
+  expect(service).not.toContain("p.status='ACTIVE'");
+  expect(service).toContain("select a.id,a.delivery_id");
+  expect(service).toContain("select q.id,q.delivery_id");
+  expect(service).toContain("ed.delivery_id=pi.delivery_id");
+  expect(service).toContain("ed.delivery_id=pa.delivery_id");
+  expect(service).toContain("ed.delivery_id=pq.delivery_id");
+  expect(service).toContain("ed.delivery_id=sub.delivery_id");
+  expect(service).toContain("ed.delivery_id=attempt.delivery_id");
+  expect(service).toContain("totalVideos:Number(row.totalVideos)");
+  expect(service).toContain("totalAssignments:Number(row.totalAssignments)");
+  expect(service).toContain("totalQuizzes:Number(row.totalQuizzes)");
+  expect(page).toContain("studentCourseCompletion(row)");
+  expect(exportRoute).toContain("studentCourseCompletion(row)");
+  expect(page).toContain("row.videos+\"/\"+row.totalVideos");
+  expect(page).not.toContain("report.totals");
+  expect(exportRoute).not.toContain("result.totals");
+ });
  it("SA-academics-people-67 never invents a 0% completion rate for a course with no measurable content",()=>{
   expect(studentCourseCompletion({videos:0,assignments:0,quizzes:0,
    totalVideos:0,totalAssignments:0,totalQuizzes:0})).toBeNull();

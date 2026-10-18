@@ -127,6 +127,7 @@ export async function revokeAllSessionsForUser(
         revoked_by_user_id = ${actorUserId},
         revocation_reason = ${reason}
     WHERE user_id = ${userId} AND revoked_at IS NULL
+      AND expires_at > now()
   `);
 }
 
@@ -153,6 +154,7 @@ export async function revokeOtherSessions(
     WHERE user_id = ${userId}
       AND id <> ${currentSessionId}
       AND revoked_at IS NULL
+      AND expires_at > now()
     RETURNING id
   `);
   return rowsOf(result).length;
@@ -173,6 +175,7 @@ export async function revokeOwnSession(
         revoked_by_user_id = ${userId},
         revocation_reason = 'USER_REVOKED_DEVICE'
     WHERE id = ${sessionId} AND user_id = ${userId} AND revoked_at IS NULL
+      AND expires_at > now()
     RETURNING id
   `);
   return rowsOf(result).length === 1;

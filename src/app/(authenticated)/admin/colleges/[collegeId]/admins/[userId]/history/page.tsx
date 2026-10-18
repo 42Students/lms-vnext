@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requirePermission} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {parseAdminSessionHistoryPage} from "@/modules/colleges/admin-session-query-model";
@@ -10,6 +11,8 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  params:Promise<{collegeId:string;userId:string}>;
  searchParams:Promise<{page?:string|string[]}>;
 }){
+ const context=await getCurrentRequestContext();
+ requirePermission(context,"admin-scope.select");
  const {collegeId,userId}=await params;
  const raw=await searchParams;
  const page=parseAdminSessionHistoryPage(raw);
@@ -18,7 +21,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
   <ErrorState title="Invalid history page" description="Choose a valid page without repeated or unrelated filters."
    action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-semibold underline">Clear history filters</Link>}/>
  </div>;
- const data=await listCollegeAdminHistory(await getCurrentRequestContext(),collegeId,userId,page);
+ const data=await listCollegeAdminHistory(context,collegeId,userId,page);
  const base="/admin/colleges/"+encodeURIComponent(collegeId)+"/admins";
  const format=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",

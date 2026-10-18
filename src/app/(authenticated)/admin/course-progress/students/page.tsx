@@ -22,10 +22,11 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
   <PageHeader title="Student Course Progress" eyebrow="Super Admin · Courses"/>
   <ErrorState title="Unable to read course progress" description="Check your selected college and course offering." action={back}/>
  </div>;}
- const denominator=report.totals.videos+report.totals.assignments+report.totals.quizzes;
- const average=report.rows.map(row=>studentCourseCompletion({...row,
-  totalVideos:report.totals.videos,totalAssignments:report.totals.assignments,
-  totalQuizzes:report.totals.quizzes})).filter((n):n is number=>n!==null);
+ const measuredCounts=report.rows.map(row=>row.totalVideos+row.totalAssignments+row.totalQuizzes);
+ const lowestMeasured=measuredCounts.length?Math.min(...measuredCounts):0;
+ const highestMeasured=measuredCounts.length?Math.max(...measuredCounts):0;
+ const average=report.rows.map(row=>studentCourseCompletion(row))
+  .filter((n):n is number=>n!==null);
  const mean=average.length?Math.round(average.reduce((a,n)=>a+n,0)/average.length):null;
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Student Course Progress" eyebrow="Super Admin · Courses"
@@ -35,7 +36,8 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
    <div className="rounded border border-border p-3"><dt>Average completion</dt><dd className="text-xl font-semibold">{mean===null?"Not measured":mean+"%"}</dd></div>
    <div className="rounded border border-border p-3"><dt>Students</dt><dd className="text-xl font-semibold">{report.rows.length}</dd></div>
    <div className="rounded border border-border p-3"><dt>Not started</dt><dd className="text-xl font-semibold">{report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length}</dd></div>
-   <div className="rounded border border-border p-3"><dt>Items measured</dt><dd className="text-xl font-semibold">{denominator}</dd></div>
+   <div className="rounded border border-border p-3"><dt>Items measured</dt><dd className="text-xl font-semibold">{lowestMeasured===highestMeasured?
+     highestMeasured:lowestMeasured+"–"+highestMeasured+" per learner"}</dd></div>
   </dl>
   <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
    className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export CSV</a>
@@ -47,12 +49,11 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     getRowKey={row=>row.membershipId}
     columns={[
       {key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.studentName},
-      {key:"videos",header:"Videos",mobilePriority:"secondary",cell:row=>row.videos+"/"+report.totals.videos},
-      {key:"assignments",header:"Assignments",mobilePriority:"secondary",cell:row=>row.assignments+"/"+report.totals.assignments},
-      {key:"quizzes",header:"Quizzes",mobilePriority:"secondary",cell:row=>row.quizzes+"/"+report.totals.quizzes},
+      {key:"videos",header:"Videos",mobilePriority:"secondary",cell:row=>row.videos+"/"+row.totalVideos},
+      {key:"assignments",header:"Assignments",mobilePriority:"secondary",cell:row=>row.assignments+"/"+row.totalAssignments},
+      {key:"quizzes",header:"Quizzes",mobilePriority:"secondary",cell:row=>row.quizzes+"/"+row.totalQuizzes},
       {key:"progress",header:"Progress",mobilePriority:"secondary",cell:row=>{
-        const completed=studentCourseCompletion({...row,totalVideos:report.totals.videos,
-          totalAssignments:report.totals.assignments,totalQuizzes:report.totals.quizzes});
+        const completed=studentCourseCompletion(row);
         return completed===null?"Not measured":completed+"%";
       }},
     ]}

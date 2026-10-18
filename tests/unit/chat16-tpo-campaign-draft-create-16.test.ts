@@ -41,7 +41,7 @@ beforeEach(()=>{
  process.env.DB09_TPO_API_READY="DB09_VERIFIED";
  process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET="s".repeat(64);
  vi.mocked(requirePlacementManageScope).mockResolvedValue({id:college,organizationId:org} as Awaited<ReturnType<typeof requirePlacementManageScope>>);
- vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(undefined);
+ vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(tpo);
 });
 afterEach(()=>{
  if(envOriginal.ready===undefined)delete process.env.DB09_TPO_API_READY;
