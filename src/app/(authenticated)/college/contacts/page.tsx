@@ -21,7 +21,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  const raw=await searchParams;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
  try{filter=parseCollegeContactsSearchParams(raw);}
- catch(error){return <div className="min-w-0 space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
+ catch(error){return <div className="min-w-0 overflow-x-clip space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
   <ErrorState title="Invalid contact filters" description={collegeContactFilterMessage(error)}
    action={<Link href="/college/contacts" className="underline">Reset contact filters</Link>}/></div>;}
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
@@ -198,7 +198,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <section aria-label="Contacts" className="space-y-3">
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
    <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
-   {results.items.length===0?<div role="status" className="space-y-2 rounded-lg border p-4 text-sm"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters in this tab</Link></div>:
+   {results.items.length===0?<div role="status" className="space-y-2 rounded-lg border p-4 text-sm"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters in this tab</Link></div>:
     <DataTable rows={results.items} getRowKey={contact=>contact.membershipId}
       caption="Contacts" empty={<div role="status"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center underline">Clear filters in this tab</Link></div>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
       columns={[

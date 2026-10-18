@@ -42,7 +42,7 @@ export default async function CollegeDomainsPage() {
   );
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
         eyebrow="College Admin"
         title="Tenant domains"
