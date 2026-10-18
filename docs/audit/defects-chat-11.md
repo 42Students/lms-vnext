@@ -68,6 +68,8 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-SA-03 | MAJOR | Super Admin sign-in PUT read unbounded `request.json()` before establishing user identity, permitting an unauthenticated same-origin large POST/PUT to consume body parsing resources, and invalid JSON to take a generic error path. | `6a14da5`, `9e6eab1`, `505257b`: authenticate before parsing, cap at 2 KiB even without Content-Length, stable 400/413, retain URL/body and persisted role/CAS checks. | `SA-tenants-modules-LOGIN-02` | Live HTTP and cloud TypeScript/Vitest pending |
 
+| CHAT11-SA-04 | BLOCKER | `getModuleAccessOverviewMetrics` accepted caller-supplied college IDs and checked only global `admin-scope.select`, allowing an organization- or college-scoped Super Admin to count foreign-tenant learners. It also counted disabled learners and non-learner membership rules as "Student overrides." | `9283fdf`, `18f3ac0`, `8723177`: parse bounded IDs; resolve persisted college/organization then require scoped `college.read`, count distinct active LEARNER membership/rules. | `SA-tenants-modules-R01` | DB-backed cross-tenant and multi-role tests pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
