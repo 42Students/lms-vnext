@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -492,7 +493,8 @@ export function AdminAttendanceWorkspace({
             </div>
           </section>
 
-          <section className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <section className="rounded-xl border border-border bg-surface">
+              <ScrollCue axis="x" label="College attendance monthly grid" className="min-w-0">
             <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
               <caption className="sr-only">College attendance for every calendar day of the selected month. Cross means no scheduled class.</caption>
               <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
@@ -601,6 +603,7 @@ export function AdminAttendanceWorkspace({
                 )}
               </tbody>
             </table>
+              </ScrollCue>
           </section>
 
           <p className="text-xs leading-5 text-muted-foreground">

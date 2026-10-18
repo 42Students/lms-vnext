@@ -21,7 +21,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   membershipStatus:raw.membershipStatus,platformStatus:raw.platformStatus,page:raw.page});
  if(!query.success) return <div className="space-y-4"><PageHeader eyebrow="Super Admin" title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
-   action={<Link href="/admin/people/directory" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
+   action={<Link href="/admin/people/directory" className="font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  const data=await listSuperAdminUsers(context,query.data);
@@ -35,7 +35,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
   {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
-   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Users without college memberships →</Link> : null}
+   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Users without college memberships →</Link> : null}
   <nav aria-label="People directory tabs" className="flex flex-wrap gap-2">
    {tabs.map(tab=><Link key={tab.id} href={adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}
     aria-current={data.query.tab===tab.id?"page":undefined}
@@ -43,9 +43,9 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      (data.query.tab===tab.id?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border text-body")}>{tab.label}</Link>)}
   </nav>
   <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 text-sm">
-   <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Student accounts</Link>
-   <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Faculty accounts</Link>
-   <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Teaching assignments</Link>
+   <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student accounts</Link>
+   <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Faculty accounts</Link>
+   <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Teaching assignments</Link>
   </nav>
   <p className="text-xs text-muted-foreground">
    {data.query.tab==="STUDENT"?"Learner memberships":data.query.tab==="FACULTY"?"Faculty memberships":"All permitted memberships"} ·
@@ -92,7 +92,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      {row.roles.map(role=><StatusBadge key={role}>{role}</StatusBadge>)}
     </div>
     <Link href={`/admin/people/directory/${encodeURIComponent(row.membershipId)}`}
-     className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
+     className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      View membership →
     </Link>
     <p className="mt-2 text-xs text-muted-foreground">Membership updated {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.updatedAt)} IST</p>
@@ -100,6 +100,6 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   </div>:<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
   <Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminUsersHref({...data.query,page})}/>
-  <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Membership management</Link>
+  <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Membership management</Link>
  </div>;
 }

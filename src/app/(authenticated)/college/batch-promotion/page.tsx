@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { collegePromotionQuerySchema, formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
 import { getPromotionFacultyReadiness } from "@/modules/academics/college-promotion-faculty-readiness";
@@ -150,29 +151,18 @@ export default async function CollegeBatchPromotionPage({
                 academicYearStart={preview.plan.academicYearStart!} />
             ) : null}
         </section>
-        <section aria-label="Learner-level preview" className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface">
+        <section aria-label="Learner-level preview" className="min-w-0 rounded-xl border border-border bg-surface">
           <h2 className="border-b border-border p-4 text-lg font-semibold text-foreground">Learner blockers</h2>
-          {preview.learners.length === 0 ? (
-            <p className="p-6 text-sm text-body">
+          <DataTable rows={preview.learners} getRowKey={learner=>learner.membershipId} caption="Learner blockers"
+            columns={[
+              {key:"name",header:"Learner",mobilePriority:"primary",cell:learner=>learner.name},
+              {key:"status",header:"Enrollment",mobilePriority:"secondary",cell:learner=>learner.enrollmentStatus},
+              {key:"blockers",header:"Blockers",mobilePriority:"secondary",cell:learner=>
+                learner.blockers.length?learner.blockers.join(", ").replaceAll("_"," "):"No detected learner blocker"},
+            ]}
+            empty={<p className="text-sm text-body">
               No persisted learner enrollments exist for this batch. No eligible count is inferred.
-            </p>
-          ) : (
-            <table className="w-full min-w-[35rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-              <thead className="bg-muted text-muted-foreground"><tr>
-                <th scope="col" className="px-4 py-3">Learner</th>
-                <th scope="col" className="px-4 py-3">Enrollment</th>
-                <th scope="col" className="px-4 py-3">Blockers</th>
-              </tr></thead>
-              <tbody>{preview.learners.map(learner => <tr key={learner.membershipId}
-                className="border-t border-border align-top">
-                <td className="px-4 py-3 font-semibold text-foreground">{learner.name}</td>
-                <td className="px-4 py-3 text-body">{learner.enrollmentStatus}</td>
-                <td className="px-4 py-3 text-body">
-                  {learner.blockers.length ? learner.blockers.join(", ").replaceAll("_", " ") : "No detected learner blocker"}
-                </td>
-              </tr>)}</tbody>
-            </table>
-          )}
+            </p>}/>
         </section>
       </>
     )}

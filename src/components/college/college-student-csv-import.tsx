@@ -1,4 +1,5 @@
 "use client";
+import {DataTable} from "@/components/ui/data-table";
 
 import { useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
@@ -132,17 +133,15 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Export neutralized result CSV
       </a> : null}
-      <div className="overflow-x-auto">
-        {report.results.length ? <table className="w-full min-w-[30rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-          <thead><tr><th className="px-3 py-2">Row</th>
-            <th className="px-3 py-2">Status</th><th className="px-3 py-2">Reason</th></tr></thead>
-          <tbody>{report.results.map(item => <tr key={item.row} className="border-t border-border">
-            <td className="px-3 py-3">{item.row}</td>
-            <td className="px-3 py-3">{item.status}</td>
-            <td className="px-3 py-3">{item.detail}</td>
-          </tr>)}</tbody>
-        </table> : <p className="text-sm text-body">No row-level results are available.</p>}
-      </div>
+      <DataTable<StudentCsvResult> caption="Student CSV validation and import results"
+        rows={report.results} getRowKey={item=>String(item.row)}
+        columns={[
+          {key:"row",header:"Row",cell:item=>item.row,mobilePriority:"primary"},
+          {key:"status",header:"Status",cell:item=>item.status,mobilePriority:"secondary"},
+          {key:"reason",header:"Reason",cell:item=>item.detail,mobilePriority:"secondary"},
+        ]}
+        empty={<p className="text-sm text-body">No row-level results are available.</p>}/>
+
       {report.preview && report.valid > 0 && report.invalid === 0 && report.structuralErrors.length === 0 ? <div className="space-y-3">
         <label className="flex items-start gap-2 text-sm text-body">
           <input type="checkbox" checked={confirm} onChange={event => setConfirm(event.target.checked)}

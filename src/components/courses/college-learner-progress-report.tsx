@@ -3,6 +3,8 @@
 import Link from "next/link";
 import {useState} from "react";
 import type {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
+import {DataTable} from "@/components/ui/data-table";
+import {EmptyState} from "@/components/ui/empty-state";
 
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
 
@@ -71,34 +73,24 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
     Export per-learner CSV
    </Link>
-   <div className="overflow-x-auto">
-    <table className="w-full min-w-[49rem] text-left text-sm">
-     <thead className="bg-muted text-muted-foreground"><tr>
-      <th scope="col" className="p-3">Student</th>
-      <th scope="col" className="p-3">Roll number</th>
-      <th scope="col" className="p-3">Videos</th>
-      <th scope="col" className="p-3">Assignments</th>
-      <th scope="col" className="p-3">Quizzes</th>
-      <th scope="col" className="p-3">Progress</th>
-     </tr></thead>
-     <tbody>{report.rows.map(row=><tr key={row.membershipId} className="border-t border-border">
-      <td className="p-3 font-semibold text-foreground">{row.name}</td>
-      <td className="p-3">{row.rollNumber??"—"}</td>
-      <td className="p-3 tabular-nums">{row.videoDone}/{report.totalVideos}</td>
-      <td className="p-3 tabular-nums">{row.assignmentDone}/{report.totalAssignments}</td>
-      <td className="p-3 tabular-nums">{row.quizDone}/{report.totalQuizzes}</td>
-      <td className="p-3">
-       <div className="flex items-center gap-2">
-        <progress max={100} value={row.progress} className="w-24" aria-label={row.name+" progress"}/>
-        <span className="tabular-nums">{row.progress}%</span>
-       </div>
-      </td>
-     </tr>)}</tbody>
-    </table>
-    {!report.rows.length?<p className="p-3 text-sm text-muted-foreground">
-     No active learner enrollments for this Class and Course.
-    </p>:null}
-   </div>
+   <DataTable
+    caption="Course Progress by learner"
+    rows={report.rows}
+    getRowKey={row=>row.membershipId}
+    empty={<EmptyState title="No enrolled learners" description="No active learner enrollments for this Class and Course." />}
+    columns={[
+     {key:"student",header:"Student",mobilePriority:"primary" as const,cell:(row)=><strong className="break-words text-foreground">{row.name}</strong>},
+     {key:"roll",header:"Roll number",mobilePriority:"secondary" as const,cell:(row)=>row.rollNumber??"—"},
+     {key:"progress",header:"Progress",mobilePriority:"secondary" as const,
+      cell:(row)=><div className="flex flex-wrap items-center gap-2">
+       <progress max={100} value={row.progress} className="w-24" aria-label={row.name+" progress"}/>
+       <span className="tabular-nums">{row.progress}%</span>
+      </div>},
+     {key:"videos",header:"Videos",mobilePriority:"secondary" as const,cell:(row)=>row.videoDone+"/"+report.totalVideos},
+     {key:"assignments",header:"Assignments",mobilePriority:"secondary" as const,cell:(row)=>row.assignmentDone+"/"+report.totalAssignments},
+     {key:"quizzes",header:"Quizzes",mobilePriority:"secondary" as const,cell:(row)=>row.quizDone+"/"+report.totalQuizzes},
+    ]}
+   />
    <p className="text-xs text-muted-foreground">
     Published, visible videos and published assignments/quizzes are measured.
     Completion uses recorded video progress, assignment submissions and quiz attempts.

@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
+import {DataTable} from "@/components/ui/data-table";
 import {useRouter,useSearchParams} from "next/navigation";
 import {projectMutation} from "./project-api";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
@@ -151,31 +152,39 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
-  <section className="overflow-x-auto rounded-xl border border-border p-3">
-    <h2 className="mb-2 text-sm font-semibold">Workload by learner</h2>
-    <table className="min-w-full text-left text-xs">
-      <thead><tr className="border-b border-border text-body">
-        <th className="p-2">Learner</th><th className="p-2">Tasks</th>
-        <th className="p-2">Done</th><th className="p-2">Blocked</th>
-        <th className="p-2">Points</th><th className="p-2">Unsized</th>
-      </tr></thead>
-      <tbody>{groups.map(group=>{
+  <section className="rounded-xl border border-border p-3" aria-labelledby="mentor-allocation-workload">
+    <h2 id="mentor-allocation-workload" className="mb-2 text-sm font-semibold">Workload by learner</h2>
+    <DataTable
+      caption="Workload by learner"
+      rows={groups.map(group=>{
         const assigned=filtered.filter(task=>task.assigneeMembershipId===group.membershipId);
-        return <tr key={group.membershipId??"unassigned"} className="border-b border-border">
-          <td className="p-2 font-semibold">{group.displayName}</td>
-          <td className="p-2">{assigned.length}</td>
-          <td className="p-2">{assigned.filter(task=>task.status==="DONE").length}</td>
-          <td className="p-2">{assigned.filter(task=>task.status==="BLOCKED").length}</td>
-          <td className="p-2">{assigned.reduce((sum,task)=>sum+(task.estimatePoints??0),0)}</td>
-          <td className="p-2">{assigned.filter(task=>task.estimatePoints===null).length}</td>
-        </tr>;
-      })}</tbody>
-    </table>
+        return {
+          id:group.membershipId??"unassigned",
+          learner:group.displayName??"Learner",
+          tasks:assigned.length,
+          done:assigned.filter(task=>task.status==="DONE").length,
+          blocked:assigned.filter(task=>task.status==="BLOCKED").length,
+          points:assigned.reduce((sum,task)=>sum+(task.estimatePoints??0),0),
+          unsized:assigned.filter(task=>task.estimatePoints===null).length,
+        };
+      })}
+      getRowKey={row=>row.id}
+      columns={[
+        {key:"learner",header:"Learner",cell:row=>row.learner,mobilePriority:"primary"},
+        {key:"tasks",header:"Tasks",cell:row=>row.tasks,mobilePriority:"secondary"},
+        {key:"done",header:"Done",cell:row=>row.done,mobilePriority:"secondary"},
+        {key:"blocked",header:"Blocked",cell:row=>row.blocked,mobilePriority:"secondary"},
+        {key:"points",header:"Points",cell:row=>row.points,mobilePriority:"secondary"},
+        {key:"unsized",header:"Unsized",cell:row=>row.unsized,mobilePriority:"secondary"},
+      ]}
+      empty={<p>No learners to summarize yet.</p>}
+    />
   </section>
   {filtered.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">
     {tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters. Use Clear all to see every task."}
   </p>:null}
-  <div className="overflow-x-auto pb-3"><div className="flex min-w-max gap-3">
+  <div role="region" aria-label="Task allocation cards; scroll sideways for more learners" tabIndex={0}
+    className="overflow-x-auto overscroll-x-contain pb-3 [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><div className="flex min-w-max gap-3">
    {groups.map(group=>{
     const cards=filtered.filter(task=>task.assigneeMembershipId===group.membershipId);
     return <section key={group.membershipId??"unassigned"} aria-label={group.displayName??"Learner"}

@@ -158,6 +158,7 @@ export function AdminCourseOverview({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: (
         <span className="sr-only">
           Actions
@@ -241,6 +242,7 @@ export function AdminCourseOverview({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: (
         <span className="sr-only">
           Actions
@@ -339,6 +341,7 @@ export function AdminCourseOverview({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: (
         <span className="sr-only">
           Actions
@@ -413,6 +416,7 @@ export function AdminCourseOverview({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: (
         <span className="sr-only">
           Actions

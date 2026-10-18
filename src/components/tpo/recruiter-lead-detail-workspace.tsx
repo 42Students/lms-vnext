@@ -1,3 +1,4 @@
+import {Dialog} from "@/components/ui/dialog";
 "use client";
 
 import { formatDateTimeIst } from "@/lib/format-date";
@@ -53,9 +54,9 @@ type EditValues = {
   companyName: string;
   source: string;
 };
-const input = "min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
-const button = "inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium hover:bg-surface-secondary disabled:opacity-50";
-const primary = "inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50";
+const input = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const button = "inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium hover:bg-surface-secondary disabled:opacity-50";
+const primary = "inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50";
 const SOURCES = [
   ["", "Added by hand / Imported"], ["ALUMNI", "Alumni"],
   ["REFERRAL", "Referral"], ["LINKEDIN", "LinkedIn"],
@@ -64,17 +65,6 @@ const SOURCES = [
   ["IMPORT", "Import"],
 ] as const;
 const ACTIVITY_TYPES = ["CALL", "EMAIL", "MEETING", "NOTE"] as const;
-/** Keep keyboard focus within the open recruiter dialog. */
-function keepRecruiterDialogFocus(event:React.KeyboardEvent<HTMLFormElement>){
- if(event.key!=="Tab")return;
- const controls=Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
-  'button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]'));
- const first=controls[0],last=controls[controls.length-1];
- if(!first||!last)return;
- if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
- else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
-}
-
 function activityDayIst(value:string){
  const time=new Date(value);
  return Number.isNaN(time.getTime())?"Date unavailable":
@@ -263,14 +253,6 @@ export function RecruiterLeadDetailWorkspace({
       !window.confirm("Discard your Not now reason and revisit date?"))return;
     setNotNowOpen(false);
   }
-  function dialogKeyDown(event:React.KeyboardEvent<HTMLFormElement>,kind:"EDIT"|"NOT_NOW"){
-    if(event.key==="Escape"){
-      event.preventDefault();
-      if(kind==="EDIT")closeEdit();else closeNotNow();
-      return;
-    }
-    keepRecruiterDialogFocus(event);
-  }
   function openEdit() {
     if (!lead) return;
     setEdit({
@@ -415,7 +397,7 @@ export function RecruiterLeadDetailWorkspace({
         <div role="alert" className="space-y-3 rounded-lg border border-border bg-surface p-6">
           <h1 className="text-lg font-semibold">This recruiter isn&apos;t in Engage</h1>
           <p>{error || "The recruiter contact could not be found or loaded."}</p>
-          <Link href="/tpo/recruiters" className="inline-flex min-h-10 items-center text-primary-text underline">
+          <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-primary-text underline">
             Go to Engage
           </Link>
           <button type="button" className={button} onClick={() => void load()}>Retry</button>
@@ -481,7 +463,7 @@ export function RecruiterLeadDetailWorkspace({
                See company drives, applicant counts, offers and recruiter contacts in Company Memory.
              </p>
              <Link href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)}
-               className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+               className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
                Open company memory
              </Link>
            </section>:null}
@@ -679,13 +661,9 @@ export function RecruiterLeadDetailWorkspace({
             ) : <p className="text-sm text-muted-foreground">No next step yet. Add a follow-up above.</p>}
           </section>
 
-          {editing ? (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
-              <form className="max-h-[90vh] w-full max-w-lg space-y-3 overflow-y-auto rounded-xl bg-surface p-6 shadow-xl"
-                role="dialog" aria-modal="true" aria-label="Edit contact details"
-                onKeyDown={event=>dialogKeyDown(event,"EDIT")}
-                onSubmit={e => void saveEdit(e)}>
-                <h2 className="text-lg font-semibold">Edit contact details</h2>
+          <Dialog open={editing} onOpenChange={next=>{if(!next)closeEdit();}}
+            title="Edit contact details" dismissible={!saving}>
+              <form className="space-y-3" onSubmit={e => void saveEdit(e)}>
                 {(["name", "email", "phone", "designation", "companyName"] as const).map(name => (
                   <label key={name} className="block text-sm">
                     {name === "companyName" ? "Company name" : name[0].toUpperCase() + name.slice(1)}
@@ -710,16 +688,11 @@ export function RecruiterLeadDetailWorkspace({
                   <button className={primary} type="submit" disabled={saving}>Save</button>
                 </div>
               </form>
-            </div>
-          ) : null}
+          </Dialog>
 
-          {notNowOpen ? (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
-              <form className="w-full max-w-md space-y-4 rounded-xl bg-surface p-6 shadow-xl"
-                role="dialog" aria-modal="true" aria-label="Not now"
-                onKeyDown={event=>dialogKeyDown(event,"NOT_NOW")}
-                onSubmit={e => void markNotNow(e)}>
-                <h2 className="text-lg font-semibold">Not now</h2>
+          <Dialog open={notNowOpen} onOpenChange={next=>{if(!next)closeNotNow();}}
+            title="Not now" dismissible={!saving}>
+              <form className="space-y-4" onSubmit={e => void markNotNow(e)}>
                 <label className="block text-sm">Reason
                   <textarea className={input + " mt-1"} maxLength={255} rows={3}
                     value={notNowReason} autoFocus onChange={e => setNotNowReason(e.target.value)} />
@@ -734,8 +707,7 @@ export function RecruiterLeadDetailWorkspace({
                   <button className={primary} type="submit" disabled={saving}>Mark not now</button>
                 </div>
               </form>
-            </div>
-          ) : null}
+          </Dialog>
         </>
       )}
     </section>

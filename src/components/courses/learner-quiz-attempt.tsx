@@ -28,6 +28,7 @@ import { learnerQuizReviewRows } from "@/modules/courses/learner-quiz-review-mod
 import { clearLearnerQuizAnswer } from "@/modules/courses/learner-quiz-answer-edit-model";
 import { normalizeLearnerQuizDraftForQuestions } from "@/modules/courses/learner-quiz-draft-scope-model";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { friendlyApiError } from "@/lib/friendly-error";
 
 type QuizPayload = {
   quiz: {
@@ -80,10 +81,13 @@ type Attempt = {
 };
 
 function messageFrom(response: Response, fallback: string) {
-  return response
-    .json()
-    .then((payload) => payload?.message || payload?.error || fallback)
-    .catch(() => fallback);
+  return response.json().then((payload: unknown) => {
+    const body = payload !== null && typeof payload === "object" && !Array.isArray(payload)
+      ? payload as Record<string, unknown> : {};
+    const code = typeof body.error === "string" ? body.error : null;
+    // Never trust provider or API message strings as display copy.
+    return response.status ? friendlyApiError({ status: response.status, code }) : fallback;
+  }).catch(() => friendlyApiError({ status: response.status }));
 }
 
 function formatDate(value: string | null) {
@@ -317,7 +321,7 @@ export function LearnerQuizAttempt() {
         () => router.replace("/learn/allQuizzes"), 2000, window.setTimeout.bind(window), window.clearTimeout.bind(window),
       );
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Quiz submission failed.");
+      setError(friendlyApiError({ network: true }));
     } finally {
       submittingRef.current = false;
       setSubmitting(false);
