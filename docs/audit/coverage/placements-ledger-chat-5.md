@@ -328,3 +328,15 @@ Four scoped TPO endpoints now call the existing streaming `readTpoBulkRequestBod
 ### PLACEMENTS-TPO-CASCADE-17 — canonical sibling effects for administrative acceptance
 
 TPO-recorded `RECORD_ACCEPTED` now invokes `cascadeTpoRecordedAcceptance` inside the same offer transaction with the active learner membership mutex, college scope, role/employment-type internship exemptions, dream and salary uplift rules. Ineligible sibling offers are declined with correlated status history and submitted sibling applications are withdrawn with correlated application history. All history and audit metadata identify the **TPO actor**, not a synthetic learner response; the employer evidence reason remains in the activity event while the canonical accepted history carries `cascade:<uuid>` for undo correspondence. Source `src/modules/placements/tpo-offer-acceptance-cascade.ts`, integration `tpo-offer-lifecycle-service.ts`. Named tests: `tests/unit/chat5-placements-core-extended-state-machines.test.ts` and `tests/integration/placements-p8-offers.test.ts` (real job plus same-learner second submitted application, correlated withdrawal and audit). **Cloud PostgreSQL execution is pending**. Concurrent TPO batches, undo CAS and notification exact-once still need live acceptance.
+
+
+### New owner-priority core hardening (2026-10-18, CI intentionally deferred)
+
+| Case | Source-level behavior | Test evidence | Pending |
+|---|---|---|---|
+| PLACEMENTS-TPO-NOTICE-18 | `recordTpoOfferLifecycle` delivers to the active college-scoped learner in the same transaction as the persisted activity event; one event is the dedupe anchor, so neither GET nor a retry creates another notification | `tests/integration/placements-p8-offers.test.ts` — accepted evidence, one scoped recipient, rejection of repeated mutation | PostgreSQL execution |
+| PLACEMENTS-TPO-NOTICE-19 | The delivery helper honors `notifyApplicationUpdates=false` for TPO-recorded decline without dropping audit/history | `tests/integration/placements-p8-offers.test.ts` — opt-out test with preference restoration and no notification | PostgreSQL execution |
+| PLACEMENTS-TPO-ESCALATE-20 | `tpoWithdrawalEscalationWindow` rejects invalid date and derives an exact UTC 24-hour window; escalation errors returned to callers use fixed safe text, never SQLSTATE/provider exception messages | `tests/unit/chat5-tpo-withdrawal-escalation-edge.test.ts` — pure date behavior and scoped input/lock/dedupe contract | Cloud behavioral execution |
+| PLACEMENTS-TPO-ESCALATE-21 | Withdrawal decision reminder stays PENDING, not auto-approved, and creates at most one durable deduped TPO event and notice for a next-round window | `tests/integration/placements-p8-offers.test.ts` — seeded request with a near round, role-scoped notification, repeat call, persisted state | PostgreSQL execution |
+
+No CI/tests/TypeScript commands were run under the owner's new no-CI-until-final-pass directive. The core placements module remains partially audited, not exhaustive and not release certified.

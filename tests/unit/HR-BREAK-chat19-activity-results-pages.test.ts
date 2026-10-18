@@ -83,4 +83,11 @@ describe("HR-BREAK-chat19-activity-results: release-scoped source and abnormal i
   expect(textOf(result)).toContain("No rounds yet");
   expect(textOf(result)).not.toContain("candidate email");
  });
+ it("HR-BREAK-ACTIVITY-PRINCIPAL-28 rejects mismatched recruiter before activity history",async()=>{
+  m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"other-user"}});
+  await expect(activity()).rejects.toThrow("REDIRECT");
+  expect(m.activity).not.toHaveBeenCalled();
+  expect(m.jobs).not.toHaveBeenCalled();
+  expect(m.workspace).not.toHaveBeenCalled();
+ });
 });

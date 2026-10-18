@@ -155,4 +155,11 @@ describe("HR-BREAK-chat19-conversation-page: actual async role, IDOR and recover
   expect(textOf(rendered)).toContain("Authorized drive");
   expect(m.changes).toHaveBeenCalledWith(context,id);
  });
+ it("HR-BREAK-CONVO-PRINCIPAL-28 denies mismatched recruiter before thread reads",async()=>{
+  m.context.mockResolvedValue({...context,recruiter:{...context.recruiter!,userId:"other-user"}});
+  await expect(page()).rejects.toThrow("REDIRECT");
+  expect(m.read).not.toHaveBeenCalled();
+  expect(m.jobs).not.toHaveBeenCalled();
+  expect(m.changes).not.toHaveBeenCalled();
+ });
 });

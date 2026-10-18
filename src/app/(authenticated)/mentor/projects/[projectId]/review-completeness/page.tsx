@@ -12,9 +12,9 @@ export default async function MentorProjectReviewCompletenessPage({
   params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Params>}) {
   const [{projectId},query]=await Promise.all([params,searchParams]);
-  const parsed=mentorReviewCompletenessQuerySchema.safeParse({
-    projectId,page:Array.isArray(query.page)?query.page[0]:query.page,
-  });
+  const parsed=mentorReviewCompletenessQuerySchema.safeParse(
+    Array.isArray(query.page)?null:{projectId,page:query.page},
+  );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid review history selector</h1>
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">

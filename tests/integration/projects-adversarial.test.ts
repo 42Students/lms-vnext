@@ -1159,6 +1159,7 @@ describe("Projects adversarial isolation", () => {
         learner,
         project.id,
         created.value.id,
+        {expectedUpdatedAt:created.value.updatedAt.toISOString()},
       );
     await reviewProjectSubmission(
       mentor,
