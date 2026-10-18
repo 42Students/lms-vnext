@@ -58,6 +58,19 @@ describe("Super Admin Projects: hostile state, URL, and concurrency contracts", 
     expect(parseProjectAdminSubmissionsQuery({ submissionStatus: "SECRET" }).success).toBe(false);
   });
 
+  it("PROJ-BREAK-SA-19 refuses duplicate query keys instead of silently choosing an attacker-controlled first value",()=>{
+    const parsers=[parseAdminProjectsQuery,parseProjectAdminRiskQuery,parseProjectAdminSubmissionsQuery];
+    for(const parse of parsers){
+      for(const ambiguous of [
+        {page:["1","100000"]},{q:["own college","foreign college"]},
+        {pageSize:["10"]},{status:["ACTIVE","ARCHIVED"]},
+      ]){
+        expect(parse(ambiguous).success,JSON.stringify(ambiguous)).toBe(false);
+      }
+      expect(parse({q:"normal",page:"1",pageSize:"25"}).success).toBe(true);
+    }
+  });
+
   it("PROJ-BREAK-SA-11 requires a version token on restore and fails closed on unknown archived metadata", () => {
     const expectedUpdatedAt = "2026-10-18T09:30:00.123+05:30";
     expect(restoreProjectInstanceInputSchema.safeParse({ expectedUpdatedAt }).success).toBe(true);
