@@ -30,8 +30,8 @@ describe("chat-13 Super Admin placements: adversarial directory, company identit
   const result=filterAdminDriveDirectory(rows,adminDriveDirectoryQuerySchema.parse({status:"ACTIVE",q:"acME"}));
   expect(result.items.map(x=>x.job.id)).toEqual(["a"]);
   expect(result.total).toBe(1);
-  expect(filterAdminDriveDirectory(rows,adminDriveDirectoryQuerySchema.parse({status:"CLOSED"})).toMatchObject({total:2});
-  expect(filterAdminDriveDirectory(rows,adminDriveDirectoryQuerySchema.parse({status:"ALL",page:5})).toMatchObject({page:1,totalPages:1});
+  expect(filterAdminDriveDirectory(rows,adminDriveDirectoryQuerySchema.parse({status:"CLOSED"}))).toMatchObject({total:2});
+  expect(filterAdminDriveDirectory(rows,adminDriveDirectoryQuerySchema.parse({status:"ALL",page:5}))).toMatchObject({page:1,totalPages:1});
   expect(rows.map(r=>r.job)).toEqual(baseline);
   expect(adminDriveStatus({status:"PUBLISHED",applicationDeadline:new Date("2026-10-17T18:30:00.000Z")},new Date("2026-10-18T18:30:00.000Z"))).toBe("Open · Expired");
   expect(adminDriveStatus({status:"PUBLISHED",applicationDeadline:new Date("2026-10-19T18:30:00.000Z")},new Date("2026-10-18T18:30:00.000Z"))).toBe("Open");
