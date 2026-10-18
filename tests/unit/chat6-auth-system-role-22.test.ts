@@ -1,7 +1,7 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {readFileSync} from "node:fs";
 import {
- assignSystemRole,assignSystemRoleInputSchema,SystemRoleServiceError,
+ assignSystemRole,assignSystemRoleInputSchema,
  type SystemRoleRepository,
 } from "@/modules/system-roles/service";
 import type {RequestContext} from "@/modules/identity/context";
