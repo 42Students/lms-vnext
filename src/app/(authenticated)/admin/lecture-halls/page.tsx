@@ -4,6 +4,10 @@ import { LectureHallManager } from "@/components/admin/lecture-hall-manager";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { listLectureHalls } from "@/modules/academics/lecture-hall-service";
 import { listDepartments } from "@/modules/departments/service";
 import { lectureHallsCsvHref } from "@/modules/academics/college-lecture-halls-export-model";
@@ -20,7 +24,7 @@ export default async function SuperAdminLectureHallsPage({
 }) {
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
-  if (!collegeId) return <div className="space-y-6">
+  if (!collegeId) return <div className="min-w-0 space-y-6">
     <PageHeader  title="Lecture Halls"
       description="Lecture hall administration requires an exact college safety scope." />
     <EmptyState title="Select a college to continue"
@@ -65,39 +69,39 @@ export default async function SuperAdminLectureHallsPage({
     <section aria-label="Lecture hall filters" className="space-y-4 rounded-xl border border-border bg-surface p-4">
       <form action="/admin/lecture-halls" method="get" className="flex flex-wrap items-end gap-3">
         <label className="grid gap-1 text-sm font-semibold">Room name
-          <input type="search" name="q" maxLength={100} defaultValue={query.q}
+          <Input type="search" name="q" maxLength={100} defaultValue={query.q}
             placeholder="Search halls" className="min-h-11 rounded border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Status
-          <select name="status" defaultValue={query.status} className="min-h-11 rounded border border-border bg-surface px-3">
+          <Select name="status" defaultValue={query.status} className="min-h-11 rounded border border-border bg-surface px-3">
             <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
             <option value="ARCHIVED">Archived</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Department
-          <select name="departmentId" defaultValue={query.departmentId ?? ""}
+          <Select name="departmentId" defaultValue={query.departmentId ?? ""}
             className="min-h-11 rounded border border-border bg-surface px-3">
             <option value="">All departments</option>
             {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Room type
-          <select name="roomType" defaultValue={query.roomType}
+          <Select name="roomType" defaultValue={query.roomType}
             className="min-h-11 rounded border border-border bg-surface px-3">
             <option value="ALL">All types</option>
             <option value="CLASSROOM">Classroom</option><option value="LECTURE_HALL">Lecture Hall</option>
             <option value="LAB">Laboratory</option><option value="SEMINAR_HALL">Seminar Hall</option>
             <option value="AUDITORIUM">Auditorium</option>
             <option value="CONFERENCE_ROOM">Conference Room</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Rows per page
-          <select name="pageSize" defaultValue={query.pageSize}
+          <Select name="pageSize" defaultValue={query.pageSize}
             className="min-h-11 rounded border border-border bg-surface px-3">
             {[10,25,50,100].map(size => <option key={size} value={size}>{size}</option>)}
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Search</button>
+        <Button type="submit">Search</Button>
         <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap gap-2">
@@ -107,7 +111,7 @@ export default async function SuperAdminLectureHallsPage({
             value !== undefined && value !== ""
               ? <input key={name} type="hidden" name={name} value={String(value)} />
               : null)}
-          <button type="submit" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Refresh</button>
+          <Button type="submit" variant="secondary">Refresh</Button>
         </form>
       </div>
     </section>
@@ -122,14 +126,8 @@ export default async function SuperAdminLectureHallsPage({
           title: "No lecture halls found.", description: "Clear filters or add a lecture hall.",
         }} />
     </section>
-    <nav aria-label="Lecture hall pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-      <span className="text-muted-foreground">Page {query.page} of {pages} · {query.pageSize} per page</span>
-      <div className="flex gap-2">
-        {query.page > 1 ? <Link href={superAdminLectureHallHref({...query,page:query.page-1})}
-          className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : null}
-        {query.page < pages ? <Link href={superAdminLectureHallHref({...query,page:query.page+1})}
-          className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
-      </div>
-    </nav>
+    <p className="text-sm text-muted-foreground">Page {query.page} of {pages} · {query.pageSize} per page</p>
+    <Pagination label="Lecture hall pages" page={query.page} pageCount={pages}
+      hrefForPage={page=>superAdminLectureHallHref({...query,page})}/>
   </div>;
 }
