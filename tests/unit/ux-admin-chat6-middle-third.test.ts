@@ -203,6 +203,22 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
   expect(page).toContain("min-h-11");
   expect(page).toContain("StatusBadge");
  });
+ it("UX-admin-placements-analytics-02 preserves company totals beside a responsive hiring table",()=>{
+  const page=read("src/app/(authenticated)/admin/placements/analytics/page.tsx");
+  expect(page).toContain('caption="Company hiring report"');
+  expect(page).toContain('aria-label="Company totals"');
+  expect(page).toContain("metricKeys.map(key=>");
+  expect(page).toContain("hiringMetricLabel(key)");
+  expect(page).not.toContain('min-w-[55rem]');
+ });
+ it("UX-admin-placements-jobs-jobId-applications-02 retains the read-only mobile register when controls are unavailable",()=>{
+  const page=read("src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx");
+  expect(page).toContain("CollegeApplicationPipelineControls");
+  expect(page).toContain('caption="Drive applications"');
+  expect(page).toContain('empty={<p role="status"');
+  expect(page).toContain('mobilePriority:"primary"');
+  expect(page).toContain("No applications match these filters.");
+ });
  it("UX-admin-placements-tables-02 uses required legacy-scoped DataTable empty copy and phone columns",()=>{
   for(const path of [
    "src/app/(authenticated)/admin/placements/drives/page.tsx",

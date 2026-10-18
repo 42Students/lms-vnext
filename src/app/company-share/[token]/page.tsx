@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import { ErrorState } from "@/components/ui/error-state";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import {cookies} from "next/headers";
@@ -17,7 +18,12 @@ export default async function CompanySharePage({
  const {token}=await params;
  const {page,q,access}=await searchParams;
  const proof=(await cookies()).get("company_share_access")?.value??null;
- const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof);
+ const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof).catch(()=>null);
+ if(result===null)return <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10">
+  <ErrorState title="Shared applicants" description="This page is temporarily unavailable. Try again."
+    action={<Link href={"/company-share/"+encodeURIComponent(token)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Try again</Link>}/>
+ </main>;
  if(result.kind==="CODE_REQUIRED")return <main className="mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:py-10">
   <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-5 sm:p-6">
    <h1 className="text-xl font-semibold">Enter the 6-digit share code</h1>
