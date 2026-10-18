@@ -1,6 +1,7 @@
 import { outboundFetch } from "@/lib/outbound";
 import { writeStructuredLog } from "@/observability/logger";
 import type { EmailProvider } from "./types";
+import { isValidRecipient } from "@/modules/messaging/model";
 
 /**
  * ZeptoMail template email (India region), matching the legacy integration.
@@ -40,7 +41,8 @@ export function createZeptoMailEmailProvider(
       if (
         !config.token ||
         !config.otpTemplateKey ||
-        !message.toEmail.includes("@") ||
+        !isValidRecipient("EMAIL", message.toEmail) ||
+        !config.token.trim() ||
         !/^[0-9]{4,8}$/.test(message.code)
       ) {
         writeStructuredLog("WARNING", "email.otp_not_sent", {
