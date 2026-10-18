@@ -46,7 +46,7 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
   if(!release||!canRemove)return;
   setPending(true);setError("");
   try{
-   await projectMutation(url,"DELETE");
+   await projectMutation(url,"DELETE",{expectedUpdatedAt:new Date(release.updatedAt).toISOString()});
    setOpen(false);router.refresh();
   }catch{setError("Could not delete the release. Reload its current status and retry.");}
   finally{setPending(false);}
