@@ -1,68 +1,23 @@
-# Typecheck errors (CI dd44f0f2, refreshed by orchestrator)
+# Typecheck errors (CI 834983cc, refreshed by orchestrator)
 
-Production typecheck: see below. Test-file typecheck (non-blocking) errors; fix in your own files:
+Production typecheck: PASS. Lint: PASS. Test-file typecheck (non-blocking) errors below; fix in your own files:
 
-- tests/unit/COURSES-BREAK-FACULTY-05.test.ts(22,21): error TS2322: Type '"LEARNER" | "COLLEGE_ADMIN" | "MENTOR" | "TPO" | "HR"' is not assignable to type '"LEARNER" | "FACULTY" | "COLLEGE_ADMIN" | "MENTOR" | "TPO"'.
-- tests/unit/HR-BREAK-chat15-round-service-03.test.ts(48,49): error TS2502: 'tx' is referenced directly or indirectly in its own type annotation.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(20,3): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(20,20): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(20,38): error TS2552: Cannot find name 'COLLEGE'. Did you mean 'college'?
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(21,3): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(21,45): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(22,3): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(22,39): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(23,3): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(23,39): error TS2552: Cannot find name 'COLLEGE'. Did you mean 'college'?
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(23,62): error TS2304: Cannot find name 'ORG'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(24,3): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(25,3): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(28,17): error TS2304: Cannot find name 'tpo'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(29,16): error TS2304: Cannot find name 'requireProjectReadAccess'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(29,49): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(30,10): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(30,84): error TS2304: Cannot find name 'ORG'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(30,98): error TS2304: Cannot find name 'COLLEGE'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(31,10): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(32,10): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(35,3): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(35,20): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(35,38): error TS2304: Cannot find name 'COLLEGE'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(38,16): error TS2304: Cannot find name 'requireProjectReadAccess'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(38,41): error TS2304: Cannot find name 'tpo'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(38,47): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(39,10): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(43,8): error TS2304: Cannot find name 'tpo'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(43,36): error TS2304: Cannot find name 'FOREIGN'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(44,8): error TS2304: Cannot find name 'tpo'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(44,41): error TS2304: Cannot find name 'FOREIGN'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(44,59): error TS2304: Cannot find name 'FOREIGN'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(46,4): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(46,21): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(46,39): error TS2304: Cannot find name 'COLLEGE'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(47,17): error TS2304: Cannot find name 'requireProjectReadAccess'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(47,42): error TS2304: Cannot find name 'tpo'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(47,67): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(50,10): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(59,11): error TS2304: Cannot find name 'can'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(66,12): error TS2304: Cannot find name 'can'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(68,10): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(72,4): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(72,21): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(72,39): error TS2304: Cannot find name 'COLLEGE'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(73,17): error TS2304: Cannot find name 'requireProjectManageAccess'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(73,44): error TS2304: Cannot find name 'tpo'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(73,50): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(75,4): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(75,21): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(75,39): error TS2304: Cannot find name 'COLLEGE'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(76,17): error TS2304: Cannot find name 'requireProjectLifecycleAccess'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(76,47): error TS2304: Cannot find name 'tpo'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(76,53): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(79,10): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(82,16): error TS2304: Cannot find name 'requireProjectReadAccess'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(82,41): error TS2304: Cannot find name 'tpo'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(83,3): error TS2304: Cannot find name 'mocks'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(84,16): error TS2304: Cannot find name 'requireProjectReadAccess'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(84,41): error TS2304: Cannot find name 'tpo'.
-- tests/unit/PROJ-BREAK-TPO-01.test.ts(84,47): error TS2304: Cannot find name 'PROJECT'.
-- tests/unit/chat5-placements-weak-audit-export-and-bulk-ids.test.ts(64,14): error TS2352: Conversion of type '{ displayName: string; programName: string; cohortName: string; branchName: string; journeyState: "NOT_DECIDED"; applicationCount: number; offerCount: number; offersAwaitingAnswer: number; ... 43 more ...; ambiguousSection: boolean; }' to type 'TpoStudentRow' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+- tests/integration/projects-adversarial.test.ts(1158,13): error TS2554: Expected 4 arguments, but got 3.
+- tests/integration/projects-p6b-final-evaluation.test.ts(402,7): error TS2554: Expected 4 arguments, but got 3.
+- tests/integration/projects-p6b-final-evaluation.test.ts(414,7): error TS2554: Expected 4 arguments, but got 3.
+- tests/integration/projects-p6b-final-evaluation.test.ts(440,11): error TS2554: Expected 4 arguments, but got 3.
+- tests/integration/projects-p6b-final-evaluation.test.ts(473,11): error TS2554: Expected 4 arguments, but got 3.
+- tests/integration/projects-p6b-final-evaluation.test.ts(544,27): error TS2554: Expected 4 arguments, but got 3.
+- tests/integration/projects-p6b-final-evaluation.test.ts(620,11): error TS2554: Expected 4 arguments, but got 3.
+- tests/unit/PROJ-BREAK-chat6-submission-http-race.test.ts(30,54): error TS2322: Type 'NextResponse<{ error: string; }>' is not assignable to type 'NextResponse<{ message: string; requestId: string; }>'.
+- tests/unit/PROJ-BREAK-chat9-evaluation-read.test.ts(41,19): error TS2741: Property 'organizationId' is missing in type '{ collegeId: string; }' but required in type 'AdminScope'.
+- tests/unit/PROJ-BREAK-chat9-file-list-scope.test.ts(44,18): error TS2741: Property 'organizationId' is missing in type '{ collegeId: string; }' but required in type 'AdminScope'.
+- tests/unit/PROJ-BREAK-chat9-global-template-read.test.ts(83,56): error TS2345: Argument of type '{ organizationId: string; }' is not assignable to parameter of type 'AdminScope'.
+- tests/unit/PROJ-BREAK-chat9-sa-shortlisted-detail.test.ts(51,12): error TS18048: 'result.related' is possibly 'undefined'.
+- tests/unit/PROJ-BREAK-chat9-sa-student-lookup-tenant.test.ts(42,19): error TS2741: Property 'organizationId' is missing in type '{ collegeId: string; }' but required in type 'AdminScope'.
+- tests/unit/chat11-super-admin-branding-save-adversarial.test.ts(44,24): error TS2345: Argument of type '{ user: { platformStatus: "DISABLED"; id: string; identityUid: string; systemRoles: readonly "SUPER_ADMIN"[]; }; membership: ActiveMembership | null; adminScope?: AdminScope | null | undefined; recruiter?: RecruiterContext | ... 1 more ... | undefined; } | { ...; } | { ...; } | { ...; }' is not assignable to parameter of type 'RequestContext | null | undefined'.
+- tests/unit/chat11-super-admin-branding-save-adversarial.test.ts(44,34): error TS2345: Argument of type '{ user: { platformStatus: "DISABLED"; id: string; identityUid: string; systemRoles: readonly "SUPER_ADMIN"[]; }; membership: ActiveMembership | null; adminScope?: AdminScope | null | undefined; recruiter?: RecruiterContext | ... 1 more ... | undefined; } | { ...; } | { ...; } | { ...; }' is not assignable to parameter of type 'RequestContext | null | undefined'.
+- tests/unit/chat11-tpo-trusted-domain-route.test.ts(59,65): error TS2345: Argument of type 'string' is not assignable to parameter of type '"DOMAIN_NOT_FOUND" | "TRUST_STORAGE_PENDING" | "DOMAIN_ALREADY_TRUSTED"'.
+- tests/unit/chat16-public-recruiter-join-pages-26.test.ts(77,7): error TS2345: Argument of type '"Recruiter invitations are temporarily unavailable."' is not assignable to parameter of type '"Recruiter verification is temporarily unavailable. The placement cell must enable verified client networking, email-code delivery and public join storage before recruiters can join."'.
+- tests/unit/chat4-super-admin-colleges-bulk-service-behaviour.test.ts(25,18): error TS2741: Property 'collegeId' is missing in type '{ organizationId: string; }' but required in type 'AdminScope'.
+- tests/unit/chat4-superadmin-tenant-lifecycle-actor.test.ts(51,31): error TS2502: 'tx' is referenced directly or indirectly in its own type annotation.
