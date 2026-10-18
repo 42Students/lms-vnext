@@ -41,10 +41,9 @@ describe("TPO-students-10 preparation assignment current TPO permission boundary
   expect(mock.db).not.toHaveBeenCalled();
  });
  it("a disabled or wrong-role principal fails before a persisted role or database read",async()=>{
-  for(const principal of [
-   {...ctx,membership:{...ctx.membership!,roles:["LEARNER"] as const}},
-   {...ctx,user:{...ctx.user,platformStatus:"DISABLED" as const}},
-  ]){
+  const learner:RequestContext={...ctx,membership:{...ctx.membership!,roles:["LEARNER"]}};
+  const disabled:RequestContext={...ctx,user:{...ctx.user,platformStatus:"DISABLED"}};
+  for(const principal of [learner,disabled]){
    await expect(assignTpoPrepCourse(principal,assignment)).rejects.toBeInstanceOf(AuthorizationError);
   }
   expect(mock.persisted).not.toHaveBeenCalled();
