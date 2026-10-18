@@ -3,13 +3,14 @@ import {renderToStaticMarkup} from "react-dom/server";
 import type {ActiveMembership,RequestContext} from "@/modules/identity/context";
 
 const mocks=vi.hoisted(()=>({
- context:vi.fn(),redirect:vi.fn(),inbox:vi.fn(),jobs:vi.fn(),
+ context:vi.fn(),actor:vi.fn(),redirect:vi.fn(),inbox:vi.fn(),jobs:vi.fn(),
  afterCollege:vi.fn(),tableReady:vi.fn(),
 }));
 vi.mock("next/navigation",()=>({
  redirect:(url:string)=>{mocks.redirect(url);throw new Error("REDIRECT_TO_"+url);},
 }));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.context}));
+vi.mock("@/modules/placements/tpo-batch-workspace-read-service",()=>({requireTpoBatchActor:mocks.actor}));
 vi.mock("@/modules/placements/tpo-global-requests-service",()=>({getTpoGlobalRequestsInbox:mocks.inbox}));
 vi.mock("@/modules/placements/job-service",()=>({listPlacementJobs:mocks.jobs}));
 vi.mock("@/modules/placements/tpo-after-college-roster-service",()=>({getTpoAfterCollegeForRoster:mocks.afterCollege}));
@@ -43,6 +44,7 @@ describe("UX-tpo-first-third-requests-01 role, filter recovery, honest empty sta
  beforeEach(()=>{
   vi.resetAllMocks();
   mocks.context.mockResolvedValue(ctx(["TPO"]));
+  mocks.actor.mockResolvedValue(COLLEGE);
   mocks.inbox.mockResolvedValue(empty);
   mocks.jobs.mockResolvedValue([]);
   mocks.afterCollege.mockResolvedValue({available:false,entries:{}});
@@ -57,6 +59,14 @@ describe("UX-tpo-first-third-requests-01 role, filter recovery, honest empty sta
   expect(mocks.redirect).toHaveBeenCalledTimes(2);
   expect(mocks.inbox).not.toHaveBeenCalled();
   expect(mocks.jobs).not.toHaveBeenCalled();
+ });
+ it("TPO-requests-verification-33 refuses revoked persisted TPO roles before fetching private drive choices",async()=>{
+  mocks.actor.mockRejectedValue(new Error("PERSISTED_TPO_ROLE_REVOKED"));
+  await expect(GlobalTpoRequestsPage({searchParams:Promise.resolve({})}))
+   .rejects.toThrow("PERSISTED_TPO_ROLE_REVOKED");
+  expect(mocks.inbox).not.toHaveBeenCalled();
+  expect(mocks.jobs).not.toHaveBeenCalled();
+  expect(mocks.afterCollege).not.toHaveBeenCalled();
  });
  it("rejects invalid pagination and unknown request status with an actionable error and no private reads",async()=>{
   for(const filters of [{pageSize:"501"},{page:"0"},{status:"PRIVATE_OTHER_COLLEGE"}]){
