@@ -22,7 +22,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
   setBusy(true);setError("");setReport(null);
   try{const res=await fetch(url,{credentials:"same-origin",cache:"no-store"});
    const value=await res.json() as Preview&{error?:string};
-   if(!res.ok)throw Error(value.error??"Could not load round preview");
+   if(!res.ok)throw Error("Could not load round preview");
    setPreview(value);
   }catch(e){setError(e instanceof Error?e.message:"Could not preview results");}finally{setBusy(false);}
  }
@@ -32,7 +32,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
   try{const res=await fetch(url,{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
    body:JSON.stringify({confirmed:true,expectedPreviewToken:preview.previewToken})});
    const value=await res.json() as ApplyReport&{error?:string};
-   if(!res.ok)throw Error(value.error??"Results could not be applied");
+   if(!res.ok)throw Error("Results could not be applied");
    setReport(value);setPreview(null);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Results could not be applied");}finally{setBusy(false);}
  }
@@ -40,9 +40,9 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
   <h2 className="font-semibold text-foreground">Apply results for the whole round</h2>
   <p className="text-sm text-body">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
   <button type="button" disabled={busy} onClick={()=>void load()}
-   className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Working…":"Preview applying round results"}</button>
-  {preview?<div role="dialog" aria-modal="false" aria-label="Round application preview" className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
+  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
    <h3 className="font-semibold">Consequence preview</h3>
    <p className="text-sm">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
    <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
@@ -59,13 +59,13 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    <p className="text-xs text-body">{preview.skippedUnrecordedNote}</p>
    <button type="button" onClick={()=>downloadRoundCsv(
     roundApplyPreviewCsv(preview.rows),"round-"+roundId+"-apply-preview.csv")}
-    className="min-h-10 rounded border border-border px-4 text-sm font-semibold text-primary-text">
+    className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
     Export consequence preview (CSV)
    </button>
-   {!preview.ready?<p role="alert" className="text-sm text-error">Complete this evaluation round before applying results.</p>:null}
+   {!preview.ready?<p role="alert" className="text-sm text-foreground">Complete this evaluation round before applying results.</p>:null}
    <div className="flex flex-wrap gap-3">
     <button type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
-     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
      Confirm and apply {preview.staged} result(s)</button>
     <button type="button" disabled={busy} onClick={()=>setPreview(null)}
      className="min-h-11 rounded border border-border px-4 text-sm">Not yet</button>
@@ -84,6 +84,6 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     ["Learner\tResult state\tOutcome\tReason",...report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].map(value=>value.replaceAll("\t"," ").replaceAll("\n"," ")).join("\t"))].join("\n")
    ).catch(()=>setError("Copy failed. Use Export results (CSV)."));}}>Copy results</button>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error} Refresh the preview before retrying.</p>:null}
+  {error?<p role="alert" className="text-sm text-foreground">{error} Refresh the preview before retrying.</p>:null}
  </section>;
 }

@@ -130,4 +130,50 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).not.toContain("window.confirm");
   expect(s).not.toContain("min-h-10");
  });
+ it("UX-cross-tpo-second-C13-019 selection recording traps focus and release has separate confirmation",()=>{
+  const s=read("src/components/placements/tpo-drive-selection-manager.tsx");
+  expect(s).toContain("<Dialog open={mode!==null}");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('submit(true)');
+  expect(s).toContain("<DataTable");
+  expect(s).not.toContain('role="dialog"');
+  expect(s).not.toContain('window.confirm');
+ });
+ it("UX-cross-tpo-second-C13-020 interview scheduling confirms all destructive operations accessibly",()=>{
+  const s=read("src/components/placements/tpo-interview-slot-planner.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('action:"CLEAR_AVAILABLE"');
+  expect(s).toContain('action:"ASSIGN_ROOMS_BY_ROLL"');
+  expect(s).toContain('action:"CANCEL"');
+  expect(s).toContain("setConfirmRequest(");
+  expect(s).not.toContain("window.confirm");
+  expect(s).not.toContain("min-h-10");
+  expect(s).not.toContain("result.issues?.[0]?.message");
+ });
+ it("UX-cross-tpo-second-C13-021 joining records and corrections require accessible confirmation",()=>{
+  const s=read("src/components/placements/tpo-joining-update-form.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain("save(true)");
+  expect(s).not.toContain("window.confirm");
+  expect(s).toContain("min-h-11");
+ });
+ it("UX-cross-tpo-second-C13-022 selection import confirms before any recorded offers",()=>{
+  const s=read("src/components/placements/tpo-selection-import.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain('No offers will be released yet.');
+  expect(s).not.toContain("window.confirm");
+ });
+ it("UX-cross-tpo-second-C13-023 bulk drive act-on has focus-managed irreversible confirmation",()=>{
+  const s=read("src/components/placements/tpo-drive-act-on-panel.tsx");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain("apply(retry,true)");
+  expect(s).not.toContain("window.confirm");
+  expect(s).toContain("expectedUpdatedAt:row.expectedUpdatedAt");
+ });
+ it("UX-cross-tpo-second-C13-024 inline round application preview has correct region semantics and no raw server error",()=>{
+  const s=read("src/components/placements/tpo-round-apply-control.tsx");
+  expect(s).toContain('role="region" aria-label="Round application preview"');
+  expect(s).not.toContain('aria-modal="false"');
+  expect(s).not.toContain('value.error??');
+ });
 });
