@@ -120,3 +120,20 @@ npm run test:db:projects-harness
 `UX-kit-E2E-06` adds a development-only pending `ConfirmDialog` fixture and Chromium test asserting that confirm/cancel actions are disabled, Escape cannot dismiss during pending state, repeated submits are not issued, and completion restores focus. Test remains unverified by a browser runner.
 
 - **Follow-on kit issues:** `UX-kit-HARDEN-45` removes explicitly mobile-hidden fields from DataTable's `More details` overlay; the real Chromium narrow/desktop test confirms private-value visibility tracks viewport and public collapsed fields remain readable. `UX-kit-HARDEN-47` keeps disabled file pickers accessible without falsely marking them invalid. Newly authored tests have no runner result yet.
+
+## Chat-17 handoff continuation — current branch-only CI gates
+
+At latest source inspection, `docs/orchestrator/unit-failures-latest.md` still reported CI `ff6819dd` / `698eb9dd` and no `chat-17` section, while the refreshed typecheck report also listed no `chat-17` files. These snapshots are **not results** for the branch's newest unmerged changes. Verified branch was fast-forward/merged from main before this batch; all additions are pushed to `chatgpt/chat-17-b`.
+
+This batch adds `UX-kit-HARDEN-45` (mobile-hidden DataTable fields must never surface inside More details, including a dev-only browser viewport witness), `UX-kit-HARDEN-47` (disabled FileUpload is not incorrectly `aria-invalid`), `UX-kit-HARDEN-48` (disabled Switch cursor), and `PROJ-HARNESS-46` (task/meeting terminal state, in addition to final-delivery state). Their exact defect/evidence entries live in `docs/audit/defects-chat-17.md` and `docs/audit/coverage/chat17-ui-kit-ledger.md`.
+
+Gate them on the cloud runner without weakening assertions:
+```bash
+npm run typecheck
+npm run test:ux:kit:hardening
+npm run test:chat17:weak
+npm run test:e2e:chat17:kit
+npm run test:db:projects-harness  # only on migrated disposable TEST_DATABASE_URL
+```
+
+The UI coverage matrix still contains other teams' page-level/raw-table entries; run the generator against merged code to distinguish stale generated flags from actual active route defects. Do not designate release readiness until the actual browser/PostgreSQL runners and the owning lanes attest passing status.
