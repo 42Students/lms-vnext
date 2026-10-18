@@ -1,7 +1,7 @@
 import "server-only";
-import {and,eq,inArray,isNull,sql} from "drizzle-orm";
+import {and,eq,gt,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
+import {placementJobs,placementCompanies,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,placementJobRoundEvents,
  placementRoundResults,activityEvents,colleges} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -28,6 +28,9 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
     eq(placementCompanyRelationships.status,"ACTIVE"),
    ))
+   .innerJoin(placementCompanies,and(
+    eq(placementCompanies.id,placementCompanyRelationships.companyId),
+    eq(placementCompanies.status,"ACTIVE")))
    .innerJoin(placementRecruiterProfiles,and(
     eq(placementRecruiterProfiles.userId,context.user.id),
     eq(placementRecruiterProfiles.companyId,placementCompanyRelationships.companyId),
@@ -37,9 +40,13 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+    sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
    ))
    .where(and(eq(placementJobs.id,jobId),inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
-    isNull(placementJobs.archivedAt),recruiterOwnJobPredicate(context.user.id)))
+    isNull(placementJobs.archivedAt),eq(colleges.status,"ACTIVE"),
+    recruiterOwnJobPredicate(context.user.id)))
    .for("update").limit(1);
   if(!job||!can(context,"placements.recruiter.round.manage",{
    collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
@@ -117,6 +124,12 @@ export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:un
    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
    eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
    eq(placementCompanyRelationships.status,"ACTIVE")))
+  .innerJoin(colleges,and(
+   eq(colleges.id,placementJobs.collegeId),
+   eq(colleges.status,"ACTIVE")))
+  .innerJoin(placementCompanies,and(
+   eq(placementCompanies.id,placementCompanyRelationships.companyId),
+   eq(placementCompanies.status,"ACTIVE")))
   .innerJoin(placementRecruiterProfiles,and(
    eq(placementRecruiterProfiles.userId,context.user.id),
    eq(placementRecruiterProfiles.companyId,placementCompanyRelationships.companyId),
@@ -124,7 +137,10 @@ export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:un
   .innerJoin(placementRecruiterCollegeGrants,and(
    eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
-   eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+    sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
   .where(and(eq(placementJobs.id,jobId),
    inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
    isNull(placementJobs.archivedAt),recruiterOwnJobPredicate(context.user.id))).limit(1);

@@ -1,0 +1,31 @@
+# chat-13 — Super Admin + Placements admin hardening handoff
+
+**Branch:** `chatgpt/chat-13-b`  
+**Date:** 2026-10-18 IST  
+**Scope:** `docs/orchestrator/queues/master-queue.md` chat-13 items 1 and 2.  
+**Status:** Source audit, corrections and test authoring complete for the enumerated scope. CI, real PostgreSQL and browser execution **not verified**; this is not a deployment or security sign-off.
+
+## Item 1 — Super Admin /admin pages, Placements and Projects
+
+- First 37 `/admin` routes: `tests/unit/chat13-admin-first-third-audit.test.ts` enumerates and tests authenticated context plus source UX/safety contracts. Main route manifest: `docs/orchestrator/ui-ux/pages-admin.md`.
+- 48 current Super Admin Projects + Placements page routes: `tests/unit/PROJ-BREAK-SA-admin-pages-and-scope.test.ts` checks delegated dynamic IDs, scoped persisted project ownership and route surfaces. Supplemental adversarial `PROJ-BREAK-SA-09..32` test suites cover state, invalid filters, tenant mentor labels, literal SQL search, audits and exports.
+- Exact gap IDs, evidence, status and remaining runtime checks: `docs/audit/acceptance/superadmin-placements-projects-a-placements-verification.md`, `docs/audit/coverage/chat13-superadmin-placements-projects-page-audit.md` and `docs/orchestrator/queues/gap-closure-chat-13.md`.
+- Independent break-it fixes in this continuation: `SA-DRIVE-ARCHIVE-NOTIFY-05`, `SA-HIRING-REPORT-SCOPE-03`, `SA-HIRING-ACADEMIC-04`, `SA-PIPELINE-TENANT-02`, `SA-SCOPED-CSV-CAP-05`, `SA-APPLICATIONS-ACADEMIC-05`. Earlier same-lane work: `PROJ-BREAK-SA-30/31/32` and booked interview tenancy hardening.
+
+## Item 2 — Admin placement services, analytics and exports
+
+- `tests/unit/chat13-placements-admin-coverage-registry.test.ts` enumerates all **38** dedicated `admin-*`, `super-admin-*`, `report-*` and `platform-placement-policy-*` modules under `src/modules/placements` and requires coverage-ledger entries for every one.
+- `tests/unit/chat13-admin-ui-placements-tenant-matrix.test.ts` audits the other **13** Super Admin placement readers and CSV services under `src/modules/admin-ui` for central selected-college authorization, job/member scope, and export caps.
+- `tests/unit/chat13-super-admin-hiring-report-tenant-aggregation.test.ts` and `chat13-super-admin-pipeline-tenant.test.ts` assert candidate membership college filters are applied before pipeline aggregation. `tests/integration/chat13-super-admin-aggregate-tenant.test.ts` is an authored rollback-isolated PostgreSQL two-college malformed-application witness.
+- `tests/unit/chat13-scoped-csv-export-page-size.test.ts` exercises the actual scoped export entrypoint using mocked authorization and loaders: URL page sizes 10/100 must still fetch exactly 25 x 10 pages for the 250-row cap, preserve warnings, and deny unauthorized status filters.
+- The detailed per-service ledger is `docs/audit/coverage/placements-admin-chat13-ledger.md`; independent defect IDs, severity and explanations are `docs/audit/defects-chat-13.md`.
+
+## CI status and remaining external verification
+
+- The latest `docs/orchestrator/unit-failures-latest.md` available to this lane remains the older `ff6819dd/698eb9dd` report. Its chat-13 `SA-placements-projects-09` and `UX-cross-tpo-second-C13-026-22`, plus shared `PROJ-BREAK-SA-16/19/26`, now have matching source/test contracts on this branch, but no fresh CI result proves they pass.
+- `docs/orchestrator/typecheck-errors-latest.md` reports production typecheck and lint passing at its older snapshot, with no chat-13-owned entries. This is not a fresh TypeScript verification for the new commits.
+- The GitHub Actions CI runs visible when preparing this handoff were queued, not complete. No local Vitest, lint, `tsc`, browser or PostgreSQL execution was performed by this lane, per lane rules.
+- Before release, the orchestrator must run the current unit suite, full TypeScript/lint, `test:db:projects-harness`, multi-tenant route/API sessions, two-session placement archive/offer acceptance, cohort contradiction, notification delivery isolation, and account/browser accessibility checks. A source assertion is not evidence that a production database is correctly migrated.
+- Provider/DLT SMS activation, manual audited GitHub findings synchronization, private malware-scanned storage and inbound mail credentials remain separate operational dependencies in `docs/orchestrator/queues/gap-closure-chat-13.md`. Those dependencies are **not** marked production-ready by this service audit.
+
+All source changes were committed/pushed only to the named chat-13 branch. This file does not assert cloud CI green, 90% branch coverage, deployed schema or production readiness.

@@ -4,7 +4,7 @@ import { escapeActivityCsvCell } from "@/modules/activity/college-activity-expor
  * invisible prefixes that some spreadsheet engines silently strip. */
 function safeCollegeCsvCell(value:string):string {
  const visible=value.replace(/^[\s\p{Cf}\p{Mn}]*/u,"");
- return escapeActivityCsvCell(/^[=+@-]/u.test(visible)?"'"+value:value);
+ return escapeActivityCsvCell(/^[-=+@]/u.test(visible)?"'"+value:value);
 }
 
 export function exportParams(params:URLSearchParams):Record<string,string>|null {

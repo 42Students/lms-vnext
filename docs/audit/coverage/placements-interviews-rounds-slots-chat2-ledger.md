@@ -149,3 +149,14 @@ All evidence below is **authored source, not an executed pass**. The main CI rep
 | `tpo-confirmed-round-result-model.ts` — `confirmedTpoRoundResultSchema` | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` — `single result requires an explicit confirm, current version and strictly validated learner decision` (corrected invalid unmessaged FAIL fixture) | Staging/apply transaction still awaits CI/DB |
 
 **Open:** direct live service role/tenant/revocation tests, transaction rollback, idempotent retries, notification exactly-once, and browser routes’ states. No completeness or CI-green claim is made.
+
+## 2026-10-18 service and import-confirmation follow-up
+
+| Entry point | Direct test and cases | Status |
+| --- | --- | --- |
+| `rescheduleTpoInterview` in `tpo-interview-reschedule-service.ts` | `tests/unit/chat2-reschedule-interview-service-races.test.ts`: revoked access before DB, hostile IDs/payload, round not editable, stale expectedUpdatedAt, lost compare-and-swap, venue unavailability and one event + one college audit after success | UNIT AUTHORED, CI pending; PostgreSQL two-session race and notification coverage open |
+| `getTpoInterviewSlotWorkspace` and `mutateTpoInterviewSlots` in `tpo-interview-slot-service.ts` | `tests/unit/chat2-tpo-interview-round-slot-ledger.test.ts` checks active membership/user joins on roster, BOOK and MOVE_REQUEST, plus booked-slot version CAS before any notice | SOURCE GUARD AUTHORED; direct service/PG behaviors open |
+| `round-service.ts`: `listPlacementRounds`, `getPlacementRound`, `createPlacementRound`, `updatePlacementRound`, `actOnPlacementRound`, `getTpoRoundReorderReadiness`, `reorderPlacementRounds` | `tests/unit/chat2-round-service-authorization-boundaries.test.ts`: malformed IDs/commands, duplicate round order, foreign-college authorization denial ahead of transaction | UNIT AUTHORED; allowed transitions/DB races open |
+| `POST /api/placements/tpo/jobs/[jobId]/rounds/[roundId]/import-results` | `tests/unit/chat2-tpo-round-import-route-confirmation.test.ts`: foreign origin, preview, explicit staging consent, additional missing-candidate consent, invalid action and correct service command | UNIT AUTHORED, CI pending |
+
+The import endpoint previously constructed `confirmed:true` on the server even if the POST supplied no confirmation field. The route now rejects staging without an explicit `confirmed=true` form field, and mass marking Not cleared requires a separate acknowledgement. `src/components/placements/tpo-round-results-import.tsx` sends both flags after the confirmation UI. No test was removed or weakened.

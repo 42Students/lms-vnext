@@ -8,6 +8,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -71,6 +72,7 @@ export default async function TpoAuditPage({
     redirect("/dashboard");
   }
 
+  await requireTpoBatchActor(context);
   const params = await searchParams;
 
   const parsed =
