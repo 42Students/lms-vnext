@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -24,7 +25,7 @@ export default async function MentorTeamMeetingsPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid meeting history filters</h1>
-    <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
+    <Link href="/mentor/projects" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);
@@ -34,7 +35,7 @@ export default async function MentorTeamMeetingsPage({
     <PageHeader eyebrow="Mentor · Project" title="Team &amp; meeting log"
       description={data.projectTitle}
       actions={<Link href={board}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Team workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -95,12 +96,11 @@ export default async function MentorTeamMeetingsPage({
             defaultValue={data.query.search}
             className="min-h-11 rounded-md border border-border bg-background px-3"/>
         </label>
-        <button type="submit"
-          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+        <Button type="submit" variant="primary">
           Filter
-        </button>
+        </Button>
         <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
-          className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+          className="px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <p className="text-sm text-body">{data.total} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
@@ -131,7 +131,7 @@ export default async function MentorTeamMeetingsPage({
               </div>:null}
             <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
               "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
               View outcome notes
             </Link>
           </li>)}</ol>}
@@ -139,9 +139,9 @@ export default async function MentorTeamMeetingsPage({
         <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-3">
           {data.page>1?<Link href={mentorTeamMeetingsHref({...data.query,page:data.page-1})}
-            className="text-sm font-semibold text-primary-text">Previous</Link>:null}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
           {data.page<data.totalPages?<Link href={mentorTeamMeetingsHref({...data.query,page:data.page+1})}
-            className="text-sm font-semibold text-primary-text">Next</Link>:null}
+            className="text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
         </div>
       </nav>
     </>}
