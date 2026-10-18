@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -56,7 +57,7 @@ export default async function FacultyCourseAssessmentHealthPage({
           <option value="QUIZ">Quizzes</option>
         </select>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
+      <Button type="submit" variant="primary">Filter</Button>
       <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
         className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
     </form>

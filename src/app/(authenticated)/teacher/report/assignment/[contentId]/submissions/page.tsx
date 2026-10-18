@@ -1,3 +1,4 @@
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -54,9 +55,9 @@ export default async function FacultyAssignmentSubmissionsPage({
       <label className="grid min-w-0 flex-1 basis-56 gap-1 text-sm font-semibold text-body">
         Find learner submissions
         <input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
-          className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-body text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
+          className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-body text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Search</button>
+      <Button type="submit" variant="primary">Search</Button>
       <Link href={facultySubmissionListHref({...query,q:"",page:1})}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear search</Link>
     </form>
