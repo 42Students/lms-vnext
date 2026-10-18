@@ -538,4 +538,22 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   for(const header of ["Student","Roll no.","Batch","Branch","After college","Applications"])
    expect(page).toContain('header:"'+header+'"');
  });
+ it("UX-tpo-reports-branch-season-02 preserves eight report fields and exact no-evidence copy on responsive cards",()=>{
+  const report=source("src/app/(authenticated)/tpo/reports/branch-season/page.tsx");
+  expect(report).toContain('import { DataTable } from "@/components/ui/data-table"');
+  expect(report).toContain('<DataTable');
+  expect(report).toContain('caption="Branch by placement season"');
+  expect(report).toContain('mobilePriority:"primary"');
+  expect((report.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(7);
+  for(const column of ["Current branch","Applicants","Accepted learners","Accepted offer versions",
+   "Accepted / applicants","Registered pool","Accepted registered learners","Placed / registered"])
+    expect(report).toContain('header:"'+column+'"');
+  expect(report).toContain('empty={<p role="status">This season has no persisted applicant, accepted-offer or registered-pool branch evidence.');
+  expect(report).toContain('row.acceptedPerApplicantPercent.toFixed(2)+"%"');
+  expect(report).toContain('row.placedPerRegisteredPercent.toFixed(2)+"%"');
+  expect(report).toContain('row.registered??"Unknown"');
+  expect(report).toContain('row.registeredPlaced??"Unknown"');
+  expect(report).not.toContain('min-w-[66rem]');
+ });
+
 });
