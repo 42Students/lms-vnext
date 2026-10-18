@@ -288,4 +288,11 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).toContain('cohortId:batch.id');
    expect(page).not.toContain('min-w-[44rem]');
  });
+ it("UX-admin-companies-companyId-drives-02 uses responsive history and an explicit empty state",()=>{
+   const page=read("src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx");
+   expect(page).toContain("<DataTable<");
+   expect(page).toContain('mobilePriority:"action"');
+   expect(page).toContain('empty={<EmptyState title="No drives recorded"');
+   expect(page).not.toContain('min-w-[42rem]');
+ });
 });
