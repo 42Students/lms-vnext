@@ -1,9 +1,9 @@
 import "server-only";
-import {and,eq,inArray,isNull} from "drizzle-orm";
+import {and,eq,exists,inArray,isNull} from "drizzle-orm";
 import {replaceCollegeProjectRosterSchema} from "./college-project-roster-model";
 import {getDb} from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {collegeMemberships,membershipRoles,projectInstances,projectMembers,users} from "@/db/schema";
+import {collegeMemberships,learnerProgramEnrollments,sectionEnrollments,membershipRoles,projectInstances,projectMembers,users} from "@/db/schema";
 import {ProjectsServiceError} from "./errors";
 import {requireProjectManageAccess} from "./access";
 import {projectTeamAuditInput} from "./mentor-team-audit-model";
@@ -17,9 +17,10 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
  const scope=await requireProjectManageAccess(context,projectId);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({
-   id:projectInstances.id,teamGroupId:projectInstances.teamGroupId,
+   id:projectInstances.id,teamGroupId:projectInstances.teamGroupId,sectionId:projectInstances.sectionId,
    status:projectInstances.status,updatedAt:projectInstances.updatedAt,
-  }).from(projectInstances).where(eq(projectInstances.id,scope.project.id)).for("update").limit(1);
+  }).from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
+   eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
   if(!project||project.teamGroupId||project.status==="ARCHIVED")
    throw new ProjectsServiceError("PROJECT_INVALID_STATE");
   // A stale request context cannot authorize a change after account disable,
@@ -44,8 +45,21 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
     .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
       eq(membershipRoles.role,"LEARNER")))
+    // Adding students must enforce the same academic enrolment rules as
+    // initial workspace creation; membership role alone is not eligibility.
+    .innerJoin(learnerProgramEnrollments,and(
+      eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+      eq(learnerProgramEnrollments.status,"ACTIVE")))
     .where(and(inArray(collegeMemberships.id,toAdd),eq(collegeMemberships.collegeId,scope.collegeId),
-      eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
+      eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+      // Section-bound workspaces require a live enrollment in that section,
+      // not merely an active enrollment in some other section or term.
+      project.sectionId?exists(tx.select({id:sectionEnrollments.id})
+        .from(sectionEnrollments).where(and(
+          eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
+          eq(sectionEnrollments.sectionId,project.sectionId),
+          eq(sectionEnrollments.status,"ACTIVE"),
+        ))):undefined));
    if(new Set(eligible.map(x=>x.id)).size!==toAdd.length)
     throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
   }

@@ -199,3 +199,13 @@ Source-only evidence: tests below were authored or verified by source inspection
 | HR-WORKSPACE-ARCHIVE-19 | SOURCE FIX, CI PENDING | `src/modules/placements/recruiter-workspace-service.ts`, `tests/unit/HR-BREAK-chat15-workspace-archive-19.test.ts` → `HR-WORKSPACE-ARCHIVE-19 employer can't read archived candidates or round metadata`. Archived published/closed jobs return not found before candidate/round queries. Verify HTTP direct link and PostgreSQL data visibility. |
 
 Neither test suite, actual account browser journey nor PostgreSQL tenant corpus was executed here; these remain release gates.
+
+
+## chat-15 HR data isolation follow-up (2026-10-18, CI pending)
+
+| ID | Source | Acceptance evidence |
+|---|---|---|
+| HR-PORTFOLIO-SCOPE-29 | `recruiter-portfolio-counts-service.ts` | Both applicant and offer aggregates now filter persisted job college, granted company relationships, active employer/college/relationship, published/closed non-archived jobs and ACTIVE shortlisted members. `tests/unit/HR-BREAK-chat15-portfolio-scope-29.test.ts`; integration with two employers in one college is still outstanding. |
+| HR-REPORT-ARCHIVE-31 | `recruiter-company-reports-service.ts` | Paginated company job rows, status totals and SQL funnel use non-archived published/closed jobs consistently. `tests/unit/HR-BREAK-chat15-company-report-archive-31.test.ts`; cross-tab counts need real PostgreSQL/browser acceptance. |
+
+Unit tests authored but not executed locally; no claim of CI pass or production deployment.

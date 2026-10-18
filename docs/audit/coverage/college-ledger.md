@@ -62,3 +62,16 @@ The current orchestrator files report production typecheck and lint **PASS**. Th
 | `COL-export-09` | `src/modules/academics/college-directory-export-model.ts` plus same test: Unicode-hidden spreadsheet formulas are escaped in College Admin directory exports |
 
 No tests were run here. These are *pending cloud CI*, not green/verified claims. Exhaustive handler/route and all actual PostgreSQL concurrency races remain open.
+
+## Further tenant lifecycle / branding coverage
+
+| Export or route | Behavioral test | Contract |
+| --- | --- | --- |
+| `src/modules/colleges/admin-branding-preview-model.ts` `describeAdminCollegeBranding` | `tests/unit/chat4-admin-college-branding-preview-security.test.ts` SA-colleges-branding-01 | persisted versus default branding, reject credentials/token-like URL queries and fragments, private object keys, inappropriate schemes, fallback order, proper HTTPS policies, malformed contact suppression, contrast |
+| `src/modules/colleges/admin-session-query-model.ts` `adminSessionHistoryPageSchema` | `tests/unit/chat4-admin-college-session-history-journey.test.ts` SA-colleges-admins-R01 | page one default, bounded decimal query, direct service validation rejects scientific and hex |
+| `src/modules/colleges/admin-session-service.ts` `listCollegeAdminHistory` | `tests/unit/chat4-admin-college-session-history-journey.test.ts` (service source contract) | same tenant/user persisted access, 100-row pagination, shared strict page schema; no DB race executed |
+| `src/app/api/admin/colleges/[collegeId]/admins/[userId]/history/route.ts` `GET` | `tests/unit/chat4-admin-history-export-route.test.ts` SA-colleges-admins-R02 | runtime mock: rejects nine malformed/duplicate/foreign page forms before any sensitive service call; valid scoped export checks CSV/Cache-Control and truncation |
+| `src/modules/academics/college-directory-export-model.ts` `buildCollegeDirectoryCsv` | `tests/unit/chat4-college-admin-export-boundaries.test.ts` COL-export-09 | guards Unicode-hidden formulas |
+| `src/modules/colleges/admin-history-export-model.ts` `collegeAdminHistoryCsv` | Same test COL-export-08 | guards Unicode-hidden formulas; client-visible truncation remains explicit |
+
+The coverage still is **not exhaustive**: module-wide service and handler inventories, all role permutations, in-transaction races, real PostgreSQL and browser sign-off remain open. CI has not executed these branch changes.

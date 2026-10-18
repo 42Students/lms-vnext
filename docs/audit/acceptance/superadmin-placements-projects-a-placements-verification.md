@@ -103,3 +103,6 @@ Status DONE below indicates the implementation is present on main and a named so
 | SA-placements-projects-39 | DONE | Recruiter lifecycle records audited events. `tests/unit/chat13-superadmin-gap-register-reconcile-a.test.ts` (`SA-placements-projects-39`); remaining runtime acceptance where PARTIAL. |
 
 Registered SQL confirmation: `tests/unit/chat13-superadmin-company-migration-0133.test.ts` asserts SA-placements-projects-24/26/27/28 fields and indexed tables in `drizzle/0133_lanes_round_1.sql` (unrun).
+
+
+- `SA-placements-projects-09` follow-up: `tests/unit/chat13-student-placement-lookup-runtime.test.ts` (`SA-STUDENT-LOOKUP-PLACED-04`, `SA-STUDENT-LOOKUP-CAP-04`) now exercises actual service composition via mocked scoped database/authorization. A/B PostgreSQL and cloud CI remain required to verify joins and limits.
