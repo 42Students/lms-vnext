@@ -28,6 +28,23 @@ export function sameInterviewRoom(left:string,right:string):boolean{
  return left.normalize("NFKC").trim().toLocaleLowerCase("en-IN")===
   right.normalize("NFKC").trim().toLocaleLowerCase("en-IN");
 }
+/** Shared physical-room overlap gate for day generation, bulk roll moves,
+ * and individual room edits. Exactly touching windows are not conflicts.
+ * Invalid timing data for the same room must fail closed.
+ */
+export function overlapsInterviewRoom(
+ proposed:{room:string;startsAt:Date;endsAt:Date},
+ existing:readonly {room:string;startsAt:Date;endsAt:Date}[],
+):boolean{
+ const begins=proposed.startsAt.getTime(),ends=proposed.endsAt.getTime();
+ if(!Number.isFinite(begins)||!Number.isFinite(ends)||ends<=begins)return true;
+ return existing.some(slot=>{
+  if(!sameInterviewRoom(proposed.room,slot.room))return false;
+  const from=slot.startsAt.getTime(),until=slot.endsAt.getTime();
+  if(!Number.isFinite(from)||!Number.isFinite(until)||until<=from)return true;
+  return from<ends&&begins<until;
+ });
+}
 export function planInterviewDay(input:{startsAt:string;durationMinutes:number;gapMinutes:number;
  slotsPerRoom:number;rooms:readonly string[]}){
  // TPO-drive-workspace-44: exported planners must validate even when called
