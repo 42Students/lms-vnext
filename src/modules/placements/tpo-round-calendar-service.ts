@@ -68,7 +68,8 @@ export async function listTpoCalendarRoundChoices(context: RequestContext,raw:un
 /**
  * Only existing registered rounds are scheduled. The round service writes
  * state + immutable round history in its own transaction. Venue detection is
- * conservative but the cross-writer serialization contract remains PARTIAL.
+ * conservative; actOnPlacementRound takes the same transaction-scoped venue
+ * advisory lock as interview rescheduling before committing the mutation.
  */
 export async function decideTpoCalendarRound(context: RequestContext, raw: unknown) {
   const college = await requireTpo(context);
