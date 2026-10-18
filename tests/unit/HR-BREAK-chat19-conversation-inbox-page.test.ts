@@ -38,6 +38,12 @@ function content(node:ReactNode):string {
  const p=node.props as {children?:ReactNode,title?:string,description?:string};
  return [p.title??"",p.description??"",content(p.children)].join(" ");
 }
+function hrefs(node:ReactNode):string[]{
+ if(Array.isArray(node))return node.flatMap(hrefs);
+ if(!isValidElement(node))return [];
+ const p=node.props as {children?:ReactNode;href?:unknown};
+ return [...(typeof p.href==="string"?[p.href]:[]),...hrefs(p.children)];
+}
 describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure containment",()=>{
  beforeEach(()=>{
   vi.clearAllMocks();m.ctx.mockResolvedValue(actor);
@@ -47,6 +53,11 @@ describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure 
    thread:{id,jobId:null,collegeId:college},messages:[],page:1,pages:0,total:0,unread:0,
   });
   m.redirect.mockImplementation(()=>{throw new Error("REDIRECT");});
+ });
+ it("HR-XA-09 notification action opens the bell inbox instead of looping through Messages alias",async()=>{
+  const result=await page();
+  expect(hrefs(result)).toContain("/hr/notifications");
+  expect(hrefs(result)).not.toContain("/hr/messages");
  });
  it("an expired session never queries any inbox, thread or notifications",async()=>{
   m.ctx.mockResolvedValue({...actor,user:{...actor.user,platformStatus:"DISABLED"}});
