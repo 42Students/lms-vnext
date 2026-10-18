@@ -1,4 +1,5 @@
-import { redirect } from "next/navigation";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementDriveWorkspace } from "@/components/placements/placement-drive-workspace";
 import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
@@ -11,9 +12,10 @@ export default async function AdminPlacementDrivePage({
   params: Promise<{ jobId: string }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.adminScope?.collegeId) {
-    redirect("/admin/placements");
-  }
+  if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
+    <PageHeader eyebrow="Super Admin" title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
+  </div>;
   const { jobId } = await params;
   const pipeline = await getSuperAdminDrivePipeline(context, jobId);
   return (

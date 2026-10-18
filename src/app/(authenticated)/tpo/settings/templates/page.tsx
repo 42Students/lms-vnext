@@ -8,7 +8,7 @@ import { TPO_MANUAL_MESSAGE_TEMPLATES } from "@/modules/placements/tpo-communica
 export const dynamic = "force-dynamic";
 export default async function TpoCommunicationTemplatesPage() {
   await requireTpoBatchActor(await getCurrentRequestContext());
-  return <main className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-5">
     <TpoSettingsNav active="templates" />
     <PageHeader eyebrow="TPO · Settings" title="Communication templates" />
     <p className="text-sm text-body">Safe draft text for manual use. These are source-provided examples, not stored college templates. Copying text does not send email, SMS, WhatsApp or a portal notice.</p>
@@ -18,6 +18,6 @@ export default async function TpoCommunicationTemplatesPage() {
       <label className="block text-sm">Draft text<textarea readOnly value={item.body} rows={5} className="mt-1 w-full rounded border border-border bg-surface p-3"/></label>
       <p className="text-xs text-muted-foreground">No recipients are selected or contacted.</p>
     </section>)}</div>
-    <Link href="/tpo/batches" className="inline-flex min-h-11 items-center text-primary-text underline">Review batches and their actual deadlines</Link>
-  </main>;
+    <Link href="/tpo/batches" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Review batches and their actual deadlines</Link>
+  </div>;
 }

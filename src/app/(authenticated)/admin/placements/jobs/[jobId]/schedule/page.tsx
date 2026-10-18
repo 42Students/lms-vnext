@@ -1,6 +1,7 @@
 import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -19,7 +20,10 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
   const context=await getCurrentRequestContext();
-  if(!context.adminScope?.collegeId) redirect("/admin/placements");
+  if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
+    <PageHeader eyebrow="Super Admin" title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
+  </div>;
   const {jobId}=await params;
   const query=driveInterviewsParams(await searchParams);
   if(!query) return <ErrorState title="Invalid interview filters"

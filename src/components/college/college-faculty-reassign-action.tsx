@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {teachingReassignPrompt} from "@/modules/courses/college-teaching-reassign-model";
@@ -34,12 +35,10 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
   }
   return <div className="space-y-1">
     <button type="button" disabled={pending||candidates.length===0} onClick={()=>setOpen(true)}
-      className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
       Reassign
     </button>
-    {open?<div role="dialog" aria-modal="true" aria-label={"Reassign "+facultyName}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md space-y-4 rounded-xl border border-border bg-surface p-5">
+    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Reassign "+facultyName} dismissible={!pending}>
         <h2 className="text-lg font-semibold text-foreground">Reassign {role}</h2>
         <p className="text-sm text-body">Replace {facultyName}; existing teaching history will be retained.</p>
         <label className="grid gap-2 text-sm font-semibold text-body">Replacement Faculty
@@ -59,8 +58,7 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
             {pending?"Reassigning…":"Confirm replacement"}
           </button>
         </div>
-      </div>
-    </div>:null}
+    </Dialog>
     {!open&&error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   </div>;
 }

@@ -33,11 +33,11 @@ export function CollegeDepartmentInsights({
       actions={<>
         {attendance ? <a href={"/api/attendance/admin/departments/export" +
           (data.query.q ? "?q=" + encodeURIComponent(data.query.q) : "")}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Export CSV
         </a> : null}
         <Link href={attendance ? "/college/attendance" : "/college/placements"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           {attendance ? "Attendance workspace" : "Placements workspace"}
         </Link>
       </>}
