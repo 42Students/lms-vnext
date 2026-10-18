@@ -1,5 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
-import {isValidElement,type ReactNode} from "react";
+import {isValidElement,type ReactElement,type ReactNode} from "react";
 import type {RequestContext} from "@/modules/identity/context";
 
 const mocks=vi.hoisted(()=>({
@@ -21,7 +21,7 @@ const admin:RequestContext={
 };
 const page=(q:Record<string,string|string[]|undefined>={})=>
  FindingsPage({searchParams:Promise.resolve(q)});
-function allNodes(node:ReactNode):Array<React.ReactElement>{
+function allNodes(node:ReactNode):ReactElement[]{
  if(Array.isArray(node))return node.flatMap(allNodes);
  if(!isValidElement(node))return [];
  const p=node.props as {children?:ReactNode};
