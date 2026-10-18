@@ -17,23 +17,34 @@ const choices:{value:Method;label:string;hint:string}[]=[
 ];
 export function CollegeSigninMethodForm({collegeId,method,version,ready}:{collegeId:string;method:Method;version:number;ready:boolean}){
  const router=useRouter(),[selection,setSelection]=useState<Method>(method);
+ const [savedMethod,setSavedMethod]=useState<Method>(method);
+ const [currentVersion,setCurrentVersion]=useState(version);
  const {pending:saving,run:guardedRun}=useGuardedAction({busyLabel:"Saving..."});
  const [message,setMessage]=useState("");
  const [confirmOpen,setConfirmOpen]=useState(false);
  async function save(){
-  if(!ready||saving||selection===method)return;
+  if(!ready||saving||selection===savedMethod)return;
   setMessage("");
   await guardedRun(async()=>{
     try {
-      await apiFetch<void>("/api/admin/colleges/"+encodeURIComponent(collegeId)+"/signin",{
+      const response=await apiFetch<{policy:{method:Method;version:number}}>(
+       "/api/admin/colleges/"+encodeURIComponent(collegeId)+"/signin",{
         method:"PUT",headers:{"content-type":"application/json"},credentials:"same-origin",
-        body:JSON.stringify({collegeId,method:selection,expectedVersion:version}),
+        body:JSON.stringify({collegeId,method:selection,expectedVersion:currentVersion}),
       });
+      // A successful but slow response must not leave the form with the old
+      // optimistic version. Read and validate the persisted response first.
+      const committed=response?.policy;
+      if(!committed||!collegeSignInMethodSchema.safeParse(committed.method).success||
+         !Number.isSafeInteger(committed.version)||committed.version<0)
+       throw new Error("INVALID_POLICY_RESPONSE");
+      setSavedMethod(committed.method);
+      setCurrentVersion(committed.version);
       setConfirmOpen(false);setMessage("Sign-in settings saved");router.refresh();
     }catch(error){
       setMessage(error instanceof FriendlyFetchError && error.status===409
         ?"Settings changed elsewhere. Refresh before retrying."
-        :error instanceof Error?error.message:"Could not save sign-in settings.");
+        :error instanceof FriendlyFetchError?error.message:"Could not save sign-in settings.");
     }
   });
  }
@@ -47,7 +58,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
     <span><strong className="block text-sm">{choice.label}</strong><span className="text-xs text-muted-foreground">{choice.hint}</span></span>
    </label>)}
   </fieldset>
-  <Button type="button" disabled={!ready||saving||selection===method} onClick={()=>setConfirmOpen(true)}
+  <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>setConfirmOpen(true)}
    className="disabled:opacity-50">
    {saving?"Saving…":"Save sign-in settings"}
   </Button>

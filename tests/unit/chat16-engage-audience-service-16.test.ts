@@ -21,7 +21,7 @@ const tpo:RequestContext={
 beforeEach(()=>{
  vi.clearAllMocks();
  vi.mocked(requirePlacementManageScope).mockResolvedValue({id:college,organizationId:org} as Awaited<ReturnType<typeof requirePlacementManageScope>>);
- vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(undefined);
+ vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(tpo);
 });
 function database<T>(rows:readonly T[]){
  const where=vi.fn(async()=>rows);
