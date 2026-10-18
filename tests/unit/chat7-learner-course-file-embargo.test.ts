@@ -52,9 +52,10 @@ describe("LEARNER-COURSE-FILE-EMBARGO-01 private course file read boundary",()=>
   state.rows=[];
   expect(await getLearnerCourseFileReference(context,deliveryId,contentId)).toBeNull();
  });
- it("ensures a future startsAt is excluded by PostgreSQL time before any signed URL can be minted",()=>{
+ it("forbids VIDEO direct R2 download bypass and future startsAt before signing a file",()=>{
   const service=readFileSync("src/modules/courses/learner-course-file-reference-service.ts","utf8");
   for(const gate of [
+   'eq(lessonContents.contentType,"RESOURCE")',
    "eq(courseLearningPaths.offeringId,delivery.offeringId)",
    'inArray(courseLearningPaths.status,delivery.endedAt?["PUBLISHED","ARCHIVED"]:["PUBLISHED"])',
    'eq(courseLessons.visibleToStudents,true)',
