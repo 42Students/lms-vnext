@@ -6,7 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
 type JobItem={job:{id:string;createdByUserId:string};collegeId:string;relationshipId:string};
-type ApprovedAttribution={userId:string;jobId:string|null};
+type ApprovedAttribution={userId:string;jobId:string|null;status?:string};
 
 /** Count each authorized job only once. A duplicate or conflicting approval
  * record cannot arbitrarily credit a colleague: fall back to the persisted
@@ -19,7 +19,7 @@ export function attributeRecruiterTeamJobs(
  for(const row of authorizedJobs)if(!jobs.has(row.job.id))jobs.set(row.job.id,row);
  const approved=new Map<string,string|null>();
  for(const request of requests){
-  if(!request.jobId||!jobs.has(request.jobId))continue;
+  if((request.status!==undefined&&request.status!=="DRAFT")||!request.jobId||!jobs.has(request.jobId))continue;
   if(!approved.has(request.jobId))approved.set(request.jobId,request.userId);
   else if(approved.get(request.jobId)!==request.userId)approved.set(request.jobId,null);
  }
@@ -35,7 +35,9 @@ export function attributeRecruiterTeamJobs(
  * Team totals cannot expose unpublished drives or another employer/college. */
 export async function recruiterTeamAttributedDriveCounts(context:RequestContext,
  collegeId:string,relationshipId:string,authorizedJobs:readonly JobItem[]){
- const grant=context.recruiter?.grants.find(g=>
+ if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)
+  throw new AuthorizationError("placements.recruiter.read");
+ const grant=context.recruiter.grants.find(g=>
    g.collegeId===collegeId&&g.companyRelationshipId===relationshipId);
  if(!grant)throw new AuthorizationError("placements.recruiter.read");
  requirePermission(context,"placements.recruiter.read",{collegeId,placementCompanyRelationshipId:relationshipId});
@@ -46,9 +48,11 @@ export async function recruiterTeamAttributedDriveCounts(context:RequestContext,
  const requests=await getDb().select({
   userId:placementRecruiterDriveRequests.recruiterUserId,
   jobId:placementRecruiterDriveRequests.approvedJobId,
+  status:placementRecruiterDriveRequests.status,
  }).from(placementRecruiterDriveRequests).where(and(
    eq(placementRecruiterDriveRequests.collegeId,collegeId),
    eq(placementRecruiterDriveRequests.companyRelationshipId,relationshipId),
+   eq(placementRecruiterDriveRequests.status,"DRAFT"),
    inArray(placementRecruiterDriveRequests.approvedJobId,ids),
  ));
  return attributeRecruiterTeamJobs(selected,requests);

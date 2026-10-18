@@ -7,7 +7,8 @@ import {can} from "@/modules/permissions/policy";
 
 /** Only expose the authorized college's currently active branch suggestions. */
 export async function listRecruiterCollegeBranches(context:RequestContext,collegeId:string){
- const grant=context.recruiter?.grants.find(g=>g.collegeId===collegeId);
+ if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)return [];
+ const grant=context.recruiter.grants.find(g=>g.collegeId===collegeId);
  if(!grant || !can(context,"placements.recruiter.read",{
   collegeId,placementCompanyRelationshipId:grant.companyRelationshipId,
  }))return [];
