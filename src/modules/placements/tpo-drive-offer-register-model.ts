@@ -21,8 +21,12 @@ export const OFFER_REGISTER_PAGE_SIZE=25;
 export function offerExpiryIndicator(status:string,expiresAt:Date|null|undefined,asOf:Date):"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"|"NOT_APPLICABLE"{
  if(status!=="ISSUED")return "NOT_APPLICABLE";
  if(!expiresAt)return "UNKNOWN";
- if(expiresAt.getTime()<=asOf.getTime())return "EXPIRED";
- return expiresAt.getTime()-asOf.getTime()<=7*86400000?"DUE_SOON":"OPEN";
+  const expiryMs=expiresAt.getTime(),referenceMs=asOf.getTime();
+  // A malformed persisted date must never be labelled "OPEN" by NaN
+  // comparison, which would misleadingly imply a valid response window.
+  if(!Number.isFinite(expiryMs)||!Number.isFinite(referenceMs))return "UNKNOWN";
+  if(expiryMs<=referenceMs)return "EXPIRED";
+  return expiryMs-referenceMs<=7*86400000?"DUE_SOON":"OPEN";
 }
 export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],search="",joiningState:z.infer<typeof offerRegisterQuery>["joining"]="ALL",kind:z.infer<typeof offerRegisterQuery>["kind"]="ALL",
  expiry:z.infer<typeof offerRegisterQuery>["expiry"]="ALL",asOf=new Date(),minCtcLpa?:number,maxCtcLpa?:number){
