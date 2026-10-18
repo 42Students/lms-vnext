@@ -446,7 +446,7 @@ export function RecruiterLeadDetailWorkspace({
           {actionToast?<p role="status" className="rounded-md border border-border p-3 text-sm">{actionToast}</p>:null}
           {actionError ? <p role="alert" className="rounded-md border border-border p-3 text-sm text-destructive">{actionError}</p> : null}
 
-          {lead.companyName?<section aria-label="Company" className="rounded-lg border border-border bg-surface p-5">
+          {lead.companyName?<section aria-label="Company" className="border-b border-border py-5">
              <h2 className="font-semibold text-foreground">Company</h2>
              <p className="mt-2 text-sm font-medium">{lead.companyName}</p>
              {companySummary?<div className="mt-3 space-y-2 text-sm text-body">
@@ -469,7 +469,7 @@ export function RecruiterLeadDetailWorkspace({
              </Link>
            </section>:null}
            <div className="grid gap-5 lg:grid-cols-2">
-            <section className="space-y-3 rounded-lg border border-border bg-surface p-5">
+            <section className="space-y-3 border-b border-border py-5">
               <h2 className="text-lg font-semibold">Contact</h2>
               <dl className="space-y-2 text-sm">
                 <div><dt className="text-muted-foreground">Email</dt>
@@ -554,7 +554,7 @@ export function RecruiterLeadDetailWorkspace({
               )}
             </section>
 
-            <section className="space-y-4 rounded-lg border border-border bg-surface p-5">
+            <section className="space-y-4 border-b border-border py-5">
               <h2 className="text-lg font-semibold">Log activity</h2>
               <form className="space-y-3" onSubmit={e => void addActivity(e)}>
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Interaction type">
@@ -615,7 +615,7 @@ export function RecruiterLeadDetailWorkspace({
             </section>
           </div>
 
-          <section className="space-y-4 rounded-lg border border-border bg-surface p-5">
+          <section className="space-y-4 border-b border-border py-5">
             <h2 className="text-lg font-semibold">Follow-ups</h2>
             <form className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] md:items-end"
               onSubmit={e => void addFollowup(e)}>
