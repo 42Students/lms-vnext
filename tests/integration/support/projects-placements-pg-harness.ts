@@ -438,10 +438,17 @@ export async function createPlacementCandidateFixture(
   if (!actor.collegeId || actor.collegeId !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and coordinator must share a college");
   }
-  const [job] = await db.query<{college_id:string}>(
-    "select college_id from placement_jobs where id=$1",[drive.jobId]);
+  const [job] = await db.query<{college_id:string; round_id:string|null}>(`
+    select j.college_id,r.id as round_id
+      from placement_jobs j
+      left join placement_job_rounds r
+        on r.job_id=j.id and r.id=$2
+     where j.id=$1`,[drive.jobId,drive.roundId]);
   if (job?.college_id !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and drive have different colleges");
+  }
+  if (job.round_id !== drive.roundId) {
+    throw new Error("PROJ-HARNESS: supplied round does not belong to this drive");
   }
   // Roles held in fixture objects are insufficient evidence; the real
   // memberships and both users must still be active in the drive's college.
