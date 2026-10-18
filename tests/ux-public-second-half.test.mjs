@@ -53,6 +53,9 @@ test("UX-public-request-demo-01 email demo CTA stays explicit and keyboard acces
 test("UX-public-company-share-01 code, expiry, privacy and authorized columns remain intact",()=>{
   const page=app("company-share/[token]/page.tsx");
   assert.match(page,/getPublicCompanyApplicantShare\(token/);
+  assert.match(page,/\.catch\(\(\)=>null\)/);
+  assert.match(page,/<ErrorState/);
+  assert.match(page,/This page is temporarily unavailable\. Try again\./);
   assert.match(page,/result\.kind==="CODE_REQUIRED"/);
   assert.match(page,/type="text" required inputMode="numeric"/);
   assert.match(page,/pattern="\[0-9\]\{6\}"/);
