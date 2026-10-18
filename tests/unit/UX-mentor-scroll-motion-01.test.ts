@@ -10,7 +10,7 @@ describe("UX-mentor-scroll-motion-01 invisible scrollbar affordances",()=>{
     expect(source).toContain("mobilePriority:\"primary\"");
     expect(source).toContain("mobilePriority:\"secondary\"");
     expect(source).toContain("empty={<p>No learners to summarize yet.</p>}");
-    expect(source).not.toMatch(/<table\\b/);
+    expect(source).not.toMatch(/<table\b/);
   });
   it("makes allocation cards discoverable and keyboard scrollable",()=>{
     const source=read("mentor-task-allocation");
@@ -38,7 +38,7 @@ describe("UX-mentor-scroll-motion-01 invisible scrollbar affordances",()=>{
   });
   it("does not add hardcoded motion durations to the updated surfaces",()=>{
     for(const name of ["mentor-task-allocation","mentor-lane-board","mentor-board-task-detail-dialog"]){
-      expect(read(name)).not.toMatch(/duration-\\d+|transition-all|animate-\\[.*?ms/);
+      expect(read(name)).not.toMatch(/duration-\d+|transition-all|animate-\[.*?ms/);
     }
   });
 });
