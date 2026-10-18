@@ -94,6 +94,10 @@ describe("SA-ACADEMICS-SECTION-OPS-01 privileged Section operational view",()=>{
    await expect(getSectionOperationsWorkspace(principal,sectionId))
     .rejects.toThrow("Missing permission: academics.manage");
   expect(state.queries).toBe(0);
+  // The single remaining scope read belongs to the active but foreign
+  // College Admin. None of the unprivileged Faculty/Mentor/Learner roles
+  // may probe Section IDs through the academic scope service.
+  expect(state.scope).toHaveBeenCalledTimes(1);
   expect(state.roster).not.toHaveBeenCalled();
  });
  it("denies another college's academic period even when the Section ID resolves",async()=>{
