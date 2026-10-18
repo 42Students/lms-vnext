@@ -29,7 +29,7 @@ function configuration(){
  try{url=new URL(origin);}catch{throw new TpoCampaignDispatchError("NOT_READY");}
  if(process.env.TPO_CAMPAIGNS_READY!=="VERIFIED"||
    !isCampaignTemplateKey(provider)||provider===process.env.ZEPTOMAIL_OTP_TEMPLATE_KEY||
-   !process.env.ZEPTOMAIL_TOKEN||Buffer.byteLength(key,"utf8")<32||
+   !process.env.ZEPTOMAIL_TOKEN?.trim()||Buffer.byteLength(key,"utf8")<32||
    url.protocol!=="https:"||url.username||url.password||url.search||url.hash)
    throw new TpoCampaignDispatchError("NOT_READY");
  return {provider,key,origin:url.origin};
