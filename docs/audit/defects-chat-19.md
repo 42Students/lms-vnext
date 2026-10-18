@@ -522,3 +522,11 @@ Auth/DB fixtures and browser execution remain orchestrator acceptance gates. No 
 | UX-HR-COMPANY-TOUCH-42 | UX | /hr/company main section tabs, college selection pills and profile link had undersized keyboard/touch targets. Give navigation 44px minimum height and visible keyboard outlines; retain exact wording and route destinations. | Same named suite |
 
 Tests and viewport validation were not run locally.
+
+## Recruiter profile self-service access revocation
+
+| ID | Severity | Cross-audit finding and correction | Regression |
+|---|---|---|---|
+| HR-BREAK-LEAVE-GRANT-43 | MAJOR | `RecruiterProfileAccess` treated any HTTP-200 response to its destructive DELETE as successful revocation, even an expired-session HTML fallback or unrelated JSON; it then removed the college from view and navigated away. Native `window.confirm` and React-only `leaving` state also lacked keyboard-dialog behavior and synchronous double-click exclusion. Require an exact `{access:{grantId,status:"REVOKED"}}` receipt from the already origin-guarded API, reject redirects and malformed JSON, single-flight with ref, and use accessible consequence dialog with explicit 44px controls. On uncertain status retain the college entry and show recovery; never claim success. | `tests/unit/HR-BREAK-chat19-leave-grant.test.ts` checks matched/foreign/malformed receipts, action ordering, confirmation and double-submit guard. |
+
+Cloud/browser/PostgreSQL executions pending; no tests were run.
