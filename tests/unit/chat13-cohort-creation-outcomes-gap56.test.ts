@@ -1,5 +1,6 @@
 import {describe,it,expect} from "vitest";
 import {cohortCreationResultRows} from "@/modules/projects/cohort-creation-outcome-model";
+import {classTeamCreationOutcomeCsv} from "@/modules/projects/class-team-creation-outcome-export";
 import {readFileSync} from "node:fs";
 const read=(p:string)=>readFileSync(p,"utf8");
 describe("SA-placements-projects-56 truthful per-student creation results",()=>{
@@ -13,6 +14,16 @@ describe("SA-placements-projects-56 truthful per-student creation results",()=>{
  });
  it("SA-placements-projects-56 rejects an incomplete successful transaction instead of falsely reporting a result",()=>{
   expect(()=>cohortCreationResultRows(groups,created,new Set())).toThrow(/incomplete cohort result/);
+ });
+ it("SA-placements-projects-56 exports exact confirmed per-learner rows without formulas or invented results",()=>{
+  const rows=cohortCreationResultRows(groups,created,new Set(["learner-b"]));
+  const names=new Map([["learner-a",{displayName:"=HYPERLINK(\"https://example.invalid\")"}]]);
+  const csv=classTeamCreationOutcomeCsv(rows,names);
+  expect(csv).toContain('"Student membership","Result","Workspace","Project ID"');
+  expect(csv).toContain("'=HYPERLINK");
+  expect(csv).toContain('"learner-a","CREATED","Project A","project-a"');
+  expect(csv).toContain('"learner-b","ALREADY_COVERED","",""');
+  expect((csv.match(/\r\n/g)??[])).toHaveLength(3);
  });
  it("SA-placements-projects-56 retains the server-side authenticated class roster and atomic serializable transaction",()=>{
   const service=read("src/modules/projects/class-team-workspace-service.ts");
