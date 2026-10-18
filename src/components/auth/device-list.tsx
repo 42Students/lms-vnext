@@ -2,7 +2,7 @@
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -24,11 +24,13 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [busy, setBusy] = useState<string | null>(null);
+  const busyRef = useRef<string | null>(null);
   const [confirmation, setConfirmation] = useState<{key:string;url:string;success:string;label:string}|null>(null);
   const [pending, startTransition] = useTransition();
 
   function run(key: string, url: string, success: string) {
-    if (busy || pending) return;
+    if (busyRef.current || pending) return;
+    busyRef.current = key;
     setBusy(key);
     startTransition(async () => {
       try {
@@ -43,12 +45,13 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
       } catch {
         showToast({ title: "That didn't work. Try again.", tone: "error" });
       } finally {
+        busyRef.current = null;
         setBusy(null);
       }
     });
   }
   function ask(key: string, url: string, success: string, label: string) {
-    if (!busy && !pending) setConfirmation({key,url,success,label});
+    if (!busyRef.current && !pending) setConfirmation({key,url,success,label});
   }
 
   const others = devices.filter((device) => !device.current).length;
@@ -77,7 +80,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
               <Button
                 variant="secondary"
                 size="sm"
-                disabled={pending}
+                disabled={pending || busy!==null}
                 onClick={() =>
                   ask(
                     device.id,
@@ -99,7 +102,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
           <Button
             variant="danger"
             size="sm"
-            disabled={pending}
+            disabled={pending || busy!==null}
             onClick={() =>
               ask(
                 "all",
