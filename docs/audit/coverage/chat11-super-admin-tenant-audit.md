@@ -30,6 +30,8 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 
 | SA-tenants-modules-BRAND-CAS-01 | `saveCollegeBranding`, `collegeBrandingSaveSchema`, `sameCollegeBranding`, College Branding form and PUT | Strict expectedVersion 0/new record, exactly one actor-scoped write/audit, identical retry without new event, changed stale request 409, live college/system-role locks, 16 KiB bounded JSON, form preserves edits and refreshes token on success | `tests/unit/chat11-super-admin-branding-cas.test.ts` and `tests/integration/chat11-super-admin-branding-cas.test.ts` | Cloud CI and real-browser save after refresh |
 
+| SA-tenants-modules-BRAND-06 | `getPublicCollegeBranding`, `sanitizePublicCollegeBranding` | Legacy stored URL and contact fields revalidated before anonymous sign-in rendering. Reject signed token fragments/queries, non-HTTPS, credentials, private object paths, unsafe CSS and CRLF contacts without hiding other valid fields; owned logo proxy retains precedence | `tests/unit/chat11-super-admin-public-branding-safe.test.ts` — BRAND-06 | Live public college-host and image network E2E |
+
 ## Audit disposition
 
 - **Source-level blockers found and patched:** unauthorized malformed-filter route bypass across three administrative pages.

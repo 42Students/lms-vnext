@@ -8,6 +8,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const router=useRouter();
  const {run:runGuarded}=useGuardedAction({timeoutMs:15000});
  const formRef=useRef<HTMLFormElement>(null);
+ const submitPendingRef=useRef(false);
  const [body,setBody]=useState("");
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState("");
@@ -36,7 +37,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
 
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
-  if(sending)return;
+  if(sending||submitPendingRef.current)return;
   const message=body.trim();
   if(message.length===0){
    setNotice("Write a message first");
@@ -46,7 +47,9 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
    setNotice("Keep a message under 4000 characters");
    return;
   }
+  submitPendingRef.current=true;
   setSending(true);
+  try{
   setNotice("");
   let confirmed=false;
   let feedback="The message was not confirmed as sent. Check the thread before retrying.";
@@ -78,7 +81,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
    }
    router.refresh();
   }else setNotice("Could not send. "+feedback);
-  setSending(false);
+  }finally{submitPendingRef.current=false;setSending(false);}
  }
  return <form ref={formRef} onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h2 className="font-semibold text-foreground">Reply to placement cell</h2>
