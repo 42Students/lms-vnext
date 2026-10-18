@@ -85,6 +85,16 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(disabled).toContain('disabled=""');
   });
 
+  it("UX-kit-HARDEN-57 success notices keep their announcement while a tab is hidden",()=>{
+    const html=render(<InlineNotice tone="success" message="Saved successfully" onDismiss={()=>{}}/>);
+    expect(html).toContain('role="status"');
+    expect(html).toContain("Saved successfully");
+    const source=moduleSource("inline-notice");
+    expect(source).toContain('document.addEventListener("visibilitychange", scheduleWhenVisible)');
+    expect(source).toContain('if (!document.hidden) timer = setTimeout(');
+    expect(source).toContain('document.removeEventListener("visibilitychange", scheduleWhenVisible)');
+  });
+
   it("UX-kit-HARDEN-48 disabled Switch exposes a 44px target but not an interactive cursor",()=>{
     const disabled=render(<Switch label="Placement eligibility" disabled/>);
     expect(disabled).toContain('role="switch"');
