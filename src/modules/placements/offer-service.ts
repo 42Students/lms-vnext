@@ -49,6 +49,7 @@ import {
   canReleaseAnotherHeldOffer,
   minimumOfferResponseDeadline,
   isPlacementOfferResponseExpired,
+  placementOfferLockedDecisionTime,
 } from "./offer-college-rules-policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
@@ -646,7 +647,7 @@ export async function actOnPlacementOffer(
     // A caller can wait on this offer row lock past its response deadline.
     // The function-entry instant must not let an already expired offer
     // transition after a competing transaction releases the lock.
-    const lockedNow=new Date(Math.max(now.getTime(),Date.now()));
+    const lockedNow=placementOfferLockedDecisionTime(now,new Date());
 
     // Guard selected status beneath the same offer row lock as the transition.
     if (expectedStatus && offer.status !== expectedStatus) {
