@@ -14,9 +14,23 @@ export function savedDeliverySubmissionReadiness(
   if(!saved||typeof saved!=="object"||Array.isArray(saved))return "UNSAVED";
   const value=saved as Record<string,unknown>;
   if(typeof value.summary!=="string"||!value.summary.trim())return "MISSING_EVIDENCE";
+  // Do not call a forged/partially uploaded file "evidence": the persisted
+  // submission service requires a concrete UUID and a READY project file.
   const fileEvidence=Array.isArray(value.attachments)&&
-    value.attachments.some(item=>item!==null&&typeof item==="object"&&
-      !Array.isArray(item)&&(item as {kind?:unknown}).kind==="FILE");
-  return Boolean(value.sourceUrl||value.demoUrl||fileEvidence)
+    value.attachments.some(item=>{
+      if(!item||typeof item!=="object"||Array.isArray(item))return false;
+      const file=item as {kind?:unknown;fileId?:unknown;url?:unknown};
+      return file.kind==="FILE"&&typeof file.fileId==="string"&&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(file.fileId)&&
+        file.url==null;
+    });
+  const safeUrl=(url:unknown)=>{
+    if(typeof url!=="string")return false;
+    try{
+      const parsed=new URL(url);
+      return (parsed.protocol==="https:"||parsed.protocol==="http:")&&Boolean(parsed.hostname);
+    }catch{return false;}
+  };
+  return (safeUrl(value.sourceUrl)||safeUrl(value.demoUrl)||fileEvidence)
     ? "READY" : "MISSING_EVIDENCE";
 }
