@@ -196,3 +196,22 @@ The `ux:capture` command requires approved **disposable/development** account fi
 - C-02 roster actions, E-02 TPO Home independent read recovery, tablet resize targets, mentor filter sheet and form, notched shell, permission fallback, HTTPS links, duplicate FilterBar IDs, exact-empty call sites, icon-only label and persistent error toasts updated.
 - `npm run ux:audit:source` now runs both Audit 1 and Audit 2 source checks; `npm run ux:audit:unit` includes nested cleanup unit assertions.
 - **No results invented.** E-01, E-03, E-04 and F-03 still require actual seeded reference browser states, same-revision passing checks, 30 affected call-site behavioural snapshots and approved real screenshot hashes; mobile/AT acceptance for all other rows remains pending. Status wording in this ledger is *implementation disposition*, not a third-party audit PASS.
+
+
+### Audit 2 acceptance harness extensions (source only)
+
+- `scripts/ux-capture-references.mjs` now requires `UX_REFERENCE_SCENARIOS_FILE` with actual **four roles × eight states** pointing to canonical role leaf routes. It rejects missing/redirected scenarios and waits for an explicit dev-only `data-ux-state` marker before taking each of the 160 viewport images. A ready screenshot may no longer masquerade as denied/error/stale evidence. No state-injection fixture is shipped or asserted to exist on production pages.
+- `scripts/ux-capture-affected-callsites.mjs` plus `npm run ux:callsite:capture` requires `UX_AFFECTED_CALLSITES_MANIFEST` with **30 unique affected source call sites**, auth-scoped dev routes, selectors and storage states. It captures 320/390/1280 screenshots, checks visible bounds, horizontal overflow and keyboard focus (or requires an explicit noninteractive rationale). It produces real SHA256 hashes only after successful browser runs. It does not auto-approve them.
+- Example invocation (with disposable development storage state files, never production credentials):
+
+```sh
+UX_BASE_URL=http://localhost:3000 UX_MENTOR_PROJECT_ID=<dev-id> \
+ UX_STORAGE_COLLEGE=<dev-storage> UX_STORAGE_FACULTY=<dev-storage> \
+ UX_STORAGE_MENTOR=<dev-storage> UX_STORAGE_TPO=<dev-storage> \
+ UX_REFERENCE_SCENARIOS_FILE=<reviewed-8-state-manifest.json> npm run ux:capture
+
+UX_BASE_URL=http://localhost:3000 \
+ UX_AFFECTED_CALLSITES_MANIFEST=<reviewed-30-callsites.json> npm run ux:callsite:capture
+```
+
+Both commands **fail closed** if the fixture states or account evidence do not actually exist. Neither command has been executed in this GitHub-only authoring lane; screenshot hashes, screen-reader results and UX audit approval remain **OPEN-EVIDENCE**.
