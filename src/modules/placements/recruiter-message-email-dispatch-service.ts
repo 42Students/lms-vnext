@@ -6,6 +6,7 @@ import {placementRecruiterMessageMailState,placementTpoMessages} from "@/db/sche
 import {isRecruiterUnreadReminderDue,makeRecruiterReplyAddress,recruiterReplyTokenForThread} from "./recruiter-message-email-model";
 import {sendRecruiterMessageDigest} from "./recruiter-message-email-provider";
 import {readZeptoMailConfig} from "@/modules/notifications/zeptomail-email";
+import {isCampaignTemplateKey} from "@/modules/messaging/template-boundary-model";
 
 type Candidate={
  thread_id:string;recruiter_user_id:string;recipient_email:string;
@@ -29,7 +30,7 @@ export async function dispatchRecruiterUnreadMessageDigests(
  const mailConfig=readZeptoMailConfig(env);
  if(Buffer.byteLength(replySecret,"utf8")<32||
     Buffer.byteLength(inboundSecret,"utf8")<32||
-    !templateKey||templateKey===mailConfig.otpTemplateKey||!mailConfig.token)
+    !isCampaignTemplateKey(templateKey)||templateKey===mailConfig.otpTemplateKey||!mailConfig.token.trim())
   return {examined:0,sent:0,enabled:false};
  if(!makeRecruiterReplyAddress("a".repeat(32),replyDomain))
   return {examined:0,sent:0,enabled:false};

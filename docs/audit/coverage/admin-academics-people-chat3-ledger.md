@@ -1,0 +1,26 @@
+# chat-3 — Super Admin Academics and People page audit
+
+Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-based audit only; no signed-in browser run, no database transactions executed. **Status: PARTIAL.** A test reference below means the named assertions are present, not that every branch or click path has been exercised.
+
+| Page or service | Role, scope and UX contract reviewed | Test or outstanding gate |
+|---|---|---|
+| `/admin/academics` | Selected college required before academic workspace; no-scope recovery | `tests/unit/chat3-superadmin-academics-people-journeys.test.ts`, `chat3-superadmin-academics-people-audit-r2.test.ts` |
+| `/admin/academics/sections/[sectionId]` | Super Admin scope checked, foreign section hidden, invalid UUID private 404 | `tests/unit/SA-ACADEMICS-PEOPLE-BREAK-chat3.test.ts`; PostgreSQL row-revocation test **GAP** |
+| `/admin/people` | Selected college required before membership mutations, stable paging and no-scope call-to-action | `tests/unit/chat3-superadmin-academics-people-audit-r2.test.ts`; browser-role switch test **GAP** |
+| `/admin/people/directory` | Tab-aware roles, selected-college contact visibility only, bounded paging and filters | `tests/unit/chat3-superadmin-academics-people-journeys.test.ts`, `SA-ACADEMICS-PEOPLE-BREAK-chat3-02.test.ts`; live DB export/read consistency **GAP** |
+| `/admin/people/directory/[membershipId]` | Private missing member and masking outside selected college | `tests/unit/chat3-superadmin-academics-people-audit-r2.test.ts`; persisted member switch **GAP** |
+| `/admin/people/directory/[membershipId]/audit` | Exact identity-scoped audit and truthful zero events | `tests/unit/chat3-superadmin-academics-people-audit-r2.test.ts`; real append-only audit chronology **GAP** |
+| `/admin/people/unassigned` | Unassigned identities only in global scope, never exposes contact or sessions | `tests/unit/SA-ACADEMICS-PEOPLE-BREAK-chat3-02.test.ts`; direct DB authorization **GAP** |
+| `/admin/recruiters` | Reuses canonical HR implementation; no alternate authorization path | `tests/unit/chat3-superadmin-academics-people-audit-r2.test.ts`; HR permission matrix belongs HR lane |
+| `src/modules/people/admin-user-directory-model.ts` | Reject unsupported filters, role overrides on Faculty/Learner tabs, pagination caps | `tests/unit/SA-ACADEMICS-PEOPLE-BREAK-chat3-02.test.ts` |
+| `src/modules/people/admin-unassigned-user-model.ts` | Global-only identity view, strict query, no-contacts page model | `tests/unit/SA-ACADEMICS-PEOPLE-BREAK-chat3-02.test.ts` |
+| `src/modules/admin-ui/super-admin-section-detail.ts` | Scope, permission and foreign UUID denial before Section render | `tests/unit/SA-ACADEMICS-PEOPLE-BREAK-chat3.test.ts` |
+| `src/modules/admin-ui/super-admin-scoped-people-service.ts` | Selected-college people guard and membership-scoped profile projection | **GAP**: mock tests and PostgreSQL wrong-organization evidence |
+| `src/modules/people/admin-user-directory-service.ts` | Scoped membership row + conditional contact projection in SQL | **GAP**: query/role DB integration across global, org and college |
+| `src/modules/people/admin-unassigned-user-service.ts` | No membership predicate and global-only guard before DB query | **GAP**: DB service test with identities having ended vs no membership |
+
+## Targeted repairs and further release gates
+
+- `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
+- `COL-people-20` permission protection and `TPO-drives-51` create-route authority appeared source-correct in the current snapshot; the published unit-failure report may be stale. Neither test was weakened or deleted.
+- Remaining: full click/action matrix, authenticated wrong-tenant/expired-session browser journeys, current on-screen/CSV reconciliation, responsive keyboard/phone tests, and real PostgreSQL tenancy checks.

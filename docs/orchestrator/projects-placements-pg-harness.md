@@ -104,3 +104,14 @@ The registered suite `tests/integration/projects-placements-pg-harness-boundarie
 `createTaskSubmission`, `createFinalSubmission`, `submitFinalSubmission` and `createMeeting` now verify tenant-linked active learner project membership and current mutation capability in the **same transaction** before writing. Meeting authors must be from the project college. This improves fixture integrity and does *not* claim service/route IDOR protection or background worker idempotency. To validate production security, test each service with an authenticated request context and a separate disposable database transaction/cleanup strategy.
 
 Shared kit regression additions: `tests/unit/UX-kit-role-and-overlay-chat17.test.tsx` covers scoped rendering, expired actors, WebView back markers, safe table links, file prechecks, toast timer cleanup. Run `npm run test:ux:kit:hardening` for these and earlier UI checks.
+
+## Additional schema and query-plan witnesses (PROJ-HARNESS-29..32)
+
+`tests/integration/projects-placements-pg-harness-relations-chat17.test.ts` is included in `npm run test:db:projects-harness` and runs against the same guarded `TEST_DATABASE_URL`. It checks:
+
+1. Migrated unique/partial indexes for college workspaces, active mentors, one active sprint, submissions, and evaluation item ordering via `pg_indexes`.
+2. `EXPLAIN (FORMAT JSON)` plans for tenant-scoped workspace and project-task reads, verifying queries are accepted by real PostgreSQL. A one-row fixture is **not** evidence of planner index selection at scale.
+3. Actual `pg_constraint.confdeltype='r'` for core Projects restricted foreign keys, rather than inventing cascade expectations.
+4. Failed task and workspace deletions leave their submission and final-delivery descendants intact; each SQLSTATE `23503` is isolated by a SAVEPOINT and the entire transaction rolls back.
+
+A separate high-volume seeded disposable database and `EXPLAIN ANALYZE` are required before claiming 1,000+ project/task query performance. Do not use these rollback-only fixtures as a throughput benchmark. CI must verify all examples on the currently registered Drizzle journal, and any failing constraint witness is a release bug, not a reason to skip the test.

@@ -118,4 +118,29 @@ describe("chat-16 generic campaign and recruiter email channel fail-closed behav
     expect(accepted).toBe(false);
     expect(transport).not.toHaveBeenCalled();
   });
+  it("MSG-ENDPOINT-01 never dispatches campaigns to plaintext or credentialed mail hosts", async () => {
+    for (const apiUrl of [
+      "http://api.zeptomail.in/v1.1/email/template",
+      "https://operator:secret@api.zeptomail.in/v1.1/email/template",
+      "not-a-url",
+    ]) {
+      const outbound = createOutboundProvider({
+        ...config, email: { ...config.email, apiUrl },
+      }, fetch, { APP_ENV: "production" });
+      expect(await outbound.send(email)).toBe(false);
+    }
+    expect(outboundFetch).not.toHaveBeenCalled();
+  });
+
+  it("REC-JOIN-CODE-ENDPOINT-01 rejects insecure join-code API URL before contacting network", async () => {
+    vi.stubEnv("APP_ENV", "production");
+    vi.stubEnv("ZEPTOMAIL_TOKEN", "test-valid-token");
+    vi.stubEnv("ZEPTOMAIL_API_URL", "http://127.0.0.1:3000/private");
+    const transport = vi.fn(async () => new Response(null, { status: 202 }));
+    expect(await deliverPublicRecruiterJoinCode(
+      "recruiter@example.org", "123456", transport as unknown as typeof fetch,
+    )).toBe(false);
+    expect(transport).not.toHaveBeenCalled();
+  });
+
 });
