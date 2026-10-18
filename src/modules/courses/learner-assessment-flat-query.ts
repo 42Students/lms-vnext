@@ -29,8 +29,10 @@ export async function listOwnLearnerAssessmentRows(deliveries:readonly Delivery[
    .innerJoin(courseLessons,eq(courseLessons.learningPathId,courseLearningPaths.id))
    .innerJoin(courseAssignments,and(eq(courseAssignments.lessonId,courseLessons.id),
     or(isNull(courseAssignments.deliveryId),eq(courseAssignments.deliveryId,courseSectionDeliveries.id))))
+   // A shared assignment has one persisted submission per (assignment, learner).
+   // Learners moving between sections retain that submitted work; the current
+   // assignment audience and delivery are authorized by the outer query.
    .leftJoin(assignmentSubmissions,and(eq(assignmentSubmissions.assignmentId,courseAssignments.id),
-    eq(assignmentSubmissions.deliveryId,courseSectionDeliveries.id),
     eq(assignmentSubmissions.membershipId,membershipId)))
    .where(and(...baseConditions,eq(courseAssignments.status,"PUBLISHED"))),
   db.select({
@@ -40,11 +42,9 @@ export async function listOwnLearnerAssessmentRows(deliveries:readonly Delivery[
    totalPoints:courseQuizzes.totalPoints,sequence:courseQuizzes.sequence,status:courseQuizzes.status,
    resultsPublished:courseQuizzes.resultsPublished,
    attemptsUsed:sql<number>`(select count(*)::integer from quiz_attempts qa
-    where qa.quiz_id = ${courseQuizzes.id} and qa.membership_id = ${membershipId}::uuid
-      and qa.delivery_id = ${courseSectionDeliveries.id})`,
+    where qa.quiz_id = ${courseQuizzes.id} and qa.membership_id = ${membershipId}::uuid)`,
    firstSubmittedAt:sql<Date|null>`(select min(qa.submitted_at) from quiz_attempts qa
-    where qa.quiz_id = ${courseQuizzes.id} and qa.membership_id = ${membershipId}::uuid
-      and qa.delivery_id = ${courseSectionDeliveries.id})`,
+    where qa.quiz_id = ${courseQuizzes.id} and qa.membership_id = ${membershipId}::uuid)`,
   }).from(courseSectionDeliveries)
    .innerJoin(courseLearningPaths,eq(courseLearningPaths.offeringId,courseSectionDeliveries.offeringId))
    .innerJoin(courseLessons,eq(courseLessons.learningPathId,courseLearningPaths.id))
