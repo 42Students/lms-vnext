@@ -5,7 +5,7 @@ import {inAppNotifications,activityEvents} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
-import {hrNotificationsQuerySchema,HR_NOTIFICATION_EVENTS,HR_INBOX_PAGE_SIZE,hrInboxPageBounds,filterHrNotificationJobs,projectHrNotifications} from "./hr-notifications-model";
+import {hrNotificationsQuerySchema,HR_NOTIFICATION_EVENTS,HR_INBOX_PAGE_SIZE,hrInboxPageBounds,clampHrInboxPage,filterHrNotificationJobs,projectHrNotifications} from "./hr-notifications-model";
 export async function listHrNotifications(context:RequestContext,raw:unknown={}) {
  const query=hrNotificationsQuerySchema.parse(raw);
  if(!hasActiveRecruiter(context)||!context.recruiter||context.recruiter.userId!==context.user.id)
@@ -33,7 +33,8 @@ export async function listHrNotifications(context:RequestContext,raw:unknown={})
  .where(scope):[{total:0,unread:0}];
  const total=Number(stats?.total??0),unread=Number(stats?.unread??0);
  const selectedTotal=query.unreadOnly==="true"?unread:total;
- const bounds=hrInboxPageBounds(query.page,selectedTotal);
+ const effectivePage=clampHrInboxPage(query.page,selectedTotal);
+ const bounds=hrInboxPageBounds(effectivePage,selectedTotal);
  const rows=jobIds.length?await db.select({
   id:inAppNotifications.id,createdAt:inAppNotifications.createdAt,
   readAt:inAppNotifications.readAt,subjectId:activityEvents.subjectId,
@@ -41,9 +42,9 @@ export async function listHrNotifications(context:RequestContext,raw:unknown={})
  }).from(inAppNotifications).innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
  .where(query.unreadOnly==="true"?and(scope,isNull(inAppNotifications.readAt)):scope)
  .orderBy(desc(inAppNotifications.createdAt),desc(inAppNotifications.id))
- .limit(HR_INBOX_PAGE_SIZE).offset((query.page-1)*HR_INBOX_PAGE_SIZE):[];
+ .limit(HR_INBOX_PAGE_SIZE).offset((effectivePage-1)*HR_INBOX_PAGE_SIZE):[];
  return {status:"READY" as const,choices:grants,collegeId,
   rows:projectHrNotifications(rows,jobs),
-  unread,total,truncated:bounds.pages>query.page,
-  page:query.page,pages:bounds.pages,first:bounds.first,last:bounds.last};
+  unread,total,truncated:bounds.pages>effectivePage,
+  page:effectivePage,pages:bounds.pages,first:bounds.first,last:bounds.last};
 }
