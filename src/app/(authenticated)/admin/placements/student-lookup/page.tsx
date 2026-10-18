@@ -15,7 +15,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
  const data=q.length>=3?ctx.adminScope?.collegeId?await lookupCollegeStudentPlacement(ctx,q):null:null;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Student placement lookup"
-   actions={<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Analytics</Link>}/>
+   actions={<Link href="/admin/placements/analytics" className="font-semibold text-[var(--lms-teal-deep)] underline">Analytics</Link>}/>
   <form action="/admin/placements/student-lookup" role="search" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
    <label className="grid max-w-xl gap-2 text-sm font-semibold">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}
