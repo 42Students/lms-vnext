@@ -339,3 +339,9 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Severity | Source | Defect, remediation, evidence |
 |---|---|---|---|
 | HR-BREAK-DIGEST-HEADER-16 | MAJOR | `src/modules/placements/recruiter-message-email-provider.ts`, `recruiter-message-email-model.ts` | Digest merge variable text was HTML-escaped, but the raw `digest.recipientName` was forwarded unchanged as the ZeptoMail recipient display name. Control characters such as CR/LF and Unicode bidi overrides could create malformed display headers or visually spoof a different recipient. Added bounded plain-text display-name sanitization at the provider boundary, preserving the validated recipient address. Direct `tests/unit/HR-BREAK-chat19-mail-digest-provider.test.ts` checks CRLF, bidi overrides, length 160 and correct safe recipient name; the existing non-OTP, no-redirect, provider denial guards remain intact. |
+
+## HR Today action queue wrong-inbox regression
+
+| ID | Severity | Source | Finding and correction | Test |
+|---|---|---|---|---|
+| HR-BREAK-TODAY-NOTICES-17 | MAJOR | `src/modules/placements/hr-today-action-queue-model.ts` | The earlier HR Today unread card was fixed to route to `/hr/notifications`, but the separate combined action queue still generated `/recruiter/messages?unreadOnly=true` for system notifications. Since Messages is the conversation inbox, this produced a wrong destination and did not reveal the promised unread system notices. Align the action queue notification link with the authorized college-scoped Notifications route, without changing actual conversation deeplinks. | `tests/unit/hr-today-action-queue-scoped.test.ts` checks exact notification URL, unread-only filter, and not the Messages alias. |
