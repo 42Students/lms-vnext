@@ -1,7 +1,7 @@
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {superAdminPublishedDriveEditSchema} from "@/modules/placements/super-admin-published-drive-edit-model";
-import {companyMergeInputSchema} from "@/modules/placements/admin-company-merge-service";
+import {companyMergeInputSchema} from "@/modules/placements/admin-company-merge-model";
 import {superAdminArchiveCommandSchema,canArchiveDriveWithImpact} from "@/modules/placements/super-admin-drive-archive-model";
 const source=(p:string)=>readFileSync(p,"utf8");
 const a="550e8400-e29b-41d4-a716-446655440000";
