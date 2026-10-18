@@ -239,9 +239,11 @@ async function requireFixtureCollegePrincipal(
       join users u on u.id = cm.user_id
       join membership_roles mr on mr.membership_id = cm.id
       join colleges c on c.id = cm.college_id
+      join organizations org on org.id = c.organization_id
      where cm.id = $1 and cm.college_id = $2 and u.id = $3
        and cm.status = 'ACTIVE' and u.platform_status = 'ACTIVE'
-       and c.status = 'ACTIVE' and mr.role = any($4::membership_role[])
+       and c.status = 'ACTIVE' and org.status = 'ACTIVE'
+       and mr.role = any($4::membership_role[])
      limit 1`, [actor.membershipId, collegeId, actor.userId, roles]);
   if (!rows.length) throw new Error("PROJ-HARNESS: actor is not an active member in the required role");
 }
@@ -314,6 +316,9 @@ async function requireProjectLearner(db: PgHarness, projectId: string,
       join college_memberships cm
         on cm.college_id = p.college_id and cm.id = $2 and cm.college_id = $3
       join users u on u.id = cm.user_id and u.id = $4 and u.platform_status = 'ACTIVE'
+      join colleges c on c.id = p.college_id and c.status = 'ACTIVE'
+      join organizations org on org.id = c.organization_id and org.status = 'ACTIVE'
+      join membership_roles mr on mr.membership_id = cm.id and mr.role = 'LEARNER'
       join project_members pm
         on pm.project_id = p.id and pm.membership_id = cm.id
      where p.id = $1
@@ -332,6 +337,8 @@ async function requireProjectCollegeActor(db: PgHarness, projectId: string,
       join college_memberships cm
         on cm.college_id = p.college_id and cm.id = $3 and cm.status = 'ACTIVE'
       join users u on u.id = cm.user_id and u.id = $4 and u.platform_status = 'ACTIVE'
+      join colleges c on c.id = p.college_id and c.status = 'ACTIVE'
+      join organizations org on org.id = c.organization_id and org.status = 'ACTIVE'
      where p.id = $1 and p.college_id = $2`,
     [projectId, actor.collegeId, actor.membershipId, actor.userId]);
   if (!rows.length) throw new Error("PROJ-HARNESS: project actor wrong college");
