@@ -28,6 +28,7 @@ export async function listCollegeActiveReadinessOverrides(context: RequestContex
   if (!live.length) return [];
   const projects = await db.select({ id: projectInstances.id, title: projectInstances.title })
     .from(projectInstances).where(and(eq(projectInstances.collegeId, college.id),
+      ne(projectInstances.status, "ARCHIVED"),
       inArray(projectInstances.id, live.map(row => row.projectId))));
   const titles = new Map(projects.map(row => [row.id, row.title]));
   return live.filter(row => titles.has(row.projectId)).map(row => ({
