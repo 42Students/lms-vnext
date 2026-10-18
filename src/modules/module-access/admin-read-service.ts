@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
   colleges,
   moduleAccessRules,
@@ -217,6 +218,18 @@ export async function listSuperAdminFeatureControls(
 
   const rules =
     await loadCollegeAncestorRules(collegeRows);
+
+  // Request-time Super Admin authority can be revoked while the college
+  // directory and ancestor rules are loading. Reconstruct persisted system
+  // roles and reapply the selected-scope fence before exposing those rows.
+  await db.transaction(async tx=>{
+    const persisted=await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
+    for(const college of collegeRows){
+      requirePermission(persisted,"college.read",{
+        collegeId:college.id,organizationId:college.organizationId,
+      });
+    }
+  });
 
   return {
     items: collegeRows.map((college) => ({
@@ -491,6 +504,15 @@ export async function getSuperAdminCollegeModuleAccess(
   const total = Number(
     countResult.rows[0]?.total ?? 0,
   );
+
+  // Do not reveal stored descendant overrides to a Super Admin whose role
+  // or selected-college permission was withdrawn during the database reads.
+  await db.transaction(async tx=>{
+    const persisted=await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
+    requirePermission(persisted,"college.read",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
+  });
 
   return {
     college: {
