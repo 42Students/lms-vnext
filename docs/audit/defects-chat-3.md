@@ -258,6 +258,12 @@ The Super Admin directory extracted only six known URL fields, ignoring arbitrar
 
 The Faculty calendar applied `first(raw.month)` and `first(raw.deliveryId)`, silently accepting duplicated URL parameters and ignoring unrecognized tenant selectors. This could mislead users about which Section/month had actually been requested and undermine auditability of copied links. The SSR route now rejects array-valued or unknown query selectors outright with the existing **Invalid month or Section filter** clear-filters recovery. `tests/unit/UX-teacher-calendar-strict-scope-query.test.tsx` exercises invalid/valid/foreign deep links. Runtime and mobile-browser acceptance pending.
 
+### FAC-DELIVERY-ROSTER-ELECTIVE-047 — malformed elective backing disclosed entire Section roster (S1)
+
+The Faculty delivery roster resolved active elective backing with tenant-joined slot/group rows. When a backed elective existed but its group/slot association was missing, archived or in a foreign college, the inner join could return no row, causing the service to incorrectly assume an ordinary Section delivery and read **every** active Section learner. This violates the elective audience boundary even when the Faculty is authorized to teach the Section.
+
+**Fix:** On a missing fully scoped elective row, explicitly check whether any elective is backed by that delivery. If it is, fail closed with an empty roster instead of executing the Section fallback; only genuinely non-elective deliveries use the Section roster. Direct service test `tests/unit/chat3-faculty-delivery-roster-elective-fallback.test.ts` covers active group, deleted/disabled group, broken/cross-college backing and real non-elective fallback. Database foreign-key/cascade and role-browser integration checks remain unrun.
+
 ### FAC-ASSESSMENT-SCALE-046 — very large Faculty lessons overflow next-position calculation (S2)
 
 The batched Faculty assessment overview calculated the next authored lesson position using `Math.max(...sequences)`, which spreads one argument per lesson content/assessment card. Large lessons can exceed V8's argument limit and fail the entire index, even if the batched SQL succeeded. The service now uses an iterative `nextFacultyLessonContentSequence` model which preserves zero-index and sparse order but rejects invalid/unsafe persisted sequence values. `tests/unit/chat3-faculty-assessment-sequence-scale.test.ts` covers 130,000 items plus boundary/tenant targeting. CI and large PostgreSQL dataset acceptance pending.
