@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {apiErrorResponse} from "@/lib/api-error";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-proposal-history-model";
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
@@ -7,8 +8,9 @@ import {hrDriveProposalHistoryCsv} from "@/modules/placements/hr-drive-proposal-
 export const runtime="nodejs";
 /** Read-only, college-scoped CSV for the requested 20-row proposal-history page. */
 export async function GET(request:Request){
+ try{
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))
+ if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  const search=new URL(request.url).searchParams;
  const allowed=["collegeId","page","q","sort"];
@@ -34,4 +36,5 @@ export async function GET(request:Request){
   "X-Export-Scope":"CURRENT_PAGE",
   "X-Export-Page":String(result.page),
  }});
+ }catch(error){return apiErrorResponse(error);}
 }
