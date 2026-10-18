@@ -246,6 +246,10 @@ The retired Faculty notices bookmark path used `facultyNoticeParamsSchema.parse(
 
 **Fix:** `safeParse` and `notFound()` before any request context or Section read; still call `getFacultySectionNotices` before redirect on valid IDs, so revoked teaching assignments cannot be bypassed. `tests/unit/UX-teacher-redirect-no-shared-route-journey.test.tsx` verifies this and three additional alias routes. Runtime/browser acceptance pending.
 
+### SA-RECRUITERS-PARTIAL-044 — transient account-status query failure hides valid recruiter directory (S2)
+
+The Super Admin recruiter index correctly caught failures of its main account list, but fetched summary counts afterward with no recovery. A summary-only DB outage therefore made the whole page fail despite the available account list. The page now returns the scoped list and a nullable summary; its client component displays **Unavailable** plus Retry totals, never fake `0` counts. The role gate remains before both queries. Direct page behavior test: `tests/unit/chat3-sa-recruiter-directory-partial-service.test.tsx`, SA-RECRUITERS-PARTIAL-01 (authored; cloud CI not yet run).
+
 ### SA-PEOPLE-DIRECTORY-QUERY-041 — ambiguous or injected people directory filters silently ignored (S2)
 
 The Super Admin directory extracted only six known URL fields, ignoring arbitrary selectors and passing potential array-valued query keys to Zod coercion. A bookmarked `?page=1&page=999` or injected `collegeId` could be ambiguously processed rather than returning the explicit invalid-filter recovery. The directory now requires exact recognized single-valued URL keys before parsing and before privileged roster reads. `tests/unit/chat3-sa-people-directory-strict-url-ssr.test.tsx` checks duplicate/forged/invalid state, genuine empty and wrong role. Source/test authored, runtime CI pending.
