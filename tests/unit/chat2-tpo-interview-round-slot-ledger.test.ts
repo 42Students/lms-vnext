@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
 import {
  tpoInterviewSlotActionSchema,planInterviewDay,sameInterviewRoom,overlapsInterviewRoom,
 } from "@/modules/placements/tpo-interview-slot-model";
@@ -66,6 +67,23 @@ describe("TPO-drive-workspace-44 interview slots/rounds service input ledger",()
   expect(overlapsInterviewRoom({...row,room:"Lab B"},[row])).toBe(false);
   expect(overlapsInterviewRoom({...row,startsAt:new Date("invalid")},[])).toBe(true);
   expect(overlapsInterviewRoom(row,[{...row,endsAt:new Date("invalid")}])).toBe(true);
+ });
+});
+
+describe("TPO-drive-workspace-44 bulk room concurrency ledger",()=>{
+ it("TPO-drive-workspace-44 versions and revalidates each booked slot before sending its room-change notice",()=>{
+  const source=readFileSync("src/modules/placements/tpo-interview-slot-service.ts","utf8");
+  const bulk=source.slice(source.indexOf('if(input.action==="ASSIGN_ROOMS_BY_ROLL")'),
+   source.indexOf('if(input.action==="MOVE_REQUEST")'));
+  expect(bulk).toContain('eq(placementRoundCandidateSlots.status,"BOOKED")');
+  expect(bulk).toContain('eq(placementRoundCandidateSlots.applicationId,slot.applicationId!)');
+  expect(bulk).toContain('eq(placementRoundCandidateSlots.version,slot.version)');
+  expect(bulk).toContain('eq(placementRoundCandidateSlots.roundId,info.round.id)');
+  expect(bulk).toContain('.returning({id:placementRoundCandidateSlots.id})');
+  expect(bulk).toContain('if(!saved)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE")');
+  expect(bulk.indexOf('if(!saved)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE")'))
+   .toBeLessThan(bulk.indexOf('await notice(tx,context,job,slot.applicationId!'));
+  expect(bulk).toContain("overlapsInterviewRoom({...slot,room:input.room}");
  });
 });
 
