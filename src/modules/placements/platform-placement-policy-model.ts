@@ -25,3 +25,18 @@ export function placementPolicyValidate(key:PlacementPolicyKey,value:number) {
    (rule.step!==1&&Math.abs(value*100-Math.round(value*100))>1e-7))return false;
  return true;
 }
+
+
+/** Read a persisted policy override without interpreting malformed legacy
+ * numeric text as a safety setting. The write schema emits canonical decimals.
+ */
+export function storedPlacementPolicyValue(
+ key: PlacementPolicyKey,
+ raw: string | null | undefined,
+): number {
+ const field=PLACEMENT_POLICY_FIELDS.find(item=>item.key===key)!;
+ const text=raw?.trim();
+ if(!text||!/^(?:0|[1-9]\\d*)(?:\\.\\d+)?$/.test(text))return field.defaultValue;
+ const value=Number(text);
+ return placementPolicyValidate(key,value)?value:field.defaultValue;
+}

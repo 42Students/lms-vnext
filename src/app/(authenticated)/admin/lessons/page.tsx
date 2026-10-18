@@ -34,7 +34,7 @@ export default async function SuperAdminLessonsPage({
   const summary = adminLessonStats(data.items);
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons"
-      description="Read-only authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion." />
+      description="Authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion." />
     <a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
      className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export lessons.csv</a>
     <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
