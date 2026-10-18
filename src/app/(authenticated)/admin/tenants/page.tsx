@@ -56,7 +56,7 @@ export default async function TenantDirectory({searchParams}:{
    <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Create an organization and its colleges</Link>
    <Link href="/admin/tenants/setup" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Get this college ready to go live</Link>
   </div>
-  <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4">
+  <form className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold text-body">College
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
