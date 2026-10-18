@@ -25,13 +25,13 @@ export default async function SuperAdminAuthSettings(){
    Configuration runtime status is not attested by this page. Privileged second-factor readiness must be verified separately before production.
   </div>
   <ul className="grid min-w-0 gap-3 sm:grid-cols-2">
-   {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+   {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 border-b border-border py-4">
     <h2 className="break-words font-semibold text-foreground">{item.title}</h2>
     <p className="mt-2 text-sm text-body">{item.description}</p>
     <p className="mt-3 text-xs font-semibold text-muted-foreground">{item.state}</p>
    </li>)}
   </ul>
-  <section aria-label="Legacy platform and auth setting keys" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+  <section aria-label="Legacy platform and auth setting keys" className="space-y-3 border-b border-border pb-5">
    <h2 className="font-semibold">Platform &amp; auth policy keys</h2>
    <p className="text-sm text-body">Names and validation are listed for review. Environment and live network configuration are never displayed. Changes to host, cookie or network controls require manual deployment acceptance.</p>
    <ul className="space-y-2 text-sm">{LEGACY_TENANT_SETTING_SPECS.filter(spec=>spec.group==="Platform & auth").map(spec=><li key={spec.key} className="rounded-md border border-border p-3">
