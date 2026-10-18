@@ -104,7 +104,7 @@ export default async function SuperAdminPeoplePage({
           description="Use the Super Admin scope selector in the top bar to choose a college before viewing membership data."
         />
         <Link href="/admin/people/directory"
-          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Browse all permitted Users &amp; Roles without selecting a college →
         </Link>
       </div>
@@ -151,11 +151,11 @@ export default async function SuperAdminPeoplePage({
           {[10,20,50].map(n=><option key={n} value={n}>{n}</option>)}
         </select>
        </label>
-       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-       <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
+       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground">Search</button>
+       <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
-      <Link href="/admin/people/directory" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Browse platform users & roles →
       </Link>
       <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
@@ -166,8 +166,8 @@ export default async function SuperAdminPeoplePage({
       <nav aria-label="People pages" className="flex flex-wrap items-center justify-between gap-4 text-sm">
        <span>Page {pagination.page} of {pagination.pages} · {pagination.total} results</span>
        <div className="flex gap-3">
-        {pagination.hasPrevious?<Link className="font-semibold text-primary-text" href={href(pagination.page-1)}>Previous</Link>:null}
-        {pagination.hasNext?<Link className="font-semibold text-primary-text" href={href(pagination.page+1)}>Next</Link>:null}
+        {pagination.hasPrevious?<Link className="font-semibold text-[var(--lms-teal-deep)]" href={href(pagination.page-1)}>Previous</Link>:null}
+        {pagination.hasNext?<Link className="font-semibold text-[var(--lms-teal-deep)]" href={href(pagination.page+1)}>Next</Link>:null}
        </div>
       </nav>
     </div>
