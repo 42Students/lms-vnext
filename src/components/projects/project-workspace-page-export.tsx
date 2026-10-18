@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {projectAdminCsv} from "@/modules/projects/project-admin-csv-model";
 import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-status-label";
@@ -18,10 +19,10 @@ export function ProjectWorkspacePageExport({items}:{items:Item[]}){
   setNotice("Exported "+items.length+" workspaces from this page.");
  }
  return <div className="flex items-center gap-3">
-  <button type="button" disabled={!items.length} onClick={exportCsv}
-   className="min-h-10 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={!items.length} onClick={exportCsv}
+   className="">
    Export this page · CSV
-  </button>
+  </Button>
   {notice?<span role="status" className="text-xs text-body">{notice}</span>:null}
  </div>;
 }
