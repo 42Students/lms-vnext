@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdAt:string;updatedAt:string;
@@ -12,6 +13,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
  const [value,setValue]=useState("");const [reason,setReason]=useState("");
  const [notes,setNotes]=useState<Record<string,string>>({});
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");
+ const [confirmation,setConfirmation]=useState<{action:"ACCEPT"|"DECLINE"|"WITHDRAW";requestId:string;expectedUpdatedAt:string;note:string}|null>(null);
  async function send(body:Record<string,unknown>){
   if(busy)return;
   setBusy(true);setError("");setSuccess("");
@@ -20,9 +22,12 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
     body:JSON.stringify(body),
    });
-   const payload=await response.json() as {error?:string;issues?:Array<{message:string}>;status?:string};
-   if(!response.ok)throw Error(payload.issues?.[0]?.message??payload.error??"Could not save change request.");
-   setSuccess("Change request "+(payload.status??"updated").toLowerCase()+".");
+   const payload=await response.json().catch(()=>null) as {status?:string}|null;
+   if(!response.ok)throw Error("Could not save change request.");
+   const publicStatus=payload?.status&&/^(OPEN|ACCEPTED|ANSWERED|DECLINED|WITHDRAWN|CANCELLED)$/i.test(payload.status)
+     ?payload.status.toLowerCase():"updated";
+   setSuccess("Change request "+publicStatus+".");
+   setConfirmation(null);
    if(body.action==="CREATE"){setValue("");setReason("");}
    if(typeof body.requestId==="string")setNotes(previous=>({...previous,[body.requestId as string]:""}));
    router.refresh();
@@ -79,14 +84,13 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
        {item.status==="OPEN"&&item.targetParty===party?(
         ["ACCEPT","ANSWER","DECLINE"] as const).map(action=>
          <button key={action} type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
-          onClick={()=>void send({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,
-           note:(notes[item.id]??"").trim()})}
+          onClick={()=>action==="ANSWER"?void send({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()}):
+           setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
           className="min-h-11 rounded border border-primary px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</button>):null}
        {item.status==="OPEN"&&item.proposerParty===party&&item.createdByUserId===userId?
         <button type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
-         onClick={()=>void send({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,
-          note:(notes[item.id]??"").trim()})}
+         onClick={()=>setConfirmation({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
          className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Withdraw</button>:null}
       </div>
      </div>
@@ -94,5 +98,14 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   </section>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
+  <ConfirmDialog open={confirmation!==null} onOpenChange={open=>{if(!open&&!busy)setConfirmation(null);}}
+   title={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
+   confirmLabel={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
+   confirmVariant={confirmation?.action==="ACCEPT"?"primary":"danger"} pending={busy}
+   onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
+     expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
+   <p className="text-sm text-body">Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
+   {error?<p role="alert" className="mt-2 text-sm text-foreground">{error}</p>:null}
+  </ConfirmDialog>
  </div>;
 }
