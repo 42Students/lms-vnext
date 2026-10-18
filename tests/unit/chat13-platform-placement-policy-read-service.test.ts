@@ -75,6 +75,26 @@ describe("SA-PLACEMENT-POLICY-07 Super Admin global policy read boundary", () =>
     expect(where).toHaveBeenCalledTimes(1);
   });
 
+  it("SA-PLACEMENT-POLICY-08 rejects finite-but-invalid overrides without losing versions", async () => {
+    mocks.getDb.mockReturnValue({
+      select: () => ({ from: () => ({ where: async () => [
+        {key:"interview.durationMaxMinutes",value:"1000000",version:5,
+          updatedAt:new Date("2099-01-02T10:00:00.000Z")},
+        {key:"interview.durationMinMinutes",value:"12.5",version:7,
+          updatedAt:new Date("2099-01-03T10:00:00.000Z")},
+        {key:"placement.lowConversionThreshold",value:"0.255",version:8,
+          updatedAt:new Date("2099-01-04T10:00:00.000Z")},
+      ] }) }),
+    });
+    const rows=await listPlatformPlacementPolicy(admin);
+    expect(rows.find(row=>row.key==="interview.durationMaxMinutes"))
+      .toMatchObject({value:480,isOverridden:true,version:5});
+    expect(rows.find(row=>row.key==="interview.durationMinMinutes"))
+      .toMatchObject({value:15,isOverridden:true,version:7});
+    expect(rows.find(row=>row.key==="placement.lowConversionThreshold"))
+      .toMatchObject({value:0.15,isOverridden:true,version:8});
+  });
+
   it("falls back to the documented default instead of displaying a nonfinite stored number", async () => {
     mocks.getDb.mockReturnValue({
       select: () => ({ from: () => ({ where: async () => [
