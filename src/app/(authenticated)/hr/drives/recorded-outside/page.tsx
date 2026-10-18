@@ -12,7 +12,10 @@ export default async function HrRecordedOutsidePage({searchParams}:{
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context)||!context.recruiter)redirect("/dashboard");
  const q=await searchParams;
- const raw=Array.isArray(q.collegeId)?q.collegeId[0]:q.collegeId;
+ // HR-RECORDED-QUERY-51: duplicate keys must not silently choose the first
+ // college or saved request supplied by a crafted link.
+ if(Array.isArray(q.collegeId)||Array.isArray(q.saved))notFound();
+ const raw=q.collegeId;
  const collegeId=raw??(context.recruiter.grants.length===1?context.recruiter.grants[0]?.collegeId:undefined);
  if(!collegeId)return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader eyebrow="Recruiter · Drive creation" title="Choose a college for the external drive"/>
@@ -22,7 +25,7 @@ export default async function HrRecordedOutsidePage({searchParams}:{
  </div>;
  if(!z.string().uuid().safeParse(collegeId).success||!context.recruiter.grants.some(g=>g.collegeId===collegeId))notFound();
  const result=await recordedOutsideChoices(context,collegeId);
- const savedId=Array.isArray(q.saved)?q.saved[0]:q.saved;
+ const savedId=q.saved;
  const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
  return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Recruiter · Drive creation" title="Record an outside-platform drive"
