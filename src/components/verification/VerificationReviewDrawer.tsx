@@ -4,6 +4,8 @@ import {useEffect,useRef,useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
+import { verificationEducationRows } from "@/modules/verification/education-rows";
+import { DataTable } from "@/components/ui/data-table";
 import {tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
 import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
 import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
@@ -146,26 +148,19 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     {row.section==="EDUCATION"&&Array.isArray(detail.review.submittedSnapshot.education)&&
       <section className="space-y-2">
         <h3 className="font-semibold">Education</h3>
-        <div className="overflow-x-auto rounded-md border">
-          <table className="w-full min-w-[460px] text-left text-sm">
-            <thead><tr className="border-b">
-              {["Level","Institution","Year","Marks","Marksheet"].map(label=>
-                <th key={label} className="p-2 font-semibold">{label}</th>)}
-            </tr></thead>
-            <tbody>{detail.review.submittedSnapshot.education.map((entry,index)=>{
-              if(!entry||typeof entry!=="object"||Array.isArray(entry))return null;
-              const string=(key:string)=>typeof entry[key]==="string"?String(entry[key]).slice(0,200):"—";
-              const hasProof=typeof entry.marksheetDocumentId==="string";
-              return <tr key={index} className="border-b">
-                <td className="p-2">{string("educationType")}</td>
-                <td className="p-2">{string("institutionName")!=="—"?string("institutionName"):string("institution")}</td>
-                <td className="p-2">{string("endYear")}</td>
-                <td className="p-2">{string("grade")}</td>
-                <td className="p-2">{hasProof?"Submitted":"Missing"}</td>
-              </tr>;
-            })}</tbody>
-          </table>
-        </div>
+        <DataTable
+          caption="Submitted education records"
+          rows={verificationEducationRows(detail.review.submittedSnapshot.education)}
+          getRowKey={entry=>entry.id}
+          empty={<p className="rounded border border-border p-3 text-sm">No education records supplied.</p>}
+          columns={[
+            {key:"level",header:"Level",mobilePriority:"primary",cell:entry=>entry.level},
+            {key:"institution",header:"Institution",mobilePriority:"secondary",cell:entry=>entry.institution},
+            {key:"year",header:"Year",mobilePriority:"secondary",cell:entry=>entry.year},
+            {key:"marks",header:"Marks",mobilePriority:"secondary",cell:entry=>entry.marks},
+            {key:"marksheet",header:"Marksheet",mobilePriority:"secondary",cell:entry=>entry.marksheet},
+          ]}
+        />
       </section>}
     <section><h3 className="font-semibold">Private supporting documents</h3>
      {detail.review.documents.some(doc=>doc.purpose==="RESUME")&&<p className="mb-2 text-sm font-semibold">
