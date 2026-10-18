@@ -39,3 +39,18 @@ export function collegeGroupsDirectoryHref(
   if (parsed.offset>0) params.set("offset",String(parsed.offset));
   return "/college/groups"+(params.size?"?"+params.toString():"");
 }
+
+/** Recover a stale deep-link page after group archival/filter changes.
+ * Empty datasets reset to page zero instead of showing "51–0 of 0". */
+export function canonicalCollegeGroupsOffset(
+  requested: number,
+  total: number,
+  limit: number,
+): number {
+  if (!Number.isSafeInteger(requested) || requested < 0 ||
+      !Number.isSafeInteger(total) || total < 0 ||
+      !Number.isSafeInteger(limit) || limit < 1)
+    throw new Error("INVALID_GROUP_PAGINATION");
+  if (total === 0) return 0;
+  return requested < total ? requested : Math.floor((total - 1) / limit) * limit;
+}
