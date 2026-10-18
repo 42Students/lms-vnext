@@ -14,8 +14,7 @@ const sprintId="33333333-3333-4333-8333-333333333333";
 const version="2026-10-18T05:30:00.123Z";
 const valid={taskId,sprintId,expectedUpdatedAt:version};
 const actor={user:{id:"44444444-4444-4444-8444-444444444444"},
- membership:{id:"55555555-5555-4555-8555-555555555555",roles:["LEARNER"]}}
- as unknown as Parameters<typeof pullOwnBacklogTask>[0];
+ membership:{id:"55555555-5555-4555-8555-555555555555",roles:["LEARNER"]}} as unknown as Parameters<typeof pullOwnBacklogTask>[0];
 
 describe("PROJ-BREAK-LEARNER-BACKLOG-01 stale-tab and malformed command rejection",()=>{
  it("denies forged tenant, actor, status and unexpected keys under strict payload policy",()=>{
