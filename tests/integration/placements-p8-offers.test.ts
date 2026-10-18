@@ -36,6 +36,7 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
+import {getTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-service";
 import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
 import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
 import {sweepExpiredPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
@@ -599,6 +600,40 @@ describe("Placement P8 offers and joining", () => {
       join activity_events e on e.id=n.event_id
       where e.subject_id=$1 and e.event_type='placements.offer.responded'`,[offer.id]);
     expect(stable.rows[0]?.count).toBe(1);
+  });
+
+  it("TPO-JOIN-TRACKER-DB-35 projects only accepted offers and never interprets pending joining as JOINED",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Joining tracker engineer",annualCtcInr:900_000,
+    });
+    const before=await getTpoJoiningTracker(tpo,{jobId:job.id});
+    expect(before.counts).toEqual({accepted:0,pending:0,joined:0,deferred:0,didNotJoin:0});
+    expect(before.items.find(item=>item.offerId===offer.id)).toBeUndefined();
+    await recordTpoOfferLifecycle(tpo,job.id,{
+      action:"RECORD_ACCEPTED",confirmed:true,offerIds:[offer.id],
+      expectedStatus:"ISSUED",reason:"Written confirmation from learner and employer",
+    });
+    const pending=await getTpoJoiningTracker(tpo,{jobId:job.id});
+    expect(pending.counts).toEqual({accepted:1,pending:1,joined:0,deferred:0,didNotJoin:0});
+    expect(pending.items[0]).toMatchObject({
+      offerId:offer.id,joiningStatus:"PENDING",hasRecordedOutcome:false,joiningDate:null,
+    });
+    await recordTpoOfferLifecycle(tpo,job.id,{
+      action:"RECORD_JOINED",confirmed:true,offerIds:[offer.id],
+      expectedStatus:"ACCEPTED",joiningDate:"2026-01-01",
+      reason:"Employer confirmed actual physical joining",
+    });
+    const joined=await getTpoJoiningTracker(tpo,{jobId:job.id});
+    expect(joined.counts).toEqual({accepted:1,pending:0,joined:1,deferred:0,didNotJoin:0});
+    expect(joined.items[0]).toMatchObject({
+      offerId:offer.id,joiningStatus:"JOINED",hasRecordedOutcome:true,joiningDate:"2026-01-01",
+    });
+    const other:RequestContext={...tpo,membership:{
+      ...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB,
+    }};
+    await expect(getTpoJoiningTracker(other,{jobId:job.id}))
+      .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
   });
 
   it("PLACEMENTS-JOIN-SM-04 DB refuses future joining evidence without a partial history write",async()=>{

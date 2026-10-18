@@ -12,7 +12,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const [p,q]=await Promise.all([params,searchParams]);
- if(tpoReportHasAmbiguousFilters(q))return <TpoReportInvalidFilters path={"/tpo/placements/jobs/"+encodeURIComponent(p.jobId)+"/offers"}/>;
+ if(tpoReportHasAmbiguousFilters(q)||Object.prototype.hasOwnProperty.call(q,"jobId"))return <TpoReportInvalidFilters path={"/tpo/placements/jobs/"+encodeURIComponent(p.jobId)+"/offers"}/>;
  const raw=Array.isArray(q.status)?q.status[0]:q.status;
  const page=Array.isArray(q.page)?q.page[0]:q.page;
  const qterm=Array.isArray(q.q)?q.q[0]:q.q;

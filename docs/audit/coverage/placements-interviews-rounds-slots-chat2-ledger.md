@@ -52,7 +52,7 @@
 | `src/modules/placements/tpo-interview-readiness-model.ts` | `projectTpoInterviewReadiness` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-interview-readiness-service.ts` | `getTpoInterviewReadiness` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-recruiter-slot-review-service.ts` | `listTpoRecruiterProposedSlots` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultTableQuerySchema` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultTableQuerySchema` | `tests/unit/chat2-round-uncovered-pure-models.test.ts` | UNIT WRITTEN (not run) |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `projectTpoRoundResultTable` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `tpoRoundResultViewSchema` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-round-result-table-model.ts` | `filterTpoRoundResultRows` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
@@ -61,12 +61,12 @@
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `buildTpoRoundDriveDayRoster` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-round-drive-day-service.ts` | `getTpoRoundDriveDay` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-round-facts-model.ts` | `projectTpoRoundFacts` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
-| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsvQuerySchema` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsvQuerySchema` | `tests/unit/chat2-round-uncovered-pure-models.test.ts` | UNIT WRITTEN (not run) |
 | `src/modules/placements/tpo-round-failure-csv-model.ts` | `tpoRoundFailureCsv` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyPreviewCsv` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-round-apply-csv-model.ts` | `roundApplyReportCsv` | **No direct behavioural test** | GAP |
 | `src/modules/placements/tpo-round-result-entry-model.ts` | `tpoRoundResultEntryFormSchema` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
-| `src/modules/placements/tpo-bulk-round-result-model.ts` | `bulkTpoRoundResultSchema` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-bulk-round-result-model.ts` | `bulkTpoRoundResultSchema` | `tests/unit/chat2-round-uncovered-pure-models.test.ts` | UNIT WRITTEN (not run) |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `summarizeBulkRoundResults` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-bulk-round-result-model.ts` | `resolveBulkRoundLearnerTokens` | `tests/unit/chat2-tpo-round-model-break-02.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-bulk-round-result-service.ts` | `confirmTpoBulkRoundResults` | **No direct behavioural test** | GAP |
@@ -80,8 +80,8 @@
 | `src/modules/placements/tpo-live-round-job-link-model.ts` | `tpoLiveRoundJobHref` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-live-round-timing-model.ts` | `tpoLiveRoundTiming` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
 | `src/modules/placements/tpo-live-round-venue-model.ts` | `tpoLiveRoundVenueLabel` | `tests/unit/chat2-tpo-round-uncovered-models-break-13.test.ts` | UNIT WRITTEN (CI pending) |
-| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundShares` | **No direct behavioural test** | GAP |
-| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundSharesByBranch` | **No direct behavioural test** | GAP |
+| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundShares` | `tests/unit/chat2-round-uncovered-pure-models.test.ts` | UNIT WRITTEN (not run) |
+| `src/modules/placements/tpo-failure-round-share-model.ts` | `summarizeFailedRoundSharesByBranch` | `tests/unit/chat2-round-uncovered-pure-models.test.ts` | UNIT WRITTEN (not run) |
 | `src/modules/placements/college-interview-action-model.ts` | `collegeInterviewActionSchema` | **No direct behavioural test** | GAP (College/Admin cross-account) |
 | `src/modules/placements/college-interview-action-service.ts` | `getCollegeInterviewAppointments` | **No direct behavioural test** | GAP (College/Admin cross-account) |
 | `src/modules/placements/college-interview-action-service.ts` | `mutateCollegeInterview` | **No direct behavioural test** | GAP (College/Admin cross-account) |
@@ -170,3 +170,16 @@ The import endpoint previously constructed `confirmed:true` on the server even i
 | `TpoInterviewRescheduleForm` | `tests/unit/chat2-tpo-interview-reschedule-route-ui.test.ts` | Shared ConfirmDialog in place of `window.confirm`, submitted inputs retained in ref, guarded duplicate action, UI renders sanitized API `message` rather than raw `error` code |
 
 These unit/source checks are committed but unexecuted. HTTP session revocation and service PostgreSQL race tests remain open; no claims of end-to-end verification.
+
+## 2026-10-19 chat-2 round action concurrency follow-up
+
+| Export / boundary | Test | Cases and release limitations |
+| --- | --- | --- |
+| `roundActionSnapshotMatches` | `tests/unit/chat2-round-action-concurrency.test.ts` | Exact status, optional revision, stale reschedule within same status, invalid revision, missing/invalid locked rows |
+| `roundActionJobMutable` | `tests/unit/chat2-round-action-concurrency.test.ts` | PUBLISHED/DRAFT allowed; CLOSED, ARCHIVED, missing locks denied |
+| `round-service.ts` `updatePlacementRound`, `actOnPlacementRound` | `tests/unit/chat2-round-action-concurrency.test.ts` | Source contract confirms job row lock before all writes; schedule, complete and cancel recheck locked version; completion audit; monotonic updatedAt; **direct PostgreSQL service transaction tests still required** |
+| `tpo-failure-round-share-model.ts` both summarizers | `tests/unit/chat2-round-uncovered-pure-models.test.ts` | Duplicate joined decisions, applied denominator, missing active branch, immutability |
+| `tpo-bulk-round-result-model.ts` schema | `tests/unit/chat2-round-uncovered-pure-models.test.ts` | Explicit confirmation, rank collision, duplicate application, 25-row cap, result CAS identity, tenant injection denial |
+| `hr-drive-round-presets.ts`, `hr-inline-round-results-model.ts`, `hr-round-schedule-model.ts` exports | `tests/unit/chat2-round-uncovered-pure-models.test.ts` | Clone-safe presets, valid URLs, overlap and touching intervals, filter counts |
+
+**Not complete:** all PostgreSQL service role/tenant/race tests and all TPO page state cases remain open. Source-contract assertions do not prove runtime transaction isolation.
