@@ -5,12 +5,23 @@ import {SuperAdminDriveArchive} from "@/components/placements/super-admin-drive-
 import {SuperAdminPublishedDriveEdit} from "@/components/placements/super-admin-published-drive-edit";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
+/** Invalid legacy posting dates must not crash the private drive workspace. */
+function driveSettingsIstDate(value:unknown):string {
+ if(!(value instanceof Date)&&typeof value!=="string")return "Not configured";
+ const instant=value instanceof Date?value:new Date(value);
+ if(!Number.isFinite(instant.getTime()))return "Not configured";
+ return new Intl.DateTimeFormat("en-IN",{
+   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+ }).format(instant);
+}
 export default async function DriveSettingsPage({params}:{params:Promise<{jobId:string}>}){
  const {jobId}=await params;
  const context=await getCurrentRequestContext();
+ requireSuperAdminSelectedCollege(context,"placements.manage");
  const job=await getPlacementJob(context,jobId);
  const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
  return <div className="space-y-4">
@@ -19,7 +30,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">{job.title}</h2>
    <p className="text-sm text-body">Status: {job.status}</p>
-   <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(job.applicationDeadline) : "Not configured"}</p>
+   <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? driveSettingsIstDate(job.applicationDeadline) : "Not configured"}</p>
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
    <Link href={base} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Open drive controls →</Link>
   </section>
@@ -42,14 +53,12 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       <p className="text-sm">Assessment URL: <ThirdPartyLink href={job.legacyPostingDetails.assessmentUrl}
         label={job.legacyPostingDetails.assessmentUrl} /></p>:null}
     {job.legacyPostingDetails.assessmentDeadline?<p className="text-sm">
-      Assessment deadline (IST): {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-        timeZone:"Asia/Kolkata"}).format(new Date(job.legacyPostingDetails.assessmentDeadline))}
+      Assessment deadline (IST): {driveSettingsIstDate(job.legacyPostingDetails.assessmentDeadline)}
     </p>:null}
     {job.legacyPostingDetails.importantDates?.length?<div>
       <h3 className="text-sm font-semibold">Important dates</h3>
       <ul className="mt-2 space-y-1 text-sm">{job.legacyPostingDetails.importantDates.map((date,i)=>
-        <li key={i}>{date.label}: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",
-          timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(date.at))}</li>)}</ul>
+        <li key={i}>{date.label}: {driveSettingsIstDate(date.at)}</li>)}</ul>
     </div>:null}
     {job.legacyPostingDetails.customEligibilityRules?.length?<div>
       <h3 className="text-sm font-semibold">Custom eligibility rules (informational)</h3>
