@@ -46,8 +46,12 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
   expect(control).toContain("if(!preview.next||inFlight.current||reason.trim().length<3)return");
   expect(control).toContain("inFlight.current=true");
   expect(control).toContain("inFlight.current=false");
-  expect(control).toContain("res.json().catch(()=>null)");
-  expect(control).toContain('if(!res.ok||typeof data?.seatNumber!=="number")');
+  expect(control).toContain("apiFetch<{seatNumber?:number}>");
+  expect(control).toContain("timeoutMs:35000");
+  expect(control).toContain('typeof data?.seatNumber!=="number"');
+  expect(control).toContain("Number.isSafeInteger(data.seatNumber)");
+  expect(control).toContain("data.seatNumber<1");
+  expect(control).not.toContain("await fetch(");
   expect(control).not.toContain("new Error(data.error)");
   expect(control).toContain("Refresh the preview before retrying.");
   expect(control).toContain("setConfirmOpen(false)");
