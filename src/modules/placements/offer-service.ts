@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import {
   and,
   asc,
+  count,
   desc,
   eq,
   inArray,
@@ -10,6 +11,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {hasAvailablePlacementOfferSeat} from "./offer-seat-capacity-policy";
 import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promotions";
 type PlacementDb = ReturnType<typeof getDb>;
 type PlacementTx = Parameters<Parameters<PlacementDb["transaction"]>[0]>[0];
@@ -311,8 +313,9 @@ export async function issuePlacementOffer(
     // Issuance must take the same lock order and only target open drives.
     const [liveJob] = await tx.select({
       status: placementJobs.status, archivedAt: placementJobs.archivedAt,
+      openings: placementJobs.openings,
     }).from(placementJobs).where(eq(placementJobs.id, current.job.id))
-      .for("share").limit(1);
+      .for("update").limit(1);
     if (!liveJob || liveJob.status !== "PUBLISHED" ||
         liveJob.archivedAt !== null) {
       throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
@@ -395,6 +398,32 @@ export async function issuePlacementOffer(
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_ACTIVE_EXISTS",
       );
+    }
+
+    // This is the same job row mutex used by cancellation and waitlist seat
+    // reservation. Check the official OFFER seat ceiling under that lock:
+    // otherwise two ready applicants in different membership rows can both
+    // issue the final opening. LOIs do not take up an official offer seat.
+    if((input.kind??"OFFER")==="OFFER"){
+      const [occupied]=await tx.select({total:count()}).from(placementOffers)
+        .innerJoin(placementApplications,
+          eq(placementApplications.id,placementOffers.applicationId))
+        .where(and(
+          eq(placementApplications.jobId,current.job.id),
+          eq(placementOffers.kind,"OFFER"),
+          inArray(placementOffers.status,["ISSUED","ACCEPTED"]),
+        ));
+      const [reserved]=await tx.select({total:count()}).from(placementWaitlistPromotions)
+        .where(and(
+          eq(placementWaitlistPromotions.jobId,current.job.id),
+          eq(placementWaitlistPromotions.status,"PENDING"),
+          ne(placementWaitlistPromotions.applicationId,current.application.id),
+        ));
+      if(!hasAvailablePlacementOfferSeat({
+        openings:liveJob.openings,
+        activeOfferCount:occupied?.total??0,
+        otherPendingReservations:reserved?.total??0,
+      }))throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     }
 
     // P-S1-02: active debarments deny new offer release. Resolve this
