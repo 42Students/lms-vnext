@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,isNotNull} from "drizzle-orm";
+import {and,eq,inArray,isNotNull,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
  courses,departments,courseOfferings,courseLearningPaths,courseLessons,
@@ -84,6 +84,7 @@ export async function readTpoLearnerPrepOutcomes(
   .innerJoin(departments,eq(departments.id,courses.departmentId))
   .where(and(
    eq(departments.collegeId,collegeId),
+   isNull(departments.archivedAt),
    eq(courses.status,"ACTIVE"),
    eq(courseOfferings.status,"ACTIVE"),
    eq(courseLearningPaths.status,"PUBLISHED"),

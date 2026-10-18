@@ -28,7 +28,7 @@ beforeEach(()=>{
  vi.mocked(requirePlacementManageScope).mockResolvedValue({
   id:"college-a",organizationId:"org-a",
  } as unknown as Awaited<ReturnType<typeof requirePlacementManageScope>>);
- vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(undefined);
+ vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(tpo);
 });
 afterEach(()=>{
  if(originalReady===undefined)delete process.env.DB09_TPO_API_READY;

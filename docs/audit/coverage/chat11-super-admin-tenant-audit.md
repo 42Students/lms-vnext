@@ -70,3 +70,9 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 | ID | Surface | Guard | Test | CI missing |
 |---|---|---|---|---|
 | SA-tenants-modules-MOD-WRITE-06 | `writeSuperAdminCollegeRule`, `writeDescendantRule` | Existing college `for update` serialization now followed by persisted active Super Admin `college.manage` SHARE lock, before expected-version, no-op, ancestor-lock evaluation, write and audit. Both levels reject tenant and session revocation between initial form read and commit. | `tests/unit/chat11-super-admin-module-writes-revocation.test.ts` (two ID-named handler cases plus role matrix), commits `7c47f0b`, `4a923db`, `c7abfe4` | PostgreSQL two-session revocation, ancestor-lock introduction race with global admin and E2E |
+
+## Learner module bulk mutation correctness — current round
+
+| ID | Surface | Verification and corrected behaviour | Test | Remaining |
+|---|---|---|---|---|
+| SA-tenants-modules-MOD-BULK-07 | `updateSuperAdminStudentRulesInBulk` | Per-student mutation returning null no longer counts as applied; raw exception messages no longer leak credentials/SQL to page; known stale CAS/ancestor locks provide next-step messages; per-learner successful writes still audited; absent successes skip misleading bulk summary | `tests/unit/chat11-super-admin-bulk-module-safety.test.ts` actual mocked service cases for null/no-op, raw error, conflict, audit recovery and revoked system role; commits `a14b3e2`, `f4a2a13` | Two-session PostgreSQL, bulk partial success browser testing |

@@ -271,3 +271,22 @@ No TypeScript, Vitest or PostgreSQL execution was performed in this lane. The co
 | PLACEMENTS-JOIN-SM-04 | TPO actual joining date must not be a future IST day | `placements-p8-offers.test.ts`: rejected future joined record leaves persisted PENDING and no history, positive actual joining creates one history event | Requires cloud DB and membership-role fixture to confirm |
 
 The branch was reconciled with the then-current `origin/main` using a two-parent merge commit without overwriting newer unrelated lane files. **CI is still needed** to establish executable coverage and to verify new PostgreSQL integration tests. Hundreds of other placement exports and routes remain outside the ledger; the core module is **not** exhaustively certified or releasable from these source checks alone.
+
+
+## TPO offer filter contract, source-only correction
+
+- **PLACEMENTS-OFFERS-FILTER-06** — `src/modules/placements/tpo-drive-offer-register-model.ts` distinguishes a submitted blank numeric filter (unbounded) from explicitly entered 0 LPA; CSV and page use the same `offerRegisterQuery` parser. `tests/unit/chat5-tpo-second-third-behavior.test.ts` covers blanks, zero, malformed numbers and retained ISSUED search matches. Cloud Vitest was not run.
+
+
+### Current follow-up: API edge cases and sweep input integrity
+
+- `PLACEMENTS-OFFERS-FILTER-06`: blank, whitespace-only, `null` and `undefined` package bounds now mean unbounded; explicit zero remains a valid bound; malformed/out-of-range values reject. Tested in `tests/unit/chat5-tpo-second-third-behavior.test.ts` against parsed filters and projected offer lists.
+- `PLACEMENTS-EXPIRY-SM-04`: `tests/integration/placements-p8-offers.test.ts` now verifies invalid reference clocks and unsafe batch limits reject before any expiration history can be written. The actual concurrent worker-vs-learner response race still requires dedicated DB tests.
+- No local tests, TypeScript compiler, PostgreSQL or browser were executed. Newly written integration assertions are pending the next cloud CI run.
+
+
+### PostgreSQL race coverage authored in this branch
+
+- `PLACEMENTS-EXPIRY-RACE-05`: `tests/integration/placements-p8-offers.test.ts` races the expiry sweep with a learner ACCEPT submitted immediately before the same deadline. It checks one persisted terminal outcome (ACCEPTED or EXPIRED), exactly one corresponding status-history transition, and the sweep's row-lock/skip-locked result. **Cloud execution pending**.
+- `PLACEMENTS-WAIT-RACE-06`: the same integration suite concurrently submits the identical rank-1 HOLD promotion. It checks a single reservation, a single active official offer, matching offer linkage, and one audit event per distinct reservation/reconciliation category. A stale-preview rejection by one racing call is permitted; two offers are not. **Cloud execution pending**.
+- These tests strengthen the previous source-only release evidence but do **not** close the crash-atomicity gap between reservation, issuance, and settlement, or the full role/tenant matrix across all Placements services.

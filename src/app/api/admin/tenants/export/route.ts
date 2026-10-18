@@ -11,7 +11,13 @@ export async function GET(request: Request) {
     return new Response(result.csv, { headers: {
       "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": 'attachment; filename="tenant-directory-ist.csv"',
       "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff",
+      Vary: "Cookie",
       "X-Export-Truncated": String(result.truncated), "X-Export-Row-Cap": String(result.cap),
     } });
-  } catch (error) { return apiErrorResponse(error); }
+  } catch (error) {
+    const response=apiErrorResponse(error);
+    response.headers.set("Cache-Control","private, no-store");
+    response.headers.set("Vary","Cookie");
+    return response;
+  }
 }

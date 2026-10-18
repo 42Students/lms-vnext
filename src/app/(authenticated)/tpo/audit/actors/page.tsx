@@ -5,6 +5,7 @@ import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoActorAudit } from "@/modules/placements/tpo-actor-audit-service";
@@ -29,6 +30,7 @@ export default async function TpoActorAuditPage({
 }: { searchParams: Promise<SearchParams> }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  await requireTpoBatchActor(context);
   const raw = await searchParams;
   const filters = {
     ...(first(raw.actorId) ? { actorId: first(raw.actorId) } : {}),

@@ -26,6 +26,9 @@ describe("SA-colleges-admins-R01 administrator history tenancy and paging",()=>{
 
   it("does not query administrator audit history when a URL filter is invalid",()=>{
     const page=source("src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx");
+    const authorization=page.indexOf('requirePermission(context,"admin-scope.select")');
+    expect(authorization).toBeGreaterThan(page.indexOf("const context=await getCurrentRequestContext()"));
+    expect(page.indexOf("parseAdminSessionHistoryPage(raw)")).toBeGreaterThan(authorization);
     expect(page.indexOf("parseAdminSessionHistoryPage(raw)")).toBeGreaterThan(-1);
     expect(page.indexOf('if(page===null)')).toBeGreaterThan(page.indexOf("parseAdminSessionHistoryPage(raw)"));
     expect(page.indexOf("listCollegeAdminHistory(")).toBeGreaterThan(page.indexOf('if(page===null)'));
