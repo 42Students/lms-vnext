@@ -58,7 +58,7 @@ export default async function TpoJoiningStatusReportPage({
       />
 
       <Link href="/tpo/reports/joining-followups"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Review joining follow-ups →
       </Link>
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/joining-status" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>

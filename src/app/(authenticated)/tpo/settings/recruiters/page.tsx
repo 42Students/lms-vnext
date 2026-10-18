@@ -96,7 +96,7 @@ export default async function TpoRecruiterAccessPage({
           action={
             <Link
               href="/tpo/settings/recruiters"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
             >
               Clear filters
             </Link>
@@ -212,7 +212,7 @@ export default async function TpoRecruiterAccessPage({
 
           <Link
             href="/tpo/settings/recruiters"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Clear
           </Link>
@@ -225,7 +225,7 @@ export default async function TpoRecruiterAccessPage({
             Grant records
           </h2>
           <a href={tpoRecruiterGrantExportHref(query)}
-            className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Export filtered grants CSV
           </a>
 
@@ -356,7 +356,7 @@ export default async function TpoRecruiterAccessPage({
                   q:query.q,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
               >
                 ← Previous
               </Link>
@@ -365,7 +365,7 @@ export default async function TpoRecruiterAccessPage({
             {page < totalPages ? (
               <Link
                 href={nextTpoRecruiterGrantPage(query,page)}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-primary-subtle"
               >
                 Next →
               </Link>

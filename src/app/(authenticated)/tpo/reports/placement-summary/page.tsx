@@ -179,7 +179,7 @@ export default async function TpoPlacementSummaryPage({
              new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
-             }).toString()} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+             }).toString()} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">
               Clear drive dimensions
              </a>:null}
 
@@ -193,7 +193,7 @@ export default async function TpoPlacementSummaryPage({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
               ...(companyId?{companyId}:{}),...(workMode?{workMode}:{}),...(payCategory?{payCategory}:{}),
-            }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 py-2 font-semibold text-primary-text">Retry</Link>
+            }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 py-2 font-semibold text-[var(--lms-teal-deep)]">Retry</Link>
           </section>:null}
           {dimensions?<p role="status" className="text-xs text-muted-foreground">
            Showing {shownDrives.length} of {byDrive.length} drive rows. This filters the drive table only.

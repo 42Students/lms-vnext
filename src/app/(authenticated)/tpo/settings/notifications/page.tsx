@@ -78,7 +78,7 @@ export default async function TpoMyNotificationsPage({
           action={
             <Link
               href="/tpo/settings/notifications"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               Clear filters
             </Link>
@@ -214,7 +214,7 @@ export default async function TpoMyNotificationsPage({
 
           <Link
             href="/tpo/settings/notifications"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Clear filters
           </Link>
@@ -347,7 +347,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Previous
               </Link>
@@ -360,7 +360,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Next
               </Link>
