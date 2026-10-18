@@ -179,3 +179,10 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Entry / services | Direct behavioural test | Coverage and remaining gate |
 |---|---|---|---|
 | HR-BREAK-TODAY-SLOTS-12 | `listRecruiterTodayRoundsNeedingSlots` and `recruiterTodayRoundsNeedingSlots` | `tests/unit/HR-BREAK-chat19-today-slots-query-limit.test.ts` | 110 scheduled rounds with 100 earlier covered interviews still produce next eight actionable slots; offered/BOOKED excluded; PROPOSED retains needs-offer state; post-query race exclusion; SQL `NOT EXISTS` precedes `LIMIT 100`, scoped to authorized job IDs and college. PostgreSQL runtime/EXPLAIN and multi-tenant browser checks still needed. |
+
+## HR message-delivery and company-team second-pair-of-eyes coverage
+
+| ID | Boundary | New direct evidence | Remaining |
+|---|---|---|---|
+| HR-BREAK-MAIL-REDIRECT-13 | Public recruiter join-code and recruiter message digest provider POST | `tests/unit/HR-BREAK-chat19-recruiter-join-code-delivery.test.ts`, `tests/unit/HR-BREAK-chat19-mail-redirect-boundary.test.ts`: never follow redirects; no retries of non-idempotent content; sanitization, allowlist/provider failure and correct Reply-To | Live SMTP/provider config and host allowlist review |
+| HR-BREAK-TEAM-GRANT-14 | `getRecruiterCompanyTeam` persisted selected grant ID | `tests/unit/HR-BREAK-chat19-company-team-grant-id.test.ts`: exact grant ID, user and relationship binding, ACTIVE conditions, same-college selector and borrowed recruiter exclusion | SQL integration test with two same-relationship grants and first revoked |
