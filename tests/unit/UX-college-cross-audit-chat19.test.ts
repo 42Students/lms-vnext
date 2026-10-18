@@ -84,3 +84,72 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
   expect(confirm).toContain("dismissible={!pending}");
  });
 });
+
+describe("College cross-audit component regressions",()=>{
+ const college=(name:string)=>readFileSync(join(process.cwd(),
+  "src/components/college/"+name+".tsx"),"utf8");
+ const placements=(name:string)=>readFileSync(join(process.cwd(),
+  "src/components/placements/"+name+".tsx"),"utf8");
+ const confirmations=[
+  "college-faculty-assignment-actions",
+  "college-faculty-schedule-reassign",
+  "college-offering-lifecycle-action",
+  "college-offering-metadata-action",
+  "college-person-edit-action",
+  "college-student-register-form",
+ ];
+ for(const name of confirmations){
+  it("COL-XA-06 "+name+" never invokes a native WebView confirmation",()=>{
+   const s=college(name);
+   expect(s).not.toMatch(/window\.(?:confirm|prompt|alert)/);
+   expect(s).toContain("useCollegeConfirmation");
+  });
+ }
+ for(const name of ["college-drive-duplicate-action","college-drive-deadline-action","college-drive-bulk-actions"]){
+  it("COL-XA-06 "+name+" offers an in-app confirmation",()=>{
+   const s=placements(name);
+   expect(s).not.toMatch(/window\.(?:confirm|prompt|alert)/);
+   expect(s).toContain("Confirm");
+  });
+ }
+ const modals=[
+  ["college","college-faculty-schedule-reassign"],
+  ["college","college-offering-metadata-action"],
+  ["college","college-person-edit-action"],
+  ["college","college-person-audit-modal"],
+  ["college","college-person-profile-overview-modal"],
+  ["college","college-student-import-history"],
+  ["college","college-faculty-reassign-action"],
+  ["placements","college-drive-deadline-action"],
+  ["placements","college-interview-appointments"],
+  ["placements","college-application-pipeline-controls"],
+  ["placements","college-application-detail-drawer"],
+ ] as const;
+ for(const [area,name] of modals){
+  it("COL-XA-07 "+name+" uses shared accessible Dialog, not faux aria-modal",()=>{
+   const s=area==="college"?college(name):placements(name);
+   expect(s).toContain("<Dialog");
+   expect(s).not.toMatch(/role="dialog"|aria-modal="true"/);
+  });
+ }
+ it("COL-XA-08 WebView links do not open unhandled popup windows",()=>{
+  for(const s of [college("college-admin-profile-editor"),
+    placements("college-application-detail-drawer")]){
+   expect(s).not.toContain('target="_blank"');
+  }
+ });
+ for(const name of ["college-drive-attention-cards","college-application-detail-drawer",
+  "college-drive-archive-action","college-drive-row-lifecycle-action"]){
+  it("COL-XA-08 "+name+" uses 44px targets",()=>{
+   const s=placements(name);
+   expect(s).not.toMatch(/min-h-(?:9|10)\b/);
+  });
+ }
+ it("COL-XA-06 shared confirmation remains a real cancellable native dialog",()=>{
+  const s=college("use-college-confirmation");
+  expect(s).toContain("<ConfirmDialog");
+  expect(s).toContain("new Promise<boolean>");
+  expect(s).toContain("pending?.(answer)");
+  expect(s).toContain("resolver.current?.(false)");
+ });
+});
