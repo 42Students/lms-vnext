@@ -5,8 +5,7 @@ const collegeA="11111111-1111-4111-8111-111111111111";
 const collegeB="22222222-2222-4222-8222-222222222222";
 const orgA="33333333-3333-4333-8333-333333333333";
 const orgB="44444444-4444-4444-8444-444444444444";
-const make=(roles:RequestContext["membership"] extends infer _T ? (
- "LEARNER"|"FACULTY"|"MENTOR"|"COLLEGE_ADMIN"|"TPO")[]:never,
+const make=(roles:("LEARNER"|"FACULTY"|"MENTOR"|"COLLEGE_ADMIN"|"TPO")[],
  status:"ACTIVE"|"SUSPENDED"|"ENDED"="ACTIVE"):RequestContext=>({
  user:{id:"55555555-5555-4555-8555-555555555555",identityUid:"member",
   platformStatus:"ACTIVE",systemRoles:[]},
@@ -51,7 +50,7 @@ describe("IIT Dharwad Projects breaker — live permission matrix for every acco
   const scoped={...superAdmin,adminScope:{collegeId:collegeA,organizationId:orgA}};
   expect(can(scoped,"projects.read",own)).toBe(true);
   expect(can(scoped,"projects.manage",wrongCollege)).toBe(false);
-  expect(can(scoped,"projects.manage",wrongOrg)).toBe(true);
+  expect(can(scoped,"projects.manage",wrongOrg)).toBe(false);
   const organizationScoped={...superAdmin,adminScope:{collegeId:null,organizationId:orgA}};
   expect(can(organizationScoped,"projects.manage",own)).toBe(true);
   expect(can(organizationScoped,"projects.read",{collegeId:collegeB,organizationId:orgB})).toBe(false);
