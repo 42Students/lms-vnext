@@ -141,6 +141,17 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
       ),
     };
   }
+  if (tenant.kind === "unavailable") {
+    // A temporary college-domain lookup outage must never be interpreted
+    // as a platform-host login with unrestricted tenant selection.
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: "TENANT_LOOKUP_UNAVAILABLE" },
+        { status: 503, headers: { "Cache-Control": "no-store", "Retry-After": "30" } },
+      ),
+    };
+  }
 
   return {
     ok: true,

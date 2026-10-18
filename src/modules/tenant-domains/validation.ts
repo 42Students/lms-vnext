@@ -9,7 +9,8 @@ export function normalizeTenantHost(rawValue: string) {
 
   if (
     trimmed.includes("://") ||
-    /[/?#@]/.test(trimmed)
+    /[/?#@]/.test(trimmed) ||
+    /[\\\x00-\x1f\x7f]/.test(trimmed)
   ) {
     throw new Error("Host must be a hostname, not a URL");
   }
@@ -60,7 +61,7 @@ export function normalizeTenantHost(rawValue: string) {
 
 export function normalizeRequestHost(rawValue: string) {
   const trimmed = rawValue.trim();
-  if (!trimmed || trimmed.includes("://") || /[/?#@]/.test(trimmed)) {
+  if (!trimmed || trimmed.includes("://") || /[/?#@]/.test(trimmed) || /[\\\x00-\x1f\x7f]/.test(trimmed)) {
     throw new Error("Request host is invalid");
   }
 
