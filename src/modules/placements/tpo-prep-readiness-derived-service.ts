@@ -8,6 +8,8 @@ import {
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoPrepReadiness} from "./tpo-configuration-read-service";
 import {getTpoCommunicationSettings} from "./tpo-communication-settings-service";
+import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {tpoPrepConfigSchema} from "./tpo-configuration-model";
 import {
  deriveTpoPrepCourseOutcome,type TpoPrepCourseOutcome,type TpoPrepCourseEvidence,
@@ -17,6 +19,11 @@ type Learner={membershipId:string;cohortId:string};
 export async function readTpoLearnerPrepOutcomes(
  context:RequestContext,collegeId:string,learners:readonly Learner[],
 ):Promise<{available:boolean;outcomes:ReadonlyMap<string,TpoPrepCourseOutcome>}>{
+ // Never trust a caller-selected college ID. In particular an empty
+ // learners array must not silently turn a revoked or foreign role into a
+ // successful-looking cross-tenant result.
+ const scopedCollegeId=await requireTpoBatchActor(context);
+ if(scopedCollegeId!==collegeId)throw new AuthorizationError("placements.manage");
  const outcomes=new Map<string,TpoPrepCourseOutcome>();
  if(!learners.length)return {available:true,outcomes};
  // Both settings reads revalidate persisted TPO scope. Unavailable storage or

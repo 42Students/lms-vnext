@@ -135,10 +135,20 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(s).toContain("name=\"pageSize\"");
   expect(s).toContain("query.q");
  });
- it("SA-placements-projects-58 preserves its implemented foundation while legacy parity remains open",()=>{
+ it("SA-placements-projects-58 preserves actual at-risk mentor reassignment and overload semantics",async()=>{
   const s=source("src/components/projects/project-admin-at-risk-page.tsx");
   expect(s).toContain("Reassign mentor");
   expect(s).toContain("fromMentorId");
+  expect(s).toContain("encodeURIComponent(project.mentorMembershipId ?? \"UNASSIGNED\")");
+  expect(s).toContain('project.mentorMembershipId ? "Reassign mentor" : "Assign mentor"');
+  expect(s).toContain('encodeURIComponent(project.riskReasons.join(", "))');
+  expect(s).toContain("listProjectAdminRiskQueue(");
+  const {projectMentorWorkloadAverage,isProjectMentorOverloaded}=await import("@/modules/projects/mentor-overload-model");
+  expect(projectMentorWorkloadAverage([])).toBe(0);
+  expect(projectMentorWorkloadAverage([2,4,8])).toBeCloseTo(14/3);
+  expect(isProjectMentorOverloaded(8,[2,4,8])).toBe(true);
+  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(false);
+  expect(isProjectMentorOverloaded(8,[8,8,8])).toBe(false);
  });
  it("SA-placements-projects-65 preserves its implemented foundation while legacy parity remains open",()=>{
   const s=source("src/components/projects/project-workspace-readiness.tsx");
