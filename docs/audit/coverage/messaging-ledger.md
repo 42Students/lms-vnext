@@ -251,3 +251,28 @@ These are newly authored cases, **not an executed green run**. Provider, databas
 ### Direct TPO messaging receipt-history service tests
 
 `tests/unit/chat16-messaging-receipt-history-service-16.test.ts` now invokes `listTpoMessagingHistory` and `exportTpoMessagingHistory` directly with an isolated mocked query builder. The four cases `messaging-receipt-history-16`–`19` enforce role and active-membership denials before any database access; strict bounded query filters; persisted-actor authorization before reading aggregate receipt counts; safe count pagination and honest `acceptedByProvider` semantics; and revoked-grant refusal. Transaction mocks are not equivalent to database race verification. Both services still need actual PostgreSQL tenant and concurrency acceptance; authored code remains unexecuted in this lane.
+
+### Admin inbound-mail and TPO draft security regressions — 2026-10-18
+
+- `tests/unit/chat16-inbound-mail-admin-page-16.test.tsx`: private page authorization invocation, invalid filters before data access, unavailable storage and page data projection.
+- `tests/unit/chat16-inbound-mail-admin-versioning-16.test.ts`: global Super Admin role, invalid mutation inputs, unavailable table, stale compare-and-swap, and confirmed version increment.
+- `tests/unit/chat16-inbound-mail-status-route-16.test.ts`: same-origin requirement, HTTP 409/503, private no-store success, shared safe error handler.
+- `tests/unit/chat16-tpo-campaign-draft-live-role-16.test.ts`: live persisted permission checks for campaign draft history and detail; source now executes both reads inside a scoped authorization transaction.
+
+All are authored **unit** cases and remain unexecuted until cloud CI; database concurrency and outbound provider delivery are not certified.
+
+### New outbound execution and provider-adapter tests (chat-16)
+
+- `tests/unit/chat16-outbound-batch-service-16.test.ts`: `messaging-batch-execution-01`–`07` directly execute `deliverBatch` and `validOutboundBatchId` with in-memory repository/provider fakes, asserting full-batch validation before side effects, opaque recipient-key records, live opt-out rechecks, policy fetch failure recovery, cumulative per-recipient caps, case-insensitive deduplication and nonproduction allowlisting.
+- `tests/unit/chat16-outbound-provider-adapters-16.test.ts`: `messaging-provider-16`–`22` directly execute `createOutboundProvider` with an injected non-network transport. They cover unknown/OTP templates, safe ZeptoMail endpoint and payload, failed 429/no retry, strict nonproduction recipient list, Exotel DLT declarations and provider acceptance SID/status, and canonical email delivery addresses.
+- `src/modules/messaging/providers.ts` now uses the successfully parsed request and `normalizeRecipient` before composing a provider request. Previously validation could accept a trimmed address but send the untrimmed input; `messaging-provider-22` tests this repaired source bug.
+
+All tests are **written, not run**. Live provider/DLT and PostgreSQL concurrency checks are not claimed.
+
+### Recruiter email bridge — direct gateway and transaction coverage
+
+- `src/modules/placements/recruiter-message-email-provider.ts` now uses `normalizeRecipient("EMAIL",digest.recipient)` after validating runtime permission and before sending to ZeptoMail. `tests/unit/chat16-recruiter-email-digest-provider-16.test.ts` exercises the **real** `sendRecruiterMessageDigest` implementation with an injected fake network transport: feature disabled/unallowlisted, secure non-OTP template/Reply-To preflight, bounded HTML-escaped last-three excerpts, canonical recipient address, and rejected/ambiguous no-retry sends (`email-bridge-digest-16`–`19`).
+- `tests/unit/chat16-recruiter-email-inbound-gates-16.test.ts`: signed inbound gateway rejects disabled bridge, bad HMAC, tampering, malformed/quoted-only replies, foreign reply domain, invalid provider message ID and absent registered storage before transactional writes (`email-bridge-inbound-gate-16`–`18`).
+- `tests/unit/chat16-recruiter-email-inbound-transaction-16.test.ts`: actual `acceptAuthenticatedRecruiterEmailReply` against a mocked transactional repository, covering expired reply-token lock, revoked grant, same-thread replay, foreign-thread replay denial, and successful new-message persistence plus TPO notice (`email-bridge-inbound-transaction-16`–`20`). Database values/locks and notification service are mocked, so this is **not** a substitute for real Postgres concurrency, foreign key, or mail-provider webhook integration.
+
+No outbound network or test runner was invoked in this lane. These tests are authored, not CI-verified.

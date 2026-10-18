@@ -54,3 +54,11 @@ export function scopeRecruiterConversations<T extends {jobId:string|null}>(
 export function countScopedConversations<T>(rows:readonly T[]):number{
  return rows.length;
 }
+
+/** The message search yields at most one distinct match per authorized thread.
+ * Cap by the exact scoped thread count, not an arbitrary 1000-result slice that
+ * silently hides additional matches for recruiters with large inboxes.
+ */
+export function recruiterMessageSearchLimit(accessibleThreadIds:readonly string[]):number{
+ return new Set(accessibleThreadIds).size;
+}

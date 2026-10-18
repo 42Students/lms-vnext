@@ -46,3 +46,7 @@ No audited route source uses raw `<table>`, `window.confirm()`, `target="_blank"
 3. Full current CI proof: TypeScript, Vitest, ESLint, Playwright, snapshots, migrations, audit events and notification delivery must be executed on a complete checkout. **These suites were authored but not executed in this connector-only run.**
 
 The earlier `docs/audit/coverage/admin-first-chat13.md` already inventories the first **37 of 111** main `/admin` routes. The earlier `docs/design-system/audits/UX-ROLLOUT-AUDIT-tpo-second-chat-13.md` already records a complete **42/42 source review** of TPO route order 43–84 with 27 findings/fixes; this page audit does not change those counts. Neither prior pass is a substitute for browser-based acceptance.
+
+
+- `PROJ-BREAK-SA-30/31`: fixed Projects admin mentor display/ID projection joins that previously trusted project membership IDs without a same-college, ACTIVE membership constraint; three scoped paths across snapshots, risk queue and submitted-work pages (`6cc66f6d`). Regression `chat13-project-admin-member-tenant-isolation.test.ts` was authored but not run. Pending A/B PostgreSQL validation and active-then-suspended stale-session test.
+- `SA-BOOKED-INTERVIEWS-03`: filtered department labels in booked-interview admin projection by the selected college; previously an enrollment referring to a foreign-college program could expose its department label. `chat13-super-admin-booked-interviews-window.test.ts` includes the join contract; database joins not executed.

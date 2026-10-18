@@ -9,7 +9,7 @@ import {bulkSuperAdminLessonVisibility} from "./super-admin-lesson-bulk-visibili
 import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
 
 export const superAdminCourseBulkSchema=z.strictObject({
- courseIds:z.array(z.uuid()).min(1).max(25).refine(ids=>new Set(ids).size===ids.length),
+ courseIds:z.array(z.uuid()).min(1).max(100).refine(ids=>new Set(ids).size===ids.length),
  visibleToStudents:z.boolean(),
  confirmed:z.literal(true),
 });
@@ -37,6 +37,8 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
   .limit(501);
  if(lessons.length>500)throw new Error("COURSE_VISIBILITY_BULK_TOO_LARGE");
  const ids=[...new Set(lessons.map(row=>row.id))];
+ const lessonCourseIds=new Map(lessons.map(row=>[row.id,row.courseId]));
+ const failedCourses=new Set<string>();
  const failures:{id:string;reason:string}[]=[];
  let matchedContents=0,changed=0,unchanged=0;
  for(let i=0;i<ids.length;i+=25){
@@ -47,12 +49,21 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
    });
    matchedContents+=report.matchedContents;
    changed+=report.changed;unchanged+=report.unchanged;
-   failures.push(...report.failures);
+   for(const failure of report.failures){
+    const courseId=lessonCourseIds.get(failure.lessonId);
+    if(courseId)failedCourses.add(courseId);
+    failures.push(failure);
+   }
   }catch(error){
    const reason=safeCourseVisibilityFailure(error);
-   for(const id of slice)failures.push({id,reason});
+   for(const id of slice){
+    failures.push({id,reason});
+    const courseId=lessonCourseIds.get(id);
+    if(courseId)failedCourses.add(courseId);
+   }
   }
  }
  return {selectedCourses:selected.length,matchedLessons:ids.length,
-  matchedContents,changed,unchanged,failures};
+  matchedContents,changed,unchanged,failures,
+  failedCourseIds:input.courseIds.filter(id=>failedCourses.has(id))};
 }

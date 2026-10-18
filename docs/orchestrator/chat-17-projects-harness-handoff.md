@@ -148,3 +148,18 @@ The UI coverage matrix still contains other teams' page-level/raw-table entries;
 New targeted regression files are included in `npm run test:ux:kit:hardening`; tests remain **unverified until CI runs**. Refresh `docs/audit/ux/COVERAGE-MATRIX.md` from the generator after merging; do not manually edit red gap counts.
 
 - **Unowned interview operations (UX-UNOWNED-TABLE-04):** `src/components/admin/super-admin-interview-operations.tsx` now uses the shared responsive `DataTable` for all eleven interview fields with actions visible on mobile; keeps 500-row CSV cap, conflicts, IST and `.ics`. New `tests/unit/UX-admin-interviews-table-chat17.test.ts` registered under `test:ux:kit:hardening`.
+
+- **Interview browser follow-up:** The development-only fixture mounts the Super Admin interview grid with synthetic overlapping room bookings. Chromium test `UX-UNOWNED-TABLE-04` checks mobile filters/conflicts and real `.ics` download. Include `npm run test:e2e:chat17:kit` in CI, with the site running in development mode. Demo entries are not tenant data and do not test API authorization.
+
+- **Intentional raw grid triage:** `docs/audit/ux/chat17-dense-grid-exceptions.md` documents the TPO spreadsheet grid and the College Admin attendance month matrix as *provisional exceptions*, with keyboard/mobile/permissions acceptance gates. `tests/unit/UX-dense-grids-chat17.test.ts` guards the existing a11y/mobile source contracts. All other raw-grid scanner results still require triage; no scanner rule was weakened.
+
+- **PROJ-HARNESS-47** fixes a critical false-positive fixture: task submissions previously used an unassigned task on a PLANNED sprint, unlike production policy. Canonical task now has the enrolled learner as assignee and ACTIVE sprint; persisted wrong-assignee and non-active sprint checks are tested. Execute `npm run test:db:projects-harness` on the migrated test DB before relying on these fixtures for IIT Dharwad readiness.
+
+## Further unowned responsive table and fixture integrity work
+
+- `UX-UNOWNED-TABLE-06` changes the sensitive verification education table to a bounded 5-field projection plus DataTable, omitting arbitrary identity/document content; unit test protects projection.
+- `UX-UNOWNED-TABLE-07` changes Super Admin student bulk-import history into DataTable inside its original modal.
+- `UX-UNOWNED-TABLE-08` changes faculty bulk-import outcome rows to DataTable and replaces `window.confirm` with shared accessible confirmation, preserving file-size, exact copy and server-confirmed payload.
+- `PROJ-HARNESS-47` changes canonical project task fixtures to an ACTIVE sprint with the learner explicitly assigned to the task, then guards persisted assignee and sprint/task state on task submission. Previously the fixture generated submissions that production submission service would reject. This must be run against a real migrated disposable test DB before the harness is used as acceptance evidence.
+
+Tests are registered in `test:ux:kit:hardening` and `test:db:projects-harness`. Cloud execution is **pending** and only actual runner output can close these items.

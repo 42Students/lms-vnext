@@ -33,6 +33,9 @@ describe("UX-UNOWNED-TABLE-02 academic module-access hierarchy",()=>{
       "Electives","Students in scope","Effective:","Expand all","Collapse all"])
       expect(source).toContain(text);
     expect(source).toContain("scopes.slice(0,15)");
+    expect(source).toContain('const showPageStatus=Boolean(baseHref&&isSafeInternalHref(baseHref))');
+    expect(source).toContain('{showPageStatus?<nav');
+    expect(source).toContain("Academic hierarchy page {safePage}");
     expect(source).toContain("min-h-11");
     expect(source).not.toMatch(/<\s*table\b/i);
     expect(source).not.toMatch(/<\s*(thead|tbody|tr|td)\b/i);
