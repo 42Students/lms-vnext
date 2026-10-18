@@ -22,7 +22,8 @@ export async function getMentorSprintProgress(
 ) {
   const query = mentorSprintProgressQuerySchema.parse(rawQuery);
   const membership = context.membership;
-  if (!membership || !hasActiveMembership(context) ||
+  if (!membership || context.user.platformStatus!=="ACTIVE" ||
+      !hasActiveMembership(context) ||
       !hasMembershipRole(context, "MENTOR") ||
       !can(context, "projects.read", {
         collegeId: membership.collegeId,
@@ -43,7 +44,9 @@ export async function getMentorSprintProgress(
   if (!modules.projects.enabled) return empty(false);
 
   const projects = (await listMyProjectInstances(context))
-    .filter(row => row.memberRole === "MENTOR" && row.project.status !== "ARCHIVED");
+    .filter(row => row.memberRole === "MENTOR" &&
+      row.project.collegeId === membership.collegeId &&
+      row.project.status !== "ARCHIVED");
   const ids = projects.map(row => row.project.id);
   const choices=projects.map(row=>({id:row.project.id,title:row.project.title}));
   if(query.projectId&&!ids.includes(query.projectId))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");

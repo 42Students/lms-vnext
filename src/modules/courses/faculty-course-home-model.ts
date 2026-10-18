@@ -60,7 +60,8 @@ export function buildFacultyCourseHomeSignals(
 ) {
   // Do not let duplicate or invalid timetable data inflate a student's
   // denominator. Only current enrolled learners contribute to this snapshot.
-  const rosterIds = new Set(input.roster.map(learner => learner.membershipId));
+  const roster = [...new Map(input.roster.map(learner => [learner.membershipId,learner] as const)).values()];
+  const rosterIds = new Set(roster.map(learner => learner.membershipId));
   const heldMarkedSessions = [...new Map(
     input.attendanceSessions.filter(session =>
       Number.isFinite(session.startsAt.getTime()) &&
@@ -103,7 +104,7 @@ export function buildFacultyCourseHomeSignals(
     );
   }
 
-  const rosterSize = input.roster.length;
+  const rosterSize = roster.length;
   const sessionPercentages =
     rosterSize > 0
       ? heldMarkedSessions.map(
@@ -128,7 +129,7 @@ export function buildFacultyCourseHomeSignals(
         )
       : null;
 
-  const lowAttendance = input.roster
+  const lowAttendance = roster
     .flatMap((learner) => {
       const absentCount =
         absencesByLearner.get(
@@ -188,7 +189,7 @@ export function buildFacultyCourseHomeSignals(
   for (const assignment of input.assignments) {
     if (
       assignment.maxPoints <= 0 ||
-      assignment.status === "ARCHIVED"
+      assignment.status !== "PUBLISHED"
     ) {
       continue;
     }
@@ -225,7 +226,7 @@ export function buildFacultyCourseHomeSignals(
       );
     }
   }
-  const studentAverages = input.roster
+  const studentAverages = roster
     .flatMap((learner) => {
       const scores = studentScores.get(
         learner.membershipId,
@@ -261,7 +262,7 @@ export function buildFacultyCourseHomeSignals(
       : null;
 
   const contentPerformance=input.assignments.flatMap(assignment=>{
-    if(assignment.status==="ARCHIVED"||assignment.maxPoints<=0)return [];
+    if(assignment.status!=="PUBLISHED"||assignment.maxPoints<=0)return [];
     const scores=assignment.submissions.filter(sub=>
       rosterIds.has(sub.membershipId)&&sub.gradingStatus==="GRADED"&&
       sub.pointsAwarded!==null&&Number.isFinite(sub.pointsAwarded)&&
@@ -282,6 +283,7 @@ export function buildFacultyCourseHomeSignals(
     if (
       assignment.status !== "PUBLISHED" ||
       !assignment.dueAt ||
+      !Number.isFinite(assignment.dueAt.getTime()) ||
       assignment.dueAt.getTime() >
         now.getTime()
     ) {
@@ -293,7 +295,7 @@ export function buildFacultyCourseHomeSignals(
           submission.membershipId,
       ),
     );
-    for (const learner of input.roster) {
+    for (const learner of roster) {
       if (
         !submitted.has(
           learner.membershipId,
@@ -315,7 +317,7 @@ export function buildFacultyCourseHomeSignals(
       learner,
     ]),
   );
-  const allAtRisk = input.roster
+  const allAtRisk = roster
     .flatMap((learner) => {
       const attendance =
         attendanceByLearner.get(

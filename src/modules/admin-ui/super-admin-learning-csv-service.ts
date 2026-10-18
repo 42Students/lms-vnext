@@ -1,5 +1,6 @@
 import "server-only";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requirePermission} from "@/modules/permissions/policy";
 import {apiErrorResponse} from "@/lib/api-error";
 import {placementReportCsv} from "@/modules/placements/report-model";
 import {listCollegeLessons,listCollegeCourseProgress} from "@/modules/courses/college-learning-directory-service";
@@ -9,6 +10,10 @@ import {adminAssessmentQuerySchema} from "@/modules/courses/admin-assessment-dir
 type Kind="LESSONS"|"PROGRESS"|"ASSIGNMENT"|"QUIZ";
 export async function exportSuperAdminLearningDirectory(request:Request,kind:Kind):Promise<Response>{
  try{
+  // Exports are private Super Admin endpoints. Deny stale or lower-privilege
+  // contexts before echoing even generic filter validation feedback.
+  const context=await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
   const searchParams=new URL(request.url).searchParams;
   // Repeated query parameters are ambiguous across proxies and frameworks:
   // do not silently keep the final value or bypass the selected-college filters.
@@ -21,7 +26,6 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
      (kind==="ASSIGNMENT"&&(query.status==="CLOSED"||
        (query.results!==undefined&&query.results!=="ALL"))))
     return Response.json({error:"INVALID_FILTERS"},{status:400});
-  const context=await getCurrentRequestContext();
   const headers:string[]=kind==="LESSONS"?["id","lessonName","sequence","status","courseName","courseCode","cohort","semester","contentCount","publishedContentCount"]:
    kind==="PROGRESS"?["offeringId","courseName","courseCode","cohort","semester","status","recordedRows","completedRows","learnersWithRecords"]:
    ["id","title","courseName","courseCode","lessonName","status","dueAt","points","activityCount","eligibleLearners","submittedLearners","gradedLearners","resultsPublished"];

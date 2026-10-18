@@ -10,24 +10,26 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
-import { adminLearningHref, adminLearningQuerySchema, adminProgressStats } from "@/modules/courses/admin-learning-read-model";
+import { adminLearningHref, adminProgressStats } from "@/modules/courses/admin-learning-read-model";
+import {parseSuperAdminCourseProgressParams} from "@/modules/courses/super-admin-course-progress-query";
+import {requirePermission} from "@/modules/permissions/policy";
 
 export default async function SuperAdminCourseProgressPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const raw = await searchParams;
-  const parsed = adminLearningQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page,courseCode:raw.courseCode||undefined,cohortCode:raw.cohortCode||undefined });
-  if (!parsed.success) return <div className="min-w-0 space-y-5">
+  const context = await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
+  const parsed = parseSuperAdminCourseProgressParams(await searchParams);
+  if (!parsed) return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
     <ErrorState title="Invalid course progress filters" description="Search, status or page is invalid."
       action={<Link href="/admin/course-progress" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
-  const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its course progress." />
   </div>;
-  const [data,filters] = await Promise.all([listCollegeCourseProgress(context, parsed.data),getSuperAdminLearningFilterOptions(context)]);
+  const [data,filters] = await Promise.all([listCollegeCourseProgress(context, parsed),getSuperAdminLearningFilterOptions(context)]);
   const summary = adminProgressStats(data.items);
   return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress"
@@ -50,6 +52,10 @@ export default async function SuperAdminCourseProgressPage({
       <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
       <Button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-foreground">Filter</Button>
     </form>
+    {filtersResult.status==="rejected"?<p role="status"
+      className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+      Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
+    </p>:null}
     <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]" href="/admin/course-progress">Clear filters</Link>
     <p className="text-sm text-muted-foreground">
       {data.total} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
