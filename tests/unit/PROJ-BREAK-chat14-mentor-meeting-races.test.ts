@@ -99,7 +99,7 @@ const draft={
  title:"Mentor review",startsAt:"2099-01-01T10:00:00.000Z",
  endsAt:"2099-01-01T10:30:00.000Z",timeZone:"Asia/Kolkata",
  status:"DRAFT",expectedProjectUpdatedAt:"2099-01-01T00:00:00.000Z",
-};
+} as const;
 describe("Mentor meeting writes and direct read permissions",()=>{
  it("PROJ-BREAK-MENTOR-280 disabled Projects denies list, request and transition before scope lookup",async()=>{
   state.moduleEnabled=false;
