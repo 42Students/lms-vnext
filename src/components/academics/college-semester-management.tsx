@@ -64,7 +64,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
   }
 
   return (
-    <section aria-label={SEMESTER_COPY.createTitle} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <section aria-label={SEMESTER_COPY.createTitle} className="- sm: border-t border-border pt-4">
       <h2 className="m-0 text-lg font-semibold text-foreground">{SEMESTER_COPY.createTitle}</h2>
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
