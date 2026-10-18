@@ -30,7 +30,11 @@ export default async function AdminCollegeVerification({
  }catch(e){if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();throw e;}
  const base=`/admin/colleges/${encodeURIComponent(college.id)}/verification`;
  const raw=await searchParams;
- const parsed=Object.values(raw).some(Array.isArray)?null:verificationQueueFilters.safeParse(Object.fromEntries(
+ const invalidPaging=["page","pageSize"].some(key=>{
+  const value=raw[key];
+  return value!==undefined&&(typeof value!=="string"||!/^[0-9]+$/.test(value));
+ });
+ const parsed=invalidPaging||Object.values(raw).some(Array.isArray)?null:verificationQueueFilters.safeParse(Object.fromEntries(
   Object.entries(raw).filter(([,v])=>v!==undefined&&v!==""),
  ));
  const header=<PageHeader eyebrow="Super Admin · Verification" title={college.name}
