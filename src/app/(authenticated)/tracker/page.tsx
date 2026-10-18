@@ -28,9 +28,9 @@ export default async function TrackerReportPage({
         My reports
       </Link>}
     {!ready ? <div role="status" className="rounded-xl border border-border bg-surface p-5">
-      <p className="font-semibold">Tracker database is not enabled.</p>
+      <p className="font-semibold">Reports are temporarily unavailable.</p>
       <p className="mt-2 text-sm text-body">
-        Migration 0076 must be verified and DB10_TRACKER_READY=DB10_VERIFIED set before reports can be saved.
+        Try again soon. Your report has not been submitted.
       </p>
     </div> : <TrackerReportForm contextPrefill={contextPrefill} canSearchSimilar={isSuperAdmin(context)}
       knownErrorId={isSuperAdmin(context)?knownErrorId:undefined} />}

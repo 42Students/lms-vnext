@@ -55,8 +55,8 @@ export function createOutboundProvider(
           });
           return response.ok;
         }
-        if (!config.sms.apiKey || !config.sms.apiToken || !/^[A-Za-z0-9_-]+$/.test(config.sms.accountSid) ||
-            !config.sms.dltEntityId || !template.exotelSenderId || !template.exotelDltTemplateId || !template.renderSms ||
+        if (!config.sms.apiKey.trim() || !config.sms.apiToken.trim() || !/^[A-Za-z0-9_-]+$/.test(config.sms.accountSid) ||
+            !config.sms.dltEntityId.trim() || !template.exotelSenderId?.trim() || !template.exotelDltTemplateId?.trim() || !template.renderSms ||
             template.exotelDltTemplateId === config.sms.otpDltTemplateId) return false;
         const body = template.renderSms(request.variables);
         if (!body.trim() || body.length > 1600) return false;
