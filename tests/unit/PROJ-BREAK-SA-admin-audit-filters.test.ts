@@ -14,7 +14,7 @@ describe("Super Admin Projects activity ledger hostile URL handling",()=>{
    const parsed=parseProjectAdminAuditQuery({[field]:["first","second"]});
    expect(parsed.ignoredInvalidFilters,field).toBe(true);
    const property=field==="action"||field==="status"||field==="eventType"?"eventType":field;
-   if(field!=="beforeOccurredAt"&&field!=="beforeId")expect((parsed as Record<string,unknown>)[property],field).toBeUndefined();
+   if(field!=="beforeOccurredAt"&&field!=="beforeId")expect((parsed as unknown as Record<string,unknown>)[property],field).toBeUndefined();
   }
   const conflicting=parseProjectAdminAuditQuery({
    action:[action,"projects.unknown"],subjectId:["known","foreign"],
