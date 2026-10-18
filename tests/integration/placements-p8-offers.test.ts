@@ -586,6 +586,44 @@ describe("Placement P8 offers and joining", () => {
     }
   });
 
+  it("PLACEMENTS-TPO-DUAL-ACCEPT-DB-01 rolls back a batch that accepts two official offers for one learner",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Engineer I",annualCtcInr:900_000,
+    });
+    const role=await pool.query<{role_option_id:string}>(
+      "select role_option_id from placement_applications where id=$1",[application.id]);
+    const secondRole=await pool.query<{id:string}>(`
+      insert into placement_job_role_options(job_id,title,employment_type,work_mode)
+      select job_id,title||' second',employment_type,work_mode
+      from placement_job_role_options where id=$1 returning id`,[role.rows[0]!.role_option_id]);
+    const secondApp=await pool.query<{id:string}>(`
+      insert into placement_applications(
+        job_id,role_option_id,membership_id,channel,status,
+        eligibility_status,eligibility_snapshot,submitted_by_user_id
+      ) select job_id,$2,membership_id,channel,status,
+          eligibility_status,eligibility_snapshot,submitted_by_user_id
+        from placement_applications where id=$1 returning id
+    `,[application.id,secondRole.rows[0]!.id]);
+    const secondOffer=await pool.query<{id:string}>(`
+      insert into placement_offers(application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id)
+      values($1,1,'OFFER','ISSUED','Engineer II',900000,$2) returning id
+    `,[secondApp.rows[0]!.id,SEED_IDS.facultyUser]);
+    const ids=[issued.id,secondOffer.rows[0]!.id];
+    await expect(recordTpoOfferLifecycle(tpo,job.id,{
+      confirmed:true,action:"RECORD_ACCEPTED",offerIds:ids,
+      expectedStatus:"ISSUED",reason:"Both candidate responses were reported on the company spreadsheet",
+    })).rejects.toMatchObject({code:"PLACEMENT_OFFER_ACTIVE_EXISTS"});
+    const state=await pool.query<{id:string;status:string}>(
+      "select id,status from placement_offers where id=any($1::uuid[]) order by id",[ids]);
+    expect(state.rows).toHaveLength(2);
+    expect(state.rows.every(row=>row.status==="ISSUED")).toBe(true);
+    const history=await pool.query<{count:number}>(
+      "select count(*)::integer as count from placement_offer_status_history where offer_id=any($1::uuid[]) and to_status='ACCEPTED'",
+      [ids]);
+    expect(history.rows[0]?.count).toBe(0);
+  });
+
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
     const { application } =
       await preparePassedApplication();
