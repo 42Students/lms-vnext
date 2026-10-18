@@ -1,4 +1,7 @@
 "use client";
+import {DataTable} from "@/components/ui/data-table";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -83,71 +86,79 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    <div><h2 className="text-lg font-semibold">Candidate interviews</h2>
     <p className="mt-1 text-sm text-body">Schedule, edit, cancel, mark Completed or No Show. Actions are audited and notify the learner.</p></div>
    <button type="button" disabled={!available.length||!candidates.length} onClick={()=>open()}
-    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Schedule interview</button>
+    className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Schedule interview</button>
   </div>
-  <div className="overflow-x-auto"><table className="min-w-full text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
-   <thead><tr className="border-b border-border bg-muted"><th className="p-3">Candidate</th><th className="p-3">Round</th>
-    <th className="p-3">Date & Time (IST)</th><th className="p-3">Mode and location</th>
-    <th className="p-3">Interviewer</th><th className="p-3">Status</th><th className="p-3">Actions</th></tr></thead>
-   <tbody>{appointments.map(row=><tr key={row.id} className="border-b border-border">
-    <td className="p-3">{candidates.find(c=>c.applicationId===row.applicationId)?.name??row.applicationId}</td>
-    <td className="p-3">{rounds.find(r=>r.id===row.roundId)?.name??"Interview round"}</td>
-    <td className="p-3">{display(row.scheduledAt)} · {row.durationMinutes} min</td>
-    <td className="p-3">{row.mode==="VIRTUAL"?"Virtual":"On campus"} · {row.venue??row.meetingUrl??"—"}</td>
-    <td className="p-3">{row.interviewer??"Not recorded"}</td><td className="p-3">{row.status}</td>
-    <td className="p-3"><div className="flex flex-wrap gap-2">
+  {!available.length||!candidates.length?<p role="status" className="text-sm text-body">Schedule an interview when a pending or scheduled round and a candidate are available.</p>:null}
+  <DataTable<(typeof appointments)[number]>
+    caption="Candidate interviews"
+    rows={appointments}
+    getRowKey={row=>row.id}
+    columns={[
+      {key:"candidate",header:"Candidate",mobilePriority:"primary",
+        cell:row=>candidates.find(c=>c.applicationId===row.applicationId)?.name??row.applicationId},
+      {key:"round",header:"Round",mobilePriority:"secondary",
+        cell:row=>rounds.find(r=>r.id===row.roundId)?.name??"Interview round"},
+      {key:"time",header:"Date & Time (IST)",mobilePriority:"secondary",
+        cell:row=>display(row.scheduledAt)+" · "+row.durationMinutes+" min"},
+      {key:"location",header:"Mode and location",mobilePriority:"secondary",
+        cell:row=>(row.mode==="VIRTUAL"?"Virtual":"On campus")+" · "+(row.venue??row.meetingUrl??"—")},
+      {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",
+        cell:row=>row.interviewer??"Not recorded"},
+      {key:"status",header:"Status",mobilePriority:"secondary",cell:row=>row.status},
+      {key:"actions",header:"Actions",mobilePriority:"action",
+        cell:row=><div className="flex flex-wrap gap-2">
      {row.status!=="CANCELLED"?<a download={"interview-"+row.id+".ics"}
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
-      }))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      }))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Download .ics</a>:null}
      {row.status==="SCHEDULED"?<>
       <button type="button" disabled={busy} onClick={()=>open(row)}
-       className="min-h-11 rounded border border-border px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Edit</button>
+       className="min-h-11 rounded border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Edit</button>
       <button type="button" disabled={busy} onClick={()=>void decide(row,"COMPLETED")}
        className="min-h-11 rounded border border-border px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Completed</button>
       <button type="button" disabled={busy} onClick={()=>void decide(row,"NO_SHOW")}
        className="min-h-11 rounded border border-border px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">No Show</button>
       <button type="button" disabled={busy} onClick={()=>void decide(row,"CANCEL")}
-       className="min-h-11 rounded border border-border px-3 text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
+       className="min-h-11 rounded border border-border px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
      </>:<span className="text-body">Recorded</span>}
-    </div></td>
-   </tr>)}</tbody>
-  </table></div>
-  {!appointments.length?<p className="text-sm text-body">No candidate interviews have been scheduled for this drive.</p>:null}
+    </div>},
+    ]}
+    empty={<p role="status" className="text-sm text-body">No candidate interviews have been scheduled for this drive.</p>}
+  />
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
-  {error&&!show?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error&&!show?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}>
     <h3 className="text-lg font-semibold">{editing?"Edit interview":"Schedule interview"}</h3>
-    <label className="grid gap-1 text-sm">Round<select value={roundId} disabled={Boolean(editing)}
+    <label className="grid gap-1 text-sm">Round<Select value={roundId} disabled={Boolean(editing)}
      onChange={e=>setRoundId(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
-    </select></label>
-    <label className="grid gap-1 text-sm">Candidate<select value={applicationId} disabled={Boolean(editing)}
+    </Select></label>
+    <label className="grid gap-1 text-sm">Candidate<Select value={applicationId} disabled={Boolean(editing)}
      onChange={e=>setApplicationId(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
-    </select></label>
+    </Select></label>
     <div className="grid gap-3 sm:grid-cols-2">
-     <label className="grid gap-1 text-sm">Date & time (IST)<input type="datetime-local" required value={start}
+     <label className="grid gap-1 text-sm">Date & time (IST)<Input type="datetime-local" required value={start}
       onChange={e=>setStart(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>
-     <label className="grid gap-1 text-sm">Duration (minutes)<input type="number" min={5} max={480} value={duration}
+     <label className="grid gap-1 text-sm">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
       onChange={e=>setDuration(Number(e.target.value))} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>
     </div>
-    <label className="grid gap-1 text-sm">Mode<select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
+    <label className="grid gap-1 text-sm">Mode<Select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
      className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
-     <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></select></label>
+     <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></Select></label>
     <label className="grid gap-1 text-sm">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
-     <input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
+     <Input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
       className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>
-    <label className="grid gap-1 text-sm">Interviewer (optional)<input value={interviewer}
+    <label className="grid gap-1 text-sm">Interviewer (optional)<Input value={interviewer}
      onChange={e=>setInterviewer(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>
     {editing?<label className="grid gap-1 text-sm">Reason for change<textarea rows={2} value={reason}
      onChange={e=>setReason(e.target.value)} className="rounded border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>:null}
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
     <div className="flex flex-wrap gap-3">
      <button type="button" disabled={busy||!start||(Boolean(editing)&&reason.trim().length<3)}
-      onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</button>
      <button type="button" disabled={busy} onClick={()=>setShow(false)}
       className="min-h-11 rounded border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>

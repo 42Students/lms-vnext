@@ -14,7 +14,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   if (!unassignedIdentityScopeAllowed(context.adminScope)) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin" title="Users without college memberships" />
     <EmptyState title="Clear the admin scope" description="These users have no college membership. Clear the organization and college selection in the header to inspect global identities." />
-    <Link href="/admin/people/directory" className="font-semibold text-[var(--lms-teal-deep)]">← Users & Roles</Link>
+    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">← Users & Roles</Link>
   </div>;
   const raw = await searchParams;
   const parsed = adminUnassignedUsersQuerySchema.safeParse({ q: raw.q, platformStatus: raw.platformStatus, role: raw.role, page: raw.page });
