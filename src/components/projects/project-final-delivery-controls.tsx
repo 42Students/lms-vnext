@@ -24,6 +24,7 @@ import {savedDeliverySubmissionReadiness} from "@/modules/projects/saved-deliver
 
 type Submission = {
   id: string;
+  updatedAt: Date | string;
   version: number;
   status: string;
   summary: string;
@@ -101,7 +102,18 @@ export function LearnerFinalDeliveryControl({
     attachments:safeDraftAttachments(draft?.attachments),
   }));
   const lastSavedSnapshot=useRef(savedSnapshot);
+  const lastSavedUpdatedAt=useRef(draft?.updatedAt ? new Date(draft.updatedAt).toISOString() : null);
   function markSaved(snapshot:string){lastSavedSnapshot.current=snapshot;setSavedSnapshot(snapshot);}
+  function acknowledgedDraftRevision(result:unknown):string {
+    const submission=result&&typeof result==="object"&&"submission" in result
+      ? (result as {submission?:unknown}).submission : null;
+    const token=submission&&typeof submission==="object"&&"updatedAt" in submission
+      ? (submission as {updatedAt?:unknown}).updatedAt : null;
+    if(typeof token!=="string"||!Number.isFinite(Date.parse(token))){
+      throw new Error("Could not confirm the draft revision. Refresh before editing again.");
+    }
+    return new Date(token).toISOString();
+  }
   function currentPayload(){
     return {
       summary:summary.trim(),
@@ -138,7 +150,7 @@ export function LearnerFinalDeliveryControl({
     setError(null);
     setPending(true);
     try {
-      await projectMutation(
+      const result = await projectMutation(
         draft
           ? `/api/projects/${projectId}/submissions/${draft.id}`
           : `/api/projects/${projectId}/submissions`,
@@ -151,8 +163,11 @@ export function LearnerFinalDeliveryControl({
             demoUrl.trim() || undefined,
           notes: notes.trim() || undefined,
           attachments,
+          ...(draft ? {expectedUpdatedAt:lastSavedUpdatedAt.current} : {}),
         },
       );
+      // Never acknowledge a save without its new server-issued revision.
+      lastSavedUpdatedAt.current=acknowledgedDraftRevision(result);
       markSaved(JSON.stringify(currentPayload()));
       failedSnapshot.current=null;
       setAutosaveStatus("saved");
@@ -186,10 +201,11 @@ export function LearnerFinalDeliveryControl({
       pendingRef.current=true;
       setAutosaveStatus("saving");setPending(true);
       try{
-        await projectMutation(
+        const result=await projectMutation(
           `/api/projects/${projectId}/submissions/${draft.id}`,
-          "PATCH",payload,
+          "PATCH",{...payload,expectedUpdatedAt:lastSavedUpdatedAt.current},
         );
+        lastSavedUpdatedAt.current=acknowledgedDraftRevision(result);
         markSaved(snapshot);
         failedSnapshot.current=null;
         setAutosaveStatus("saved");

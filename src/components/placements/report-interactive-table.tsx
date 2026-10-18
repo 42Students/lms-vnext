@@ -144,7 +144,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
        className="min-h-11 text-left text-foreground underline-offset-4 hover:underline">
        {col.heading} {sort===col.index?(descending?"↓":"↑"):""}
       </button>,
-      cell:row=>{
+      cell:(row:(typeof visibleRows)[number])=>{
         const value=row.cells[col.index];
         return value===null||value===undefined||value===""?"—":value;
       },
