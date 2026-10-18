@@ -78,27 +78,27 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
     }} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
       <label className="text-sm font-semibold">Title<input required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3"/></label>
+        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
       <label className="text-sm font-semibold">Priority<select value={priority}
         onChange={e=>setPriority(e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3">
+        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
       </select></label>
       <label className="text-sm font-semibold">Description<textarea maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
-        className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
+        className="mt-1 w-full rounded-md border border-border bg-background p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
       <label className="text-sm font-semibold">Approach (optional)<textarea maxLength={4000}
         value={approach} onChange={event=>setApproach(event.target.value)}
-        className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
+        className="mt-1 w-full rounded-md border border-border bg-background p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
       <label className="text-sm font-semibold">Done when<textarea maxLength={4000}
         value={criteria} onChange={e=>setCriteria(e.target.value)}
-        className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
+        className="mt-1 w-full rounded-md border border-border bg-background p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
       <label className="text-sm font-semibold">Estimate points<input type="number" min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3"/></label>
+        className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
       <label className="text-sm font-semibold">Task type
         <select value={taskType} onChange={e=>setTaskType(e.target.value)}
-          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3">
+          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="">Not specified</option>
           <option value="STORY">Story</option><option value="BUG">Bug</option>
           <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
@@ -106,11 +106,11 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       </label>
       <label className="text-sm font-semibold">Due date
         <input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
-          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3"/>
+          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
       </label>
       <label className="text-sm font-semibold sm:col-span-2">What&apos;s blocking this task?
         <textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
-          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background p-2"/>
+          className="mt-1 min-h-11 w-full rounded-md border border-border bg-background p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
       </label>
       <div className="flex items-end gap-2"><button type="submit"
         disabled={busy||!title.trim()||(points!==""&&
@@ -143,7 +143,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       </div>:null}
     {!readOnly?<label className="mt-2 block text-sm font-semibold">Pull into sprint
      <select disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
-      className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2">
+      className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       <option value="">Choose sprint</option>
       {targets.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
      </select>
