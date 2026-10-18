@@ -123,3 +123,5 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 - Admin APIs and additional modules beyond academics/people/recruiters.
 
 | `src/modules/courses/faculty-content-preview-model.ts` | `facultyContentExternalHref`, `facultyYouTubeEmbed` | `tests/unit/chat3-faculty-video-preview-url-boundaries.test.ts` | FAC-VIDEO-PREVIEW-01 | HTTPS and credential restrictions, exact YouTube host allowlist, watch/shorts/live/embed form support, strict eleven-character ID and privacy-safe no-cookie embed; tests authored, not executed |
+
+| `src/modules/courses/faculty-course-health-model.ts` | `facultyCourseHealthParamsSchema`, `selectFacultyCourseHealthCandidates`, `facultyCourseHealthHref`, `responseCoverage` | `tests/unit/chat3-faculty-course-health-model-adversarial.test.ts` | FAC-HEALTH-MODEL-01 | strict tenant-free selectors, foreign delivery exclusion, published/closed visibility, stable tie-breaks with corrupt dates, bounded pagination, no input mutation, invalid metric nullability; authored, not executed |
