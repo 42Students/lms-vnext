@@ -24,6 +24,16 @@ describe("IIT Dharwad Projects Admin IST date-boundary integrity",()=>{
     expect(csv).toContain('"' + istDate + '"');
     expect(csv).not.toContain('"' + utcDate + '"');
   });
+  it("PROJ-BREAK-admin-exports-35 Super Admin export uses the same visible status and timezone as cards",()=>{
+    const source=readFileSync("src/components/projects/project-workspace-page-export.tsx","utf8");
+    expect(source).toContain("collegeWorkspaceStatusLabel(r.status,r.riskReasons)");
+    expect(source).toContain("formatProjectAdminUpdatedDateIst(r.updatedAt)");
+    expect(source).toContain("Updated at (IST)");
+    expect(source).toContain("projectAdminCsv([columns,...body])");
+    const page=readFileSync("src/app/(authenticated)/admin/projects/page.tsx","utf8");
+    expect(page).toContain("riskReasons:item.riskReasons");
+    expect(formatProjectAdminUpdatedDateIst(new Date("2099-06-01T21:00:00.000Z"))).toContain("2 Jun 2099");
+  });
   it("PROJ-BREAK-admin-time-34 a just-before-midnight IST event stays on the previous calendar date",()=>{
     const beforeMidnight=new Date("2099-06-01T18:29:59.000Z");
     expect(formatProjectAdminUpdatedDateIst(beforeMidnight)).toContain("1 Jun 2099");
