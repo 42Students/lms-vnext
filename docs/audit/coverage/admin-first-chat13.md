@@ -44,3 +44,7 @@ On the first-third faculty pages, `SuperAdminFacultyBulkImport` clears an old se
 
 ## Bulk learner override UX — SA-STUDENT-BULK-18
 The first-third Super Admin student-access widget now validates selected memberships against the currently visible college roster, prevents double submits using a synchronous pending ref, and freezes the confirmed module/action/membership IDs throughout the network request. Denied/stale/invalid server statuses are mapped to friendly guidance instead of raw error codes. Behavioral selection/feedback tests and component interaction contracts: `tests/unit/chat13-student-bulk-stale-roster.test.ts`; browser acceptance pending.
+
+
+## Selected organization college bulk-import approval — SA-COLLEGE-CSV-20
+`CollegeBulkImport` now invalidates confirmation when CSV or organization changes, sends the exact approved snapshot, refuses duplicate clicks with an in-flight ref, and retains the original organization-bound source validation. `canApplyConfirmedCollegeBulkImport` and `tests/unit/chat13-college-bulk-confirmation-snapshot.test.ts` cover version mismatch, empty/bad drafts, 200-record cap and double submit. No real browser or SQL acceptance is asserted.
