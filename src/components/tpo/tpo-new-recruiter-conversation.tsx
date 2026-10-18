@@ -70,7 +70,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div>
-  <button ref={launchRef} type="button" className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold"
+  <button ref={launchRef} type="button" className="min-h-11 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold"
    onClick={()=>open?close():openDialog()}>New message</button>
   <Dialog open={open} onOpenChange={next=>{if(!next)close();}} dismissible={!busy}
    title="New message to a recruiter">
@@ -92,7 +92,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
      </div>
      <label className="block text-sm font-semibold text-body">Message
       <textarea aria-label="New message" placeholder="Write a message" required maxLength={4000}
-       className="mt-1 min-h-28 w-full rounded-md border border-border bg-surface p-3 text-base sm:text-sm"
+       className="mt-1 min-h-28 w-full rounded-[9px] border border-border bg-surface p-3 text-base sm:text-sm"
        value={message} onChange={event=>editMessage(event.target.value)}
        onKeyDown={event=>{
         if(event.key==="Enter"&&(event.ctrlKey||event.metaKey||!event.shiftKey)&&
@@ -116,7 +116,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
       <button type="button" onClick={()=>editMessage("")} disabled={!message||busy}
        className="min-h-11 rounded-md border border-border px-4 text-sm">Discard draft</button>
       <button type="submit" disabled={!id||!message.trim()||busy}
-       className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
+       className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
        {busy?"Sending…":"Send"}
       </button>
      </div>
