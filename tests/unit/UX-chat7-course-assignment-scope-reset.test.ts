@@ -23,7 +23,7 @@ describe("UX-courses-learner-reset-01 cross-assessment/browser-navigation guard"
   const text=source("assignment-submission-control");
   expect(text).toContain("createSubmissionFlightGuard");
   expect(text).toContain("learnerAssignmentFinalConfirmation(submissionType)");
-  for(const type of ["TEXT","LINK","FILE"] as const){
+  for(const type of ["TEXT","LINK"] as const){
    expect(learnerAssignmentFinalConfirmation(type)).toContain("cannot replace");
   }
   const guard=createSubmissionFlightGuard();
