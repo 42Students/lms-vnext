@@ -36,7 +36,7 @@ export default async function CollegeFacultyAssignmentPage({
       <ErrorState title="Invalid assignment filters"
         description="The status, page or search is invalid; no assignments were loaded."
         action={<Link href="/college/faculty-assignment"
-          className="font-semibold text-primary-text">Clear filters</Link>} />
+          className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
     </div>
   );
 
@@ -49,22 +49,22 @@ export default async function CollegeFacultyAssignmentPage({
     new Map(options.deliveries.map(item=>[item.sectionCode,{code:item.sectionCode,name:item.sectionName}])).values(),
   ).sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code));
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
         eyebrow="College Admin · People"
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}
         actions={<Link href="/college/faculty"
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Faculty directory</Link>}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Faculty directory</Link>}
       />
       <Link prefetch={false} download href={facultyAssignmentCsvHref(query)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Export filtered faculty assignments CSV
       </Link>
       <CollegeFacultyAssignmentCreate {...options} />
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-0 sm:min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Faculty, course or class
             <input name="q" type="search" defaultValue={query.q} maxLength={100}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
@@ -106,12 +106,12 @@ export default async function CollegeFacultyAssignmentPage({
               <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
             </select>
           </label>
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
           <Link href="/college/faculty-assignment"
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
         </form>
       </section>
-      <section className="overflow-x-auto rounded-xl border border-border bg-surface" aria-label="Teaching assignment roster">
+      <section className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface" aria-label="Teaching assignment roster">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {total} matching teaching assignment{total === 1 ? "" : "s"}
         </p>
@@ -138,7 +138,7 @@ export default async function CollegeFacultyAssignmentPage({
               </td>
               <td className="px-4 py-3">
                 <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
-                  className="font-semibold text-primary-text hover:underline">
+                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
                   {item.courseName}
                 </Link>
                 <p className="mt-1 text-xs text-muted-foreground">{item.courseCode}</p>
@@ -174,9 +174,9 @@ export default async function CollegeFacultyAssignmentPage({
       <nav aria-label="Faculty assignment pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span className="text-muted-foreground">Page {query.page} of {totalPages} · 25/page</span>
         <div className="flex gap-2">
-          {query.page > 1 ? <Link className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text"
+          {query.page > 1 ? <Link className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page - 1 })}>Previous</Link> : null}
-          {query.page < totalPages ? <Link className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text"
+          {query.page < totalPages ? <Link className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page + 1 })}>Next</Link> : null}
         </div>
       </nav>

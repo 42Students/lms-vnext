@@ -32,7 +32,7 @@ export default async function LearnerApplicationHistoryPage({
       <Link
         href={"/learn/my-placements/applications?applicationId=" +
           encodeURIComponent(history.applicationId)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
       >
         ← Back to application
       </Link>

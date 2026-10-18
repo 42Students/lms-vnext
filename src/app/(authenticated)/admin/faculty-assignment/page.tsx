@@ -16,7 +16,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
   collegeId?getSuperAdminFacultyAssignmentClasses(context):Promise.resolve([]),
   collegeId?getAdminCourseWorkspace(context,collegeId):Promise.resolve(null),
  ]);
- return <div className="space-y-5"><div className="flex flex-wrap items-center gap-3"><p className="font-semibold">Current teaching assignments</p><Link href="/admin/courses" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Create teaching assignment →</Link></div>{workspace?<SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries}
+ return <div className="min-w-0 space-y-5"><div className="flex flex-wrap items-center gap-3"><p className="font-semibold">Current teaching assignments</p><Link href="/admin/courses" className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">Create teaching assignment →</Link></div>{workspace?<SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries}
   faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>:null}
  <AdminScopedReadPage classOptions={classes} title="Faculty Assignments" path="/admin/faculty-assignment" statuses={statuses}
   exportPath="/api/admin/faculty-assignment/export" exportFilename="faculty-assignments.csv"
@@ -26,7 +26,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
     if(row.status!=="ACTIVE")return null;
     const rawRole=row.details.find(detail=>detail.startsWith("Teaching role: "))?.slice("Teaching role: ".length);
     const role=COURSE_TEACHING_ROLES.find(value=>value===rawRole);
-    return <div className="flex flex-wrap gap-2">
+    return <div className="min-w-0 flex flex-wrap gap-2">
       {role?<SuperAdminTeachingRoleEdit assignmentId={row.id} role={role}/>:null}
       <TeachingAssignmentActions legacyCopy assignment={{
         id:row.id,facultyDisplayName:row.title,courseName:row.subtitle,sectionName:row.details[0]??"Selected class",

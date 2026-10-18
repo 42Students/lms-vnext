@@ -65,7 +65,7 @@ export default async function RecruiterRequestDrivePage({
   if (collegeId && !grants.some((grant) => grant.collegeId === collegeId)) notFound();
 
   if (!collegeId) {
-    return <div className="space-y-6">
+    return <div className="min-w-0 max-w-full space-y-6">
       <PageHeader eyebrow="Recruiter" title="Request a drive"
         description="Choose an authorized college before drafting a hiring request." />
       {grants.length === 0 ? (
@@ -99,11 +99,11 @@ export default async function RecruiterRequestDrivePage({
     ? hrDraftFromAuthorizedJob(fromJob.job, fromJob.rounds)
     : emptyHrDriveDraft();
 
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Recruiter" title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
     <Link href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)}
-      className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
       ← Back to drives
     </Link>
     <Link href={hrSentProposalsHref(collegeId)}

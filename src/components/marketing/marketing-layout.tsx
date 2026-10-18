@@ -31,9 +31,9 @@ export function MarketingLayout({children}:{children:ReactNode}){
  </div>;
 }
 export function MarketingHero({eyebrow,title,description}:{eyebrow:string;title:string;description:string}){
- return <section className="min-w-0 space-y-5 py-6 sm:py-12">
+ return <section aria-labelledby="marketing-hero-heading" className="min-w-0 space-y-5 py-6 sm:py-12">
    <p className="text-sm font-semibold uppercase tracking-wider text-primary-text">{eyebrow}</p>
-   <h1 className="max-w-4xl break-words text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-6xl">{title}</h1>
+   <h1 id="marketing-hero-heading" className="max-w-4xl break-words text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-6xl">{title}</h1>
    <p className="max-w-3xl break-words text-base leading-7 text-body sm:text-lg sm:leading-8">{description}</p>
    <div className="flex flex-wrap gap-3">
     <Link href="/request-demo" className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 py-3 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Request a demo</Link>
@@ -41,9 +41,10 @@ export function MarketingHero({eyebrow,title,description}:{eyebrow:string;title:
    </div>
  </section>;
 }
-export function MarketingFeatureGrid({title,items}:{title:string;items:readonly {title:string;description:string}[]}){
- return <section className="space-y-6">
-  <h2 className="text-2xl font-semibold">{title}</h2>
+export function MarketingFeatureGrid({title,items}:{title:string;items:readonly {title:string;description:string}[]}) {
+ const headingId="marketing-features-"+title.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+ return <section aria-labelledby={headingId} className="min-w-0 space-y-6">
+  <h2 id={headingId} className="text-2xl font-semibold">{title}</h2>
   <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3">{items.map(item=><article key={item.title}
    className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
     <h3 className="font-semibold">{item.title}</h3><p className="mt-3 text-sm leading-6 text-body">{item.description}</p>
@@ -51,8 +52,8 @@ export function MarketingFeatureGrid({title,items}:{title:string;items:readonly 
  </section>;
 }
 export function MarketingCta({title}:{title:string}){
- return <section className="min-w-0 space-y-4 rounded-xl border border-border bg-primary-subtle p-5 sm:p-8">
-  <h2 className="text-2xl font-semibold">{title}</h2>
+ return <section aria-labelledby="marketing-cta-heading" className="min-w-0 space-y-4 rounded-xl border border-border bg-primary-subtle p-5 sm:p-8">
+  <h2 id="marketing-cta-heading" className="text-2xl font-semibold">{title}</h2>
   <p className="text-body">Explore how 42 LMS can support your learners and teams.</p>
   <Link href="/request-demo" className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 py-2 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">See 42 LMS in action</Link>
  </section>;

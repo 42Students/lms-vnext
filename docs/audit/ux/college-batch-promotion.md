@@ -1,9 +1,6 @@
-# UI/UX review: /college/batch-promotion
+# UX review: /college/batch-promotion
 
-Before: responsive interactions and table reading needed stronger minimum sizing or overflow containment.
-
-Changed: page overflow containment at mobile widths. Existing legacy headings and actions remain unchanged. Source: `src/app/(authenticated)/college/batch-promotion/page.tsx`.
-
-States preserved: existing loading, empty, error, validation, authorization and submit flows, where present. Outstanding browser verification: 320px widths, keyboard traversal, contrast and focus order.
-
-Regression: `tests/unit/chat4-college-ux-round2.test.ts` test `UX-college-batch-promotion-01`. Tests not executed; checklist remains unticked.
+- Owned route: `src/app/(authenticated)/college/batch-promotion/page.tsx`; legacy labels and status wording unchanged.
+- Improvements: contrast-safe action text; accessible links; bounded table scroll; overflow containment.
+- Existing tenant guards, successful data and failure/empty states retained; no artificial metrics or new permissions. No direct DataTable.
+- Test authored: `tests/unit/UX-college-college-batch-promotion-01.test.ts`; not yet executed by orchestrator, so checklist remains unticked.

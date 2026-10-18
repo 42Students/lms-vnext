@@ -95,7 +95,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
   if (!parsed.success) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           eyebrow="Super Admin · Module Access"
           title="Learner access trace"
@@ -107,7 +107,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           action={
             <Link
               href={basePath}
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
             >
               Clear filters
             </Link>
@@ -154,10 +154,10 @@ export default async function SuperAdminLearnerAccessTracePage({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <Link
         href={`/admin/features/${encodeURIComponent(college.id)}`}
-        className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
       >
         ← {college.name} access hierarchy
       </Link>
@@ -168,7 +168,7 @@ export default async function SuperAdminLearnerAccessTracePage({
         description={`Explain why an active learner's Projects, Placements and Electives module settings resolve to On or Off. The selected college is fixed to ${college.code}.`}
       />
 
-      <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+      <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-5">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Find a learner
@@ -217,14 +217,14 @@ export default async function SuperAdminLearnerAccessTracePage({
           </label>
           <button
             type="submit"
-            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground hover:bg-primary-hover"
           >
             Search
           </button>
 
           <Link
             href={basePath}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Clear
           </Link>
@@ -307,7 +307,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                               ? "true"
                               : undefined
                           }
-                          className="font-semibold text-primary-text hover:underline"
+                          className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
                         >
                           {isSelected
                             ? "Selected"
@@ -343,7 +343,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                       query.membershipId,
                   },
                 )}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
               >
                 ← Previous
               </Link>
@@ -361,7 +361,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                       query.membershipId,
                   },
                 )}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
               >
                 Next →
               </Link>
@@ -372,7 +372,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
       {selected ? (
         <section
-          className="space-y-6"
+          className="min-w-0 space-y-6"
           aria-label="Selected learner module access"
         >
           <div className="rounded-xl border border-border bg-surface p-5">
@@ -388,7 +388,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>
 
             <Link href={`/admin/features/${encodeURIComponent(college.id)}?scope=MEMBERSHIP&scopeId=${encodeURIComponent(selected.membershipId)}`}
-              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Inspect this learner&apos;s stored rules in the hierarchy →</Link>
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Inspect this learner&apos;s stored rules in the hierarchy →</Link>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               Resolution checks the current membership,
               section, cohort, program, department,
@@ -435,7 +435,7 @@ export default async function SuperAdminLearnerAccessTracePage({
            ].join(String.fromCharCode(10))),
            ].join(String.fromCharCode(10,10))}/>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Inspect membership overrides and locks →
           </Link>
           <section className="min-w-0 rounded-xl border border-border bg-surface p-5" aria-label="Student overrides and locks">
@@ -457,7 +457,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           {selected.modules.map((module) => (
             <article
               key={module.module}
-              className="space-y-4 rounded-xl border border-border bg-surface p-5"
+              className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>

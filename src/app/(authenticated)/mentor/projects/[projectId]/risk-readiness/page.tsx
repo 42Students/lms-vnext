@@ -30,11 +30,11 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     ["Past scheduled / unclosed",data.counts.scheduledPastDay],
     ["Tasks not Done",data.counts.incompleteTasks],
   ] as const;
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="At-risk & readiness drill-in"
       description={data.projectTitle+" · "+data.projectStatus}
       actions={<Link href={base}
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Full project workspace
       </Link>}/>
     {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5">
@@ -58,24 +58,24 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Show
           <select name="focus" defaultValue={data.query.focus}
-            className="min-h-10 rounded border border-border bg-background px-3">
+            className="min-h-11 rounded border border-border bg-background px-3">
             <option value="ALL">All evidence</option><option value="RISK">Attention only</option>
             <option value="READINESS">Readiness gaps only</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Task priority
           <select name="taskPriority" defaultValue={data.query.taskPriority}
-            className="min-h-10 rounded border border-border bg-background px-3">
+            className="min-h-11 rounded border border-border bg-background px-3">
             <option value="ALL">All task priorities</option>
             <option value="CRITICAL">Critical</option><option value="HIGH">High</option>
             <option value="MEDIUM">Medium</option><option value="LOW">Low</option>
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
         <Link href={base+"/risk-readiness"}
-          className="inline-flex min-h-10 items-center text-sm text-primary-text underline">Clear</Link>
+          className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear</Link>
       </form>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
         description="No matching stored signals were found. This is not a certificate of project safety or completeness."/>:
@@ -89,7 +89,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
           </div>
           <p className="mt-2 break-words text-sm text-body">{row.detail}</p>
           <Link href={row.href}
-            className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Open exact project workspace →
           </Link>
         </li>)}</ol>}

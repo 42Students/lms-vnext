@@ -6,6 +6,10 @@ import { TrackerIssueSavedViews } from "@/components/tracker/tracker-issue-saved
 import { TrackerIssueBulkActions } from "@/components/tracker/tracker-issue-bulk-actions";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
 import {
@@ -52,12 +56,10 @@ export default async function TrackerIssuesPage({
       <div className="space-y-6">
         <PageHeader eyebrow="42 Tracker" title="Issues" description="Review and triage reported LMS issues." />
         <TrackerAdminNav />
-        <div role="alert" className="rounded-xl border border-border bg-surface p-5">
-          <p className="m-0 font-semibold text-foreground">Invalid issue filter.</p>
-          <Link className="mt-2 inline-block font-semibold text-primary-text underline" href="/tracker/issues">
+        <ErrorState title="Invalid issue filter." description="Review and triage reported LMS issues."
+          action={<Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline" href="/tracker/issues">
             Reset filters
-          </Link>
-        </div>
+          </Link>}/>
       </div>
     );
   }
@@ -77,7 +79,7 @@ export default async function TrackerIssuesPage({
   }
 
   const inputClass =
-    "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
+    "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:text-sm";
 
   return (
     <div className="space-y-6">
@@ -134,10 +136,8 @@ export default async function TrackerIssuesPage({
           </select>
         </label>
         <div className="flex items-end gap-2 sm:col-span-2 xl:col-span-5">
-          <button type="submit" className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
-            Apply filters
-          </button>
-          <Link href="/tracker/issues" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground">
+          <Button type="submit" variant="primary">Apply filters</Button>
+          <Link href="/tracker/issues" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
             Reset
           </Link>
         </div>
@@ -146,13 +146,12 @@ export default async function TrackerIssuesPage({
       <TrackerIssueBulkActions rows={page.items.map(issue=>({publicId:issue.publicId,version:issue.version,status:issue.status}))} />
 
       {page.items.length === 0 ? (
-        <div className="rounded-xl border border-border bg-surface p-8 text-center">
-          <p className="m-0 font-semibold text-foreground">No matching issues.</p>
-        </div>
+        <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
+          action={<Link href="/tracker/issues" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Reset</Link>}/>
       ) : (
         <div className="grid gap-3">
           {page.items.map((issue) => (
-            <article key={issue.id} className="rounded-xl border border-border bg-surface p-5">
+            <Card as="article" key={issue.id}>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap gap-2">
@@ -161,7 +160,7 @@ export default async function TrackerIssuesPage({
                     <StatusBadge>{issue.environment}</StatusBadge>
                   </div>
                   <h2 className="mt-3 text-base font-semibold text-foreground">
-                    <Link className="hover:text-primary-text" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
+                    <Link className="hover:text-[var(--lms-teal-deep)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
                       {issue.publicId} · {issue.issueType}
                     </Link>
                   </h2>
@@ -172,12 +171,12 @@ export default async function TrackerIssuesPage({
                 </div>
                 <Link
                   href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}
-                  className="inline-flex min-h-10 shrink-0 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground hover:border-primary"
+                  className="inline-flex min-h-11 shrink-0 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
                 >
                   Open issue
                 </Link>
               </div>
-            </article>
+            </Card>
           ))}
         </div>
       )}
@@ -186,7 +185,7 @@ export default async function TrackerIssuesPage({
         <div className="flex justify-center">
           <Link
             href={"/tracker/issues?" + next.toString()}
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
           >
             {current.sort === "newest" ? "Older issues" : "Newer issues"}
           </Link>

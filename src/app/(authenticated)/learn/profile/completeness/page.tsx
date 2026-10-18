@@ -25,8 +25,8 @@ export default async function ProfileCompleteness({searchParams}:{
     {value:"missing",label:"Not filled"},
     {value:"filled",label:"Filled"},
   ] as const;
-  return <div className="space-y-6">
-    <Link href="/learn/profile" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+  return <div className="min-w-0 space-y-6">
+    <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
       ← Back to Profile
     </Link>
     <PageHeader eyebrow="Learner · Profile" title="Profile completion checklist"
@@ -49,8 +49,8 @@ export default async function ProfileCompleteness({searchParams}:{
         href={"/learn/profile/completeness?show="+option.value}
         aria-current={readiness.show===option.value ? "page" : undefined}
         className={
-          "inline-flex min-h-10 items-center rounded-lg border px-4 text-sm font-semibold " +
-          (readiness.show===option.value ? "border-primary bg-primary-subtle text-primary-text" :
+          "inline-flex min-h-11 items-center rounded-lg border px-4 text-sm font-semibold " +
+          (readiness.show===option.value ? "border-primary bg-primary-subtle text-[var(--lms-teal-deep)]" :
             "border-border bg-surface text-foreground")
         }>
         {option.label}

@@ -46,45 +46,45 @@ export default async function MentorReviewsPage({
       <form action="/mentor/reviews" method="get" className={mentorDeliveryReviewMobileForm}>
         <label className="grid gap-1 text-sm font-semibold text-body">Search
           <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-            placeholder="Project title" className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
+            placeholder="Project title" className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
+          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 max-w-full rounded-md border border-border bg-background px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
-          <select name="assignment" defaultValue={data.query.assignment} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="assignment" defaultValue={data.query.assignment} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All assigned projects</option><option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
           <select name="order" defaultValue={data.query.order}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Newest submitted first</option>
             <option value="OLDEST">Oldest submitted first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Submitted within
-          <select name="age" defaultValue={data.query.age} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="age" defaultValue={data.query.age} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">Any age</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_7_DAYS">Waiting over 7 days</option><option value="OLDER_THAN_30_DAYS">Waiting over 30 days</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned Project lifecycle
-          <select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All current assignments</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size
           <select name="pageSize" defaultValue={String(data.pageSize)}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="20">20</option><option value="50">50</option>
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
         <Link href="/mentor/reviews" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">

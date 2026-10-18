@@ -25,22 +25,22 @@ export default async function CollegeClassesPage({
     <PageHeader eyebrow="College Admin · Academic Setup" title="Classes" />
     <ErrorState title="Invalid class filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
-      action={<Link href="/college/classes" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/college/classes" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
   const [classes, options] = await Promise.all([
     listCollegeClasses(context, parsed.data),
     listCollegeSectionOptions(context),
   ]);
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 overflow-x-clip space-y-6">
     <div className="flex flex-wrap items-center gap-3">
       <a href={classesExportHref(classes.query)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Export CSV
       </a>
       <span className="text-xs text-muted-foreground">Up to {CLASSES_EXPORT_CAP} classes; download includes a truncation notice when capped.</span>
     </div>
     <Link href="/college/classes/recurring-preview"
-      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       Preview recurring class schedule
     </Link>
     <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />

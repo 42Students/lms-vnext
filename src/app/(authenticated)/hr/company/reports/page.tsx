@@ -65,7 +65,7 @@ export default async function RecruiterCompanyReportsPage({
 
   if (!parsed.success) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
           eyebrow="Employer Recruiter"
           title="Company Reports"
@@ -78,7 +78,7 @@ export default async function RecruiterCompanyReportsPage({
           action={
             <Link
               href="/hr/company/reports"
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
             >
               Clear filters
             </Link>
@@ -95,7 +95,7 @@ export default async function RecruiterCompanyReportsPage({
 
   if (report.status !== "READY") {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
           eyebrow="Employer Recruiter"
           title="Company Reports"
@@ -163,17 +163,17 @@ export default async function RecruiterCompanyReportsPage({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         eyebrow="Employer Recruiter"
         title="Company Reports"
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
         actions={<div className="flex flex-wrap gap-2">
           <Link href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">
             Export report CSV
           </Link>
-          <Link href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm text-body">
+          <Link href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-body">
             Drives →
           </Link>
         </div>}
@@ -404,7 +404,7 @@ export default async function RecruiterCompanyReportsPage({
             </article>)}
           </div>
           <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
-            <table className="w-full min-w-[72rem] text-left text-sm">
+            <div role="region" aria-label="Company Reports table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[72rem] text-left text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">
@@ -500,7 +500,7 @@ export default async function RecruiterCompanyReportsPage({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
           </>
         )}
@@ -522,7 +522,7 @@ export default async function RecruiterCompanyReportsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Previous
               </Link>
@@ -536,7 +536,7 @@ export default async function RecruiterCompanyReportsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Next
               </Link>

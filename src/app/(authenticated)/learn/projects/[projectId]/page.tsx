@@ -107,11 +107,11 @@ export default async function LearnerProjectPage({
     : workspace;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <LearnerProjectTabs projectId={projectId} />
       {activeSection === "overview" ? (
         <Link href={"/learn/projects/" + encodeURIComponent(projectId) + "?tab=delivery"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
           Final delivery
         </Link>
       ) : null}
@@ -125,7 +125,7 @@ export default async function LearnerProjectPage({
       {activeSection === "tasks" ? <section className="flex flex-wrap items-center gap-3">
         {workspace.readiness.finalSubmission.canSubmitDraft?
           <Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-            className="inline-flex min-h-11 items-center rounded-lg border border-primary px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-lg border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Submit final work
           </Link>:
           <p className="text-xs text-body">Submission available after completion.</p>}
@@ -140,7 +140,7 @@ export default async function LearnerProjectPage({
         <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface-subtle p-4 text-sm text-body">
           <span>{selectionNotice}</span>
           <Link href={learnerBoardTaskHref(projectId, boardFilters)}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Return to Board</Link>
+            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Return to Board</Link>
         </div>
       ) : null}
       {selectedTask ? (

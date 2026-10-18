@@ -36,7 +36,7 @@ export default async function SuperAdminAttendancePage({
 
   if (!collegeId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader
           
           title="Attendance"
@@ -117,7 +117,7 @@ export default async function SuperAdminAttendancePage({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         
         title="Attendance"

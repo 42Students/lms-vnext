@@ -6,3 +6,7 @@
 - **Legacy wording:** Preserved titles, labels, button messages, selected scope and URL semantics; nothing was deleted or reauthorized on the client.
 - **Regression:** `tests/unit/ux-admin-chat9-batch-02.test.ts` case `UX-admin-projects-templates-01`.
 - **Verification:** Unit/typecheck/lint/device evidence pending orchestrator. Page-list checkbox remains open until tests pass.
+
+## Follow-up implementation
+
+The global template directory now uses shared Input/Select/Button with narrow viewport-safe filter layout and shared Pagination. Regression assertions in the named UX batch test now cover the shared contract. Execution remains pending orchestrator.

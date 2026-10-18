@@ -23,7 +23,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
-   action={<Link href="/admin/placements/drives" className="text-primary-text">Clear filters</Link>}/>
+   action={<Link href="/admin/placements/drives" className="text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
  const operations=await getPlacementTpoOperations(ctx,ctx.adminScope.collegeId);
  const rows=operations.jobs.map(row=>({job:row.job,company:row.job.company,metrics:row.metrics}));
@@ -51,9 +51,9 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   <PageHeader eyebrow="Super Admin · Placements" title="All drives"
    description="Review and open every persisted non-archived drive in the selected college." />
   <div className="flex flex-wrap gap-3">
-   <Link href="/admin/placements" className="text-sm font-semibold text-primary-text">← Placement overview</Link>
-   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Look up a student&apos;s placement status →</Link>
-    <Link href="/admin/placements/new" className="text-sm font-semibold text-primary-text">Create drive →</Link>
+   <Link href="/admin/placements" className="text-sm font-semibold text-[var(--lms-teal-deep)]">← Placement overview</Link>
+   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Look up a student&apos;s placement status →</Link>
+    <Link href="/admin/placements/new" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Create drive →</Link>
   </div>
   <form action="/admin/placements/drives" method="get"
    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
@@ -75,7 +75,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     </select>
    </label>
    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-foreground">Filter</button>
-   <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-primary-text">Clear all</Link>
+   <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-[var(--lms-teal-deep)]">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
   <p role="status" className="text-sm text-muted-foreground">{data.total} matching drives · Page {data.page} of {data.totalPages}</p>

@@ -8,8 +8,8 @@ import {getOwnLearnerAcademicSummary} from "@/modules/people/learner-academic-su
 export default async function LearnerAcademicRecordPage(){
  const context=await getCurrentRequestContext();
  const record=await getOwnLearnerAcademicSummary(context);
- return <main className="space-y-6">
-  <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
+ return <div className="min-w-0 space-y-6">
+  <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Profile</Link>
   <PageHeader title="Academic record" description="Your college-recorded current program enrollment."/>
   <section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="text-base font-semibold text-foreground">Current academic enrollment</h2>
@@ -30,5 +30,5 @@ export default async function LearnerAcademicRecordPage(){
     It is not a transcript, grades disclosure, or proof of degree completion.
    </p>
   </section>
- </main>;
+ </div>;
 }

@@ -145,26 +145,26 @@ export default async function CollegeElectiveAllocatePage({
       (reason ? "&reason=" + encodeURIComponent(reason) : ""));
   }
 
-  return <main className="min-w-0 space-y-6">
+  return <main className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
-      actions={<Link href="/college/electives" className="font-semibold text-primary-text">Back to Electives</Link>} />
+      actions={<Link href="/college/electives" className="font-semibold text-[var(--lms-teal-deep)]">Back to Electives</Link>} />
     {input.added !== undefined && <p role="status" className="rounded-md border border-border p-3">
       Processed {input.added} learner(s); {input.failed ?? "0"} failed.
       {input.reason ? " " + input.reason : ""}
     </p>}
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
-      <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold">Class/Section
+      <label className="grid min-w-0 sm:min-w-52 flex-1 gap-1 text-sm font-semibold">Class/Section
         <select name="section" className={fieldStyle} defaultValue={input.section ?? ""}>
           <option value="">All sections</option>
           {allSections.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
         </select>
       </label>
-      <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold">Name, roll number or learner ID
+      <label className="grid min-w-0 sm:min-w-52 flex-1 gap-1 text-sm font-semibold">Name, roll number or learner ID
         <input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
       </label>
-      <button className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Search</button>
+      <button className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Search</button>
     </form>
     <form action={allocate} className="space-y-4 rounded-lg border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold">Allocate selected to…
@@ -198,7 +198,7 @@ export default async function CollegeElectiveAllocatePage({
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>
       <button type="submit" disabled={!offerings.length}
-        className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+        className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
         Allocate selected to…
       </button>
     </form>

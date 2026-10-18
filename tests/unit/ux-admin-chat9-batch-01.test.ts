@@ -21,6 +21,9 @@ describe("chat-9 last-third admin UX rollout, batch 01",()=>{
   expect(page).not.toContain("text-primary-text");
   expect(page).not.toContain("min-h-10");
   expect(page).toContain("<DataTable");
+  expect(page).toContain("disabled={!ctx.adminScope?.collegeId}");
+  expect(page).toContain("placement-student-scope-hint");
+  expect(page).toContain('role="search"');
   expect(page).toContain('empty={<p className="text-sm text-body">No applications found.</p>}');
  });
  it("UX-admin-programs-01 preserves authorized route and accessible UX surface",()=>{
