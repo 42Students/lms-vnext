@@ -102,9 +102,12 @@ describe("chat-14 mentor route guards and friendly API error handling",()=>{
     expect(src).toContain("createLearnerOwnTask");
     expect(src).toContain("createMentorProjectTask");
   });
-  it("allows release deletion without trusting an unbounded or unnecessary request body",()=>{
+  it("requires a confirmed release version from a same-origin authenticated DELETE",()=>{
     const src=readFileSync(base+"releases/[releaseId]/route.ts","utf8");
-    expect(src).toContain('releaseId,"DELETE",null');
+    expect(src).toContain('releaseId,"DELETE",await request.json()');
+    expect(src.indexOf("isSameOriginRequest(request)")).toBeLessThan(src.indexOf('"DELETE",await request.json()'));
     expect(src).toContain("writeMentorProjectRelease");
+    const client=readFileSync("src/components/projects/mentor-release-editor.tsx","utf8");
+    expect(client).toContain('projectMutation(url,"DELETE",{expectedUpdatedAt:new Date(release.updatedAt).toISOString()})');
   });
 });
