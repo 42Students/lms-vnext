@@ -20,22 +20,23 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
      !can(context,"projects.read",{
        collegeId:membership.collegeId,organizationId:membership.organizationId,
      }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  // An off module cannot disclose the existence, name, or status of
+  // an otherwise scoped project or query its team membership.
+  const projectsEnabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
+  if(!projectsEnabled)return {
+    enabled:false as const,query,projectTitle:"",projectStatus:"",
+    team:{learners:0,mentors:0,primaryRecorded:false},
+    ...mentorTeamMeetingsPage(0,1),
+    items:[] as {
+      id:string;title:string;status:string;type:string;
+      startsAt:Date;endsAt:Date;updatedAt:Date;timeZone:string;hasOutcome:boolean;
+    }[],
+  };
   const scope=await requireProjectReadAccess(context,query.projectId);
   if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId||
      !can(context,"projects.read",{
        collegeId:scope.collegeId,organizationId:scope.organizationId,
      }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const projectsEnabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
-  const empty=()=>({
-    enabled:false as const,query,projectTitle:scope.project.title,
-    projectStatus:scope.project.status,
-    team:{learners:0,mentors:0,primaryRecorded:false},
-    ...mentorTeamMeetingsPage(0,1),items:[] as {
-      id:string;title:string;status:string;type:string;
-      startsAt:Date;endsAt:Date;updatedAt:Date;timeZone:string;hasOutcome:boolean;
-    }[],
-  });
-  if(!projectsEnabled)return empty();
   const db=getDb();
   const search=query.search?ilike(projectMeetings.title,
     "%"+escapeMentorMeetingSearch(query.search)+"%"):undefined;
