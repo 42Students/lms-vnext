@@ -42,10 +42,11 @@ export function deriveMentorProjectAttention(
         occurredAt:project.submission.submittedAt.toISOString(),
       });
     }
+    // Planned projects can also be idle before activation; still exclude blocked, completed, archived.
     // Avoid a stale alarm for records without any trustworthy activity signal.
     const last=project.lastActivityAt ?? project.projectUpdatedAt;
     const lastMillis=last.getTime();
-    const stalled=project.projectStatus==="ACTIVE" && Number.isFinite(lastMillis) &&
+    const stalled=(project.projectStatus==="ACTIVE"||project.projectStatus==="PLANNED") && Number.isFinite(lastMillis) &&
       timestamp-lastMillis >= 7*24*60*60*1000;
     if (stalled) alerts.push({
       projectId:project.projectId,
