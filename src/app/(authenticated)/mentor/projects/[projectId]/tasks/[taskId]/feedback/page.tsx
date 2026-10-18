@@ -9,7 +9,7 @@ export default async function Page({params}:{
 }){
  const ids=mentorTaskFeedbackParamsSchema.parse(await params);
  const data=await getMentorTaskFeedback(await getCurrentRequestContext(),ids);
- return <div className="space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Mentor · Task Board" title="Recorded task review feedback"
    description={data.task.title}/>
   <section role="status" className="rounded-xl border border-border bg-surface p-4">
@@ -35,7 +35,7 @@ export default async function Page({params}:{
     <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">{entry.feedback}</p>
    </li>)}</ol>}
   <Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"?tab=board"}
-   className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
    Back to authorized task Board
   </Link>
   <p className="text-xs text-muted-foreground">

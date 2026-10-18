@@ -246,7 +246,7 @@ export default async function HrPlacementJobPage({
       : null;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 max-w-full space-y-6">
       <RecruiterDriveFocusRefresh />
       <Link href={returnTo} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
         ← Back to Drives
@@ -667,7 +667,7 @@ export default async function HrPlacementJobPage({
               <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
               <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
               {selectionRows.length?<div className="overflow-x-auto">
-               <table className="w-full min-w-[34rem] text-left text-sm">
+               <div role="region" aria-label="Records table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[34rem] text-left text-sm">
                 <thead><tr><th scope="col" className="px-3 py-2">Candidate</th>
                  <th scope="col" className="px-3 py-2">Role</th>
                  <th scope="col" className="px-3 py-2">CTC (LPA)</th>
@@ -680,7 +680,7 @@ export default async function HrPlacementJobPage({
                   <td className="px-3 py-2"><StatusBadge>{item.status==="SELECTED"?"With the placement cell":
                     item.status==="VERIFIED"?"Verified, awaiting release":"Selection cancelled"}</StatusBadge></td>
                 </tr>)}</tbody>
-               </table>
+               </table></div>
               </div>:<p role="status" className="text-sm text-muted-foreground">No selections have been recorded in this status.</p>}
               <p className="text-xs text-muted-foreground">
                {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
@@ -693,7 +693,7 @@ export default async function HrPlacementJobPage({
               </nav>
             </section>:null}
           {offers.length ? <div className="overflow-x-auto rounded-lg border border-border">
-            <table className="w-full min-w-[56rem] text-left text-sm">
+            <div role="region" aria-label="Records table" tabIndex={0} className="max-w-full overflow-x-auto overscroll-x-contain"><table className="w-full min-w-[56rem] text-left text-sm">
               <caption className="sr-only">Offers for shared applicants at this college</caption>
               <thead className="bg-surface-secondary text-xs font-semibold text-foreground">
                 <tr>
@@ -724,7 +724,7 @@ export default async function HrPlacementJobPage({
                   </td>
                 </tr>)}
               </tbody>
-            </table>
+            </table></div>
           </div> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>:null}
           {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">

@@ -31,11 +31,11 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   result=await readRecruiterThreadMessages(context,parsedId.data,parsedPage.data);
  }catch(error){
   if(error instanceof TpoMessagingError && error.code==="TPO_MESSAGE_FORBIDDEN"){
-   return <main className="space-y-5"><PageHeader eyebrow="Recruiter" title="Messages"/>
+   return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Messages"/>
     <ErrorState title="No access to this college"
      description="Your access to this college has ended or was removed. Ask the placement cell to give it again."
      action={<Link href="/hr/home" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Return to Today</Link>}/>
-   </main>;
+   </div>;
   }
   if(error instanceof TpoMessagingError)notFound();
   throw error;
@@ -50,7 +50,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
  const messages=[...result.messages].reverse().map(message=>({
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
- return <main className="space-y-5">
+ return <div className="min-w-0 max-w-full space-y-5">
   <RecruiterConversationLiveRefresh/>
   <PageHeader eyebrow="Recruiter · Conversations" title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
@@ -85,7 +85,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
         </li>)}
       </ol>
       <Link href={"/recruiter/drives/"+encodeURIComponent(result.thread.jobId!)+"?tab=requests"}
-        className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+        className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
         Review requests, answers and decisions
       </Link>
     </section>:null}
@@ -118,5 +118,5 @@ export default async function RecruiterConversationDetail({params,searchParams}:
    {result.page>1?<Link href={hrConversationDetailHref(threadId,result.page-1)}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Newer</Link>:null}
   </nav>
- </main>;
+ </div>;
 }

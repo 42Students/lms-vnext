@@ -35,65 +35,65 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
       <form action="/mentor/activity" method="get" className={mentorActivityFormLayout}>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project title
           <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-            placeholder="Search your project names" className="min-h-10 w-full min-w-0 rounded-md border border-border bg-background px-3" />
+            placeholder="Search your project names" className="min-h-11 w-full min-w-0 rounded-md border border-border bg-background px-3" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded importance
           <select name="importance" defaultValue={data.query.importance}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All importance</option><option value="LOW">Low</option>
             <option value="NORMAL">Normal</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
+          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 max-w-full rounded-md border border-border bg-background px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">My assignment
-          <select name="assignment" defaultValue={data.query.assignment} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="assignment" defaultValue={data.query.assignment} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All assigned projects</option><option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded event group
           <select name="view" defaultValue={data.query.view}
-            className="min-h-10 rounded-md border border-border bg-background px-3">
+            className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All event groups</option>
             <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option><option value="DELIVERIES">Final delivery history</option>
             <option value="MEETINGS">Meeting decisions</option><option value="TASKS">Task events</option><option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded within
-          <select name="window" defaultValue={data.query.window} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="window" defaultValue={data.query.window} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All recorded dates</option><option value="PAST_7_DAYS">Past 7 days</option><option value="PAST_30_DAYS">Past 30 days</option><option value="PAST_90_DAYS">Past 90 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Chronology
-          <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="order" defaultValue={data.query.order} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Newest recorded first</option><option value="OLDEST">Oldest recorded first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Project lifecycle
-          <select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All assigned projects</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
             <option value="ARCHIVED">Archived</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size
-          <select name="pageSize" defaultValue={String(data.pageSize)} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="pageSize" defaultValue={String(data.pageSize)} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="20">20</option><option value="50">50</option>
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
         <Link href="/mentor/activity" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
         <Link href={mentorPortfolioActivityExportHref(data.query)} download
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
           Export filtered activity CSV (max 200)
         </Link>
         {data.total>200?<span role="status" className="text-xs text-body">

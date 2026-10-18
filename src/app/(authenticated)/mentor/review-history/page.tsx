@@ -34,7 +34,7 @@ export default async function MentorReviewHistoryPage({
   const context=await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const data=await getMentorReviewHistory(context,parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Delivery" title="Delivery review history"
       description="Recorded final-delivery review decisions for projects currently assigned to you."
       actions={<Link href="/mentor/reviews"
@@ -51,35 +51,35 @@ export default async function MentorReviewHistoryPage({
         <input type="hidden" name="decision" value={data.query.decision}/>
         <label className="grid gap-1 text-sm font-semibold text-body">Project title
           <input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-10 rounded-md border border-border bg-background px-3"/>
+            className="min-h-11 rounded-md border border-border bg-background px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select name="projectId" defaultValue={data.query.projectId??""} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Project lifecycle
-          <select name="projectState" defaultValue={data.query.projectState} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="projectState" defaultValue={data.query.projectState} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">Any project state</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
             <option value="ARCHIVED">Archived</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Delivery submission version
-          <input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-10 w-36 rounded-md border border-border bg-background px-3"/>
+          <input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 w-36 rounded-md border border-border bg-background px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
-          <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="order" defaultValue={data.query.order} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Latest decision first</option><option value="OLDEST">Earliest decision first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded decision within
-          <select name="window" defaultValue={data.query.window} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <select name="window" defaultValue={data.query.window} className="min-h-11 rounded-md border border-border bg-background px-3">
             <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
         <Link href="/mentor/review-history" className="text-sm text-primary-text underline">Clear</Link>
       </form>
       <nav aria-label="Review decision filter" className="flex flex-wrap gap-2">
@@ -117,7 +117,7 @@ export default async function MentorReviewHistoryPage({
               }).format(item.reviewedAt)} IST
             </p>
             <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=delivery"}
-              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
               Open authorized delivery history →
             </Link>
           </li>)}</ol>}

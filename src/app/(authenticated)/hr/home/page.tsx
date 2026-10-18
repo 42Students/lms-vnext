@@ -41,7 +41,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const context = await getCurrentRequestContext();
   if (!hasActiveRecruiter(context) || !context.recruiter) redirect("/dashboard");
   const parsed = querySchema.safeParse({collegeId:first((await searchParams).collegeId)});
-  if (!parsed.success) return <div className="space-y-5"><PageHeader eyebrow="Recruiter" title="Today" />
+  if (!parsed.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Today" />
     <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
       action={<Link href="/hr/home" className="text-primary-text underline">Choose again</Link>} /></div>;
   const recruiter = context.recruiter;
@@ -52,7 +52,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     const access=await getRecruiterSelfGrantOverview(context);
     const byId=new Map(access.grants.map(item=>[item.id,item]));
     const visible=grants.filter(item=>byId.has(item.id));
-    return <div className="space-y-6">
+    return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Recruiter" title="Today" description={"College access for " + recruiter.companyName} />
     {visible.length === 0 ? <EmptyState title="Open this on your college&apos;s placement address" description="Your recruiter account works inside one college&apos;s placement site. Ask the placement cell that invited you to restore access." /> :
     <section className="grid gap-3 sm:grid-cols-2">{visible.map(grant => {
@@ -125,7 +125,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     }] : []),
     ...(unreadAction ? [unreadAction] : []),
   ];
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title={greeting.title}
       description={greeting.subtitle}
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedId})}
@@ -146,7 +146,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <p className="font-semibold">Drive summary is partially unavailable.</p>
       <p className="mt-1">Your available drive information is shown below. Some notifications or calendar events may be missing.</p>
       <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
-        className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Retry</Link>
+        className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>
     </div>:null}
     <section aria-label="Recruiter tasks" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{actions.map(action=>
       <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary">
