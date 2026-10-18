@@ -2,6 +2,7 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { ScrollCue } from "@/components/ui/scroll-cue";
 import { LearnerClassSchedule,type LearnerScheduleEvent }
   from "@/components/academics/learner-class-schedule";
 import {
@@ -85,7 +86,7 @@ export default async function FacultyCalendarPage({
       </p>:grid.days.every(day=>day.events.length===0)?<p className="mt-5 text-sm text-body">
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </p>:null}
-      <div className="mt-4 overflow-x-auto rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="IST month schedule grid; scroll horizontally for all weekdays" tabIndex={0}>
+      <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className="mt-4 rounded-lg">
         <div className="grid min-w-[44rem] grid-cols-7 gap-px rounded-lg border border-border bg-border">
           {names.map(name=><div key={name} className="bg-surface-subtle p-2 text-center text-xs font-semibold">{name}</div>)}
           {grid.days.map(day=><section key={day.key}
@@ -110,7 +111,7 @@ export default async function FacultyCalendarPage({
             </div>
           </section>)}
         </div>
-      </div>
+      </ScrollCue>
       <p className="mt-3 text-xs text-muted-foreground">
         Month cells use Asia/Kolkata calendar dates, including sessions crossing IST midnight.
         A Section-wide session is shown without guessing a course link.
