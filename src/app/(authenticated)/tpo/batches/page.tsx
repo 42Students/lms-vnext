@@ -6,6 +6,9 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {TpoBatchInstantSearch} from "@/components/tpo/tpo-batch-instant-search";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {redirect} from "next/navigation";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import {countTpoLearnersWithoutClass} from "@/modules/placements/tpo-batch-unassigned-students-service";
 import { listTpoBatchCardEligibility } from "@/modules/placements/tpo-batch-directory-counts-service";
@@ -28,7 +31,15 @@ import {TpoBatchFacetFilters} from "@/components/tpo/tpo-batch-facet-filters";
 export const dynamic="force-dynamic";
 
 export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[];facetState?:string|string[];facetProgram?:string|string[];facetDepartment?:string|string[];facetFinalYear?:string|string[]}>}){
- const raw=await searchParams,parsed=batchDirectoryFilterSchema.safeParse({q:Array.isArray(raw.q)?raw.q[0]:raw.q,state:Array.isArray(raw.state)?raw.state[0]:raw.state});
+ // Authorize before even returning filter feedback to a stale or foreign actor.
+
+ if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ await requireTpoBatchActor(context);
+ const raw=await searchParams;
+ const scalarKeys=["q","state","sort","program","department","deadline","page","pageSize","showOlder"] as const;
+ if(scalarKeys.some(key=>Array.isArray(raw[key])))
+  return <div role="alert">Invalid batch filters. <Link href="/tpo/batches">Clear filters</Link></div>;
+ const parsed=batchDirectoryFilterSchema.safeParse({q:raw.q,state:raw.state});
  const sortParsed=tpoBatchSortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
  const programParsed=tpoBatchProgramSchema.safeParse(Array.isArray(raw.program)?raw.program[0]:raw.program);
  const departmentParsed=tpoBatchDepartmentSchema.safeParse(Array.isArray(raw.department)?raw.department[0]:raw.department);
