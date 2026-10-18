@@ -449,6 +449,47 @@ describe("Placement P8 offers and joining", () => {
     expect(stillOne.rows[0]?.count).toBe(1);
   });
 
+  it("PLACEMENTS-WAIT-RACE-06 DB never releases two offers for concurrent identical waitlist previews",async()=>{
+    const {job,application,round}=await preparePassedApplication();
+    await pool.query(
+      "update placement_round_results set outcome='HOLD',waitlist_rank=1 where application_id=$1 and round_id=$2",
+      [application.id,round.id],
+    );
+    const preview=await getTpoWaitlistPreview(tpo,job.id);
+    expect(preview.next?.applicationId).toBe(application.id);
+    const input={action:"OFFER_NEXT" as const,confirmed:true,
+      expectedPreviewToken:preview.previewToken,reason:"Company has an opening for the next ranked waitlisted learner",
+    };
+    const outcomes=await Promise.allSettled([
+      offerToNextWaitlisted(tpo,job.id,input),
+      offerToNextWaitlisted(tpo,job.id,input),
+    ]);
+    expect(outcomes.some(result=>result.status==="fulfilled")).toBe(true);
+    const promotions=await pool.query<{status:string;offer_id:string|null}>(
+      "select status,offer_id from placement_waitlist_promotions where job_id=$1",
+      [job.id],
+    );
+    expect(promotions.rows).toHaveLength(1);
+    expect(promotions.rows[0]?.status).toBe("RELEASED");
+    expect(promotions.rows[0]?.offer_id).toBeTruthy();
+    const offers=await pool.query<{id:string}>(
+      `select o.id from placement_offers o
+       inner join placement_applications a on a.id=o.application_id
+       where a.job_id=$1 and o.kind='OFFER' and o.status in ('ISSUED','ACCEPTED')`,
+      [job.id],
+    );
+    expect(offers.rows).toHaveLength(1);
+    expect(offers.rows[0]?.id).toBe(promotions.rows[0]?.offer_id);
+    const audit=await pool.query<{count:number}>(
+      "select count(*)::int as count from activity_events where subject_id=$1 and event_type='PLACEMENTS_TPO_WAITLIST_PROMOTED'",
+      [job.id],
+    );
+    expect(audit.rows[0]?.count).toBe(1);
+    for(const result of outcomes)if(result.status==="fulfilled"){
+      expect(result.value.offerId).toBe(offers.rows[0]?.id);
+    }
+  });
+
   it("PLACEMENTS-WAIT-SEASON-05 DB denies waitlist promotion and seat creation after season closure",async()=>{
     const {job,application,round}=await preparePassedApplication();
     await pool.query(
