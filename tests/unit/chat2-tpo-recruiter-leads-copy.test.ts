@@ -16,12 +16,14 @@ describe("TPO recruiter leads visible legacy parity",()=>{
  });
  it("TPO-recruiters-40 restores edit-action heading and legacy Save label",()=>{
   const page=src("src/components/tpo/recruiter-lead-detail-workspace.tsx");
-  expect(page).toContain('aria-label="Edit contact details"');
-  expect(page).toContain("Edit contact details</h2>");
+  const dialog=src("src/components/ui/dialog.tsx");
+  expect(page).toContain('title="Edit contact details"');
+  expect(dialog).toContain("aria-labelledby={titleId}");
+  expect(dialog).toContain("<h2 id={titleId}");
   expect(page).toContain(">Save</button>");
   expect(page).toContain("← Recruiter leads");
   expect(page).toContain('onClick={() => setNotNowOpen(true)}>Not now</button>');
-  expect(page).toContain('<h2 className="text-lg font-semibold">Not now</h2>');
+  expect(page).toContain('title="Not now"');
   expect(page).toContain('<h2 className="text-lg font-semibold">Log activity</h2>');
  });
 });
