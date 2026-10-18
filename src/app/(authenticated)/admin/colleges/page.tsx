@@ -175,7 +175,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       </div>
       <div className="hidden min-w-0 lg:block">
         <DataTable columns={columns} rows={visible} getRowKey={(college)=>college.id}
-           empty={<EmptyState title="No active colleges in this scope" description="There are no active colleges to display."/>}/>
+           empty={<EmptyState title="No active colleges in this scope" description="No college records are visible under the selected Super Admin safety scope. Clear or change the scope to search elsewhere; no tenants were modified."/>}/>
       </div>
       <nav aria-label="College directory pages" className="flex flex-wrap gap-3 text-sm">
        {page>1?<Link href={href(page-1)} className="min-h-11 rounded border border-border px-3 py-2">Previous</Link>:null}

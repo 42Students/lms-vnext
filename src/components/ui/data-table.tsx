@@ -16,26 +16,34 @@ export type DataTableProps<Row> = {
   columns: readonly DataTableColumn<Row>[];
   rows: readonly Row[];
   getRowKey: (row: Row) => string;
-  /** Required, role-approved copy and authorized next action for an empty result. */
-  empty: ReactNode;
+  /** Role-approved copy and authorized next action for an empty result; a plain default is shown when omitted. */
+  empty?: ReactNode;
   caption?: string;
   rowHref?: (row: Row) => string;
 };
 
 export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref }: DataTableProps<Row>) {
   if (rows.length === 0) return <div className="rounded-xl border border-border bg-surface p-4 sm:p-6">
-    {empty}
+    {empty ?? <p className="text-sm text-muted-foreground">No records to show.</p>}
   </div>;
+  // Treat a hidden phone column as recoverable only if every row has a valid
+  // internal detail destination; otherwise reveal it in mobile More details.
+  const detailHrefs = rows.map(row => {
+    const href = rowHref?.(row);
+    return typeof href === "string" && href.startsWith("/") && !href.startsWith("//") && href.length > 1 ? href : null;
+  });
+  const allDetailRoutesAvailable = detailHrefs.every(Boolean) && Boolean(rowHref);
   const primary = columns.find(column => column.mobilePriority === "primary") ??
     columns.find(column => column.mobilePriority === undefined || column.mobilePriority === "secondary");
   const actions = columns.filter(column => column.mobilePriority === "action");
   const secondary = columns.filter(column => column.key !== primary?.key && column.mobilePriority !== "action" &&
-    !(column.mobilePriority === "hidden" && column.mobileHiddenReason && rowHref));
+    !(column.mobilePriority === "hidden" && column.mobileHiddenReason && allDetailRoutesAvailable));
   const shown = secondary.slice(0, 3);
   const extra = secondary.slice(3);
   // Evaluate expensive row cell formatters once, then reuse the results in
   // both responsive semantics. Caller paginates beyond 100 rows.
-  const prepared = rows.map(row => ({
+  const prepared = rows.map((row, index) => ({
+    detailHref: detailHrefs[index],
     key: getRowKey(row),
     row,
     cells: new Map(columns.map(column => [column.key, column.cell(row)] as const)),
@@ -60,7 +68,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
           {actions.length ? <div className="mt-3 flex min-w-0 flex-wrap gap-2 border-t border-border pt-3" aria-label="Row actions">
             {actions.map(column => <div key={column.key} className="min-w-0">{cell(item,column)}</div>)}
           </div> : null}
-          {rowHref ? <Link href={rowHref(item.row)} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View details</Link> : null}
+          {item.detailHref ? <Link href={item.detailHref} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View details</Link> : null}
         </article>
       ))}
     </div>

@@ -254,6 +254,10 @@ export function PlacementJobCreateForm({
           if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
           else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
         }
+        // TPO-drives-45: restoring a draft must never overwrite its chosen time.
+        if(typeof saved.values.applicationDeadline==="string"&&saved.values.applicationDeadline.trim()){
+          deadlineTimeChosen.current=true;
+        }
         markDirty();
         setRestoredBackup(true);
       }catch{/* Corrupt or disabled browser storage must not break creation. */}

@@ -35,6 +35,7 @@ export function useOverlayWebview({
   dismissibleRef.current = dismissible;
   const [availableHeight, setAvailableHeight] = useState<string>();
   const [viewportTop, setViewportTop] = useState<string>();
+  const [viewportBottom, setViewportBottom] = useState<string>();
   useEffect(() => {
     if (!open) return;
     const marker = `lms-overlay:${id}`;
@@ -65,6 +66,7 @@ export function useOverlayWebview({
       const top = viewport?.offsetTop ?? 0;
       setAvailableHeight(`${Math.max(1,Math.floor(height))}px`);
       setViewportTop(`${Math.max(0,Math.floor(top))}px`);
+      setViewportBottom(`${Math.max(0,Math.floor(window.innerHeight - top - height))}px`);
     }
     resize();
     window.addEventListener("lms:native-back", hostBack);
@@ -86,5 +88,5 @@ export function useOverlayWebview({
       }
     };
   }, [open, id, historyMode]);
-  return { availableHeight, viewportTop };
+  return { availableHeight, viewportTop, viewportBottom };
 }

@@ -90,3 +90,13 @@ test("UX-AUDIT2-F-02 AST guard covers high-risk and branch-changed routes", () =
   assert.match(guard,/tpo\/messages/);
   assert.match(guard,/module-access/);
 });
+test("UX-AUDIT2-E-01/E-04/F-03 screenshot commands require real state and affected callsite fixtures",()=>{
+  const ref=read("scripts/ux-capture-references.mjs");
+  assert.match(ref,/UX_REFERENCE_SCENARIOS_FILE/);
+  assert.match(ref,/data-ux-state/);
+  assert.match(ref,/requiredStates/);
+  const sites=read("scripts/ux-capture-affected-callsites.mjs");
+  assert.match(sites,/UX_AFFECTED_CALLSITES_MANIFEST/);
+  assert.match(sites,/cases.length<30/);
+  assert.match(sites,/keyboardFocusChecked/);
+});
