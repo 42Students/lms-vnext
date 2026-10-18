@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   buildTpoCompanyRows,
   buildTpoCompanyTimeline,
@@ -99,5 +101,33 @@ describe("TPO-companies-24 activity chronology", () => {
     expect(events.length).toBe(5);
     expect(events.every(event => event.at.getTime() === T.getTime())).toBe(true);
     expect(events.every((e, idx) => idx === 0 || events[idx - 1].id.localeCompare(e.id) <= 0)).toBe(true);
+  });
+});
+
+describe("TPO-companies-10 client component and duplicate-submit regression", () => {
+  const source = (file: string) => readFileSync(resolve(process.cwd(), file), "utf8");
+  it("keeps the controlled create form and company memory UI as client components", () => {
+    for (const file of [
+      "src/components/tpo/tpo-company-create-form.tsx",
+      "src/components/tpo/tpo-company-memory-workspace.tsx",
+    ]) {
+      expect(source(file).trimStart().startsWith('"use client";')).toBe(true);
+    }
+  });
+  it("requires an explicit create confirmation, locks repeat submits and preserves form fields on failure", () => {
+    const file = source("src/components/tpo/tpo-company-create-form.tsx");
+    expect(file).toContain("if (pending) return;");
+    expect(file).toContain("if(!reviewing)");
+    expect(file).toContain("setPending(true)");
+    expect(file).toContain("confirmed: true");
+    expect(file).toContain("setError(");
+    expect(file).toContain("disabled={pending}");
+    expect(file).toContain('role="alert"');
+  });
+  it("does not conflate empty, failure and database pending company-memory states", () => {
+    const file = source("src/components/tpo/tpo-company-memory-workspace.tsx");
+    expect(file).toContain('"loading" | "ready" | "error" | "migration-pending" | "not-found"');
+    expect(file).toContain("signal?.aborted");
+    expect(file).toContain('onClick={retry}');
   });
 });
