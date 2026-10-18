@@ -40,12 +40,13 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
   :[];
  const accessible=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles,
    new Set(messageMatches.map(row=>row.threadId)));
- const unreadRows=query.unreadOnly==="true"?await getDb().selectDistinct({
+ const unreadRows=query.unreadOnly==="true"&&accessibleIds.length?await getDb().selectDistinct({
    threadId:placementTpoMessages.threadId,
  }).from(placementTpoMessages)
   .innerJoin(placementTpoMessageThreads,
    eq(placementTpoMessageThreads.id,placementTpoMessages.threadId))
   .where(and(
+   inArray(placementTpoMessages.threadId,accessibleIds),
    eq(placementTpoMessageThreads.collegeId,collegeId),
    eq(placementTpoMessageThreads.recruiterUserId,context.user.id),
    eq(placementTpoMessages.senderType,"TPO"),
