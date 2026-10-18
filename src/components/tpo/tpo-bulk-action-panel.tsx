@@ -130,10 +130,13 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    const response=await post("confirm",{
      ...plan,selections:preview.rows.map(row=>({id:row.id,version:row.version})),
      previewToken:preview.previewToken,confirmed:true,acknowledged,
-   }) as {outcomes:BulkOutcome[];runAuditId?:string|null};
+   }) as {outcomes:BulkOutcome[];runAuditId?:string|null;summaryWarning?:string|null;summaryRecorded?:boolean};
    if(!Array.isArray(response.outcomes))throw new Error("Could not confirm the outcomes. Please refresh and try again.");
    setOutcomes(response.outcomes);
    setRunAuditId(response.runAuditId??null);
+   // The optional aggregate event is written after independently committed rows.
+   if(response.summaryRecorded===false)setError(response.summaryWarning??
+    "Some changes were saved. Refresh and review the student history before retrying.");
    setSelected(current=>current.filter(id=>!plan.ids.includes(id)));
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Confirmation failed. Preview again before retrying.");setPreview(null);setPlan(null);}
