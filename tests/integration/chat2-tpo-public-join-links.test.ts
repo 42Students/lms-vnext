@@ -5,7 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   changeTpoPublicJoinLink, getTpoPublicJoinLinkStatus,
-  TpoPublicJoinLinkError,
+  setTpoPublicJoinLinkEnabled, TpoPublicJoinLinkError,
 } from "@/modules/placements/tpo-public-join-link-service";
 import { getPublicJoinPreview } from "@/modules/placements/public-join/preview-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -72,8 +72,42 @@ describe.skipIf(!enabled)("TPO-companies-01 scoped link lifecycle in PostgreSQL"
     expect(stored.rows[0]?.token_hash).not.toBe(token);
     await expect(changeTpoPublicJoinLink(actor, { ...input, action: "CREATE" }))
       .rejects.toMatchObject({ code: "ALREADY_EXISTS" });
-    const next = await changeTpoPublicJoinLink(actor, { ...input, action: "REPLACE" });
+    const oldId=first.status.link?.id;
+    if(!oldId)throw new Error("Missing first public join link ID");
+    await expect(changeTpoPublicJoinLink(actor, {
+      ...input,action:"REPLACE",expectedLinkId:randomUUID(),
+    })).rejects.toMatchObject({code:"STALE"});
+    const next = await changeTpoPublicJoinLink(actor, {
+      ...input,action:"REPLACE",expectedLinkId:oldId,
+    });
     expect(next.path).not.toBe(first.path);
+    const newId=next.status.link?.id;
+    if(!newId)throw new Error("Missing replacement public join link ID");
+    await expect(changeTpoPublicJoinLink(actor,{
+      ...input,action:"REPLACE",expectedLinkId:oldId,
+    })).rejects.toMatchObject({code:"STALE"});
+    const disabled=await setTpoPublicJoinLinkEnabled(actor,{
+      scope:"COMPANY",companyId:id,enabled:false,expectedLinkId:newId,
+    });
+    expect(disabled).toEqual({enabled:false});
+    const enabledAgain=await setTpoPublicJoinLinkEnabled(actor,{
+      scope:"COMPANY",companyId:id,enabled:true,expectedLinkId:newId,
+    });
+    expect(enabledAgain).toEqual({enabled:true});
+    const eventsBeforeRetry=await pool.query<{total:number}>(`
+      select count(*)::integer as total from activity_events where subject_id=$1
+       and event_type='PLACEMENTS_PUBLIC_JOIN_LINK_ENABLED'`,[newId]);
+    expect(eventsBeforeRetry.rows[0]?.total).toBe(2);
+    expect(await setTpoPublicJoinLinkEnabled(actor,{
+      scope:"COMPANY",companyId:id,enabled:true,expectedLinkId:newId,
+    })).toEqual({enabled:true});
+    const eventsAfterRetry=await pool.query<{total:number}>(`
+      select count(*)::integer as total from activity_events where subject_id=$1
+       and event_type='PLACEMENTS_PUBLIC_JOIN_LINK_ENABLED'`,[newId]);
+    expect(eventsAfterRetry.rows[0]?.total).toBe(2);
+    await expect(setTpoPublicJoinLinkEnabled(actor,{
+      scope:"COMPANY",companyId:id,enabled:false,expectedLinkId:oldId,
+    })).rejects.toMatchObject({code:"STALE"});
     expect((await getPublicJoinPreview(token, "COMPANY")).kind).toBe("UNAVAILABLE");
     expect((await getPublicJoinPreview(next.path.split("/").at(-1) ?? "", "COMPANY")).kind)
       .toBe("READY");
@@ -86,7 +120,7 @@ describe.skipIf(!enabled)("TPO-companies-01 scoped link lifecycle in PostgreSQL"
     const foreign: RequestContext = { ...actor, membership: {
       ...actor.membership!, collegeId: SEED_IDS.collegeB,
     } };
-    await expect(changeTpoPublicJoinLink(foreign, { ...input, action: "REPLACE" }))
+    await expect(changeTpoPublicJoinLink(foreign, { ...input, action: "REPLACE",expectedLinkId:newId }))
       .rejects.toBeInstanceOf(TpoPublicJoinLinkError);
   });
 });
