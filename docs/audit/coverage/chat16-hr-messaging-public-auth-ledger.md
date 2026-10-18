@@ -453,3 +453,12 @@ The strict credential HMAC/one-time-code, tenant and real database-commit guards
 | `POST /api/public/recruiter-invite/[token]/send-code` | same (`PUBLIC-INVITE-ROUTE-38/40/41`) | cross-origin denial, disabled OTP gate, malformed token rejected without revealing grant identity or sending mail |
 
 Method-level tests mock external service writes, do not verify the real transactional lock/idempotency or delivery provider. No CI/TS/runtime suite was run in chat-16.
+
+
+### 2026-10-19: global inbound-mail PATCH guard
+
+| Route | Direct test | Behaviour |
+|---|---|---|
+| `PATCH /api/admin/inbound-mail/status` | `tests/unit/chat16-inbound-mail-status-json-cap-42.test.ts` (`INBOUND-TRIAGE-SIZE-42..44`) | Same-origin denies before reading JSON, strict 8 KB UTF-8 byte cap and 400/413 before loading even a privileged session, global Super Admin context forwarded to the existing compare-and-swap service, exact 200/409/503 persistence states, no-store private response |
+
+The existing `changeInboundMailStatusForAdmin` permission matrix, status machine and database version token are unchanged. This fills the route body-size coverage gap without accepting untrusted actor IDs from the payload. These direct tests are authored, not run.
