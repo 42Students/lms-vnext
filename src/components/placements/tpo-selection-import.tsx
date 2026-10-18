@@ -1,12 +1,14 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {prepareSelectionImport,type SelectionImportCandidate,type SelectionImportEntry} from "@/modules/placements/tpo-selection-import-model";
 
 export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:SelectionImportCandidate[]}){
  const router=useRouter();const [entries,setEntries]=useState<SelectionImportEntry[]>([]);
  const [unmatched,setUnmatched]=useState<Array<{line:number;value:string;reason:string}>>([]);
  const [error,setError]=useState("");const [busy,setBusy]=useState(false);const [done,setDone]=useState("");
+ const [confirmOpen,setConfirmOpen]=useState(false);
  async function read(file:File|null){
   setEntries([]);setUnmatched([]);setError("");setDone("");
   if(!file)return;
@@ -21,7 +23,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
  }
  async function confirm(){
   if(busy||!entries.length)return;
-  if(!window.confirm("Record "+entries.length+" matched company selections? "+unmatched.length+" unmatched rows will not be recorded. No offers will be released yet."))return;
+
   setBusy(true);setError("");setDone("");
   try{
    let count=0;
@@ -34,15 +36,14 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
      }))}),
     });
     if(!response.ok){
-     const body=await response.json().catch(()=>null) as {error?:string;issues?:Array<{message:string}>}|null;
-     throw Error(body?.issues?.[0]?.message??body?.error??"Import batch failed");
+     throw Error("Import batch failed. Refresh before retrying.");
     }
     count+=chunk.length;
    }
    setDone(count+" selection(s) recorded. Students have not been notified; verify and release from the selection register.");
    setEntries([]);router.refresh();
   }catch(e){setError((e instanceof Error?e.message:"Import failed")+
-   ". Already recorded rows remain saved. Refresh before retrying.");}finally{setBusy(false);}
+   ". Already recorded rows remain saved. Refresh before retrying.");}finally{setBusy(false);setConfirmOpen(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="font-semibold text-foreground">Import the company&apos;s selection list</h2>
@@ -58,17 +59,22 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     {entries.map(e=><p key={e.applicationId} className="border-b border-border px-2 py-1">{e.name} · {e.roleTitle}
      {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
    </div>
-   <button type="button" disabled={busy} onClick={()=>void confirm()}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+   <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
+    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
     {busy?"Recording…":"Confirm and record "+entries.length+" selections"}
    </button>
   </div>:null}
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
+    title={"Record "+entries.length+" matched company selections?"}
+    description={unmatched.length+" unmatched rows will not be recorded. No offers will be released yet."}
+    confirmLabel={"Confirm and record "+entries.length+" selections"}
+    onConfirm={()=>void confirm()}/>
   {unmatched.length?<details className="rounded border border-border p-3" open>
    <summary className="cursor-pointer text-sm font-semibold">{unmatched.length} unmatched or unusable rows</summary>
    <ul className="mt-2 max-h-40 list-disc overflow-y-auto pl-6 text-sm">{unmatched.map(x=>
     <li key={x.line}>Row {x.line}: {x.value||"Empty identifier"} — {x.reason}</li>)}</ul>
   </details>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
   {done?<p role="status" className="text-sm text-body">{done}</p>:null}
  </section>;
 }

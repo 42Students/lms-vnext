@@ -1,6 +1,7 @@
 "use client";
 import {useState,type MouseEvent} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {TpoBulkDriveReminder} from "./tpo-bulk-drive-reminder";
 type Action="CLOSE"|"CANCEL";
 type Preview={id:string;title:string;allowed:boolean;reason:string;
@@ -18,6 +19,7 @@ function selectedFrom(event:MouseEvent<HTMLButtonElement>):string[]{
  */
 export function TpoDriveActOnPanel(){
  const [open,setOpen]=useState(false);
+ const [confirmRetry,setConfirmRetry]=useState<boolean|null>(null);
  const [action,setAction]=useState<Action>("CLOSE");
  const [rows,setRows]=useState<Preview[]>([]);
  const [results,setResults]=useState<Outcome[]>([]);
@@ -54,12 +56,12 @@ export function TpoDriveActOnPanel(){
    setRows(proposed);
   });
  }
- async function apply(onlyFailed=false){
+ async function apply(onlyFailed=false,confirmed=false){
   if(reason.trim().length<10){setNotice("Explain the bulk action in at least 10 characters.");return;}
   const current=rows.filter(item=>item.allowed&&item.expectedUpdatedAt&&
    (!onlyFailed||results.some(v=>v.id===item.id&&v.status==="failed")));
   if(!current.length){setNotice("No applicable drives to change.");return;}
-  if(!window.confirm("Apply "+action.toLowerCase()+" to "+current.length+" eligible drives? Each change is audited."))return;
+  if(!confirmed){setConfirmRetry(onlyFailed);return;}
   const output:Outcome[]=onlyFailed?results.filter(item=>item.status!=="failed"):[];
   await run(async()=>{
    for(const row of current){
@@ -91,7 +93,7 @@ export function TpoDriveActOnPanel(){
  }
  return <section aria-label="Act on selected drives" className="space-y-3 rounded-md border border-border p-3">
   <button type="button" onClick={()=>setOpen(!open)} aria-expanded={open}
-   className="min-h-10 rounded border border-border px-4 text-sm font-semibold">Act on selected drives</button>
+   className="min-h-11 rounded border border-border px-4 text-sm font-semibold">Act on selected drives</button>
   {open?<div className="space-y-4">
    <p className="text-sm text-body">Actions only apply to checked rows on this page. Every drive is rechecked by the placement server before applying a change.</p>
    <TpoBulkDriveReminder/>
@@ -119,11 +121,18 @@ export function TpoDriveActOnPanel(){
     <p className="text-sm font-semibold">Per-drive results and retry</p>
     <ul className="space-y-1 text-sm">{results.map(row=><li key={row.id}>{row.id} · {row.status} · {row.reason}</li>)}</ul>
     {results.some(row=>row.status==="failed")?<div className="flex flex-wrap gap-3">
-     <button type="button" disabled={pending} onClick={()=>void apply(true)} className="min-h-10 rounded border border-border px-3 text-sm">Retry failed</button>
-     <button type="button" onClick={()=>void copyFailed()} className="min-h-10 rounded border border-border px-3 text-sm">Copy failed</button>
+     <button type="button" disabled={pending} onClick={()=>void apply(true)} className="min-h-11 rounded border border-border px-3 text-sm">Retry failed</button>
+     <button type="button" onClick={()=>void copyFailed()} className="min-h-11 rounded border border-border px-3 text-sm">Copy failed</button>
     </div>:null}
    </div>:null}
    {notice?<p role="status" className="text-sm">{notice}</p>:null}
   </div>:null}
+  <ConfirmDialog open={confirmRetry!==null}
+    onOpenChange={next=>{if(!next&&!pending)setConfirmRetry(null);}}
+    pending={pending}
+    title={"Apply "+action.toLowerCase()+" to "+rows.filter(item=>item.allowed&&item.expectedUpdatedAt&&(confirmRetry!==true||results.some(v=>v.id===item.id&&v.status==="failed"))).length+" eligible drives?"}
+    description="Each change is audited. Changes to applicants and offers are not silently reversible."
+    confirmLabel="Confirm selected action"
+    onConfirm={()=>{if(confirmRetry!==null){const retry=confirmRetry;setConfirmRetry(null);void apply(retry,true);}}}/>
  </section>;
 }
