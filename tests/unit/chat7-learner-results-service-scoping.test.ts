@@ -49,7 +49,7 @@ beforeEach(()=>{
  state.attempts=[];state.answers=[];state.submission=[];
  for(const mock of [state.access,state.own,state.quizScope,state.assignmentScope])mock.mockReset();
  state.access.mockResolvedValue("LEARNER");
- state.quizScope.mockResolvedValue({status:"CLOSED",resultsPublished:false,deliveryId:null,
+ state.quizScope.mockResolvedValue({status:"CLOSED",resultsPublished:false,dueAt:new Date("2026-01-01T00:00:00Z"),deliveryId:null,
   offeringId:"77777777-7777-4777-8777-777777777777"});
  state.assignmentScope.mockResolvedValue({deliveryId:null,offeringId:"77777777-7777-4777-8777-777777777777"});
 });
@@ -80,7 +80,7 @@ describe("COURSES7-07 / COURSES7-08 learner owner isolation and historical submi
  });
  it("does not reveal answer keys just because an open quiz has a stale published flag",async()=>{
   state.attempts=[attempt];state.answers=[answer];
-  state.quizScope.mockResolvedValueOnce({status:"PUBLISHED",resultsPublished:true,
+  state.quizScope.mockResolvedValueOnce({status:"PUBLISHED",resultsPublished:true,dueAt:new Date("2026-01-01T00:00:00Z"),
    deliveryId:null,offeringId:"77777777-7777-4777-8777-777777777777"});
   const out=await getMyQuizAttempts(context,quizId,deliveryId);
   expect(out[0].resultsVisible).toBe(false);
