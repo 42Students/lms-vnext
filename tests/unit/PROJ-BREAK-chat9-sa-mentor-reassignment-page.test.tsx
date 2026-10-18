@@ -3,7 +3,6 @@ import {isValidElement} from "react";
 import SuperAdminProjectReassignMentorRoute from "@/app/(authenticated)/admin/projects/reassign-mentor/page";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
-const organizationId="22222222-2222-4222-8222-222222222222";
 const state=vi.hoisted(()=>({scoped:true,allowed:true}));
 vi.mock("@/auth/request-context",()=>({
   getCurrentRequestContext:async()=>({
@@ -55,6 +54,5 @@ describe("IIT Dharwad Super Admin bulk project mentor reassignment access",()=>{
     const props=result.props as {collegeId:string;basePath:string};
     expect(props.collegeId).toBe(collegeId);
     expect(props.basePath).toBe("/admin/projects");
-    expect(organizationId).toMatch(/[a-f0-9-]{36}/);
   });
 });
