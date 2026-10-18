@@ -295,4 +295,12 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).toContain('empty={<EmptyState title="No drives recorded"');
    expect(page).not.toContain('min-w-[42rem]');
  });
+ it("UX-admin-features-collegeId-trace-02 exposes learner actions on phones and keeps resolution level visible",()=>{
+  const page=read("src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx");
+  expect(page).toContain('<DataTable<(typeof learners)[number]>');
+  expect(page).toContain('mobilePriority:"action"');
+  expect(page).toContain('No matching learners');
+  expect(page).toContain('overridesModule:query.overridesModule');
+  expect(page).toContain('sticky left-0 z-10 bg-surface');
+ });
 });
