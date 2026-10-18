@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
@@ -9,21 +9,30 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {collegeBulkImportToast} from "@/modules/colleges/bulk-import-feedback-model";
 import {parseCollegeImportCsv} from "@/modules/colleges/bulk-import-model";
+import {canApplyConfirmedCollegeBulkImport} from "@/modules/colleges/bulk-import-confirmation-model";
 type Result={line:number;code:string;status:"CREATED"|"SKIPPED"|"FAILED";message:string};
 export function CollegeBulkImport({organizations}:{organizations:readonly {id:string;name:string}[]}){
+ const versionRef=useRef(0),confirmedVersionRef=useRef(-1),inFlightRef=useRef(false);
  const router=useRouter(),{showToast}=useToast(),[open,setOpen]=useState(false),[organizationId,setOrganizationId]=useState(organizations[0]?.id??""),
  [csv,setCsv]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),[results,setResults]=useState<Result[]>([]);
  const [confirmImport,setConfirmImport]=useState(false),[confirmDiscard,setConfirmDiscard]=useState(false);
  let valid=0,validation="";
  try{if(csv.trim())valid=parseCollegeImportCsv(csv).length;}
  catch(cause){validation=cause instanceof Error?cause.message:"Invalid CSV";}
- function discard(){setOpen(false);setCsv("");setResults([]);setError("");setConfirmDiscard(false);}
+ function discard(){versionRef.current++;confirmedVersionRef.current=-1;setOpen(false);setCsv("");setResults([]);setError("");setConfirmDiscard(false);setConfirmImport(false);}
  async function submit(){
-  if(busy||!valid||!organizationId)return;
+  if(!canApplyConfirmedCollegeBulkImport({
+   confirmed:confirmImport,inFlight:inFlightRef.current||busy,validRows:valid,
+   validationError:validation,organizationId,
+   selectionVersion:versionRef.current,confirmationVersion:confirmedVersionRef.current,
+  }))return;
+  const confirmedOrganization=organizationId,confirmedCsv=csv;
+  inFlightRef.current=true;
   setBusy(true);setError("");setResults([]);
   try{
    const response=await fetch("/api/admin/colleges/bulk-import",{method:"POST",
-    headers:{"content-type":"application/json"},body:JSON.stringify({organizationId,csv})});
+    headers:{"content-type":"application/json"},
+    body:JSON.stringify({organizationId:confirmedOrganization,csv:confirmedCsv})});
    if(!response.ok)throw Error("Bulk Import could not be completed.");
    const payload=await response.json() as {results:Result[]};
    setResults(payload.results);setConfirmImport(false);
@@ -31,7 +40,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    showToast({title:feedback.title,tone:feedback.tone});router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Import failed");
    showToast({title:"Bulk Import failed",tone:"error"});}
-  finally{setBusy(false);}
+  finally{inFlightRef.current=false;setBusy(false);}
  }
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <Button type="button" variant="secondary" className="min-h-11 rounded border border-border px-3 text-[var(--lms-teal-deep)]"
@@ -39,12 +48,12 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
   {open?<div className="space-y-3">
    <label className="grid gap-1 text-sm">Organization
     <Select className="min-h-11 rounded border border-border bg-background px-3" value={organizationId}
-     onChange={e=>setOrganizationId(e.target.value)}>
+     onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
    <label className="grid gap-1 text-sm">CSV (name, code, city, state, country)
     <Textarea rows={5} maxLength={150000} value={csv}
-     onChange={e=>{setCsv(e.target.value);setResults([]);setError("");}}
+     onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
      className="w-full rounded border border-border bg-background p-3 font-mono"
      placeholder="name,code,city,state,country"/>
    </label>
@@ -52,7 +61,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    {valid>0?<p role="status" className="text-sm">{valid} colleges ready</p>:null}
    {(error||validation)?<p role="alert" className="text-sm text-error">{error||validation}</p>:null}
    <div className="flex flex-wrap gap-2">
-    <Button type="button" disabled={busy||!valid} onClick={()=>setConfirmImport(true)}
+    <Button type="button" disabled={busy||!valid} onClick={()=>{confirmedVersionRef.current=versionRef.current;setConfirmImport(true);}}
      className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">
      {busy?"Importing…":"Import colleges"}</Button>
     <Button type="button" disabled={busy} className="min-h-11 rounded border border-border px-3 text-sm"
@@ -69,7 +78,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
      ]}/>
    </div>:null}
   </div>:null}
-  <ConfirmDialog open={confirmImport} onOpenChange={setConfirmImport} title={"Create "+valid+" colleges?"} description="Existing codes will be skipped." confirmLabel="Import colleges" pending={busy} confirmDisabled={!valid||!organizationId} onConfirm={()=>void submit()}>
+  <ConfirmDialog open={confirmImport} onOpenChange={setConfirmImport} title={"Create "+valid+" colleges?"} description="Existing codes will be skipped." confirmLabel="Import colleges" pending={busy} confirmDisabled={!valid||!organizationId||Boolean(validation)||confirmedVersionRef.current!==versionRef.current} onConfirm={()=>void submit()}>
    {(error||validation)?<p role="alert" className="text-sm text-foreground">{error||validation}</p>:null}
   </ConfirmDialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title="Discard Bulk Import draft?" description="Unsaved CSV content will be discarded." confirmLabel="Discard draft" confirmVariant="danger" pending={busy} onConfirm={discard}/>

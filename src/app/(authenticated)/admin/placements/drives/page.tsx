@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -17,6 +18,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
   <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
  </div>;
+ requireSuperAdminSelectedCollege(ctx,"placements.manage");
  const parsed=adminDriveDirectoryQuerySchema.safeParse({
   q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,
  });

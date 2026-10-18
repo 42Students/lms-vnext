@@ -184,3 +184,18 @@ Source-level legacy role crosswalk in `docs/audit/legacy-vs-vnext-chat7-learner-
 | `LessonResourceMaterialsControl` | 44px touch targets on editable resource buttons, links and inputs; existing keyboard input, errors and confirmation remain | `tests/unit/UX-chat7-resource-material-touch-10.test.ts` — `UX-LEARN-RESOURCE-10` |
 
 The owner postponed CI/real PostgreSQL until all lanes complete; these new tests and source checks have not been executed locally. The legacy route inventory is in `docs/audit/legacy-vs-vnext-chat7-learner-gaps.md`.
+
+## Final incremental page boundary review: phone deadlines and Super Admin catalogue
+
+| Function/page | Behavior and audience | Regression |
+|---|---|---|
+| `learnerAssignmentMobileState`, `learnerQuizMobileState` | Exactly at the persisted deadline, learner mobile cards show **Closed**, not an actionable submit/attempt; one millisecond before remains open, published grades/results still display, unpublished answer keys remain withheld | `tests/unit/chat7-learner-mobile-deadline-boundaries.test.ts` — `LEARNER-DEADLINE-MOBILE-14` |
+| `collegeCourseCatalogueQuerySchema`, `paginateCollegeCourses`, `AdminCourseOverview` | Selected-college catalogue search/sort/page guards and deterministic ties; invalid filter input is rejected, last-page overrun clamps safely, empty stays usable, 44px Filter/Refresh/CSV/Previous/Next/Open learning controls | `tests/unit/chat7-superadmin-course-catalogue-touch-pagination.test.ts` — `SA-COURSES-TOUCH-13` |
+
+These are source-authored, not CI-green. The owner deferred test and browser gating until the full queue finishes.
+
+## Course-thumbnail URL safety
+
+| Export | Behavior covered | Test |
+|---|---|---|
+| `learnerCourseCardMedia`, `learnerCourseCardMediaAfterError`, `learnerCourseFallbackMedia` | Only credential-free, fragment-free, public HTTPS authored thumbnails; no localhost/loopback/RFC1918/metadata hosts; missing or failed authored image uses trusted bundled fallback and never retries an unsafe URL | `tests/unit/learner-course-card-media-model.test.ts` — `LEARNER-THUMBNAIL-15` extended hostile-host matrix (authored, CI pending) |
