@@ -70,7 +70,7 @@ describe("Super Admin Projects: bounded history comparison and IDOR", () => {
     // A malformed data adapter or foreign-version mock must not be trusted
     // even if it returns a matching UUID from another template.
     state.versionRows = [
-      { ...state.versionRows[0], templateId: "99999999-9999-4999-8999-999999999999" },
+      { ...state.versionRows[0]!, templateId: "99999999-9999-4999-8999-999999999999" },
       ...state.versionRows.slice(1),
     ];
     await expect(getSuperAdminTemplateVersionComparison(actor(), { templateId, versionId }))
