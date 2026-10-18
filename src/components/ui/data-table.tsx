@@ -60,7 +60,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
     <div className="min-w-0 sm:overflow-x-auto sm:rounded-xl sm:border sm:border-border">
       <table className="block w-full border-separate border-spacing-0 text-left text-sm leading-5 sm:table sm:border-collapse">
         <caption className="sr-only">{caption ?? "Records"}</caption>
-        <thead className="sr-only sm:table-header-group sm:bg-muted">
+        <thead className="hidden sm:table-header-group sm:bg-muted">
           <tr>{columns.map(col=><th key={col.key} scope="col"
             className={cx("border-b border-border px-4 py-3 font-semibold text-body sm:sticky sm:top-0 sm:z-10 sm:bg-muted",col.className)}>{col.header}</th>)}</tr>
         </thead>
