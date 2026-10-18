@@ -87,6 +87,27 @@ describe("TPO-drive-workspace-44 bulk room concurrency ledger",()=>{
  });
 });
 
+describe("TPO-drive-workspace-44 bookable learner roster security",()=>{
+ it("TPO-drive-workspace-44 excludes inactive memberships/users on reads AND rechecks active identity during BOOK and MOVE_REQUEST",()=>{
+  const source=readFileSync("src/modules/placements/tpo-interview-slot-service.ts","utf8");
+  const roster=source.slice(source.indexOf("export async function getTpoInterviewSlotWorkspace"),
+   source.indexOf("async function notice("));
+  expect(roster).toContain('eq(collegeMemberships.status,"ACTIVE")');
+  expect(roster).toContain('eq(users.platformStatus,"ACTIVE")');
+  const booking=source.slice(source.indexOf('if(input.action==="BOOK")'),
+   source.indexOf('if(input.action==="CANCEL")'));
+  const moving=source.slice(source.indexOf('if(input.action==="MOVE_REQUEST")'),
+   source.indexOf('const id=input.slotId;'));
+  for(const action of [booking,moving]){
+   expect(action).toContain('eq(collegeMemberships.collegeId,info.collegeId)');
+   expect(action).toContain('eq(collegeMemberships.status,"ACTIVE")');
+   expect(action).toContain('eq(users.platformStatus,"ACTIVE")');
+   expect(action).toContain('eq(placementApplications.status,"SUBMITTED")');
+   expect(action).toContain('eq(placementApplicationScreenings.status,"SHORTLISTED")');
+  }
+ });
+});
+
 describe("TPO-drive-workspace-37 round plan immutability",()=>{
  it("TPO-drive-workspace-37 never reorders ended, live or artifact-bearing plans",()=>{
   expect(roundReorderLockMessage({jobStatus:"PUBLISHED",roundStatuses:["PENDING","PENDING"],hasExecutionArtifacts:false})).toBeNull();
