@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 export type SummaryProject={
@@ -8,7 +12,7 @@ export type SummaryProject={
  sprintLengthWeeks:number|null;estimationUnit:string|null;
 };
 type Choice={id:string;name:string;code:string};
-const style="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3 py-2";
+const style="mt-1 w-full";
 export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProject}){
  const router=useRouter();
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -55,49 +59,49 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
   }catch(e){setError(e instanceof Error?e.message:"Save failed");}finally{setBusy(false);}
  }
  const field=(label:string,key:keyof typeof form,max:number)=><label className="text-sm font-semibold">
-  {label}<input className={style} maxLength={max} value={form[key]} onChange={e=>change(key,e.target.value)}/>
+  {label}<Input className={style} maxLength={max} value={form[key]} onChange={e=>change(key,e.target.value)}/>
  </label>;
- return <section className="rounded-xl border border-border bg-surface p-4">
-  <button type="button" onClick={()=>setOpen(v=>!v)} className="rounded-md border border-border px-3 py-2 text-sm font-semibold">
-   Edit workspace summary</button>
+ return <section className="border-b border-border pb-5">
+  <Button variant="secondary" type="button" onClick={()=>setOpen(v=>!v)} className="rounded-md border border-border px-3 py-2 text-sm font-semibold">
+   Edit workspace summary</Button>
   {open?<div className="mt-4 space-y-4">
    <div className="grid gap-3 sm:grid-cols-2">
     {field("Workspace title","title",200)}
-    <label className="text-sm font-semibold">Status<select className={style}
+    <label className="text-sm font-semibold">Status<Select className={style}
      value={form.status} onChange={e=>change("status",e.target.value)}>
       {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
        <option key={v} value={v}>{v}</option>)}
-    </select></label>
-    <label className="text-sm font-semibold">Progress %<input className={style} type="number" min={0} max={100}
+    </Select></label>
+    <label className="text-sm font-semibold">Progress %<Input className={style} type="number" min={0} max={100}
      value={form.progressPercent} onChange={e=>change("progressPercent",Number(e.target.value))}/></label>
     {field("Phase","phase",120)}{field("Due label","dueLabel",160)}{field("Course label","courseLabel",160)}
-    <label className="text-sm font-semibold">Class<select className={style} value={form.sectionId}
+    <label className="text-sm font-semibold">Class<Select className={style} value={form.sectionId}
      onChange={e=>change("sectionId",e.target.value)}>
       <option value="">No class</option>
       {form.sectionId&&!classes.some(v=>v.id===form.sectionId)?<option value={form.sectionId}>Current class</option>:null}
       {classes.map(v=><option key={v.id} value={v.id}>{v.name} · {v.code}</option>)}
-    </select></label>
+    </Select></label>
     {(["startDate","endDate"] as const).map(key=><label key={key} className="text-sm font-semibold">
      {key==="startDate"?"Start date":"End date"}
-     <input className={style} type="date" value={form[key]} onChange={e=>change(key,e.target.value)}/>
+     <Input className={style} type="date" value={form[key]} onChange={e=>change(key,e.target.value)}/>
     </label>)}
-    <label className="text-sm font-semibold">Sprint length (weeks)<input className={style} type="number"
+    <label className="text-sm font-semibold">Sprint length (weeks)<Input className={style} type="number"
      min={1} max={104} value={form.sprintLengthWeeks} onChange={e=>change("sprintLengthWeeks",e.target.value)}/></label>
-    <label className="text-sm font-semibold">Estimation unit<select className={style}
+    <label className="text-sm font-semibold">Estimation unit<Select className={style}
      value={form.estimationUnit} onChange={e=>change("estimationUnit",e.target.value)}>
       <option value="POINTS">Points</option><option value="HOURS">Hours</option><option value="TASKS">Tasks</option>
-    </select></label>
+    </Select></label>
    </div>
    {(["summary","blocker","nextAction"] as const).map(k=><label key={k} className="block text-sm font-semibold">
     {k==="summary"?"Summary":k==="blocker"?"Blocker":"Next action"}
-    <textarea className={style+" min-h-24"} maxLength={4000} value={form[k]}
+    <Textarea className={style+" min-h-24"} maxLength={4000} value={form[k]}
      onChange={e=>change(k,e.target.value)}/>
    </label>)}
    <p className="text-xs text-muted-foreground">Activating requires a Mentor; completing requires an approved final submission.</p>
-   <button type="button" disabled={busy||!form.title.trim()} onClick={()=>void save()}
-    className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary">{busy?"Saving…":"Save changes"}</button>
-   <button type="button" disabled={busy} onClick={()=>setOpen(false)}
-    className="ml-2 rounded-md border border-border px-4 py-2 text-sm">Cancel</button>
+   <Button type="button" disabled={busy||!form.title.trim()} onClick={()=>void save()}
+    className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary">{busy?"Saving…":"Save changes"}</Button>
+   <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
+    className="ml-2 rounded-md border border-border px-4 py-2 text-sm">Cancel</Button>
   </div>:null}
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
  </section>;
