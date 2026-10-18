@@ -60,6 +60,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-036 · PROJ-BREAK-idor-36/37 / races-14/15 | High | Super Admin template rollback validated permissions only from the RequestContext snapshot before entering the transaction. A role revocation between page load and submission could create another version despite the actor no longer having global management rights. The parent template row is now locked before a persisted-role assertion; stale/archived/version-invalid requests still fail and no audit/version insert occurs for denied actors. | `c8ef340` | `tests/unit/PROJ-BREAK-chat9-template-rollback-auth.test.ts` (`06132d3`): stale permission, archive, stale token, valid version clone and disabled actor. Real PG revocation race OPEN |
 
+| PROJ9-037 · PROJ-BREAK-idor-38 / races-16 / state-23 | High | Global template unpublish and archive checked Super Admin status only before opening the transaction, allowing a revoked role to mutate a template from a stale tab. Both now reauthorize the persisted user under transaction-held SHARE locks after locking the template row; valid DRAFT/ARCHIVED repeated submissions remain idempotent and active college assignments still prohibit archival. | `4fcd540` | `tests/unit/PROJ-BREAK-chat9-template-lifecycle-auth.test.ts` (`30c98f3`) covers revoked roles, repeated lifecycle mutations and active assignment prohibition; PostgreSQL race verification OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
