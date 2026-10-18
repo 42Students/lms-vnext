@@ -10,7 +10,7 @@ export type TenantDirectoryExportRow = {
  * formulas before =, +, -, or @. Guard the complete original field so
  * Excel/LibreOffice cannot reinterpret a tenant-controlled name as a formula. */
 export function tenantDirectoryCsvCell(value: string) {
-  const firstVisible = value.replace(/^[\s\p{Cf}\p{Mn}]*/u, "");
+  const firstVisible = value.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}]*/u, "");
   const safe = /^[=+@-]/u.test(firstVisible) ? "'" + value : value;
   return '"' + safe.replaceAll('"', '""') + '"';
 }
