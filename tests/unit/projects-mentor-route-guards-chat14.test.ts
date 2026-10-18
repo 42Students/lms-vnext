@@ -86,7 +86,17 @@ describe("chat-14 mentor route guards and friendly API error handling",()=>{
       expect(source).toContain(route.service);
       expect(source).toContain("apiErrorResponse(error)");
       expect(source).toContain("status:403");
-      expect(source.indexOf("isSameOriginRequest")).toBeLessThan(source.lastIndexOf("request.json()"));
+      // Bounded JSON readers are stronger than direct request.json(). The
+      // origin guard still must precede either decoder, never merely its import.
+      const decoder=source.includes("readMentorProjectCommandBody(request)")
+        ?"readMentorProjectCommandBody(request)":"request.json()";
+      expect(source).toContain(decoder);
+      expect(source.indexOf("isSameOriginRequest(request)")).toBeGreaterThanOrEqual(0);
+      expect(source.indexOf("isSameOriginRequest(request)")).toBeLessThan(source.lastIndexOf(decoder));
+      if(decoder==="readMentorProjectCommandBody(request)"){
+        expect(source).toContain("MentorProjectCommandBodyError");
+        expect(source).toContain("mentorProjectBodyFailureMessage(error.status)");
+      }
       for(const method of route.methods){
         expect(source).toMatch(new RegExp("export\\s+async\\s+function\\s+"+method+"\\s*\\("));
       }
