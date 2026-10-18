@@ -282,7 +282,7 @@ export default async function TpoRecruiterAccessPage({
                 </div>},
               {key:"granted",header:"Granted",mobilePriority:"secondary",cell:item=>item.grantedDate},
               {key:"valid",header:"Valid through (IST)",mobilePriority:"secondary",cell:item=>item.validUntilDate??"No expiry on record"},
-              {key:"access",header:"Access & verification",mobilePriority:"secondary",cell:item=>item.capabilities.join(", ")||"No capabilities"},
+              {key:"access",header:"Access & verification",mobilePriority:"secondary",cell:item=><span>{item.capabilities.join(", ")||"No capabilities"}{" · "}{item.verificationStatus}</span>},
               {key:"revoked",header:"Revoked",mobilePriority:"secondary",cell:item=>item.revokedDate??"—"},
             ]}
           />
