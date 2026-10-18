@@ -7,7 +7,7 @@ import {
 
 const state=vi.hoisted(()=>({
  moduleEnabled:true,scopeCalls:0,projectLocks:0,meetingReads:0,
- persistedChecks:0,learnerChecks:0,learnerDenied:true,
+ persistedChecks:0,mentorDenied:true,learnerChecks:0,learnerDenied:true,
  access:"MENTOR",meetingStatus:"SCHEDULED",windowChecks:0,expiresAfterLock:false,
  writes:0,audits:0,notices:0,lockConditions:"",
 }));
@@ -57,7 +57,7 @@ vi.mock("@/modules/projects/meeting-window-policy",()=>({
 vi.mock("@/modules/projects/persisted-mentor-mutation",()=>({
  assertPersistedProjectMutationActor:async()=>{
   state.persistedChecks++;
-  throw new Error("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  if(state.mentorDenied)throw new Error("PROJECT_LIFECYCLE_ACCESS_DENIED");
  },
 }));
 vi.mock("@/modules/activity/service",()=>({
@@ -107,7 +107,7 @@ vi.mock("@/db/client",()=>({
 }));
 beforeEach(()=>{
  state.moduleEnabled=true;state.scopeCalls=0;state.projectLocks=0;
- state.meetingReads=0;state.persistedChecks=0;
+ state.meetingReads=0;state.persistedChecks=0;state.mentorDenied=true;
  state.learnerChecks=0;state.learnerDenied=true;
  state.access="MENTOR";state.meetingStatus="SCHEDULED";
  state.windowChecks=0;state.expiresAfterLock=false;
@@ -191,6 +191,7 @@ describe("Mentor meeting writes and direct read permissions",()=>{
  });
  it("PROJ-BREAK-MENTOR-353 delayed meeting scheduling rechecks the future window under lock",async()=>{
   state.expiresAfterLock=true;
+  state.mentorDenied=false;
   // The first window check passes before transaction entry; the second
   // simulates the clock crossing startsAt while a parent row lock is awaited.
   state.persistedChecks=0;
