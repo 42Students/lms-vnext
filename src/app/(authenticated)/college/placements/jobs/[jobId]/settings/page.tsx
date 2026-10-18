@@ -34,10 +34,10 @@ export default async function CollegeDriveSettingsPage({
   ):[];
   return <div className="space-y-6">
     <PageHeader eyebrow="Drives" title="Settings" description={drive.title}
-      actions={<Link className="font-semibold text-primary-text underline"
+      actions={<Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         href={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"}>Overview</Link>}/>
     {job.status==="DRAFT"&&eligibilityPolicy?
-      <section aria-label="Edit drive" className="space-y-2">
+      <section aria-label="Edit drive" className="min-w-0 space-y-3">
         <h2 className="text-lg font-semibold">Edit drive</h2>
         <PlacementDraftEditForm academicOptions={{
           programs:programs.map(program=>({
@@ -78,7 +78,9 @@ export default async function CollegeDriveSettingsPage({
         This drive is read-only. Only drafts in an active placement season are editable.
         Published-drive changes use the guarded lifecycle and deadline actions.
       </p>}
-    <CollegeLegacyDriveSettings jobId={jobId} status={drive.status as CollegeLegacyDriveStatus}/>
+    <section aria-label="Legacy drive settings" className="min-w-0 space-y-4">
+      <CollegeLegacyDriveSettings jobId={jobId} status={drive.status as CollegeLegacyDriveStatus}/>
+    </section>
     {drive.status!=="ARCHIVED"?<CollegeDriveArchiveAction jobId={jobId}/>:null}
   </div>;
 }
