@@ -22,18 +22,24 @@ export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPrev
  await getDb().transaction(async tx=>requireTpoJobActor(tx,context),{accessMode:"read only"});
  const current=new Map<string,TpoBulkCurrent>();
  if(plan.target==="STUDENTS"){
-   for(const id of plan.ids){
-     try {
-       const record=await getTpoLearnerParticipation(context,id);
-       current.set(id,{version:tpoBulkStudentVersion(record.direct),
-         ready:tpoBulkStudentReady(plan.action,record.direct.status),
-         reason:plan.action==="ELIGIBLE"&&record.direct.status==="ELIGIBLE"?
-          "Already eligible":plan.action==="INELIGIBLE"&&record.direct.status==="INELIGIBLE"?
-          "Already ineligible":plan.action==="CLEAR_OVERRIDE"&&record.direct.status===null?
-          "No direct override to clear":undefined});
-     } catch(error) {
-       if(!(error instanceof AuthorizationError))throw error;
-     }
+   // One eligibility projection performs several scoped reads. The 200-row
+   // preview must not serialize hundreds of independent lookups (or flood
+   // the PostgreSQL pool with 200 simultaneous connections).
+   const previewConcurrency=8;
+   for(let offset=0;offset<plan.ids.length;offset+=previewConcurrency){
+     await Promise.all(plan.ids.slice(offset,offset+previewConcurrency).map(async id=>{
+       try {
+         const record=await getTpoLearnerParticipation(context,id);
+         current.set(id,{version:tpoBulkStudentVersion(record.direct),
+           ready:tpoBulkStudentReady(plan.action,record.direct.status),
+           reason:plan.action==="ELIGIBLE"&&record.direct.status==="ELIGIBLE"?
+            "Already eligible":plan.action==="INELIGIBLE"&&record.direct.status==="INELIGIBLE"?
+            "Already ineligible":plan.action==="CLEAR_OVERRIDE"&&record.direct.status===null?
+            "No direct override to clear":undefined});
+       }catch(error){
+         if(!(error instanceof AuthorizationError))throw error;
+       }
+     }));
    }
  } else if(plan.action==="MOVE_TEST"||plan.action==="MOVE_INTERVIEW"){
    if(!plan.jobId)return current;
