@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {LEGACY_TPO_BRANCH_COLUMNS,legacyTpoBranchReportRow} from "@/modules/placements/tpo-branch-report-view-model";
@@ -60,11 +61,11 @@ export default async function TpoByBranchReportPage({
 
       <Link
         href="/tpo/reports/branch-season"
-        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
       >
         View applicant and accepted-offer evidence by season →
       </Link>
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/by-branch" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/by-branch" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
