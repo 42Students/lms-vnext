@@ -14,6 +14,10 @@ describe("learner assessment state filters",()=>{
     expect(learnerAssessmentMatchesState({...assignment,submittedAt:"2026-10-15T09:00:00Z"},"COMPLETED",now)).toBe(true);
     expect(learnerAssessmentMatchesState({...assignment,submittedAt:"2026-10-15T09:00:00Z"},"RESULTS",now)).toBe(false);
     expect(learnerAssessmentMatchesState({...quiz,attemptsUsed:1},"RESULTS",now)).toBe(false);
-    expect(learnerAssessmentMatchesState({...quiz,attemptsUsed:1,resultsPublished:true},"RESULTS",now)).toBe(true);
+    expect(learnerAssessmentMatchesState({...quiz,attemptsUsed:1,resultsPublished:true},"RESULTS",now)).toBe(false);
+    // Result publication alone is insufficient while the attempt is still open.
+    expect(learnerAssessmentMatchesState({...quiz,attemptsUsed:1,status:"CLOSED",resultsPublished:true},"RESULTS",now)).toBe(false);
+    // Published feedback is visible only once the quiz is closed AND its deadline passed.
+    expect(learnerAssessmentMatchesState({...quiz,attemptsUsed:1,status:"CLOSED",resultsPublished:true},"RESULTS",Date.parse("2026-10-15T10:00:00Z"))).toBe(true);
   });
 });
