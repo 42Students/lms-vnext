@@ -188,6 +188,12 @@ The selected `/admin/faculty-assignment`, `/admin/people/directory`, and global 
 
 **Fix:** Each entrypoint now redirects non-Super-Admin actors before the list data load. Existing central permission service checks remain in force. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` explicitly verifies `SA-PEOPLE-ROOT-02`. Tests authored, not run; browser and CI checks pending.
 
+### SA-ACADEMICS-ROLE-035 — Super Admin batch and Student Register service allowed College Admin role fallback (S1)
+
+Both the batch census and Student Register options services delegated directly to `resolveActingCollege`. This helper intentionally permits active College Admins to act inside their own college, but it is not an appropriate sole actor guard for **Super Admin-only** service entry points. Calling these exported functions from a future API or action would inherit that broader authorization despite the page naming.
+
+**Fix:** Both services now explicitly deny principals lacking active `SUPER_ADMIN` system role before even resolving a college scope. No College Admin service was changed. Direct service tests: `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` and `tests/unit/chat3-sa-student-register-options-role-scope.test.ts`, case SA-ACADEMICS-ROLE-01. Cloud CI, signed-in Super Admin and College Admin browser journeys pending.
+
 ### SA-ACADEMICS-BATCH-COUNT-033 — disabled account included in class occupancy but absent from roster (S1)
 
 In the selected-college Super Admin batch detail, class occupancy counted `college_memberships.id` for an active program and Section enrollment. The detailed roster instead joins `users.platform_status = ACTIVE`. A suspended platform user with a still-active membership could inflate a classroom's occupancy and capacity warning while never appearing in the roster or CSV.
