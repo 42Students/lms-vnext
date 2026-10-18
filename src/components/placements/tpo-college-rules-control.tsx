@@ -71,7 +71,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
     } finally { inFlight.current = false; setBusy(false); }
   }
   return (
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="border-b border-border pb-6">
       <h3 className="text-base font-semibold text-foreground">Offers and placed</h3>
       <p className="mt-2 text-sm text-body">
         The placed numbers (Home, Students, Reports) follow the first rule as soon as you save; the offer rules apply to offers released from then on.
@@ -82,7 +82,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
           A student counts as placed when the offer is
           <select value={form.countsAsPlacedAt} disabled={busy}
             onChange={(event) => setForm((current) => ({ ...current, countsAsPlacedAt: event.target.value }))}
-            className="min-h-11 rounded-md border border-border bg-surface px-3">
+            className="min-h-11 rounded-[9px] border border-border bg-surface px-3">
             <option value="OFFER_RELEASED">released</option>
             <option value="OFFER_ACCEPTED">accepted</option>
           </select>
@@ -93,7 +93,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
             <input type="number" min={TPO_RULE_LIMITS[key].min} max={TPO_RULE_LIMITS[key].max} step={1}
               value={form[key]} disabled={busy}
               onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-              className="min-h-11 rounded-md border border-border bg-surface px-3" />
+              className="min-h-11 rounded-[9px] border border-border bg-surface px-3" />
           </label>
         ))}
       </div>
@@ -104,7 +104,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         <p>A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p>
       </section>
       <button type="button" disabled={busy} onClick={() => void save()}
-        className="mt-4 min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
+        className="mt-4 min-h-11 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60 text-primary-foreground">
         {busy ? "Saving..." : "Review and confirm rules"}
       </button>
       {error ? <p role="alert" className="mt-2 text-sm text-error">{error}</p> : null}

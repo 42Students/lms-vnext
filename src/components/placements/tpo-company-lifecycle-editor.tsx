@@ -50,7 +50,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
   }
 
   return (
-    <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    <section className="space-y-4 border-b border-border pb-6">
       <h2 className="text-lg font-semibold text-foreground">Manage college relationship</h2>
       <p className="text-sm text-body">
         This company&apos;s global name and domain are shared across colleges and cannot
@@ -65,7 +65,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
         <textarea
           value={reason} onChange={(event) => {setReviewAction(null);setReason(event.target.value);}}
           disabled={busy} maxLength={500} rows={3}
-          className="mt-2 block w-full rounded-md border border-border bg-surface p-3 text-sm font-normal"
+          className="mt-2 block w-full rounded-[9px] border border-border bg-surface p-3 text-sm font-normal"
         />
       </label>
       <div className="flex flex-wrap gap-3">
@@ -96,7 +96,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
           This changes only this college&apos;s relationship and is audited.</p>
         <div className="mt-2 flex gap-2">
           <button type="button" disabled={busy} onClick={()=>void submit(reviewAction)}
-            className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Confirm change</button>
+            className="min-h-10 rounded-[9px] bg-primary px-4 font-semibold text-on-primary text-primary-foreground">Confirm change</button>
           <button type="button" disabled={busy} onClick={()=>setReviewAction(null)}
             className="min-h-10 rounded-md border border-border px-4">Cancel</button>
         </div>

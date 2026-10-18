@@ -45,7 +45,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   }catch(e){setError((e instanceof Error?e.message:"Import failed")+
    ". Already recorded rows remain saved. Refresh before retrying.");}finally{setBusy(false);setConfirmOpen(false);}
  }
- return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section className="space-y-4 border-b border-border pb-6">
   <h2 className="font-semibold text-foreground">Import the company&apos;s selection list</h2>
   <p className="text-sm text-body">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
@@ -60,7 +60,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
      {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
    </div>
    <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
+    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
     {busy?"Recording…":"Confirm and record "+entries.length+" selections"}
    </button>
   </div>:null}
