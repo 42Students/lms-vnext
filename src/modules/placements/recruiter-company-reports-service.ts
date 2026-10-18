@@ -18,6 +18,7 @@ import {
   placementJobs,
   placementOffers,
   placementJoiningOutcomes,
+  users,
 } from "@/db/schema";
 
 import type {
@@ -235,8 +236,13 @@ export async function getRecruiterCompanyReports(
               collegeMemberships.collegeId,
               collegeId,
             ),
+            eq(collegeMemberships.status,"ACTIVE"),
           ),
         )
+        .innerJoin(users,and(
+          eq(users.id,collegeMemberships.userId),
+          eq(users.platformStatus,"ACTIVE"),
+        ))
         .innerJoin(placementApplicationScreenings,and(
           eq(placementApplicationScreenings.applicationId,placementApplications.id),
           eq(placementApplicationScreenings.status,"SHORTLISTED"),
@@ -288,7 +294,8 @@ export async function getRecruiterCompanyReports(
       select a.id,a.status from placement_applications a
       join jobs j on j.id=a.job_id
       join college_memberships m on m.id=a.membership_id
-        and m.college_id=${collegeId}::uuid
+        and m.college_id=${collegeId}::uuid and m.status='ACTIVE'
+      join users u on u.id=m.user_id and u.platform_status='ACTIVE'
       where exists (select 1 from placement_application_screenings sc
         where sc.application_id=a.id and sc.status='SHORTLISTED')
     )
