@@ -595,6 +595,9 @@ export async function archiveCollege(
 
   const archivedAt = new Date();
   return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.manage",{
+      collegeId,organizationId:college.organizationId,
+    });
     const [archived]=await tx.update(colleges)
       .set({status:"ARCHIVED",updatedAt:archivedAt})
       .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE")))
