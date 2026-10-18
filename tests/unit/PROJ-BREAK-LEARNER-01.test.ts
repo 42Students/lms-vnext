@@ -90,6 +90,10 @@ describe("PROJ-BREAK-LEARNER-01 create and mutate only own authorized project ta
    expect(learnerTaskProgressInputSchema.safeParse({action,expectedUpdatedAt:version} ).success).toBe(false);
   }
   expect(learnerTaskProgressInputSchema.safeParse({action:"STATUS",status:"DONE",expectedUpdatedAt:version}).success).toBe(false);
+  expect(learnerTaskProgressInputSchema.safeParse({action:"STATUS",status:"BLOCKED",expectedUpdatedAt:version}).success).toBe(false);
+  expect(learnerTaskProgressInputSchema.safeParse({action:"STATUS",status:"BLOCKED",blockerNote:"  ",expectedUpdatedAt:version}).success).toBe(false);
+  expect(learnerTaskProgressInputSchema.safeParse({action:"STATUS",status:"IN_PROGRESS",blockerNote:"Still blocked",expectedUpdatedAt:version}).success).toBe(false);
+  expect(learnerTaskProgressInputSchema.safeParse({action:"STATUS",status:"TODO",blockerNote:"Still blocked",expectedUpdatedAt:version}).success).toBe(false);
   expect(learnerTaskProgressInputSchema.safeParse({action:"MOVE_UP",expectedUpdatedAt:version,clientSequence:999}).success).toBe(false);
   expect(learnerTaskTransitionAllowed("TODO","BLOCKED","reason")).toBe(true);
   expect(learnerTaskTransitionAllowed("TODO","BLOCKED","  ")).toBe(false);
