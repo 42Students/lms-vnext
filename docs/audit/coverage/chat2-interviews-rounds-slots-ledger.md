@@ -25,3 +25,32 @@ Every route handler and service export in `src/modules/placements/*interview*`, 
 ## Report reconciliation
 
 The 2026-10-18 `unit-failures-latest.md` cites CI `ff6819dd`; `typecheck-errors-latest.md` cites `39270260`. The newer `main` snapshot had already replaced the erroneous `cohorts` table binding with `cohortTable` in `tpo-prep-readiness-derived-service.ts`. Do not reintroduce the obsolete compile defect. Actual current CI must re-run to validate all named failures.
+
+## Additional service / model coverage, 2026-10-18 (source authored, not CI-run)
+
+The behaviour tests are in `tests/unit/chat2-round-import-calendar-roster-hardening.test.ts` and the transactional source constraints in `tests/unit/chat2-interview-transaction-contracts.test.ts`. These rows supplement, not replace, PostgreSQL tests.
+
+| Export / boundary | Test | Behaviour covered |
+| --- | --- | --- |
+| `roundImportActionSchema` | `chat2-round-import-calendar-roster-hardening.test.ts` — TPO-drive-workspace-40 import confirmation | SHA-256, explicit confirmation, duplicate overrides, overlap with skipped rows, tenant-field refusal |
+| `uniqueTpoRoundImportRoster` | Same — TPO-drive-workspace-40 resolves duplicates | Identical join rows coalesce; conflicting evidence is not guessed |
+| `matchTpoRoundImportRoster` | Same — TPO-drive-workspace-40 resolves duplicates | Exact intersection across ID, email and roll; contradictory evidence denied |
+| `parseTpoRoundImport` | Same — TPO-drive-workspace-40 CSV result template | Valid HOLD rank, malformed/ambiguous headers, file type and file size |
+| `tpoRoundImportPreviewToken` | Same — TPO-drive-workspace-40 import fingerprint | File, round and roster state bind approval |
+| `tpoRoundCalendarMutationSchema` | Same — TPO-calendar-reports-R07 | Confirmed SCHEDULE/CANCEL, required location and cancellation reason, strict keys |
+| `parseIstRoundLocalTime` | Same — TPO-calendar-reports-R07 | IST wall clock to UTC, leap-day and impossible hour denial |
+| `tpoInterviewRescheduleSchema` | Same — TPO-drive-workspace-44 | Version and reason validation, on-campus venue and secure meeting link |
+| `validInterviewWindow` | Same — TPO-drive-workspace-44 | Future timing, zero/bad duration bounds |
+| `overlappingInterviewVenue` | Same — TPO-drive-workspace-44 | Touching versus overlapping interval, invalid and too-long windows |
+| `buildTpoRoundDriveDayRoster` | Same — TPO-drive-workspace-40 | Duplicate application rows, ambiguous detail, counts, absence of invented results |
+| `projectTpoRoundFacts` | Same — TPO-drive-workspace-62 | Status wording, count and IST presentation |
+| `roundApplyPreviewCsv` | Same — TPO-drive-workspace-42 | Formula-resistant preview export |
+| `roundApplyReportCsv` | Same — TPO-drive-workspace-42 | Formula-resistant decision report |
+| `getTpoInterviewSlotWorkspace` | `chat2-interview-transaction-contracts.test.ts` — TPO-drive-workspace-44 scoped slot read | Source guard: college, round, active memberships |
+| `mutateTpoInterviewSlots` | Same — TPO-drive-workspace-44 mutation boundaries | Source guard: transaction, locked round, optimistic slot CAS, learner schedule override upsert and audit notification |
+| `getTpoRoundApplyPreview` | Same — TPO-drive-workspace-42 source contract | Scoped college and evaluative round preview |
+| `applyTpoWholeRound` | Same — TPO-drive-workspace-42 source contract | Token revalidation and per-result expected version |
+| `applyPlacementRoundResult` | Same — TPO-drive-workspace-42 source contract | Locked revision comparison, idempotent previous application, audit and learner delivery |
+| `previewTpoRoundImport` / `stageTpoRoundImport` | Same — TPO-drive-workspace-40 source contract | Tenant-roster evidence, digest and guarded confirmation |
+
+**Outstanding:** these are selective behavioural and source-level coverage checks only. Integration transaction rollback, full role matrix, routes and all other exports remain unverified, and the queue is not complete.
