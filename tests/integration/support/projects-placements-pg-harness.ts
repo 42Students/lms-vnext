@@ -461,8 +461,10 @@ export async function createPlacementFixture(db: PgHarness, tenant: TenantFixtur
     [tenant.collegeId,"Harness "+suffix,"PH-"+suffix,"2099-10-01","2099-06-30",author.userId]))[0]!;
   const [job] = await db.query<{id:string}>(`
     insert into placement_jobs (college_id,company_relationship_id,season_id,title,description,
-      employment_type,work_mode,created_by_user_id)
-    values ($1,$2,$3,'Harness drive','Fixture job','FULL_TIME','REMOTE',$4) returning id`,
+      employment_type,work_mode,openings,minimum_annual_ctc_inr,application_deadline,
+      status,published_at,created_by_user_id)
+    values ($1,$2,$3,'Harness drive','Fixture job','FULL_TIME','REMOTE',2,800000,
+      '2099-06-01T12:00:00Z','PUBLISHED',now(),$4) returning id`,
     [tenant.collegeId,relationship!.id,season.id,author.userId]);
   const [round] = await db.query<{id:string}>(`
     insert into placement_job_rounds (job_id,sequence,kind,name,created_by_user_id)
@@ -493,8 +495,10 @@ export async function createPlacementCandidateFixture(
   if (!actor.collegeId || actor.collegeId !== learner.collegeId) {
     throw new Error("PROJ-HARNESS: applicant and coordinator must share a college");
   }
-  const [job] = await db.query<{college_id:string; round_id:string|null}>(`
-    select j.college_id,r.id as round_id
+  const [job] = await db.query<{college_id:string; round_id:string|null; accepting_applications:boolean}>(`
+    select j.college_id,r.id as round_id,
+        (j.status='PUBLISHED' and j.published_at is not null
+          and j.application_deadline>now()) as accepting_applications
       from placement_jobs j
       left join placement_job_rounds r
         on r.job_id=j.id and r.id=$2
@@ -504,6 +508,9 @@ export async function createPlacementCandidateFixture(
   }
   if (job.round_id !== drive.roundId) {
     throw new Error("PROJ-HARNESS: supplied round does not belong to this drive");
+  }
+  if (!job.accepting_applications) {
+    throw new Error("PROJ-HARNESS: drive is not open for applications");
   }
   // Roles held in fixture objects are insufficient evidence; the real
   // memberships and both users must still be active in the drive's college.

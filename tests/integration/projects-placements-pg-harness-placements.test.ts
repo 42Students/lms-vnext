@@ -148,6 +148,43 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
     });
   });
 
+  it("PROJ-HARNESS-PLACEMENTS-13 closed, draft or expired drive rejects new applications",async()=>{
+    await withPlacementCase(async({db,learner,actor,drive})=>{
+      const initial=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_applications where job_id=$1`,[drive.jobId]);
+      const before=initial[0]!.count;
+      await db.query("update placement_jobs set status='DRAFT',published_at=null where id=$1",
+        [drive.jobId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/drive is not open for applications/);
+      await db.query("update placement_jobs set status='PUBLISHED',published_at=now() where id=$1",
+        [drive.jobId]);
+      await db.query("update placement_jobs set status='CLOSED',closed_at=now() where id=$1",
+        [drive.jobId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/drive is not open for applications/);
+      await db.query("update placement_jobs set status='PUBLISHED',closed_at=null,application_deadline='2020-01-01T00:00:00Z' where id=$1",
+        [drive.jobId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/drive is not open for applications/);
+      const after=await db.query<{count:number}>(`
+        select count(*)::int as count from placement_applications where job_id=$1`,[drive.jobId]);
+      expect(after[0]?.count).toBe(before);
+    });
+  });
+
+  it("PROJ-HARNESS-PLACEMENTS-14 published fixture has future deadline and real compensation",async()=>{
+    await withPlacementCase(async({db,drive})=>{
+      const rows=await db.query<{status:string;has_future_deadline:boolean;minimum_annual_ctc_inr:number;published_at:Date|null}>(`
+        select status,application_deadline>now() as has_future_deadline,
+          minimum_annual_ctc_inr,published_at from placement_jobs where id=$1`,
+        [drive.jobId]);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toMatchObject({status:"PUBLISHED",has_future_deadline:true,minimum_annual_ctc_inr:800000});
+      expect(rows[0]!.published_at).not.toBeNull();
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-09 suspended learner cannot be added from a stale fixture object",async()=>{
     await withPlacementCase(async({db,learner,actor,drive})=>{
       const before=await db.query<{count:number}>(`
