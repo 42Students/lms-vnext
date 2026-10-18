@@ -95,6 +95,7 @@ describe("TPO-campaigns-public-12 / T-S2-04 campaign safety ledger",()=>{
   expect(s).toContain('"DRAFT"');
   expect(s).toContain("snapshot.suppressed");
   expect(s).toContain("collegeId:college.id");
+  expect(s).toContain("resolveTpoCampaignRecipientSecret(process.env)");
  });
  it("recipient unsubscribe requires matching college campaign and lead under transaction lock",()=>{
   const s=readFileSync("src/modules/messaging/tpo-campaign-unsubscribe-service.ts","utf8");
@@ -113,9 +114,11 @@ describe("TPO-settings-audit-55 / public recruiter link ledger",()=>{
   expect(tpoPublicJoinLinkChangeSchema.safeParse({scope:"COLLEGE",action:"CREATE",confirmed:true}).success).toBe(true);
   expect(tpoPublicJoinLinkChangeSchema.safeParse({scope:"COLLEGE",action:"CREATE",confirmed:false}).success).toBe(false);
   expect(tpoPublicJoinLinkChangeSchema.safeParse({scope:"COMPANY",action:"REPLACE",confirmed:true}).success).toBe(false);
-  expect(tpoPublicJoinLinkChangeSchema.safeParse({scope:"COMPANY",action:"REPLACE",confirmed:true,companyId:uuid}).success).toBe(true);
+  expect(tpoPublicJoinLinkChangeSchema.safeParse({scope:"COMPANY",action:"REPLACE",confirmed:true,companyId:uuid}).success).toBe(false);
+  expect(tpoPublicJoinLinkChangeSchema.safeParse({scope:"COMPANY",action:"REPLACE",confirmed:true,companyId:uuid,expectedLinkId:other}).success).toBe(true);
   expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",enabled:false}).success).toBe(false);
-  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",companyId:uuid,enabled:false}).success).toBe(true);
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",companyId:uuid,enabled:false}).success).toBe(false);
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",companyId:uuid,enabled:false,expectedLinkId:other}).success).toBe(true);
  });
  it("builds scoped encoded URLs and preserves exact legacy public copy",()=>{
   expect(publicJoinLinkPath("COMPANY","abc/123")).toBe("/company-join/abc%2F123");
@@ -136,6 +139,8 @@ describe("TPO-settings-audit-55 / public recruiter link ledger",()=>{
   expect(s).toContain('eventType:"PLACEMENTS_PUBLIC_JOIN_LINK_ENABLED"');
   expect(s).toContain('"ALREADY_EXISTS"');
   expect(s).toContain('"STALE"');
+  expect(s).toContain('existing.id!==input.expectedLinkId');
+  expect(s).toContain('row.id!==input.expectedLinkId');
  });
  it("settings people read is active-membership and college scoped, not role-inferred",()=>{
   const s=readFileSync("src/modules/placements/tpo-settings-people-service.ts","utf8");
