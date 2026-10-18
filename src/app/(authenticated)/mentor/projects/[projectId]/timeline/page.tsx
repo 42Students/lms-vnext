@@ -25,7 +25,7 @@ export default async function MentorProjectTimelinePage({
   );
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Release &amp; Sprint timeline"
-      description={data.projectTitle}
+      description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Sprint workspace
