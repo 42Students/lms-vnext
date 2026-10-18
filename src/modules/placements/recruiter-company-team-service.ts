@@ -1,6 +1,7 @@
 import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  colleges,
   placementCompanies,
   placementCompanyRelationships,
   placementRecruiterCollegeGrants,
@@ -62,6 +63,11 @@ export async function getRecruiterCompanyTeam(
     })
     .from(placementCompanyRelationships)
     .innerJoin(
+      colleges,
+      and(eq(colleges.id,placementCompanyRelationships.collegeId),
+        eq(colleges.status,"ACTIVE")),
+    )
+    .innerJoin(
       placementCompanies,
       eq(placementCompanies.id, placementCompanyRelationships.companyId),
     )
@@ -73,8 +79,8 @@ export async function getRecruiterCompanyTeam(
       eq(placementRecruiterProfiles.status,"ACTIVE"),
     ))
     .innerJoin(placementRecruiterCollegeGrants,and(
-      // A different still-active grant for the same relationship must not
-      // silently resurrect the exact cached grant selected in this session.
+      // A still-active sibling grant must never resurrect the exact selected
+      // session grant after it is revoked.
       eq(placementRecruiterCollegeGrants.id,scope.grant.id),
       eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
       eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
