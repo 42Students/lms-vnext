@@ -1,4 +1,3 @@
-import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
