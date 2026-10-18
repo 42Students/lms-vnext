@@ -35,6 +35,8 @@ No audited route source uses raw `<table>`, `window.confirm()`, `target="_blank"
 - `PROJ-BREAK-SA-25`: preserved existing `search`/`q` legacy naming, but explicitly rejects contradictory simultaneous aliases; no breaking rename.
 - The CI `ff6819dd` report still lists `SA-PLACEMENT-POLICY-03` and `UX-cross-tpo-second-C13-026-22`. On the current branch the *production* policy parser refines against field-specific limits (commit `9bf3a6c6`), while TPO Reports loading uses exact `Loading TPO reports` wording (`61ade3fd`). Their current source/test contracts agree, but neither is certified green until a newer CI run.
 
+- `PROJ-BREAK-SA-26`: normalized a second Project admin search path: snapshot, risk queue, and submissions all use the same literal-ILIKE helper used by the unsubmitted directory, with a three-function regression contract. Database-side query plan tests remain open.
+
 ## Not cleared for IIT Dharwad release
 
 1. Two-session PostgreSQL adversarial harness: race archived project vs delivery-lock review, accepted offer vs drive archive, policy min/max concurrent writes, rechecked membership changes during action and cross-tenant joined data.
