@@ -26,7 +26,8 @@ describe("IIT Dharwad Projects: hostile pagination never triggers an unbounded d
     // Direct service calls must use exactly the same strict, bounded model;
     // accepting exponent/hex/blank input because of z.coerce would re-open
     // the very offset and DoS class the page URL parsers now close.
-    expect(snapshots).toContain("projectAdminServiceQuerySchema.parse(rawQuery)");
+    expect(snapshots).toContain("const projectAdminQuerySchema = projectAdminServiceQuerySchema");
+    expect(snapshots).toContain("projectAdminQuerySchema.parse(rawQuery)");
     expect(snapshots).toContain("projectSubmissionQueueQuerySchema");
     for (const page of ["0x10", "1e2", "", " ", "-1", "0", "100001", "1.5", "NaN", "Infinity", ["1", "2"]]) {
       expect(projectAdminServiceQuerySchema.safeParse({page}).success, JSON.stringify(page)).toBe(false);
