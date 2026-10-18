@@ -53,7 +53,7 @@ export default async function TpoStudentNoticesSettings(){
    <h2 className="text-lg font-semibold">Emails switched on</h2>
    <p role="status" className="text-sm text-warning-text">Couldn&apos;t check which emails are switched on.</p>
    <p className="text-xs text-muted-foreground">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
-   <Link href="/tpo/settings/templates" className="inline-flex min-h-10 text-sm text-primary-text underline">View available message templates</Link>
+   <Link href="/tpo/settings/templates" className="inline-flex min-h-11 text-sm text-primary-text underline">View available message templates</Link>
   </section>
   <nav aria-label="Notice and notification destinations" className="flex flex-wrap gap-4 text-sm">
     <Link href={destinations.inbox} className="inline-flex min-h-11 items-center text-primary-text underline">Open personal notifications inbox</Link>
