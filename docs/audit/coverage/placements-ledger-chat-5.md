@@ -110,3 +110,11 @@ Sampled core inventory: **80 runtime exports**, **38 directly referenced names**
 | PLACEMENTS-SELECTION-IDEMP-DB-01 | `tests/integration/placements-p8-offers.test.ts`: seed published job, final passed learner, record selection, retry exact request; assert same row, same recorded timestamp, exactly one selection audit; wrong-college TPO and learner attempts denied, no extra DB rows | **Added PostgreSQL test, execution pending cloud CI**. Cleanup removes `placement_drive_selections` before offers/applications. |
 
 The central project ledger is managed by chat-14, so chat-5's narrowly scoped TPO/Projects crossover evidence is tracked **here**, avoiding conflicting writes. The project-notice helper now percent-encodes path identifiers without affecting normal UUID links. This does not assert a broad Projects coverage certification. The inherited Placements high-risk gaps — atomic waitlist+offer release, sweeper response competition, full 1,018 placement files, and TPO page deployed-device coverage — remain **open**.
+
+
+### Further S1 waitlist release race hardening
+
+- **PLACEMENTS-WAIT-IDEMP-01:** `decideWaitlistReleaseSettlement` is an explicit three-state pure policy: PENDING/no offer -> WRITE; RELEASED/same offer ID -> IDEMPOTENT; changed offer or state -> STALE. This prevents duplicate RELEASED reconciliation and a second audit when two TPO requests finish at nearly the same instant.
+- Both reconciliation paths in `offerToNextWaitlisted` now lock the promotion row (`FOR UPDATE`) before deciding; a second waiter on an already released *same* canonical offer returns successfully without updating `releasedAt` or appending another audit.
+- **Test:** `tests/unit/chat5-waitlist-settlement-race.test.ts` validates the state/action matrix and transaction source ordering. **Execution pending.**
+- **Still S1 release blocked:** the reservation, canonical offer issuance and settlement are different database transactions. These changes do not make that workflow crash-atomic or guarantee offer capacity under every mixed issuer. PostgreSQL chaos/retry tests and an outbox/transaction redesign may still be necessary.
