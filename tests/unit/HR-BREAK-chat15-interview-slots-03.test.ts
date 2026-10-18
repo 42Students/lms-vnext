@@ -14,7 +14,7 @@ vi.mock("@/modules/placements/hr-tpo-notification-service",()=>({
  notifyTpoOfRecruiterAction:mocks.notify,
 }));
 
-import {writeHrInterviewSlot} from "@/modules/placements/hr-interview-slot-service";
+import {writeHrInterviewSlot,listHrInterviewSlots} from "@/modules/placements/hr-interview-slot-service";
 
 const jobId="123e4567-e89b-42d3-a456-426614174001";
 const college="123e4567-e89b-42d3-a456-426614174002";
@@ -121,4 +121,27 @@ describe("HR-SLOT-SERVICE-03 recruiter slot authorization and stale-window write
   }
   expect(mocks.getDb).not.toHaveBeenCalled();
  });
+ it("HR-SLOT-READ-01 exposes read-only slot metadata without granting foreign actor mutation",async()=>{
+  const view={...slot,startAt:future,endAt:new Date("2099-01-01T08:30:00.000Z"),
+   mode:"VIRTUAL",panelLabel:null,meetingLocation:null};
+  mocks.rows=[[job],[view]];
+  await expect(listHrInterviewSlots(context as never,jobId)).resolves.toMatchObject({
+   status:"READY",items:[{id:slotId,isOwn:true,canEdit:true}],
+  });
+  mocks.rows=[[job],[{...view,createdByUserId:"123e4567-e89b-42d3-a456-426614174099"}]];
+  await expect(listHrInterviewSlots(context as never,jobId)).resolves.toMatchObject({
+   status:"READY",items:[{id:slotId,isOwn:false,canEdit:false}],
+  });
+  expect(mocks.update).not.toHaveBeenCalled();
+  expect(mocks.notify).not.toHaveBeenCalled();
+ });
+ it("HR-SLOT-READ-02 denies cross-tenant or expired grants before returning scheduling metadata",async()=>{
+  mocks.can.mockReturnValue(false);
+  mocks.rows=[[job],[slot]];
+  await expect(listHrInterviewSlots(context as never,jobId))
+   .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
+  expect(tx.select).toHaveBeenCalledTimes(1);
+  expect(mocks.update).not.toHaveBeenCalled();
+ });
+
 });
