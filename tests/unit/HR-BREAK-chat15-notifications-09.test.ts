@@ -65,7 +65,7 @@ describe("HR-NOTIFY-SCOPE-09 recruiter inbox privacy, expired roles and tenant b
    {...recruiter.recruiter.grants[0]!,collegeId:foreignCollege,id:"other-grant"},
   ]}};
   const response=await listHrNotifications(ctx as never,{});
-  expect(response).toMatchObject({status:"CHOOSE_COLLEGE",items:undefined});
+  expect(response).toMatchObject({status:"CHOOSE_COLLEGE",rows:[],total:0});
   expect(mock.jobs).not.toHaveBeenCalled();
   expect(mock.getDb).not.toHaveBeenCalled();
  });
