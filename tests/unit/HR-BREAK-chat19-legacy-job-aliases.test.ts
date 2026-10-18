@@ -29,8 +29,8 @@ function pageText(node:ReactNode):string{
  if(Array.isArray(node))return node.map(pageText).join(" ");
  if(typeof node==="string"||typeof node==="number")return String(node);
  if(!isValidElement(node))return "";
- const p=node.props as {children?:ReactNode;title?:string;description?:string};
- return [p.title??"",p.description??"",pageText(p.children)].join(" ");
+ const p=node.props as {children?:ReactNode;title?:string;description?:string;action?:ReactNode};
+ return [p.title??"",p.description??"",pageText(p.children),pageText(p.action)].join(" ");
 }
 describe("HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect",()=>{
  beforeEach(()=>{
