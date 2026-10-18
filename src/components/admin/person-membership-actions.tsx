@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -16,6 +17,10 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import {
+  verifiedMembershipRoleReceipt,
+  verifiedMembershipLifecycleReceipt,
+} from "@/modules/people/membership-action-receipt";
 
 function roleLabel(role: MembershipRole) {
   return role
@@ -57,14 +62,17 @@ export function PersonMembershipActions({
     useState<MembershipRole | null>(null);
   const [lifecyclePending, startLifecycleTransition] =
     useTransition();
+  const roleRequestPending = useRef(false);
+  const lifecycleRequestPending = useRef(false);
 
 
   async function mutateRole(role: MembershipRole) {
-    if (currentStatus === "ENDED" || rolePending) {
+    if (currentStatus === "ENDED" || rolePending || roleRequestPending.current || lifecycleRequestPending.current) {
       return;
     }
 
     const removing = currentRoles.includes(role);
+    roleRequestPending.current = true;
     setRolePending(role);
 
     try {
@@ -92,14 +100,32 @@ export function PersonMembershipActions({
         return;
       }
 
-      setCurrentRoles(payload.roles);
+      const confirmedRoles = verifiedMembershipRoleReceipt(payload, role, removing);
+      if (!confirmedRoles) {
+        showToast({
+          tone: "error",
+          title: "Role update could not be confirmed",
+          description: "Reload the membership before retrying this role change.",
+        });
+        router.refresh();
+        return;
+      }
+      setCurrentRoles(confirmedRoles);
       showToast({
         tone: "success",
         title: removing ? "Role removed" : "Role added",
         description: `${roleLabel(role)} was ${removing ? "removed from" : "added to"} ${displayName}.`,
       });
       router.refresh();
+    } catch {
+      showToast({
+        tone: "error",
+        title: "Role update could not be confirmed",
+        description: "The connection was interrupted. Reload the membership before retrying.",
+      });
+      router.refresh();
     } finally {
+      roleRequestPending.current = false;
       setRolePending(null);
     }
   }
@@ -110,47 +136,63 @@ export function PersonMembershipActions({
       | { action: "REACTIVATE" }
       | { action: "END" },
   ) {
+    if (lifecycleRequestPending.current || lifecyclePending || roleRequestPending.current) return;
+    lifecycleRequestPending.current = true;
     startLifecycleTransition(async () => {
-      const response = await fetch(
-        `/api/people/${membershipId}/lifecycle`,
-        {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(body),
-        },
-      );
-      const payload = await response.json().catch(() => null);
+      try {
+        const response = await fetch(
+          `/api/people/${membershipId}/lifecycle`,
+          {
+            method: "PATCH",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(body),
+          },
+        );
+        const payload = await response.json().catch(() => null);
 
-      if (!response.ok) {
+        if (!response.ok) {
+          showToast({
+            tone: "error",
+            title: "Membership update failed",
+            description:
+              payload?.error === "MEMBERSHIP_ENDED"
+                ? "Ended memberships cannot be reactivated or suspended."
+                : "The membership state could not be changed.",
+          });
+          return;
+        }
+
+        const nextStatus = verifiedMembershipLifecycleReceipt(payload, body.action);
+        if (!nextStatus) {
+          showToast({
+            tone: "error",
+            title: "Membership update could not be confirmed",
+            description: "Reload the membership before retrying this change.",
+          });
+          router.refresh();
+          return;
+        }
+        setCurrentStatus(nextStatus);
+
+        setSuspendOpen(false);
+        setEndOpen(false);
+        setSuspensionReason("");
+        showToast({
+          tone: "success",
+          title: "Membership updated",
+          description: `${displayName} is now ${nextStatus.toLowerCase()}.`,
+        });
+        router.refresh();
+      } catch {
         showToast({
           tone: "error",
-          title: "Membership update failed",
-          description:
-            payload?.error === "MEMBERSHIP_ENDED"
-              ? "Ended memberships cannot be reactivated or suspended."
-              : "The membership state could not be changed.",
+          title: "Membership update could not be confirmed",
+          description: "The connection was interrupted. Reload the membership before retrying.",
         });
-        return;
+        router.refresh();
+      } finally {
+        lifecycleRequestPending.current = false;
       }
-
-      const nextStatus =
-        payload?.person?.membership?.status as
-          | MembershipStatus
-          | undefined;
-
-      if (nextStatus) {
-        setCurrentStatus(nextStatus);
-      }
-
-      setSuspendOpen(false);
-      setEndOpen(false);
-      setSuspensionReason("");
-      showToast({
-        tone: "success",
-        title: "Membership updated",
-        description: `${displayName} is now ${(nextStatus ?? currentStatus).toLowerCase()}.`,
-      });
-      router.refresh();
     });
   }
 
@@ -167,7 +209,7 @@ export function PersonMembershipActions({
         <Button
           variant="secondary"
           size="sm"
-          disabled={currentStatus === "ENDED"}
+          disabled={currentStatus === "ENDED" || lifecyclePending || Boolean(rolePending)}
           onClick={() => setRolesOpen(true)}
         >
           Roles
@@ -177,6 +219,7 @@ export function PersonMembershipActions({
           <Button
             variant="secondary"
             size="sm"
+            disabled={lifecyclePending || Boolean(rolePending)}
             onClick={() => setSuspendOpen(true)}
           >
             Suspend
@@ -187,7 +230,7 @@ export function PersonMembershipActions({
           <Button
             variant="secondary"
             size="sm"
-            disabled={lifecyclePending}
+            disabled={lifecyclePending || Boolean(rolePending)}
             onClick={() =>
               lifecycle({ action: "REACTIVATE" })
             }
@@ -202,6 +245,7 @@ export function PersonMembershipActions({
           <Button
             variant="ghost"
             size="sm"
+            disabled={lifecyclePending || Boolean(rolePending)}
             onClick={() => setEndOpen(true)}
           >
             End
@@ -234,6 +278,7 @@ export function PersonMembershipActions({
                   checked={checked}
                   disabled={
                     Boolean(rolePending) ||
+                    lifecyclePending ||
                     currentStatus === "ENDED"
                   }
                   onChange={() => mutateRole(role)}
@@ -266,6 +311,7 @@ export function PersonMembershipActions({
               variant="danger"
               disabled={
                 lifecyclePending ||
+                Boolean(rolePending) ||
                 !suspensionReason.trim()
               }
               onClick={() =>

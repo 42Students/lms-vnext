@@ -91,8 +91,10 @@ describe("PROJ-BREAK-TPO-02 truthful self-reported portfolio counts",()=>{
   const {resolve}=await import("node:path");
   const grid=readFileSync(resolve(process.cwd(),"src/components/tpo/tpo-students-spreadsheet.tsx"),"utf8");
   const page=readFileSync(resolve(process.cwd(),"src/app/(authenticated)/tpo/students/page.tsx"),"utf8");
-  expect(grid).toContain('key:"projects",label:"Profile projects (self-reported)"');
-  expect(page).toContain('["minProjects","Profile project entries (self-reported)"]');
+  expect(grid).toContain('key:"projects",label:"Projects"');
+  expect(grid).toContain("Self-reported learner profile entries; not verified Projects workspace outcomes");
+  expect(page).toContain('["minProjects","Projects"]');
+  expect(page).toContain("not verified Projects workspace outcomes or released grades.");
   expect(grid).not.toContain('key:"projects",label:"Verified Projects"');
   const {tpoStudentProfileFacts}=await import("@/modules/placements/tpo-student-profile-facts");
   const facts=tpoStudentProfileFacts({projects:[{title:"Claim without approval"},

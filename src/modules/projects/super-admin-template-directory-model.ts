@@ -6,6 +6,7 @@ export const templateDirectoryQuerySchema=z.object({
 }).strict();
 export const TEMPLATE_DIRECTORY_PAGE_SIZE=20;
 export function templateDirectoryPages(total:number){
+ if(!Number.isFinite(total)||total<0)return 1;
  return Math.max(1,Math.ceil(total/TEMPLATE_DIRECTORY_PAGE_SIZE));
 }
 export function templateDirectoryHref(query:z.infer<typeof templateDirectoryQuerySchema>){

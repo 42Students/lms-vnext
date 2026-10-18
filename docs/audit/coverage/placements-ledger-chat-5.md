@@ -157,3 +157,11 @@ A published drive could be closed by the `evaluateTpoDriveLifecycle` policy afte
 - `tests/unit/chat5-placements-core-state-machines.test.ts` includes `PLACEMENTS-EXPIRY-RACE-04`: before/after lock boundary, explicitly bad clocks and null-expiry handling.
 - `tests/integration/placements-p8-offers.test.ts` includes `PLACEMENTS-EXPIRY-RACE-DB-04`: seeded completed round/issued offer, DB FOR UPDATE hold, an explicitly pre-expiry submitted action, release after deadline, assert rejection and **zero ACCEPTED history**. **Cloud PostgreSQL run pending**.
 - Distinct risk: expiry sweep worker can still contend with the learner decision at the exact instant and needs separate two-worker/outbox notification tests. No exactly-once certification.
+
+### PLACEMENTS-OFFER-RETRY-05 — durable response retries after expiry
+
+An ACCEPT/DECLINE operation previously checked the deadline before reading its row lock, so a lost HTTP response retried after expiry failed even though the original decision had been committed. This contradicted the existing accepted/declined idempotent response branch and could mislead a learner into thinking the original decision was never saved.
+
+`canReplayFinalOfferResponseAfterExpiry` requires **matching action, matching final status and the same persisted responding user**. `actOnPlacementOffer` still authenticates and checks the actual live learner membership and user under locks, validates expectedStatus, and rejects every *new* or changed response after expiry using the post-lock clock. Only the original immutable result may be replayed. Test matrix: `tests/unit/chat5-placements-core-state-machines.test.ts` (PLACEMENTS-OFFER-RETRY-05); actual PostgreSQL status-history invariants in `tests/integration/placements-p8-offers.test.ts` (PLACEMENTS-OFFER-RETRY-DB-05). CI execution pending.
+
+**Latest listed unit failure:** `chat5-delegated-policy-decisions.test.ts` / `TPO-campaigns-public-25` was already repaired by a5379fd (11:53 UTC) to carry mandatory `expectedLinkId`, preserve stale-CAS negative cases and retain revocation. The rolling failures file retains the older `CI ff6819dd` title; the updated test, model and revoke service are consistent on current main. Do not weaken the expected-link rule to satisfy an older CI snapshot.
