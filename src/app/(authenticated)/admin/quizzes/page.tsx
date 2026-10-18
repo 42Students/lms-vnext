@@ -49,7 +49,7 @@ export default async function SuperAdminQuizzesPage({
   const data=dataResult.value;
   return <div className="space-y-4">
     <a href={adminAssessmentExportHref("QUIZ",query.data)}
-     className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export quizzes.csv</a>
+     className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export quizzes.csv</a>
     {lessonsResult.status==="fulfilled"?
       <CollegeQuizCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>:
       <p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
