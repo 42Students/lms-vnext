@@ -1,5 +1,5 @@
 import "server-only";
-import { and,desc,eq,isNull } from "drizzle-orm";
+import { and,desc,eq,isNull,sql } from "drizzle-orm";
 import { z } from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectTasks,projectSprints,projectReleases} from "@/db/schema";
@@ -9,13 +9,13 @@ import {ProjectsServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
-const inputSchema=z.strictObject({
+export const learnerBacklogPullInputSchema=z.strictObject({
  taskId:z.string().uuid(),sprintId:z.string().uuid(),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
 });
 /** LEARNER-projects-29: learners may pull only their own queued task into an active sprint. */
 export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:string,raw:unknown){
- const input=inputSchema.parse(raw),scope=await requireProjectReadAccess(context,projectIdInput);
+ const input=learnerBacklogPullInputSchema.parse(raw),scope=await requireProjectReadAccess(context,projectIdInput);
  if(scope.access!=="LEARNER"||!context.membership)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const membership=context.membership;
@@ -46,7 +46,8 @@ export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:s
     sprintId:sprint.id,sequence:(last?.sequence??-1)+1,
     updatedAt:new Date(Math.max(Date.now(),task.updatedAt.getTime()+1)),
   }).where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,task.id),
-    isNull(projectTasks.sprintId),eq(projectTasks.updatedAt,task.updatedAt))).returning();
+    isNull(projectTasks.sprintId),
+    sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`)).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const event=await recordActivityEventInTransaction(tx,context,{
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
