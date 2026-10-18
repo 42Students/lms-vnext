@@ -178,3 +178,12 @@ No suites were executed or disabled. The HR-first continuation remains open for 
 | `hrDriveDraftSchema` / `hrDriveDraftQuerySchema` | `tests/unit/HR-BREAK-chat15-drive-round-82.test.ts` | Control characters in round labels refused; Unicode NFKC+whitespace lookalike duplicate rounds rejected; supported names and single-action query retained | PostgreSQL proposal submission and TPO round import checks |
 
 All evidence above is **authored but not executed** under the owner's no-CI direction. Every item retains the full end-to-end and database acceptance gate.
+
+
+## Chat-15 messaging resilience and HTTP principal preflight
+
+| Export / authenticated route | Behavioral file | Invariants exercised | Still open |
+|---|---|---|---|
+| `/hr/conversations` server page | `tests/unit/HR-BREAK-chat15-messaging-page-83.test.tsx` | An optional general-thread lookup failure does not crash the primary authorized message directory or offer a misleading duplicate new-thread action; revoked recruiter, duplicate filters, authentic empty state and primary failure are distinct | Live multi-college thread, keyboard/phone and read receipt integration |
+| `/api/placements/recruiter/conversations/open` POST | `tests/unit/HR-BREAK-chat15-messaging-api-84.test.ts` | Same-origin first, strict college UUID, inactive and swapped recruiter user, canonical 303 redirect, sanitized downstream error response | Real HTTP body caps, concurrent open idempotence and transaction lock |
+| `/api/placements/recruiter/conversations/[threadId]/reply` POST | `tests/unit/HR-BREAK-chat15-messaging-api-84.test.ts` | Same-origin, trimmed nonblank body, canonical recruiter identity, disabled session, single authorized message service call, redirect and failure no false success | Live message audit and TPO notification exactly-once/rollback |
