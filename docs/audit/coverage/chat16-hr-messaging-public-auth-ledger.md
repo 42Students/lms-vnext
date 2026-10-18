@@ -431,3 +431,25 @@ Bug fixes: both public recruitment POST routes previously let unexpected tenancy
 | `readPublicRecruitEnquiryBody` | `tests/unit/chat16-public-recruit-enquiry-route-guards-16.test.ts` | Named compatibility export preserves the public recruitment route contract through shared parser |
 
 These routes previously parsed unbounded anonymous JSON or form-data bodies; all now reject oversize payloads at the stream boundary and keep their original business validation and response copy. Sources and tests are **authored but not executed**; upstream reverse proxy caps and real provider/PostgreSQL behaviour remain to be independently verified.
+
+
+### 2026-10-19: recruiter OTP acceptance under an anonymous body cap
+
+| Boundary | Authored direct test | Behaviour |
+|---|---|---|
+| `POST /api/public/recruiter-invite/[token]/accept` | `tests/unit/chat16-public-recruiter-invite-accept-byte-cap-34.test.ts` (`PUBLIC-INVITE-SIZE-34..36`) | unauthenticated 8 KB stream cap before Zod/identity mutation, malformed body and forbidden caller-field injection refused, same-origin first, readiness gate retains 503, valid six-digit OTP delegates only code and parsed name before no-store success |
+| `readBoundedJsonBody` | above and `tests/unit/chat16-public-join-route-stream-guards-30.test.ts` | shared validated JSON primitive prevents the public recruiter invite, college join, company join and enquiry endpoints from buffering unbounded request bodies |
+
+The strict credential HMAC/one-time-code, tenant and real database-commit guards remain owned by the downstream services; these tests do not substitute real disposable PostgreSQL transaction or provider execution. All added tests are authored but unexecuted.
+
+
+### 2026-10-19: anonymous recruiter invitation route methods and nonmutation
+
+| Handler | Direct regression test | Cases |
+|---|---|---|
+| `GET /api/public/recruiter-invite/[token]` | `tests/unit/chat16-public-recruiter-invite-route-matrix-37.test.ts` (`PUBLIC-INVITE-ROUTE-37/40`) | Preview returns published invite only and never performs first-open/decision writes; disabled DB09 gate returns 503 before a preview lookup |
+| `POST /api/public/recruiter-invite/[token]/opened` | same (`PUBLIC-INVITE-ROUTE-38..40`) | same-origin denial, dedicated first-open method returns persisted `recorded:false` idempotency, disabled deployment denies |
+| `POST /api/public/recruiter-invite/[token]/not-hiring` and `unsubscribe` | same | POST-only decision handlers preserve exact non-hiring/unsubscribe outcomes; cross-origin and disabled gates prevent service calls |
+| `POST /api/public/recruiter-invite/[token]/send-code` | same (`PUBLIC-INVITE-ROUTE-38/40/41`) | cross-origin denial, disabled OTP gate, malformed token rejected without revealing grant identity or sending mail |
+
+Method-level tests mock external service writes, do not verify the real transactional lock/idempotency or delivery provider. No CI/TS/runtime suite was run in chat-16.
