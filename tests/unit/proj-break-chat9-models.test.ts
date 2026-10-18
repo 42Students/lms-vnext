@@ -112,8 +112,8 @@ describe("IIT Dharwad Projects adversarial admin/college models",()=>{
   for(const title of ["=SUM(1,1)","\t=1+1","\u200B=2+2","\u2060@HYPERLINK(1)","\u202E+2+3","  -1+1"]){
    const csv=projectTemplateCatalogueCsv([{templateId:uuid(10),title,version:1,
     sections:{overview:0,releases:0,sprints:0,tasks:0,resources:0}}]);
-   expect(csv).toContain("\\"" + "'" + title.replace(/"/g,'""') + "\\"");
-   expect(csv).not.toContain("\\""+title+"\\",1,");
+   expect(csv).toContain(String.fromCharCode(34,39)+title.replace(/"/g,'""')+String.fromCharCode(34));
+   expect(csv).not.toContain(String.fromCharCode(34)+title+String.fromCharCode(34)+",1,");
   }
  });
  it("PROJ-BREAK-exports-02 quoted commas, quotes and multiline fields do not create a new column",()=>{
