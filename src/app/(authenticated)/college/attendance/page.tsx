@@ -37,7 +37,7 @@ export default async function CollegeAttendancePage({
     context.membership?.collegeId ??
     (isSuperAdmin(context) ? context.adminScope?.collegeId : null);
   if (!collegeId) {
-    return <ErrorState title="Choose a college to view attendance" description="Select an active college in your scope switcher, then try again." action={<Link href="/college" className="font-semibold text-primary-text underline">Return to college dashboard</Link>}/>;
+    return <ErrorState title="Choose a college to view attendance" description="Select an active college in your scope switcher, then try again." action={<Link href="/college" className="font-semibold text-[var(--lms-teal-deep)] underline">Return to college dashboard</Link>}/>;
   }
   const parsed = z.object({
     deliveryId: z.uuid().optional(),
@@ -46,7 +46,7 @@ export default async function CollegeAttendancePage({
     allCourses: z.enum(["1"]).optional(),
     month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional(),
   }).safeParse(await searchParams);
-  if (!parsed.success) return <ErrorState title="Unable to load attendance" description="These attendance filters are not valid. Clear them and choose a class, course and month again." action={<Link href="/college/attendance" className="font-semibold text-primary-text underline">Reset attendance filters</Link>}/>;
+  if (!parsed.success) return <ErrorState title="Unable to load attendance" description="These attendance filters are not valid. Clear them and choose a class, course and month again." action={<Link href="/college/attendance" className="font-semibold text-[var(--lms-teal-deep)] underline">Reset attendance filters</Link>}/>;
   const query=parsed.data;
   const month = query.month ?? currentMonth();
   const options = await getAdminAttendanceOptions(context, collegeId);
@@ -113,7 +113,7 @@ export default async function CollegeAttendancePage({
   };
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
         eyebrow="College Admin · Academics"
         title="Attendance"
@@ -121,17 +121,17 @@ export default async function CollegeAttendancePage({
         actions={
           <div className="flex flex-wrap gap-3">
           <Link href="/college/attendance/departments"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Attendance by Department
           </Link>
           <Link
             href="/college/attendance/corrections"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Correction windows
           </Link>
           <Link
             href="/college/attendance/settings"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle"
           >
             Attendance policy
           </Link>
