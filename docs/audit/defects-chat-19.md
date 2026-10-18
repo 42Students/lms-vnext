@@ -339,3 +339,15 @@ These fixes are committed on chat-19; live provider, PostgreSQL revocation races
 | ID | Severity | Source | Defect, remediation, evidence |
 |---|---|---|---|
 | HR-BREAK-DIGEST-HEADER-16 | MAJOR | `src/modules/placements/recruiter-message-email-provider.ts`, `recruiter-message-email-model.ts` | Digest merge variable text was HTML-escaped, but the raw `digest.recipientName` was forwarded unchanged as the ZeptoMail recipient display name. Control characters such as CR/LF and Unicode bidi overrides could create malformed display headers or visually spoof a different recipient. Added bounded plain-text display-name sanitization at the provider boundary, preserving the validated recipient address. Direct `tests/unit/HR-BREAK-chat19-mail-digest-provider.test.ts` checks CRLF, bidi overrides, length 160 and correct safe recipient name; the existing non-OTP, no-redirect, provider denial guards remain intact. |
+
+## HR Today action queue wrong-inbox regression
+
+| ID | Severity | Source | Finding and correction | Test |
+|---|---|---|---|---|
+| HR-BREAK-TODAY-NOTICES-17 | MAJOR | `src/modules/placements/hr-today-action-queue-model.ts` | The earlier HR Today unread card was fixed to route to `/hr/notifications`, but the separate combined action queue still generated `/recruiter/messages?unreadOnly=true` for system notifications. Since Messages is the conversation inbox, this produced a wrong destination and did not reveal the promised unread system notices. Align the action queue notification link with the authorized college-scoped Notifications route, without changing actual conversation deeplinks. | `tests/unit/hr-today-action-queue-scoped.test.ts` checks exact notification URL, unread-only filter, and not the Messages alias. |
+
+## HR Today offer action priority under a large portfolio
+
+| ID | Severity | Source | Failure and remediation | Regression |
+|---|---|---|---|---|
+| HR-BREAK-TODAY-OFFERS-18 | MAJOR | `src/modules/placements/hr-today-offer-actions-service.ts` | Grouped SQL offered no stable ordering, then truncated to 30 status/job rows. A recruiter with 40 historical accepted/declined groups could lose a later outstanding `ISSUED` offer follow-up from the Today action queue. Sort already college- and employer-authorized aggregated rows by urgency (ISSUED, ACCEPTED, DECLINED), with stable job-title/id ordering, **before** the 30-row cap. No candidate identities are exposed. | `tests/unit/HR-BREAK-chat19-today-offer-priority.test.ts`: 40 old groups plus 2 new ISSUED, stable order, zero counts, immutability, scoped query contract. |

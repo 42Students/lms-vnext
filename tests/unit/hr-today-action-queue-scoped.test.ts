@@ -10,6 +10,16 @@ describe("REC-home-drives-01 scoped task queue",()=>{
   expect(rows.map(row=>row.key)).toEqual(["due:round","notifications","thread:thread","review:11111111-1111-4111-8111-111111111111"]);
   expect(rows[0]?.description).toContain("does not establish whether results are outstanding");
  });
+ it("routes unread system notifications to notifications, not the recruiter Messages conversation alias",()=>{
+  const results=buildRecruiterActionQueue({
+   jobs:[job],collegeId:"college",companyId:"employer",unread:3,
+  });
+  const unread=results.find(row=>row.key==="notifications");
+  expect(unread).toBeDefined();
+  expect(unread?.href).toBe("/hr/notifications?collegeId=college&unreadOnly=true");
+  expect(unread?.href).not.toContain("/recruiter/messages");
+  expect(unread?.description).toContain("notification inbox");
+ });
  it("cannot leak foreign-company or unlinked deadline rows into actions",()=>{
   const rows=buildRecruiterActionQueue({jobs:[job,{...job,companyId:"foreign"}],
     collegeId:"college",companyId:"employer",unread:0,

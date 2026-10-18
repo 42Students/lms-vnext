@@ -249,3 +249,8 @@ The retired/external recruiter drive page rejects ambiguous duplicate `collegeId
 ## HR-PARITY-54 / HR-PARITY-55 source audit — 2026-10-18
 
 The two legacy inventory-B recruiter entries previously flagged UNKNOWN have source mappings: `/recruiter/drives?tab=closed` reaches `/hr/drives` CLOSED-filter logic, and `/recruiter/drives/[jobId]?tab=requests` reaches the company-only Requests tab via authorized `getHrJobRead` and `getDriveChangeRequests`. `tests/unit/chat15-hr-legacy-parity-54-55.test.ts` contains named coverage; `docs/audit/legacy-vs-vnext-tpo-hr-gaps.md` records remaining live parity and PostgreSQL acceptance. No claim of actual-browser parity or CI execution.
+
+
+## HR-TODAY-CHANGE-56 recruiter change requests after job archive (2026-10-18)
+
+The Today change-request list and per-drive open badge counts only include submitted recruiter-owned job IDs that still belong to the selected college, remain PUBLISHED or CLOSED, are not archived, and have OPEN, COMPANY-targeted requests. `tests/unit/chat15-hr-today-change-56.test.ts` checks both SQL scope contracts and true empty, list and count behaviors under mocked DB. Real PostgreSQL archive races and authenticated mobile Today page remain unverified.
