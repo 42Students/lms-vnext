@@ -25,7 +25,19 @@ export default async function TenantDirectory({searchParams}:{
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
    action={<Link href="/admin/tenants" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
- const data=await getSuperAdminTenantLifecycleDirectory(context,parsed);
+ let data:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDirectory>>;
+ try{
+  data=await getSuperAdminTenantLifecycleDirectory(context,parsed);
+ }catch{
+  // A failed tenant directory read must not appear as an empty tenant list.
+  // Preserve the validated filters so a retry cannot silently expand scope.
+  return <div className="min-w-0 space-y-4">
+   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"/>
+   <ErrorState title="Tenant directory unavailable"
+    description="Colleges and organizations could not be loaded. Try again with the same filters."
+    action={<Link href={tenantLifecycleHref(parsed)} className="font-semibold text-[var(--lms-teal-deep)]">Retry tenant directory</Link>}/>
+  </div>;
+ }
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
  const statuses = ["ACTIVE", "ARCHIVED", "ALL"] as const;
  return <div className="min-w-0 space-y-5">

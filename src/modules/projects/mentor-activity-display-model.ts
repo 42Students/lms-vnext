@@ -15,7 +15,7 @@ export function mentorActivityCategory(eventType: string): string {
 }
 export function mentorActivityRelativeTime(occurredAt: Date | string, now: string): string {
   const gap = Date.parse(now) - new Date(occurredAt).getTime();
-  if (!Number.isFinite(gap)) return "Time unavailable";
+  if (!Number.isFinite(gap) || gap < 0) return "Time unavailable";
   if (gap < 60_000) return "Just now";
   if (gap < 3_600_000) return Math.floor(gap / 60_000) + "m ago";
   if (gap < 86_400_000) return Math.floor(gap / 3_600_000) + "h ago";

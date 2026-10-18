@@ -100,3 +100,6 @@ Validation: source review and committed behavioural/source-guard tests; cloud te
 
 
 | COL-student-import-placement-START-PERIOD-01 | S1 cross-tenant IDOR | Protecting the CSV batch-picker did not protect the direct placement action for a manually supplied section ID. The class target query validated the current period's college but not cohort's independent startPeriodId FK. Added aliased same-college start period join to the row-locked write transaction. | `chat4-college-import-placement-authorization.test.ts` | PostgreSQL direct-action adversarial fixture pending |
+
+
+| COL-student-import-ERROR-01 | S1 double-submit / error recovery | Two placement writes targeting different sections within the same term may both pass the pre-check, then PostgreSQL's partial unique index rejects the second. Raw database violation was not translated and could surface as HTTP 500 rather than a retry-safe conflict. Added typed `AcademicsServiceError` for all four expected placement failures and translated unique-index violation into `ALREADY_PLACED_IN_PERIOD` (409). | `tests/unit/chat4-college-student-placement-conflict-errors.test.ts` | Concurrent PostgreSQL integration still required |

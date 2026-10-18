@@ -66,7 +66,9 @@ describe("HR-BREAK-CONVO-04: inbox account, stale message and ancillary failure 
   expect(m.thread).not.toHaveBeenCalled();
   expect(m.notices).not.toHaveBeenCalled();
  });
- it.each([{collegeId:"wrong"},{page:"0"},{q:"x".repeat(121)},{scope:"PRIVATE"}])(
+ it.each([{collegeId:"wrong"},{page:"0"},{q:"x".repeat(121)},{scope:"PRIVATE"},
+  {collegeId:[college,"22222222-2222-4222-8222-222222222222"]},
+  {page:["1","100"]},{q:["first","second"]}])(
   "invalid %j rejects without reading private message bodies",async bad=>{
    expect(content(await page(bad))).toContain("Invalid conversation filters.");
    expect(m.inbox).not.toHaveBeenCalled();

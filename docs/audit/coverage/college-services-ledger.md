@@ -222,3 +222,6 @@ No claim of green cloud CI is made. Test-file TypeScript verification, isolated 
 
 
 | `placeImportedLearnerInSection` cohort start-period direct API guard | `tests/unit/chat4-college-import-placement-authorization.test.ts` | In addition to membership, role, section/current-period ownership, the locked target query now joins the batch's independent `startPeriodId` as a separate alias and verifies it belongs to the same college. Direct calls cannot bypass chooser's validation. PG corrupt-FK fixture still pending |
+
+
+| `placeImportedLearnerInSection` race/error mapping | `tests/unit/chat4-college-student-placement-conflict-errors.test.ts` | Executes real service with rejected transaction representing `section_enrollments_active_period_uq`: maps to typed `ALREADY_PLACED_IN_PERIOD` and customer-safe API 409; expected class errors are typed, nonunique SQL failures pass through unchanged; PG parallel writes pending |
