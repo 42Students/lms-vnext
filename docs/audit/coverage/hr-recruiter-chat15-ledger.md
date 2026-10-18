@@ -301,3 +301,6 @@ Both cases remain **authored but not executed**. Do not equate mocked behavior w
 
 
 | `buildHrDrivesCsv` | `tests/unit/HR-BREAK-chat15-drive-csv-120.test.ts` | Malformed persisted deadline is an actionable unavailable value, not an entire failed employer CSV; deliberate no-deadline stays blank; hard 200-row limit with explicit omitted warning; spreadsheet-safe formula text | Real published/closed cross-college PostgreSQL job export and viewer |
+
+
+| `GET /api/placements/recruiter/drives/requests` | `tests/unit/HR-BREAK-chat15-request-api-71.test.ts` extended with HR-DRIVE-REQUEST-121 | Exact college ID must be the only query parameter; repeated/unknown keys are rejected 400 before any actor or request history fetch, alongside prior valid GET no-write/replay tests | Dual-tenant recruiter request history, revoked employer and real DB snapshots |
