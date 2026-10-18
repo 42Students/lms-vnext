@@ -141,7 +141,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         </div>
         <div className="sm:col-span-2 lg:col-span-5">
           <button disabled={pending||dateInvalid} type="submit"
-            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">
             {pending ? "Creating…" : "Create batch"}
           </button>
         </div>
@@ -243,7 +243,7 @@ export function CollegeCohortRowActions({ row, periods }: {
     {row.status === "ACTIVE" && <button type="button"
       disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
       onClick={graduate}
-      className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
       Mark graduated
     </button>}
     <button type="button" disabled={pending || row.status!=="PLANNED" ||
@@ -303,11 +303,11 @@ export function CollegeCohortRowActions({ row, periods }: {
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex flex-wrap justify-end gap-3">
           <button disabled={pending} type="button" onClick={close}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
             Cancel
           </button>
           <button disabled={pending || !hasUnsavedCollegeCohortEdit(original, draft)} type="submit"
-            className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
             {pending ? "Saving…" : "Save changes"}
           </button>
         </div>

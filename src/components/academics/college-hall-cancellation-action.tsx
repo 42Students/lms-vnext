@@ -31,7 +31,7 @@ export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}
         className="min-h-10 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
     <button type="button" disabled={pending||reason.trim().length<3} onClick={cancel}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       {pending?"Cancelling…":"Cancel booking"}
     </button>
     {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
