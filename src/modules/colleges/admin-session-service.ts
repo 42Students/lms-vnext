@@ -9,6 +9,7 @@ import {getSuperAdminTenantLifecycleDetail} from "./admin-tenant-lifecycle-servi
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {adminSessionHistoryPageSchema} from "./admin-session-query-model";
 
 async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userIdInput:unknown){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
@@ -119,7 +120,7 @@ export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:un
  * Actor activity elsewhere and other colleges' membership events are excluded.
  */
 export async function listCollegeAdminHistory(ctx:RequestContext,collegeId:unknown,userId:unknown,rawPage:unknown=1){
- const page=z.coerce.number().int().min(1).max(10000).parse(rawPage);
+ const page=adminSessionHistoryPageSchema.parse(rawPage);
  const target=await authorizedTarget(ctx,collegeId,userId);
  // Do not trust a Super Admin role captured before an expired session or
  // role removal. Authorize under SHARE locks until sensitive event data loads.

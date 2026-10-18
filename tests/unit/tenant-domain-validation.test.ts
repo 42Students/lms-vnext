@@ -27,6 +27,8 @@ describe("tenant-domain validation", () => {
       "https://college.example.edu",
       "college.example.edu/path",
       "college.example.edu:8443",
+      "college.example.edu:443",
+      "college.example.edu:80",
       "localhost",
       "127.0.0.1",
     ]) {

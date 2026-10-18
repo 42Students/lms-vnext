@@ -284,3 +284,10 @@ The two corrections are authored on chat-19's branch. The next CI run is require
 | ID | Before-fix severity | Source | Finding / fix | Direct regression |
 |---|---|---|---|---|
 | HR-BREAK-DRIVE-THREAD-09 | MAJOR | `src/modules/placements/hr-drive-conversation-service.ts` | The service correctly authorized the workspace and filtered by job/recruiter, but did not independently confirm each returned thread belonged to the **same college**. Harden the composition boundary against a malformed nested list result by filtering `thread.collegeId===workspace.college.id` before passing through recruiter/job filtering. | `tests/unit/HR-BREAK-chat19-drive-conversation-service.test.ts` directly invokes the service with other-college, other-recruiter and other-job rows, invalid job UUID, authorization denial and primary read failure. |
+
+## HR profile identity second-pair-of-eyes hardening
+
+| ID | Severity | Source | Finding, correction, evidence |
+|---|---|---|---|
+| HR-BREAK-PROFILE-IDENTITY-10 | MAJOR | `src/modules/placements/recruiter-profile-service.ts`, `src/app/(authenticated)/hr/profile/page.tsx` | Both the self-profile reader and own-grant selector previously relied on `hasActiveRecruiter(context)` but did not verify `context.recruiter.userId===context.user.id`. Reject the mismatched identity before any DB lookup/mutation, matching the already-hardened grant overview. Added service and real page tests to assert no read/write is attempted. |
+| HR-BREAK-PROFILE-NAME-11 | COVERAGE | `src/modules/placements/hr-recruiter-name-fields-model.ts` | Added independent direct tests for Unicode name splitting, canonical editing, strict rejection of injected fields, length boundaries and millisecond IST/UTC optimistic versioning; no source defect identified on review. |
