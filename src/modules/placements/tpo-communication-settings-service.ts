@@ -53,9 +53,9 @@ export async function updateTpoCommunicationSettings(context:RequestContext,raw:
  if(!await placementTableExists("placement_tpo_college_settings"))
   throw new TpoCommunicationSettingsError("TPO_SETTINGS_PENDING");
  return getDb().transaction(async tx=>{
-  const [college]=await tx.select({organizationId:colleges.organizationId})
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
-  if(!college)throw new TpoCommunicationSettingsError("TPO_SETTINGS_NOT_FOUND");
+  if(!college||college.status!=="ACTIVE")throw new TpoCommunicationSettingsError("TPO_SETTINGS_NOT_FOUND");
   // The request may have been authenticated before a concurrent role or
   // session revocation. Rebuild and lock the persisted actor in this write.
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
