@@ -2,7 +2,7 @@
 import {useState} from "react";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 type Course={id:string;name:string};
 type Report={selectedCourses:number;matchedLessons:number;matchedContents:number;
  changed:number;unchanged:number;failures:{id:string;reason:string}[];failedCourseIds:string[]};
@@ -30,7 +30,13 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
    });
    setReport(data);
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Unable to update student visibility.");}
+  }catch(e){
+   setError(e instanceof FriendlyFetchError&&e.code==="COURSE_VISIBILITY_BULK_TOO_LARGE"
+    ?"Too many published lesson items are selected. Select fewer courses and try again."
+    :e instanceof FriendlyFetchError&&e.code==="COURSE_NOT_FOUND"
+     ?"One or more selected courses changed. Refresh and select current courses."
+     :e instanceof Error?e.message:"Unable to update student visibility.");
+  }
   finally{setPending(false);}
  }
  return <section aria-label="Bulk course visibility" className="space-y-3 rounded-lg border border-border p-4">
