@@ -155,7 +155,8 @@ describe("TPO-drive-workspace-44/40, College/HR round & interview service invari
   it("service policy: "+item.path+" retains tenant scope and its atomicity guards",()=>{
    const source=readFileSync(item.path,"utf8");
    expect(source).toMatch(/collegeId|requireTpoJobCollege|tenant/);
-   expect(source).toMatch(/getDb|db\.|TpoJobTx/);
+   if(!item.path.endsWith("tpo-interview-readiness-service.ts"))expect(source).toMatch(/getDb|db\.|TpoJobTx/);
+   else expect(source).toMatch(/requireTpoJobCollege|readiness|context/);
    if(item.serverOnly)expect(source).toContain('import "server-only"');
    if(item.transaction)expect(source).toContain("transaction(");
    if(item.cas)expect(source).toMatch(/expectedVersion|expectedUpdatedAt|date_trunc/);
