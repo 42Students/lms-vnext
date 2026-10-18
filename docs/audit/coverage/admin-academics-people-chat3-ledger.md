@@ -98,6 +98,11 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - The canonical `/admin/hr` handler, also exported by `/admin/recruiters`, now keeps a successfully scoped recruiter directory usable if the independent account-status summary query fails. The UI displays **Unavailable**, a concise explanation and a Retry totals action instead of fabricated `0` accounts.
 - `tests/unit/chat3-sa-recruiter-directory-partial-service.test.tsx` exercises actual server-page props and legacy alias, service outage states, and wrong/disabled-role denial before private queries. CI and browser React client error flow remain pending.
 
+## SA-PEOPLE-UNASSIGNED-URL-01 — global no-membership identities
+
+- `/admin/people/unassigned` now rejects extra URL keys and repeated query fields before parsing the global identity directory's page/status/role selectors. Real Super Admin role and **cleared organization/college scope** remain prerequisites for this intentionally limited no-contact view.
+- `tests/unit/chat3-sa-unassigned-global-identity-ssr.test.tsx` checks actual server rendering for forged selectors, global/selected scopes, Faculty/Mentor/Learner/disabled Super Admin denial, and empty text. No live CI or browser execution yet.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
