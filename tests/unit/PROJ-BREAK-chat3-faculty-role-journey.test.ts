@@ -17,17 +17,17 @@ vi.mock("@/db/client",()=>({
   select:(projection?:Record<string,unknown>)=>{
    stubs.queries++;
    const member=Boolean(projection&&"roleKind" in projection);
-   const query={
-    from:()=>query,
-    innerJoin:()=>query,
-    where:()=>query,
-    limit:async()=>{
+   class Query {
+    from(){return this;}
+    innerJoin(){return this;}
+    where(){return this;}
+    async limit(){
      stubs.rows++;
      const result=await (member?stubs.member():stubs.project());
      return result?[result]:[];
-    },
-   };
-   return query;
+    }
+   }
+   return new Query();
   },
  }),
 }));
