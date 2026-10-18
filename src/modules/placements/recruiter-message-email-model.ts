@@ -38,8 +38,14 @@ export function recruiterReplyTokenForThread(secret:string,threadId:string):stri
  return createHmac("sha256",secret).update("recruiter-reply:v1:"+threadId.toLowerCase()).digest("hex").slice(0,32);
 }
 export function makeRecruiterReplyAddress(token:string,domain:string):string|null{
- if(!/^[a-f0-9]{32}$/.test(token)||!/^([a-z0-9-]+\.)+[a-z]{2,}$/i.test(domain))return null;
- return "r-"+token+"@"+domain.toLowerCase();
+ const host=domain.toLowerCase();
+ const labels=host.split(".");
+ if(!/^[a-f0-9]{32}$/.test(token)||host.length>253||labels.length<2||
+    !/^[a-z]{2,63}$/.test(labels[labels.length-1]!)||
+    labels.some(label=>label.length===0||label.length>63||
+      label.startsWith("-")||label.endsWith("-")||
+      !/^[a-z0-9-]+$/.test(label)))return null;
+ return "r-"+token+"@"+host;
 }
 /** Verify Reply-To before it leaves the outbound mail provider boundary. */
 export function isRecruiterReplyAddress(value:string,domain:string):boolean{
