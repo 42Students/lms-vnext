@@ -229,3 +229,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Source | Direct test | Cases and remaining integration |
 |---|---|---|---|
 | HR-BREAK-TODAY-OFFERS-18 | `prioritizeRecruiterOfferFollowups` and `listRecruiterTodayOfferActions` | `tests/unit/HR-BREAK-chat19-today-offer-priority.test.ts` | ISSUED priority over 40 history groups, exact 30-row cap, stable ordering, zero/NaN exclusion, no mutation, shortlist/college/job scoped SQL; full PostgreSQL fanout still requires cloud CI |
+
+## Recruiter Today college-selection URL hardening
+
+| ID | Route and source | Direct regression | Boundary |
+|---|---|---|---|
+| HR-BREAK-HOME-QUERY-19 | `/hr/home` server-page `querySchema` | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Repeated collegeId parameter arrays are invalid and produce an actionable recovery state; no employer-grant or job reader called. |
