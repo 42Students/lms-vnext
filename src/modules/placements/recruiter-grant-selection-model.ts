@@ -10,6 +10,7 @@ export function findRecruiterScopedGrant<
   collegeId: string,
   companyRelationshipId: string,
 ): Grant | null {
+  if (!collegeId.trim() || !companyRelationshipId.trim()) return null;
   return grants?.find(grant =>
     grant.collegeId === collegeId &&
     grant.companyRelationshipId === companyRelationshipId,

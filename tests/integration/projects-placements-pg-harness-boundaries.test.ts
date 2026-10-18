@@ -185,6 +185,39 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-38 archived organizations and colleges revoke all new fixture writes", async () => {
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      await db.query("update organizations set status='ARCHIVED' where id=$1", [f.own.organizationId]);
+      await expect(createTaskSubmission(db,f.project,f.learner)).rejects.toThrow(/active member/);
+      await expect(createMeeting(db,f.project,f.learner,f.author)).rejects.toThrow(/active member|wrong college/);
+      await expect(createPlacementFixture(db,f.own,f.author)).rejects.toThrow(/active member/);
+      expect(await count(db,"project_task_submissions")).toBe(0);
+      expect(await count(db,"project_meetings")).toBe(0);
+      await db.query("update organizations set status='ACTIVE' where id=$1", [f.own.organizationId]);
+      await db.query("update colleges set status='ARCHIVED' where id=$1", [f.own.collegeId]);
+      await expect(createFinalSubmission(db,f.project,f.learner)).rejects.toThrow(/active member/);
+      await expect(createPlacementFixture(db,f.own,f.author)).rejects.toThrow(/active member/);
+      expect(await count(db,"project_submissions")).toBe(0);
+      await db.query("update colleges set status='ACTIVE' where id=$1", [f.own.collegeId]);
+      await expect(createTaskSubmission(db,f.project,f.learner)).resolves.toBeTruthy();
+    });
+  });
+
+  it("PROJ-HARNESS-39 revoked learner role denies writes even while project roster remains active", async () => {
+    await withProjectPg(pool, async db => {
+      const f = await actors(db);
+      await db.query("delete from membership_roles where membership_id=$1 and role='LEARNER'",
+        [f.learner.membershipId]);
+      await expect(createTaskSubmission(db,f.project,f.learner)).rejects.toThrow(/active member/);
+      await expect(createFinalSubmission(db,f.project,f.learner)).rejects.toThrow(/active member/);
+      await expect(createMeeting(db,f.project,f.learner,f.author)).rejects.toThrow(/active member/);
+      expect(await count(db,"project_task_submissions")).toBe(0);
+      expect(await count(db,"project_submissions")).toBe(0);
+      expect(await count(db,"project_meetings")).toBe(0);
+    });
+  });
+
   it("PROJ-HARNESS-26 independent sessions contend for the same transaction advisory lock", async () => {
     const key = BigInt("0x" + randomUUID().replaceAll("-", "").slice(0, 15)).toString();
     await withTwoPgSessions(pool, async (first, second) => {
