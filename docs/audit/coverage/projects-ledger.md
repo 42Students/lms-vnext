@@ -10,6 +10,10 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 - `mentor-project-card-progress.test.ts`: previous test expected invalid `open=-3` to show 100% task completion; source correctly rejects corrupt aggregates with `null`. Updated the behavioral test for negative, excess, NaN and no-task inputs (`PROJ-BREAK-MENTOR-217`).
 - This is static reconciliation, not an executed Vitest/typecheck pass. Latest checked-in typecheck inventory has no chat-14-owned compiler error.
 
+## Mentor global activity page — PROJ-BREAK-MENTOR-302..307
+- `tests/unit/PROJ-BREAK-chat14-mentor-activity-page.test.tsx` exercises wrong-role redirect before service calls, malformed/duplicate query denial, tenant feature-off private row suppression, honest authorized empty results, escaped stored event titles with exact project links and IST labels, and error propagation on expired permissions.
+- Rendered behavior is authored but unrun. Keyboard/375px, suspense, high-volume scroll and true HTTP/PG permission tests are still GAPs.
+
 ## Mentor top-level account/workspace journeys — PROJ-BREAK-MENTOR-290..301
 - `tests/unit/PROJ-BREAK-chat14-mentor-root-workspace-pages.test.tsx` checks the /mentor landing role redirect, enabled-project redirect, unavailable/failed-policy recovery and notifications navigation; /mentor/projects rejects wrong role and skips all reads when disabled; /mentor/projects/[projectId] cannot enumerate an ID when disabled, redirects non-Mentor grants, and propagates legitimate service outages; /mentor/calendar rejects duplicate filters and hides backend errors behind a safe recovery view.
 - All tests are **authored, not run**. Authorized populated project directory and workspace interactions, keyboard and 375px layout, suspense states, slow network and real per-tenant HTTP session handling remain **GAP**.
@@ -755,7 +759,7 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/app/(authenticated)/college/projects/workspaces/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/learn/projects/[projectId]/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/learn/projects/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
-| `src/app/(authenticated)/mentor/activity/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
+| `src/app/(authenticated)/mentor/activity/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-activity-page.test.tsx` | Rendered wrong-role, invalid/duplicated, disabled, empty, partial/escaped, denied states; authored/unrun. Loading, mobile keyboard and true HTTP role/PG GAP |
 | `src/app/(authenticated)/mentor/calendar/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-root-workspace-pages.test.tsx` | Role, feature-disabled, policy outage, recovery/redirect and service denial; authored server-render behavior; populated, mobile/keyboard, loading and real HTTP tenancy remain GAP |
 | `src/app/(authenticated)/mentor/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-root-workspace-pages.test.tsx` | Role, feature-disabled, policy outage, recovery/redirect and service denial; authored server-render behavior; populated, mobile/keyboard, loading and real HTTP tenancy remain GAP |
 | `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-workspace-drilldown-pages.test.tsx` | Rendered duplicate invalid selectors, feature disabled non-disclosure and denied service; authored/unrun. Loading, partial, phone, keyboard and real authentication/PG GAP |
