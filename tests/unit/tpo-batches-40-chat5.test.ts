@@ -6,7 +6,7 @@ describe("TPO batch eligibility import presentation",()=>{
   expect(ui).toContain('<Drawer open={importOpen} onOpenChange={setImportOpen} title="Import eligibility decisions"');
   expect(ui).toContain("dismissible={!busy}");
   expect(ui).toContain("if(busy||actionInFlight.current)return");
-  expect(ui).toContain("finally{actionInFlight.current=false;setBusy(false)}");
+  expect(ui).toContain("finally{actionInFlight.current=false;setBusy(false);");
   expect(ui).toContain("<ConfirmDialog open={discardPending}");
   for(const label of ["Import eligibility decisions","Preview import","Confirm matched decisions","Import saved"])
    expect(ui).toContain(label);
