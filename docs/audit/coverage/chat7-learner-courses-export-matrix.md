@@ -32,3 +32,29 @@
 | `learner-assessment-state-filter-model.ts` | `LearnerAssessmentStateFilter` | Not individually linked in this inventory |
 | `learner-assessment-state-filter-model.ts` | `learnerAssessmentMatchesState` | Not individually linked in this inventory |
 | `learner-assessment-submitted-link-model.ts` | `learnerAssessmentSubmittedLinkHref` | Authored direct model regression, unrun |
+| `learner-assignment-confirmation-model.ts` | `learnerAssignmentFinalConfirmation` | Authored direct model regression, unrun |
+| `learner-assignment-detail-model.ts` | `learnerAssignmentDetailQuery` | Not individually linked in this inventory |
+| `learner-assignment-detail-model.ts` | `findOwnLearnerAssignment` | Not individually linked in this inventory |
+| `learner-assignment-display.ts` | `AssignmentDisplayInput` | Not individually linked in this inventory |
+| `learner-assignment-display.ts` | `assignmentOverviewState` | Not individually linked in this inventory |
+| `learner-assignment-due-notice-model.ts` | `LearnerDueSource` | Not individually linked in this inventory |
+| `learner-assignment-due-notice-model.ts` | `LearnerDueNotice` | Not individually linked in this inventory |
+| `learner-assignment-due-notice-model.ts` | `learnerDueSoonNotices` | Authored direct model regression, unrun |
+| `learner-assignment-file-model.ts` | `learnerAssignmentFileAccept` | Not individually linked in this inventory |
+| `learner-assignment-file-model.ts` | `learnerAssignmentFileRequest` | Not individually linked in this inventory |
+| `learner-assignment-file-model.ts` | `learnerAssignmentUploadGrantSchema` | Not individually linked in this inventory |
+| `learner-assignment-file-model.ts` | `learnerAssignmentUploadHeadersSafe` | Not individually linked in this inventory |
+| `learner-assignment-file-model.ts` | `validateLearnerAssignmentUploadGrant` | Not individually linked in this inventory |
+| `learner-assignment-file-model.ts` | `learnerAssignmentFilePayload` | Not individually linked in this inventory |
+| `learner-assignment-file-model.ts` | `learnerAssignmentReadGrantSchema` | Not individually linked in this inventory |
+| `learner-assignment-file-model.ts` | `validateLearnerAssignmentReadGrant` | Not individually linked in this inventory |
+| `learner-assignment-file-selection-model.ts` | `selectLearnerAssignmentFile` | Not individually linked in this inventory |
+| `learner-assignment-grade-label-model.ts` | `learnerAssignmentPublishedGradeLabel` | Authored direct model regression, unrun |
+| `learner-assignment-link-model.ts` | `learnerAssignmentHttpsLinkSchema` | Not individually linked in this inventory |
+| `learner-assignment-link-model.ts` | `isLearnerAssignmentHttpsLink` | Not individually linked in this inventory |
+| `learner-assignment-materials-model.ts` | `facultyAssignmentMaterialLinkSchema` | Not individually linked in this inventory |
+| `learner-assignment-materials-model.ts` | `FacultyAssignmentMaterialLink` | Not individually linked in this inventory |
+| `learner-assignment-materials-model.ts` | `safeLearnerAssignmentMaterialLink` | Not individually linked in this inventory |
+| `learner-assignment-materials-service.ts` | `assignmentMaterialTableReady` | Not individually linked in this inventory |
+| `learner-assignment-materials-service.ts` | `listOwnLearnerAssignmentMaterialLinks` | Not individually linked in this inventory |
+| `learner-assignment-materials-service.ts` | `commandFacultyAssignmentMaterialLink` | Not individually linked in this inventory |
