@@ -56,16 +56,16 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
   <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
    <label className="text-sm">What happened
     <input value={what} onChange={event=>setWhat(event.target.value)} type="search"
-     maxLength={120} className="mt-1 block min-h-11 rounded border border-border px-2" />
+     maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm" />
    </label>
    <label className="text-sm">Who
     <input value={who} onChange={event=>setWho(event.target.value)} type="search"
-     maxLength={120} className="mt-1 block min-h-11 rounded border border-border px-2" />
+     maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm" />
    </label>
    <label className="text-sm">When
     <select value={oldestFirst?"oldest":"newest"}
      onChange={e=>setOldestFirst(e.target.value==="oldest")}
-     className="mt-1 block min-h-11 rounded border border-border px-2">
+     className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm">
      <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
     </select>
    </label>

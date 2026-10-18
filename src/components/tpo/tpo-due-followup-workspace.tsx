@@ -31,7 +31,7 @@ type Queue = {
   window:"DUE"|"NEXT_7_DAYS";
 };
 
-const field = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const field = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground sm:text-sm";
 const action = "min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50";
 function displayDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
