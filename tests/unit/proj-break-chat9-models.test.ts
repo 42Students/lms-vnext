@@ -10,6 +10,7 @@ import {isFutureProjectMeetingWindow} from "@/modules/projects/meeting-window-po
 import {projectTemplateCatalogueCsv,projectTemplateSectionCounts} from "@/modules/projects/project-template-catalogue-model";
 import {exportClassTeamsCsv} from "@/modules/projects/class-team-csv-export";
 import {projectReadinessOverrideCsvCell} from "@/modules/projects/readiness-overrides-export-model";
+import {isRetryableProjectTransactionError} from "@/modules/projects/errors";
 import {compareTemplateVersionSnapshots,templateVersionComparisonParamsSchema} from "@/modules/projects/template-version-comparison-model";
 import {isProjectMentorOverloaded,projectMentorWorkloadAverage} from "@/modules/projects/mentor-overload-model";
 import {createClassTeamWorkspacesSchema} from "@/modules/projects/class-team-create-request";
@@ -172,6 +173,18 @@ describe("IIT Dharwad Projects adversarial admin/college models",()=>{
    expect(escaped.endsWith(String.fromCharCode(34))).toBe(true);
   }
   expect(projectReadinessOverrideCsvCell('Say "yes", no')).toBe('"Say ""yes"", no"');
+ });
+
+ it("PROJ-BREAK-races-06 only serialization and deadlock SQLSTATE values merit a retry",()=>{
+  for(const code of ["40001","40P01"]){
+   expect(isRetryableProjectTransactionError({code})).toBe(true);
+   expect(isRetryableProjectTransactionError({cause:{cause:{code}}})).toBe(true);
+  }
+  for(const code of ["23505","23503","42501","22001","08006"]){
+   expect(isRetryableProjectTransactionError({code})).toBe(false);
+  }
+  expect(isRetryableProjectTransactionError(null)).toBe(false);
+  expect(isRetryableProjectTransactionError({cause:{cause:{cause:null}}})).toBe(false);
  });
 
 });
