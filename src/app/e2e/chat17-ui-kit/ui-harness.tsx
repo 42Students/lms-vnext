@@ -75,11 +75,13 @@ function UIKitTestSurface() {
         title="Harness drawer" description="Nested history and focus test.">
         <p>The workspace drawer stays open when its sheet is dismissed.</p>
         <Button onClick={() => setSheetOpen(true)}>Open nested sheet</Button>
+        <div aria-label="Drawer long content" className="h-[950px] min-h-[950px]">Long project activity feed</div>
       </Drawer>
       <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen}
         title="Harness nested sheet" description="Second overlay">
         <p>Sheet content is nested above the workspace drawer.</p>
         <Button onClick={() => setSheetOpen(false)}>Close nested sheet</Button>
+        <div aria-label="Sheet long content" className="h-[950px] min-h-[950px]">More project details</div>
       </BottomSheet>
     </section>
 
