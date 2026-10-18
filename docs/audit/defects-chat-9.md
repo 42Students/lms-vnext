@@ -86,6 +86,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-049 · SA-tenants-ux-09/11 | Medium | Super Admin /admin/tenants directory previously awaited persisted lifecycle data without error handling. An outage or stale scope failure could display a raw route error; it must not be treated as no tenants. Added a recoverable unavailable state preserving strict, validated filter values; invalid/repeated query filters continue to terminate before the service and permission checks remain before any tenant PII read. | `5943cc5` | `tests/unit/PROJ-BREAK-chat9-sa-tenant-directory-page.test.tsx` (`2806bb5`) covers failed, invalid, denied and genuinely empty; real browser/PG proof OPEN |
 
+| PROJ9-050 · SA-tenants-create-08/11 | High | Super Admin tenant creation previously awaited organizations directly; a failed read could crash onboarding instead of showing that the college destination could not be authenticated. Creation now fails closed with a retry and does not present a college creation form until the authorized organization list is available. Tests verify malicious preferred organization UUIDs and duplicate GET keys cannot select an unauthorized organization. | `6870213` | `tests/unit/PROJ-BREAK-chat9-sa-tenant-create-page.test.tsx` (`fa66191`); authenticated browser/actual creation transaction OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
