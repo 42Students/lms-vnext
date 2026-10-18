@@ -4,6 +4,7 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
+import { mayReadGlobalProjectAudit } from "@/modules/projects/admin-audit-access-model";
 
 export default async function SuperAdminProjectAuditPage({
   searchParams,
@@ -19,7 +20,7 @@ export default async function SuperAdminProjectAuditPage({
   const collegeId =
     getProjectAdminCollegeId(context);
 
-  if (!collegeId) {
+  if (!collegeId && !mayReadGlobalProjectAudit(context)) {
     return (
       <div className="min-w-0 space-y-6">
         <ProjectAdminNav

@@ -45,7 +45,7 @@ export function mentorProjectActivityEventTypes(view:MentorProjectActivityQuery[
 export function mentorProjectActivityPage(total:number,requested:number,pageSize:number=20) {
   if(pageSize!==20&&pageSize!==50)throw new Error("Invalid mentor activity page size");
   const totalPages=Math.max(1,Math.ceil(total/pageSize));
-  const page=Math.min(requested,totalPages);
+  const page=Number.isSafeInteger(requested)?Math.max(1,Math.min(requested,totalPages)):1;
   return {total,pageSize,totalPages,page};
 }
 

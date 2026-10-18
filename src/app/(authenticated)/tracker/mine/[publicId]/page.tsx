@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {getMyTrackerReport} from "@/modules/bug-tracker/reporter-service";
+import {TrackerAdminError} from "@/modules/bug-tracker/admin-errors";
 import {trackerPublicIdSchema} from "@/modules/bug-tracker/admin-validation";
 export const dynamic="force-dynamic";
 export default async function MyTrackerReportDetail({
@@ -14,8 +15,13 @@ export default async function MyTrackerReportDetail({
   const {publicId}=await params;
   if(!trackerPublicIdSchema.safeParse(publicId).success)notFound();
   if(!trackerAdminRuntimeEnabled())return <p role="status">Reports are temporarily unavailable. Try again soon.</p>;
-  const report=await getMyTrackerReport(context,publicId).catch(()=>null);
-  if(!report)notFound();
+  let report;
+  try{report=await getMyTrackerReport(context,publicId);}
+  catch(error){
+    if(error instanceof TrackerAdminError && error.code==="ISSUE_NOT_FOUND")notFound();
+    // An unavailable database is a retryable page error, not a missing report.
+    throw error;
+  }
   return <article className="space-y-4">
     <PageHeader title={report.publicId} description={report.issueType}/>
     <Link href="/tracker/mine" className="font-semibold text-primary-text underline">Back to my reports</Link>

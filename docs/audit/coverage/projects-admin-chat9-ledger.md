@@ -9,8 +9,8 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 | `admin-college-scope.ts` | `getProjectAdminCollegeId` | OPEN | Requires active, scoped College Admin/Super Admin scenarios. Evidence: **OPEN — missing adequate test** |
 | `admin-insights-service.ts` | `listProjectAdminSnapshots` | SOURCE + URL | PROJ-BREAK-scale-20; PROJ-BREAK-ux-10, no DB-backed permission test. Evidence: tests/unit/PROJ-BREAK-chat9-admin-filters.test.ts, tests/unit/PROJ-BREAK-chat9-admin-risk-query.test.ts, tests/unit/PROJ-BREAK-chat9-admin-submissions-query.test.ts, tests/unit/PROJ-BREAK-chat9-service-bounds.test.ts |
 | `admin-insights-service.ts` | `listProjectAdminRiskQueue` | SOURCE + URL | PROJ-BREAK-scale-20; PROJ-BREAK-ux-14, no DB-backed permission test. Evidence: tests/unit/PROJ-BREAK-chat9-admin-filters.test.ts, tests/unit/PROJ-BREAK-chat9-admin-risk-query.test.ts, tests/unit/PROJ-BREAK-chat9-admin-submissions-query.test.ts, tests/unit/PROJ-BREAK-chat9-service-bounds.test.ts |
-| `admin-insights-service.ts` | `getProjectAdminSubmissionSummary` | OPEN | Counts vs list and tenant fixture pending. Evidence: **OPEN — missing adequate test** |
-| `admin-insights-service.ts` | `listProjectAdminSubmissionQueue` | SOURCE + URL | PROJ-BREAK-ux-17, no DB-backed permission test. Evidence: tests/unit/PROJ-BREAK-chat9-admin-filters.test.ts, tests/unit/PROJ-BREAK-chat9-admin-risk-query.test.ts, tests/unit/PROJ-BREAK-chat9-admin-submissions-query.test.ts, tests/unit/PROJ-BREAK-chat9-service-bounds.test.ts |
+| `admin-insights-service.ts` | `getProjectAdminSubmissionSummary` | SQL + permission | PROJ-BREAK-reports-08, PROJ-BREAK-idor-23: Drizzle renders correctly qualified outer-project correlation; wrong tenant rejected. `tests/unit/PROJ-BREAK-chat9-admin-correlations.test.ts`. Real PostgreSQL counts-vs-list still OPEN. |
+| `admin-insights-service.ts` | `listProjectAdminSubmissionQueue` | SQL + permission + URL | PROJ-BREAK-reports-09, PROJ-BREAK-idor-23: actual Drizzle correlated mentor SQL render and wrong-tenant denial in `tests/unit/PROJ-BREAK-chat9-admin-correlations.test.ts`. URL bounds in `tests/unit/PROJ-BREAK-chat9-admin-submissions-query.test.ts`; PostgreSQL result verification OPEN. |
 | `admin-readiness-overrides-service.ts` | `listCollegeActiveReadinessOverrides` | SOURCE | PROJ-BREAK-archive-01; archived filter asserted from source. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `admin-submission-lock-policy.ts` | `mayRecordCollegeAdminDeliveryLock` | BEHAVIOR | PROJ-BREAK-idor-20/21; own vs other tenant, wrong role, disabled actor. Evidence: tests/unit/proj-break-chat9-models.test.ts, tests/unit/PROJ-BREAK-chat9-admin-role-journeys.test.ts, tests/unit/PROJ-BREAK-chat9-csv-isolates.test.ts |
 | `admin-submission-review-model.ts` | `canAdminSettleDelivery` | BEHAVIOR | PROJ-BREAK-state-03/20; every active/restricted workflow status. Evidence: tests/unit/proj-break-chat9-models.test.ts, tests/unit/PROJ-BREAK-chat9-admin-role-journeys.test.ts, tests/unit/PROJ-BREAK-chat9-csv-isolates.test.ts |
@@ -42,7 +42,7 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 | `template-service.ts` | `unpublishProjectTemplate` | OPEN | Idempotent and archived transitions PG OPEN. Evidence: **OPEN — missing adequate test** |
 | `template-service.ts` | `duplicateProjectTemplate` | OPEN | Slug uniqueness and archived historical state OPEN. Evidence: **OPEN — missing adequate test** |
 | `template-service.ts` | `archiveProjectTemplate` | OPEN | Assigned-college behavior and race OPEN. Evidence: **OPEN — missing adequate test** |
-| `template-service.ts` | `assignProjectTemplateToCollege` | OPEN | Wrong-college IDOR and idempotent retry OPEN. Evidence: **OPEN — missing adequate test** |
+| `template-service.ts` | `assignProjectTemplateToCollege` | MOCK BEHAVIOR + permission | PROJ-BREAK-races-08/09, PROJ-BREAK-idor-22, PROJ-BREAK-state-21: same-version retries cannot overwrite assignment metadata or emit a second event; version upgrade emits one event, forbidden scope and unpublished states deny writes. `tests/unit/PROJ-BREAK-chat9-template-assignments.test.ts`. Real PostgreSQL serialization and row-lock race OPEN. |
 | `template-service.ts` | `revokeProjectTemplateFromCollege` | OPEN | Wrong-org revoke and audit OPEN. Evidence: **OPEN — missing adequate test** |
 | `template-service.ts` | `listAssignedProjectTemplates` | OPEN | Scope and module disable OPEN. Evidence: **OPEN — missing adequate test** |
 | `template-rollback-service.ts` | `rollbackProjectTemplate` | OPEN | Old/new version CAS and audit PG OPEN. Evidence: **OPEN — missing adequate test** |
@@ -58,6 +58,10 @@ Test references: **BEHAVIOR** = direct function assertions; **SOURCE** = source 
 | `readiness-override-service.ts` | `readProjectReadinessOverride` | OPEN | Scoped read and cache OPEN. Evidence: **OPEN — missing adequate test** |
 | `readiness-override-service.ts` | `overrideProjectReadiness` | SOURCE | PROJ-BREAK-routing-01, transaction+audit OPEN. Evidence: tests/unit/proj-break-chat9-services.test.ts (source contract, NOT live database behavioral evidence) |
 | `super-admin-template-directory-service.ts` | `listSuperAdminTemplateDirectory` | OPEN | Search/page/scoping PG cases OPEN. Evidence: **OPEN — missing adequate test** |
+
+| `admin-audit-query-model.ts` | `parseProjectAdminAuditQuery` | BEHAVIOR | PROJ-BREAK-ux-22/23/24: valid date/cursor parsing and invalid action, scope, cursor and reverse date rejection. `tests/unit/PROJ-BREAK-chat9-admin-audit-query.test.ts`. Shared Super/College Admin audit component consumes it; live browser verification OPEN. |
+
+| `admin-audit-access-model.ts` | `mayReadGlobalProjectAudit` | BEHAVIOR | PROJ-BREAK-idor-24/25/26: active global Super Admin allowed, college/org selected and disabled/wrong-role denied; `tests/unit/PROJ-BREAK-chat9-admin-audit-access.test.ts`. Real session/browser coverage OPEN. |
 
 ## Route/page tests and independent audit
 

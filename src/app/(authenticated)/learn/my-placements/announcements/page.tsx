@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { LEARNER_LEGACY_NOTICES_TITLE } from "@/modules/placements/learner-placement-copy-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -185,10 +186,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
               </p>
               <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{notice.message}</p>
                {notice.buttonUrl && notice.buttonLabel ? (
-                 <a href={notice.buttonUrl} target="_blank" rel="noopener noreferrer"
-                    className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
-                   {notice.buttonLabel} ↗
-                 </a>
+                 <div className="mt-3 min-w-0">
+                   <ThirdPartyLink href={notice.buttonUrl} label={`${notice.buttonLabel} ↗`} />
+                 </div>
                ) : null}
               {notice.senderLabel==="Placement cell"?<TpoNoticeAcknowledge id={notice.id}/>:null}
               {learnerNoticeHref(notice.id) ? (

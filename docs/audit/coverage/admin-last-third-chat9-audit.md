@@ -15,7 +15,7 @@ Scope: 37 routes (positions 75–111) of `docs/orchestrator/ui-ux/pages-admin.md
 | `/admin/projects/[projectId]/[section]` | `UX-admin-projects-project-id-section-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/[projectId]/readiness` | `UX-admin-projects-project-id-readiness-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/at-risk` | `UX-admin-projects-at-risk-01` | **OPEN** — no live/browser or full service-role journey confirmation |
-| `/admin/projects/audit` | `UX-admin-projects-audit-01` | **OPEN** — no live/browser or full service-role journey confirmation |
+| `/admin/projects/audit` | `UX-admin-projects-audit-01` + `PROJ-BREAK-ux-22..26` + `PROJ-BREAK-idor-24..26` | Invalid URL recovery, global Super Admin-only template activity, selected-scope isolation, actual remaining-page counter. **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/readiness` | `UX-admin-projects-readiness-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/reassign-mentor` | `UX-admin-projects-reassign-mentor-01` | **OPEN** — no live/browser or full service-role journey confirmation |
 | `/admin/projects/submissions` | `UX-admin-projects-submissions-01` | **OPEN** — no live/browser or full service-role journey confirmation |

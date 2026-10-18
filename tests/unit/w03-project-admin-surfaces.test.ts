@@ -27,8 +27,14 @@ describe("W03 project admin daily-use surface parity", () => {
       expect(source).toContain("ProjectAdminPagination");
       expect(source).toContain("listProjectAdminSnapshots");
       expect(source).toContain("searchParams");
-      expect(source).toContain("params.status");
-      expect(source).toContain("params.pageSize");
+      expect(source).toContain("const query: ProjectAdminCollectionQuery = parsed.data");
+      expect(source).toContain("if (!parsed.success)");
+      expect(source).toContain("Invalid project filters");
+      expect(source).toContain("Clear filters");
+      expect(source).toContain("query.status");
+      expect(source).toContain("query={query}");
+      expect(source).toContain("page={result.page}");
+      expect(source).toContain("totalPages={result.totalPages}");
     }
   });
 

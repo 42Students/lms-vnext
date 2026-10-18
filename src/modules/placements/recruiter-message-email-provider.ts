@@ -23,7 +23,7 @@ export async function sendRecruiterMessageDigest(
  let endpoint:URL;
  try{endpoint=new URL(config.apiUrl);}catch{return false;}
  if(endpoint.protocol!=="https:"||endpoint.username||endpoint.password)return false;
- if(!config.token||!key||key===config.otpTemplateKey ||
+ if(!config.token.trim()||!key||key===config.otpTemplateKey ||
     !isRecruiterReplyAddress(digest.replyTo,env.RECRUITER_MESSAGE_REPLY_DOMAIN??"")||
     digest.messages.length===0)return false;
  try{

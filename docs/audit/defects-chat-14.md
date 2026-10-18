@@ -20,3 +20,49 @@
 1. `docs/audit/coverage/projects-ledger.md` lists 263 project TypeScript module files, 91 Project/Mentor API route files, and 63 relevant page entries; per-symbol expansion and behavioural closure have **not** finished. Every GAP must remain visible.
 2. Neither Vitest nor TypeScript strict checking, real HTTP requests, PostgreSQL, signed URL storage, 1,000-project EXPLAIN, browser/a11y runs could be executed here; the GitHub connection can read and write repository files but supplies no runtime checkout/CI invocation for these checks.
 3. The separate review requirement is unmet for chat-14's source fix. Do not mark Projects IIT Dharwad hardening as complete or sell-ready until a different lane reviews the code and cloud/DB/device acceptance passes.
+
+
+## 2026-10-18 lead hardening delta (merged `main` into lane before editing)
+
+| ID | Severity | Evidence / behavioural risk | Lead fix commit | Regression (authored, not executed) | Verification |
+|---|---|---|---|---|---|
+| PROJ-DEF-014-02 / PROJ-BREAK-MENTOR-05 | S1 lifecycle | `meetingNotesEditable` previously permitted edits on a COMPLETED project; the write service delegates directly to this helper under project + meeting row locks, and the page rendered the editor for the same disallowed state. | `3637306d`, `ddbcfc6f` | `PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` (state matrix), `PROJ-BREAK-chat14-mentor-notes-page.test.tsx` (rendered role/state visibility) | Real PostgreSQL revoked-role / completed-project write test and cloud CI **pending** |
+| PROJ-DEF-014-03 / PROJ-BREAK-MENTOR-06 | S2 defensive boundary | The exported activity pagination helper accepted zero, negative and nonfinite pages, producing invalid offsets if called outside the request schema. | `87269084` | `PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` page clamps and schema rejection | CI **pending** |
+| PROJ-DEF-014-04 / PROJ-BREAK-MENTOR-07 | S2 export capacity | The portfolio CSV model trusted the caller-supplied row length; the current route caps at 200, but a future service/route caller could emit an unlimited CSV. | `7af1c979` | `PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` 203-row cap, omitted count, formula injection and invalid dates | CI and large-export perf **pending** |
+| PROJ-BREAK-MENTOR-08..12 | Behavioural proof expansion | New runtime assertions for latest delivery version selection, project subject ID precedence over untrusted metadata, persisted review evidence, write-schema tenant/actor injection rejection and CSV/URL privacy. No source defect claimed for these cases. | Test `76c70310` | `PROJ-BREAK-chat14-mentor-lead-hardening.test.ts` | Service-backed test / CI / DB **pending** |
+| PROJ-BREAK-MENTOR-16..20 | Service permission / concurrency proof | Mocked transactional service tests now check stale edit, active row-lock ordering, wrong role and cross-college/organization rejection, no audit event on denied/invalid state. These are isolated service tests, not a real PG race. | `b3085be4`, `6e860a32` | `PROJ-BREAK-chat14-mentor-notes-service.test.ts` | Real PostgreSQL two-user race, HTTP/session revocation, persistent audit exactly-once **pending** |
+| PROJ-BREAK-MENTOR-13..15 | Mentor page coverage | The meeting outcome page has rendered matrix checks for active/completed, empty result and denial propagation. Mocked dependencies cannot prove real auth or HTTP error mapping. | Test `3fd63b82` | `PROJ-BREAK-chat14-mentor-notes-page.test.tsx` | Browser keyboard/phone/a11y + real auth **pending** |
+
+### Cross-lane breaker reconciliation, source and regression status
+
+- **chat-6:** `docs/audit/defects-chat-6.md` reports source fixes and authored tests for `PROJ-BREAK-state-04` and `grading-03`, `file-08/09/10`, plus file-readiness, submission, and notification boundary cases. These fixes have regression files, but the upload-completion / deletion CAS retry cases require concurrent PostgreSQL execution. **Open:** draft-update optimistic token (simultaneous team edits may overwrite each other); the lead has not implemented or certified client/API/DB CAS parity.
+- **chat-9:** `docs/audit/defects-chat-9.md` records admin URL normalization, lifecycle close/lock guard, filtered export and bounded query fixes with adversarial source/runtime tests. **Open:** cross-tenant DB replay, archive race and independently reviewed source changes.
+- **chat-13:** `docs/audit/defects-chat-13.md` records the tenant-scoped Super Admin lock actor fix, denied-action UI, invalid action gate and full status matrix. **Open S1 product parity:** Super Admin without College Admin membership cannot create an auditable delivery lock because `project_delivery_events.actor_membership_id` is non-null. Requires an approved actor-user schema/audit migration; do not impersonate a College Admin. Placement-policy / drive races are also not PostgreSQL-certified.
+- **chat-17:** PostgreSQL fixtures and harness exist as source. Their mere presence does not prove integration tests executed. All raw HTTP/DB state machine checks remain release gates.
+
+### Sign-off remains blocked
+
+No runtime checkout or authenticated app/CI runner is exposed in this session. Every new test is **authored/unrun**, not green. The canonical ledger still has extensive GAP rows (module exports, API handlers, pages); rendered meeting-notes coverage is only one page. More than 90% Projects branch coverage, two-writer races, expired sessions, real signed URLs, device accessibility, full mentor permission matrix, release-notification exactly-once and external reviewer approval are not verified. No IIT Dharwad release approval can be inferred.
+
+
+## New lead findings: IST calendar and history pagination (2026-10-18)
+
+| ID | Severity | Source risk / observed divergence | Fix commits | Regression | Release proof |
+|---|---|---|---|---|---|
+| PROJ-DEF-014-05 / PROJ-BREAK-MENTOR-21 | S1 scheduling integrity | `mentorMeetingScheduleError` accepted calendar-shaped strings by constructing a `Date` and checking only finiteness, so some runtimes normalize nonexistent IST wall dates (February 30, April 31, 24:00). The UI could show one time while persisting another. | `96cef5d8`, `76c0aa16` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts`: leap day, impossible dates, 23:59 IST, exact now/end order | Run full Vitest and real meeting HTTP/DB replay; **not executed** |
+| PROJ-DEF-014-06 / PROJ-BREAK-MENTOR-22 | S2 pagination resiliency | Review, task and team history exported pagination helpers accepted negative/NaN/infinite requested page, and team history accepted zero/huge page size. Callers normally validate URLs but helpers must not create invalid offsets on alternate direct calls. | `903f44fd`, `bc95f9c1`, `632a309c` | `tests/unit/PROJ-BREAK-chat14-mentor-time-history.test.ts`: direct-call abuse, query validation, normal 10/20 page sizes | Run cloud CI and DB bounded-offset integration; **not executed** |
+
+### Rolling chat-14 CI failures: source-shape contract reconciliation
+
+The rolling `docs/orchestrator/unit-failures-latest.md` listed seven failing chat-14 test files. This branch updated **assertions to preserve or strengthen the underlying safeguards rather than undoing the safer application code**: active `SUBMITTED` and column/college consent required before applicant PII or resume exposure; full verified-marks college visibility; `DataTable` mobile-priority/accessible `ScrollCue` semantics rather than removed local overflow markup; explicit `getProjectAdminCollegeId` scoped permission guard on create; parsed filters/error recovery and shared page controls for Projects admin surfaces. Fix test commits: `96986d6c`, `7d33e56f`, `5f7a99e1`, `df88f3bd`, `af6cc501`, `0ad65aca`, `d82e15ae`, `166f8296`. The cloud runner **has not verified these tests pass**; retain failure status until a new successful run.
+
+Release status remains **BLOCKED**: hundreds of ledger GAP symbols/pages/handlers still lack complete behavioural proof, PostgreSQL integration and cross-lane review are unavailable, and chat-6 draft update CAS and chat-13 membershipless Super Admin delivery lock actor migration remain unresolved.
+
+
+## Mentor board export direct-call defense
+
+| ID | Severity | Evidence | Change | Regression | CI |
+|---|---|---|---|---|---|
+| PROJ-DEF-014-07 / PROJ-BREAK-MENTOR-27 | S2 export resiliency | `mentorBoardReview` hands the current routes 500 tasks / 100 Sprints, but the exported `mentorBoardExportCsv` and `mentorSprintSummaryCsv` formatters previously trusted an unbounded caller array and inconsistent `omitted` values. Any future route/service bypass could generate oversized reports and erase the truncation indicator. | `12c97f77`: defensive 500 / 100 cap and internally computed excess, finite nonnegative omitted counts; caller-facing project headings unchanged. | `38b12afc`: 503-task/103-Sprint inputs, formula injection, stable status and sprint totals, hostile query, scoped export URLs. | Authored, **NOT run**; PostgreSQL and report UI comparison pending |
+
+The coverage ledger maps these six previously unmapped board-review exports to authored behavioural assertions but still contains many GAP entries. The independent review/CI/blocking release gates above remain unchanged.
