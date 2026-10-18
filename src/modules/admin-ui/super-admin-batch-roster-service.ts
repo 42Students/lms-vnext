@@ -34,6 +34,8 @@ export async function getSuperAdminBatchRosterOverview(context:RequestContext,ra
   .where(eq(sections.cohortId,batchId))
   .groupBy(sections.id,sections.name,sections.code,sections.capacity,sections.status)
   .orderBy(asc(sections.name),asc(sections.id));
+ // No authorized Sections means no learner roster to enumerate.
+ if(classes.length===0)return {batch,classes,roster:[]};
  const active=await db.select({
   learnerEnrollmentId:learnerProgramEnrollments.id,memberId:collegeMemberships.id,
   name:users.displayName,email:users.email,roll:learnerProfiles.rollNumber,
