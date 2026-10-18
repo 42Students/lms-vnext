@@ -6,9 +6,15 @@ describe("TPO report unknown-route recovery",()=>{
  it("TPO-calendar-reports-53 announces Refreshing report instead of an unlabeled skeleton",()=>{
   const code=readFileSync(join(process.cwd(),
    "src/app/(authenticated)/tpo/reports/loading.tsx"),"utf8");
-  expect(code).toContain("Refreshing report…");
-  expect(code).toContain('role="status"');
-  expect(code).toContain('aria-busy="true"');
+  expect(code).toContain('GracefulPageLoading label="Refreshing report…"');
+  const skeleton=readFileSync(join(process.cwd(),
+    "src/components/ui/skeleton.tsx"),"utf8");
+  const graceful=readFileSync(join(process.cwd(),
+    "src/components/ui/graceful-page-loading.tsx"),"utf8");
+  expect(skeleton).toContain('role="status"');
+  expect(skeleton).toContain('aria-live="polite"');
+  expect(graceful).toContain("This is taking longer than expected. Please try again.");
+  expect(graceful).toContain("window.location.reload()");
  });
 
  it("TPO-calendar-reports-53 shows Unknown report and return to reports only for authorized TPO members",()=>{

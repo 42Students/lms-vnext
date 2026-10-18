@@ -17,8 +17,11 @@ describe("exact legacy Mentor Projects copy",()=>{
   });
   it("preserves exact legacy project tabs from the source catalogue",()=>{
     const labels=[...tabs.matchAll(/label: "([^"]+)"/g)].map(m=>m[1]);
-    expect(labels).toEqual(["Overview","People & Meetings","Releases and Sprints","Board","Task Allocation","Resources","Activity"]);
-    for(const label of labels)expect(legacy).toContain("prop:label: "+label);
+    expect(labels).toEqual(["Overview","People & Meetings","Releases and Sprints","Board","Task Allocation","Resources","Delivery","Activity"]);
+    // Preserve every legacy tab in its existing order, while independently testing the new Delivery workspace.
+    for(const label of labels.filter(label=>label!=="Delivery"))expect(legacy).toContain("prop:label: "+label);
+    expect(detail).toContain('delivery: "Delivery"');
+    expect(detail).toContain('selectedTab === "delivery"');
   });
   it("uses the original page title and empty states instead of Mentoring Projects",()=>{
     expect(page).toContain('title="Projects"');

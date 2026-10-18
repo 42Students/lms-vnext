@@ -54,7 +54,11 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   state=transitionResourceUploadUi(state,{type:"TRANSFER_COMPLETE"});
   expect(state.stage).toBe("VERIFYING");
   expect(transitionResourceUploadUi(state,{type:"VERIFIED"}).stage).toBe("SUCCEEDED");
-  expect(transitionResourceUploadUi(state,{type:"FAIL",message:"PRIVATE CODE"})).toEqual(state);
+  expect(transitionResourceUploadUi(state,{type:"FAIL",message:"PRIVATE CODE"})).toEqual({
+    stage:"FAILED",progress:0,message:"Upload could not be completed. Retry or choose another file.",
+  });
+  const succeeded=transitionResourceUploadUi(state,{type:"VERIFIED"});
+  expect(transitionResourceUploadUi(succeeded,{type:"FAIL",message:"PRIVATE CODE"})).toEqual(succeeded);
  });
  it("PROJ-BREAK-file-02 stale, cross-college and deactivated resource views cannot download",()=>{
   const good:ResourceFileUiScope={viewer:"MENTOR",projectAccessGranted:true,moduleEnabled:true,

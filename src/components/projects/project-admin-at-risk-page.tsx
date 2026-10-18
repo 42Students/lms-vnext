@@ -7,19 +7,13 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { parseProjectAdminRiskQuery } from "@/modules/projects/admin-risk-query-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   listProjectAdminRiskQueue,
 } from "@/modules/projects/admin-insights-service";
 import {ProjectAtRiskPageExport} from "./project-at-risk-page-export";
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 function formatDate(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -44,18 +38,18 @@ export async function ProjectAdminAtRiskPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
-  const bucket = one(searchParams.riskBucket);
-  const query: ProjectAdminCollectionQuery = {
-    riskBucket: bucket === "STALLED" || bucket === "BLOCKER" || bucket === "REVIEW" ? bucket : undefined,
-    riskSort: (["INACTIVE","WORKSPACE","SEVERITY"].includes(one(searchParams.riskSort)??"")
-      ? one(searchParams.riskSort) : undefined) as ProjectAdminCollectionQuery["riskSort"],
-    q: one(searchParams.q),
-    status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
-    page: Number(one(searchParams.page) ?? 1),
-    pageSize: Number(
-      one(searchParams.pageSize) ?? 25,
-    ),
-  };
+  const parsed = parseProjectAdminRiskQuery(searchParams);
+  if (!parsed.success) {
+    return <div className="space-y-6">
+      <PageHeader eyebrow={eyebrow} title="At-risk projects"
+        description="Workspaces with no recent activity, an active blocker, or a pending review." />
+      <ErrorState title="Invalid project filters"
+        description="Check the risk, status, sort, search and page filters, or clear them to continue."
+        action={<Link href={basePath + "/at-risk"}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>} />
+    </div>;
+  }
+  const query: ProjectAdminCollectionQuery = parsed.data;
   const result =
     await listProjectAdminRiskQueue(
       context,

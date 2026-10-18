@@ -16,11 +16,17 @@ describe("TPO recruiter contact modal and source parity",()=>{
   expect(detail).not.toContain("DB09 migrations and database checks");
  });
  it("TPO-recruiters-36 traps Tab and supports Escape inside editable recruiter dialogs",()=>{
-  expect(detail).toContain('function keepRecruiterDialogFocus(');
-  expect(detail).toContain('event.key!=="Tab"');
-  expect(detail).toContain("document.activeElement===last");
+  const dialog=readFileSync("src/components/ui/dialog.tsx","utf8");
+  expect(detail).toContain("<Dialog open={editing}");
+  expect(detail).toContain("<Dialog open={notNowOpen}");
+  expect(detail).toContain("dismissible={!saving}");
   expect(detail).toContain('setEditing(false)');
   expect(detail).toContain('setNotNowOpen(false)');
-  expect(detail).toContain('aria-modal="true"');
+  // Native showModal traps keyboard focus; onCancel handles Escape and
+  // onClose returns focus to the opener. Dismissal is blocked while saving.
+  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("onCancel={event =>");
+  expect(dialog).toContain("onOpenChange(false)");
+  expect(dialog).toContain("opener.current?.focus()");
  });
 });
