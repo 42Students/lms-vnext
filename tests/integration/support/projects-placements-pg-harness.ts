@@ -526,8 +526,9 @@ export async function createPlacementCandidateFixture(
   const [job] = await db.query<{college_id:string; round_id:string|null; role_option_id:string|null; accepting_applications:boolean}>(`
     select j.college_id,r.id as round_id,role.id as role_option_id,
         (j.status='PUBLISHED' and j.published_at is not null
-          and j.application_deadline>now()) as accepting_applications
+          and j.application_deadline>now() and season.status='ACTIVE') as accepting_applications
       from placement_jobs j
+      join placement_seasons season on season.id=j.season_id and season.college_id=j.college_id
       left join placement_job_rounds r
         on r.job_id=j.id and r.id=$2
       left join placement_job_role_options role

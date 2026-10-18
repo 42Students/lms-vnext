@@ -185,3 +185,6 @@ The registered placement application schema requires non-null `role_option_id`, 
 
 ### PROJ-HARNESS-TENANCY-17: same-organization cross-college denial
 `createSiblingCollege(db,parent)` creates a second college under a shared organization with independent memberships; new adversarial `PROJ-HARNESS-TENANCY-17` confirms a valid student/admin of the sibling college cannot submit a task, write a final delivery, schedule a foreign project meeting, create a drive for the other college, or apply to that college's drive. This closes a distinct tenancy gap: prior tests covered only wholly different organizations. The fixture stays rollback-only; database CI is pending.
+
+### PROJ-HARNESS-PLACEMENTS-17: active-season gate
+A published drive may still belong to a season explicitly CLOSED by the TPO. Candidate fixture checks the persisted season status as well as job publication/deadline and rejects attempts to add an application to a closed season. PostgreSQL case 17 closes the season with audit actor/time, then proves zero additional applications; GUARD-16 verifies a same-college season join, not a client-supplied flag. Service-layer tests must independently verify this product rule; fixture tests cannot certify the actual HTTP API.

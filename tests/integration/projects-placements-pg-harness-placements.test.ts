@@ -203,6 +203,21 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       expect(after[0]?.n).toBe(before[0]?.n);
     });
   });
+  it("PROJ-HARNESS-PLACEMENTS-17 closed season cannot accept a candidate even with a published job",async()=>{
+    await withPlacementCase(async({db,drive,actor,learner})=>{
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      await db.query(`
+        update placement_seasons set status='CLOSED',closed_by_user_id=$2,closed_at=now()
+        where id=$1`,[drive.seasonId,actor.userId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/drive is not open for applications/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      expect(after[0]?.n).toBe(before[0]?.n);
+    });
+  });
+
   it("PROJ-HARNESS-PLACEMENTS-16 archived role option cannot be used by a stale draft",async()=>{
     await withPlacementCase(async({db,drive,actor,learner})=>{
       await db.query("update placement_job_role_options set status='ARCHIVED',archived_at=now() where id=$1",
