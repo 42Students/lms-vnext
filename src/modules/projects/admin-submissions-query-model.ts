@@ -50,3 +50,21 @@ export function projectAdminUnsubmittedHref(
   if(page>1)params.set("page",String(page));
   return basePath+"?"+params.toString();
 }
+
+/** Switching back to submitted versions or a review shortcut should retain
+ * the search, workspace status and rows preference, while starting at page 1.
+ * A submission-status shortcut replaces (never combines with) the old status.
+ */
+export function projectAdminSubmissionHref(
+  basePath:string,
+  query:{q?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number},
+  submissionStatus?:"SUBMITTED"|"UNDER_REVIEW"|"LOCKED"|"DRAFT_REVISING",
+):string {
+  const params=new URLSearchParams();
+  if(query.q)params.set("q",query.q);
+  if(query.status)params.set("status",query.status);
+  if(query.pageSize)params.set("pageSize",String(query.pageSize));
+  if(submissionStatus)params.set("submissionStatus",submissionStatus);
+  const suffix=params.toString();
+  return basePath+(suffix?"?"+suffix:"");
+}

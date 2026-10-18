@@ -8,6 +8,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { mayCloseProjectSprint } from "./sprint-close-policy";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { allowedMentorTaskTransition } from "./mentor-task-transition-model";
@@ -149,7 +150,8 @@ export async function startProjectSprint(
       const [project] = await tx
         .select({ status: projectInstances.status })
         .from(projectInstances)
-        .where(eq(projectInstances.id, scope.project.id))
+        .where(and(eq(projectInstances.id, scope.project.id),
+          eq(projectInstances.collegeId,scope.collegeId)))
         .for("update")
         .limit(1);
 
@@ -158,6 +160,7 @@ export async function startProjectSprint(
           "PROJECT_SPRINT_INVALID_STATE",
         );
       }
+      await assertPersistedProjectMutationActor(tx,context,scope);
 
       const [primary] = await tx.select({ id: projectMembers.id })
         .from(projectMembers).where(and(
@@ -288,7 +291,8 @@ export async function completeProjectSprint(
     const [project] = await tx
       .select({ status: projectInstances.status })
       .from(projectInstances)
-      .where(eq(projectInstances.id, scope.project.id))
+      .where(and(eq(projectInstances.id, scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId)))
       .for("update")
       .limit(1);
 
@@ -297,6 +301,7 @@ export async function completeProjectSprint(
         "PROJECT_SPRINT_INVALID_STATE",
       );
     }
+    await assertPersistedProjectMutationActor(tx,context,scope);
 
     const [sprint] = await tx
       .select()
@@ -394,7 +399,8 @@ export async function reopenProjectSprint(
       const [project] = await tx
         .select({ status: projectInstances.status })
         .from(projectInstances)
-        .where(eq(projectInstances.id, scope.project.id))
+        .where(and(eq(projectInstances.id, scope.project.id),
+          eq(projectInstances.collegeId,scope.collegeId)))
         .for("update")
         .limit(1);
 
@@ -403,6 +409,7 @@ export async function reopenProjectSprint(
           "PROJECT_SPRINT_INVALID_STATE",
         );
       }
+      await assertPersistedProjectMutationActor(tx,context,scope);
 
       const [sprint] = await tx
         .select()
@@ -533,11 +540,13 @@ export async function updateProjectTaskStatus(
   return getDb().transaction(async (tx) => {
     const [project] = await tx.select({ status: projectInstances.status })
       .from(projectInstances)
-      .where(eq(projectInstances.id, scope.project.id))
+      .where(and(eq(projectInstances.id, scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId)))
       .for("update").limit(1);
     if (!project || !projectAllowsExecution(project.status)) {
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     }
+    await assertPersistedProjectMutationActor(tx,context,scope);
 
     // Read inside the transaction; the sprint lock and task recheck protect
     // against concurrently moving or completing a task.
@@ -624,7 +633,8 @@ export async function unshipProjectRelease(
     const [project] = await tx
       .select({ status: projectInstances.status })
       .from(projectInstances)
-      .where(eq(projectInstances.id, scope.project.id))
+      .where(and(eq(projectInstances.id, scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId)))
       .for("update")
       .limit(1);
 
@@ -633,6 +643,7 @@ export async function unshipProjectRelease(
         "PROJECT_RELEASE_INVALID_STATE",
       );
     }
+    await assertPersistedProjectMutationActor(tx,context,scope);
 
     const [release] = await tx
       .select()
@@ -734,7 +745,8 @@ export async function shipProjectRelease(
     const [project] = await tx
       .select({ status: projectInstances.status })
       .from(projectInstances)
-      .where(eq(projectInstances.id, scope.project.id))
+      .where(and(eq(projectInstances.id, scope.project.id),
+        eq(projectInstances.collegeId,scope.collegeId)))
       .for("update")
       .limit(1);
 
@@ -743,6 +755,7 @@ export async function shipProjectRelease(
         "PROJECT_RELEASE_INVALID_STATE",
       );
     }
+    await assertPersistedProjectMutationActor(tx,context,scope);
 
     const [release] = await tx
       .select()

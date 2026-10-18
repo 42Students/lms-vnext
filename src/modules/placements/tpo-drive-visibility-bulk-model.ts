@@ -10,6 +10,6 @@ export function tpoDriveVisibilitySelection<T extends {id:string}>(
 export function tpoDriveVisibilityValid(input:{
  jobId:string;decision:"INCLUDE"|"EXCLUDE"|"CLEAR";reason:string;count:number;
 }):boolean{
- return input.jobId.length>0&&input.count>0&&input.count<=25&&
+ return input.jobId.length>0&&input.count>0&&input.count<=200&&
   input.reason.trim().length>=3&&input.reason.trim().length<=500;
 }

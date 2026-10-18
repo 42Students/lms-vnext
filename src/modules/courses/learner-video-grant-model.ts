@@ -11,5 +11,7 @@ export function resumePositionForGrant(
 export function playbackGrantRefreshDelay(expiresAt: string, now: number) {
   const remaining = Date.parse(expiresAt) - now;
   if (!Number.isFinite(remaining) || remaining <= 0) return 0;
-  return Math.max(0, remaining - 30_000);
+  // Near-expiry grants renew immediately; longer short grants back off one
+  // second so a misconfigured short TTL cannot create a tight refresh loop.
+  return remaining <= 1_000 ? 0 : Math.max(1_000, remaining - 30_000);
 }

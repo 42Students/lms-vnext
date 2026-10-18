@@ -10,7 +10,7 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
-import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref } from "@/modules/projects/admin-submissions-query-model";
+import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref,projectAdminSubmissionHref } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
@@ -73,8 +73,10 @@ export async function ProjectAdminSubmissionsPage({
     listProjectAdminSubmissionQueue(context, collegeId, query),
     getProjectAdminSubmissionSummary(context, collegeId),
   ]):null;
-  const result=all?.[0]?.status==="fulfilled"?all[0].value:null;
-  const summary=all?.[1]?.status==="fulfilled"?all[1].value:null;
+  const submissionsRead=all?.[0];
+  const summaryRead=all?.[1];
+  const result=submissionsRead?.status==="fulfilled"?submissionsRead.value:null;
+  const summary=summaryRead?.status==="fulfilled"?summaryRead.value:null;
   const queuePath=basePath+"/submissions";
   const renderedAt=new Date();
   const unsubmittedResult=view==="NOT_SUBMITTED"
@@ -115,23 +117,23 @@ export async function ProjectAdminSubmissionsPage({
       />
 
       <nav aria-label="Submission categories" className="flex flex-wrap gap-3 text-sm font-semibold">
-        <Link href={queuePath} aria-current={view==="ALL"?"page":undefined}
+        <Link href={projectAdminSubmissionHref(queuePath,query)} aria-current={view==="ALL"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 text-primary-text">All submissions</Link>
-        <Link href={queuePath+"?view=NOT_SUBMITTED"} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
+        <Link href={projectAdminUnsubmittedHref(queuePath,query)} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded border border-border px-3 py-2 text-primary-text">Not submitted</Link>
       </nav>
       <nav aria-label="Review status shortcuts" className="flex flex-wrap gap-2 text-xs font-semibold">
-        <Link href={queuePath+"?submissionStatus=UNDER_REVIEW"}
+        <Link href={projectAdminSubmissionHref(queuePath,query,"UNDER_REVIEW")}
           aria-current={query.submissionStatus==="UNDER_REVIEW"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
           Under Review
         </Link>
-        <Link href={queuePath+"?submissionStatus=LOCKED"}
+        <Link href={projectAdminSubmissionHref(queuePath,query,"LOCKED")}
           aria-current={query.submissionStatus==="LOCKED"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
           Locked
         </Link>
-        <Link href={queuePath+"?submissionStatus=DRAFT_REVISING"}
+        <Link href={projectAdminSubmissionHref(queuePath,query,"DRAFT_REVISING")}
           aria-current={query.submissionStatus==="DRAFT_REVISING"?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-primary-text">
           Draft (revising)
@@ -172,14 +174,12 @@ export async function ProjectAdminSubmissionsPage({
       {view==="ALL" && result ? <>
       {summary?<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {([
-          ["Active workspaces", summary.activeWorkspaces, "status", "ACTIVE"],
-          ["Pending review", summary.pendingReview, "submissionStatus", "SUBMITTED"],
-          ["Needs student action", summary.needsStudentAction, "submissionStatus", "CHANGES_REQUESTED"],
-          ["Reviewed", summary.reviewed, "submissionStatus", "APPROVED"],
-        ] as const).map(([name, value, key, filter]) => {
-          const params = new URLSearchParams();
-          params.set(key, filter);
-          return <Link key={name} href={queuePath + "?" + params.toString()}
+          ["Active workspaces", summary.activeWorkspaces, basePath+"?status=ACTIVE"],
+          ["Pending review", summary.pendingReview, queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"],
+          ["Needs student action", summary.needsStudentAction, queuePath+"?status=ACTIVE&submissionStatus=CHANGES_REQUESTED"],
+          ["Reviewed", summary.reviewed, queuePath+"?submissionStatus=APPROVED"],
+        ] as const).map(([name, value, href]) => {
+          return <Link key={name} href={href}
             className="rounded-xl border border-border bg-surface p-4 hover:border-primary">
             <p className="text-xs font-semibold text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>

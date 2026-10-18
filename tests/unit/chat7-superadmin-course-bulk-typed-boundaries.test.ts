@@ -2,6 +2,7 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 import {CoursesServiceError} from "@/modules/courses/errors";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readFileSync} from "node:fs";
 
 const state=vi.hoisted(()=>({
  selected:[] as Array<{id:string}>,
@@ -95,6 +96,16 @@ describe("SA-academics-people-53 scoped bulk course visibility and recoverable i
    expect(typeof body.message).toBe("string");
    expect(body.message.length).toBeGreaterThan(0);
   }
+ });
+ it("only counts published-path lessons with matching academic-period and department tenant",()=>{
+  const source=readFileSync("src/modules/courses/super-admin-course-bulk-visibility.ts","utf8");
+  for(const guard of [
+   'eq(courseLearningPaths.status,"PUBLISHED")',
+   'eq(courseLessons.status,"ACTIVE")',
+   'eq(courseOfferings.status,"ACTIVE")',
+   'eq(departments.collegeId,acting.collegeId)',
+   'eq(academicPeriods.collegeId,acting.collegeId)',
+  ])expect(source).toContain(guard);
  });
  it("keeps typed limit errors in the standard customer-safe API mapper",()=>{
   expect(new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE").code)

@@ -5,26 +5,45 @@ import {getDb} from "@/db/client";
 import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {getProjectAdminCollegeId} from "./admin-college-scope";
+import {ProjectsServiceError} from "./errors";
 import {loadProjectCollegeScope} from "./scope";
 
 export async function listCollegeReadinessWorkspaceChoices(context:RequestContext,collegeId:string){
- const college=await loadProjectCollegeScope(z.string().uuid().parse(collegeId));
+ const id=z.string().uuid().parse(collegeId);
+ if(getProjectAdminCollegeId(context)!==id)
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const college=await loadProjectCollegeScope(id);
  requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
- return getDb().select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
-  .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),ne(projectInstances.status,"ARCHIVED")))
-  .orderBy(asc(projectInstances.title),asc(projectInstances.id)).limit(1000);
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  return tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
+   .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),ne(projectInstances.status,"ARCHIVED")))
+   .orderBy(asc(projectInstances.title),asc(projectInstances.id)).limit(1000);
+ });
 }
 
 /** COL-projects-12: release readiness is derived from registered sprint/task data. */
 export async function listCollegeReadinessReleases(context:RequestContext,collegeId:string,projectId:string){
- const college=await loadProjectCollegeScope(z.string().uuid().parse(collegeId));
- requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
+ const requestedCollegeId=z.string().uuid().parse(collegeId);
  const id=z.string().uuid().parse(projectId);
- const [owned]=await getDb().select({id:projectInstances.id}).from(projectInstances)
-  .where(and(eq(projectInstances.id,id),eq(projectInstances.collegeId,college.id),
-   ne(projectInstances.status,"ARCHIVED"))).limit(1);
- if(!owned)return [];
- const db=getDb();
+ if(getProjectAdminCollegeId(context)!==requestedCollegeId)
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const college=await loadProjectCollegeScope(requestedCollegeId);
+ requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
+ // The live actor and project are held under SHARE locks until all derived
+ // readiness rows are read; archive and role revocation must not race them.
+ return getDb().transaction(async db=>{
+  await assertPersistedPlatformPermission(db,context,"projects.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  const [owned]=await db.select({id:projectInstances.id}).from(projectInstances)
+   .where(and(eq(projectInstances.id,id),eq(projectInstances.collegeId,college.id),
+    ne(projectInstances.status,"ARCHIVED"))).for("share").limit(1);
+  if(!owned)return [];
  const releases=await db.select({id:projectReleases.id,title:projectReleases.title,
   status:projectReleases.status,sequence:projectReleases.sequence})
   .from(projectReleases).where(eq(projectReleases.projectId,id)).orderBy(asc(projectReleases.sequence));
@@ -42,5 +61,6 @@ export async function listCollegeReadinessReleases(context:RequestContext,colleg
    completedSprints:included.filter(s=>s.status==="COMPLETED").length,
    points:included.reduce((sum,s)=>sum+(bySprint.get(s.id)??0),0),
    targetDate:null as string|null};
+ });
  });
 }

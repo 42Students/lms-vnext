@@ -1,8 +1,9 @@
+import {inflateSync} from "node:zlib";
 /**
  * Validate the structure and CRCs of a small, browser-cropped PNG.
  * A PNG signature/IHDR alone is not proof of an actual image: arbitrary
  * attacker bytes could otherwise be placed behind the public logo proxy.
- * This intentionally does not replace malware scanning or decoding.
+ * This intentionally does not replace malware scanning.
  */
 function crc32(bytes:Uint8Array,start:number,end:number):number{
  let crc=0xffffffff;
@@ -18,9 +19,13 @@ function crc32(bytes:Uint8Array,start:number,end:number):number{
 export function verifyCollegeLogoPngChunks(bytes:Uint8Array):boolean{
  // Eight signature bytes, 25-byte IHDR (length+type+data+CRC), IDAT and IEND.
  if(bytes.length<57||bytes.length>2*1024*1024)return false;
+ if([137,80,78,71,13,10,26,10].some((value,index)=>bytes[index]!==value))
+  return false;
  const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
  let offset=8;
  let ihdr=false,idat=false,iend=false,closedIdat=false;
+ const compressedChunks:Uint8Array[]=[];
+ let width=0,height=0,channels=0;
  while(offset<bytes.length){
   if(bytes.length-offset<12)return false;
   const length=view.getUint32(offset,false);
@@ -34,12 +39,20 @@ export function verifyCollegeLogoPngChunks(bytes:Uint8Array):boolean{
    if(type!=="IHDR"||length!==13)return false;
    ihdr=true;
    // Non-interlaced 8-bit truecolour/RGBA only, as produced by the crop UI.
-   if(bytes[offset+26]!==0||bytes[offset+27]!==0||
-      bytes[offset+28]!==0)return false;
+   width=view.getUint32(offset+8,false);
+   height=view.getUint32(offset+12,false);
+   const depth=bytes[offset+16],color=bytes[offset+17];
+   channels=color===2?3:color===6?4:0;
+   if(width<1||width>2048||height!==width||depth!==8||!channels||
+      bytes[offset+18]!==0||bytes[offset+19]!==0||
+      bytes[offset+20]!==0)return false;
   }else if(type==="IHDR")return false;
   else if(type==="IDAT"){
    if(closedIdat||iend)return false;
-   idat=true;
+   if(length>0){
+    idat=true;
+    compressedChunks.push(bytes.subarray(offset+8,next-4));
+   }
   }else if(type==="IEND"){
    if(length!==0||!idat||next!==bytes.length)return false;
    iend=true;
@@ -53,5 +66,18 @@ export function verifyCollegeLogoPngChunks(bytes:Uint8Array):boolean{
   }
   offset=next;
  }
- return ihdr&&idat&&iend&&offset===bytes.length;
+ if(!ihdr||!idat||!iend||offset!==bytes.length)return false;
+ // A valid CRC alone cannot prove the compressed pixel rows decode correctly.
+ const rowBytes=width*channels+1;
+ const expandedLength=rowBytes*height;
+ try{
+  const decoded=inflateSync(Buffer.concat(compressedChunks),{
+   maxOutputLength:expandedLength,
+  });
+  if(decoded.length!==expandedLength)return false;
+  for(let y=0;y<height;y++){
+   if((decoded[y*rowBytes]??255)>4)return false;
+  }
+  return true;
+ }catch{return false;}
 }

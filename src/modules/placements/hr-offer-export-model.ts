@@ -9,7 +9,7 @@ function cell(value:string){
  return '"'+safe.replaceAll('"','""')+'"';
 }
 function ist(value:Date|null){
- return value?new Intl.DateTimeFormat("en-GB",{
+ return value && Number.isFinite(value.getTime())?new Intl.DateTimeFormat("en-GB",{
   timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric",
   hour:"2-digit",minute:"2-digit",hour12:false,
  }).format(value):"";
@@ -24,7 +24,8 @@ export function buildHrOfferCsv(rows:readonly HrOfferCsvRow[],total:number){
   row.annualCtcInr?.toString()??"",ist(row.issuedAt),ist(row.expiresAt),
   row.joiningDate??"",row.joiningStatus??"Not recorded","Masked",
  ].map(cell).join(","));
- const omitted=Math.max(0,total-exported.length);
+ const authorizedTotal=Number.isSafeInteger(total)&&total>=0?total:exported.length;
+ const omitted=Math.max(0,authorizedTotal-exported.length);
  if(omitted)out.push(["","Export capped",omitted+" additional authorized offers",
   "","","","","","",""].map(cell).join(","));
  return {csv:"\uFEFF"+out.join("\r\n")+"\r\n",omitted,exported:exported.length};

@@ -109,3 +109,31 @@ No tests, migrations or CI were executed. `HR-ROUND-DEPTH-64`, `HR-CALENDAR-DEPT
 
 | HR-APPLICANT-EXPORT-70 | S3 resilience | A malformed persisted submission timestamp could abort the entire recruiter export; invalid totals could print NaN. The CSV now renders a clear unavailable date and bounded totals without changing contact masking or caps. | `hr-applicant-export-model.ts`, `HR-BREAK-chat15-applicant-export-70.test.ts` | Unit and PostgreSQL exports not run |
 | HR-DRIVE-API-71 | S2 graceful failure | Unexpected recruiter drive request service failures were rethrown from GET/POST/PATCH, leaving an unstructured HTTP exception instead of a safe response. The route now delegates those cases to the common sanitized API error handler. | `api/placements/recruiter/drives/requests/route.ts`, `HR-BREAK-chat15-request-api-71.test.ts` | HTTP and cloud CI not run |
+
+
+## HR-first continuation findings — October 19, 2026
+
+| Gap | Severity | Concrete defect and change | Named behavioral test | Verification |
+|---|---|---|---|---|
+| HR-OFFER-EXPORT-74 | S2 | Corrupted `issuedAt` or `expiresAt` throws `RangeError: Invalid time value` during the entire employer CSV export; an invalid aggregate `total` can insert NaN/Infinity in the cap row. Export now treats invalid dates as empty and uses only safe integer counts. | `HR-BREAK-chat15-offer-export-74.test.ts` | Tests authored, not run |
+| HR-CALENDAR-75 | S2 | The HR Today results-due projection accepted any round status when its date/job looked valid; stale canceled and pending dates could appear as actionable employer deadlines. Now only SCHEDULED/COMPLETED results are projected. | `HR-BREAK-chat15-calendar-state-75.test.ts` | Tests authored, not run |
+| HR-PROFILE-76 | S3 | Recruiter first/last name validation accepted embedded control characters in identity data. Input now rejects CR/LF/tab/NUL without prohibiting normal Unicode names. | `HR-BREAK-chat15-profile-name-76.test.ts` | Tests authored, not run |
+| PROJ-BREAK-HR-77 | S1 | `requireProjectLifecycleMutationAccess` loaded feature settings before checking whether a recruiter, TPO or learner may ever mutate Projects. Such roles now fail early, before private module config or project ID lookups. | `PROJ-BREAK-HR-77.test.ts` | Tests authored, not run; external Projects reviewer and real tenant DB pending |
+
+
+## HR-role page and data integrity follow-up — 19 October 2026
+
+| ID | Severity | Impact and corrective behavior | Regression evidence | Remaining verification |
+|---|---|---|---|---|
+| HR-APPLICANTS-78 | S2 accuracy/privacy | Verified academic mark records for a given learner and level could contain conflicting historical values. `getHrJobRead` previously overwrote earlier values depending on unordered SQL delivery, disclosing an arbitrary grade. `uniqueHrVerifiedAcademicMarks` now omits ambiguous or corrupt marks, preserving independent valid levels and learners. | `HR-BREAK-chat15-verified-marks-78.test.ts` | Real PostgreSQL mixed verification history, CI and authorized employer rendering |
+| HR-DRIVES-82 | S2 workflow correctness | Recruiter draft hiring round labels accepted internal CR/LF/control characters and visually identical full-width Unicode names as distinct. New validation rejects control chars and compares Unicode-NFKC canonical names before sending to the placement cell. | `HR-BREAK-chat15-drive-round-82.test.ts` | TPO import and browser draft form acceptance |
+
+Additional **coverage without an independently established defect**: `HR-BREAK-chat15-drive-new-page-79.test.tsx`, `HR-BREAK-chat15-proposals-page-80.test.tsx`, `HR-BREAK-chat15-tracker-report-page-81.test.tsx`. None was run; no release readiness is asserted.
+
+
+## HR messaging retry and identity follow-up — 19 October 2026
+
+| Gap | Severity | Issue and fix | Test | Verification |
+|---|---|---|---|---|
+| HR-MESSAGING-83 | S2 reliability | Optional general-conversation directory lookup was awaited without failure recovery, so a transient enrichment failure crashed the entire valid recruiter inbox. Now the main inbox remains available with explicit retry copy and the create-new form stays hidden while general-thread state is unknown. | `HR-BREAK-chat15-messaging-page-83.test.tsx` | Authenticated page/browser test not executed |
+| HR-MESSAGING-84 | S2 defense in depth | Recruiter open/reply HTTP handlers checked active role but did not preflight equality between cached recruiter principal and signed-in user before calling a sensitive service. Both now reject mismatched principal with 403 before persistence and retain same-origin guards. | `HR-BREAK-chat15-messaging-api-84.test.ts` | Actual HTTP, persistence and notification tests not executed |
