@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {DataTable} from "@/components/ui/data-table";
 import {requirePermission} from "@/modules/permissions/policy";
 import {adminControlScopeTag} from "@/modules/module-access/admin-control-overview-model";
 import {
@@ -141,124 +142,40 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
             </p>
           </div>
 
-          <div className="grid min-w-0 gap-3 lg:hidden" aria-label={`${section.title} setting cards`}>
-            {section.items.map(setting=><article key={setting.label} className="min-w-0 rounded-xl border border-border bg-surface p-4">
-              <h3 className="break-words text-sm font-semibold text-foreground">{setting.label}</h3>
-              <p className="mt-2 break-words text-base font-semibold text-foreground">{formatPlatformSettingValue(setting)}</p>
-              <p className="mt-2 text-xs text-body">Origin: {platformSettingOriginLabel(setting.origin)}</p>
-              <p className="mt-1 break-all font-mono text-xs text-muted-foreground">Source: {setting.source}</p>
-            </article>)}
-          </div>
-          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface lg:block">
-            <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
-              <thead className="bg-surface-subtle">
-                <tr>
-                  {[
-                    "Setting",
-                    "Value",
-                    "Origin",
-                    "Source file or table",
-                  ].map((heading) => (
-                    <th
-                      key={heading}
-                      scope="col"
-                      className="border-b border-border px-4 py-3 font-semibold text-foreground"
-                    >
-                      {heading}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {section.items.map((setting) => (
-                  <tr
-                    key={`${section.id}:${setting.label}`}
-                    className="border-b border-border last:border-0"
-                  >
-                    <th
-                      scope="row"
-                      className="px-4 py-3 font-semibold text-foreground"
-                    >
-                      {setting.label}
-                    </th>
-                    <td className="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-foreground">
-                      {formatPlatformSettingValue(setting)}
-                    </td>
-                    <td className="px-4 py-3 text-body">
-                      {platformSettingOriginLabel(
-                        setting.origin,
-                      )}
-                    </td>
-                    <td className="break-all px-4 py-3 font-mono text-xs text-muted-foreground">
-                      {setting.source}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable<(typeof section.items)[number]>
+            caption={section.title}
+            rows={section.items}
+            getRowKey={setting=>section.id+":"+setting.label}
+            columns={[
+              {key:"setting",header:"Setting",mobilePriority:"primary",cell:setting=>
+                <span className="break-words font-semibold text-foreground">{setting.label}</span>},
+              {key:"value",header:"Value",mobilePriority:"secondary",cell:setting=>
+                <span className="break-words font-semibold tabular-nums">{formatPlatformSettingValue(setting)}</span>},
+              {key:"origin",header:"Origin",mobilePriority:"secondary",cell:setting=>platformSettingOriginLabel(setting.origin)},
+              {key:"source",header:"Source file or table",mobilePriority:"secondary",cell:setting=>
+                <span className="break-all font-mono text-xs">{setting.source}</span>},
+            ]}
+            empty={<p role="status" className="text-sm text-body">No visible settings match the selected filters.</p>}
+          />
 
           {section.smsTemplates ? (
             <>
-            <div className="grid min-w-0 gap-3 lg:hidden" aria-label="SMS source template cards">
-              {section.smsTemplates.map(template=><article key={template.key} className="min-w-0 rounded-xl border border-border bg-surface p-4">
-                <h3 className="break-all text-sm font-semibold">{template.key}</h3>
-                <p className="mt-2 text-sm text-body">{template.purpose}</p>
-                <p className="mt-2 break-words text-xs text-body">Channels: {template.channels.join(", ")}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{template.definition==="FIXED_OTP_SOURCE"?"Fixed OTP source template":"Declared intent key; no active sender implied"}</p>
-                <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{template.source}</p>
-              </article>)}
-            </div>
-            <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface lg:block">
-              <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
-                <thead className="bg-surface-subtle">
-                  <tr>
-                    {[
-                      "Source template / key",
-                      "Purpose",
-                      "Declared channels",
-                      "Definition",
-                      "Source file",
-                    ].map((heading) => (
-                      <th
-                        key={heading}
-                        scope="col"
-                        className="border-b border-border px-4 py-3 font-semibold text-foreground"
-                      >
-                        {heading}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {section.smsTemplates.map((template) => (
-                    <tr
-                      key={template.key}
-                      className="border-b border-border last:border-0"
-                    >
-                      <th
-                        scope="row"
-                        className="px-4 py-3 font-semibold text-foreground"
-                      >
-                        {template.key}
-                      </th>
-                      <td className="px-4 py-3 text-body">{template.purpose}</td>
-                      <td className="px-4 py-3 text-body">
-                        {template.channels.join(", ")}
-                      </td>
-                      <td className="px-4 py-3 text-body">
-                        {template.definition === "FIXED_OTP_SOURCE"
-                          ? "Fixed source OTP template"
-                          : "Fixed intent key, not an operational sender"}
-                      </td>
-                      <td className="break-all px-4 py-3 font-mono text-xs text-muted-foreground">
-                        {template.source}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DataTable<(typeof section.smsTemplates)[number]>
+              caption="SMS source templates"
+              rows={section.smsTemplates}
+              getRowKey={template=>template.key}
+              columns={[
+                {key:"template",header:"Source template / key",mobilePriority:"primary",cell:template=>
+                  <span className="break-all font-semibold">{template.key}</span>},
+                {key:"purpose",header:"Purpose",mobilePriority:"secondary",cell:template=>template.purpose},
+                {key:"channels",header:"Declared channels",mobilePriority:"secondary",cell:template=>template.channels.join(", ")},
+                {key:"definition",header:"Definition",mobilePriority:"secondary",cell:template=>
+                  template.definition==="FIXED_OTP_SOURCE"?"Fixed source OTP template":"Fixed intent key, not an operational sender"},
+                {key:"source",header:"Source file",mobilePriority:"secondary",cell:template=>
+                  <span className="break-all font-mono text-xs">{template.source}</span>},
+              ]}
+              empty={<p role="status" className="text-sm text-body">No source templates match the selected filters.</p>}
+            />
             </>
           ) : null}
 
