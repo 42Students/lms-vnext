@@ -20,7 +20,7 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).toContain('min-w-0 w-full sm:min-w-');
    expect(page).not.toContain('min-w-[38rem]');
  });
- it("UX-admin-college-admins-01 uses shared phone-safe cards and explicit empty copy",()=>{
+ it("UX-admin-colleges-collegeId-admins-01 uses shared phone-safe cards and explicit empty copy",()=>{
    const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx");
    expect(page).toContain("<DataTable");
    expect(page).toContain("No active College Admin or TPO accounts in this college.");
@@ -28,7 +28,7 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).not.toContain("<main");
    expect(page).not.toContain('min-w-[46rem]');
  });
- it("UX-admin-admin-sessions-01 uses shared phone-safe cards and explicit empty copy",()=>{
+ it("UX-admin-colleges-collegeId-admins-userId-01 uses shared phone-safe cards and explicit empty copy",()=>{
    const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx");
    expect(page).toContain("<DataTable");
    expect(page).toContain("No active sessions for this account.");
@@ -36,7 +36,7 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).not.toContain("<main");
    expect(page).not.toContain('min-w-[46rem]');
  });
- it("UX-admin-admin-history-01 uses shared phone-safe cards and explicit empty copy",()=>{
+ it("UX-admin-colleges-collegeId-admins-userId-history-01 uses shared phone-safe cards and explicit empty copy",()=>{
    const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx");
    expect(page).toContain("<DataTable");
    expect(page).toContain("No matching identity or platform history was recorded for this administrator in the current college.");
@@ -51,7 +51,7 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).not.toContain("text-primary-text");
    expect(page).toContain("min-w-0");
  });
- it("UX-admin-academics-section-01 keeps scope-safe accessible route surface",()=>{
+ it("UX-admin-academics-sections-sectionId-01 keeps scope-safe accessible route surface",()=>{
    const page=read("src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx");
    expect(page).not.toContain("<main");
    expect(page).not.toMatch(/min-h-10\b/);
@@ -93,7 +93,7 @@ describe("Super Admin UX first-third rollout",()=>{
   expect(page).toContain("min-w-0");
   expect(page).not.toContain("min-h-10");
  });
- it("UX-admin-batch-roster-01 supports mobile-safe navigation without changing legacy wording",()=>{
+ it("UX-admin-batches-batchId-students-01 supports mobile-safe navigation without changing legacy wording",()=>{
   const page=read("src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx");
   expect(page).not.toContain("<main");
   expect(page).not.toContain("text-primary-text");
