@@ -250,6 +250,10 @@ The retired Faculty notices bookmark path used `facultyNoticeParamsSchema.parse(
 
 The Super Admin recruiter index correctly caught failures of its main account list, but fetched summary counts afterward with no recovery. A summary-only DB outage therefore made the whole page fail despite the available account list. The page now returns the scoped list and a nullable summary; its client component displays **Unavailable** plus Retry totals, never fake `0` counts. The role gate remains before both queries. Direct page behavior test: `tests/unit/chat3-sa-recruiter-directory-partial-service.test.tsx`, SA-RECRUITERS-PARTIAL-01 (authored; cloud CI not yet run).
 
+### SA-PEOPLE-UNASSIGNED-URL-048 — duplicated global People filters silently normalized (S2)
+
+The Super Admin unassigned identity page used a picked-object Zod parse of `q`, `page`, `role` and `platformStatus`, silently ignoring unrecognized selectors and accepting some single-element arrays through number coercion. This global-only directory should reject ambiguous URL input instead of proceeding with a query that differs from a shared bookmark. The page now enforces **only recognized single-valued URL keys** before any global identity service call, retaining explicit recovery copy and the cleared-scope restriction. `tests/unit/chat3-sa-unassigned-global-identity-ssr.test.tsx` covers actual SSR valid/invalid/denied/empty paths. Runtime CI pending.
+
 ### SA-PEOPLE-DIRECTORY-QUERY-041 — ambiguous or injected people directory filters silently ignored (S2)
 
 The Super Admin directory extracted only six known URL fields, ignoring arbitrary selectors and passing potential array-valued query keys to Zod coercion. A bookmarked `?page=1&page=999` or injected `collegeId` could be ambiguously processed rather than returning the explicit invalid-filter recovery. The directory now requires exact recognized single-valued URL keys before parsing and before privileged roster reads. `tests/unit/chat3-sa-people-directory-strict-url-ssr.test.tsx` checks duplicate/forged/invalid state, genuine empty and wrong role. Source/test authored, runtime CI pending.
