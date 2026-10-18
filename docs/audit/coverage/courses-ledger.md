@@ -96,6 +96,10 @@ All prior failing unit tests are retained. The snapshot's failing cases have not
 
 Remaining: real PostgreSQL concurrency cases, live role revocation between preflight and transaction, the other Courses API routes, Super Admin UI page-level browser checks, all Learner certificates and discussion transitions. Do not infer execution or passing coverage from authored tests alone.
 
+## Super Admin assignments/quizzes CSV export service (2026-10-18)
+
+`SA-academics-people-64/65` previously offered CSV links that dropped the visible selected course, audience and quiz-results filters. `adminAssessmentExportHref` now derives the export link from the strict directory query (without pagination). `tests/unit/chat7-superadmin-assessment-export-filter-parity.test.ts` exercises default, filtered assignment and quiz URLs, preservation of search/course/scope/result parameters, and no stale page/tenant ID injection. `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` mocks the authorized reader and validates actor context, per-page filter continuity, formula-safe CSV, private no-store output, and 500-row/20-page truncation. Tests authored, **not executed**. Real Postgres tenant/role behavior and export vs on-screen totals remain independent open checks.
+
 ## Latest unit-failure inventory triage (2026-10-18)
 
 The published unit-failure list still names CI `ff6819dd` (cloud `698eb9dd`) and has not been refreshed for this branch. Test and source reviews were performed without running Vitest:
