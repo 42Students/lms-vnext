@@ -441,20 +441,42 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/pr-s2-04-task-fields-model.ts` | `projectTaskBlockerValid` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/pr-s2-04-task-fields-model.ts` | `projectTaskExpandedFieldsSchema` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/pr-s2-04-task-fields-model.ts` | `projectTaskCommentInputSchema` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/pr-s2-07-delivery-reopen-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/primary-mentor-policy.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/progress-percentage-policy.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/project-notification-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/project-resource-audit-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/project-resource-file-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/project-resource-files-ui-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/project-task-visible-facts-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/project-template-catalogue-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/readiness-override-copy.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/readiness-override-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/readiness-override-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/readiness-overrides-export-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/readiness-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/pr-s2-07-delivery-reopen-model.ts` | `mayReopenApprovedDelivery` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/pr-s2-07-delivery-reopen-model.ts` | `projectDeliveryAttachmentSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/pr-s2-07-delivery-reopen-model.ts` | `projectDeliveryLockInputSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/pr-s2-07-delivery-reopen-model.ts` | `projectDeliveryAttachmentsSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/primary-mentor-policy.ts` | `mayRemovePrimaryProjectMentor` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/progress-percentage-policy.ts` | `projectCompletionPercent` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-notification-service.ts` | `projectNoticeHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-notification-service.ts` | `notifyActiveProjectMembers` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-notification-service.ts` | `notifyProjectMemberships` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-audit-model.ts` | `projectResourceAuditAction` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-audit-model.ts` | `projectResourceAuditMatches` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-file-service.ts` | `toProjectFileDto` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-file-service.ts` | `issueProjectFileUploadGrant` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-file-service.ts` | `completeProjectFileUpload` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-file-service.ts` | `listProjectFiles` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-file-service.ts` | `updateProjectFileDetails` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-file-service.ts` | `removeProjectFile` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-file-service.ts` | `issueProjectFileDownloadGrant` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-file-service.ts` | `projectFileUploadInputSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-file-service.ts` | `projectFileUpdateInputSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-files-ui-model.ts` | `projectResourceFileDeclaration` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-files-ui-model.ts` | `validProjectResourceUploadGrant` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-files-ui-model.ts` | `projectFileUsable` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-resource-files-ui-model.ts` | `PROJECT_FILE_LIMIT` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-task-visible-facts-model.ts` | `projectTaskDueLabel` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-task-visible-facts-model.ts` | `projectTaskVisibleFacts` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-task-visible-facts-model.ts` | `projectTaskDueState` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-template-catalogue-model.ts` | `projectTemplateSectionCounts` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/project-template-catalogue-model.ts` | `projectTemplateCatalogueCsv` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/readiness-override-copy.ts` | `projectReadinessLegacyCopy` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/readiness-override-model.ts` | `effectiveProjectSubmissionReady` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/readiness-override-model.ts` | `readinessOverrideInputSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/readiness-override-service.ts` | `readProjectReadinessOverride` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/readiness-override-service.ts` | `overrideProjectReadiness` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/readiness-overrides-export-model.ts` | `projectReadinessOverrideCsvCell` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/readiness-service.ts` | `getProjectReadiness` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/resource-file-action-state-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/resource-file-delete-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/resource-file-empty-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
