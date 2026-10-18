@@ -298,3 +298,6 @@ Both cases remain **authored but not executed**. Do not equate mocked behavior w
 
 
 | `GET /api/placements/recruiter/jobs` | `tests/unit/HR-BREAK-chat15-jobs-api-119.test.ts` | Actual authorized empty read, exact scoped job payload passthrough, central grant denial does not become a global listing, identity backend outage maps to safe error rather than fabricated empty portfolio; GET has no writes | Real persisted active/expired grants, two-company tenancy and API cache/ETag behavior |
+
+
+| `buildHrDrivesCsv` | `tests/unit/HR-BREAK-chat15-drive-csv-120.test.ts` | Malformed persisted deadline is an actionable unavailable value, not an entire failed employer CSV; deliberate no-deadline stays blank; hard 200-row limit with explicit omitted warning; spreadsheet-safe formula text | Real published/closed cross-college PostgreSQL job export and viewer |
