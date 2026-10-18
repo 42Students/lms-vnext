@@ -67,6 +67,14 @@ Source fix `3f025d6`; tests **authored but not run**. `tests/unit/PROJ-BREAK-cha
 - **Required independent gates:** replay real PostgreSQL row-lock races; review SQL query plans on 1k+ workspaces; exercise distinct Learner, Mentor, College Admin and Super Admin sessions; run authored Vitest/TypeScript/HTTP/browser/375px keyboard acceptance after the owner's no-CI period; obtain non-author lane review. The legacy `transitionProjectMeeting` missing optimistic token/ABA protection remains **S1 RELEASE GAP**, not claimed closed.
 - **Other lanes:** module-wide admin, college, faculty, learner, TPO and HR rows still contain explicit `GAP` entries as shown in the inventory; chat-14 does not convert them to covered without test evidence. **No production/release sign-off.**
 
+## Legacy meeting transition CAS and stale-client optional token — PROJ-BREAK-MENTOR-389..394 (2026-10-19)
+| Export | Regression | Invariants and remaining acceptance |
+|---|---|---|
+| `validation.ts:projectMeetingTransitionInputSchema` | `tests/unit/PROJ-BREAK-chat14-mentor-meeting-version-cas.test.ts` | `389/394` optional RFC3339 offset-aware `expectedUpdatedAt` for legacy-compatible callers; strict rejects forged fields and malformed timestamp; equivalent IST offset accepted |
+| `meeting-service.ts:transitionProjectMeeting` | Same file | `390` lock-time single transition pins exact pre-read status plus millisecond `updatedAt` using SQL compare-and-swap; `391` stale concurrent completion/cancellation fails before activity or notifications; `392` draft cancellation never broadcasts; `393` learner requester and active grant still checked |
+
+Source fixes `46e53dc` and `10a1fb3`. Monotonic `updatedAt` on transition. **Tests authored but not run.** This closes the *pre-read-to-write* lost update path in code, but **does not fully close legacy S1 stale-tab/ABA acceptance** while some old clients omit the optional version and until real PostgreSQL parallel transaction replays, backward client audit, and independent reviewer signoff.
+
 ## CI failure triage (refreshed inventory ff6819dd, 2026-10-18)
 - `projects-mentor-service-guards-chat14.test.ts` final-delivery boundary assertion: the current service still contains every checked guard, version token, audited notification and scoped mutation gate. This appears to be a stale snapshot; do not change code or weaken the check without a new failing trace.
 - `recruiter-chat14-message-email-bridge-contract.test.ts`: the expectation referred to the raw email string, but the provider now normalizes the recipient *before* applying the allowlist; updated the test to assert both normalization and the runtime allowlist, preserving the stronger safety invariant.
