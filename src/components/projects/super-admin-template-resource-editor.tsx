@@ -1,10 +1,13 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectTemplateBlueprintSchema,type ProjectTemplateBlueprint} from "@/modules/projects/validation";
 import {projectMutation} from "./project-api";
 type Resource=ProjectTemplateBlueprint["resources"][number];
-const cls="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
+const cls="mt-1 w-full";
 export function SuperAdminTemplateResourceEditor({templateId,title,summary,currentVersion,blueprint}:{
  templateId:string;title:string;summary:string|null;currentVersion:number;blueprint:ProjectTemplateBlueprint;
 }){
@@ -34,7 +37,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   }catch(e){setError(e instanceof Error?e.message:"Could not save resources");}
   finally{setPending(false);}
  }
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section className="space-y-3 border-b border-border pb-5">
   <div className="flex items-center justify-between">
    <h2 className="font-semibold">Template resources</h2>
    <button type="button" onClick={()=>setOpen(v=>!v)}
@@ -44,26 +47,26 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   {open?<div className="space-y-4">
    {rows.map((row,i)=><fieldset key={row.key} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
     <legend className="px-2 text-sm font-semibold">Resource {i+1}</legend>
-    <label className="text-xs font-semibold">Key<input value={row.key} maxLength={64}
+    <label className="text-xs font-semibold">Key<Input value={row.key} maxLength={64}
       onChange={e=>change(i,{key:e.target.value})} className={cls}/></label>
-    <label className="text-xs font-semibold">Title<input value={row.title} maxLength={200}
+    <label className="text-xs font-semibold">Title<Input value={row.title} maxLength={200}
       onChange={e=>change(i,{title:e.target.value})} className={cls}/></label>
-    <label className="text-xs font-semibold">Type<select value={row.type??"LINK"}
+    <label className="text-xs font-semibold">Type<Select value={row.type??"LINK"}
       onChange={e=>change(i,{type:e.target.value as Resource["type"]})} className={cls}>
       {["LINK","PDF","DOCUMENT","SLIDES","VIDEO","FILE"].map(v=><option key={v} value={v}>{v}</option>)}
-    </select></label>
-    <label className="text-xs font-semibold">Status<select value={row.status??"ACTIVE"}
+    </Select></label>
+    <label className="text-xs font-semibold">Status<Select value={row.status??"ACTIVE"}
       onChange={e=>change(i,{status:e.target.value as Resource["status"]})} className={cls}>
       {["ACTIVE","DRAFT","ARCHIVED"].map(v=><option key={v} value={v}>{v}</option>)}
-    </select></label>
-    <label className="text-xs font-semibold sm:col-span-2">URL<input value={row.url??""}
+    </Select></label>
+    <label className="text-xs font-semibold sm:col-span-2">URL<Input value={row.url??""}
       onChange={e=>change(i,{url:e.target.value||undefined})}
       placeholder="https://" className={cls}/></label>
     <label className="text-xs font-semibold sm:col-span-2">Description
-     <textarea value={row.description??""} onChange={e=>change(i,{description:e.target.value||undefined})}
+     <Textarea value={row.description??""} onChange={e=>change(i,{description:e.target.value||undefined})}
       className={cls+" min-h-20"}/></label>
     <label className="text-xs font-semibold sm:col-span-2">Access notes
-     <textarea maxLength={2000} value={row.accessNotes??""}
+     <Textarea maxLength={2000} value={row.accessNotes??""}
       onChange={e=>change(i,{accessNotes:e.target.value||undefined})}
       className={cls+" min-h-16"}/></label>
     <label className="flex items-center gap-2 text-xs font-semibold"><input type="checkbox"
