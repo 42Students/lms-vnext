@@ -7,8 +7,15 @@ import {activityEvents} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
+/** Legacy imported-row counters are trustworthy only when nonnegative integers. */
+function safeCount(value:unknown):number{
+ return typeof value==="number"&&Number.isSafeInteger(value)&&value>=0?value:0;
+}
 export async function listCollegeStudentImportHistory(ctx:RequestContext,raw:unknown){
- const page=z.coerce.number().int().min(1).max(500).parse(raw??1);
+ const page=z.union([
+  z.number().int().min(1).max(500),
+  z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(500)),
+ ]).parse(raw??1);
  const member=ctx.membership;
  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
   throw new AuthorizationError("people.manage");
@@ -30,9 +37,9 @@ export async function listCollegeStudentImportHistory(ctx:RequestContext,raw:unk
  });
  return{page,items:rows.slice(0,20).map(row=>({
   id:row.id,when:row.when,
-  students:typeof row.metadata.count==="number"?row.metadata.count:0,
-  imported:typeof row.metadata.created==="number"?row.metadata.created:0,
-  partial:typeof row.metadata.partial==="number"?row.metadata.partial:0,
-  failed:typeof row.metadata.failed==="number"?row.metadata.failed:0,
+  students:safeCount(row.metadata.count),
+  imported:safeCount(row.metadata.created),
+  partial:safeCount(row.metadata.partial),
+  failed:safeCount(row.metadata.failed),
  })),hasNext:rows.length>20};
 }
