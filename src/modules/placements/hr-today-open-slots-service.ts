@@ -18,6 +18,7 @@ export async function listRecruiterTodayRoundsNeedingSlots(
   eq(placementJobs.id,placementJobRounds.jobId))
  .where(and(inArray(placementJobRounds.jobId,ids),
   eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED"),
+  isNull(placementJobs.archivedAt),
   eq(placementJobRounds.kind,"INTERVIEW"),eq(placementJobRounds.status,"SCHEDULED"),
   gt(placementJobRounds.scheduledAt,now),
   // Exclude already covered rounds *before* the bounded query. Filtering
