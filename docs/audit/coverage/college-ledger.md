@@ -156,3 +156,11 @@ Both use isolated service mocks and server-rendered markup, **not** end-to-end b
 | Export | Test | Coverage / outstanding |
 | --- | --- | --- |
 | `src/modules/people/college-import-history-service.ts` `listCollegeStudentImportHistory` | `tests/unit/chat4-college-student-import-history.test.ts` (`COL-people-import-history-01`) | Reject malformed/ambiguous numeric strings before SQL, deny ordinary learner/inactive College Admin, recheck persisted `people.manage` before any event rows, page by 20 with 21-row lookahead and correct offset, map metadata counts safely and suppress negative, fractional, infinite or NaN counts. No real PostgreSQL race or UI browser run. |
+
+## Faculty CSV registration and preview
+
+| Export | Behavioral test | Coverage / caveats |
+| --- | --- | --- |
+| `src/modules/people/college-faculty-csv-service.ts` `runCollegeFacultyCsv`, `FACULTY_CSV_COLUMNS` | `tests/unit/chat4-college-faculty-csv-import.test.ts` (`COL-people-faculty-csv-01`) | PREVIEW has no mutations, 500-row structural cap, explicit confirmation/unknown-field validation, wrong role/deactivated account denial, duplicate mobile/email/casefolding, invalid type, normalized +91 phone and legacy faculty title, successful College-scoped onboarding/profile, distinct safe FAILED vs PARTIAL receipts without exposing exception details. Real identity/index conflicts and cross-request rate limits remain PostgreSQL/integration gates. |
+
+New tests have not been executed.
