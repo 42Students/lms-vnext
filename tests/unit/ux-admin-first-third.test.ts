@@ -301,7 +301,12 @@ describe("Super Admin UX first-third rollout",()=>{
   expect(page).toContain('mobilePriority:"action"');
   expect(page).toContain('No matching learners');
   expect(page).toContain('overridesModule:query.overridesModule');
-  expect(page).toContain('sticky left-0 z-10 bg-surface');
+  const table=read("src/components/ui/data-table.tsx");
+  const cue=read("src/components/ui/scroll-cue.tsx");
+  expect(table).toContain("sm:first:sticky sm:first:left-0");
+  expect(table).toContain('<ScrollCue axis="x"');
+  expect(cue).toContain("tabIndex={edges.scrollable ? 0 : -1}");
+  expect(page).toContain('mobilePriority:"action"');
  });
  it("UX-admin-features-02 mounts module editors once and retains accessible matrix controls",()=>{
   const page=read("src/app/(authenticated)/admin/features/page.tsx");
