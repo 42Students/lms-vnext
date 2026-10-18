@@ -140,3 +140,6 @@ All four are DONE in reviewed source. No local CI, PostgreSQL or browser run was
 
 
 | SA-COMPANY-HISTORY-PLACED-07 | DONE in source; CI pending | Hired applicants in `admin-company-drive-history-service.ts` now require accepted offer + joined outcome and distinct application, in addition to college-scoped membership. `tests/unit/chat13-company-drive-history-visible-totals.test.ts`; execution pending. |
+
+
+| SA-placements-projects-13-409 | DONE in source, concurrency test pending | Published metadata edit now returns existing typed `PLACEMENT_JOB_STALE` (HTTP 409) and exact safe reload guidance rather than unhandled 500. Epoch-equivalent timezone versions accepted, DB milliseconds CAS retained. `tests/unit/chat13-published-drive-edit.test.ts`. Published audience changes remain PARTIAL. |
