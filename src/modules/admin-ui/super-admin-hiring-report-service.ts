@@ -48,9 +48,17 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
     eq(colleges.id,selected.collegeId),
     selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined))
-  .leftJoin(placementApplications,and(eq(placementApplications.jobId,placementJobs.id),applicationFilters))
-  .leftJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
-    eq(collegeMemberships.collegeId,selected.collegeId)))
+  // Keep zero-application jobs in this LEFT JOIN, but never let an
+  // application with a foreign-college membership into the aggregates.
+  // A separate LEFT JOIN on memberships is insufficient: COUNT(application.id)
+  // still includes the unmatched foreign application.
+  .leftJoin(placementApplications,and(
+    eq(placementApplications.jobId,placementJobs.id),
+    applicationFilters,
+    exists(db.select({id:collegeMemberships.id}).from(collegeMemberships)
+      .where(and(eq(collegeMemberships.id,placementApplications.membershipId),
+        eq(collegeMemberships.collegeId,selected.collegeId)))),
+  ))
   .leftJoin(placementCollegeApplicationStages,and(
     eq(placementCollegeApplicationStages.applicationId,placementApplications.id),
     eq(placementCollegeApplicationStages.jobId,placementJobs.id)))
