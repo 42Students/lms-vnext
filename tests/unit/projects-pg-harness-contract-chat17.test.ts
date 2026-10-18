@@ -123,6 +123,12 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("supplied role option is not active on this drive");
  });
 
+ it("PROJ-HARNESS-GUARD-15 creates a true sibling-college fixture without reusing a membership",()=>{
+   expect(helper).toContain("export async function createSiblingCollege");
+   expect(helper).toContain("parent.organizationId,name");
+   expect(helper).toContain("organizationId:parent.organizationId, collegeId:row!.id");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");
