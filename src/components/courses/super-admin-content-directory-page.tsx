@@ -58,26 +58,37 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+"."}/>
  </div>;
- const loaded=await Promise.all([
+ // Directory reads must remain available even when an independent
+ // authoring picker or Section-filter options service is temporarily down.
+ const [dataResult,lessonsResult,sectionsResult]=await Promise.allSettled([
   listSuperAdminContentDirectory(context,kind,parsed.data),
   listSuperAdminContentAuthoringLessons(context),
   listSuperAdminContentSectionOptions(context),
- ]).then(([data,lessons,sections])=>({ok:true as const,data,lessons,sections}))
-   .catch(()=>({ok:false as const}));
- if(!loaded.ok)return <div className="space-y-5">
+ ]);
+ if(dataResult.status==="rejected")return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
   <ErrorState title="Content directory unavailable"
    description="The selected college content could not be loaded. Your filters are unchanged."
    action={<Link href={adminContentHref(kind,parsed.data)}
     className="font-semibold text-[var(--lms-teal-deep)]">Retry loading content</Link>}/>
  </div>;
- const {data,lessons,sections}=loaded;
+ const data=dataResult.value;
+ const lessons=lessonsResult.status==="fulfilled"?lessonsResult.value:[];
+ const sections=sectionsResult.status==="fulfilled"?sectionsResult.value:[];
  const offerings=[...new Map(lessons.map(item=>[item.offeringId,{id:item.offeringId,name:item.courseCode+" · "+item.courseName}])).values()];
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}
    description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}/>
-  <SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false} />
+  {lessonsResult.status==="fulfilled"
+   ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false}/>
+   :<p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+     Content authoring options are temporarily unavailable. Existing content remains visible.
+    </p>}
+  {sectionsResult.status==="rejected"?<p role="status"
+   className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+     Section filter choices are temporarily unavailable. Your selected filters are still applied.
+   </p>:null}
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
