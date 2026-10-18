@@ -108,3 +108,20 @@ The published unit-failure report (`ff6819dd`) is stale for chat-16's two listed
 | UX-chat16-public-placements-01..06 | S2, public page route state behaviours needed direct page invocation evidence | New SSR unit tests for unknown host/unpublished denial, published aggregate, partial content failure and branding/statistics outages. No production page behaviour changed | `7391bc72e802` | `tests/unit/chat16-public-placement-page-states-03.test.tsx`; not run |
 
 These are isolated branch-source corrections, not claims of end-to-end email delivery or full module certification. The dev-only orchestrator still needs to run the authored suites, typecheck, real PostgreSQL and browser/provider verification.
+
+## 2026-10-19: follow-on hardening (CI held by owner)
+
+| ID | Severity | Root cause and correction | Test | Evidence |
+|---|---|---|---|---|
+| HR-EMAIL-DIGEST-UNICODE-01 | S3 | HTML-escaped digest excerpts could terminate in an unmatched high surrogate when the 4,000-unit cap cut an emoji. Clip at a codepoint boundary before partial-entity suppression. | `tests/unit/chat16-messaging-unicode-boundaries-07.test.ts` | `cf2fb2e3c397` |
+| HR-CONVERSATIONS-UNICODE-02 | S3 | Recruiter one-line inbox previews could render an invalid partial emoji. Preserve the 120-unit maximum while keeping valid UTF-16. | same | `6114672eaf98` |
+| INBOUND-MAIL-UNICODE-03/04 | S3 | Long untrusted inbound list/drawer copy could be cut midway through a surrogate pair. Preserve complete Unicode at existing length caps. | same | `4c33204f6074`, `486742457204` |
+| HR-MAIL-INBOUND-BYTES-08..10 | S2 | Direct service invocation bypassed the route's streaming cap and could process a signed oversized JSON body and reach private DB checks. Add a fail-closed 20 KB bound prior to HMAC, JSON parsing or DB access. | `tests/unit/chat16-recruiter-mail-inbound-service-byte-cap-08.test.ts` | `abd1998c2371` |
+| REC-MESSAGE-BIDI-11 / TPO-UNSUB-BIDI-12 / INBOUND-MAIL-BIDI-13 | S2 | Spoofed Unicode right-to-left override/isolate marks in recruiter messages, CRM names and incoming-mail previews could reorder customer-visible bell text. Remove directional controls, retain valid ZWJ emoji and normal legacy wording. | `tests/unit/chat16-recruiter-bidi-notification-safety-11.test.ts` | `42b83abbbe35`, `45e4a8213c52`, `8cbfcc35476b` |
+
+Source only: new direct tests and TypeScript remain unexecuted per no-CI directive. No sign-off of provider delivery, mail gateway, browser, database or deployment.
+
+
+| MSG-POLICY-INITIAL-14/15 | S2 | An initial policy repository read error used to reject `deliverBatch` after some earlier recipients had already been sent; `auditBatch` was skipped and the provider could have accepted side effects without final aggregate status. Record a per-recipient fail-closed `FAILED` receipt and continue safely, then audit the complete batch. | `tests/unit/chat16-messaging-initial-policy-outage-14.test.ts` (authored, unrun) | `713ae457f910` |
+
+The initial-policy failure branch deliberately never contacts the provider for that recipient. This does not claim exactly-once delivery across worker crashes or transactional persistence.

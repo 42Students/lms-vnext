@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
+ from "@/modules/projects/mentor-command-body";
 import {
   listProjectMeetings,
   scheduleProjectMeeting,
@@ -45,7 +47,7 @@ export async function POST(
   try {
     const context = await getCurrentRequestContext();
     const { projectId } = await params;
-    const body = await request.json();
+    const body = readMentorProjectCommandBody(request);
     const meeting = await scheduleProjectMeeting(
       context,
       projectId,
@@ -58,6 +60,9 @@ export async function POST(
       { status: 201 },
     );
   } catch (error) {
+    if(error instanceof MentorProjectCommandBodyError)
+      return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},
+        {status:error.status});
     return apiErrorResponse(error);
   }
 }

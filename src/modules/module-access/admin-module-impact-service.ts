@@ -1,12 +1,25 @@
 import "server-only";
 import {moduleDisableImpactSummary} from "./admin-module-impact-model";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {and,count,countDistinct,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {colleges,collegeMemberships,membershipRoles,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers} from "@/db/schema";
+import {colleges,collegeMemberships,membershipRoles,users,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 const id=z.uuid();
+/** Only return aggregate tenant counts while the persisted Super Admin role
+ * and this exact active college's scope are still valid. */
+async function assertCurrentImpactScope(ctx:RequestContext,collegeId:string,organizationId:string){
+ await getDb().transaction(async tx=>{
+  const [college]=await tx.select({status:colleges.status,organizationId:colleges.organizationId})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
+  if(!college||college.status!=="ACTIVE"||college.organizationId!==organizationId)
+   throw new AuthorizationError("college.read");
+  const live=await assertPersistedPlatformPermission(tx,ctx,"college.read",{collegeId,organizationId});
+  if(!isSuperAdmin(live))throw new AuthorizationError("admin-scope.select");
+ });
+}
 export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:string,moduleRaw:string){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
  requirePermission(ctx,"admin-scope.select");
@@ -21,8 +34,9 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
   .innerJoin(membershipRoles,and(
    eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"LEARNER")))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .where(and(eq(collegeMemberships.collegeId,collegeId),
-   eq(collegeMemberships.status,"ACTIVE")));
+   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
  const students=population?.total??0;
  if(moduleName==="projects"){
   const [row]=await db.select({total:count()}).from(projectMembers)
@@ -30,6 +44,7 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
    .where(and(eq(projectInstances.collegeId,collegeId),eq(projectInstances.status,"ACTIVE"),
      eq(projectMembers.role,"MENTOR"),eq(projectMembers.isPrimary,true),isNull(projectMembers.endedAt)));
   const counts=[row?.total??0];
+  await assertCurrentImpactScope(ctx,collegeId,college.organizationId);
   return {module:moduleName,students,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
  if(moduleName==="placements"){
@@ -45,7 +60,9 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
     .where(and(eq(placementJobs.collegeId,collegeId),eq(placementOffers.status,"ISSUED"))),
   ]);
   const counts=[drives[0]?.total??0,applications[0]?.total??0,offers[0]?.total??0];
+  await assertCurrentImpactScope(ctx,collegeId,college.organizationId);
   return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
+ await assertCurrentImpactScope(ctx,collegeId,college.organizationId);
  return {module:moduleName,students,counts:[],summary:moduleDisableImpactSummary(moduleName,[])};
 }

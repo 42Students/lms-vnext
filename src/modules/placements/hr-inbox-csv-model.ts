@@ -13,10 +13,13 @@ export function buildHrInboxCsv(rows:readonly HrInboxExportRow[],total:number){
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  });
  for(const item of selected){
-  out.push([item.title,item.label,date.format(item.createdAt),
+  const received=Number.isFinite(item.createdAt.getTime())
+   ?date.format(item.createdAt):"Date unavailable";
+  out.push([item.title,item.label,received,
    item.unread?"Yes":"No"].map(safeCsvCell).join(","));
  }
- const omitted=Math.max(0,total-selected.length);
+ const authorizedTotal=Number.isSafeInteger(total)&&total>=0?total:selected.length;
+ const omitted=Math.max(0,authorizedTotal-selected.length);
  if(omitted)out.push(["Export capped","Additional authorized notifications omitted","",""]
   .map(safeCsvCell).join(","));
  return {csv:"\uFEFF"+out.join("\r\n")+"\r\n",exported:selected.length,omitted};

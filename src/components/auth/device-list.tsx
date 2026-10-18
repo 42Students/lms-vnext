@@ -11,13 +11,13 @@ import { useToast } from "@/components/ui/toast";
 export type DeviceRow = {
   id: string;
   label: string;
-  createdAt: string;
-  lastSeenAt: string;
+  createdAt: string | null;
+  lastSeenAt: string | null;
   current: boolean;
 };
 
-function when(value: string) {
-  return formatDateTimeIst(value);
+function when(value: string | null) {
+  return value ? formatDateTimeIst(value) : "Time unavailable";
 }
 
 export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
