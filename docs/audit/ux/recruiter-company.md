@@ -8,3 +8,5 @@
 - **Evidence remaining:** browser at 320/360/390px, keyboard/SR, typecheck and unit execution by orchestrator. Do not mark accepted before those pass.
 
 - **Route-level loading and retry:** The alias retains the shared GracefulPageLoading and GracefulErrorBoundary wrappers, both now asserted alongside the canonical PageHeader. No duplicated HR authorization or UI copy; phone/browser acceptance remains unexecuted.
+
+- **Acceptance blocker (canonical HR ownership):** The effective /hr/company website link currently opens `target="_blank"` and accepts HTTP; this violates the signed-off WebView-safe same-tab HTTPS policy. Requires the HR lane to swap the canonical anchor to the shared ThirdPartyLink. The recruiter alias intentionally remains unchanged so it does not fork its HR route. Do not tick as device/source accepted until this is resolved.
