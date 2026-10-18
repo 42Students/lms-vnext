@@ -347,6 +347,7 @@ async function requireProjectCollegeActor(db: PgHarness, projectId: string,
 export async function createTaskSubmission(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture): Promise<string> {
   await requireProjectLearner(db, project.projectId, learner);
+  await requireMutableFixtureProject(db, project.projectId, "task submissions");
   // The schema has separate task_id and project_id foreign keys. Neither
   // alone proves that a task belongs to the selected workspace.
   const tasks = await db.query<{id:string}>(
@@ -363,18 +364,20 @@ export async function createTaskSubmission(db: PgHarness, project: ProjectFixtur
     [project.projectId,project.taskId,learner.membershipId,"https://example.test/proof"]);
   return row!.id;
 }
-async function requireOpenFinalDeliveryProject(db: PgHarness, projectId: string): Promise<void> {
+async function requireMutableFixtureProject(
+  db: PgHarness, projectId: string, activity: "task submissions" | "final delivery" | "meetings",
+): Promise<void> {
   const rows = await db.query<{id:string}>(`
     select id from project_instances
      where id=$1 and status not in ('ARCHIVED','COMPLETED')
      limit 1`,[projectId]);
-  if (rows.length !== 1) throw new Error("PROJ-HARNESS: project final delivery is closed");
+  if (rows.length !== 1) throw new Error("PROJ-HARNESS: project " + activity + " is closed");
 }
 
 export async function createFinalSubmission(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture): Promise<string> {
   await requireProjectLearner(db, project.projectId, learner);
-  await requireOpenFinalDeliveryProject(db, project.projectId);
+  await requireMutableFixtureProject(db, project.projectId, "final delivery");
   const [row] = await db.query<{id:string}>(`
     insert into project_submissions (project_id,version,status,summary,created_by_membership_id)
     values ($1,1,'DRAFT','Harness final proof',$2) returning id`,
@@ -390,7 +393,7 @@ export async function submitFinalSubmission(db: PgHarness, submissionId: string,
     "select project_id from project_submissions where id=$1", [submissionId]);
   if (submissions.length !== 1) throw new Error("PROJ-HARNESS: submission not found");
   await requireProjectLearner(db, submissions[0]!.project_id, learner);
-  await requireOpenFinalDeliveryProject(db, submissions[0]!.project_id);
+  await requireMutableFixtureProject(db, submissions[0]!.project_id, "final delivery");
   const rows = await db.query<{id:string}>(`
     update project_submissions
        set status='SUBMITTED',submitted_by_membership_id=$2,submitted_at=now(),updated_at=now()
@@ -401,6 +404,7 @@ export async function submitFinalSubmission(db: PgHarness, submissionId: string,
 export async function createMeeting(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture, author: PrincipalFixture): Promise<string> {
   await requireProjectLearner(db, project.projectId, learner);
+  await requireMutableFixtureProject(db, project.projectId, "meetings");
   await requireProjectCollegeActor(db, project.projectId, author);
   await requireFixtureCollegePrincipal(db, author.collegeId!, author, ["COLLEGE_ADMIN","MENTOR"]);
   const coordinator = await db.query<{id:string}>(`
