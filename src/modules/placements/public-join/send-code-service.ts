@@ -150,22 +150,22 @@ export async function requestPublicJoinCode(
   if (!sent) throw new PublicJoinCodeError("DELIVERY_FAILED");
   // Show a company only after we have successfully sent a verification code
   // to the provided mailbox, never as an unauthenticated domain oracle.
-  return { sent: true,companyName:await lookupDeliveredJoinCompanyName(email) };
+  return { sent: true,...(await lookupDeliveredJoinCompanyName(email)) };
 }
 
 /** Optional identity-safe company hint. A lookup outage after code acceptance
  * must not turn a successfully sent OTP into a false DELIVERY_FAILED. */
-export async function lookupDeliveredJoinCompanyName(email:string):Promise<string|null>{
+export async function lookupDeliveredJoinCompanyName(email:string):Promise<{companyName:string|null}>{
  const domain=registrableWorkDomain(email);
- if(!domain)return null;
+ if(!domain)return {companyName:null};
  try{
   const [known]=await getDb().select({name:placementCompanies.name})
    .from(placementCompanies).where(and(
     eq(placementCompanies.primaryDomain,domain),
     eq(placementCompanies.status,"ACTIVE"),
    )).limit(1);
-  return known?.name??null;
+  return {companyName:known?.name??null};
  }catch{
-  return null;
+  return {companyName:null};
  }
 }
