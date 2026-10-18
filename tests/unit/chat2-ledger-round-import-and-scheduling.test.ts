@@ -26,8 +26,8 @@ describe("TPO-drive-workspace-40/44 round import and scheduling ledger",()=>{
  });
  it("flags ranks for non-HOLD statuses and rank bounds",()=>{
   const result=parseTpoRoundImport(csv("Application ID,Result,Rank\n"+uuid+",PASS,1\n"+other+",HOLD,0\n"),"round.csv");
-  expect(result[0]?.invalidRank).toBe(true);
-  expect(result[1]?.invalidRank).toBe(true);
+  expect(result[0]).toMatchObject({invalidRank:true,rank:null});
+  expect(result[1]).toMatchObject({invalidRank:true,rank:null});
  });
  it("rejects spreadsheet-notated or out-of-range waitlist ranks without silently normalizing them",()=>{
   for(const rank of ["1e2","0x10","1.5","0","100001","001","-1"]){
