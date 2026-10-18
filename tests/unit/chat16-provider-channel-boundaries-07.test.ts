@@ -143,4 +143,38 @@ describe("chat-16 generic campaign and recruiter email channel fail-closed behav
     expect(transport).not.toHaveBeenCalled();
   });
 
+  it("MSG-SMS-PROVIDER-04 refuses whitespace-only Exotel credentials and DLT registration", async () => {
+    for (const change of [
+      { apiKey: " " }, { apiToken: "  " }, { dltEntityId: "\t " },
+    ]) {
+      const outbound = createOutboundProvider({
+        ...config, sms: { ...config.sms, ...change },
+      }, fetch, { APP_ENV: "production" });
+      expect(await outbound.send(sms)).toBe(false);
+    }
+    for (const template of [
+      { exotelSenderId: "   " },
+      { exotelDltTemplateId: "  " },
+    ]) {
+      const outbound = createOutboundProvider({
+        ...config, templates: { [templateKey]: {
+          ...config.templates[templateKey], ...template,
+        } },
+      }, fetch, { APP_ENV: "production" });
+      expect(await outbound.send(sms)).toBe(false);
+    }
+    expect(outboundFetch).not.toHaveBeenCalled();
+  });
+
+  it("REC-JOIN-CODE-ZEPTO-05 rejects blank OTP template in public recruiter join flow", async () => {
+    vi.stubEnv("APP_ENV", "production");
+    vi.stubEnv("ZEPTOMAIL_TOKEN", "valid-token");
+    vi.stubEnv("ZEPTOMAIL_OTP_TEMPLATE_KEY", "  ");
+    const transport = vi.fn(async () => new Response(null, { status: 202 }));
+    expect(await deliverPublicRecruiterJoinCode(
+      "recruiter@example.org", "123456", transport as unknown as typeof fetch,
+    )).toBe(false);
+    expect(transport).not.toHaveBeenCalled();
+  });
+
 });

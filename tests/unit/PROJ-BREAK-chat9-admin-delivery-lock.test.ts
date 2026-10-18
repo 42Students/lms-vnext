@@ -1,0 +1,104 @@
+import {beforeEach,describe,expect,it,vi} from "vitest";
+import type {RequestContext} from "@/modules/identity/context";
+import {lockAdminProjectSubmission} from "@/modules/projects/admin-submission-review-service";
+
+const projectId="11111111-1111-4111-8111-111111111111";
+const submissionId="22222222-2222-4222-8222-222222222222";
+const collegeId="33333333-3333-4333-8333-333333333333";
+const organizationId="44444444-4444-4444-8444-444444444444";
+const state=vi.hoisted(()=>({
+ projectStatus:"ACTIVE",submissionStatus:"SUBMITTED",
+ lockedAt:null as Date|null,found:true,checks:0,allowed:true,
+ updates:0,deliveryEvents:0,activityEvents:0,
+}));
+vi.mock("@/modules/projects/access",()=>({
+ requireProjectManageAccess:async()=>({
+  project:{id:projectId},collegeId,organizationId,
+ }),
+}));
+vi.mock("@/modules/permissions/persisted-actor",()=>({
+ assertPersistedPlatformPermission:async(_tx:unknown,ctx:RequestContext)=>{
+  state.checks+=1;
+  if(!state.allowed)throw new Error("Missing permission: projects.manage");
+  return ctx;
+ },
+}));
+vi.mock("@/modules/activity/service",()=>({
+ recordActivityEventInTransaction:async()=>{state.activityEvents+=1;return {id:"event"};},
+}));
+vi.mock("@/db/client",()=>({
+ getDb:()=>({
+  transaction:async(run:(tx:unknown)=>Promise<unknown>)=>{
+   let reads=0;
+   const tx={
+    select:()=>{
+     const step=reads++;
+     const rows=step===0?[{status:state.projectStatus}]:
+      state.found?[{id:submissionId,projectId,status:state.submissionStatus,
+       lockedAt:state.lockedAt,version:2}]:[];
+     const q={from:()=>q,where:()=>q,for:()=>q,limit:async()=>rows};
+     return q;
+    },
+    update:()=>({set:(value:{lockedAt:Date})=>({
+     where:()=>({returning:async()=>{
+      state.updates+=1;state.lockedAt=value.lockedAt;
+      return [{id:submissionId,projectId,status:state.submissionStatus,
+       lockedAt:state.lockedAt,version:2}];
+     }}),
+    })}),
+    insert:()=>({values:async()=>{state.deliveryEvents+=1;}}),
+   };
+   return run(tx);
+  },
+ }),
+}));
+const actor=():RequestContext=>({
+ user:{id:"55555555-5555-4555-8555-555555555555",identityUid:"admin",
+  platformStatus:"ACTIVE",systemRoles:[]},
+ membership:{id:"66666666-6666-4666-8666-666666666666",
+  collegeId,organizationId,status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
+ adminScope:null,
+});
+beforeEach(()=>{
+ state.projectStatus="ACTIVE";state.submissionStatus="SUBMITTED";state.lockedAt=null;
+ state.found=true;state.checks=0;state.allowed=true;
+ state.updates=0;state.deliveryEvents=0;state.activityEvents=0;
+});
+describe("IIT Dharwad College Admin delivery final lock transaction",()=>{
+ it("PROJ-BREAK-races-18 duplicate lock returns the winner without another delivery/activity event",async()=>{
+  const initial=await lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Final review"});
+  expect(initial.lockedAt).toBeInstanceOf(Date);
+  const stamp=initial.lockedAt?.getTime();
+  const retry=await lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Final review"});
+  expect(retry.lockedAt?.getTime()).toBe(stamp);
+  expect(state.updates).toBe(1);
+  expect(state.deliveryEvents).toBe(1);
+  expect(state.activityEvents).toBe(1);
+  expect(state.checks).toBe(2);
+ });
+ it("PROJ-BREAK-state-26 archived project cannot lock or retry an existing final lock",async()=>{
+  state.projectStatus="ARCHIVED";
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Bad archive lock"}))
+   .rejects.toThrow("PROJECT_SUBMISSION_INVALID_STATE");
+  state.lockedAt=new Date();
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Bad archive retry"}))
+   .rejects.toThrow("PROJECT_SUBMISSION_INVALID_STATE");
+  expect(state.updates).toBe(0);
+  expect(state.activityEvents).toBe(0);
+ });
+ it("PROJ-BREAK-idor-49 stale persisted role cannot return even a previously locked row",async()=>{
+  state.lockedAt=new Date();state.allowed=false;
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Stale actor"}))
+   .rejects.toThrow("Missing permission: projects.manage");
+  expect(state.updates).toBe(0);
+  expect(state.deliveryEvents).toBe(0);
+ });
+ it("PROJ-BREAK-input-36 malformed reasons and absent submissions never create events",async()=>{
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:""})).rejects.toThrow();
+  state.found=false;
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Present"}))
+   .rejects.toThrow("PROJECT_SUBMISSION_INVALID_STATE");
+  expect(state.updates).toBe(0);
+  expect(state.activityEvents).toBe(0);
+ });
+});

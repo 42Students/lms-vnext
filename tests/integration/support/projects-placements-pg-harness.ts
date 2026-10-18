@@ -239,9 +239,11 @@ async function requireFixtureCollegePrincipal(
       join users u on u.id = cm.user_id
       join membership_roles mr on mr.membership_id = cm.id
       join colleges c on c.id = cm.college_id
+      join organizations org on org.id = c.organization_id
      where cm.id = $1 and cm.college_id = $2 and u.id = $3
        and cm.status = 'ACTIVE' and u.platform_status = 'ACTIVE'
-       and c.status = 'ACTIVE' and mr.role = any($4::membership_role[])
+       and c.status = 'ACTIVE' and org.status = 'ACTIVE'
+       and mr.role = any($4::membership_role[])
      limit 1`, [actor.membershipId, collegeId, actor.userId, roles]);
   if (!rows.length) throw new Error("PROJ-HARNESS: actor is not an active member in the required role");
 }
@@ -314,6 +316,9 @@ async function requireProjectLearner(db: PgHarness, projectId: string,
       join college_memberships cm
         on cm.college_id = p.college_id and cm.id = $2 and cm.college_id = $3
       join users u on u.id = cm.user_id and u.id = $4 and u.platform_status = 'ACTIVE'
+      join colleges c on c.id = p.college_id and c.status = 'ACTIVE'
+      join organizations org on org.id = c.organization_id and org.status = 'ACTIVE'
+      join membership_roles mr on mr.membership_id = cm.id and mr.role = 'LEARNER'
       join project_members pm
         on pm.project_id = p.id and pm.membership_id = cm.id
      where p.id = $1
@@ -332,6 +337,8 @@ async function requireProjectCollegeActor(db: PgHarness, projectId: string,
       join college_memberships cm
         on cm.college_id = p.college_id and cm.id = $3 and cm.status = 'ACTIVE'
       join users u on u.id = cm.user_id and u.id = $4 and u.platform_status = 'ACTIVE'
+      join colleges c on c.id = p.college_id and c.status = 'ACTIVE'
+      join organizations org on org.id = c.organization_id and org.status = 'ACTIVE'
      where p.id = $1 and p.college_id = $2`,
     [projectId, actor.collegeId, actor.membershipId, actor.userId]);
   if (!rows.length) throw new Error("PROJ-HARNESS: project actor wrong college");
@@ -340,6 +347,15 @@ async function requireProjectCollegeActor(db: PgHarness, projectId: string,
 export async function createTaskSubmission(db: PgHarness, project: ProjectFixture,
   learner: PrincipalFixture): Promise<string> {
   await requireProjectLearner(db, project.projectId, learner);
+  // The schema has separate task_id and project_id foreign keys. Neither
+  // alone proves that a task belongs to the selected workspace.
+  const tasks = await db.query<{id:string}>(
+    "select id from project_tasks where id=$1 and project_id=$2",
+    [project.taskId, project.projectId],
+  );
+  if (tasks.length !== 1) {
+    throw new Error("PROJ-HARNESS: task does not belong to this project");
+  }
   const [row] = await db.query<{id:string}>(`
     insert into project_task_submissions
       (project_id,task_id,version,submitted_by_membership_id,submission_url)
@@ -377,6 +393,19 @@ export async function createMeeting(db: PgHarness, project: ProjectFixture,
   await requireProjectLearner(db, project.projectId, learner);
   await requireProjectCollegeActor(db, project.projectId, author);
   await requireFixtureCollegePrincipal(db, author.collegeId!, author, ["COLLEGE_ADMIN","MENTOR"]);
+  const coordinator = await db.query<{id:string}>(`
+    select cm.id from college_memberships cm
+      left join membership_roles admin
+        on admin.membership_id=cm.id and admin.role='COLLEGE_ADMIN'
+      left join project_members mentor
+        on mentor.membership_id=cm.id and mentor.project_id=$2
+       and mentor.role='MENTOR' and mentor.ended_at is null
+       and mentor.can_mutate=true
+     where cm.id=$1 and (admin.membership_id is not null or mentor.id is not null)
+     limit 1`, [author.membershipId,project.projectId]);
+  if (coordinator.length !== 1) {
+    throw new Error("PROJ-HARNESS: meeting mentor is not active on this project");
+  }
   const [row] = await db.query<{id:string}>(`
     insert into project_meetings
       (project_id,title,starts_at,ends_at,time_zone,requested_by_membership_id,created_by_user_id)
