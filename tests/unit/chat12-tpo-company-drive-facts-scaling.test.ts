@@ -34,7 +34,7 @@ describe("TPO-companies-scale-01 company directory batching and correct evidence
  });
  it("TPO-companies-scale-02 caps SQL predicates at 500 unique drive IDs while preserving order",()=>{
   const ids=Array.from({length:1205},(_,i)=>"job-"+i);
-  const batches=tpoDriveFactIdChunks([...ids,ids[1],ids[1],ids[1204]]);
+  const batches=tpoDriveFactIdChunks([...ids,"job-1","job-1","job-1204"]);
   expect(batches.map(batch=>batch.length)).toEqual([500,500,205]);
   expect(batches.flat()).toEqual(ids);
   expect(new Set(batches.flat()).size).toBe(1205);
