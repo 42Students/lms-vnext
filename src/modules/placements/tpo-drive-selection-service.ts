@@ -170,6 +170,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
     // A previous request can issue the canonical offer and time out before
     // marking the selection RELEASED. Reconcile the exact issued offer first.
     if(selection.status==="VERIFIED"&&candidate?.offer&&
+      candidate.offer.kind==="OFFER"&&
       ["ISSUED","ACCEPTED"].includes(candidate.offer.status)&&
       candidate.offer.roleTitle===selection.roleTitle&&
       candidate.offer.annualCtcInr===selection.annualCtcInr){
@@ -188,10 +189,11 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
           if(locked.status!=="VERIFIED")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
           const [persistedOffer]=await tx.select({
             id:placementOffers.id,status:placementOffers.status,applicationId:placementOffers.applicationId,
-            roleTitle:placementOffers.roleTitle,annualCtcInr:placementOffers.annualCtcInr,
+            kind:placementOffers.kind,roleTitle:placementOffers.roleTitle,annualCtcInr:placementOffers.annualCtcInr,
           }).from(placementOffers).where(eq(placementOffers.id,offerId))
             .for("share").limit(1);
-          if(!persistedOffer||!["ISSUED","ACCEPTED"].includes(persistedOffer.status)||
+          if(!persistedOffer||persistedOffer.kind!=="OFFER"||
+            !["ISSUED","ACCEPTED"].includes(persistedOffer.status)||
             persistedOffer.applicationId!==locked.applicationId||
             persistedOffer.roleTitle!==locked.roleTitle||
             persistedOffer.annualCtcInr!==locked.annualCtcInr)
