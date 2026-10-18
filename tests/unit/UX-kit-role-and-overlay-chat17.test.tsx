@@ -328,6 +328,20 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(render(<ToastStack toasts={items} onDismiss={()=>{}}/>)).toContain("Request failed");
   });
 
+  it("UX-kit-HARDEN-59 repeated toast IDs update rather than duplicate accessible notices",()=>{
+    const old={id:"request-1",title:"Request started",tone:"info" as const};
+    const updated={id:"request-1",title:"Request finished",tone:"success" as const};
+    expect(enqueueToast([old],updated)).toEqual({items:[updated],evictedIds:[]});
+    const repeated=enqueueToast([old],updated,NaN).items;
+    expect(repeated).toHaveLength(1);
+    const html=render(<ToastStack toasts={repeated} onDismiss={()=>{}}/>);
+    expect(html).toContain("Request finished");
+    expect(html).not.toContain("Request started");
+    const numerous=Array.from({length:4},(_,i)=>({...old,id:"id-"+i}));
+    expect(enqueueToast(numerous,updated,NaN).items.filter(t=>t.tone!=="error"))
+      .toHaveLength(3);
+  });
+
   it("UX-kit-HARDEN-29 persistent errors never evict and timed toast timers are cleaned up", () => {
     const errors:ToastItem[]=Array.from({length:6},(_,i)=>({
       id:"err-"+i,title:"Could not save attempt "+i,tone:"error",

@@ -22,7 +22,11 @@ vi.mock("@/db/client",()=>({getDb:()=>({
   if(table==="classes")state.classCount=projection.learnerCount as SQL;
   class Query {
    from(){return this;}
-   innerJoin(){return this;}
+   innerJoin(_target:unknown,condition:SQL){
+    const q=dialect.sqlToQuery(condition);
+    state.joins.push({table,sql:q.sql,params:q.params});
+    return this;
+   }
    leftJoin(_target:unknown,condition:SQL){
     const q=dialect.sqlToQuery(condition);
     state.joins.push({table,sql:q.sql,params:q.params});
@@ -48,7 +52,7 @@ const actor:RequestContext={
 beforeEach(()=>{
  vi.resetAllMocks();
  state.queries=0;state.joins=[];state.classCount=null;
- state.rows.classes=[];
+ state.rows.classes=[{id:"55555555-5555-4555-8555-555555555555",name:"Section A"}];
  state.rows.roster=[];
  state.scope.mockResolvedValue({collegeId,organizationId:orgId});
 });
@@ -69,8 +73,24 @@ describe("SA-ACADEMICS-BATCH-COUNT-01 scoped active batch learner census",()=>{
   expect(sql).toContain('"college_memberships"."status"');
   expect(sql).toContain('"learner_program_enrollments"."status"');
   expect(sql).toContain('"section_enrollments"."status"');
+  expect(sql).toContain('"section_enrollments"."academic_period_id"');
+  expect(sql).toContain('"sections"."academic_period_id"');
+  expect(sql).toContain('"membership_roles"."membership_id"');
+  expect(joins.flatMap(x=>x.params)).toContain("LEARNER");
   expect(joins.flatMap(x=>x.params)).toContain("ACTIVE");
   expect(joins.flatMap(x=>x.params)).toContain(collegeId);
+  const rosterWhere=state.joins.filter(x=>x.table==="roster");
+  expect(rosterWhere.map(x=>x.sql).join("\n")).toContain('"membership_roles"."role"');
+  expect(rosterWhere.flatMap(x=>x.params)).toContain("LEARNER");
+  expect(rosterWhere.map(x=>x.sql).join("\n")).toContain('"sections"."cohort_id"');
+  expect(rosterWhere.map(x=>x.sql).join("\n")).toContain('"sections"."academic_period_id"');
+ });
+ it("SA-ACADEMICS-BATCH-EMPTY-03 skips private learner reads when no scoped Sections exist",async()=>{
+  state.rows.classes=[];
+  const result=await getSuperAdminBatchRosterOverview(actor,batchId);
+  expect(result).toMatchObject({classes:[],roster:[]});
+  expect(state.queries).toBe(2);
+  expect(state.joins.every(value=>value.table==="classes")).toBe(true);
  });
  it("returns null for a missing cohort without scanning learner membership records",async()=>{
   state.rows.batch=null as unknown as typeof state.rows.batch;

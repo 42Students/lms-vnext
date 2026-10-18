@@ -123,6 +123,14 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(cue).toHaveAttribute("data-scroll-end","false");
   });
 
+  test("UX-kit-E2E-13 permission lookup failure never mounts a restricted DataTable cell",async({page})=>{
+    await page.goto(route);
+    const table=page.locator('[data-slot="data-table"]').filter({has:page.getByText("Secure workspace")});
+    await expect(table.getByText("Secure workspace")).toBeVisible();
+    await expect(table).not.toContainText("NEVER_SERIALIZE_PRIVATE_REVIEW");
+    await expect(table.getByRole("link",{name:/View details/})).toHaveCount(0);
+  });
+
   test("UX-kit-HARDEN-45 mobile More details never discloses desktop-only private columns",async({page})=>{
     await page.setViewportSize({width:390,height:780});
     await page.goto(route);
