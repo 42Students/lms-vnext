@@ -25,6 +25,9 @@ export const collegeProjectSummaryPatch = z.strictObject({
     ctx.addIssue({code:"custom",path:["endDate"],message:"End date must be after start date."});
 });
 export function collegeProjectStatusChangeAllowed(from:string,to:string,hasMentor:boolean,approvedDelivery:boolean) {
+  // Fail closed for ARCHIVED and unknown historical states, including no-op retries.
+  const valid=["PLANNED","ACTIVE","COMPLETED"];
+  if(!valid.includes(from)||!valid.includes(to))return false;
   if(from===to)return true;
   if(from==="PLANNED"&&to==="ACTIVE")return hasMentor;
   if(from==="ACTIVE"&&to==="COMPLETED")return approvedDelivery;
