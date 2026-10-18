@@ -31,7 +31,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
   <PageHeader eyebrow="TPO · Applicant detail"
    title={data.application.student??"Name not recorded"}
    description={data.job.title+" · "+data.application.roleTitle}/>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-b border-border pb-6">
    <h2 className="font-semibold text-foreground">Application and screening</h2>
    <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
     {applicationFields.map(([label,value])=><div key={label} className="min-w-0">
@@ -48,7 +48,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
      expectedUpdatedAt={data.application.screeningUpdatedAt}/> : null}
   <ApplicantNotesPanel endpoint={"/api/placements/tpo/jobs/"+jobId+"/applicants/"+applicationId+"/notes"}
    snapshot={notes} audience="the college placement cell (TPO)"/>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-b border-border pb-6">
    <h2 className="font-semibold text-foreground">Applied round outcomes</h2>
    {data.resultsTruncated?<p role="status" className="text-sm text-body">Only 100 applied result versions examined.</p>:null}
    {data.appliedRoundResults.length===0?<p className="mt-2 text-sm text-body">No applied round outcomes recorded for this application.</p>:
@@ -59,7 +59,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
        new Date(r.appliedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Time not recorded"}</p>
      </article>)}</div>}
   </section>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-b border-border pb-6">
    <h2 className="font-semibold text-foreground">Offer and joining evidence</h2>
    {data.offersTruncated?<p role="status" className="text-sm text-body">Only the latest 100 offer versions examined.</p>:null}
    {data.offers.length===0?<p className="mt-2 text-sm text-body">No persisted offer versions for this application.</p>:

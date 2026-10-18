@@ -25,8 +25,8 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
  }).format(date)+" IST";
  return <div className="min-w-0 space-y-5">
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
-    className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-[var(--lms-link-text)] underline">← Back to drive</Link>
-  <header><h1 className="text-2xl font-semibold text-foreground">Interview slot proposals</h1>
+    className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">← Back to drive</Link>
+  <header><h1 className="font-semibold text-[30px] text-[#172033]">Interview slot proposals</h1>
    <p className="mt-2 text-sm text-body">{data.job.title} · Employer-proposed time blocks for your college.</p>
   </header>
   <p className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
