@@ -24,6 +24,12 @@ function first(value: string | string[] | undefined) {
 export function parseCollegeProjectsQuery(
   params: Record<string, string | string[] | undefined>,
 ) {
+  // A repeated filter can hide an attacker-controlled second value in a stale
+  // URL or query builder. Do not silently prefer the first value for mutations.
+  if (Object.keys(params).some(key => !["q", "status", "view", "page", "pageSize"].includes(key)) ||
+      Object.values(params).some(Array.isArray)) {
+    return schema.safeParse(null);
+  }
   const q = first(params.q);
   const status = first(params.status);
   const view = first(params.view);

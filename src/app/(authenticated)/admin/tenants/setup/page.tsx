@@ -2,6 +2,7 @@ import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {ErrorState} from "@/components/ui/error-state";
 import {getSuperAdminTenantLifecycleDetail,getSuperAdminTenantLifecycleDirectory} from "@/modules/colleges/admin-tenant-lifecycle-service";
 import {CollegeServiceError} from "@/modules/colleges/service";
 import {requirePermission,can} from "@/modules/permissions/policy";
@@ -31,20 +32,35 @@ export default async function SuperAdminTenantSetup({
  const active="border-primary bg-primary-subtle text-[var(--lms-teal-deep)]";
  const inactive="border-border text-body hover:bg-surface-subtle";
  const tabLink=(next:Tab)=>"/admin/tenants/setup?tab="+next;
- // Structure forms must never suggest an organization outside this safety scope.
- const organizations=tab==="STRUCTURE"?await listOrganizations(context):[];
+ // Read failures must never present a partial college creation path as an
+ // authorized empty organization directory or a safe-to-launch college.
+ let organizations:Awaited<ReturnType<typeof listOrganizations>>=[];
+ let list:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDirectory>>|null=null;
+ let college:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>|null=null;
+ let readiness:Awaited<ReturnType<typeof getSuperAdminCollegeReadiness>>|null=null;
+ try{
+  if(tab==="STRUCTURE"){
+   organizations=await listOrganizations(context);
+   list=await getSuperAdminTenantLifecycleDirectory(context,{status:"ALL",page:1});
+  }else if(id){
+   college=await getSuperAdminTenantLifecycleDetail(context,id);
+   requirePermission(context,"college.read",{
+    organizationId:college.organizationId,collegeId:college.id,
+   });
+   readiness=await getSuperAdminCollegeReadiness(context,college.id);
+  }
+ }catch(error){
+  if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();
+  return <div className="min-w-0 space-y-5">
+   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"/>
+   <ErrorState title="Tenant setup unavailable"
+    description="The authorized organization or college readiness information could not be verified. Setup actions are unavailable until the read succeeds."
+    action={<Link href={tabLink(tab)} className="font-semibold text-[var(--lms-teal-deep)]">Retry tenant setup</Link>}/>
+  </div>;
+ }
+ // No creation controls are shown before the complete authorized read.
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=can(context,"organization.manage");
- const list=tab==="STRUCTURE"
-  ?await getSuperAdminTenantLifecycleDirectory(context,{status:"ALL",page:1})
-  :null;
- let college:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>|null=null;
- if(tab==="LAUNCH"&&id){
-  try{college=await getSuperAdminTenantLifecycleDetail(context,id);}
-  catch(e){if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();throw e;}
-  requirePermission(context,"college.read",{organizationId:college.organizationId,collegeId:college.id});
- }
- const readiness=college?await getSuperAdminCollegeReadiness(context,college.id):null;
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
  return <div className="min-w-0 space-y-6">
   <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Tenant directory</Link>

@@ -4,15 +4,15 @@
 
 | Production path | Export | Test file | Evidence and missing cases | Status |
 |---|---|---|---|---|
-| `src/modules/placements/tpo-students-model.ts` | `TPO_STUDENT_JOURNEY_STATES` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | enumerated journey states; enum consumers | **PARTIAL** |
+| `src/modules/placements/tpo-students-model.ts` | `TPO_STUDENT_JOURNEY_STATES` | `tests/unit/chat12-tpo-roster-legacy-stage-matrix.test.ts` | all five exact published journey states and enum consumers | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `deriveTpoStudent` | `tests/unit/chat12-round34-profile-readiness.test.ts` | source-level readiness provenance | **SOURCE** |
 | `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudents` | `tests/unit/chat12-tpo-roster-summaries-behavior.test.ts` | Active roster, registered placement pool vs unregistered, placed outside pool, null rate for no denominator, deterministic branch sorting | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `summarizeTpoStudentBranches` | `tests/unit/chat12-tpo-roster-summaries-behavior.test.ts` | Active roster, registered placement pool vs unregistered, placed outside pool, null rate for no denominator, deterministic branch sorting | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `filterTpoStudentRoster` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | facet intersection, nulls, search and pagination | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `selectTpoStudentWorkingSet` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | default vs explicit finished-batch access | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-model.ts` | `tpoStudentRegisteredForPlacements` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | explicit selection vs application fallback | **BEHAVIOURAL** |
-| `src/modules/placements/tpo-students-model.ts` | `tpoStudentMatchesLegacyStage` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | verified vs waiting / legacy status | **PARTIAL** |
-| `src/modules/placements/tpo-students-model.ts` | `tpoStudentNeedsAttention` | `tests/unit/chat12-tpo-roster-facets-behavioral.test.ts` | offer pending and verification attention | **PARTIAL** |
+| `src/modules/placements/tpo-students-model.ts` | `tpoStudentMatchesLegacyStage` | `tests/unit/chat12-tpo-roster-legacy-stage-matrix.test.ts` | all five legacy stages with inverse states | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-students-model.ts` | `tpoStudentNeedsAttention` | `tests/unit/chat12-tpo-roster-legacy-stage-matrix.test.ts` | all seven independently reported attention reasons and clean placed state | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-service.ts` | `tpoStudentsQuerySchema` | `tests/unit/chat12-tpo-query-schema-security.test.ts` | default bounds, tri-state booleans, inverted numeric ranges and strict unknown-key refusal; DB read permission still pending | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-service.ts` | `tpoStudentRequestsQuerySchema` | `tests/unit/chat12-tpo-query-schema-security.test.ts` | all request filters, wrong tenant, non-GET guards | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-students-service.ts` | `getTpoStudentsIntelligence` | `tests/unit/chat12-tpo-students-contract.test.ts` | source assertions only; PostgreSQL authorisation and query count pending | **SOURCE** |
@@ -37,7 +37,7 @@
 | `src/modules/placements/tpo-bulk-action-confirm-service.ts` | `TpoBulkPreviewError` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | rejects stale token and reordered IDs | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-bulk-action-confirm-service.ts` | `confirmTpoBulkAction` | `tests/unit/PROJ-BREAK-TPO-bulk-partial-audit-01.test.ts` | partial rows, audit outage, undo only with receipt, replay invalidation | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-bulk-action-preview-service.ts` | `loadTpoBulkCurrent` | `tests/unit/chat12-tpo-bulk-preview-service-behavior.test.ts` | Actual service with mocked actor/DB: persisted role revoked before person reads, foreign learner skipped, source scoped actor; PostgreSQL + high-volume query count still pending | **BEHAVIOURAL/MOCKED DB** |
-| `src/modules/placements/tpo-bulk-action-preview-service.ts` | `previewTpoBulkAction` | `tests/unit/chat12-tpo-bulk-preview-service-behavior.test.ts` | Actual preview service signs exact authorized rows/order/versions, no-op rows skipped, forged action/IDs fail before I/O, stale role denied; PostgreSQL under concurrent actors pending | **BEHAVIOURAL/MOCKED DB** |
+| `src/modules/placements/tpo-bulk-action-preview-service.ts` | `previewTpoBulkAction` | `tests/unit/chat12-tpo-bulk-preview-service-behavior.test.ts` | Actual preview service signs exact authorized rows/order/versions, no-op rows skipped, forged action/IDs fail before I/O, stale role denied; 21-row ordered result with max eight active reads; PostgreSQL under concurrent actors pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-companies-view-model.ts` | `buildTpoCompanyRows` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | canonical IDs, duplicate offers, wrong relationship | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-companies-view-model.ts` | `filterTpoCompanyRows` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | search and deterministic paging | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-companies-view-model.ts` | `buildTpoCompanyTimeline` | `tests/unit/chat12-tpo-company-directory-hardening.test.ts` | persisted events only, tie ordering | **BEHAVIOURAL** |
@@ -100,6 +100,15 @@
 |---|---|---|---|
 | `loadTpoBulkApplicationStages` | `tests/unit/PROJ-BREAK-TPO-applicant-stage-revocation-10.test.ts` | Real reader rejects removed persisted role before stage rows or migration probes; DB access mocked, no PostgreSQL concurrency witness yet | **BEHAVIOURAL/MOCKED DB** |
 | `moveTpoBulkApplicationStage` | same test | Revoked actor fails inside serialized transaction before application query; wrong/unknown application denied, unavailable registered schema refuses; real two-session race pending | **BEHAVIOURAL/MOCKED DB** |
+
+### Company applicant-share history
+
+| Production export | Test file | Evidence / remaining acceptance | Status |
+|---|---|---|---|
+| `src/modules/placements/company-share/company-history-service.ts` — `listCompanyShareHistory` | `tests/unit/chat12-tpo-company-share-history-behavior.test.ts` | Actual reader mocked DB: zero jobs return without queries, missing migration reports `ready:false`, persisted revocation/expiry/selection counts returned, static tenant join and 100-row limit; authentic tenant authorization is delegated to callers and needs end-to-end PostgreSQL proof | **BEHAVIOURAL/MOCKED DB** |
+
+- PostgreSQL actor validation executes `requireTpoJobActor` using a row `FOR SHARE` lock. Both bulk current and direct stage preview now use ordinary short transactions, **not** `READ ONLY` transactions (which forbid `FOR SHARE`). Named source regression in `chat12-tpo-bulk-preview-service-behavior.test.ts`; real PostgreSQL execution pending.
+- Actual Students bulk preview now uses an eight-wide bounded read window for up to 200 authorized learners; `chat12-tpo-bulk-preview-service-behavior.test.ts` verifies peak concurrency and signed output order without claiming database race proof. The confirm writer remains deliberately sequential for CAS/audit semantics.
 
 ## Critical outstanding integration tests
 

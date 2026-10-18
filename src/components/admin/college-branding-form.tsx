@@ -50,17 +50,20 @@ export function CollegeBrandingForm({
   collegeId,
   collegeName,
   initial,
+  initialVersion,
   canEdit,
   uploadedLogoUrl,
 }: {
   collegeId: string;
   collegeName: string;
   initial: BrandingFormValues;
+  initialVersion: number;
   canEdit: boolean;
   uploadedLogoUrl?:string|null;
 }) {
   const { showToast } = useToast();
   const [values, setValues] = useState<BrandingFormValues>(initial);
+  const [version,setVersion]=useState(initialVersion);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, startSave] = useTransition();
   // A transition is not a synchronous double-click guard.
@@ -89,14 +92,17 @@ export function CollegeBrandingForm({
       const response = await fetch(`/api/colleges/${collegeId}/branding`, {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(clean(values)),
+        body: JSON.stringify({...clean(values),expectedVersion:version}),
       });
       const data = (await response.json().catch(() => ({}))) as {
         error?: string;
+        branding?: {version:number};
         issues?: { path?: (string | number)[]; message?: string }[];
       };
 
       if (response.ok) {
+        if(data.branding && Number.isInteger(data.branding.version))
+          setVersion(data.branding.version);
         setErrors({});
         showToast({ title: "Branding saved", tone: "success" });
         return;
@@ -114,7 +120,11 @@ export function CollegeBrandingForm({
         title:
           response.status === 403
             ? "You can't change this college's branding"
-            : "Check the highlighted fields",
+            : response.status === 409
+              ? "Branding changed in another tab. Your edits are preserved. Refresh before saving again."
+              : response.status === 413
+                ? "Branding settings are too large. Shorten the URLs and try again."
+                : "Check the highlighted fields",
         tone: "error",
       });
       } catch {

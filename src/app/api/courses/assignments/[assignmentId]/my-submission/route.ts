@@ -30,7 +30,7 @@ export async function GET(
           "",
       );
 
-    return NextResponse.json({ submission });
+    return NextResponse.json({ submission }, {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

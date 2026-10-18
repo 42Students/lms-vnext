@@ -10,6 +10,7 @@ import {SuperAdminStudentImportHistory} from "@/components/admin/super-admin-stu
 import {listSuperAdminStudentCsvImportHistory} from "@/modules/people/college-student-csv-service";
 import {getSuperAdminStudentRegisterOptions} from "@/modules/admin-ui/super-admin-student-register-options-service";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
+import {ErrorState} from "@/components/ui/error-state";
 import {listAdminScopedPeople} from "@/modules/admin-ui/super-admin-scoped-people-service";
 import {getSuperAdminPeopleFilterOptions} from "@/modules/admin-ui/super-admin-people-filter-options";
 const statuses=["ALL","ACTIVE","SUSPENDED","ENDED"] as const;
@@ -17,9 +18,27 @@ export default async function SuperAdminStudentsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
- const peopleFilters=context.adminScope?.collegeId?await getSuperAdminPeopleFilterOptions(context):null;
- const choices=context.adminScope?.collegeId?await getSuperAdminStudentRegisterOptions(context):null;
- const importHistory=context.adminScope?.collegeId?await listSuperAdminStudentCsvImportHistory(context):[];
+ let peopleFilters:Awaited<ReturnType<typeof getSuperAdminPeopleFilterOptions>>|null=null;
+ let choices:Awaited<ReturnType<typeof getSuperAdminStudentRegisterOptions>>|null=null;
+ let importHistory:Awaited<ReturnType<typeof listSuperAdminStudentCsvImportHistory>>=[];
+ if(context.adminScope?.collegeId){
+  try{
+   // Never display registration or bulk-import actions with partially loaded
+   // college-scoped choices. A failed history or roster policy read is not an
+   // empty authorized register.
+   [peopleFilters,choices,importHistory]=await Promise.all([
+    getSuperAdminPeopleFilterOptions(context),
+    getSuperAdminStudentRegisterOptions(context),
+    listSuperAdminStudentCsvImportHistory(context),
+   ]);
+  }catch{
+   return <div className="min-w-0 space-y-5">
+    <ErrorState title="Student register unavailable"
+     description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
+     action={<Link href="/admin/students" className="font-semibold text-[var(--lms-teal-deep)]">Retry student register</Link>}/>
+   </div>;
+  }
+ }
  const importRuns=importHistory.map(run=>{
    const meta=run.metadata;
    const count=(value:unknown)=>typeof value==="number"&&Number.isSafeInteger(value)&&value>=0?value:0;

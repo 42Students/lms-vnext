@@ -81,3 +81,20 @@ The refreshed `unit-failures-latest.md` on main listed two additional lane-7 fai
 - `COURSES7-07/08`: `chat7-learner-results-service-scoping.test.ts` release-positive fixture supplied `status=CLOSED` and `resultsPublished=true` but omitted the persisted `dueAt` now required by the common quiz embargo rule. Added an elapsed due timestamp to the fixture rather than relaxing result secrecy in `4bafe06`.
 
 No test was weakened, disabled or deleted. This branch still requires an executed unit/typecheck/build run. Draft PR #175 is CI-only and must not be merged for release based on these source fixes alone.
+
+
+## Late chat-7 breaker findings: private response caching, retries, and discussion UX (2026-10-18)
+
+Source committed on `chatgpt/chat-7-b`, **not CI or database verified**.
+
+| ID | Risk before fix | Corrective source / direct test | Residual gate |
+|---|---|---|---|
+| COURSES7-07/08 | Private quiz attempt answers and assignment grades GET responses lacked explicit anti-cache headers | `src/app/api/courses/quizzes/[quizId]/my-attempts/route.ts`, `assignments/[assignmentId]/my-submission/route.ts`; `tests/unit/chat7-learner-assessment-route-boundaries.test.ts` | Browser/proxy header verification and role/college switch |
+| COURSES7-09 | Learner roster, course workspace and content-progress GET lacked explicit no-store; authenticated progress data could remain in shared caches | `src/app/api/courses/learner/route.ts`, `learner/workspace/route.ts`, `progress/[contentId]/route.ts`; `tests/unit/chat7-learner-course-progress-route-privacy.test.ts` | Live browser cache and session revocation tests |
+| COURSES7-11 | Discussion guard permitted over-3,900-character input even though persisted messages reject them | `src/modules/courses/learner-discussion-submit-guard-model.ts` now reuses `learnerDiscussionDraftValid`; `tests/unit/chat7-learner-discussion-scope-and-race.test.ts` | Browser submit/refresh race and PostgreSQL moderation checks |
+| SA-academics-people-52/53 | Bulk visibility Retry failed replayed successfully changed courses after partial failure | Bulk service returns selected-college `failedCourseIds`; client re-sends only that subset; `chat7-final-sprint-superadmin-course-visibility.test.ts` | Real tenant swap and content-version CAS races |
+| SA-academics-people-62 | Older stored public links could render credentials or URL fragments in Super Admin content preview | `super-admin-content-public-link-model.ts`, `chat7-superadmin-content-public-link-safety.test.ts` | Browser external link verification; storage scanning separate |
+| COURSES-WEAK-EXPORT-SERVICE-01 | Assignment CSV accepted quiz-only results and CLOSED filter before query | `college-assessment-export-service.ts` validates kind-aware filter before read; extended `chat7-college-assessment-export-service-weak.test.ts` | Full 1,000-row CSV live fixture and cloud CI |
+| PROJ-BREAK-LEARNER-91..101 | Needed explicit coverage for forged actor/task status and learner task route origin and error boundaries | `tests/unit/PROJ-BREAK-chat7-learner-role-journey.test.ts`, `tests/unit/PROJ-BREAK-chat7-learner-task-route-boundaries.test.ts` | PostgreSQL transaction races and independent Projects master ledger review |
+
+All existing tests remain present and unchanged in intent. The originally listed chat-7 failing unit tests require a new CI verdict before clearing their failure status.
