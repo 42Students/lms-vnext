@@ -34,7 +34,7 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
   .innerJoin(departments,eq(departments.id,courses.departmentId))
   .where(and(inArray(courses.id,input.courseIds),eq(departments.collegeId,acting.collegeId),
    eq(courses.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
-   eq(courseLessons.status,"ACTIVE")))
+   eq(courseLearningPaths.status,"PUBLISHED"),eq(courseLessons.status,"ACTIVE")))
   .limit(501);
  if(lessons.length>500)throw new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE");
  const ids=[...new Set(lessons.map(row=>row.id))];
