@@ -126,6 +126,39 @@ export async function withProjectPg<T>(pool: Pool, action: (db: PgHarness) => Pr
   }
 }
 
+/** Two real PostgreSQL sessions for races/tenant reads against *already committed*
+ * seed records in the disposable DB. Uncommitted withProjectPg fixtures are NOT
+ * visible here. Both sessions always roll back, even when a race throws.
+ */
+export async function withTwoPgSessions<T>(
+  pool: Pool, run: (a: PoolClient, b: PoolClient) => Promise<T>,
+): Promise<T> {
+  const a = await pool.connect();
+  let b: PoolClient | undefined;
+  let aStarted = false, bStarted = false;
+  try {
+    await assertHarnessSchema(a);
+    b = await pool.connect();
+    await assertHarnessSchema(b);
+    await a.query("BEGIN"); aStarted = true;
+    await b.query("BEGIN"); bStarted = true;
+    await a.query("SET LOCAL lock_timeout = '1500ms'");
+    await b.query("SET LOCAL lock_timeout = '1500ms'");
+    return await run(a,b);
+  } finally {
+    try {
+      if (b && bStarted) await b.query("ROLLBACK");
+    } finally {
+      try {
+        if (aStarted) await a.query("ROLLBACK");
+      } finally {
+        b?.release();
+        a.release();
+      }
+    }
+  }
+}
+
 /** For FK and business invariants, use truly separate orgs + colleges. */
 export async function createTenant(db: PgHarness, name = "College"): Promise<TenantFixture> {
   const tag = randomUUID();
