@@ -76,7 +76,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const eligibleCount=eligibility===null?null:working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.eligible??0),0);
  const pendingCount=eligibility===null?null:working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.undecided??0),0);
  const placedCount=journey===null?null:working.reduce((sum,batch)=>sum+(journey.get(batch.id)?.placed??0),0);
- return <main className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
   <TpoBatchFacetFilters key={JSON.stringify(facets)} initial={facets}
    rows={facetRows} baseQuery={{
@@ -96,7 +96,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    <label className="text-sm">Deadline<select name="deadline" defaultValue={deadlineParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All deadlines</option><option value="NEXT_7_DAYS">Due in next 7 days</option><option value="PAST_DUE">Past due</option><option value="NO_DEADLINE">No deadline recorded</option></select></label>
    <label className="text-sm">Sort<select name="sort" defaultValue={sortParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="WORKING_SET">Recommended order</option><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="DEADLINE_ASC">Deadline earliest</option><option value="DEADLINE_DESC">Deadline latest</option></select></label>
    <label className="text-sm">Page size<select name="pageSize" defaultValue={String(pageParsed.data.pageSize)} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="12">12</option><option value="24">24</option><option value="48">48</option></select></label>
-   <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-on-primary">Search</button>
+   <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-foreground">Search</button>
   </form>
   {unassigned!==null&&unassigned>0?<p role="status" className="rounded-md border border-warning bg-surface p-3 text-sm text-warning">
     {unassigned} {unassigned===1?"student is":"students are"} not in any active class. Assign their academic classes before deciding placement eligibility.
@@ -114,14 +114,14 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {workingSet.hidden>0?<p role="status" className="flex flex-wrap items-center gap-2 rounded-md border border-border p-3 text-sm">
     {workingSet.hidden} older {workingSet.hidden===1?"batch is":"batches are"} hidden from your working set.
     <Link href={tpoBatchPageHref({...pageFilters,showOlder:"1"},1,pageParsed.data.pageSize)}
-      className="font-semibold text-primary-text underline">Show older batches</Link>
+      className="font-semibold text-[var(--lms-teal-deep)] underline">Show older batches</Link>
    </p>:showOlder?<Link href={tpoBatchPageHref({...pageFilters,showOlder:""},1,pageParsed.data.pageSize)}
-      className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Hide older batches</Link>:null}
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Hide older batches</Link>:null}
   <p role="status" className="text-sm text-muted-foreground">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
   {pageParsed.data.page!==batchPage.page?<p role="status" className="rounded border border-border p-3 text-sm text-body">The requested batch page no longer exists for these filters. Showing the last available page.</p>:null}
   <nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
-   {batchPage.hasPrev?<Link className="min-h-10 inline-flex items-center rounded border border-border px-3 text-primary-text" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
-   {batchPage.hasNext?<Link className="min-h-10 inline-flex items-center rounded border border-border px-3 text-primary-text" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
+   {batchPage.hasPrev?<Link className="min-h-11 inline-flex items-center rounded border border-border px-3 text-[var(--lms-teal-deep)]" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
+   {batchPage.hasNext?<Link className="min-h-11 inline-flex items-center rounded border border-border px-3 text-[var(--lms-teal-deep)]" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
 
   </nav>
   {batches.length===0?<section role="status" className="space-y-2 rounded border border-border p-4">
@@ -129,9 +129,9 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
      "No placement batches or academic cohorts are available to list yet.":
      "No batches match these filters."}</p>
    {data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
-      className="inline-flex min-h-11 items-center text-primary-text underline">Clear batch filters</Link>:null}
+      className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Clear batch filters</Link>:null}
   </section>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
-    <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize))} className="text-primary-text underline">{b.name}</Link></h2>
+    <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize))} className="text-[var(--lms-teal-deep)] underline">{b.name}</Link></h2>
     <p className="text-sm">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
     <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility?.get(b.id)?.eligible??null}):"Status unavailable"}</p>
     {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<p className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</p>:null}
@@ -173,5 +173,5 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     </section>:null}
     <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))}</Link>
    </li>)}</ul>}
- </main>;
+ </div>;
 }
