@@ -47,6 +47,22 @@ export function uniqueTpoRoundImportRoster<T extends {applicationId:string}>(row
  }
  return [...byId].filter(([id])=>!conflicts.has(id)).map(([,row])=>row);
 }
+/** A company result may carry several identity columns. Intersect *all* of
+ * them; never guess a learner from the first matching email or roll number.
+ * A portal/candidate ID is intentionally not part of this internal match.
+ */
+export function matchTpoRoundImportRoster<T extends {
+ applicationId:string;email:string|null;roll:string|null;
+}>(row:Pick<ImportRow,"applicationId"|"email"|"roll">,roster:readonly T[]):T[]{
+ const methods=[
+  row.applicationId?roster.filter(item=>item.applicationId.toLowerCase()===row.applicationId.toLowerCase()):null,
+  row.email?roster.filter(item=>item.email?.toLowerCase()===row.email.toLowerCase()):null,
+  row.roll?roster.filter(item=>item.roll?.toLowerCase()===row.roll.toLowerCase()):null,
+ ].filter((matches):matches is T[]=>matches!==null);
+ if(!methods.length)return [];
+ return methods[0]!.filter(candidate=>methods.every(matches=>matches.some(
+  item=>item.applicationId===candidate.applicationId)));
+}
 function outcome(value:string):ImportRow["outcome"]{
  const token=value.toUpperCase().replace(/[^A-Z]/g,"");
  if(["PASS","PASSED","CLEAR","CLEARED","SELECTED","SHORTLISTED"].includes(token))return "PASS";
