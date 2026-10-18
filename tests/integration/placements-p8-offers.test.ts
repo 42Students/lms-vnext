@@ -37,6 +37,7 @@ import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/module
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
 import {getTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-service";
+import {isoDateInIndia} from "@/modules/placements/tpo-offer-expiry-model";
 import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
 import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
 import {sweepExpiredPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
@@ -619,15 +620,16 @@ describe("Placement P8 offers and joining", () => {
     expect(pending.items[0]).toMatchObject({
       offerId:offer.id,joiningStatus:"PENDING",hasRecordedOutcome:false,joiningDate:null,
     });
+    const joiningDay=isoDateInIndia(new Date());
     await recordTpoOfferLifecycle(tpo,job.id,{
       action:"RECORD_JOINED",confirmed:true,offerIds:[offer.id],
-      expectedStatus:"ACCEPTED",joiningDate:"2026-01-01",
+      expectedStatus:"ACCEPTED",joiningDate:joiningDay,
       reason:"Employer confirmed actual physical joining",
     });
     const joined=await getTpoJoiningTracker(tpo,{jobId:job.id});
     expect(joined.counts).toEqual({accepted:1,pending:0,joined:1,deferred:0,didNotJoin:0});
     expect(joined.items[0]).toMatchObject({
-      offerId:offer.id,joiningStatus:"JOINED",hasRecordedOutcome:true,joiningDate:"2026-01-01",
+      offerId:offer.id,joiningStatus:"JOINED",hasRecordedOutcome:true,joiningDate:joiningDay,
     });
     const other:RequestContext={...tpo,membership:{
       ...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB,

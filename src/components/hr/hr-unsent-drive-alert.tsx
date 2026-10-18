@@ -1,10 +1,13 @@
 "use client";
 import {useEffect,useState} from "react";
+import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import Link from "next/link";
-import {restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
+import {restoreHrUnsentDraft,clearHrUnsentDraftStores} from "@/modules/placements/hr-unsent-draft-storage-model";
 /** REC-home-drives-17: only a scoped, saved, validated draft can be continued. */
 export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;collegeId:string}){
  const [hasDraft,setHasDraft]=useState(false);
+ const [confirmDiscard,setConfirmDiscard]=useState(false);
+ const [error,setError]=useState("");
  useEffect(()=>{
   function readDraft(){
    try{
@@ -26,15 +29,29 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
    <p className="font-semibold text-foreground">You have a drive request you haven&apos;t sent yet</p>
    <p className="mt-1 text-sm text-body">It is saved on this device.</p>
    <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-    className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+    className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
     Continue
    </Link>
-   <button type="button" className="ml-3 min-h-10 text-sm font-semibold text-body underline"
-    onClick={()=>{
-      if(!window.confirm("Discard the unsent drive request saved on this device?"))return;
-      try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
-      catch{/* Browser storage may be unavailable. */}
-      setHasDraft(false);
-    }}>Discard saved draft</button>
+   <button type="button"
+    className="ml-3 min-h-11 rounded-md px-3 text-sm font-semibold text-body underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+    onClick={()=>{setError("");setConfirmDiscard(true);}}>Discard saved draft</button>
+   <ConfirmActionDialog open={confirmDiscard}
+    title="Discard the unsent drive request saved on this device?"
+    consequence="This removes your saved draft from this browser. It has not been submitted."
+    confirmLabel="Discard saved draft"
+    onCancel={()=>setConfirmDiscard(false)}
+    onConfirm={()=>{
+      let cleared=false;
+      try{
+        cleared=clearHrUnsentDraftStores(
+         [window.localStorage,window.sessionStorage],storageKey);
+      }catch{/* Browsers can throw even while accessing storage properties. */}
+      if(!cleared){
+        setError("Could not clear this saved draft. Try again or continue editing.");
+        setConfirmDiscard(false);return;
+      }
+      setHasDraft(false);setConfirmDiscard(false);setError("");
+    }}/>
+   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
  </aside>;
 }

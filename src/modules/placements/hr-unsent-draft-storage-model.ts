@@ -60,3 +60,15 @@ export function hrDriveDraftFormStateKey(
 ):string {
  return [userId,collegeId,mode,sourceId??"new"].join(":");
 }
+
+/** Never hide a saved draft merely because storage deletion was attempted.
+ * Browsers may block/removeItem independently for local and session stores. */
+export function clearHrUnsentDraftStores(
+ stores:readonly Pick<Storage,"removeItem"|"getItem">[],storageKey:string,
+):boolean{
+ if(!storageKey||stores.length===0)return false;
+ try{
+  for(const store of stores)store.removeItem(storageKey);
+  return stores.every(store=>store.getItem(storageKey)===null);
+ }catch{return false;}
+}

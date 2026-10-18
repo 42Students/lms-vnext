@@ -1,5 +1,9 @@
 # MASTER QUEUE (owner: use every lane at full throttle, never idle)
 
+## ON HOLD, DO NOT ACT ON THIS BLOCK YET: the owner wants to discuss the design first. Ignore it until a later message says GO.
+## DESIGN DIRECTIVE (owner, 2026-10-19 00:50): ONE CANVAS PER PAGE, NOT BITS AND PIECES
+The owner feels the old LMS pages read as one big continuous canvas, while vNext pages are a stack of separate small boxed sections. Do this through the SHARED kit so it lands everywhere at once, not page by page. chat-17 owns it (src/components/ui: page shell, section, card, data-table wrappers): a page is ONE outer surface; its sections are separated by spacing, headings and thin dividers, not each wrapped in its own bordered rounded card with its own background and padding; tables and forms sit directly on the canvas; nested cards only for genuinely separate objects (a modal, a repeating item). Keep legacy wording, spacing rhythm and phone layout. chat-19, chat-13 and the lanes that own pages then remove per-section card wrappers in their pages and use the shared section primitive. Keep UI-kit tests green and assert the new structure.
+
 ## PRIORITY CHANGE (owner, 2026-10-18 23:40): NO CI GATING UNTIL THE END
 Stop fixing failing unit tests and compile errors from docs/orchestrator/unit-failures-latest.md and typecheck-errors-latest.md for now: the orchestrator is NOT running CI rounds until all tasks are finished. Spend ALL your time on your task queue below (Projects hardening, exhaustive coverage, TPO/HR depth, Super Admin audit, UX coverage), item by item, pushing every ~10 commits. Still keep syntax valid (balanced parentheses and braces, no line break before an as-cast) because the push gate is a syntax check. One full CI, test-fix and deploy pass happens at the very end.
 
