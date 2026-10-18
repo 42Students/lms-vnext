@@ -21,7 +21,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
  const result=await listTpoMessagingHistory(context,query.data);
  const drafts=await listTpoCampaignDrafts(context);
  const deliveryReady=await tpoCampaignDispatchReady();
- return <main className="space-y-6">
+ return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Engage" title="Emails"
    description="Persisted email/SMS batch receipts for your college. Provider acceptance does not prove recipient delivery."/>
   <nav aria-label="Engage views" className="flex flex-wrap gap-2">
@@ -100,5 +100,5 @@ export default async function CampaignHistory({searchParams}:PageProps){
     {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)]">Previous</Link>:null}
     {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)]">Next</Link>:null}
   </nav>
- </main>;
+ </div>;
 }
