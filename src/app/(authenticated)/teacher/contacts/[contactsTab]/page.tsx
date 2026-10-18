@@ -133,7 +133,7 @@ export default async function FacultyContactsPage({
               Contacts per page
               <select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
-                className="mt-1.5 block min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                className="mt-1.5 block min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>

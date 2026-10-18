@@ -26,8 +26,10 @@ async function change(request:Request,params:Params["params"]){
  }catch(error){return apiErrorResponse(error);}
 }
 export async function POST(request:Request,{params}:Params){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return change(request,params);
 }
 export async function DELETE(request:Request,{params}:Params){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return change(request,params);
 }
