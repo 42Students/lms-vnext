@@ -1,17 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
-import {can} from "@/modules/permissions/policy";
-
-const mocks=vi.hoisted(()=>({
- getDb:vi.fn(),select:vi.fn(),college:vi.fn(),moduleAccess:vi.fn(),
- rows:[] as unknown[][],
-}));
-vi.mock("@/db/client",()=>({getDb:mocks.getDb}));
-vi.mock("@/modules/projects/scope",()=>({loadProjectCollegeScope:mocks.college}));
-vi.mock("@/modules/module-access/service",()=>({resolveOptionalModuleAccess:mocks.moduleAccess}));
-import {requireProjectReadAccess,requireProjectManageAccess,requireProjectLifecycleAccess}
- from "@/modules/projects/access";
-
 const mocks=vi.hoisted(()=>({
  getDb:vi.fn(),can:vi.fn(),college:vi.fn(),moduleAccess:vi.fn(),
  select:vi.fn(),rows:[] as unknown[][],
@@ -54,6 +42,7 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
   mocks.select.mockImplementation(()=>query(mocks.rows.shift()??[]));
   mocks.getDb.mockReturnValue({select:mocks.select});
   mocks.college.mockResolvedValue({id:COLLEGE,organizationId:ORG});
+  mocks.can.mockReturnValue(false);
   mocks.moduleAccess.mockResolvedValue({projects:{enabled:true}});
  });
  it("TPO student-directory permission does not expose unassigned project workspace",async()=>{
