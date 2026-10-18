@@ -148,7 +148,7 @@ export function TpoParticipationDecisionForm({
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-60"
+        className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-60"
       >
         {pending ? "Saving…" : "Save learner eligibility"}
       </button>

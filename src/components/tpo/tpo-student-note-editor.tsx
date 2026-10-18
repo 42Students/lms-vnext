@@ -34,7 +34,7 @@ export function TpoStudentNoteEditor({membershipIds,afterSave}:{
     if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();void runGuarded(save);}
    }} className="w-full rounded border border-border bg-surface p-3"/>
   <button type="button" disabled={busy||guardedPending||!note.trim()||!membershipIds.length}
-   onClick={()=>void runGuarded(save)} className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+   onClick={()=>void runGuarded(save)} className="min-h-10 rounded bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
    {busy?"Saving…":"Add note"+(membershipIds.length>1?" to "+membershipIds.length+" students":"")}</button>
   <p className="text-xs text-muted-foreground">Ctrl+Enter to save</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

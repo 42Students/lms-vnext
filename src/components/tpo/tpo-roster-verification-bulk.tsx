@@ -72,7 +72,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    </label>;})}
   </div>
   <label className="grid gap-1 text-sm">Action
-   <select className="min-h-11 rounded border border-border bg-surface px-3" disabled={busy} value={action}
+   <select className="min-h-11 rounded-[9px] border border-border bg-surface px-3" disabled={busy} value={action}
     onChange={event=>{setAction(event.target.value as Action);invalidate();}}>
     <option value="VERIFY">Verify selected</option><option value="SEND_BACK">Send back for correction</option>
    </select>
@@ -88,7 +88,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
        className="min-h-10 rounded border border-border px-3 text-xs">{item}</button>)}
    </div>
    <label className="grid gap-1 text-sm">Correction reason (shown to students)
-    <textarea className="w-full rounded border border-border bg-surface p-3" rows={3} minLength={3} maxLength={500}
+    <textarea className="w-full rounded-[9px] border border-border bg-surface p-3" rows={3} minLength={3} maxLength={500}
      value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);invalidate();}}/>
    </label>
   </div>:null}
@@ -102,10 +102,10 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
     I have checked their documents another way (for example the college&apos;s own records).
    </label>:null}
    <button type="button" disabled={busy||guardedPending||eligible.length===0||action==="VERIFY"&&!ack}
-    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50" onClick={()=>void runGuarded(save)}>
+    className="min-h-11 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50" onClick={()=>void runGuarded(save)}>
     {busy?"Saving…":action==="VERIFY"?"Confirm verify selected":"Confirm send back selected"}
    </button>
-   <button type="button" disabled={busy} className="ml-2 min-h-11 rounded border border-border px-3" onClick={()=>setPreview(false)}>Cancel preview</button>
+   <button type="button" disabled={busy} className="ml-2 min-h-11 rounded-[9px] border border-border px-3" onClick={()=>setPreview(false)}>Cancel preview</button>
   </div>:null}
   {outcomes.length>0?<div role="status" className="space-y-2 rounded border border-border p-3">
    <h3 className="font-semibold">Bulk review results</h3>
