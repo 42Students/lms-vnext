@@ -416,3 +416,15 @@ No code or tests were executed locally. Interactive focus, viewport and CI verif
 | HR-BREAK-DRIVE-PRINCIPAL-27 | MAJOR | `/hr/drives/[jobId]/messages`, `/rounds/editor`, `/rounds/editor/remove/[roundId]`, `/interview-slots` | Reject mismatched recruiter before job/thread/slot/round reads. `tests/unit/HR-BREAK-chat19-drive-pages.test.ts`. |
 
 Seven source page guards, real page invocation tests and a companion UX note are authored. Existing legacy UI wording and service authorization remain intact. Cloud CI and interactive validation still pending; no local test execution.
+
+
+## HR page second-pass principal checks — additional inbox and activity routes (2026-10-18)
+
+| ID | Severity | Source and correction | Behavioral regression |
+|---|---|---|---|
+| HR-BREAK-ACTIVITY-PRINCIPAL-28 | MAJOR | `/hr/activity` now blocks a mismatched recruiter identity before employer/job activity read. | `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` |
+| HR-BREAK-CONVO-PRINCIPAL-28 | MAJOR | `/hr/conversations` and `/hr/conversations/[threadId]` now deny mismatched recruiter identities before private previews and thread reads. | `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts`, `HR-BREAK-chat19-conversation-page.test.ts` |
+| HR-BREAK-NOTIFICATIONS-PRINCIPAL-29 | MAJOR | `/hr/notifications` denies mismatched recruiter profile before per-college notification history. | `tests/unit/HR-BREAK-chat19-notifications-page.test.ts` |
+| HR-BREAK-RECORDED-PRINCIPAL-29 | MAJOR | `/hr/drives/recorded-outside` refuses a mismatched recruiter before using profile grant IDs, showing college choices or reading outside-drive confirmation. | `tests/unit/HR-BREAK-chat19-recorded-outside-principal.test.ts` |
+
+No local test or runtime execution. Existing exact wording and all service authorization remain unchanged.
