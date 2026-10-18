@@ -5,5 +5,6 @@ export const inboundMailDetailSchema=z.strictObject({
  receivedAt:z.iso.datetime({offset:true}),plainText:z.string().max(100000),
 });
 export function safeMailDrawerText(value:string) {
- return value.replace(/\u0000/g,"").slice(0,100000);
+ const clipped=value.replace(/\u0000/g,"").slice(0,100000);
+ return /[\uD800-\uDBFF]$/.test(clipped)?clipped.slice(0,-1):clipped;
 }
