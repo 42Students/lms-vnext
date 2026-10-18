@@ -36,6 +36,8 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
+import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
+import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
 import {sweepExpiredPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
 import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -322,6 +324,44 @@ describe("Placement P8 offers and joining", () => {
     const after=await pool.query<{count:number}>(
       "select count(*)::int as count from placement_offer_status_history where to_status='EXPIRED'");
     expect(after.rows[0]?.count).toBe(0);
+  });
+
+  it("TPO-2ND-PAGE-OFFERS-DB-01 protects live register and export against a foreign-college actor",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Systems engineer",annualCtcInr:900_000,
+    });
+    const own=await getTpoDriveOfferRegister(tpo,{jobId:job.id,status:"ALL"});
+    expect(own.rows.some(row=>row.id===offer.id)).toBe(true);
+    const exported=await getTpoDriveOfferRegisterCsv(tpo,{jobId:job.id,status:"ALL"});
+    expect(exported.csv).toContain(offer.id);
+    const foreign:RequestContext={...tpo,membership:{
+      ...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB,
+    }};
+    for(const query of [
+      getTpoDriveOfferRegister(foreign,{jobId:job.id,status:"ALL"}),
+      getTpoDriveOfferRegisterCsv(foreign,{jobId:job.id,status:"ALL"}),
+    ]){
+      await expect(query).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
+    }
+    const state=await pool.query<{status:string}>(
+      "select status from placement_offers where id=$1",[offer.id]);
+    expect(state.rows).toEqual([{status:"ISSUED"}]);
+  });
+
+  it("TPO-2ND-PAGE-OFFER-EVIDENCE-DB-02 rejects a real offer ID paired with a different drive",async()=>{
+    const first=await preparePassedApplication();
+    const issued=await issuePlacementOffer(tpo,first.application.id,{
+      roleTitle:"Offer provenance engineer",annualCtcInr:800_000,
+    });
+    const second=await preparePassedApplication();
+    const correct=await getTpoOfferEvidence(tpo,{jobId:first.job.id,offerId:issued.id});
+    expect(correct.offer.id).toBe(issued.id);
+    await expect(getTpoOfferEvidence(tpo,{jobId:second.job.id,offerId:issued.id}))
+      .rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_FOUND"});
+    const untouched=await pool.query<{status:string}>(
+      "select status from placement_offers where id=$1",[issued.id]);
+    expect(untouched.rows).toEqual([{status:"ISSUED"}]);
   });
 
   it("PLACEMENTS-IDOR-01 refuses a wrong-college TPO, learner issuing an offer and TPO self-acceptance", async () => {
