@@ -54,7 +54,7 @@ describe("chat-6 high priority auth login OTP session and deactivation adversari
   expect(normalizeEmail("not an email")).toBe(null);
  });
  it("AUTH-login-02 user-facing contact masks never reveal full phone or local email",()=>{
-  expect(maskPhone("+919876543210")).toBe("********8765");
+  expect(maskPhone("+919876543210")).toBe("********3210");
   expect(maskPhone("111")).toBe("****");
   expect(maskEmail("example@example.org")).toContain("@example.org");
   expect(maskEmail("example@example.org")).not.toContain("example@example.org");
