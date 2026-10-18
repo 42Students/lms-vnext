@@ -137,7 +137,10 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    // The optional aggregate event is written after independently committed rows.
    if(response.summaryRecorded===false)setError(response.summaryWarning??
     "Some changes were saved. Refresh and review the student history before retrying.");
-   setSelected(current=>current.filter(id=>!plan.ids.includes(id)));
+   // A partially committed batch must leave skipped/failed students selected
+   // for inspection. Only confirmed updated rows can be removed safely.
+   const completed=new Set(response.outcomes.filter(row=>row.status==="updated").map(row=>row.id));
+   setSelected(current=>current.filter(id=>!completed.has(id)));
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Confirmation failed. Preview again before retrying.");setPreview(null);setPlan(null);}
   finally{actionInFlightRef.current=false;setBusy(false);}
