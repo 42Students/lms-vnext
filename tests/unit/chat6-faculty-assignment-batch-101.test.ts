@@ -35,6 +35,7 @@ describe("SA-academics-people-101 multi-course faculty assignment",()=>{
   expect(service).toContain("eq(sections.cohortId,courseOfferings.cohortId)");
   expect(service).toContain("eq(sections.academicPeriodId,courseOfferings.academicPeriodId)");
   expect(service).toContain("liveMember.status!==\"ACTIVE\"");
+  expect(service).toContain('assertPersistedPlatformPermission(tx,context,"courses.manage"');
   expect(service).toContain('eq(membershipRoles.role,"FACULTY")');
   expect(service).toContain("teachingAssignmentConflict(");
   expect(service).toContain(".insert(courseTeachingAssignments).values(ids.map(");
