@@ -9,8 +9,8 @@ export default async function FacultySessionCoveragePage({
   const {deliveryId}=await params;
   const data=await getFacultySessionCoverage(await getCurrentRequestContext(),{deliveryId});
   const base="/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail";
-  return <div className="space-y-5">
-    <Link href={base} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">← Attendance</Link>
+  return <div className="min-w-0 max-w-full space-y-5">
+    <Link href={base} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Attendance</Link>
     <PageHeader title="Attendance session coverage"/>
     <section aria-label="Session state counts" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {([["Scheduled sessions",data.total],["Marked",data.marked],
@@ -37,7 +37,7 @@ export default async function FacultySessionCoveragePage({
         Showing latest 40 sessions; {data.omitted} older sessions omitted.
       </p>:null}
     </section>
-    <p className="text-xs text-muted-foreground">Snapshot {data.nowIso}.
+    <p className="text-xs text-muted-foreground">Snapshot {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(data.nowIso))} IST.
       Unmarked sessions are not counted as absent learner records. The view does
       not calculate learner attendance eligibility or infer missing records.</p>
   </div>;

@@ -5,10 +5,10 @@ import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact
 
 export default async function FacultyOwnContactPage(){
  const data=await getOwnFacultyContactAvailability(await getCurrentRequestContext(),{});
- return <div className="space-y-6">
+ return <div className="min-w-0 max-w-full space-y-6">
  <PageHeader eyebrow="Faculty · Profile" title="Contact details"
   description="Your college-managed sign-in details and the status of optional contact fields."
-  actions={<Link href="/teacher/profile" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Profile</Link>}/>
+  actions={<Link href="/teacher/profile" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Profile</Link>}/>
  <section className="rounded-xl border border-border bg-surface p-5">
   <h2 className="font-semibold text-foreground">Registered identity contact</h2>
   <dl className="mt-4 grid gap-4 sm:grid-cols-2">
