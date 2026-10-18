@@ -33,7 +33,6 @@ export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  if(query.pipelineStage!=="ALL")params.set("pipelineStage",query.pipelineStage);
  if(query.source!=="ALL")params.set("source",query.source);
  if(query.channel!=="ALL")params.set("channel",query.channel);
- if(query.source!=="ALL")params.set("source",query.source);
  for(const key of ["departmentId","programId","cohortId","sectionId","employmentType"] as const){if(query[key])params.set(key,query[key]);}
  if(query.status!=="ALL")params.set("status",query.status);
  if(query.page>1)params.set("page",String(query.page));
@@ -41,7 +40,7 @@ export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  return path+(params.size?"?"+params:"");
 }
 export function readAdminQuery(raw:Record<string,string|string[]|undefined>) {
- return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId,pipelineStage:raw.pipelineStage,source:raw.source,departmentId:raw.departmentId,programId:raw.programId,cohortId:raw.cohortId,sectionId:raw.sectionId,employmentType:raw.employmentType});
+ return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId,pipelineStage:raw.pipelineStage,source:raw.source,channel:raw.channel,departmentId:raw.departmentId,programId:raw.programId,cohortId:raw.cohortId,sectionId:raw.sectionId,employmentType:raw.employmentType});
 }
 export function scopedSearchLike(q:string) {
  return "%"+q.replace(/[\\%_]/g,"\\$&")+"%";
