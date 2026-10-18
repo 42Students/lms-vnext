@@ -93,3 +93,9 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 - Full chat-11 master-queue ledger for TPO course progress/setup/notices/preferences and Super Admin tenants/branding/sign-in/readiness remains incomplete. This log does not certify exhaustive coverage, 90% Projects branch coverage, or IIT Dharwad production readiness.
 - TPO-settings-audit-60 Excel parity and broader tenant/module role matrices must be verified by the orchestrator; CSV-only export is not labelled full Excel/CSV parity.
 - Cross-audit of 26 `/mentor` routes was previously source-completed in `docs/design-system/audits/UX-ROLLOUT-AUDIT-mentor-chat-11.md` (2 BLOCKER, 21 MAJOR source fixes); runtime sign-off pending.
+
+## Subsequent chat-11 TPO job-type finding (2026-10-18)
+
+| ID | Severity | Evidence | Correction and regression | Limitation |
+|---|---|---|---|---|
+| CHAT11-TPO-22 / `TPO-settings-audit-23` | BLOCKER | All five mutating `tpo-job-type-write-service.ts` exports checked persisted TPO membership before entering a DB transaction, but none rechecked active actor status and roles after locking the college. An administrator revoked between the preflight and commit could still create/rename/enable/disable/reclassify a job type. | Commit `7ba3174`: call `assertPersistedPlatformPermission` under the active-college transaction lock in all five mutations before reads/no-op checks/writes. Commit `1023bcb`: `tests/unit/chat11-tpo-job-type-transaction-authorization.test.ts` tests every function's guard order plus legacy fixed type names and Unicode label validation. | Vitest, TypeScript, true concurrent PostgreSQL revocation, and downstream drive/filter/report effects not run or fully covered; `TPO-settings-audit-23` remains PARTIAL. |
