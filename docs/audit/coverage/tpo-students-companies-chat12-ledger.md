@@ -94,6 +94,13 @@
 | `src/modules/placements/tpo-company-team-model.ts` | `tpoCompanyTeamCompanyIdSchema` | same file | Canonical UUID accepts, malformed company path denies | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-company-team-model.ts` | `canPostToTpoCompanyTeam` | same file | ACTIVE only; ARCHIVED/SUSPENDED/DELETED/unknown denied, including casing confusion | **BEHAVIOURAL** |
 
+### Bulk application stage actor revocation (TPO-students-14)
+
+| Production export | Test file | Real versus mocked proof | Status |
+|---|---|---|---|
+| `loadTpoBulkApplicationStages` | `tests/unit/PROJ-BREAK-TPO-applicant-stage-revocation-10.test.ts` | Real reader rejects removed persisted role before stage rows or migration probes; DB access mocked, no PostgreSQL concurrency witness yet | **BEHAVIOURAL/MOCKED DB** |
+| `moveTpoBulkApplicationStage` | same test | Revoked actor fails inside serialized transaction before application query; wrong/unknown application denied, unavailable registered schema refuses; real two-session race pending | **BEHAVIOURAL/MOCKED DB** |
+
 ## Critical outstanding integration tests
 
 - Actual `getTpoStudentsIntelligence`, `listTpoStudentRequests`, and `getTpoCompaniesView` against a disposable migrated PostgreSQL database, with a wrong-college actor and a disabled TPO membership. Model-level tests are **not** these service tests.
