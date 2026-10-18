@@ -195,6 +195,12 @@ export async function getProjectEvaluation(
       context,
       projectIdInput,
     );
+  // Rubric scores are internal until a dedicated, audited release decision exists.
+  // Approval of a delivery is not publication of its evaluation.
+  if (scope.access !== "ADMIN" && scope.access !== "MENTOR") {
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  }
+
   const submissionId =
     projectSubmissionIdSchema.parse(
       submissionIdInput,
@@ -246,6 +252,12 @@ export async function listProjectEvaluations(
       context,
       projectIdInput,
     );
+  // Rubric scores are internal until a dedicated, audited release decision exists.
+  // Approval of a delivery is not publication of its evaluation.
+  if (scope.access !== "ADMIN" && scope.access !== "MENTOR") {
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  }
+
   const evaluations = await getDb()
     .select()
     .from(projectEvaluations)
