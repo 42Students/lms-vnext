@@ -118,3 +118,5 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 |---|---|---|---|
 
 | UX-SPILL-TPO-CLIP-02 | `TpoRequestPageClipboard` component | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` | SSR verifies responsive DataTable cards, request status, employer/name, record selector, empty state and disabled copy; original copy/export model unaffected |
+
+| UX-SPILL-TPO-CLIP-03 | `sortRequestClipboardRows` and `selectedRequestClipboardRows` in request clipboard model | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` | Immutable newest/oldest sorting, decided-null ordering, exact visible-page subset, no stale prior-page selection leakage |
