@@ -35,8 +35,14 @@ describe("TPO placement announcement round-4 evidence",()=>{
  });
  it("TPO-inbox-team-50 has the legacy modal and paired optional button input",()=>{
   const c=src("src/components/tpo/tpo-notice-composer-dialog.tsx");
-  expect(c).toContain("showModal()");
-  expect(c).toContain("<dialog");
+  // Modal lives in the accessible shared Dialog. Assert the actual native
+  // modal behaviour and focus return instead of an obsolete inline wrapper.
+  const dialog=src("src/components/ui/dialog.tsx");
+  expect(c).toContain("<Dialog open={open}");
+  expect(dialog).toContain("<dialog");
+  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("opener.current?.focus()");
+  expect(dialog).toContain("onCancel={event =>");
   expect(page()).toContain("Button (optional)");
   expect(page()).toContain("maxLength={60}");
   expect(page()).toContain("maxLength={500}");
