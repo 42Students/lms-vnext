@@ -55,6 +55,17 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
         [tenant.collegeId,actor.userId]),"23505");
     });
   });
+  it("PROJ-HARNESS-PLACEMENTS-02B can add a second drive under the same active season",async()=>{
+    await withPlacementCase(async({db,tenant,actor,drive})=>{
+      const second=await createPlacementFixture(db,tenant,actor);
+      expect(second.jobId).not.toBe(drive.jobId);
+      expect(second.seasonId).toBe(drive.seasonId);
+      const rows=await db.query<{n:number}>(`
+        select count(*)::int n from placement_seasons
+        where college_id=$1 and status='ACTIVE'`,[tenant.collegeId]);
+      expect(rows[0]?.n).toBe(1);
+    });
+  });
   it("PROJ-HARNESS-PLACEMENTS-03 application and screening enforce one candidate per drive and decision shape",async()=>{
     await withPlacementCase(async({db,learner,drive,candidate})=>{
       await db.expectSqlState(()=>db.query(`
