@@ -292,3 +292,6 @@ No CI or database executed. Test cases are source-authored pending the final int
 | `POST /api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/notes` | `tests/unit/HR-BREAK-chat15-applicant-notes-api-117.test.ts` | Cross-origin forbidden before principal lookup, 16KiB parser cap, invalid/oversized JSON friendly 400/413, authorized job/application note service, revoked private candidate failure does not claim success | Real notes ownership, withdrawn-after-shortlist, audit/event exactly once |
 
 Both cases remain **authored but not executed**. Do not equate mocked behavior with production acceptance.
+
+
+| `GET /api/placements/recruiter/drives/export` | `tests/unit/HR-BREAK-chat15-drive-export-api-118.test.ts` | Exact role principal compared before data read, duplicate/unknown query keys 400 before auth context, wrong-college IDOR nonenumerating 404, authorized search with scoped college and bounded page size, no-store read-only export, private SQL failure sanitized | Real PostgreSQL drive cap, two companies and cross-tenant grants, live spreadsheet/view parity |
