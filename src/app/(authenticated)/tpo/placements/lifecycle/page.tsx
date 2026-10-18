@@ -81,7 +81,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <Link href="/tpo/placements/overview" className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">Operations overview</Link>
       <nav aria-label="Drive creation paths" className="flex flex-wrap items-center gap-3">
         <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Recorded outside · history</Link>
-      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Create drive</Link>
+      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Create drive</Link>
       <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Recorded outside (history)</Link>
       </nav>
     </div>
@@ -191,7 +191,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="DREAM">Dream</option>
         </select>
       </label>
-      <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
+      <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground">Apply</button>
     </form>
     <div className="flex flex-wrap gap-3 text-sm">
       <Link href={exportHref("PAGE")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">
