@@ -121,3 +121,12 @@ This audit documents source-level hardening only. Do not declare the IIT Dharwad
 | SA-tenants-modules-COURSE-PROGRESS-07 | `src/modules/courses/super-admin-course-progress-query.ts`, `src/app/(authenticated)/admin/course-progress/page.tsx` | Role check before filter-state recovery and SQL reads; deny repeated values, caller-selected tenant/organization IDs, unknown fields, scientific/hex/signed/whitespace page forms, out-of-range page. Selected college still comes exclusively from active admin scope. | `tests/unit/chat11-super-admin-course-progress-tenant-guard.test.ts` | HTTP 401/403, 320px page, real DB cross-college CSV export |
 
 These are code and authored tests only, not executed Vitest/TypeScript/PostgreSQL/browser evidence.
+
+## Private Super Admin course-progress student results — 2026-10-19
+
+| ID | Boundary | Source hardening | Named regression | Not yet executed |
+|---|---|---|---|---|
+| SA-tenants-modules-COURSE-STUDENTS-10 | `/admin/course-progress/students`, GET `/api/admin/course-progress/students/export`, `getSuperAdminStudentCourseProgress` | Verify Super Admin role before parsing any offering query or returning a CSV error; reject repeated/off-scope query fields; page and export take the offering from strict UUID-only model, never a caller-selected college. After private roster SQL, service locks the ACTIVE college and rechecks the persisted account/system role and selected `courses.read` scope before returning student names and content progress. | `tests/unit/chat11-super-admin-student-progress-revocation.test.ts` and added `chat11-super-admin-course-progress-tenant-guard.test.ts` detail cases | Two-transaction PostgreSQL in-flight revocation, live 403/401/no-cache/export CSV testing |
+| SA-tenants-modules-COURSE-EXPORT-09 | `exportSuperAdminLearningDirectory` for LESSONS, PROGRESS, ASSIGNMENT, QUIZ | Require authenticated Super Admin system privilege before inspecting query contents; a College Admin with legitimate college-level `courses.read` cannot call a Super Admin CSV endpoint. The existing selected-scope course readers and no-store CSV headers remain. | `tests/unit/chat11-super-admin-learning-export-scope.test.ts` | HTTP unauthorized cases and large export verification |
+
+**Execution statement:** tests authored, not run. No PostgreSQL, browser, TypeScript or CI certification.
