@@ -1,4 +1,5 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Dialog} from "@/components/ui/dialog";
@@ -63,9 +64,9 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
       className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold">Lock submission</button>:null}
    </>}>
    <label className="block text-sm font-medium">Feedback for the learner
-    <textarea maxLength={6000} value={feedback} disabled={pending}
+    <Textarea maxLength={6000} value={feedback} disabled={pending}
       onChange={event=>setFeedback(event.target.value)} rows={4}
-      className="mt-2 w-full rounded-md border border-border bg-surface p-3"
+      className="mt-2 w-full"
       placeholder="Optional for Accept/Lock — required for Request changes"/>
    </label>
    {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
