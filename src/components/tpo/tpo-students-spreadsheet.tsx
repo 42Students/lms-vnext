@@ -59,7 +59,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>tpoStudentDisplayLabel(row.readinessSignal)},
  {key:"readinessNote",label:"Readiness note",read:row=>[
-  !row.profileFacts?.resume?"No resume":"",row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academics incomplete":"",
+  row.profileFacts?.resume===false?"No resume":"",row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academics incomplete":"",
   row.offersAwaitingAnswer>0?row.offersAwaitingAnswer+" offer(s) waiting on an answer":""
  ].filter(Boolean).join(" · ")||"No flags recorded"},
  {key:"eligibilityReason",label:"Eligibility reason",read:row=>row.participationReason??"Not recorded"},
