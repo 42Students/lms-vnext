@@ -136,4 +136,18 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   }
  });
 
+ it("PROJ-BREAK-file-04 stale upload completion cannot mutate archived project during verification",()=>{
+  const code=src("src/modules/projects/project-resource-file-service.ts");
+  const from=code.indexOf("export async function completeProjectFileUpload(");
+  const until=code.indexOf("export async function listProjectFiles(",from);
+  const complete=code.slice(from,until);
+  expect(complete).toContain('if (row.status === "READY") return toProjectFileDto(row)');
+  expect(complete).toContain("requireOpenProject(scope.project.status)");
+  expect(complete).toContain("requireOpenProject(project.status)");
+  expect(complete).toContain('.for("share")');
+  expect(complete.indexOf("requireOpenProject(project.status)")).toBeLessThan(
+    complete.indexOf(".update(projectResourceFiles)"));
+  expect(complete).toContain('inArray(projectResourceFiles.status, ["UPLOADING", "VERIFYING"])');
+ });
+
 });
