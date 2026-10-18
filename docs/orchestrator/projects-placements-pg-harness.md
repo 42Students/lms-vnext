@@ -171,3 +171,7 @@ The shared `createPlacementFixture` builds a published drive with `published_at`
 ### PROJ-HARNESS-ROLLBACK-06: transaction-local schema pinning
 
 The harness checks canonical migration tables in `public` before beginning each transaction. It must not then honor an attacker/misconfigured connection-string `options=-c search_path=other_schema` that would insert fixture rows into a different schema. Both `withProjectPg` and `withTwoPgSessions` therefore issue `SET LOCAL search_path = public, pg_temp` after BEGIN and before any writes. SQL-level `PROJ-HARNESS-ROLLBACK-06` asserts `current_schema() = 'public'` for both entrypoints; source guard `PROJ-HARNESS-GUARD-11` protects the ordering. `SET LOCAL` is reset automatically on rollback, so pooled sessions are not polluted. Requires disposable PostgreSQL CI.
+
+### PROJ-HARNESS-51: coherent published workspace lineage
+
+The fixture now publishes version 1 of its template before assigning it to the college, and creates an `IN_PROGRESS` release for the `ACTIVE` project and its `ACTIVE` sprint. `PROJ-HARNESS-51` checks the template/version/project/release/sprint state chain on real PostgreSQL. Source-only `PROJ-HARNESS-GUARD-12` catches a reversion to mismatched defaults. Does not replace the product's separate template-publishing permission and concurrency checks; cloud CI remains pending.
