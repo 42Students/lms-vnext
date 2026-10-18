@@ -64,6 +64,10 @@
 | `src/modules/placements/tpo-student-notes-service.ts` | `addTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked transaction: persisted permission before reads, foreign ID skip, active saved row, audit write failure; actual DB atomicity/race pending | **BEHAVIOURAL/MOCKED DB** |
 | `src/modules/placements/tpo-student-notes-service.ts` | `listTpoStudentNotes` | `tests/unit/chat12-tpo-notes-authorization-behavior.test.ts` | Mocked disappeared learner returns null without leaking old notes; production SQL checks active learner/college and caps at 100; DB role/session race still pending | **BEHAVIOURAL/MOCKED DB** |
 
+### Projects ID-oracle denial for TPO-only sessions
+
+`tests/unit/PROJ-BREAK-TPO-01.test.ts` now asserts that pure TPO cannot call either `requireProjectReadAccess` or `requireProjectManageAccess` even for an existing, unknown or malformed project ID **without an underlying DB read**. The previous existing-vs-nonexistent return-code difference was a cross-tenant object-existence oracle. Genuine persisted Mentor/Learner project member reads and normal PROJECT_NOT_FOUND for a properly authorized viewer retain explicit positive tests. Fix `6f44aea6`, test `0f182fdd`; full role/browser coverage remains open.
+
 ### Real permission policy matrix
 
 `tests/unit/PROJ-BREAK-TPO-real-permission-matrix.test.ts` asserts the **actual** `can` function for own-college TPO versus College Admin, learner/faculty/mentor/recruiter, wrong college, forged org, disabled account, suspended membership and Super Admin acting-college scope. This is distinct from the mocked persisted project-member SQL read in `PROJ-BREAK-TPO-01.test.ts`. `projects.read` by itself does not permit a nonmember to open a project workspace; the access service still checks a persisted project-member row.
