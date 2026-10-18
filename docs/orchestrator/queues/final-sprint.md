@@ -119,6 +119,10 @@ No page UI/UX restyling was introduced.
 - REC-home-drives-R06 [FIXED-ON-MAIN] recruiter/home-drives
 - REC-home-drives-R07 [NOT-A-GAP] recruiter/home-drives — owner requires IST everywhere; existing acceptance and named test: tests/unit/recruiter-home-drives-chat7-r7.test.ts
 
+### chat-6 source closure (11/11; branch chatgpt/chat-6-b)
+
+All ten `FIXED-ON-MAIN` recruiter/home-drives IDs above have existing individual gap-named tests `tests/unit/chat6-final-sprint-rec-home-drives-{04,05,06,07,08,10,37,r04,r05,r06}.test.ts` and evidence rows in `docs/audit/acceptance/recruiter-home-drives-verification.md`. The eleventh, `REC-home-drives-R07`, is independently covered by `tests/unit/chat6-final-sprint-rec-home-drives-r07.test.ts` and intentionally NOT-A-GAP because the owner requires IST everywhere. Reviewed the corresponding tests and acceptance rows again. Status is **source-verified; cloud CI and browser/DB verification still pending**. No duplicate tests or UI copy changes were introduced in this follow-up.
+
 ## chat-7 (11)
 
 - SA-academics-people-50 [OPEN] superadmin/academics-people-2-courses-content
