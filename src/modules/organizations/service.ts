@@ -90,7 +90,18 @@ async function assertUniqueActiveName(
 }
 
 export async function listOrganizations(context: RequestContext) {
-  const db = getDb();
+  // Session claims alone must not expose cross-college organization names
+  // after the Super Admin role or College Admin membership is revoked.
+  const resource={
+    organizationId: isSuperAdmin(context)
+      ? context.adminScope?.organizationId??undefined
+      : context.membership?.organizationId??undefined,
+    collegeId: isSuperAdmin(context)
+      ? context.adminScope?.collegeId??undefined
+      : context.membership?.collegeId??undefined,
+  };
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"organization.read",resource);
 
   if (isSuperAdmin(context)) {
     const selected = context.adminScope;
@@ -188,6 +199,7 @@ export async function listOrganizations(context: RequestContext) {
       ),
     )
     .limit(1);
+  });
 }
 
 export async function createOrganization(
