@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -24,14 +25,14 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   }catch(cause){setError(cause instanceof Error?cause.message:"Template rollback failed.");}
   finally{setBusy(false);}
  }
- return <div className="space-y-2 rounded-xl border border-border bg-surface p-4">
+ return <div className="space-y-2 border-b border-border pb-5">
   <h2 className="text-sm font-semibold">Restore this snapshot</h2>
   <p className="text-xs text-body">Review the compared changes above. Rollback creates a new editable version;
    assigned colleges and existing workspaces keep their current pinned versions.</p>
-  <button type="button" disabled={!enabled||busy} onClick={()=>void rollback()}
+  <Button type="button" disabled={!enabled||busy} onClick={()=>void rollback()}
    className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">
    {busy?"Rolling back…":"Roll back"}
-  </button>
+  </Button>
   {status==="ARCHIVED"?<p className="text-xs text-warning-text">Archived templates cannot be rolled back.</p>:null}
   {selectedVersion.version===currentVersion?<p className="text-xs text-muted-foreground">This is already the current version.</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
