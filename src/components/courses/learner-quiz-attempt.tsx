@@ -369,7 +369,7 @@ export function LearnerQuizAttempt() {
                   : "No attempt is available to review."}
             </p>
           </div>
-          <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-[var(--lms-link-text)]">← Back</button>
+          <button type="button" onClick={leaveQuiz} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Back</button>
         </div>
         {deadlineMissing && !latestAttempt ? (
           <p role="status" className="mt-4 rounded-lg border border-warning p-3 text-sm text-body">
@@ -450,7 +450,7 @@ export function LearnerQuizAttempt() {
               <p role="status" className="mt-2 rounded-md border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
             ) : null}
           </div>
-          <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-[var(--lms-link-text)]">Back</button>
+          <button type="button" onClick={leaveQuiz} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back</button>
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-body" aria-live="polite">
           <span>{answerProgress.answered} answered · {answerProgress.total-answerProgress.answered} unanswered</span>
