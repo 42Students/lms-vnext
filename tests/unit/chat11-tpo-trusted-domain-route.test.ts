@@ -8,7 +8,7 @@ vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:stubs.context}))
 vi.mock("@/lib/api-error",()=>({apiErrorResponse:stubs.apiError}));
 vi.mock("@/modules/placements/tpo-trusted-domains-write-service",()=>{
  class TpoTrustedDomainError extends Error{
-  constructor(readonly code:string){super(code);}
+  constructor(readonly code:"DOMAIN_ALREADY_TRUSTED"|"DOMAIN_NOT_FOUND"|"TRUST_STORAGE_PENDING"){super(code);}
  }
  return {TpoTrustedDomainError,changeTpoTrustedDomain:stubs.change};
 });
