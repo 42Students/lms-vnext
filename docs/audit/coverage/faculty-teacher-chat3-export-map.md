@@ -30,3 +30,15 @@ GitHub source declaration review, October 19, 2026. **This is a symbol map, not 
 | `src/modules/courses/faculty-content-order-ui-model.ts` | `facultyMoveContentId`, `facultyContentOrderDirty`, `facultyResetContentOrder`, `facultyContentOrderValid`, `facultyContentOrderReceiptMatches` | — | 36 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-content-preview-model.ts` | `facultyContentExternalHref`, `facultyYouTubeEmbed` | — | 25 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-course-card-summary-model.ts` | `countFacultyCourseCardItems` | — | 34 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-card-summary-service.ts` | `listFacultyCourseCardSummaries` | `FacultyCourseCardSummary` | 95 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-health-model.ts` | `facultyCourseHealthParamsSchema`, `selectFacultyCourseHealthCandidates`, `facultyCourseHealthHref`, `responseCoverage` | `FacultyCourseHealthParams`, `FacultyCourseHealthCandidate` | 64 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-health-service.ts` | `getFacultyCourseAssessmentHealth` | — | 84 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-home-model.ts` | `buildFacultyCourseHomeSignals` | — | 401 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-home-service.ts` | `getFacultyCourseHomeSignals` | — | 75 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-list-model.ts` | `facultyCourseListQuerySchema`, `FACULTY_COURSE_LIST_PAGE_SIZE`, `pageFacultyCourseList`, `facultyCourseListHref`, `facultyCourseWorkspaceRevokedError`, `parseFacultyCourseListLocation` | `FacultyCourseListQuery` | 63 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-list-service.ts` | `getFacultyCourseList` | — | 23 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-navigation.ts` | `facultyCourseTabs`, `isFacultyCourseTab`, `facultyCourseTabHref`, `facultyCourseTabFromPath`, `validFacultyDefaultDeliveryId` | `FacultyCourseTab` | 29 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-route-errors.ts` | `hidesFacultyCourseRouteError` | — | 12 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-course-service.ts` | `listFacultyCourseDeliveries`, `getFacultyCourseWorkspace` | — | 335 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `facultyDiscussionHistorySchema`, `discussionHistoryPagination`, `facultyDiscussionHistoryHref`, `discussionHistoryLabel`, `parseFacultyDiscussionHistoryLocation` | `FacultyDiscussionHistoryQuery` | 41 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-discussion-history-service.ts` | `getFacultyDiscussionHistory` | — | 54 | Declared; behavioral verification pending |
