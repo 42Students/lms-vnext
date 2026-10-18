@@ -57,7 +57,7 @@ describe("TPO-requests-verification-01 persisted role on private general request
   expect(mock.jobActor).toHaveBeenCalledTimes(1);
  });
  it("does not allow a cached non-TPO actor to query sensitive request history",async()=>{
-  const learner={...ctx,membership:{...ctx.membership!,roles:["LEARNER"] as const}};
+  const learner:RequestContext={...ctx,membership:{...ctx.membership!,roles:["LEARNER"]}};
   await expect(listTpoGeneralRequests(learner)).rejects.toBeInstanceOf(AuthorizationError);
   expect(mock.persisted).not.toHaveBeenCalled();
   expect(mock.db).not.toHaveBeenCalled();
