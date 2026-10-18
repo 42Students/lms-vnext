@@ -235,3 +235,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Route and source | Direct regression | Boundary |
 |---|---|---|---|
 | HR-BREAK-HOME-QUERY-19 | `/hr/home` server-page `querySchema` | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Repeated collegeId parameter arrays are invalid and produce an actionable recovery state; no employer-grant or job reader called. |
+
+## Today route cross-principal session denial
+
+| ID | Export / entry | Behavioral coverage | Boundary |
+|---|---|---|---|
+| HR-BREAK-HOME-IDENTITY-20 | `HrHomePage` session check | `tests/unit/HR-BREAK-chat19-home-portfolio-proposals.test.ts` | Exact user/recruiter identity equality required before employer job, grant or discussion retrieval. |
