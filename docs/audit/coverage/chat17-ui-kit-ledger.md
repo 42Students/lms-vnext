@@ -67,3 +67,5 @@ Tests are in:
 - **UX-kit-HARDEN-33..34:** Tabs now select the first enabled panel when an old bookmark points to a missing/disabled tab, with consistent selected ARIA and keyboard tabstop. FileUpload connects helper, error and unavailable text with combined IDs rather than replacing one with another. Corresponding `tests/unit/UX-kit-states-chat17.test.tsx` cases guard both.
 
 - **UX-kit-HARDEN-35:** `src/lib/safe-internal-href.ts` centralizes percent-encoding-aware absolute path validation. `DataTable` retains its prior public export, and `Breadcrumbs` now denies external/obfuscated hrefs without disabling valid internal links. Negative and valid link assertions are in `UX-kit-role-and-overlay-chat17.test.tsx`.
+
+- **Browser witness:** `tests/e2e/ux-safe-internal-href-chat17.spec.ts` transpiles the production `isSafeInternalHref` function and tests hostile encodings and legitimate URLs against Chromium's own URL origin resolver. Execute with `npx playwright test tests/e2e/ux-safe-internal-href-chat17.spec.ts`. This covers navigation parsing only; it is not proof of authenticated Projects end-to-end permission safety.
