@@ -3,6 +3,8 @@ import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {isVerifiedHrReplyReceipt,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 /** Never carry a recruiter draft across two different employer-college threads. */
 export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
@@ -90,10 +92,10 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
  return <form ref={formRef} onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h2 className="font-semibold text-foreground">Reply to placement cell</h2>
   <label className="grid gap-2 text-sm text-body">Message
-   <textarea value={body} onChange={event=>setBody(event.target.value)}
+   <Textarea value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
     rows={4} disabled={sending} aria-invalid={body.trim().length>4000}
-    className="rounded-md border border-border bg-surface p-3"
+    className="w-full"
     placeholder="Write a message to the placement cell"/>
   </label>
   <p className="text-xs text-muted-foreground">
@@ -101,10 +103,9 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   </p>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
   <div className="flex flex-wrap items-center gap-3">
-  <button type="submit" disabled={sending}
-   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
+  <Button type="submit" disabled={sending} loading={sending}>
    {sending?"Sending…":"Send reply"}
-  </button>
+  </Button>
   <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"
    consequence="Your draft reply will be lost." confirmLabel="Discard"
    onCancel={()=>setPendingLeave(null)} onConfirm={()=>{
