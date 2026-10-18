@@ -1,6 +1,6 @@
 import {beforeEach,afterEach,describe,expect,it,vi} from "vitest";
 import {tpoCampaignDraftStorageReady} from "@/modules/messaging/tpo-campaign-draft-service";
-import {tpoCampaignDispatchReady,dispatchTpoCampaign,TpoCampaignDispatchError}
+import {tpoCampaignDispatchReady,dispatchTpoCampaign}
  from "@/modules/messaging/tpo-campaign-dispatch-service";
 import type {RequestContext} from "@/modules/identity/context";
 
