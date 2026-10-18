@@ -24,6 +24,11 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `src/modules/admin-ui/super-admin-scoped-people-service.ts` now clamps a previously valid but stale deep-link page to the current filtered total **before** fetching rows. This prevents “page 999 of 1” from falsely reporting an empty faculty or learner list after a role change.
 - `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` checks the actual service entrypoint with a bounded query collaborator: valid page 2, stale page 999, zero matches, invalid/forged filters and no query for disabled Super Admin, Mentor, Learner or missing selected college. Disposable PostgreSQL and browser evidence remain pending.
 
+## SA-PEOPLE-SQL-01 — Super Admin directory SQL and contact privacy matrix
+
+- `tests/unit/chat3-superadmin-people-directory-query-scope.test.ts` executes the real `listSuperAdminUsers` service with a query-capturing collaborator and compiles its Drizzle predicates. It verifies exact organization+college filters are present before contact visibility, and that **global** email and phone fields are generated as `CASE ... ELSE NULL` SQL expressions, not merely hidden in the rendered component.
+- Disabled Super Admin, Learner, Mentor and Faculty contexts fail before database reads; injected URL college filters and invalid query shape fail before the query. This is a source/model unit regression, not a substitute for a PostgreSQL-backed account-role walkthrough.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.

@@ -151,3 +151,16 @@ export function tpoDriveWorkModeLabel(value:string):string{
  if(value==="HYBRID")return "Hybrid";
  return "Not chosen";
 }
+
+/** A displayed request can outlive its recruiter's college access. Null
+ * validity is deliberately expired, matching the live grant authorization.
+ * Status and DRIVE capability are required regardless of company trust. */
+export function tpoRecruiterRequestAccessEnded(
+ grant:{status:string;validUntil:Date|null;capabilities:readonly string[]}|null,
+ platformStatus:string,now:Date,
+):boolean{
+ return platformStatus!=="ACTIVE"||!grant||grant.status!=="ACTIVE"||
+  !grant.validUntil||grant.validUntil.getTime()<=now.getTime()||
+  !grant.capabilities.includes("DRIVES");
+}
+

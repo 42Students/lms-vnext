@@ -30,7 +30,7 @@ export function parseCollegeRoleDirectoryExportQuery(params:URLSearchParams){
  return {kind,filter};
 }
 export function escapeRoleDirectoryCsvCell(value:string):string {
- const safe=/^[\s\u0000-\u001f]*[=+@-]/u.test(value)?"'"+value:value;
+ const safe=/^[\s\p{Cf}\p{Mn}\u0000-\u001f]*[-=+@]/u.test(value)?"'"+value:value;
  return '"'+safe.replaceAll('"','""')+'"';
 }
 export function renderCollegeRoleDirectoryCsv(kind:CollegeDirectoryKind,rows:readonly CollegeRoleDirectoryRow[],truncated:boolean):string {

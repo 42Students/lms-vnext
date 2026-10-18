@@ -3,7 +3,9 @@ import "server-only";
 import {
   and,
   eq,
+  gt,
   inArray,
+  sql,
 } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
@@ -149,6 +151,10 @@ export async function getRecruiterSelfGrantOverview(
           placementRecruiterCollegeGrants.status,
           "ACTIVE",
         ),
+        // HR-SELF-GRANTS-53: do not show a stale, expired or unverified
+        // persisted grant as current employer access.
+        eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+        gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
         eq(
           placementCompanyRelationships.status,
           "ACTIVE",

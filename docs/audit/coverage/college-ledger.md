@@ -110,3 +110,34 @@ Its three ID-named cases assert that healthy rows remain visible while those for
 | Export | Behavioral tests | Evidentiary limit |
 | --- | --- | --- |
 | `src/modules/groups/actor-access.ts` `assertPersistedGroupActor`, `GroupActorAccessError` | `tests/unit/chat4-college-group-persisted-actor.test.ts` (`COL-groups-actor-01`): mock transaction SHARE locks, absent/disabled actor, SELF wrong member/college/status/learner role, MANUAL wrong or revoked College Admin, Super Admin stale in-memory role and persisted-role revocation, typed error mapping | Exercises transaction-scoped actor decision with controlled query rows. Separate group resource-level caller `requirePermission` and simultaneous persisted role-revocation transaction tests still required; no CI execution performed |
+
+## Super Admin directory and page continuation (2026-10-18; cloud CI pending)
+
+| Route / page | Case / test | Coverage claim |
+| --- | --- | --- |
+| `/admin/organizations` | `SA-colleges-directory-06`, `tests/unit/chat4-admin-colleges-organizations-directory.test.ts` | Guards `admin-scope.select` before invalid URL response; permission expression normalized to the exact source contract without weakening test |
+| `/admin/colleges/[collegeId]/admins/[userId]/history` | `SA-colleges-admins-R01`, `tests/unit/chat4-admin-college-session-history-journey.test.ts`; `tests/unit/chat4-superadmin-history-page-rendering.test.tsx` | Page authenticates Super Admin before even invalid-filter rendering, rejects duplicate/bogus pages before service reads, renders subject-scoped IST activity with next/previous and matching CSV URL; user summary escapes markup; static SSR tests authored |
+| `/admin/colleges/[collegeId]/signin` | `SA-colleges-signin-page-01`, `tests/unit/chat4-superadmin-college-signin-page-states.test.tsx` | Page SSR verifies configured policy/version, migration-unavailable disabled action, malformed stored policy safe message, invalid college ID 404, College Admin denial before secret read |
+| `/api/admin/tenants/export` | `SA-tenants-directory-export-01`, `tests/unit/chat4-superadmin-tenant-export-handler.test.ts` | Full parsed query rejection (duplicate, unexpected, invalid organization/status), authorized normalized export with same actor, 1000 cap headers, private no-store and Vary Cookie for success and denial. Request-specific error responses now explicitly not cacheable |
+| `tests/unit/chat4-super-admin-colleges-bulk-service-behaviour.test.ts` | `SA-colleges-bulk-IMPORT-01/02/03` | Strict `AdminScope` typing corrected: organization-scoped Super Admin uses `collegeId:null` |
+| `tests/unit/chat4-superadmin-tenant-lifecycle-actor.test.ts` | `SA-tenants-lifecycle-ACTOR-01/02/03/04` | Mock transaction callback type no longer refers recursively to its own parameter |
+
+All above tests **authored but not executed**; existing latest CI report still references `SA-colleges-directory-06`, which requires a fresh CI rerun to close. Other College Admin module/page coverage remains open.
+
+## College People additions: import and identity service behavior
+
+| Export | Test | Covered behavior and remaining evidence |
+| --- | --- | --- |
+| `src/modules/people/college-student-import-options.ts` `listCollegeStudentImportOptions` | `tests/unit/chat4-college-student-import-options-service.test.ts` (`COL-student-import-OPTIONS-01`) | Wrong role/inactive actor rejected before DB, persisted college-admin role checked inside transaction, exact same-college options and query caps 500/2000/3000, empty choices; real PostgreSQL corrupt foreign-cohort fixture and role-revocation race still pending |
+| `src/modules/people/local-identity-directory.ts` `localIdentityDirectory.findByPhone/findByEmail/createUser/updateUser` | `tests/unit/chat4-college-local-identity-directory.test.ts` (`COL-people-local-identity-01`) | Identity projection without internal user IDs, casefolded email SQL argument, missing lookup, unique opaque local IDs, no implicit DB creation, partial profile contact preservation; unique-index and concurrent create reconciliation still require PostgreSQL integration |
+
+No local execution. The module-wide College Admin and Super Admin coverage gate is not complete.
+
+## College People export safety and revocation (source + unit authored)
+
+| Export / model | Test | Evidence |
+| --- | --- | --- |
+| `src/modules/people/college-visible-directory-export.ts` `exportVisibleCollegePeople` | `tests/unit/chat4-college-people-visible-export-security.test.ts` (`COL-people-export-ACTOR-02`) | Faculty private phone requires same-college persisted actor verification during its enrichment transaction; student phone column remains blank despite stored mobile; no private read occurs when actor's role was revoked between list and enrichment or when no rows are visible; UTF-8 BOM retained |
+| `src/modules/people/college-role-directory-export.ts` `escapeRoleDirectoryCsvCell`, `renderCollegeRoleDirectoryCsv` | Same test (`COL-people-export-formula-01`) | Escapes `= + - @` spreadsheet formulas even after Unicode format/combining marks, ordinary whitespace/control prefixes; numeric and quoted cells preserve CSV shape, active roster labels remain unmodified |
+
+This corrects the earlier blind spot in the People directory CSV encoder (which had recognized ASCII whitespace/control prefixes but not Unicode format and combining marks). **Tests were not run**. Database-role races and browser/spreadsheet import checks are still required.

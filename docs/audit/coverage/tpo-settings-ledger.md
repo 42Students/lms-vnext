@@ -147,3 +147,23 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | Export | Added integrity contract | Regression | Still pending |
 |---|---|---|---|
 | `getTpoMyNotifications` | Own-user, same-college, same-organization filters apply independently to count and paginated rows; after preferences read the service rechecks active persisted TPO (not merely College Admin placements.manage) in transaction-held SHARE locks before responding, including to a revoked/disabled user | `tests/unit/chat11-tpo-private-notifications-revocation.test.ts` — TPO-settings-audit-NOTIFY-READ-05, commits `cb7b636`, `ee28856` | Two-session PG role revocation; mixed-college recipient integration |
+
+## Personal preference editor — last-saved CAS token (chat-11)
+
+| Export/route | Behavioural requirement | Regression | Remaining |
+|---|---|---|---|
+| `TpoMyNotificationPreferencesEditor`, `saveMyTpoNotificationPreferences` | Five exact own-account switches and no caller-selected user/college; no-op retry avoids duplicate audit, successful response updates local saved baseline and optimistic token so two sequential saves work, synchronous click lock and safe errors remain | `tests/unit/chat11-tpo-personal-preferences-editor-cas.test.ts` — TPO-settings-audit-PREF-UI-06, commits `2230087`, `41f1463` | Browser sequential-save slow revalidation and cross-session PostgreSQL CAS |
+
+## Archived department prevention in preparation assignment
+
+| Export | Behaviour and negative cases | Test evidence | Runtime remainder |
+|---|---|---|---|
+| `listTpoPrepCourses`, `readTpoLearnerPrepOutcomes` | An archived department is excluded from active college preparation choices and from learner published-content readiness evidence; missing eligible published content is UNAVAILABLE, not NEEDS_PREP or READY; stored selections absent from active catalog remain unresolved for correction | `tests/unit/chat11-tpo-prep-archived-catalog.test.ts` — TPO-settings-audit-PREP-CATALOG-07, commits `a329efb`, `a483080`, `5a42456` | PostgreSQL archived department / old offering, role and course completion integration |
+
+## Personal preference HTTP adversarial coverage
+
+| API | Behavioural test | Evidence | Remaining |
+|---|---|---|---|
+| `PUT /api/placements/tpo/my-notification-preferences` | Actual mocked HTTP route rejects foreign origin before actor lookup, invalid JSON/media type (400), streamed oversized body (413), maps stale 409 and storage unavailable 503; successful own-account response private no-store; denied session mapped through central error boundary; strict service model separately denies any `userId`/`collegeId` keys | `tests/unit/chat11-tpo-preferences-http-security.test.ts` — TPO-settings-audit-PREF-HTTP-08, commit `20f4314`; plus `chat11-tpo-personal-preferences-editor-cas.test.ts` | Real PostgreSQL RLS-equivalent cross-tenant and expired session tests |
+
+**PREP-CATALOG-07 transaction supplement:** `setTpoPrepReadiness` now checks the locked college's ACTIVE status and revalidates every requested UUID against ACTIVE courses inside a non-archived department of the authorized college. The previous catalog-only filter was insufficient because a direct HTTP client could still save retired academic course IDs. `tests/unit/chat11-tpo-prep-archived-catalog.test.ts` includes the locked mutation ordering test; commits `aa6a9a5` and `06d33d1`. PostgreSQL remains unexecuted.

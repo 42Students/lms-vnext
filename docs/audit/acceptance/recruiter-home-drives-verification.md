@@ -229,3 +229,18 @@ The recruiter job-list SQL now rechecks all persisted grant-validity invariants:
 ## HR-GRANT-EXPIRE-39: persisted authorization (source-reviewed)
 
 Employer drive, round, slot and candidate reads now independently check `verification_status='VERIFIED'`, `valid_until > now()`, and `DRIVES` capability in persisted grant SQL. A company team directory also refuses an unverified or expired grant. Unit tests `HR-BREAK-chat15-expired-grants-39.test.ts` and PostgreSQL lifecycle tests `tests/integration/hr-grant-expiry-39-postgresql.test.ts` are authored but not executed; live revocation race still open.
+
+
+### HR-GRANT-EXPIRY-CLOCK-44 and HR-ROUND-TENANT-46
+
+Employer grant authorization uses a real PostgreSQL wall-clock expiry within potentially long-running transactions. Round list and writes require live ACTIVE college and company in addition to persisted grant, recruiter and drive. Unit contract: `HR-BREAK-chat15-round-archive-26.test.ts` and `HR-BREAK-chat15-expired-grants-39.test.ts`; database: `hr-grant-expiry-39-postgresql.test.ts`. Tests were authored, not run.
+
+
+### HR-API-MATRIX-47 and HR-ACTOR-STATUS-48
+
+Every dedicated recruiter API route now has an inventory assertion in `tests/unit/chat15-recruiter-api-route-coverage-47.test.ts` distinguishing mutation-origin guards from read-only GETs; the request and slot handlers also have mocked behavioural HTTP tests. A stale/revoked recruiter user must be ACTIVE in persistence before job, candidate, round or slot reads, even if an earlier session object still says ACTIVE; see `tests/unit/HR-BREAK-chat15-persisted-user-48.test.ts`. These are authored but not executed; browser and PostgreSQL session-revocation checks remain necessary.
+
+
+## Chat-15 HR-RECORDED-QUERY-51 — outside-platform drives
+
+The retired/external recruiter drive page rejects ambiguous duplicate `collegeId` and `saved` parameters before it reads an authorized college's choices or displays a saved receipt. Actual SSR evidence: `tests/unit/chat15-hr-recorded-outside-page-51.test.tsx`, covering active/revoked actor, one/multiple grants, foreign/malformed college, repeated keys and independently verified saving. The page never presents an outside-drive historical record as a published learner-visible job. CI and browser run pending.

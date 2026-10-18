@@ -344,3 +344,22 @@ Additional unexecuted test evidence:
 - `tests/unit/chat16-hr-notifications-service-16.test.ts`: actual recruiter inbox service with actor, employer grant, multi-college choice, no eligible jobs and scoped job-event projection; DB and grant fetch mocked.
 
 These are authored direct-test cases, not a claim of passed CI, full PostgreSQL concurrency or provider delivery. The source-level stage preserves exact existing role/UI copy except for removing unsupported public AI-agent claims.
+
+### Immutable recipient snapshot binding — post-draft address substitution closed
+
+TPO campaign creation stored a purpose-specific `recipientKey` HMAC of the originally selected email, but dispatch previously selected only the lead's current `emailNorm`. A recruiter address changed **between draft creation and dispatch** could therefore receive a campaign they had never been selected for, while receipts remained keyed to the former address. `issueTpoCampaignEmailRecipientKey` and `matchesTpoCampaignEmailRecipientKey` now share the original `tpo-campaign-email-v1:` signing derivation between `tpo-campaign-draft-service.ts` and `tpo-campaign-dispatch-service.ts`. Dispatch fetches the saved `recipientKey` and verifies it in constant time against the current contact email **before** transitioning PENDING to QUEUED; a mismatch is suppressed rather than forwarded. Existing after-claim live consent and email checks remain in place. `chat16-tpo-campaign-live-consent-recheck-16.test.ts` covers canonical addresses, wrong keys/secret, invalid keys and source claim/send order.
+
+Source authored on the chat-16 branch; run unit/PostgreSQL concurrency/provider acceptance tests in CI before release.
+
+### Campaign identity, recruiter digest and notification writer additions
+
+The latest authored source and tests add further direct service coverage:
+
+- `src/modules/messaging/tpo-campaign-recipient-token.ts`: `issueTpoCampaignEmailRecipientKey` and `matchesTpoCampaignEmailRecipientKey` are shared by draft persistence and dispatch. The stored purpose-specific HMAC is now verified against the current lead email before claiming a recipient, so a change between **draft creation and dispatch** cannot redirect email to an unselected address. `tests/unit/chat16-tpo-campaign-live-consent-recheck-16.test.ts` directly tests both functions and guards claim-before-send order.
+- `src/modules/placements/recruiter-message-email-dispatch-service.ts`: within the locked send transaction, a SQL `exists` check re-verifies active recruiter user/profile, active verified `DRIVES` grant with valid date, same college/company relationship, active college/company, job relationship and unchanged recipient email. `tests/unit/chat16-recruiter-email-digest-live-grant-16.test.ts` tests feature-disabled, weak-key and revoked-grant fail-closed paths without external sends.
+- `src/modules/placements/hr-tpo-notification-service.ts`: `tests/unit/chat16-hr-tpo-notification-writer-16.test.ts` exercises missing college, scoped event+notification writes, slot href and empty-recipient no-op using the caller's mocked transaction.
+- `src/modules/placements/tpo-my-notification-preferences-write.ts`: `tests/unit/chat16-tpo-notification-preferences-write-16.test.ts` covers global actor, unregistered storage, persisted live TPO role, stale optimistic versions, audit writes and idempotent no-op retries.
+- `src/modules/placements/tpo-my-notifications-service.ts`: `tests/unit/chat16-tpo-personal-notification-read-16.test.ts` covers role, strict filters, own-college fixed-label projection and final persisted-role authorization after list queries.
+- `src/app/enterprises/page.tsx` and `src/app/universities/page.tsx`: removed remaining false marketing claims of active AI functionality, keeping navigation and demo CTAs. The existing real SSR marketing suite asserts the replacement headings.
+
+These are authored and pushed to the lane branch. **CI runs after these specific commits are not yet complete**, so database locks, provider delivery and full browser behavior remain separate release gates.
