@@ -53,6 +53,25 @@ export async function requestPublicJoinCode(
   }
   const digest = createHash("sha256").update(input.data.token).digest("hex");
   const email = input.data.email;
+  // Reject expired, revoked and wrong-scope links BEFORE anonymous MX lookup.
+  // The transaction below repeats this check under the link lock, so revocation
+  // between preflight and the durable rate/OTP write still fails closed.
+  const [availableLink] = await getDb().select({
+    id: placementPublicJoinLinks.id, domain: placementPublicJoinLinks.companyDomain,
+  }).from(placementPublicJoinLinks)
+    .innerJoin(colleges, eq(placementPublicJoinLinks.collegeId, colleges.id))
+    .innerJoin(organizations, eq(colleges.organizationId, organizations.id))
+    .where(and(
+      eq(placementPublicJoinLinks.tokenHash,digest),
+      eq(placementPublicJoinLinks.scope,scope),
+      eq(placementPublicJoinLinks.enabled,true),
+      isNull(placementPublicJoinLinks.revokedAt),
+      gt(placementPublicJoinLinks.expiresAt,new Date()),
+      eq(colleges.status,"ACTIVE"), eq(organizations.status,"ACTIVE"),
+    )).limit(1);
+  if(!availableLink || (scope==="COMPANY" &&
+      !companyJoinEmailCandidate(email,availableLink.domain??"")))
+    throw new PublicJoinCodeError("INVALID_LINK");
   // Delivery must be possible at the domain before recording a challenge.
   const host=email.split("@")[1];
   let records:{exchange:string;priority:number}[];
@@ -131,11 +150,22 @@ export async function requestPublicJoinCode(
   if (!sent) throw new PublicJoinCodeError("DELIVERY_FAILED");
   // Show a company only after we have successfully sent a verification code
   // to the provided mailbox, never as an unauthenticated domain oracle.
-  const domain=registrableWorkDomain(email);
-  const [known]=domain?await getDb().select({name:placementCompanies.name})
+  return { sent: true,...(await lookupDeliveredJoinCompanyName(email)) };
+}
+
+/** Optional identity-safe company hint. A lookup outage after code acceptance
+ * must not turn a successfully sent OTP into a false DELIVERY_FAILED. */
+export async function lookupDeliveredJoinCompanyName(email:string):Promise<{companyName:string|null}>{
+ const domain=registrableWorkDomain(email);
+ if(!domain)return {companyName:null};
+ try{
+  const [known]=await getDb().select({name:placementCompanies.name})
    .from(placementCompanies).where(and(
     eq(placementCompanies.primaryDomain,domain),
     eq(placementCompanies.status,"ACTIVE"),
-   )).limit(1):[];
-  return { sent: true,companyName:known?.name??null };
+   )).limit(1);
+  return {companyName:known?.name??null};
+ }catch{
+  return {companyName:null};
+ }
 }
