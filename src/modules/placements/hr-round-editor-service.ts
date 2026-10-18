@@ -7,7 +7,7 @@ import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
 import type {RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
-import {hrRoundFormSchema,canRecruiterEditRound,duplicateRecruiterRoundName} from "./hr-round-editor-model";
+import {hrRoundFormSchema,canRecruiterEditRound,duplicateRecruiterRoundName,matchesRecruiterRoundVersion} from "./hr-round-editor-model";
 import {z} from "zod";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
@@ -79,7 +79,7 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
    .where(and(eq(hrInterviewSlots.roundId,target.id),eq(hrInterviewSlots.jobId,job.id))).limit(1);
   if(!canRecruiterEditRound({status:target.status,createdByUserId:target.createdByUserId,
    recruiterUserId:context.user.id,hasResults:Boolean(result),hasSlots:Boolean(attachedSlot)}) ||
-   target.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt!))
+   !matchesRecruiterRoundVersion(target.updatedAt,input.expectedUpdatedAt))
    throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
   if(input.name&&duplicateRecruiterRoundName(active,input.name,target.id))
    throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_EDITABLE");
