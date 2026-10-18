@@ -679,13 +679,13 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/projects/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
-| `src/app/(authenticated)/mentor/reports/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
+| `src/app/(authenticated)/mentor/reports/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-reports-page.test.tsx` | Server-rendered invalid/duplicate filters, empty, module-disabled, authorized partial list, denied/no-data propagation; **authored/unrun**; interactive keyboard/phone browser **GAP** |
 | `src/app/(authenticated)/mentor/review-history/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/reviews/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/sprint-progress/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/task-review-history/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
 | `src/app/(authenticated)/mentor/task-reviews/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
-| `src/app/(authenticated)/mentor/team-coverage/page.tsx` | **GAP — source test mapping pending** | loading, empty, error, denied, partial, mobile, keyboard |
+| `src/app/(authenticated)/mentor/team-coverage/page.tsx` | `tests/unit/PROJ-BREAK-chat14-mentor-team-page.test.tsx` | Server-rendered invalid/duplicate filters, empty, module-disabled, authorized partial list, denied/no-data propagation; **authored/unrun**; interactive keyboard/phone browser **GAP** |
 
 ## Role/tenant matrix (must have behavioural proof)
 
