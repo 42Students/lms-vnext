@@ -11,6 +11,9 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 | SA-tenants-modules-BRAND-01 | `/admin/colleges/[collegeId]/branding` | Cross-tenant user tries to preview or edit a different college's logo/settings | Existing scoped `getSuperAdminCollegeBrandingPreview`, persisted tenant detail, scoped `getCollegeBranding` and organization-aware `can("college.manage")` guard inspected | `tests/unit/chat11-super-admin-signin-readiness.test.ts` source-scoped regression | Upload URL authorization, signed storage writes, malicious SVG/oversized file, expired session and keyboard crop flow |
 | SA-tenants-modules-MOD-01 | `/admin/module-access` | No selected scope, unauthorized module overview, hostile page/filter request | Existing list service and `getModuleAccessOverviewMetrics` scope inputs, now preceded by a page-level Super Admin permission gate | `tests/unit/chat11-super-admin-tenant-route-guard.test.ts` + `tests/unit/chat11-super-admin-signin-readiness.test.ts` | DB true/false override matrices, inherited rules, large tenant counts, audit activity |
 
+
+| SA-tenants-modules-SEC-02 | `/admin/colleges/[collegeId]/signin`, `/branding`, `/readiness` | Invalid tenant UUID could be parsed before an explicit Super Admin system-role check; sign-in and branding relied on downstream service auth | `c5e0d52`, `8d9ea45`, `e063736`: require `admin-scope.select` before parsing or loading per-college data | `tests/unit/chat11-super-admin-tenant-route-guard.test.ts`: `SA-tenants-modules-SEC-02` | HTTP unauthorized/expired session and load-shedding E2E |
+
 ## Audit disposition
 
 - **Source-level blockers found and patched:** unauthorized malformed-filter route bypass across three administrative pages.

@@ -196,6 +196,19 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     expect(control).toContain("Retry loading it before creating the Project");
   });
 
+  it("PROJ-COL-STALE-06 prevents mentorless activation after a Mentor selection is cleared",()=>{
+    const control=readFileSync("src/components/projects/project-create-control.tsx","utf8");
+    const validation=control.indexOf('if (initialStatus === "ACTIVE" && !mentorMembershipId)');
+    const submit=control.indexOf("submitLock.current = true");
+    expect(validation).toBeGreaterThan(0);
+    expect(validation).toBeLessThan(submit);
+    expect(control).toContain("Assign a Mentor before making this Project active.");
+    expect(createProjectInstanceInputSchema.safeParse({
+      collegeId:COLLEGE,templateId:TEMPLATE,slug:"a",title:"Team A",
+      initialStatus:"ACTIVE",learnerMembershipIds:[],
+    }).success).toBe(false);
+  });
+
   it("PROJ-COL-STALE-02 rejects stale timestamps and repeated roster members", () => {
     const valid = { learnerMembershipIds: [STUDENT],
       expectedUpdatedAt: "2099-04-01T12:00:00.000+05:30" };

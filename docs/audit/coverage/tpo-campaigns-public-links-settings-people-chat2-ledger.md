@@ -74,3 +74,8 @@ This ledger is deliberately explicit about gaps; source assertions and compilati
 - Updated `chat2-public-join-disabled.test.ts` to exercise required optimistic `expectedLinkId` and reject forged company inputs. Updated `chat2-unsubscribe-graceful.test.ts` to protect idempotent **signed** retries while refusing unknown/unverified tokens rather than showing a false unsubscribed confirmation.
 - Added `tests/unit/chat2-tpo-last-third-route-matrix.test.ts` covering all 42 final-slice page **source** contracts, authorization inherited from `/tpo/layout.tsx`, loading/retry errors, and reports/settings routes. Individual interactive browser state journeys remain pending.
 - Every test and route is still subject to cloud typecheck/unit/DB verification before a green ledger claim.
+
+## Pass B – public link actual-handler tests
+
+- `tests/unit/chat2-tpo-public-link-route-journeys-break-05.test.ts` imports the actual public join link create, toggle and status handlers. Cases cover CSRF denial before context load, session-derived actor scope, safe stale/expired/tenant failure response, forged scope query rejection, no bearer token in status response, and no-store caching. The service implementation remains the tenant-level enforcement boundary; mocked-handler tests alone are not DB actor/tenant certification.
+- Canonical HMAC resolution in unsubscribe read preview now matches the POST and campaign dispatch secret. `chat2-unsubscribe-graceful.test.ts` rejects unsigned unknown links while accepting idempotent signed opt-outs.

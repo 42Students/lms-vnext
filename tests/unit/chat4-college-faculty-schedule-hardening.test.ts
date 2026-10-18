@@ -33,6 +33,8 @@ describe("College faculty schedule reassignment break-it workflows",()=>{
   expect(s).toContain('if(!sourceFaculty)throw Error("Faculty not found in this college.")');
   expect(s).toContain("eq(collegeMemberships.id,id)");
   expect(s).toContain("eq(collegeMemberships.collegeId,m.collegeId)");
+  expect(s).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(s).toContain('p.userStatus==="ACTIVE"');
   expect(s).toContain("eq(departments.collegeId,m.collegeId)");
   expect(s).toContain("eq(sections.id,sectionScheduleEvents.sectionId)");
   expect(s).toContain("eq(sectionScheduleEvents.facultyMembershipId,old)");
@@ -46,6 +48,7 @@ describe("College faculty schedule reassignment break-it workflows",()=>{
   const trans=s.indexOf("return db.transaction(async tx=>");
   const principals=s.indexOf('for("share",{of:collegeMemberships})',trans);
   const guard=s.indexOf('assertPersistedPlatformPermission(tx,ctx,"academics.manage"');
+  const serialization=s.indexOf("pg_advisory_xact_lock(hashtext(");
   const lock=s.indexOf('for("update",{of:sectionScheduleEvents})');
   const update=s.indexOf("tx.update(sectionScheduleEvents)");
   const noOp=s.indexOf('if(!results.some(row=>row.status==="REASSIGNED"))');
@@ -53,7 +56,8 @@ describe("College faculty schedule reassignment break-it workflows",()=>{
   expect(trans).toBeGreaterThan(-1);
   expect(principals).toBeGreaterThan(trans);
   expect(guard).toBeGreaterThan(principals);
-  expect(lock).toBeGreaterThan(guard);
+  expect(serialization).toBeGreaterThan(guard);
+  expect(lock).toBeGreaterThan(serialization);
   expect(update).toBeGreaterThan(lock);
   expect(noOp).toBeGreaterThan(update);
   expect(audit).toBeGreaterThan(noOp);
