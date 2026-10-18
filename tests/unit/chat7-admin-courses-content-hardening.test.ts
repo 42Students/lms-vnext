@@ -53,6 +53,10 @@ describe("SA-COURSES-CONTENT-AUDIT-02 course and resource list boundaries",()=>{
      "http://example.edu/file","javascript:alert(1)",
      "https://user:pass@example.edu/file",
      "https://example.edu/file#token","not a link",
+     "https://localhost/internal","https://127.0.0.1/metadata",
+     "https://10.1.0.1/private","https://192.168.1.1/admin",
+     "https://169.254.169.254/latest/meta-data/",
+     "https://[::1]/internal",
    ])expect(safePublicCourseContentUrl(link)).toBeNull();
    const filters=adminContentQuerySchema.parse({
      q:"  lecture  ",status:"PUBLISHED",page:"3",offeringId:courseId,scope:"SECTION",
