@@ -8,5 +8,10 @@ describe("UX-superadmin-01",()=>{
   expect(code).toContain("redirect(\"/admin/academics\")");
 
 
+  const loading=source("src/app/(authenticated)/superadmin/loading.tsx");
+  const error=source("src/app/(authenticated)/superadmin/error.tsx");
+  expect(loading).toContain("GracefulPageLoading");
+  expect(error).toContain("GracefulErrorBoundary");
+  expect(error).toContain("reset={reset}");
  });
 });
