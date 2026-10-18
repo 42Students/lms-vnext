@@ -128,13 +128,13 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
           Frontend commit SHA
           <Input className="mt-1" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<a href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
-            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">View on GitHub ↗</a>:null}
+            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">View on GitHub ↗</a>:null}
         </label>
         <label className="text-sm font-semibold text-body">
           Backend commit SHA
           <Input className="mt-1" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<a href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
-            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">View on GitHub ↗</a>:null}
+            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">View on GitHub ↗</a>:null}
         </label>
         <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
           <input type="checkbox" checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />

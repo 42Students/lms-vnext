@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
@@ -59,13 +60,14 @@ export function HrDriveDraftForm({
   const [showPreview, setShowPreview] = useState(false);
   const [notice, setNotice] = useState("");
   const [pendingLeave,setPendingLeave]=useState<string|null>(null);
+   const [draftDecision,setDraftDecision]=useState<"RESTORE"|"CLEAR"|null>(null);
   const router=useRouter();
   const [savedRequestId,setSavedRequestId]=useState<string|null>(null);
   const [submitting,setSubmitting] = useState(false);
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
   const submittedRef=useRef(false);
   const result = hrDriveDraftSchema.safeParse(draft);
-  const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+  const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
   const selectOptions = [
     ["FULL_TIME", "Full-time"], ["INTERNSHIP", "Internship"], ["INTERNSHIP_FULL_TIME", "Internship + full-time"], ["CONTRACT", "Contract"],
   ] as const;
@@ -142,12 +144,11 @@ export function HrDriveDraftForm({
       setNotice("Unsent draft saved on this device, even if some fields are unfinished (24-hour expiry).");}
     catch{setNotice("This browser cannot save a draft. Copy the preview instead.");}
   }
-  function restoreFromThisTab(){
+  function restoreFromThisTab(confirmed=false){
     try{
       const saved=(restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now())??restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now()));
       if(!saved){setNotice("No unexpired saved draft for this college and job was found.");return;}
-      if(hrDraftContainsWork(draft)&&JSON.stringify(draft)!==JSON.stringify(saved)&&
-        !window.confirm("Replace your current unsent changes with the draft saved on this device?"))return;
+      if(hrDraftContainsWork(draft)&&JSON.stringify(draft)!==JSON.stringify(saved)&&!confirmed){setDraftDecision("RESTORE");return;}
       setDraft(saved);setBranchInput((saved.branches??[]).join(", "));setShowPreview(false);
       setNotice("Restored local draft. It has not been submitted or sent.");}
     catch{setNotice("Unable to access saved drafts in this browser.");}
@@ -226,11 +227,11 @@ export function HrDriveDraftForm({
     <p className="text-sm text-body">Your request was saved. The placement cell will review and set the dates before it can open to students.</p>
     <div className="flex flex-wrap gap-3">
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text underline">Open the request</a>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] underline">Open the request</a>
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text underline">Go to Drives</a>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] underline">Go to Drives</a>
       <a href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text underline">Request another</a>
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] underline">Request another</a>
     </div>
   </section>;
 
@@ -244,7 +245,18 @@ export function HrDriveDraftForm({
         submittedRef.current=true;
         if(href)router.push(href);
        }}/>
-      {sourceJobTitle ? (
+      <ConfirmDialog open={draftDecision!==null} onOpenChange={open=>{if(!open)setDraftDecision(null);}}
+         title={draftDecision==="RESTORE"?"Replace your current unsent changes with the draft saved on this device?":"Discard all unsent draft changes and clear this tab's saved copy?"}
+         confirmLabel={draftDecision==="RESTORE"?"Restore saved draft":"Start over"}
+         confirmVariant="danger" onConfirm={()=>{
+           const decision=draftDecision;setDraftDecision(null);
+           if(decision==="RESTORE")restoreFromThisTab(true);
+           else if(decision==="CLEAR"){
+             try{window.sessionStorage.removeItem(storageKey);window.localStorage.removeItem(storageKey);}catch{}
+             setDraft(emptyHrDriveDraft());setBranchInput("");setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
+           }
+         }}/>
+       {sourceJobTitle ? (
         <p className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-body">
           Hire again · copied from: <strong>{sourceJobTitle}</strong>. Changes here do not update the existing drive.
         </p>
@@ -377,7 +389,7 @@ export function HrDriveDraftForm({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Hiring rounds</h2>
           <button type="button" disabled={draft.rounds.length >= 12}
-            className="min-h-10 rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
             onClick={() => setDraft((current) => ({
               ...current, rounds: [...current.rounds, { kind: "INTERVIEW", name: "Interview" }],
             }))}>
@@ -386,7 +398,7 @@ export function HrDriveDraftForm({
         </div>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
           {HR_DRIVE_ROUND_PRESETS.map(preset=><button key={preset.id}
-            type="button" className="min-h-10 rounded-md border border-border px-3 text-sm text-primary-text"
+            type="button" className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)]"
             onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
             {preset.label}
           </button>)}
@@ -415,15 +427,15 @@ export function HrDriveDraftForm({
               </label>
               <div className="flex items-end gap-2">
                 <button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
-                  className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50"
+                  className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</button>
                 <button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
-                  className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50"
+                  className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</button>
               </div>
               <button type="button" disabled={draft.rounds.length>=12}
                 aria-label={"Duplicate "+round.name}
-                className="self-end rounded-md border border-border px-3 py-3 text-sm text-primary-text disabled:opacity-50"
+                className="self-end rounded-md border border-border px-3 py-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
                 onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
                 Duplicate
               </button>
@@ -446,21 +458,21 @@ export function HrDriveDraftForm({
             onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</button>
           <button type="button" disabled={!result.success||submitting}
             aria-busy={submitting}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </button>
           <button type="button" disabled={!result.success}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
             onClick={() => void copyPreview()}>Copy validated draft</button>
           <button type="button" disabled={submitting}
-            className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
             onClick={saveForThisTab}>Save unsent draft</button>
-          <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text"
-            onClick={restoreFromThisTab}>Restore saved draft</button>
+          <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]"
+            onClick={()=>restoreFromThisTab()}>Restore saved draft</button>
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-body"
             onClick={() => {
-              if(hrDraftContainsWork(draft)&&!window.confirm("Discard all unsent draft changes and clear this tab's saved copy?"))return;
+              if(hrDraftContainsWork(draft)){setDraftDecision("CLEAR");return;}
               try{window.sessionStorage.removeItem(storageKey);window.localStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
               setDraft(emptyHrDriveDraft());setBranchInput("");setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
             }}>Start over</button>
@@ -483,7 +495,7 @@ export function HrDriveDraftForm({
             {draft.driveMode==="OFF_CAMPUS"?
               <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
                 ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer" target="_blank"
-                  className="font-semibold text-primary-text underline">{result.data.externalApplicationUrl}</a>
+                  className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{result.data.externalApplicationUrl}</a>
                 : "Not specified"}</p>:null}
             <h4 className="font-semibold text-foreground">Planned hiring process</h4>
             <ol className="list-inside list-decimal space-y-1">
