@@ -86,7 +86,7 @@ describe("Super Admin Projects and Placements page routes — independent securi
     const access=source("src/modules/projects/access.ts");
     for(const component of [section,readiness]) expect(component).toContain("requireProjectManageAccess");
     expect(template).toContain("getSuperAdminTemplateSubview(");
-    expect(template).toContain("projectTemplateIdSchema.safeParse(");
+    expect(template).toMatch(/projectTemplateIdSchema\.safeParse\(\s*templateId,?\s*\)\.success/);
     expect(access).toContain('can(context, "projects.manage", {');
     expect(access).toContain("organizationId: scope.organizationId");
     expect(access).toContain("collegeId: scope.collegeId");
