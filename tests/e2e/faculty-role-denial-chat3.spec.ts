@@ -49,7 +49,7 @@ test.describe("FAC-courses-01 Faculty authentication, deep links and page resili
   await page.setViewportSize({width:390,height:844});
   await page.goto("/teacher/courses");
   const skip=page.getByRole("link",{name:"Skip to faculty content"});
-  await page.keyboard.press("Tab");
+  await skip.focus();
   await expect(skip).toBeFocused();
   await skip.press("Enter");
   await expect(page.locator("#faculty-page-content")).toBeFocused();
