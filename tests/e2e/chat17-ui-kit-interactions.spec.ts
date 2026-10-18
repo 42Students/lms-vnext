@@ -41,6 +41,13 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(cue).toHaveAttribute("data-scroll-start","true");
     await expect(cue).toHaveAttribute("data-scroll-end","false");
 
+    await page.getByRole("button",{name:"Narrow scroll content"}).click();
+    await expect(cue).toHaveAttribute("data-scroll-start","false");
+    await expect(cue).toHaveAttribute("data-scroll-end","false");
+    await expect(cue.getByRole("region",{name:"Harness horizontal overflow"})).toHaveCount(0);
+    await page.getByRole("button",{name:"Widen scroll content"}).click();
+    await expect(cue).toHaveAttribute("data-scroll-end","true");
+
     // Native host browser shims sometimes lack this standard API.
     await page.evaluate(() => {
       Object.defineProperty(window,"matchMedia",{configurable:true,value:undefined});
@@ -74,6 +81,16 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
       name:"valid.pdf",mimeType:"application/pdf",buffer:Buffer.from("%PDF-1.7 valid"),
     });
     await expect(page.getByTestId("file-status")).toContainText("Selected: valid.pdf");
+
+    await page.getByRole("button",{name:"Disable file selection"}).click();
+    await expect(upload).toBeDisabled();
+    await expect(page.getByTestId("file-status")).toContainText("No file selected");
+    await page.getByRole("button",{name:"Enable file selection"}).click();
+    await expect(upload).toBeEnabled();
+    await upload.setInputFiles({
+      name:"second.pdf",mimeType:"application/pdf",buffer:Buffer.from("%PDF-1.7 second"),
+    });
+    await expect(page.getByTestId("file-status")).toContainText("Selected: second.pdf");
 
     await page.evaluate(() => {
       Object.defineProperty(window.crypto,"randomUUID",{configurable:true,value:undefined});
