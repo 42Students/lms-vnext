@@ -726,6 +726,17 @@ export async function setEligibilityOverride(
     if (liveJob.collegeId !== job.collegeId) {
       throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
     }
+    if(input.expectedOverrideId!==undefined){
+      const [current]=await tx.select({id:placementEligibilityOverrides.id})
+        .from(placementEligibilityOverrides)
+        .where(and(
+          eq(placementEligibilityOverrides.jobId,jobId),
+          eq(placementEligibilityOverrides.membershipId,membershipId),
+          isNull(placementEligibilityOverrides.revokedAt),
+        )).for("update").limit(1);
+      if((current?.id??null)!==input.expectedOverrideId)
+        throw new PlacementsServiceError("PLACEMENT_ELIGIBILITY_OVERRIDE_STALE");
+    }
     await tx
       .update(placementEligibilityOverrides)
       .set({ revokedAt: new Date() })
