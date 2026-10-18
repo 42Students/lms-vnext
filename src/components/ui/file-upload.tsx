@@ -46,7 +46,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
   }
   return <div className={cx("min-w-0 space-y-2", className)} data-slot="file-upload">
     <label htmlFor={id} className="block text-sm font-semibold text-foreground">{label}</label>
-    {pickerUnavailable ? <p role="status" className="text-sm text-body">File selection is unavailable in this app view.</p> :
+    {pickerUnavailable ? <p role="status" className="text-sm text-body">File selection is unavailable in this app view. {fallback ? "Use the alternative below." : "Open this form in a browser that supports file selection."}</p> :
       <input {...props} id={id} type="file" accept={accept} disabled={disabled} onChange={handleChange}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : helper ? `${id}-help` : undefined}
@@ -54,5 +54,6 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     {helper ? <p id={`${id}-help`} className="text-sm leading-6 text-body">{helper}</p> : null}
     {error ? <p id={`${id}-error`} role="alert" className="text-sm text-foreground">{error}</p> : null}
     {fallback ? <div className="min-w-0 space-y-2">{fallback}</div> : null}
+    {pickerUnavailable && !fallback ? <p role="alert" className="text-sm text-body">This upload cannot continue in the current app view.</p> : null}
   </div>;
 }
