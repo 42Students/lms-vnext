@@ -86,7 +86,7 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
    description="Most recent notifications from your own college.">
 
    {refreshing?<p role="status" className="text-xs text-muted-foreground">Refreshing notifications…</p>:null}
-   {!refreshing&&displayedItems.length===0?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul className="max-h-80 space-y-2 overflow-y-auto">
+   {!refreshing&&displayedItems.length===0?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul className="space-y-2">
     {displayedItems.slice(0,20).map(item=><li key={item.id} className="rounded border border-border text-sm">
      <button type="button" disabled={pending} onClick={()=>void openItem(item)}
       className="w-full min-h-11 rounded p-3 text-left hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary">
@@ -98,8 +98,8 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
      <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
      </button>
     </li>)}</ul>}
-   <div className="flex flex-wrap gap-3"><button type="button" disabled={refreshing||pending} onClick={()=>void refresh()} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Refresh</button><Link className="min-h-10 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
-    {unread>0?<button type="button" className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending}>{pending?"Saving…":"Mark all read"}</button>:null}</div>
+   <div className="flex flex-wrap gap-3"><button type="button" disabled={refreshing||pending} onClick={()=>void refresh()} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Refresh</button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
+    {unread>0?<button type="button" className="min-h-11 rounded border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending}>{pending?"Saving…":"Mark all read"}</button>:null}</div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </Drawer>
  </div>;

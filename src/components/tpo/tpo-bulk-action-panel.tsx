@@ -1,3 +1,4 @@
+import {ScrollCue} from "@/components/ui/scroll-cue";
 "use client";
 
 import {useState} from "react";
@@ -190,7 +191,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    {rollFeedback?<p role="status" className="text-xs text-muted-foreground">{rollFeedback}</p>:null}
    <p className="text-xs text-muted-foreground">Rolls outside these loaded rows cannot be selected by pasting. Use whole-batch search to locate them first.</p>
   </div>:null}
-  <div className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
+  <ScrollCue axis="y" label="Select applicants" className="rounded-md border border-border" viewportClassName="max-h-64 space-y-1 p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
     <input type="checkbox" disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
      onChange={e=>{const pageIds=rows.map(row=>row.id);setSelected(current=>e.target.checked?
@@ -203,7 +204,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       onChange={e=>{setSelected(current=>toggleTpoBulkRow(current,row.id,e.target.checked));invalidate();}}/>
     <span className="min-w-0 break-words">{row.label}</span>
    </label>)}
-  </div>
+  </ScrollCue>
   <div className="flex flex-wrap gap-2">
    <button type="button" disabled={busy||safeSelected.length===0}
      onClick={()=>{setSelected([]);invalidate();}}
@@ -293,13 +294,13 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      </div>:null}
      {safeSelected.length>1?<details className="text-sm">
        <summary>Review selected applicants individually ({safeSelected.length})</summary>
-       <ol className="mt-2 max-h-40 space-y-2 overflow-y-auto">
+       <ScrollCue axis="y" label="Selected applicant review links" viewportClassName="max-h-40"><ol className="mt-2 space-y-2">
          {safeSelected.map((id,index)=><li key={id}>
            <Link href={tpoReviewOneByOneHref(jobId,id)} className="text-[var(--lms-teal-deep)] underline">
              Applicant {index+1}
            </Link>
          </li>)}
-       </ol>
+       </ol></ScrollCue>
      </details>:null}
    </div>:null}
    {actionCounts.length>0?<div className="grid gap-2 sm:grid-cols-2">

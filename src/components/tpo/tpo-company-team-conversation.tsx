@@ -1,3 +1,4 @@
+import {ScrollCue} from "@/components/ui/scroll-cue";
 "use client";
 import {useCallback,useEffect,useState,type FormEvent} from "react";
 import Link from "next/link";
@@ -125,7 +126,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
      {data.messages.filter(m=>m.decision&&!m.deletedAt).slice(-5).map(m=>
        <a key={m.id} href={"#company-team-"+m.id} className="block truncate text-primary-text underline">{m.body}</a>)}
    </aside>:null}
-   <ol role="log" aria-live="polite" aria-label="Company Team messages" className="max-h-[35rem] space-y-3 overflow-y-auto">
+   <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">
     {data.messages.length===0?<li className="text-sm text-muted-foreground">
       Nothing here yet. Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date.
     </li>:data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="rounded-md border border-border p-3">
@@ -167,7 +168,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
         <button type="button" className="ml-3 text-primary-text underline" onClick={()=>setEditing(null)}>Cancel</button>
        </form>:null}
     </li>)}
-   </ol>
+   </ol></ScrollCue>
    <form onSubmit={event=>void send(event)} className="grid gap-3">
     <label className="grid gap-1 text-sm font-semibold text-body">
      Write to the team. @ to mention, # to link a drive, company or student.

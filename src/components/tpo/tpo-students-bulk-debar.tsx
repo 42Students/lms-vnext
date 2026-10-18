@@ -1,3 +1,4 @@
+import {ScrollCue} from "@/components/ui/scroll-cue";
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -105,11 +106,11 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
    description={"Apply "+action.toLowerCase()+" to up to "+picked.length+" students? Each decision records the named reason and the learner is notified."}
    footer={<><Button variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
     <Button disabled={!check.ok||pending} onClick={()=>void run()}>{pending?"Saving…":"Confirm selected changes"}</Button></>}>
-    <ul className="max-h-44 list-disc overflow-y-auto pl-4 text-sm">{picked.map(row=><li key={row.id}>{row.name}</li>)}</ul>
+    <ul className="list-disc pl-4 text-sm">{picked.map(row=><li key={row.id}>{row.name}</li>)}</ul>
   </Dialog>
   {results.length>0?<div role="status" aria-live="polite" className="space-y-2">
    <p>{results.filter(r=>r.status==="saved").length} saved · {results.filter(r=>r.status==="skipped").length} skipped · {results.filter(r=>r.status==="failed").length} failed.</p>
-   <ul className="max-h-64 space-y-1 overflow-y-auto text-sm">{results.map(row=><li key={row.id}><strong>{row.name}</strong> — {row.detail}</li>)}</ul>
+   <ScrollCue axis="y" label="Bulk debarment results" viewportClassName="max-h-64"><ul className="space-y-1 text-sm">{results.map(row=><li key={row.id}><strong>{row.name}</strong> — {row.detail}</li>)}</ul></ScrollCue>
   </div>:null}
   {error?<p role="alert" className="text-error">{error}</p>:null}
  </section>;

@@ -1,3 +1,4 @@
+import {Drawer} from "@/components/ui/drawer";
 "use client";
 import {apiFetch} from "@/lib/api-fetch";
 import Link from "next/link";
@@ -56,33 +57,33 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
   student.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academic evidence is incomplete":null,
   student.journeyState==="READY_NOT_APPLYING"?"No active applications recorded":null,
  ].filter((value):value is string=>Boolean(value));
- useEffect(()=>{
-  const close=(event:KeyboardEvent)=>{if(event.key==="Escape")onClose();};
-  document.addEventListener("keydown",close);
-  return ()=>document.removeEventListener("keydown",close);
- },[onClose]);
  const history="/tpo/students/"+encodeURIComponent(student.membershipId)+"/history";
  const participation="/tpo/students/"+encodeURIComponent(student.membershipId)+"/participation";
- return <div className="fixed inset-0 z-50 flex justify-end bg-black/40" onMouseDown={event=>{
-   if(event.target===event.currentTarget)onClose();
- }}>
-  <aside role="dialog" aria-modal="true" aria-label={"Student panel for "+student.displayName}
-   className="h-full w-full max-w-xl overflow-y-auto bg-background p-5 shadow-2xl">
-   <header className="flex flex-wrap items-start justify-between gap-2 border-b border-border pb-4">
+ return <Drawer open={true} onOpenChange={next=>{if(!next)onClose();}}
+  title={"Student panel for "+student.displayName}
+  description={student.branchName+" · "+student.cohortName} footer={   <div className="flex w-full flex-wrap items-center justify-between gap-2">
+    <button type="button" disabled={index<=0} onClick={()=>onNavigate(rows[index-1].membershipId)}
+      className="min-h-11 rounded border border-border px-3 disabled:opacity-40">← Previous</button>
+    <span className="text-xs text-muted-foreground">{index+1} of {rows.length} on this page</span>
+    <button type="button" disabled={index<0||index>=rows.length-1}
+      onClick={()=>onNavigate(rows[index+1].membershipId)}
+      className="min-h-11 rounded border border-border px-3 disabled:opacity-40">Next →</button>
+   </div>}>
+   <section className="flex flex-wrap items-start justify-between gap-2 border-b border-border pb-4">
     <div><p className="text-xs text-muted-foreground">TPO · Student</p>
       <h2 className="text-xl font-bold">{student.displayName}</h2>
       <p className="text-sm text-body">{student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName}</p>
       <p className="text-xs text-muted-foreground">{student.cohortName} · {tpoStudentDisplayLabel(student.journeyState)}</p>
       <p className="mt-2 text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
     </div>
-    <button type="button" autoFocus className="min-h-10 rounded border border-border px-3" onClick={onClose}>
+    <button type="button" autoFocus className="min-h-11 rounded border border-border px-3" onClick={onClose}>
       Close panel
     </button>
-   </header>
+   </section>
    <nav aria-label="Student panel pages" className="mt-4 flex flex-wrap gap-2">
     {tabs.map(t=><button key={t} type="button" onClick={()=>void chooseTab(t)}
       aria-current={tab===t?"page":undefined}
-      className={"min-h-10 rounded border px-3 text-sm "+(tab===t?"border-primary bg-primary-subtle":"border-border")}>{t}
+      className={"min-h-11 rounded border px-3 text-sm "+(tab===t?"border-primary bg-primary-subtle":"border-border")}>{t}
        {t==="Requests"&&detail?.requests.some(row=>row.status==="PENDING")?
        " ("+detail.requests.filter(row=>row.status==="PENDING").length+" waiting)":""}
       </button>)}
@@ -90,7 +91,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
    <div className="mt-5 space-y-4 text-sm">
     {tab==="Profile"?<>
       <h3 className="font-semibold">Recorded learner facts</h3>
-      <dl className="grid grid-cols-2 gap-3">
+      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
        {[
         ["Program",student.programName],["Branch",student.branchName],
         ["Batch",student.cohortName],["Roll number",student.rollNumber??"Not recorded"],
@@ -123,13 +124,13 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        <p className="text-xs text-muted-foreground">Set at {student.participationLevel??"placement"} level
         {student.participationDecidedAt?" · "+when(student.participationDecidedAt.toString()):""}</p>
       </div>:null}
-      <Link href={participation} className="inline-flex min-h-10 items-center text-primary-text underline">Placement eligibility</Link>
+      <Link href={participation} className="inline-flex min-h-11 items-center text-primary-text underline">Placement eligibility</Link>
       <Link href={"/tpo/team?about="+encodeURIComponent("STUDENT:"+student.membershipId)}
-        className="ml-3 inline-flex min-h-10 items-center text-primary-text underline">Discuss with team</Link>
+        className="ml-3 inline-flex min-h-11 items-center text-primary-text underline">Discuss with team</Link>
     </>:null}
     {tab==="Placement"?<>
       <h3 className="font-semibold">Placement journey</h3>
-      <dl className="grid grid-cols-2 gap-3">
+      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
        {[
         ["Participation",tpoStudentDisplayLabel(student.participationStatus)],["Applications",student.applicationCount],
         ["Active applications",student.activeApplicationCount],["Offers",student.offerCount],
@@ -143,15 +144,15 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       {detail&&!detail.applications?.length?<p>No recorded placement applications.</p>:null}
       {detail?.applications?.map(row=><div key={row.id} className="flex flex-wrap items-center justify-between gap-2 rounded border border-border p-3">
         <span>{row.title} · {row.status.replaceAll("_"," ")}</span>
-        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)} className="min-h-10 text-primary-text underline">Open drive</Link>
+        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)} className="min-h-11 text-primary-text underline">Open drive</Link>
       </div>)}
-      <Link href={participation} className="inline-flex min-h-10 items-center text-primary-text underline">Manage placement participation</Link>
+      <Link href={participation} className="inline-flex min-h-11 items-center text-primary-text underline">Manage placement participation</Link>
       <TpoStudentNudgePanel rows={[{id:student.membershipId,label:student.displayName,
        registered:student.registeredForPlacements}]}/>
     </>:null}
     {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status">Loading student records…</p>:null}
     {error?<div role="alert" className="space-y-2 text-error"><p>{error}</p>
-     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text" onClick={()=>void fetchDetail()}>Retry loading student details</button></div>:null}
+     <button type="button" className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text" onClick={()=>void fetchDetail()}>Retry loading student details</button></div>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
       {detail&&!detail.requests.length?<p>No placement requests recorded for this student.</p>:null}
@@ -164,7 +165,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
           onSuccess={()=>void fetchDetail()}/>:null}
       </article>)}
       <Link href={"/tpo/students/requests?search="+encodeURIComponent(student.displayName)}
-       className="inline-flex min-h-10 items-center text-primary-text underline">Review student&apos;s requests</Link>
+       className="inline-flex min-h-11 items-center text-primary-text underline">Review student&apos;s requests</Link>
     </>:null}
     {tab==="Notes"?<>
       <h3 className="font-semibold">Internal Notes</h3>
@@ -177,7 +178,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         <p>{row.body}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.createdAt)}</p>
       </article>)}
-      <Link href={history} className="inline-flex min-h-10 items-center text-primary-text underline">Open placement history</Link>
+      <Link href={history} className="inline-flex min-h-11 items-center text-primary-text underline">Open placement history</Link>
     </>:null}
     {detail?.truncated&&(tab==="Requests"||tab==="Notes"||tab==="History")?<p className="text-xs text-warning-text">
       Most recent records shown; open the full Requests or History page for older entries.
@@ -185,22 +186,14 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     {tab==="History"?<>
       <h3 className="font-semibold">Team and student activity</h3>
       {detail&&!detail.teamHistory?.length?<p>No recorded team actions for this student.</p>:null}
-      <ol className="max-h-72 space-y-2 overflow-y-auto">{detail?.teamHistory?.map(row=><li key={row.id} className="rounded border border-border p-3">
+      <ol className="space-y-2">{detail?.teamHistory?.map(row=><li key={row.id} className="rounded border border-border p-3">
        <p className="font-semibold">{row.summary}</p>
        <p className="mt-1 text-xs text-muted-foreground">{when(row.occurredAt)} · {row.eventType}</p>
       </li>)}</ol>
       <p>Open the tenant-authorized historical application, round result, offer and joining timeline.</p>
-      <Link href={history} className="inline-flex min-h-10 items-center text-primary-text underline">View full placement history</Link>
+      <Link href={history} className="inline-flex min-h-11 items-center text-primary-text underline">View full placement history</Link>
     </>:null}
    </div>
-   <footer className="mt-8 flex items-center justify-between border-t border-border pt-3">
-    <button type="button" disabled={index<=0} onClick={()=>onNavigate(rows[index-1].membershipId)}
-      className="min-h-10 rounded border border-border px-3 disabled:opacity-40">← Previous</button>
-    <span className="text-xs text-muted-foreground">{index+1} of {rows.length} on this page</span>
-    <button type="button" disabled={index<0||index>=rows.length-1}
-      onClick={()=>onNavigate(rows[index+1].membershipId)}
-      className="min-h-10 rounded border border-border px-3 disabled:opacity-40">Next →</button>
-   </footer>
-  </aside>
- </div>;
+
+ </Drawer>;
 }

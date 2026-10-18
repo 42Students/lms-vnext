@@ -8,6 +8,7 @@ import { templateVersionHistoryQuerySchema, templateVersionHistoryHref, type tem
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
 import { SuperAdminTemplatePlanEditor } from "@/components/projects/super-admin-template-plan-editor";
@@ -533,82 +534,26 @@ export async function SuperAdminTemplateSubviewPage({
               </StatusBadge>
             </div>
 
-            <div role="region" aria-label="Project template records table" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
-              <table className="w-full border-collapse text-left text-sm">
-                <thead className="bg-muted text-body">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="border-b border-border px-4 py-3"
-                    >
-                      College
-                    </th>
-                    <th
-                      scope="col"
-                      className="border-b border-border px-4 py-3"
-                    >
-                      College status
-                    </th>
-                    <th
-                      scope="col"
-                      className="border-b border-border px-4 py-3"
-                    >
-                      Assigned version
-                    </th>
-                    <th
-                      scope="col"
-                      className="border-b border-border px-4 py-3"
-                    >
-                      Assigned on
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {detail.assignedColleges.map(
-                    (assignment) => (
-                      <tr
-                        key={assignment.assignmentId}
-                        className="border-b border-border last:border-0"
-                      >
-                        <td className="px-4 py-3 align-top">
-                          <p className="m-0 font-semibold text-foreground">
-                            {assignment.collegeName}
-                          </p>
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {assignment.collegeCode}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3 align-top">
-                          <StatusBadge
-                            tone={
-                              assignment.collegeStatus ===
-                              "ACTIVE"
-                                ? "success"
-                                : "neutral"
-                            }
-                          >
-                            {assignment.collegeStatus}
-                          </StatusBadge>
-                        </td>
-                        <td className="px-4 py-3 align-top">
-                          {assignment.assignedVersion ??
-                            "Unresolved"}
-                        </td>
-                        <td className="px-4 py-3 align-top">
-                          <time
-                            dateTime={assignment.assignedAt.toISOString()}
-                          >
-                            {formatDate(
-                              assignment.assignedAt,
-                            )}
-                          </time>
-                        </td>
-                      </tr>
-                    ),
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <DataTable
+              caption="Project template records"
+              rows={detail.assignedColleges}
+              getRowKey={assignment=>assignment.assignmentId}
+              columns={[
+                {key:"college",header:"College",mobilePriority:"primary",cell:assignment=><>
+                  <p className="m-0 font-semibold text-foreground">{assignment.collegeName}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{assignment.collegeCode}</p>
+                </>},
+                {key:"status",header:"College status",mobilePriority:"secondary",cell:assignment=>
+                  <StatusBadge tone={assignment.collegeStatus==="ACTIVE"?"success":"neutral"}>
+                    {assignment.collegeStatus}
+                  </StatusBadge>},
+                {key:"version",header:"Assigned version",mobilePriority:"secondary",cell:assignment=>
+                  assignment.assignedVersion??"Unresolved"},
+                {key:"assigned",header:"Assigned on",mobilePriority:"secondary",cell:assignment=>
+                  <time dateTime={assignment.assignedAt.toISOString()}>{formatDate(assignment.assignedAt)}</time>},
+              ]}
+              empty={<p className="text-sm text-body">No active college assignments.</p>}
+            />
           </section>
         )
       ) : null}

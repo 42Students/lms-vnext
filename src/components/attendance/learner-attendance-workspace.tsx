@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 
 type Course = {
   deliveryId: string;
@@ -531,107 +532,30 @@ export function LearnerAttendanceWorkspace({
           description={monthRows.length ? "Select All statuses to see the recorded sessions for this month." : deliveryId ? "No classes scheduled for this month. Try selecting a different period." : "Choose a course from the dropdown above to view your attendance records."}
         />
       ) : (
-        <>
-          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">
-                    Date
-                  </th>
-                  <th className="px-4 py-3">Day</th>
-                  <th className="px-4 py-3">Class Start Time</th>
-                  <th className="px-4 py-3">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {historyRows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-t border-border"
-                  >
-                    <td className="px-4 py-3">
-                      <p className="m-0 font-semibold text-foreground">
-                        {dateLabel(
-                          row.startsAt,
-                        )}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {timeLabel(
-                          row.startsAt,
-                        )}
-                      </p>
-                    </td>
-                    <td className="px-4 py-3 text-body">
-                      {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long"}).format(new Date(row.startsAt))}
-                    </td>
-                    <td className="px-4 py-3 text-body">
-                      <p className="font-semibold">{timeLabel(row.startsAt)}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">{row.title} · {row.courseCode}</p>
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge
-                        tone={learnerAttendanceStatusTone(
-                          row.status,
-                        )}
-                      >
-                        {statusLabel(
-                          row.status,
-                        )}
-                      </StatusBadge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="space-y-3 md:hidden">
-            {historyRows.map((row) => (
-              <article
-                key={row.id}
-                className="rounded-xl border border-border bg-surface p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="m-0 text-sm font-semibold text-foreground">
-                      {row.title}
-                    </h3>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {dateLabel(
-                        row.startsAt,
-                      )}{" "}
-                      ·{" "}
-                      {timeLabel(
-                        row.startsAt,
-                      )}
-                    </p>
-                  </div>
-                  <StatusBadge
-                    tone={learnerAttendanceStatusTone(
-                      row.status,
-                    )}
-                  >
-                    {statusLabel(
-                      row.status,
-                    )}
-                  </StatusBadge>
-                </div>
-                <p className="mt-3 text-xs text-body">
-                  {[
-                    row.courseName,
-                    row.facultyName,
-                    row.location,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-              </article>
-            ))}
-          </div>
-        </>
+        <DataTable
+          caption="Attendance history"
+          rows={historyRows}
+          getRowKey={row=>row.id}
+          empty={<EmptyState title="No attendance records" description="No classes scheduled for this month. Try selecting a different period."/>}
+          columns={[
+            {key:"date",header:"Date",mobilePriority:"primary" as const,
+              cell:(row)=><span className="block min-w-0">
+                <strong className="block text-foreground">{dateLabel(row.startsAt)}</strong>
+                <span className="block text-xs text-muted-foreground">{timeLabel(row.startsAt)}</span>
+              </span>},
+            {key:"class",header:"Class Start Time",mobilePriority:"secondary" as const,
+              cell:(row)=><span className="block min-w-0">
+                <strong className="block text-foreground">{timeLabel(row.startsAt)}</strong>
+                <span className="block break-words text-xs text-muted-foreground">{row.title} · {row.courseCode}</span>
+              </span>},
+            {key:"status",header:"Status",mobilePriority:"secondary" as const,
+              cell:(row)=><StatusBadge tone={learnerAttendanceStatusTone(row.status)}>{statusLabel(row.status)}</StatusBadge>},
+            {key:"details",header:"Faculty / location",mobilePriority:"secondary" as const,
+              cell:(row)=>[row.courseName,row.facultyName,row.location].filter(Boolean).join(" · ")||"Not specified"},
+            {key:"day",header:"Day",mobilePriority:"secondary" as const,
+              cell:(row)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long"}).format(new Date(row.startsAt))},
+          ]}
+        />
       )}
     </div>
   );

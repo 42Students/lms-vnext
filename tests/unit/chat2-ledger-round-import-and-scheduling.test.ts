@@ -1,0 +1,66 @@
+import { describe, expect, it } from "vitest";
+import { parseTpoRoundImport, roundImportActionSchema, ROUND_IMPORT_TEMPLATE } from "@/modules/placements/tpo-round-import-model";
+import { parseIstRoundLocalTime, tpoRoundCalendarMutationSchema } from "@/modules/placements/tpo-round-calendar-model";
+import { tpoInterviewRescheduleSchema, validInterviewWindow, overlappingInterviewVenue } from "@/modules/placements/tpo-interview-reschedule-model";
+
+const uuid="00000000-0000-4000-8000-000000000001";
+const other="00000000-0000-4000-8000-000000000002";
+const token="a".repeat(64);
+const csv=(body:string)=>Buffer.from(body,"utf8");
+
+describe("TPO-drive-workspace-40/44 round import and scheduling ledger",()=>{
+ it("reads approved CSV result synonyms with exact line provenance",()=>{
+  const parsed=parseTpoRoundImport(csv("Application ID,Result,Waitlist rank,Student message\n"+uuid+",Shortlisted,,Great work\n"+other+",Waitlisted,2,Please prepare\n"),"round.csv");
+  expect(parsed).toHaveLength(2);
+  expect(parsed[0]).toMatchObject({line:2,applicationId:uuid,outcome:"PASS",message:"Great work",invalidRank:false});
+  expect(parsed[1]).toMatchObject({line:3,applicationId:other,outcome:"HOLD",rank:2,invalidRank:false});
+  expect(ROUND_IMPORT_TEMPLATE).toContain("Application ID");
+ });
+ it("does not mistake an unsupported company portal ID for the applicant's internal identity",()=>{
+  expect(()=>parseTpoRoundImport(csv("Company ID,Result\nexternal-123,PASS\n"),"round.csv")).toThrow("Application ID, Email or Roll");
+ });
+ it("rejects same-meaning duplicate CSV headers and malformed blank data rows",()=>{
+  expect(()=>parseTpoRoundImport(csv("Application ID,Email,Student Email,Result\n"+uuid+",a@x.test,b@x.test,PASS\n"),"round.csv")).toThrow("more than one column");
+  expect(()=>parseTpoRoundImport(csv("Application ID,Result\n"+uuid+",PASS\n\n"),"round.csv")).toThrow("blank data rows");
+  expect(()=>parseTpoRoundImport(csv("Application ID,Result\n"+uuid+",PASS\n"),"round.txt")).toThrow(".xlsx or a .csv");
+ });
+ it("flags ranks for non-HOLD statuses and rank bounds",()=>{
+  const result=parseTpoRoundImport(csv("Application ID,Result,Rank\n"+uuid+",PASS,1\n"+other+",HOLD,0\n"),"round.csv");
+  expect(result[0]?.invalidRank).toBe(true);
+  expect(result[1]?.invalidRank).toBe(true);
+ });
+ it("review command requires one explicit decision per source line and unique student identity",()=>{
+  const action={action:"STAGE_IMPORT",confirmed:true,previewToken:token,missingPolicy:"LEAVE_PENDING",overrides:[{line:2,applicationId:uuid}],skippedLines:[3]};
+  expect(roundImportActionSchema.safeParse(action).success).toBe(true);
+  expect(roundImportActionSchema.safeParse({...action,confirmed:false}).success).toBe(false);
+  expect(roundImportActionSchema.safeParse({...action,overrides:[{line:2,applicationId:uuid},{line:2,applicationId:other}]}).success).toBe(false);
+  expect(roundImportActionSchema.safeParse({...action,skippedLines:[2]}).success).toBe(false);
+  expect(roundImportActionSchema.safeParse({...action,skippedLines:[3,3]}).success).toBe(false);
+ });
+ it("converts local IST wall time without depending on host timezone",()=>{
+  expect(parseIstRoundLocalTime("2026-10-20T09:30").toISOString()).toBe("2026-10-20T04:00:00.000Z");
+  expect(()=>parseIstRoundLocalTime("2026-02-30T09:30")).toThrow("Invalid IST");
+ });
+ it("requires valid scheduled locations and cancellation reasons",()=>{
+  const base={confirmed:true,roundId:uuid,expectedUpdatedAt:"2026-10-19T09:00:00+05:30",action:"SCHEDULE",localDateTime:"2026-10-20T09:30",mode:"ON_CAMPUS",venue:"Main hall"};
+  expect(tpoRoundCalendarMutationSchema.safeParse(base).success).toBe(true);
+  expect(tpoRoundCalendarMutationSchema.safeParse({...base,venue:""}).success).toBe(false);
+  expect(tpoRoundCalendarMutationSchema.safeParse({...base,action:"CANCEL",reason:"x"}).success).toBe(false);
+  expect(tpoRoundCalendarMutationSchema.safeParse({...base,action:"CANCEL",reason:"No room available"}).success).toBe(true);
+ });
+ it("rescheduling validates mode, reason and positive future slot",()=>{
+  const base={confirmed:true,expectedUpdatedAt:"2026-10-19T09:00:00+05:30",localDateTime:"2026-10-20T10:00",mode:"VIRTUAL",meetingUrl:"https://meeting.example.org/room",reason:"Panel member unavailable"};
+  expect(tpoInterviewRescheduleSchema.safeParse(base).success).toBe(true);
+  expect(tpoInterviewRescheduleSchema.safeParse({...base,meetingUrl:"javascript:alert(1)"}).success).toBe(false);
+  expect(tpoInterviewRescheduleSchema.safeParse({...base,reason:"short"}).success).toBe(false);
+  expect(validInterviewWindow(new Date("2026-10-20T10:00:00Z"),new Date("2026-10-20T09:00:00Z"),30)).toBe(true);
+  expect(validInterviewWindow(new Date("2026-10-20T08:00:00Z"),new Date("2026-10-20T09:00:00Z"),30)).toBe(false);
+  expect(validInterviewWindow(new Date("2026-10-20T10:00:00Z"),new Date("2026-10-20T09:00:00Z"),0)).toBe(false);
+ });
+ it("allows touching interviews but conservatively blocks unknown-duration bookings",()=>{
+  const start=new Date("2026-10-20T04:00:00Z");
+  expect(overlappingInterviewVenue(start,30,[{start:new Date("2026-10-20T03:30:00Z"),durationMinutes:30}])).toBe(false);
+  expect(overlappingInterviewVenue(start,30,[{start:new Date("2026-10-20T03:50:00Z"),durationMinutes:30}])).toBe(true);
+  expect(overlappingInterviewVenue(start,30,[{start:new Date("2026-10-20T03:30:00Z"),durationMinutes:null}])).toBe(true);
+ });
+});

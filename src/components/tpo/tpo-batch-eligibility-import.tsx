@@ -117,7 +117,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
      className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-[var(--lms-teal-deep)]">
      {tab==="ALL"?"All":tab==="MATCHED"?"Matched":"Can't use"}</button>)}
    </div>
-   <ul className="max-h-96 space-y-1 overflow-y-auto text-xs">{preview.preview.map((row,i)=>({row,i}))
+   <ul className="space-y-1 text-xs">{preview.preview.map((row,i)=>({row,i}))
     .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
     .slice((previewPage-1)*8,previewPage*8)
     .map(({row,i})=><li className="min-w-0 break-all rounded border border-border p-2" key={i}>
