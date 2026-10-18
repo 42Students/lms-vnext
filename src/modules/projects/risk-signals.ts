@@ -69,7 +69,10 @@ export function deriveProjectRiskReasons({
     reasons.push("Active blocker");
   }
 
-  if (latestSubmissionStatus === "SUBMITTED") {
+  // Only an ACTIVE project may accept delivery review. A restored or
+  // not-yet-started PLANNED project can retain historical submissions but
+  // must not advertise an operation the review state machine forbids.
+  if (projectStatus === "ACTIVE" && latestSubmissionStatus === "SUBMITTED") {
     reasons.push("Pending review");
   }
 

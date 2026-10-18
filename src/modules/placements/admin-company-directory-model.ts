@@ -21,6 +21,24 @@ export const adminCompaniesQuerySchema = z.strictObject({
   website: z.enum(["ALL","HAS_WEBSITE","MISSING_WEBSITE"]).default("ALL"),
   changedWithin: z.enum(["ALL","7","30","90"]).default("ALL"),
 });
+/** Parse the entire external company search URL, preserving only the legacy
+ * view tab outside the strict relationship filters. This rejects unrecognized
+ * tenant selectors, array/duplicate values and malformed view aliases.
+ */
+export function parseAdminCompanyDirectoryParams(
+  params: Record<string, string | string[] | undefined>,
+) {
+  const validView = params.view === undefined || params.view === "GLOBAL" ||
+    params.view === "COLLEGE";
+  const filters = Object.fromEntries(
+    Object.entries(params).filter(([key]) => key !== "view"),
+  );
+  if (filters.collegeId === "") delete filters.collegeId;
+  return adminCompaniesQuerySchema.safeParse(
+    validView ? filters : { ...filters, view: params.view },
+  );
+}
+
 export type AdminCompanyRow = {
   relationshipId: string; companyId: string; name: string; collegeId: string;
   collegeName: string; organizationId: string; relationshipStatus: string;
