@@ -568,6 +568,14 @@ export const projectSubmissionDraftInputSchema = z
   })
   .strict();
 
+// Saving a shared draft requires the editor's last server-acknowledged revision.
+ // A separate schema preserves create-draft input while preventing stale tabs
+ // and multiple devices from silently overwriting each other's draft.
+export const updateProjectSubmissionDraftInputSchema =
+  projectSubmissionDraftInputSchema.extend({
+    expectedUpdatedAt: z.iso.datetime({offset:true}),
+  }).strict();
+
 export const reviewProjectSubmissionInputSchema =
   z
     .object({
@@ -648,6 +656,9 @@ export const createProjectEvaluationInputSchema =
 
 export type ProjectSubmissionDraftInput = z.infer<
   typeof projectSubmissionDraftInputSchema
+>;
+export type UpdateProjectSubmissionDraftInput = z.infer<
+  typeof updateProjectSubmissionDraftInputSchema
 >;
 export type ReviewProjectSubmissionInput = z.infer<
   typeof reviewProjectSubmissionInputSchema
