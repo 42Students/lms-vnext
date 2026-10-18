@@ -1,13 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { parseFacultyBulkCsv } from "@/modules/people/faculty-bulk-import-model";
+import {canSubmitFacultyBulkImport} from "@/modules/people/faculty-bulk-import-submit-guard";
 import { DataTable } from "@/components/ui/data-table";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 
 type Result={row:number;name:string;status:"CREATED"|"FAILED"|"SKIPPED";message:string};
 export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
  const router=useRouter();
+ const fileVersion=useRef(0);
  const {askConfirm,dialog}=useConfirmFlow();
  const [csv,setCsv]=useState("");
  const [filename,setFilename]=useState("");
@@ -18,19 +20,34 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
  try{if(csv.trim())count=parseFacultyBulkCsv(csv).length;}
  catch(cause){issue=cause instanceof Error?cause.message:"Invalid faculty file";}
  async function fileSelected(file:File|null){
+  const version=++fileVersion.current;
+  // Never let a rejected or slow replacement upload reuse the previously
+  // validated CSV while displaying the new filename.
+  setCsv("");setResults([]);setError("");setFilename(file?.name??"");
   if(!file)return;
-  setResults([]);setError("");setFilename(file.name);
   if(!file.name.toLowerCase().endsWith(".csv")){setError("Choose a .csv faculty file.");return;}
   if(file.size>1_500_000){setError("The CSV file exceeds 1.5 MB.");return;}
-  try{setCsv(await file.text());}catch{setError("Could not read the CSV file.");}
+  try{
+   const text=await file.text();
+   if(version===fileVersion.current)setCsv(text);
+  }catch{
+   if(version===fileVersion.current)setError("Could not read the CSV file.");
+  }
  }
  async function submit(){
-  if(busy||!count||issue||!(await askConfirm("Onboard "+count+" faculty from this file?")))return;
+  const version=fileVersion.current;
+  const inputCsv=csv;
+  const allowed=()=>canSubmitFacultyBulkImport({
+   busy,count,issue,error,filename,snapshotVersion:version,
+   currentVersion:fileVersion.current,
+  });
+  if(!allowed())return;
+  if(!(await askConfirm("Onboard "+count+" faculty from this file?"))||!allowed())return;
   setBusy(true);setError("");setResults([]);
   try{
    const response=await fetch("/api/admin/faculty/bulk-import",{
     method:"POST",headers:{"content-type":"application/json"},
-    body:JSON.stringify({collegeId,csv,confirmed:true}),
+    body:JSON.stringify({collegeId,csv:inputCsv,confirmed:true}),
    });
    const result=await response.json() as {results?:Result[];error?:string};
    if(!response.ok)throw new Error(result.error??"Bulk onboarding failed");
@@ -61,7 +78,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   {filename?<p className="text-xs text-muted-foreground">File: {filename}</p>:null}
   {count>0?<p role="status" className="text-sm">{count} rows validated locally; review before creating.</p>:null}
   {(issue||error)?<p role="alert" className="text-sm text-error">{error||issue}</p>:null}
-  <button type="button" onClick={()=>void submit()} disabled={busy||!count||Boolean(issue)}
+  <button type="button" onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}
     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Importing…":"Validate and Create"}
   </button>
