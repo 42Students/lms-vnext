@@ -48,7 +48,7 @@ const actor:RequestContext={
 beforeEach(()=>{
  vi.resetAllMocks();
  state.queries=0;state.joins=[];state.classCount=null;
- state.rows.classes=[];
+ state.rows.classes=[{id:"55555555-5555-4555-8555-555555555555",name:"Section A"}];
  state.rows.roster=[];
  state.scope.mockResolvedValue({collegeId,organizationId:orgId});
 });
@@ -71,6 +71,13 @@ describe("SA-ACADEMICS-BATCH-COUNT-01 scoped active batch learner census",()=>{
   expect(sql).toContain('"section_enrollments"."status"');
   expect(joins.flatMap(x=>x.params)).toContain("ACTIVE");
   expect(joins.flatMap(x=>x.params)).toContain(collegeId);
+ });
+ it("SA-ACADEMICS-BATCH-EMPTY-03 skips private learner reads when no scoped Sections exist",async()=>{
+  state.rows.classes=[];
+  const result=await getSuperAdminBatchRosterOverview(actor,batchId);
+  expect(result).toMatchObject({classes:[],roster:[]});
+  expect(state.queries).toBe(2);
+  expect(state.joins.every(value=>value.table==="classes")).toBe(true);
  });
  it("returns null for a missing cohort without scanning learner membership records",async()=>{
   state.rows.batch=null as unknown as typeof state.rows.batch;
