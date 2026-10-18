@@ -8,6 +8,7 @@ import { hasActiveMembership, hasMembershipRole, type RequestContext } from
   "@/modules/identity/context";
 import { ProjectsServiceError } from "./errors";
 import { can } from "@/modules/permissions/policy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import type { MentorMeetingCalendarItem } from "./mentor-calendar-view";
 
 /**
@@ -25,6 +26,9 @@ export async function listMyMentorCalendarMeetings(
       })) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
+  // A direct call/export must not bypass the page-level Projects feature flag.
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
 
   const rows = await getDb().select({
     id: projectMeetings.id,
