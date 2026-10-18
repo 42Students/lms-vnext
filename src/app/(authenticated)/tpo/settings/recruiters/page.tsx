@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DataTable } from "@/components/ui/data-table";
 import {TpoRecruiterDurationEditor} from "@/components/tpo/tpo-communication-settings-editors";
 import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
 import { redirect } from "next/navigation";
@@ -252,91 +253,39 @@ export default async function TpoRecruiterAccessPage({
             }
           />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-            <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-4 py-3"
-                  >
-                    Recruiter
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3"
-                  >
-                    Company
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3"
-                  >
-                    Grant status
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3"
-                  >
-                    Granted
-                  </th>
-                  <th scope="col" className="px-4 py-3">Valid through (IST)</th>
-                  <th scope="col" className="px-4 py-3">Access & verification</th>
-                  <th scope="col" className="px-4 py-3">Revoked</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {items.map((item, index) => (
-                  <tr
-                    key={`${page}:${index}`}
-                    className="border-t border-border align-top"
-                  >
-                    <td className="px-4 py-4 font-semibold text-foreground">
-                      {item.displayName}
-                      {item.designation?<p className="mt-1 text-xs font-normal text-muted-foreground">{item.designation}</p>:
-                        <p className="mt-1 text-xs font-normal text-muted-foreground">Designation not recorded</p>}
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      {item.companyName}
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <StatusBadge
-                        tone={
-                          item.status === "ACTIVE"
-                            ? "success"
-                            : "neutral"
-                        }
-                      >
-                        {item.ended?"Ended or removed":item.status === "ACTIVE"?"Active":"Revoked"}
-                      </StatusBadge>
-                      {item.status === "ACTIVE" && item.grantId && item.expectedUpdatedAt ? (
-                        <><TpoRecruiterExtend grantId={item.grantId}
-                           expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName} ended={item.ended}/>
-                        <TpoRecruiterRevoke
-                          grantId={item.grantId}
-                          expectedUpdatedAt={item.expectedUpdatedAt}
-                          displayName={item.displayName}
-                        /></>
-                      ) : null}
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      {item.grantedDate}
-                    </td>
-
-                    <td className="px-4 py-4 text-body">{item.validUntilDate??"No expiry on record"}</td>
-                    <td className="px-4 py-4 text-body">{item.capabilities.join(", ")||"No capabilities"} · {item.verificationStatus}</td>
-                    <td className="px-4 py-4 text-body">
-                      {item.revokedDate ?? "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            rows={items}
+            getRowKey={item=>item.grantId??item.companyName+":"+item.displayName+":"+item.grantedDate}
+            caption="Recruiter grants"
+            empty={<p>No recruiter access grants with the selected status were recorded for your college.</p>}
+            columns={[
+              {key:"recruiter",header:"Recruiter",mobilePriority:"primary",cell:item=>
+                <div className="min-w-0 break-words font-semibold text-foreground">
+                  {item.displayName}
+                  <p className="mt-1 text-xs font-normal text-muted-foreground">
+                    {item.designation??"Designation not recorded"}
+                  </p>
+                </div>},
+              {key:"company",header:"Company",mobilePriority:"secondary",cell:item=>item.companyName},
+              {key:"grant",header:"Grant status",mobilePriority:"secondary",cell:item=>
+                <div className="space-y-2">
+                  <StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>
+                    {item.ended?"Ended or removed":item.status==="ACTIVE"?"Active":"Revoked"}
+                  </StatusBadge>
+                  {item.status==="ACTIVE"&&item.grantId&&item.expectedUpdatedAt?
+                    <div className="flex min-w-0 flex-wrap gap-2">
+                      <TpoRecruiterExtend grantId={item.grantId}
+                        expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName} ended={item.ended}/>
+                      <TpoRecruiterRevoke grantId={item.grantId}
+                        expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName}/>
+                    </div>:null}
+                </div>},
+              {key:"granted",header:"Granted",mobilePriority:"secondary",cell:item=>item.grantedDate},
+              {key:"valid",header:"Valid through (IST)",mobilePriority:"secondary",cell:item=>item.validUntilDate??"No expiry on record"},
+              {key:"access",header:"Access & verification",mobilePriority:"secondary",cell:item=>item.capabilities.join(", ")||"No capabilities"},
+              {key:"revoked",header:"Revoked",mobilePriority:"secondary",cell:item=>item.revokedDate??"—"},
+            ]}
+          />
         )}
 
         <nav
