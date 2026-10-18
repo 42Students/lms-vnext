@@ -24,3 +24,27 @@
 Pure policy and source-level Vitest tests were committed; one existing PostgreSQL offer/joining integration test was expanded. **None were executed** in this environment. This is a meaningful partial coverage improvement, not exhaustive acceptance of hundreds of placements exports, seven role journeys, PostgreSQL races or real UI interaction. `docs/audit/coverage/placements-chat5-core-ledger.md` identifies covered service functions and residual areas. Integration tests require an isolated, seeded disposable PostgreSQL database and orchestrator CI.
 
 **Release risk:** Waitlist atomicity and notification failures, tenant/role negative cases for every service/route, stale tabs/parallel versions, migration constraints, retention reporting, and browser/device states remain to be fully audited. They must not be silently marked green.
+
+
+## 18 October 2026 — Additional TPO adversarial findings (current lane branch)
+
+| ID | Severity | Failure route | Fix/evidence | Release gate |
+|---|---|---|---|---|
+| TPO-BREAK-race-01 / TPO-batches-40 | S1 | Same-tick rapid Preview/Confirm clicks can enter the importer before React commits 'busy', potentially duplicating work | **Source fixed**: synchronous actionInFlight ref before network work and finally unlock, commit 47995c9; TPO-BREAK-race-01 and tpo-batches-40 unit assertions added | Browser double-click, lost-response and DB action dedupe still pending |
+| TPO-BREAK-error-01 | S2 | Unexpected CSV/parser exception could expose raw Error.message in the import alert | **Source fixed**: only safe FriendlyFetchError message is displayed; unknown exceptions use friendlyApiError({}), commit 47995c9 | Browser malformed input and 500 response |
+| PLACEMENTS-JOINING-01 | S2 compile | Joining retry integration test referred to non-existent 'id' property; current joining record identity is 'offerId' | **Test fixed** without losing history idempotency assertions, commit 057954f | npm run typecheck + PostgreSQL integration |
+| PLACEMENTS-WAIT-SM-01 | S2 | Waitlist preview token accepted arbitrary non-hex 64-character input before re-reading the preview | **Source fixed**: lowercase SHA-256 hex token validation, commit 4334e4a | Unit and malformed request response |
+| PLACEMENTS-WAIT-SM-02 | S1 | Released-offer settlement race emitted a raw Error instead of stable domain conflict | **Source fixed**: PLACEMENT_JOB_PREVIEW_STALE service error, commit 3fcd470 | Recovery / timeout / concurrent job |
+| PLACEMENTS-WAIT-ATOMIC-01 | S1 | Pending waitlist reservation, real offer issuance, and mark-as-RELEASED occur in separate transactions | **OPEN**: do not mark successful atomicity, even after safe error mapping | Two concurrent TPOs plus late crash and notification exactly-once regression |
+| PLACEMENTS-EXPIRY-NOTIFY-01 | S1 | Offer response may race expiry sweep | **OPEN**: existing pure expiry checks and SKIP LOCKED source are insufficient | Same-offer two-worker/learner acceptance transaction test |
+| PLACEMENTS-RETENTION-01 | S1 | Joining/retention reporting can misrepresent revoked offers or another tenant | **OPEN**: no new chat-5 PostgreSQL coverage of college-retention-report-service | Full historical/tenant/export evidence matrix |
+| TPO-BREAK-session-02 | S1 | TPO session revocation or role suspension between preview and confirmed commit | **OPEN**: source preflight and HTTP 401/403 mapping tests written, not a live session test | Persisted auth session revocation with zero-write guarantee |
+| UX-tpo-last-note-02 | S2 | Last-third source test lowercased dynamic note filenames while actual note files retain membershipId/threadId; three notes lacked follow-up finding | **Test and docs fixed** with specific note, loading/error and IDOR follow-ups, commits 31ae5a3/74ac12a/dc897dd/e59d7bc | Full browser/device run |
+| UX-tpo-middle-pagination-02 | S2 | Stale after-college test expected one 300-row render; page now shows 25 per page with 300-record source cap | **Test fixed** to protect pagination + complete export disclosure, commit ae313c7 | Large report/CSV runtime |
+| TPO-batches-43 / TPO-drive-workspace-27 | S2 test drift | Tests enforced obsolete native modal and min-h-10 markup after shared accessible Dialog/Drawer adoption | **Tests fixed with stronger safety assertions** for shared overlay, 44px target, version/undo, commits 52cbdad/c9b16b/326fcfd/b400829 | Vitest run |
+
+### Mandatory adversarial execution before sign-off
+
+Wrong-college and revoked-role TPO service IDOR; simultaneous release of same selection; two TPOs competing for last waitlist seat; expiry sweep versus acceptance; repeated Import Commit after lost response; session expiration between preview/commit; duplicate roll numbers and remapped membership; and retention/CTC/Joining evidence provenance. **This run did not execute those PostgreSQL/browser scenarios.** Do not treat written source contracts or these fixes as release certification.
+
+Coverage trace: docs/audit/coverage/placements-ledger-chat-5.md, tests/unit/chat5-placements-core-extended-state-machines.test.ts, tests/unit/chat5-tpo-account-breakit.test.ts, tests/unit/chat5-tpo-second-third-behavior.test.ts.
