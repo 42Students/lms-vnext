@@ -1,3 +1,4 @@
+import {createHash} from "node:crypto";
 import {z} from "zod";
 import {parseSelectionCsv} from "./tpo-selection-import-model";
 import {parseResultXlsx} from "./tpo-result-xlsx-model";
@@ -17,6 +18,19 @@ export const roundImportActionSchema=z.object({
  if(lines.some(line=>command.skippedLines.includes(line)))
   ctx.addIssue({code:"custom",path:["skippedLines"],message:"A source row cannot be both matched and skipped"});
 });
+/** Bind a reviewed result file to the current, uniquely joined applicant roster.
+ * Import preview tokens must change on a new result, renamed applicant, or
+ * roster membership update; source order cannot invalidate an unchanged review.
+ */
+export function tpoRoundImportPreviewToken(roundId:string,bytes:Buffer,rows:readonly {
+ applicationId:string;currentResultId:string|null;currentStatus:string|null;
+ email:string|null;roll:string|null;name:string|null;
+}[]):string{
+ const snapshot=rows.map(row=>[row.applicationId,row.currentResultId,row.currentStatus,
+  row.email,row.roll,row.name]).sort((left,right)=>String(left[0]).localeCompare(String(right[0])));
+ return createHash("sha256").update(JSON.stringify([roundId,
+  createHash("sha256").update(bytes).digest("hex"),snapshot])).digest("hex");
+}
 export type ImportRow={line:number;identity:string;applicationId:string;email:string;roll:string;companyId:string;name:string;
  outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT"|null;rank:number|null;invalidRank:boolean;message:string|null};
 /** TPO-drive-workspace-40: collapse identical JOIN duplicates, but never
