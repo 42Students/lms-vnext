@@ -143,3 +143,7 @@ The typecheck report explicitly labels production typecheck and lint PASS. Its o
 ### Legacy authentication alias and recruiter invitation page execution
 
 `tests/unit/chat16-legacy-auth-invite-alias-pages-16.test.ts` invokes all four actual legacy server page exports: `/superadmin-login`, `/e2e/superadmin-login`, `/auth/handoff`, and `/hr-invite/[token]`. Cases `UX-chat16-legacy-auth-alias-16`–`19` enforce redirect-only retirement of test/privileged sign-in bypasses, the visible handoff-retired recovery code, scoped opaque HR invite token redirect and Not Found before redirect for path traversal, external schemes, separators, escapes and short/oversized tokens. Next navigation is mocked; browser/session validation is pending cloud CI.
+
+### Global and placement-cell unsubscribe POST route execution
+
+`tests/unit/chat16-campaign-unsubscribe-post-route-16.test.ts` calls the actual `POST /api/public/campaign-unsubscribe` handler with FormData Requests and mocked token/signature, table registration and TPO recipient mutation collaborators. `campaign-unsubscribe-route-16`–`21` cover same-origin denial before token inspection, missing/unsigned/oversized links, purpose-bound placement-cell scoped redirect, revoked/invalid locked recipient response, unavailable global storage 503 rather than false completion, and signed opaque-key global suppression redirect. Provider and PostgreSQL callbacks are mocked; these tests do not assert physical DB commit or full cross-request races. They are authored pending cloud CI.
