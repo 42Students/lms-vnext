@@ -13,15 +13,18 @@ import { Pagination } from "@/components/ui/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
  ADMIN_CONTENT_LABELS,adminContentHref,adminContentQuerySchema,
- adminContentTypeLabel,type AdminContentKind,
+ adminContentTypeLabel,effectiveCourseContentVisibleToStudents,type AdminContentKind,
 } from "@/modules/courses/super-admin-content-directory-model";
 import { listSuperAdminContentDirectory,listSuperAdminContentSectionOptions } from "@/modules/courses/super-admin-content-directory-service";
 
 function publicHttpsHref(value:string|null){
  return safePublicCourseContentUrl(value);
 }
-function studentContentVisible(item:{status:string;visibleToStudents:boolean;lessonStatus:string;offeringStatus:string}){
- return item.status==="PUBLISHED"&&item.visibleToStudents&&item.lessonStatus==="ACTIVE"&&item.offeringStatus==="ACTIVE";
+function studentContentVisible(item:{
+ status:string;visibleToStudents:boolean;lessonStatus:string;
+ learningPathStatus:string;offeringStatus:string;courseStatus:string;
+}){
+ return effectiveCourseContentVisibleToStudents(item);
 }
 function ist(value:Date) {
  return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(value)+" IST";

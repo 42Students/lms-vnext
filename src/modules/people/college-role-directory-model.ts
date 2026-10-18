@@ -26,8 +26,16 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   departmentPresence: z.enum(["ALL", "ASSIGNED", "MISSING"]).default("ALL"),
   employmentType: z.string().trim().min(1).max(128).optional(),
   sort: z.enum(["NAME", "NAME_DESC", "NEWEST", "OLDEST"]).default("NAME"),
-  page: z.coerce.number().int().min(1).max(10000).default(1),
-  pageSize: z.coerce.number().int().refine(n => [10,25,50].includes(n)).default(COLLEGE_ROLE_DIRECTORY_PAGE_SIZE),
+  // URL paging must not silently interpret hexadecimal, exponent syntax or
+  // whitespace as another tenant-directory page.
+  page: z.union([
+    z.number().int().min(1).max(10000),
+    z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(10000)),
+  ]).default(1),
+  pageSize: z.union([
+    z.number().int(),
+    z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int()),
+  ]).refine(n => [10,25,50].includes(n)).default(COLLEGE_ROLE_DIRECTORY_PAGE_SIZE),
 }).strict();
 
 export type CollegeRoleDirectoryQuery = z.infer<typeof collegeRoleDirectoryQuerySchema>;
@@ -105,6 +113,8 @@ export function parseCollegeRoleDirectorySearchParams(raw: Record<string, string
     if (!Object.hasOwn(collegeRoleDirectoryQuerySchema.shape,key) || Array.isArray(value)) {
       throw new Error("INVALID_ROLE_DIRECTORY_FILTERS");
     }
+    if ((key==="page"||key==="pageSize")&&value==="")
+      throw new Error("INVALID_ROLE_DIRECTORY_FILTERS");
     if (value !== undefined && value !== "") entries.push([key,value]);
   }
   const filter=collegeRoleDirectoryQuerySchema.parse(Object.fromEntries(entries));

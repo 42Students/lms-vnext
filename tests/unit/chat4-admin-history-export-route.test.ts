@@ -46,8 +46,11 @@ describe("SA-colleges-admins-R02 administrator history export isolation",()=>{
   expect(response.headers.get("Cache-Control")).toContain("no-store");
   expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
   expect(response.headers.get("X-Export-Truncated")).toBe("false");
-  const body=await response.text();
-  expect(body.startsWith("\uFEFF")).toBe(true);
+  // Response.text() decodes UTF-8 and strips the BOM. Verify its actual
+  // wire bytes so this checks the Excel-compatibility contract correctly.
+  const bytes=new Uint8Array(await response.arrayBuffer());
+  expect(Array.from(bytes.slice(0,3))).toEqual([0xef,0xbb,0xbf]);
+  const body=new TextDecoder().decode(bytes);
   expect(body).toContain("ADMIN_UPDATED");
   expect(mocks.history).toHaveBeenCalledTimes(1);
   expect(mocks.history).toHaveBeenCalledWith(

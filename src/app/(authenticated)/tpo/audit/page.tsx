@@ -222,7 +222,7 @@ export default async function TpoAuditPage({
       </section>
 
       <p role="note" className="text-xs text-muted-foreground">Audit totals count source records, not necessarily unique actions. Related records are retained so no recorded decision is silently discarded.</p>
-      <TpoAuditSavedViews collegeId={context.membership.collegeId} userId={context.user.id}
+      <TpoAuditSavedViews
        filters={{kind:query.kind,from:query.from,to:query.to,q:query.q,who:query.who}}/>
       <nav aria-label="Quick looks" className="flex flex-wrap gap-2">
        <span className="self-center text-sm font-semibold">Quick looks</span>

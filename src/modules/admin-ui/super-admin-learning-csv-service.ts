@@ -9,10 +9,18 @@ import {adminAssessmentQuerySchema} from "@/modules/courses/admin-assessment-dir
 type Kind="LESSONS"|"PROGRESS"|"ASSIGNMENT"|"QUIZ";
 export async function exportSuperAdminLearningDirectory(request:Request,kind:Kind):Promise<Response>{
  try{
-  const query=Object.fromEntries(new URL(request.url).searchParams);
+  const searchParams=new URL(request.url).searchParams;
+  // Repeated query parameters are ambiguous across proxies and frameworks:
+  // do not silently keep the final value or bypass the selected-college filters.
+  if([...searchParams.keys()].some(key=>searchParams.getAll(key).length!==1))
+    return Response.json({error:"INVALID_FILTERS"},{status:400});
+  const query=Object.fromEntries(searchParams);
   const assessment=kind==="ASSIGNMENT"||kind==="QUIZ";
   const params=(assessment?adminAssessmentQuerySchema:adminLearningQuerySchema).safeParse(query);
-  if(!params.success)return Response.json({error:"INVALID_FILTERS"},{status:400});
+  if(!params.success ||
+     (kind==="ASSIGNMENT"&&(query.status==="CLOSED"||
+       (query.results!==undefined&&query.results!=="ALL"))))
+    return Response.json({error:"INVALID_FILTERS"},{status:400});
   const context=await getCurrentRequestContext();
   const headers:string[]=kind==="LESSONS"?["id","lessonName","sequence","status","courseName","courseCode","cohort","semester","contentCount","publishedContentCount"]:
    kind==="PROGRESS"?["offeringId","courseName","courseCode","cohort","semester","status","recordedRows","completedRows","learnersWithRecords"]:

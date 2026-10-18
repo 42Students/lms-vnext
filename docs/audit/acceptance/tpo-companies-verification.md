@@ -151,3 +151,10 @@ TPO-companies-scale-01: One scoped company-drive read, partitioned by job ID. Be
 TPO-companies-scale-02: 500-job bounded facts batches, 1205-ID and duplicate behavioral test in tests/unit/chat12-tpo-company-drive-facts-scaling.test.ts. Authored only; load verification pending.
 UX-tpo-first-third-archived-01: Direct SSR page tests in tests/unit/chat12-tpo-archived-everyone-ssr-journey.test.tsx for role denial, persisted revocation, scoped archive count limitation, empty state, restoration link. Authored only; browser acceptance pending.
 TPO-BREAK-company-lifecycle-read-05: Source `src/modules/placements/tpo-company-lifecycle-service.ts` requires persisted active actor before lifecycle, archive and restoration entrypoints; direct service test `tests/unit/chat12-tpo-company-lifecycle-persisted-reads.test.ts` covers revoked/wrong-role, tenant drift, malformed input, empty and 100-row cap. Written; not executed.
+
+### Chat-3 follow-on — TPO-companies-05 request safety (CI pending)
+
+| Gap ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-companies-05 | PARTIAL — source guarded, database registration pending | The embedded composer now holds a synchronous in-flight lock and a stable UUID idempotency key for retries of the same message, resetting the key if the draft changes. The company-Team mutation endpoint parses a maximum 16 KiB JSON body, rejects corrupt UTF-8, unsupported media types and malformed Content-Length before any database mutation, and returns safe 400/413/415 messages with a request reference. `tests/unit/chat3-tpo-company-team-request-transport.test.ts` covers actual POST behavior, forged origin, valid scoped forwarding, Unicode JSON, bounds and the duplicate-send source contract. Source files: `src/components/tpo/tpo-company-team-conversation.tsx`, `src/modules/placements/tpo-company-team-request-body.ts`, `src/app/api/placements/tpo/company-team/[companyId]/route.ts`. Full PostgreSQL migration, browser retries and notification delivery remain unverified. |
+

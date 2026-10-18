@@ -24,6 +24,7 @@ import {
 } from "./tpo-offer-lifecycle-model";
 import { placementJobIdSchema } from "./validation";
 import {requireTpoJobActor} from "./tpo-job-write-base";
+import {cascadeTpoRecordedAcceptance} from "./tpo-offer-acceptance-cascade";
 
 /**
  * All-or-nothing and locked in offer UUID order to avoid duplicate updates
@@ -137,6 +138,7 @@ export async function recordTpoOfferLifecycle(
         throw new PlacementsServiceError("PLACEMENT_OFFER_EXPIRED");
       }
       let nextStatus: (typeof placementOffers.$inferSelect)["status"] = offer.status;
+      let cascade: Awaited<ReturnType<typeof cascadeTpoRecordedAcceptance>> | null = null;
       if (input.action === "EXTEND") {
         const newExpiry = new Date(input.expiresAt!);
         if (newExpiry <= now ||
@@ -190,12 +192,23 @@ export async function recordTpoOfferLifecycle(
           eq(placementOffers.status, offer.status),
         )).returning();
         if (!updated) throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+        if (nextStatus === "ACCEPTED") {
+          cascade=await cascadeTpoRecordedAcceptance(tx,{
+            actorUserId:context.user.id,
+            membershipId:membershipByOffer.get(offer.id)!,
+            collegeId,
+            offer:{id:offer.id,applicationId:offer.applicationId,
+              kind:offer.kind,annualCtcInr:offer.annualCtcInr},
+            now,
+          });
+        }
         await tx.insert(placementOfferStatusHistory).values({
           offerId: offer.id,
           fromStatus: offer.status,
           toStatus: nextStatus,
           actorUserId: context.user.id,
-          reason: input.reason,
+          reason: cascade ? "cascade:"+cascade.cascadeId : input.reason,
+          ...(cascade ? {cascadeId:cascade.cascadeId} : {}),
         });
         if (nextStatus === "ACCEPTED") {
           await tx.insert(placementJoiningOutcomes)
@@ -219,6 +232,9 @@ export async function recordTpoOfferLifecycle(
           previousStatus: offer.status,
           nextStatus,
           reason: input.reason,
+          cascadeId:cascade?.cascadeId??null,
+          cascadedOfferCount:cascade?.cascadedOfferCount??0,
+          withdrawnApplicationCount:cascade?.withdrawnApplicationCount??0,
         },
         groupKey: "placement-job:" + jobId + ":offers",
       });
