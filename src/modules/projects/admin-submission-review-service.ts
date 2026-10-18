@@ -20,18 +20,19 @@ export async function lockAdminProjectSubmission(ctx:RequestContext,projectIdRaw
  const actorMembershipId=ctx.membership.id;
  const submissionId=id.parse(submissionIdRaw),input=body.parse(raw);
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
-   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
-   .for("update").limit(1);
-  // RequestContext is a snapshot: an administrator may be suspended or lose
-  // College Admin status after opening the dialog. Validate the persisted
-  // actor under SHARE locks in the same transaction that writes the event.
+  // Check the persisted College Admin role under SHARE locks before
+  // locking the project. A revoked actor must not hold a project row lock;
+  // consistent actor-before-resource order also avoids the inverse lock
+  // order used by other administrative mutations.
   const persisted=await assertPersistedPlatformPermission(tx,ctx,"projects.manage",{
    organizationId:scope.organizationId,collegeId:scope.collegeId,
   });
   if(!mayRecordCollegeAdminDeliveryLock(persisted,scope.collegeId,scope.organizationId)||
      persisted.membership?.id!==actorMembershipId)
    throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+   .for("update").limit(1);
   const [submission]=await tx.select().from(projectSubmissions)
    .where(and(eq(projectSubmissions.id,submissionId),eq(projectSubmissions.projectId,scope.project.id)))
    .for("update").limit(1);
