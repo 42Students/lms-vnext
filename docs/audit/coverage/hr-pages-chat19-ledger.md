@@ -198,3 +198,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Export and source | Behavioral test | Verified boundary, remaining integration |
 |---|---|---|---|
 | HR-BREAK-TODAY-SLOTS-12 | `listRecruiterTodayRoundsNeedingSlots` with `NOT EXISTS` filtering; `recruiterTodayRoundsNeedingSlots` pure model | `tests/unit/HR-BREAK-chat19-today-slots-query-limit.test.ts` | Pre-limit SQL excludes already booked/offered rounds, per-tenant employer jobs/college remain scoped, 110-round action opportunity retained, proposed vs cancelled distinction, race-time recheck. PostgreSQL planner and concurrent writes require CI/integration verification. |
+
+## Scoped recruiter activity pagination
+
+| ID | Source | Direct test | Coverage |
+|---|---|---|---|
+| HR-BREAK-ACTIVITY-PAGE-13 | `listRecruiterJobActivity`, `clampHrActivityPage`, HR Activity page | `tests/unit/HR-BREAK-chat19-activity-stale-page.test.ts` | Old bookmarked page recovery, 0/1/40/41/105 scoped event boundaries, no cross-company job IDs, strict malformed input rejection, links use effective page. Live PostgreSQL under grant revocation still requires CI. |
