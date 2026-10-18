@@ -22,6 +22,9 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-014 · PROJ-BREAK-ux-22/23/24 | High | Super Admin and College Admin Project audit routes passed arbitrary `action`, `importance`, dates, entity IDs and incomplete/malformed pagination cursors directly to strict `listActivityEvents` validation. A forged URL could trigger a server-side parse failure instead of a recoverable filter state. | `b55e802`, `83775e3` | Direct URL parser tests `tests/unit/PROJ-BREAK-chat9-admin-audit-query.test.ts` (`e4d12a0`) and visible alert for ignored malformed filters; browser-level recovery OPEN |
 
+| PROJ9-015 · PROJ-BREAK-idor-24/25/26 | Medium | The Super Admin Projects audit route required a selected college before rendering, so platform-wide template activity with no college could not be reviewed even though the audit component and read service support that privilege. Its descriptive copy also misidentified organization-only views as global. Added an explicit active, unscoped Super Admin permission gate; College Admin, disabled users, college-selected and organization-selected sessions cannot use it. | `b022412`, `3835e7b`, `4d9fa17` | `tests/unit/PROJ-BREAK-chat9-admin-audit-access.test.ts` (`265c80f`) — policy-model scenarios; live role/browser checks OPEN |
+| PROJ9-016 · PROJ-BREAK-ux-26 | Low | Projects audit used `nextRemaining={0}` even with a nonempty pagination cursor and positive service remaining count, falsely labeling the Load more link `(0 older)`. Now passes `result.remainingCount`. | `796d8a5` | `tests/unit/PROJ-BREAK-chat9-admin-audit-access.test.ts` (`8b7199b`) — component wiring assertion; full pagination interaction OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
