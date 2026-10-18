@@ -232,4 +232,35 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
    expect(page).not.toContain("min-w-[55rem]");
   }
  });
+ it("UX-admin-module-access-02 shared pagination stays query-scoped with keyboard-safe controls",()=>{
+  const page=read("src/app/(authenticated)/admin/module-access/page.tsx");
+  expect(page).toContain('import {Pagination} from "@/components/ui/pagination"');
+  expect(page).toContain('label="Module Access pages"');
+  expect(page).toContain("hrefForPage={page=>pageHref(result.q,page)}");
+  expect(page).toContain("sm:grid-cols-[minmax(0,1fr)_auto_auto]");
+  expect(page).toContain('title="No matching colleges"');
+ });
+ it("UX-admin-people-unassigned-02 paginates without losing active filters or revealing contact fields",()=>{
+  const page=read("src/app/(authenticated)/admin/people/unassigned/page.tsx");
+  expect(page).toContain('label="Unassigned user pages"');
+  expect(page).toContain("adminUnassignedUsersHref({...data.query,page})");
+  expect(page).toContain("No users without college memberships match these filters.");
+  expect(page).toContain("Personal contact and session information are excluded.");
+ });
+
+ it("UX-admin-middle-third-coverage-01 keeps exactly 37 route notes and named acceptance tests",()=>{
+  const list=read("docs/orchestrator/ui-ux/pages-admin.md");
+  const routes=[...list.matchAll(/^- \[[ x]\] `([^`]+)`/gm)].map(match=>match[1]!);
+  expect(routes).toHaveLength(111);
+  const slice=routes.slice(37,74);
+  expect(slice).toHaveLength(37);
+  const tests=read("tests/unit/ux-admin-chat6-middle-third.test.ts");
+  for(const route of slice){
+   const slug=route.slice("/admin/".length).replace(/[\/\[\]]+/g,"-").replace(/-$/,"");
+   const note=read("docs/audit/ux/admin-"+slug+".md");
+   expect(note).toContain("# "+route+" · UX source review");
+   expect(tests).toContain("UX-admin-"+slug+"-01");
+  }
+ });
+
 });

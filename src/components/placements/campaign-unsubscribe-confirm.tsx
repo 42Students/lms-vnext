@@ -1,10 +1,14 @@
 "use client";
-import {useRef,useState} from "react";
+import {useEffect,useRef,useState} from "react";
+import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useRouter} from "next/navigation";
 /** Public unsubscribes are user-confirmed POSTs. Failed saves never claim success. */
 export function CampaignUnsubscribeConfirm({token,cell}:{token:string;cell:boolean}){
  const router=useRouter(),pendingRef=useRef(false);
  const [pending,setPending]=useState(false),[error,setError]=useState("");
+ const errorRef=useRef<HTMLDivElement>(null);
+ useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
  async function confirm(event:React.FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(pendingRef.current)return;
@@ -25,10 +29,9 @@ export function CampaignUnsubscribeConfirm({token,cell}:{token:string;cell:boole
   finally{window.clearTimeout(timeout);pendingRef.current=false;setPending(false);}
  }
  return <form onSubmit={event=>void confirm(event)} className="mt-4 space-y-3">
-  {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
-  <button type="submit" disabled={pending}
-   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
+  {error?<div ref={errorRef} tabIndex={-1} className="outline-none"><InlineNotice tone="error" message={error}/></div>:null}
+  <Button type="submit" loading={pending} className="w-full sm:w-auto">
    {pending?"Saving…":cell?"Unsubscribe":"Confirm unsubscribe"}
-  </button>
+  </Button>
  </form>;
 }
