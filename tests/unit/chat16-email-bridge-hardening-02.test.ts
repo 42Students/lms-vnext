@@ -44,6 +44,12 @@ describe("chat-16 recruiter email bridge security and resend policy",()=>{
   expect(extractRecruiterEmailReply("")).toBeNull();
   expect(extractRecruiterEmailReply("x".repeat(20001))).toBeNull();
   expect(extractRecruiterEmailReply("A\u0000B")).toBe("AB");
+  // REC-calendar-messages-profile-R01: forwarded history and Outlook-style
+  // headers must never be persisted as a new recruiter message.
+  expect(extractRecruiterEmailReply("New answer\nBegin forwarded message:\nprivate history")).toBe("New answer");
+  expect(extractRecruiterEmailReply("New answer\n---- Forwarded message ----\nprivate history")).toBe("New answer");
+  expect(extractRecruiterEmailReply("New answer\nSent: 18 October 2026 15:00\nprivate history")).toBe("New answer");
+  expect(extractRecruiterEmailReply("Begin forwarded message:\nprivate history")).toBeNull();
  });
  it("email-bridge-escape-01 bounds and escapes provider template merge variables",()=>{
   expect(safeRecruiterEmailMergeText("<a>&\"'")).toBe("&lt;a&gt;&amp;&quot;&#39;");
