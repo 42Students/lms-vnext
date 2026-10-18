@@ -383,3 +383,17 @@ These are newly authored SSR/mocked-boundary page tests; actual mobile viewport/
 | `GET /health`, `GET /ready` | `tests/unit/chat16-public-health-readiness-http-06.test.ts` (`UX-chat16-public-health-route-01`, `UX-chat16-public-ready-route-02`, `UX-chat16-public-ready-outage-03`) | public liveness, readiness 200/503, no database credentials or stack details exposed |
 
 The public HTTP probes mock the system-readiness collaborators; they do not establish a successful disposable PostgreSQL connection. No automated runtime tests were run by chat-16.
+
+### 2026-10-19 continued: Unicode safety, signed inbound service cap and adversarial bell copy
+
+| Function / route | Direct tests | Cases |
+|---|---|---|
+| `safeRecruiterEmailMergeText`, `safeRecruiterDigestMessages` | `tests/unit/chat16-messaging-unicode-boundaries-07.test.ts` (`HR-EMAIL-DIGEST-UNICODE-01`) | emoji at HTML excerpt boundary, partial entity removal, newline escaping, digest ordering |
+| `conversationSnippet` | same (`HR-CONVERSATIONS-UNICODE-02`) | no unpaired surrogate in one-line recruiter inbox excerpt; zero/nonfinite limits |
+| `safeInboundPreview`, `safeMailDrawerText` | same (`INBOUND-MAIL-UNICODE-03/04`) | safe 1,000-character list and 100 KB drawer boundaries, control removal |
+| `acceptAuthenticatedRecruiterEmailReply` | `tests/unit/chat16-recruiter-mail-inbound-service-byte-cap-08.test.ts` (`HR-MAIL-INBOUND-BYTES-08..10`) | oversized signed JSON rejected before DB access, multibyte byte cap, disabled bridge |
+| `recruiterMessageTpoPreview`, `recruiterMessageTpoRecipients`, `recruiterMessageTpoHref` | `tests/unit/chat16-recruiter-bidi-notification-safety-11.test.ts` (`REC-MESSAGE-BIDI-11`) | prevent bidirectional-control spoofing, preserve joining emoji and codepoint cap, recipient dedupe, safe fallback URL |
+| `tpoCampaignUnsubscribeEvent` | same (`TPO-UNSUB-BIDI-12`) | prevent direction-spoofed recruiter name in TPO bell while preserving legacy wording |
+| `safeInboundPreview` | same (`INBOUND-MAIL-BIDI-13`) | strip override/isolate controls in untrusted inbound-mail subject but leave ZWJ emoji intact |
+
+All cases are **authored but unexecuted**. Existing tests are retained. No actual provider send, PostgreSQL concurrency, branch-percentage certification or visual inspection is claimed.
