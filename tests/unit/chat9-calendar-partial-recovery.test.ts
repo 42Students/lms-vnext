@@ -12,6 +12,8 @@ describe("TPO calendar partial-data recovery",()=>{
   expect(calendar).toContain("const countSourceEvents=eventTypeCountsSource?.events??[];");
   expect(calendar).toContain('needsWindow?overdue.length:"Unavailable"');
   expect(calendar).toContain('needsWindow&&blockedDays?.ready?blockedRounds.length:"Unavailable"');
-  expect(calendar).toContain('eventTypeCountsSource?tpoCalendarChipCount(countSourceEvents,filter.value):"unavailable"');
+  // Count chips only from a successful auxiliary read; a missing source is not zero.
+  // The source retains direct access after the presence guard (also covered by TPO-calendar-reports-11).
+  expect(calendar).toContain('eventTypeCountsSource?tpoCalendarChipCount(eventTypeCountsSource.events,filter.value):"unavailable"');
  });
 });
