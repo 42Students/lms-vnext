@@ -25,6 +25,13 @@ describe("chat-4 College Admin export boundaries", () => {
     expect(csv.split("\r\n")).toHaveLength(3);
   });
 
+  it("COL-export-09 neutralizes Unicode-hidden formulas in College Admin directory exports", () => {
+    const values = ["\u200B=1+1", "\u2067+SUM(1)", "\u0301@IMPORTDATA(1)"];
+    const csv=buildCollegeDirectoryCsv(["Name"],values.map(value=>[value]),false,100);
+    for(const value of values)expect(csv).toContain('"' + "'" + value + '"');
+    expect(csv).not.toContain('"\u200B=1+1"');
+  });
+
   it("COL-export-03 marks truncation without claiming that every record is included", () => {
     const csv=buildCollegeDirectoryCsv(["Name"],[["College A"]],true,100);
     expect(csv).toContain("EXPORT TRUNCATED");
