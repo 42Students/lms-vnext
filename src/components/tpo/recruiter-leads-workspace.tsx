@@ -604,7 +604,7 @@ export function RecruiterLeadsWorkspace({
     <section className="space-y-5" aria-label="Recruiter leads">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">{TPO_OWNER_PAGE_COPY.recruiterLeads}</h1>
+          <h1 className="text-[30px] font-semibold leading-9 tracking-[-0.02em] text-[#172033]">{TPO_OWNER_PAGE_COPY.recruiterLeads}</h1>
            <p className="mt-1 text-sm text-body">Every company contact you find, and what you will do next.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
