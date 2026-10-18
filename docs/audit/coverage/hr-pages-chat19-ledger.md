@@ -145,3 +145,10 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 | ID | Page | Direct behavioral evidence | Expected security invariant |
 |---|---|---|---|
 | HR-BREAK-QUERY-05 | Notifications, conversations and activity | `tests/unit/HR-BREAK-chat19-notifications-page.test.ts`, `tests/unit/HR-BREAK-chat19-conversation-inbox-page.test.ts`, `tests/unit/HR-BREAK-chat19-activity-results-pages.test.ts` | Duplicate college, page, or search keys are invalid input, not a first-value fallback. Every one is rejected before tenant-aware query/service invocation; legacy invalid-filter recovery copy stays exact. |
+
+## Post-merge service authorization and high-cardinality search tests
+
+| Gap | Export and service | Direct tests | Cases and integration limits |
+|---|---|---|---|
+| HR-BREAK-NOTIFICATION-OWNER-06 | `ownsHrNotificationActor` and `markHrNotificationRead` | `tests/unit/HR-BREAK-chat19-notification-ownership.test.ts` | Exact recruiter identity, disabled principal, absent recruiter, mismatched principal, early denial before DB/own-job lookup |
+| HR-BREAK-INBOX-SEARCH-07 | `recruiterMessageSearchLimit`, `filterRecruiterConversations`, `listHrConversations` | `tests/unit/HR-BREAK-chat19-inbox-search-boundary.test.ts` | Distinct 1205 scoped matching threads and last-page 1201–1205, foreign thread excluded, dynamic SQL bound to authorized accessible IDs. Real PostgreSQL large-fanout plan and load tests not run |
