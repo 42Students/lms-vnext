@@ -18,9 +18,9 @@ const token=issueTpoCampaignRecipientToken({
 type Stored={id:string;collegeId:string;campaignId:string;leadId:string;unsubscribedAt:Date|null};
 function fakeDb(registered:boolean,row:Stored|null){
  const limit=vi.fn(async()=>row?[row]:[]);
- const select=vi.fn(()=>({from:vi.fn(()=>({where:vi.fn(()=>({
-  for:vi.fn(()=>({limit})),
- }))}))}));
+ const select=vi.fn().mockImplementation(()=>({from:()=>({where:()=>({
+  for:()=>({limit}),
+ })})}));
  const tx={select,update:vi.fn(),insert:vi.fn()};
  const db={execute:vi.fn(async()=>({rows:[{ready:registered}]})),
   transaction:vi.fn(async(cb:(input:typeof tx)=>Promise<unknown>)=>cb(tx))};
@@ -61,7 +61,6 @@ describe("chat-16 TPO recipient unsubscribe live row decision",()=>{
   const row:Stored={id:recipient,collegeId:college,campaignId:campaign,leadId:lead,
    unsubscribedAt:null};
   const f=fakeDb(true,row);
-  const now=new Date("2026-10-18T11:00:00Z");
   const changedRecipient=vi.fn(async()=>[{id:recipient}]);
   const changedLead=vi.fn(async()=>[{id:lead,name:"Recruiter One"}]);
   const recipientSet=vi.fn(()=>({where:()=>({returning:changedRecipient})}));
@@ -97,7 +96,6 @@ describe("chat-16 TPO recipient unsubscribe live row decision",()=>{
   expect(noticeValues).toHaveBeenCalledWith([expect.objectContaining({
    eventId:"event-1",userId:"officer-1",title:"Recruiter One unsubscribed",
   })]);
-  expect(now).toBeInstanceOf(Date);
  });
  it("campaign-unsubscribe-service-19 an already unsubscribed recipient is idempotent, without repeat notifications",async()=>{
   const row:Stored={id:recipient,collegeId:college,campaignId:campaign,
