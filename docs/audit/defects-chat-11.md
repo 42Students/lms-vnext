@@ -64,6 +64,8 @@ Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-spri
 
 | CHAT11-TPO-19 | BLOCKER | `readTpoLearnerPrepOutcomes` took caller-supplied `collegeId` but queried course progress directly from that scope and returned success for an empty roster before verifying TPO permission. This could allow wrong-college readiness inference or misleading OK on expired accounts. | `741cd1c`, `28fe53b`: persisted TPO scope required before empty shortcut and exact college match before any progress data. | `TPO-settings-audit-PREP-SCOPE-01` | PostgreSQL cross-tenant and active enrollment pairing pending |
 
+| CHAT11-TPO-20 | MAJOR | Recruiter access and personal notification pages used a `first()` helper on repeated query values; `z.coerce.number()` additionally interpreted hex, exponential and padded recruiter page values. Unexpected caller-supplied college/user fields were ignored rather than diagnosed. | `65311eb`, `6168ce7`, `94cec2f`, `507c25e`, `2b43dd8`: unique-supported-key parsers, decimal bounded page, explicit invalid-filters recovery. | `TPO-settings-audit-RECRUIT-04/NOTIFY-03` | Browser E2E and fresh CI pending |
+
 ## Latest r9 unit-failure disposition
 
 `tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
