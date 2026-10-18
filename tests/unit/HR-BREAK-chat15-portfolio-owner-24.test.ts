@@ -5,6 +5,8 @@ vi.mock("server-only",()=>({}));
 vi.mock("@/db/client",()=>({getDb:mock.getDb}));
 import {listOwnRecruiterPlacementJobs}
  from "@/modules/placements/recruiter-service";
+import {recruiterGrantEffectiveAt}
+ from "@/modules/placements/recruiter-grant-expiry-policy";
 
 const actor="123e4567-e89b-42d3-a456-426614174001";
 const college="123e4567-e89b-42d3-a456-426614174002";
@@ -63,6 +65,9 @@ describe("HR-PORTFOLIO-OWNER-24 no unauthorized employer portfolio enumeration",
    'eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id)',
    'eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id)',
    'eq(placementRecruiterCollegeGrants.status,"ACTIVE")',
+   'eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED")',
+   'gt(placementRecruiterCollegeGrants.validUntil,sql`now()`)',
+   "`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`",
    'eq(placementRecruiterProfiles.userId,context.user.id)',
    'eq(placementRecruiterProfiles.companyId,placementCompanies.id)',
    'eq(placementRecruiterProfiles.status,"ACTIVE")',
@@ -73,6 +78,19 @@ describe("HR-PORTFOLIO-OWNER-24 no unauthorized employer portfolio enumeration",
    "src/modules/placements/hr-notifications-service.ts",
    "src/modules/placements/recruiter-calendar-service.ts",
   ])expect(readFileSync(reader,"utf8")).toContain("listOwnRecruiterPlacementJobs");
+ });
+
+ it("HR-PORTFOLIO-EXPIRY-38 requires verified active unexpired DRIVES capability even with cached status",()=>{
+  const now=new Date("2026-10-18T09:00:00.000Z");
+  const valid={status:"ACTIVE",verificationStatus:"VERIFIED",
+   validUntil:new Date("2026-10-18T09:00:00.001Z"),capabilities:["DRIVES"]};
+  expect(recruiterGrantEffectiveAt(valid,now,"DRIVES")).toBe(true);
+  for(const altered of [
+   {status:"REVOKED"},{verificationStatus:"PENDING"},
+   {validUntil:null},{validUntil:new Date("2026-10-18T09:00:00.000Z")},
+   {validUntil:new Date("2026-10-18T08:59:59.999Z")},
+   {capabilities:["MESSAGES"]},{capabilities:[]},
+  ])expect(recruiterGrantEffectiveAt({...valid,...altered},now,"DRIVES")).toBe(false);
  });
 
 });
