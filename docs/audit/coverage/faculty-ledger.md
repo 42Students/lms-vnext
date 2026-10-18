@@ -38,22 +38,75 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/attendance/faculty-schedule-mutation-model.ts` | `facultyScheduleFieldsChanged`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-schedule-mutation-model.ts` | `facultyScheduleErrorMessage`: GAP — behavioural test needed |
 | `src/modules/attendance/faculty-schedule-mutation-service.ts` | `commandFacultyAttendanceSchedule`: GAP — behavioural test needed |
-| `src/modules/attendance/faculty-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assessment-batch-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assessment-editor-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assessment-filter.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assessment-report-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assessment-route-boundary.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assessment-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assignment-authoring-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assignment-authoring-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assignment-grading-policy.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-assignment-submissions-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-authoring-datetime-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-contact-detail-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-contacts-filter-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-contacts-service.ts` | GAP: exported-function test inventory required |
+| `src/modules/attendance/faculty-service.ts` | `getFacultyDeliveryRoster`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-service.ts` | `getFacultyAttendanceWorkspace`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-service.ts` | `createFacultyAttendanceSession`: GAP — behavioural test needed |
+| `src/modules/attendance/faculty-service.ts` | `markFacultyAttendance`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-batch-model.ts` | `facultyAssessmentVisibleToDelivery`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentLimitEditable`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentLimitPatch`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentCanArchive`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentEditReceiptMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-editor-model.ts` | `facultyAssessmentArchiveReceiptMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-filter.ts` | `filterFacultyAssessments`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `buildScoreDistribution`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `latestQuizAttemptsByLearner`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `questionAccuracy`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `assignmentScoreSummary`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `scoreSummary`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `getFacultyQuizReport`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-report-service.ts` | `getFacultyAssignmentReport`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-route-boundary.ts` | `parseFacultyAssessmentReportRoute`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-route-boundary.ts` | `facultyAssignmentReportHidden`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-route-boundary.ts` | `facultyQuizReportHidden`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assessment-service.ts` | `getFacultyAssessmentOverview`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-authoring-model.ts` | `facultyAssignmentParamsSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-authoring-model.ts` | `facultyAssignmentCommandSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-authoring-model.ts` | `assignmentFieldsChanged`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-authoring-model.ts` | `facultyAssignmentMethodsChanged`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-authoring-model.ts` | `facultyAssignmentVersionMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-authoring-model.ts` | `facultyAssignmentLegacyEdit`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-authoring-model.ts` | `facultyAssignmentEditLockedBySubmissions`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-authoring-service.ts` | `commandFacultyAssignment`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-authoring-service.ts` | `getFacultyAssignmentMethods`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentDraftDirty`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentDraftIssue`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentCommandReceipt`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentMaySubmit`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentConfirmationOnEdit`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentSwitchNeedsConfirmation`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentArchiveWarning`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentPublishIssue`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentCommandError`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-editor-ui-model.ts` | `facultyAssignmentCanSaveDraft`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-grading-policy.ts` | `facultyAssignmentGradingAllowed`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-grading-policy.ts` | `facultyAssignmentGradePublicationAllowed`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySubmissionFilterSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySubmissionListQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySubmissionReportPageQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySubmissionReportSearchSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `selectFacultyAssignmentSubmissions`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySubmissionListPage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySubmissionListHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `parseFacultySubmissionReviewUrl`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySubmissionReviewApiHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySortSubmissionReportRows`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySearchSubmissionReportRows`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultyFilterSubmissionPublication`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySubmissionReportEmptyState`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-assignment-submissions-model.ts` | `facultySubmissionCsvScopeNote`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-authoring-datetime-model.ts` | `authoringLocalDateTime`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-authoring-datetime-model.ts` | `authoringDueInstant`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-authoring-datetime-model.ts` | `assignmentActionAvailable`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-contact-detail-model.ts` | `facultyContactDetailParamsSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-contact-detail-model.ts` | `facultyContactRoleLabel`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-contact-detail-model.ts` | `facultyContactTabMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-contact-detail-model.ts` | `facultyContactDetailHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-contact-detail-model.ts` | `facultyContactDetailHidden`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-contact-detail-model.ts` | `facultyContactDirectoryQuery`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-contacts-filter-model.ts` | `parseFacultyContactsQuery`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-contacts-service.ts` | `listFacultyContacts`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-contacts-service.ts` | `getFacultyContactDetail`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-content-edit-model.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-content-input-model.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-content-order-ui-model.ts` | GAP: exported-function test inventory required |
