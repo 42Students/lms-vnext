@@ -101,7 +101,7 @@ export function FacultyReportStudentTable({
             type="button"
             disabled={result.page === 1}
             onClick={() => setRequestedPage(result.page - 1)}
-            className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50"
           >
             Previous
           </button>
@@ -110,7 +110,7 @@ export function FacultyReportStudentTable({
             type="button"
             disabled={result.page >= result.pages}
             onClick={() => setRequestedPage(result.page + 1)}
-            className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50"
+            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50"
           >
             Next
           </button>
