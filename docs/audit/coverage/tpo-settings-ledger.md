@@ -198,3 +198,14 @@ Cloud typecheck, unit, PostgreSQL and browser checks are pending; these are sour
 | `saveTpoOutcomeLabels`, `readTpoOutcomeLabels` | Saved labels and versions cannot be edited or read after archived college/role removal; writes use ACTIVE college `for update`, reads hold college `for share` and persisted permission until label data is fetched | Same test — TPO-settings-audit-OUTCOME-CAS-01; `a39921a`, `8ed5e99`, `bbd346a` | Concurrent read/archive/role revocation E2E |
 
 **Status:** source changes and tests authored; tests/TypeScript/PostgreSQL/browser not executed in this lane.
+
+## TPO-settings-audit-R04 — server-persisted saved audit views (new)
+
+| Export / boundary | Verified source contract | Named test | Execution needed |
+|---|---|---|---|
+| `tpoAuditSavedFiltersSchema`, `tpoAuditSavedViewCommandSchema`, `tpoAuditStoredView`, `tpoAuditSavedViewHref` | Strict audit-only filter shapes, safe UTC/IST date strings, canonical query serialization, invalid tenant/user fields rejected, optimistic revisions and malformed persisted JSON denied | `tests/unit/chat11-final-TPO-settings-audit-R04.test.ts` — `TPO-settings-audit-R04` | Vitest |
+| `listTpoAuditSavedViews`, `changeTpoAuditSavedView` | Existing `placement_tpo_saved_views` with `scope='AUDIT'`, exact owner user/college partition, ACTIVE college row lock, persisted TPO-only role, 12-view/5-pin limits, create, rename, delete, pin, open/last-used; tokened CAS prevents stale cross-device updates, metadata-only immutable audit | Same named test (model+source), `tests/unit/chat11-tpo-audit-saved-view-route.test.ts`; commits `f909c18`, `7386eb6`, `437e7c0` | Concurrent PostgreSQL two-session audit view tests and DB migration readiness |
+| `GET/POST /api/placements/tpo/audit/saved-views` | GET no-store rejects forged query tenant IDs; POST checks same-origin and actor before bounded JSON, no caller-selected college/user, 409 stale/limits, 404 missing, 503 storage, no raw provider details | `tests/unit/chat11-tpo-audit-saved-view-route.test.ts` seven `TPO-settings-audit-R04` Next route cases; `0e1c13f`, `bbbb979` | Real authenticated HTTP and 400/401/403 route E2E |
+| `TpoAuditSavedViews` and `/tpo/audit` | Server-owned views sync between signed-in devices, replaces local-only persistence; asynchronous GET/mutation reconciliation, no blind create retry after lost response, clear errors, preserved keyboard-sized buttons, exact saved-view actions and truthful storage unavailable state | `tests/unit/chat11-final-TPO-settings-audit-R04.test.ts`, `71b56b3`, `017b5bb`, `70a3bac`, `db71584` | Browser double-click, offline/failed storage, cross-device conflicts |
+
+**Disposal:** Original `TPO-settings-audit-R04` missing server persisted saved views is now source-implemented on this branch, rather than browser-only. PostgreSQL, Vitest and browser acceptance are not claimed as run.
