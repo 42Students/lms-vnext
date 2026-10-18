@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
+import type { ReactNode } from "react";
 
 const mocks=vi.hoisted(()=>({context:vi.fn(),history:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.context}));
@@ -10,7 +11,7 @@ vi.mock("@/components/ui/data-table",async()=>{
  const {createElement}=await import("react");
  return {DataTable:({rows,empty}:{
   rows:readonly {id:string;eventType:string;summary:string}[];
-  empty?:unknown;
+  empty?:ReactNode;
  })=>createElement("section",{"aria-label":"Administrator activity history"},
   rows.length?rows.map(row=>createElement("article",{key:row.id},
    createElement("b",null,row.eventType),createElement("p",null,row.summary))):empty)};
