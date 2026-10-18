@@ -126,7 +126,8 @@ async function errorMessage(
     if (body?.error === "SCHEDULE_EVENT_CONFLICT") {
       return "Another class overlaps this time in the Section. Choose a different time.";
     }
-    return body?.message || body?.error || fallback;
+    // UX-teacher-attendanceDetail-07: never render unrecognized API errors or internals.
+    return fallback;
   } catch {
     return fallback;
   }
@@ -172,6 +173,8 @@ export function FacultyAttendanceWorkspace({
     useState(false);
   const [confirmingAttendance, setConfirmingAttendance] = useState(false);
   const [confirmingRosterReload, setConfirmingRosterReload] = useState(false);
+  const [discardOpen,setDiscardOpen]=useState(false);
+  const nextAfterDiscard=useRef<(()=>void)|null>(null);
   const submitLock = useRef(false);
   const [error, setError] =
     useState<string | null>(null);
@@ -182,6 +185,7 @@ export function FacultyAttendanceWorkspace({
     useState(false);
   const [scheduling, setScheduling] =
     useState(false);
+  const [confirmScheduleOpen,setConfirmScheduleOpen]=useState(false);
   const [scheduleError, setScheduleError] =
     useState<string | null>(null);
   const [scheduleTitle, setScheduleTitle] =
@@ -229,12 +233,13 @@ export function FacultyAttendanceWorkspace({
     indiaAttendanceDayKey(session.startsAt)===selectedDate);
   function chooseDate(day:string){
     if(day===selectedDate)return;
-    if(!confirmDiscardMarks())return;
-    setSelectedDate(day);
-    const first=workspace.sessions.find(session=>indiaAttendanceDayKey(session.startsAt)===day);
-    setSelectedSessionId(first?.id??"");
-    setAbsent(initialAbsencesForSession(workspace.roster,workspace.records,first?.id??""));
-    setCorrectionReason("");setError(null);
+    confirmDiscardMarks(()=>{
+      setSelectedDate(day);
+      const first=workspace.sessions.find(session=>indiaAttendanceDayKey(session.startsAt)===day);
+      setSelectedSessionId(first?.id??"");
+      setAbsent(initialAbsencesForSession(workspace.roster,workspace.records,first?.id??""));
+      setCorrectionReason("");setError(null);
+    });
   }
   const selectedSession =
     workspace.sessions.find(
@@ -253,8 +258,9 @@ export function FacultyAttendanceWorkspace({
     window.addEventListener("beforeunload",warn);
     return ()=>window.removeEventListener("beforeunload",warn);
   },[unsavedMarks]);
-  function confirmDiscardMarks(){
-    return !unsavedMarks||window.confirm("Discard your unsaved attendance changes?");
+  function confirmDiscardMarks(next:()=>void){
+    if(!unsavedMarks){next();return;}
+    nextAfterDiscard.current=next;setDiscardOpen(true);
   }
   const markingWindow = selectedSession
     ? facultyAttendanceMarkingWindow({
@@ -317,15 +323,14 @@ export function FacultyAttendanceWorkspace({
   );
 
   function chooseSession(id: string) {
-    if(id!==selectedSessionId&&!confirmDiscardMarks())return;
-    setSavedNotice(null);
-    setSelectedSessionId(id);
-    setAbsent(initialAbsencesForSession(workspace.roster, workspace.records, id));
-    setSearch("");
-    setError(null);
-    setCorrectionReason("");
+    if(id===selectedSessionId)return;
+    confirmDiscardMarks(()=>{
+      setSavedNotice(null);
+      setSelectedSessionId(id);
+      setAbsent(initialAbsencesForSession(workspace.roster,workspace.records,id));
+      setSearch("");setError(null);setCorrectionReason("");
+    });
   }
-
   function markOne(
     membershipId: string,
     isAbsent: boolean,
@@ -428,16 +433,17 @@ export function FacultyAttendanceWorkspace({
   }
 
   async function createSession(
-    event: FormEvent<HTMLFormElement>,
+    event: FormEvent<HTMLFormElement>|null,
+    confirmed=false,
   ) {
-    event.preventDefault();
+    event?.preventDefault();
     if (scheduling) return;
 
     setScheduleError(null);
-    setScheduling(true);
     try {
       const timing = facultyScheduleInstants(startsAt, endsAt);
-      if (!window.confirm("Confirm attendance session from " + startsAt.replace("T", " ") + " to " + endsAt.replace("T", " ") + " IST?")) return;
+      if(!confirmed){setConfirmScheduleOpen(true);return;}
+      setScheduling(true);
       const response = await fetch(
         "/api/attendance/faculty",
         {
@@ -473,7 +479,7 @@ export function FacultyAttendanceWorkspace({
       setScheduleError(caught instanceof Error ? caught.message :
         "Failed to schedule class. Check your connection and try again.");
     } finally {
-      setScheduling(false);
+      if(confirmed){setScheduling(false);setConfirmScheduleOpen(false);}
     }
   }
 
@@ -510,7 +516,7 @@ export function FacultyAttendanceWorkspace({
                 ? "primary"
                 : "ghost"
             }
-            onClick={() => {if(confirmDiscardMarks())setMode("REPORT");}}
+            onClick={() => confirmDiscardMarks(()=>setMode("REPORT"))}
           >
             Monthly Attendance
           </Button>
@@ -521,7 +527,7 @@ export function FacultyAttendanceWorkspace({
                 ? "primary"
                 : "ghost"
             }
-            onClick={() => {if(confirmDiscardMarks())setMode("MARK");}}
+            onClick={() => confirmDiscardMarks(()=>setMode("MARK"))}
           >
             Mark attendance
           </Button>
@@ -1275,6 +1281,19 @@ export function FacultyAttendanceWorkspace({
           ) : null}
         </form>
       </Drawer>
+      <ConfirmDialog open={discardOpen} onOpenChange={open=>{
+          if(!open){nextAfterDiscard.current=null;setDiscardOpen(false);}
+        }} title="Discard your unsaved attendance changes?"
+        confirmLabel="Discard changes" confirmVariant="danger"
+        onConfirm={()=>{
+          const next=nextAfterDiscard.current;
+          nextAfterDiscard.current=null;setDiscardOpen(false);next?.();
+        }}/>
+      <ConfirmDialog open={confirmScheduleOpen} onOpenChange={setConfirmScheduleOpen}
+        title={"Confirm attendance session from "+startsAt.replace("T"," ")+" to "+endsAt.replace("T"," ")+" IST?"}
+        confirmLabel="Confirm" confirmVariant="primary"
+        pending={scheduling} onConfirm={()=>void createSession(null,true)}/>
+
     </div>
   );
 }
