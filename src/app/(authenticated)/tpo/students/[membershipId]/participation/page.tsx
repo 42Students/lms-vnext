@@ -38,14 +38,14 @@ export default async function TpoLearnerParticipationPage({
         actions={
           <Link
             href="/tpo/students"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Back to Students
           </Link>
         }
       />
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border py-5">
         <h2 className="text-lg font-semibold text-foreground">
           Current participation
         </h2>
@@ -80,8 +80,8 @@ export default async function TpoLearnerParticipationPage({
       </section>
 
       <nav aria-label="Student placement journey" className="flex flex-wrap gap-3">
-        <Link href={journey.history} className="inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">View placement history and round outcomes →</Link>
-        <Link href={journey.roster} className="inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Student roster</Link>
+        <Link href={journey.history} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">View placement history and round outcomes →</Link>
+        <Link href={journey.roster} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Student roster</Link>
       </nav>
 
       <TpoDebarControl
@@ -90,7 +90,7 @@ export default async function TpoLearnerParticipationPage({
       />
       <TpoTimedDebarControl membershipId={learner.membershipId} initial={timedDebarments}/>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border py-5">
         <h2 className="text-lg font-semibold text-foreground">
           Change learner-level eligibility
         </h2>
