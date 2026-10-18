@@ -185,3 +185,9 @@ New tests have not been executed.
 | `src/modules/people/college-contacts-academic-scope.ts` `inProgram`, `activeEnrollment` | `tests/integration/chat4-college-academic-cross-tenant-pg.test.ts` (`COL-contacts-scope-PG-01`) | The filters now require a learner enrollment's declared program and cohort to agree before counting same-college academic participation. Disposable PostgreSQL fixtures exercise a separate synthetic learner with only a foreign cohort while the valid local learner remains visible; cloud CI not run |
 
 No in-memory preview may be considered tenant proof without the persisted membership/context and PostgreSQL fixture. Integration execution is still pending.
+
+## College student import placement: coherent program, cohort and college
+
+| Source | Tests | Required integrity |
+| --- | --- | --- |
+| `src/modules/people/college-student-import-placement.ts` `placeImportedLearnerInSection` | `tests/unit/chat4-college-student-import-placement-integrity.test.ts` (`COL-student-import-placement-tenant-01`); `tests/integration/chat4-college-academic-cross-tenant-pg.test.ts` (`COL-student-import-placement-tenant-PG-01`) | The section's program, academic period, cohort start period and learner member must all belong to the same college; learner enrollment's declared program must actually own its referenced cohort before the locked capacity check, membership insert, and single audit. Disposable DB fixture for a College A member with a College B declared program and College A cohort expects CLASS_BATCH_MISMATCH and zero inserted class memberships. CI/test execution pending. |
