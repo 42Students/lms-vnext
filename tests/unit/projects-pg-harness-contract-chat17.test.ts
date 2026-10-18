@@ -50,6 +50,10 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("current_database()");
    expect(helper).toContain("to_regclass(");
    expect(helper).toContain("REQUIRED_TABLES");
+   expect(helper).toContain("information_schema.columns");
+   expect(helper).toContain('"can_mutate"');
+   expect(helper).toContain('"ended_at"');
+   expect(helper).toContain("u.platform_status = 'ACTIVE'");
  });
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
