@@ -1,6 +1,7 @@
 import "server-only";
 import {outboundFetch} from "@/lib/outbound";
 import {canContactRecipientAtRuntime} from "@/modules/messaging/runtime-safety";
+import {normalizeRecipient} from "@/modules/messaging/model";
 import {readZeptoMailConfig} from "@/modules/notifications/zeptomail-email";
 import {isCampaignTemplateKey} from "@/modules/messaging/template-boundary-model";
 import {safeRecruiterDigestMessages,safeRecruiterEmailMergeText,isRecruiterReplyAddress} from "./recruiter-message-email-model";
@@ -18,7 +19,8 @@ export async function sendRecruiterMessageDigest(
  fetchImpl:typeof fetch=fetch,
 ):Promise<boolean>{
  if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true")return false;
- if(!canContactRecipientAtRuntime("EMAIL",digest.recipient,env))return false;
+ const recipient=normalizeRecipient("EMAIL",digest.recipient);
+ if(!canContactRecipientAtRuntime("EMAIL",recipient,env))return false;
  const config=readZeptoMailConfig(env);
  const key=(env.RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY??"").trim();
  let endpoint:URL;
@@ -34,7 +36,7 @@ export async function sendRecruiterMessageDigest(
    headers:{Authorization:config.token,"Content-Type":"application/json",Accept:"application/json"},
    body:JSON.stringify({
     template_key:key,from:{address:config.fromAddress,name:config.fromName},
-    to:[{email_address:{address:digest.recipient,name:digest.recipientName}}],
+    to:[{email_address:{address:recipient,name:digest.recipientName}}],
     reply_to:[{address:digest.replyTo}],
     merge_info:{name:safeRecruiterEmailMergeText(digest.recipientName,160),
       college:safeRecruiterEmailMergeText(digest.collegeName,160),
