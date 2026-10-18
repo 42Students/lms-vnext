@@ -58,17 +58,17 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3 text-sm text-body" role="status">
         <details className="relative rounded-lg border border-border bg-surface px-3 py-2">
-          <summary className="cursor-pointer font-semibold">{scopeCount} Teaching assignment(s)</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{scopeCount} Teaching assignment(s)</summary>
           <ul className="mt-2 max-h-48 space-y-1 overflow-auto text-xs">
             {assignmentChoices.map(item=><li key={item.deliveryId}>
-              <Link className="text-primary-text underline" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
+              <Link className="text-[var(--lms-teal-deep)] underline" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
                 {item.courseName} · {item.sectionName} · {item.academicPeriodName}
               </Link>
             </li>)}
           </ul>
         </details>
         <details className="rounded-lg border border-border bg-surface px-3 py-2">
-          <summary className="cursor-pointer font-semibold">{sections.length} Section(s)</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{sections.length} Section(s)</summary>
           <ul className="mt-2 max-h-48 space-y-1 overflow-auto text-xs">
             {sections.map(section=><li key={section.id}>{section.name} · {section.count} teaching assignment(s)</li>)}
           </ul>
@@ -108,8 +108,8 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           </label>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply filters</button>
-          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Apply filters</button>
+          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
           </p>
@@ -127,14 +127,14 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
           data-testid="teacher.courses.card.open"
-          className="group flex min-h-64 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+          className="group flex min-h-64 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
         >
           <div className="flex items-start justify-between gap-3">
-            <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-lg border border-border bg-primary-subtle text-xl font-bold text-primary-text">
+            <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-lg border border-border bg-primary-subtle text-xl font-bold text-[var(--lms-teal-deep)]">
               {course.courseName.trim().slice(0,2).toUpperCase()||"CS"}
             </span>
             <div className="min-w-0">
-              <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
+              <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">
                 {course.courseCode}
               </p>
               <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
@@ -152,7 +152,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
             </StatusBadge>
           </div>
 
-          <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-5 text-body">
+          <p className="mt-3 line-clamp-2 min-h-11 text-sm leading-5 text-body">
             {course.courseDescription ??
               "Teaching workspace for this exact Section delivery."}
           </p>
@@ -205,7 +205,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
               </p>
               <span
                 aria-hidden="true"
-                className="text-lg text-primary-text transition-transform group-hover:translate-x-0.5"
+                className="text-lg text-[var(--lms-teal-deep)] transition-transform group-hover:translate-x-0.5"
               >
                 →
               </span>
@@ -217,9 +217,9 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
       )}
       <nav aria-label="Faculty Courses pages" className="flex flex-wrap items-center justify-between gap-3">
         {pagination.page > 1 ? <Link href={facultyCourseListHref({...query,page:pagination.page-1})}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link> : <span />}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : <span />}
         {pagination.page < pagination.totalPages ? <Link href={facultyCourseListHref({...query,page:pagination.page+1})}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Next</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
       </nav>
     </div>
   );
