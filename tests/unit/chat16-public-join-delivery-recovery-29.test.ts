@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PgDialect } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import { resolveMx } from "node:dns/promises";
@@ -10,6 +10,7 @@ vi.mock("node:dns/promises", () => ({ resolveMx: vi.fn() }));
 vi.mock("@/modules/placements/public-join/readiness", () => ({ publicJoinTablesReady: vi.fn() }));
 
 beforeEach(() => vi.resetAllMocks());
+afterEach(() => vi.unstubAllEnvs());
 
 describe("chat-16 public recruiter OTP accepted before optional company hint", () => {
   it("REC-JOIN-DELIVERY-06 retrieves only active company hint scoped by normalized registrable domain", async () => {
@@ -93,7 +94,7 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
       select: vi.fn(() => { throw new Error("company directory outage"); }),
     };
     vi.mocked(getDb).mockReturnValue(db as never);
-    const deliver = vi.fn(async () => true);
+    const deliver = vi.fn(async (_email: string, _code: string) => true);
     const result = await requestPublicJoinCode(
       "COMPANY",
       { token: "a".repeat(64), email: "recruiter@team.example.org" },
@@ -106,7 +107,6 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
     expect(deliver.mock.calls[0]?.[1]).toMatch(/^[0-9]{6}$/);
     expect(tx.insert).toHaveBeenCalledTimes(1);
     expect(db.select).toHaveBeenCalledTimes(1);
-    vi.unstubAllEnvs();
   });
 
 });
