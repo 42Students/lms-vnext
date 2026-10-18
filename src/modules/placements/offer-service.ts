@@ -11,7 +11,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import {hasAvailablePlacementOfferSeat} from "./offer-seat-capacity-policy";
+import {hasAvailablePlacementOfferSeat,isPlacementIssuanceConcurrencyError} from "./offer-seat-capacity-policy";
 import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promotions";
 type PlacementDb = ReturnType<typeof getDb>;
 type PlacementTx = Parameters<Parameters<PlacementDb["transaction"]>[0]>[0];
@@ -587,7 +587,11 @@ export async function issuePlacementOffer(
     );
 
     return offer;
-  }, { isolationLevel: "serializable" });
+  }, { isolationLevel: "serializable" }).catch(error=>{
+    if(isPlacementIssuanceConcurrencyError(error))
+      throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+    throw error;
+  });
 }
 
 export async function actOnPlacementOffer(
