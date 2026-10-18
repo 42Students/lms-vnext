@@ -22,7 +22,7 @@ describe("TPO Requests grid and 500 row parity",()=>{
   ];
   expect(selectedRequestClipboardRows(pageRows,["b","not-on-page"],"ASKED_NEW").map(row=>row.id)).toEqual(["b"]);
   const copy=requestRowsTsv(selectedRequestClipboardRows(pageRows,["a"],"ASKED_NEW"),["student","asked"]);
-  expect(copy).toBe("Student\\tAsked\\n'=unsafe\\t2099-01-01");
+  expect(copy).toBe("Student\tAsked\n'=unsafe\t2099-01-01");
   expect(copy).not.toContain("Company A");
  });
 });
