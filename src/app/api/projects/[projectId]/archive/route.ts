@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   archiveProjectInstance,
 } from "@/modules/projects/instance-service";
+import {archiveProjectInstanceInputSchema} from "@/modules/projects/instance-archive-model";
 
 export const runtime = "nodejs";
 
@@ -38,10 +39,13 @@ export async function POST(
     try{input=JSON.parse(body);}catch{
       return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
     }
+    const parsed=archiveProjectInstanceInputSchema.safeParse(input);
+    if(!parsed.success)
+      return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
     const project = await archiveProjectInstance(
       context,
       projectId,
-      input,
+      parsed.data,
     );
     return NextResponse.json({ project });
   } catch (error) {
