@@ -16,6 +16,11 @@
 
 | WEAK-auth-tenant-access-08 | S1 (cross-principal stale grant) | Cached recruiter context with an active company grant but a `recruiter.userId` belonging to another account previously passed the pure tenant admission check by college ID alone. | Require the recruiter principal to match `context.user.id` before inspecting grants. Unit `WEAK-auth-tenant-access-08`. Commits `f014556a`, `70c9324e`. | Fix pushed; cloud execution pending |
 
+| UX-kit-HARDEN-33 | S2 (stale-state accessibility) | Tabs with an unavailable or disabled persisted value had no selected panel but retained a disabled selected tab/invalid label relation. | Normalize to the first enabled tab for rendered panel + one ARIA selection/tab stop. Test `UX-kit-HARDEN-33`; commit `8bad8cc2`. | Fix pushed; cloud pending |
+| UX-kit-HARDEN-34 | S2 (file-picker accessibility) | FileUpload replaced helper description with disabled/error description, preventing screen readers from accessing original size/type guidance alongside the error. | Combined describedBy IDs and SSR regression `UX-kit-HARDEN-34`; commit `87df5d46`. | Fix pushed; cloud pending |
+| WEAK-tenant-managed-26 | S2 (managed hostname mismatch) | Suffix-only matching treated invalid empty-label and reserved-label addresses as managed. | Require a canonical allocatable prefix and exact normalized host match; test `WEAK-tenant-managed-26`; commit `a00dea1c`. | Fix pushed; cloud pending |
+| PROJ-BREAK-MENTOR-40 | S2 (WebView and touch UI) | Mentor auto-assign invoked native `window.confirm` and used 40px tap targets. | Shared promise-backed confirmation with visible overlay and 44px controls; source/UX regression `PROJ-BREAK-MENTOR-40`, commit `4f664565`. | Fix pushed; browser pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
