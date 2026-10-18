@@ -30,6 +30,7 @@ import {
   requirePermission,
 } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   candidateAcademicEvidenceInputSchema,
@@ -645,6 +646,9 @@ export async function upsertJobEligibilityPolicy(
   const db = getDb();
   return db.transaction(async (tx) => {
     const liveJob = await lockEligibilityJob(tx, jobId);
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:liveJob.collegeId,
+    });
     if (
       liveJob.collegeId !== job.collegeId ||
       liveJob.status !== "DRAFT"
@@ -716,6 +720,9 @@ export async function setEligibilityOverride(
 
   return db.transaction(async (tx) => {
     const liveJob = await lockEligibilityJob(tx, jobId);
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:liveJob.collegeId,
+    });
     if (liveJob.collegeId !== job.collegeId) {
       throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
     }
@@ -769,6 +776,9 @@ export async function revokeEligibilityOverride(
 
   return db.transaction(async (tx) => {
     const liveJob = await lockEligibilityJob(tx, jobId);
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:liveJob.collegeId,
+    });
     if (liveJob.collegeId !== job.collegeId) {
       throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
     }
