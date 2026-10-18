@@ -47,3 +47,13 @@ Scope: 22 entries from `docs/orchestrator/ui-ux/pages-hr.md`. All have existing 
 | New/Copy/Edit/Fix drive form | HR-BREAK-DRIVE-DRAFT-SCOPE-38 | `tests/unit/HR-BREAK-chat19-drive-draft-scope.test.ts` | Principal, college, mode and source-isolated state and storage |
 
 All entries are **authored, not locally executed**. PostgreSQL/provider, real responsive screen readers and keyboard navigation remain orchestrator acceptance gates; no test was weakened or removed.
+
+## Additional weak-area HR pure model branch coverage
+
+| Model functions | Evidence | Tested cases |
+|---|---|---|
+| `recruiterTodayWaitingRequests` | `tests/unit/HR-BREAK-chat19-today-waiting-progress.test.ts` | Formal statuses only, chronological ordering, 8-item cap, untouched source, malformed draft fallback |
+| `recruiterDriveProgressSteps` | Same test | Exact stage copy; not claiming unshared rounds/offers/joining complete |
+| `recruiterDriveNextAction` | Same test | Closed, issued offer, no applicants, active rounds, default next action |
+
+These branch-level tests are authored, not executed; fixture timestamps use 2099.
