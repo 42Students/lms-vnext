@@ -114,11 +114,11 @@ export default async function SuperAdminProjectTemplateDetailPage({
           blueprint={detail.currentVersion.blueprint}
         />
       ) : (
-        <section className="rounded-xl border border-border bg-surface p-4 sm:p-6 text-sm text-muted-foreground">
+        <section className="border-b border-border py-5 text-sm text-muted-foreground">
           The current template version could not be resolved.
         </section>
       )}
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <section className="border-b border-border py-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Version history
         </h2>
@@ -126,7 +126,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
           {detail.versions.map((version) => (
             <div
               key={version.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-muted px-3 py-2"
+              className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 last:border-0"
             >
               <div>
                 <p className="m-0 text-sm font-semibold text-foreground">
