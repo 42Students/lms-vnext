@@ -193,7 +193,7 @@ export default async function TpoPlacementRulesSettingsPage({
               <p className="mt-2 text-xs leading-5 text-muted-foreground">
                 {note.detail}
               </p>
-              <p className="mt-2 text-xs font-semibold text-primary-text">
+              <p className="mt-2 text-xs font-semibold text-[var(--lms-teal-deep)]">
                 {note.source}
               </p>
             </article>
@@ -344,7 +344,7 @@ export default async function TpoPlacementRulesSettingsPage({
                       "/tpo/placements/jobs/" +
                       encodeURIComponent(job.id)
                     }
-                    className="text-sm font-semibold text-primary-text hover:underline"
+                    className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
                   >
                     View job →
                   </Link>
@@ -370,7 +370,7 @@ export default async function TpoPlacementRulesSettingsPage({
                     ? "/tpo/settings/rules"
                     : `/tpo/settings/rules?page=${result.page - 1}`
                 }
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 ← Previous
               </Link>
@@ -378,7 +378,7 @@ export default async function TpoPlacementRulesSettingsPage({
             {result.page < result.totalPages ? (
               <Link
                 href={`/tpo/settings/rules?page=${result.page + 1}`}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Next →
               </Link>

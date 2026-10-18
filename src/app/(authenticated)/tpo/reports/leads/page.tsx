@@ -115,8 +115,8 @@ export default async function TpoLeadsReportPage({
       <ReportNavigation workspace={workspace} />
       <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
        <p className="min-w-0 flex-1 text-sm text-body">This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.</p>
-       <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Open Engage →</Link>
-       <Link href="/tpo/companies" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Company memory →</Link>
+       <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Open Engage →</Link>
+       <Link href="/tpo/companies" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Company memory →</Link>
       </nav>
 
 
@@ -135,7 +135,7 @@ export default async function TpoLeadsReportPage({
         </label>
         <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
         {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
-         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Clear company</Link>:null}
+         className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Clear company</Link>:null}
        </form>
        <p className="text-xs text-muted-foreground">The company filter applies to this company table and its CSV only. Headline recruiter lead metrics, stage summaries and acquisition source totals remain college-wide.</p>
        {!companyFilter.valid?<p role="alert" className="text-sm text-warning-text">This company is not in the authorized college report. Clear the company filter.</p>:null}
@@ -143,7 +143,7 @@ export default async function TpoLeadsReportPage({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
         ...(selectedCompanyId?{companyId:selectedCompanyId}:{}),
-       }).toString()} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export company engagement CSV</a>
+       }).toString()} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export company engagement CSV</a>
        <ReportTable title="Engage and placement outcomes by company"
         headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
         rows={companyFilter.rows.map(row=>{

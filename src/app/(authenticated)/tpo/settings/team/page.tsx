@@ -48,7 +48,7 @@ export default async function TpoPlacementTeamPage() {
         actions={
           <Link
             href="/tpo/settings/trusted"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
           >
             Trusted Companies
           </Link>
@@ -217,7 +217,7 @@ export default async function TpoPlacementTeamPage() {
                                 href={`/tpo/placements/jobs/${encodeURIComponent(
                                   duty.jobId,
                                 )}`}
-                                className="font-semibold text-primary-text hover:underline"
+                                className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
                               >
                                 {duty.jobTitle}
                               </Link>
