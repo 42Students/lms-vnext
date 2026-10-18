@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
-export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
+export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
  minCtcLpa:z.coerce.number().min(0).max(1000).optional(),
  maxCtcLpa:z.coerce.number().min(0).max(1000).optional(),
 }).strict().superRefine((input,ctx)=>{
