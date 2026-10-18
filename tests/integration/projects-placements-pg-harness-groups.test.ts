@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Pool } from "pg";
 import {
-  newHarnessPool, withProjectPg, createTenant, createPrincipal,
+  newHarnessPool, withProjectPg, withTwoPgSessions, createTenant, createPrincipal,
   createProjectFixture, createTaskSubmission, createFinalSubmission,
   createMeeting, createPlacementFixture, type PgHarness,
 } from "./support/projects-placements-pg-harness";
@@ -311,6 +311,24 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
         insert into project_delivery_events(project_id,submission_id,event_type,actor_membership_id,reason)
         values ($1,$2,'REOPENED',$3,'Wrong project')`,
         [f.project.projectId,otherSubmission,f.mentor.membershipId]),"23503");
+    });
+  });
+
+  it("PROJ-HARNESS-21 dual sessions can independently read a committed schema and never share a transaction",async()=>{
+    await withTwoPgSessions(pool,async(a,b)=>{
+      expect(a).not.toBe(b);
+      const [one,two]=await Promise.all([
+        a.query<{name:string}>("select current_database() as name"),
+        b.query<{name:string}>("select current_database() as name"),
+      ]);
+      expect(one.rows[0]?.name).toBe(two.rows[0]?.name);
+      expect(one.rows[0]?.name).toMatch(/test|ci|tmp/i);
+      const [t1,t2]=await Promise.all([
+        a.query("select count(*) from project_instances"),
+        b.query("select count(*) from placement_jobs"),
+      ]);
+      expect(t1.rowCount).toBe(1);
+      expect(t2.rowCount).toBe(1);
     });
   });
 
