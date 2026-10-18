@@ -19,19 +19,20 @@ export const tpoAuditSavedFiltersSchema=z.strictObject({
 });
 const name=z.string().trim().min(1).max(50);
 const id=z.uuid();
+const expectedRevision=z.uuid().nullable();
 export const tpoAuditSavedViewCommandSchema=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("CREATE"),name,filters:tpoAuditSavedFiltersSchema}),
- z.strictObject({action:z.literal("RENAME"),id,name}),
- z.strictObject({action:z.literal("PIN"),id,pinned:z.boolean()}),
- z.strictObject({action:z.literal("DELETE"),id}),
+ z.strictObject({action:z.literal("RENAME"),id,name,expectedRevision}),
+ z.strictObject({action:z.literal("PIN"),id,pinned:z.boolean(),expectedRevision}),
+ z.strictObject({action:z.literal("DELETE"),id,expectedRevision}),
  z.strictObject({action:z.literal("OPEN"),id}),
 ]);
 export type TpoAuditSavedFilters=z.output<typeof tpoAuditSavedFiltersSchema>;
 export type TpoAuditSavedViewCommand=z.output<typeof tpoAuditSavedViewCommandSchema>;
-export type TpoAuditStoredView={query:TpoAuditSavedFilters;pinned:boolean;usedAt:string|null};
+export type TpoAuditStoredView={query:TpoAuditSavedFilters;pinned:boolean;usedAt:string|null;revision:string|null};
 export type TpoAuditSavedView={
  id:string;name:string;filters:TpoAuditSavedFilters;pinned:boolean;
- usedAt:string|null;createdAt:string;
+ usedAt:string|null;createdAt:string;revision:string|null;
 };
 export function tpoAuditStoredView(raw:unknown):TpoAuditStoredView|null{
  if(!raw||typeof raw!=="object"||Array.isArray(raw))return null;
@@ -39,6 +40,7 @@ export function tpoAuditStoredView(raw:unknown):TpoAuditStoredView|null{
  const query=tpoAuditSavedFiltersSchema.safeParse(data.query);
  if(!query.success)return null;
  return {query:query.data,pinned:data.pinned===true,
+  revision:typeof data.revision==="string"&&z.uuid().safeParse(data.revision).success?data.revision:null,
   usedAt:typeof data.usedAt==="string"&&Number.isFinite(Date.parse(data.usedAt))
    ?data.usedAt:null};
 }
