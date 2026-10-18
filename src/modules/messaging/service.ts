@@ -48,7 +48,21 @@ export async function deliverBatch(args: {
   const recipientAccepted=new Map<string,{baseline:number;accepted:number}>();
   const seenRecipientPurpose = new Set<string>();
   for (const {request,recipientKey} of keyedRequests) {
-    const policy = await args.policyFor(request);
+    let policy: DeliveryPolicy;
+    try {
+      policy = await args.policyFor(request);
+    } catch {
+      // A transient policy read must fail this recipient closed rather than
+      // leaving an already-sent partial batch without its final audit totals.
+      const rejected: DeliveryRecord = {
+        batchId: args.batchId, channel: request.channel, recipientKey,
+        templateKey: request.templateKey, purpose: request.purpose,
+        status: "FAILED", reason: "policy-read-failed",
+      };
+      await args.repository.insert(rejected);
+      records.push({ ...rejected });
+      continue;
+    }
     startingDailySent ??= policy.sentToday;
     const initial = decideDelivery(request, policy);
     // Enforce the independently configured AUTH test allowlist even if a caller

@@ -16,6 +16,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { notifyActiveProjectMembers } from "./project-notification-service";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
+import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
 import {
   projectMeetings,
   projectInstances,
@@ -30,14 +31,12 @@ import {
 import { ProjectsServiceError } from "./errors";
 import { isFutureProjectMeetingWindow } from "./meeting-window-policy";
 import {mentorMeetingFacilitationSchema,emptyMentorMeetingFacilitation} from "./mentor-meeting-facilitation-model";
+import {maySaveMentorMeetingStatus} from "./mentor-meeting-status-model";
 import {
   projectMeetingIdSchema,
   projectMeetingTransitionInputSchema,
   requestProjectMeetingInputSchema,
   scheduleProjectMeetingInputSchema,
-  type ProjectMeetingTransitionInput,
-  type RequestProjectMeetingInput,
-  type ScheduleProjectMeetingInput,
 } from "./validation";
 
 function ensureMeetingProjectMutable(
@@ -186,7 +185,7 @@ export async function listProjectMeetings(
 export async function requestProjectMeeting(
   context: RequestContext,
   projectIdInput: string,
-  rawInput: RequestProjectMeetingInput,
+  rawInput: unknown,
 ) {
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
@@ -209,6 +208,12 @@ export async function requestProjectMeeting(
       )).for("update").limit(1);
     if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     ensureMeetingProjectMutable(project.status);
+    // The page-time learner grant can be revoked before this transaction obtains
+    // the project lock. Verify the live user, college role and Project assignment
+    // while holding the locks, before reading conflicts or creating notifications.
+    await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
+    if (!isFutureProjectMeetingWindow(startsAt,endsAt,Date.now()))
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
       .where(and(eq(projectMeetings.projectId,scope.project.id),
         eq(projectMeetings.requestedByMembershipId,context.membership!.id),
@@ -253,7 +258,7 @@ export async function scheduleProjectMeeting(
   context: RequestContext,
   projectIdInput: string,
   meetingIdInput: string | null,
-  rawInput: ScheduleProjectMeetingInput,
+  rawInput: unknown,
 ) {
   const scope = await requireProjectLifecycleMutationAccess(context, projectIdInput);
   ensureMeetingProjectMutable(scope.project.status);
@@ -273,6 +278,10 @@ export async function scheduleProjectMeeting(
     if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     ensureMeetingProjectMutable(project.status);
     await assertPersistedProjectMutationActor(tx,context,scope);
+    // A future window validated before a contended row lock may be in the past
+    // by the time the write starts; the server clock inside the lock is final.
+    if (!isFutureProjectMeetingWindow(startsAt,endsAt,Date.now()))
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     const [existing] = meetingIdInput ? await tx.select().from(projectMeetings)
       .where(and(eq(projectMeetings.id,projectMeetingIdSchema.parse(meetingIdInput)),
         eq(projectMeetings.projectId,scope.project.id))).for("update").limit(1) : [null];
@@ -295,11 +304,14 @@ export async function scheduleProjectMeeting(
     // Drafts have no learner-facing invitations and cannot silently replace
     // a requested or previously announced scheduled meeting.
     const targetStatus=input.status??(existing?.status==="RESCHEDULED"?"RESCHEDULED":"SCHEDULED");
-    if ((!existing && targetStatus==="RESCHEDULED") ||
-      (existing?.status!=="DRAFT" && existing && targetStatus==="DRAFT") ||
-      (targetStatus==="RESCHEDULED" && existing && existing.status!=="RESCHEDULED" &&
-        existing.startsAt.getTime()===startsAt.getTime() &&
-        existing.endsAt.getTime()===endsAt.getTime()) ||
+    const timeChanged=existing!==null && existing!==undefined && (
+      existing.startsAt.getTime()!==startsAt.getTime() ||
+      existing.endsAt.getTime()!==endsAt.getTime()
+    );
+    // A direct call to the legacy scheduling service must obey the same
+    // audited state machine as the Mentor UI. In particular, a changed time
+    // cannot silently remain SCHEDULED; only SCHEDULED -> RESCHEDULED is valid.
+    if (!maySaveMentorMeetingStatus(existing?.status??null,targetStatus,timeChanged) ||
       (targetStatus!=="DRAFT" && !(input.meetingUrl??existing?.meetingUrl)))
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     // MEN-projects-meetings-R02: prevent the organiser being double-booked
@@ -421,7 +433,7 @@ export async function transitionProjectMeeting(
   context: RequestContext,
   projectIdInput: string,
   meetingIdInput: string,
-  rawInput: ProjectMeetingTransitionInput,
+  rawInput: unknown,
 ) {
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
@@ -553,6 +565,8 @@ export async function transitionProjectMeeting(
   ensureMeetingProjectMutable(project.status);
   if(scope.access==="MENTOR"||scope.access==="ADMIN")
     await assertPersistedProjectMutationActor(tx,context,scope);
+  else
+    await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
   const [cancelled] = await tx
     .update(projectMeetings)
     .set({

@@ -1,12 +1,18 @@
 import { z } from "zod";
 
+/** Do not interpret hexadecimal, exponent or array URL values as page numbers. */
+const strictCompanyPage = z.union([
+  z.number().int().min(1).max(10000),
+  z.string().regex(/^[1-9][0-9]*$/).transform(Number).pipe(z.number().int().min(1).max(10000)),
+]);
+
 export const adminCompaniesQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   companyStatus: z.enum(["MATCH","ALL","ACTIVE","ARCHIVED"]).default("MATCH"),
   trust: z.enum(["ALL", "TRUSTED", "UNTRUSTED"]).default("ALL"),
   verified: z.enum(["ALL", "VERIFIED", "NOT_VERIFIED"]).default("ALL"),
-  page: z.coerce.number().int().min(1).max(10000).default(1),
+  page: strictCompanyPage.default(1),
   collegeId: z.uuid().optional(),
   companyId: z.uuid().optional(),
   sort: z.enum(["NAME","RECENT"]).default("NAME"),

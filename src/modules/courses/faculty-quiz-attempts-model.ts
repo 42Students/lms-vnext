@@ -16,10 +16,16 @@ export const facultyQuizAttemptSearchSchema = facultyQuizAttemptsQuerySchema.omi
 export function facultyQuizAttemptsPage<T extends {id:string;submittedAt:Date}>(
   values:readonly T[],requested:number,order:"NEWEST"|"OLDEST"="NEWEST",
 ) {
+  const timestamp = (date: Date) => {
+    const instant = date.getTime();
+    return Number.isFinite(instant) ? instant : 0;
+  };
   const ordered=[...values].sort((a,b)=>
-    (order==="NEWEST"?b.submittedAt.getTime()-a.submittedAt.getTime():a.submittedAt.getTime()-b.submittedAt.getTime())||a.id.localeCompare(b.id));
+    (order==="NEWEST"?timestamp(b.submittedAt)-timestamp(a.submittedAt):
+      timestamp(a.submittedAt)-timestamp(b.submittedAt))||a.id.localeCompare(b.id));
   const pageSize=10,total=ordered.length,totalPages=Math.max(1,Math.ceil(total/pageSize));
-  const page=Math.min(requested,totalPages);
+  const safeRequested=Number.isSafeInteger(requested)&&requested>0?requested:1;
+  const page=Math.min(safeRequested,totalPages);
   return {total,page,pageSize,totalPages,items:ordered.slice((page-1)*pageSize,page*pageSize)};
 }
 
