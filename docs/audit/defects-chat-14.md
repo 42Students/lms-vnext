@@ -139,3 +139,14 @@ The earlier PR-S2-11 source-text failure is **absent** from the newer `docs/orch
 | `w03-project-admin-audit.test.ts` | 2 | W03 static assertions demanded inline `searchParams.*` parsing and an unconditional college requirement, ignoring the refactored validated parser and narrowly authorized platform-wide template audit. | `c17ce3c3` inspects `parseProjectAdminAuditQuery` and exact legacy filters plus `mayReadGlobalProjectAudit` (active unscoped Super Admin + `activity.read`) instead of weakening the security contract |
 
 **Verification:** Source/test comparisons performed after these commits; no local Vitest, typecheck, authenticated browser or fresh cloud results were available for this four-commit batch. Do not mark tests passing until the next actual CI run.
+
+
+## Additional Mentor state integrity and coverage (18 October 2026)
+
+| ID | Severity | Evidence / fix | Regression | Gating |
+|---|---|---|---|---|
+| PROJ-BREAK-MENTOR-122..129 | S2 | Pure risk/readiness classifier now clamps malformed direct-call page numbers, and archived/completed/unknown project states do not generate actionable task/meeting risks. Tests compare Oct 18 23:59 and Oct 19 00:00 IST, absent work vs actual 0%, recorded blockers/reviews, high-priority filters and fully released work. | `4e2aa292`, `641dedaf`, 3 model ledger exports | Authored/unrun; true query permission and browser parity remain open |
+| PROJ-BREAK-MENTOR-130..133 | S1 stale-token replay | `writeMentorProjectRelease` used raw `new Date()` for PATCH `updatedAt`. Two edits in one millisecond could retain the same optimistic version and permit a stale-tab replay. Added monotonic +1ms update helper, while rejecting corrupted timestamps; normal actual clock still wins. | `e67bb65d`, `4b3054c6`, `263858fb`; mapped in canonical ledger | Unit model authored/unrun, actual concurrent PostgreSQL patch & audit once still required |
+| PROJ-BREAK-MENTOR-134..153 | Coverage only | Added deterministic pure-model tests for 11 Mentor workspace-evidence exports (safe href, no inferred percent, criteria visibility, review state, exact task URL, team/primary counts, latest delivery and resource safety) and four Team coverage exports (filters, primary assignment separation, numeric sorting, hostile URL, page clamp). | `cac81353`, `fa33e268`, `cdfda8e2` ledger | Authored/unrun; no claim of source-to-database authorization or 90% branch coverage |
+
+No CI pass, production sign-off or independent review is implied.
