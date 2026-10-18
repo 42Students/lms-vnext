@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {evaluateTpoDriveLifecycle,hasSecureEmployerPortalUrl,tpoDriveLifecycleSchema,tpoDriveReadinessMessage,type TpoDriveReadinessFacts} from "@/modules/placements/tpo-drive-lifecycle-model";
-import {canReleaseAnotherHeldOffer,isPlacementOfferResponseExpired,minimumOfferResponseDeadline} from "@/modules/placements/offer-college-rules-policy";
+import {canReleaseAnotherHeldOffer,isPlacementOfferResponseExpired,minimumOfferResponseDeadline,placementOfferLockedDecisionTime} from "@/modules/placements/offer-college-rules-policy";
 import {canAddPlacementHeldOffer,canShowLearnerSelfApply,verifiedExternalHeldOffers} from "@/modules/placements/held-offer-policy";
 import {isPlacementInternship,parsePlacementCascadeId,shouldKeepPlacementCascadeSibling} from "@/modules/placements/placement-cascade-policy";
 import {assertUndoablePlacementCascadeSnapshot} from "@/modules/placements/placement-cascade-undo-policy";
@@ -115,6 +115,19 @@ describe("chat-5 offers, waitlist eligibility, expiry and cascade invariants",()
   expect(isPlacementOfferExpiredAt(new Date(Number.NaN),due)).toBe(true);
   expect(isPlacementOfferResponseExpired(new Date(Number.NaN),due)).toBe(true);
   expect(isPlacementOfferExpiredAt(null,due)).toBe(false);
+ });
+ it("PLACEMENTS-EXPIRY-RACE-04 rejects a response that crossed its deadline while waiting on a locked offer row",()=>{
+  const requestTime=new Date("2099-10-18T18:29:58.000Z");
+  const lockTime=new Date("2099-10-18T18:29:59.000Z");
+  const beforeLock=new Date("2099-10-18T18:29:57.000Z");
+  expect(placementOfferLockedDecisionTime(requestTime,lockTime)).toEqual(lockTime);
+  expect(placementOfferLockedDecisionTime(requestTime,beforeLock)).toEqual(requestTime);
+  expect(isPlacementOfferResponseExpired(lockTime,requestTime)).toBe(false);
+  expect(isPlacementOfferResponseExpired(lockTime,placementOfferLockedDecisionTime(requestTime,lockTime))).toBe(true);
+  expect(isPlacementOfferResponseExpired(lockTime,new Date(Number.NaN))).toBe(true);
+  expect(()=>placementOfferLockedDecisionTime(requestTime,new Date(Number.NaN))).toThrow();
+  expect(()=>placementOfferLockedDecisionTime(new Date(Number.NaN),lockTime)).toThrow();
+  expect(isPlacementOfferResponseExpired(null,new Date(Number.NaN))).toBe(false);
  });
  it("PLACEMENTS-EXPIRY-02 sweep ignores later, accepted and undated offers",()=>{
   const rows=[{id:"early",status:"ISSUED",expiresAt:due},

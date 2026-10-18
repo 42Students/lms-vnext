@@ -60,6 +60,9 @@ describe("TPO-STUDENTS-BULK-AMBIG-01 avoid guessing learners by duplicate roll n
  });
  it("does not allow pasted tabs/newlines or formulas to escape a TSV cell",()=>{
   expect(tpoStudentClipboardCell(" =2+2\tsecret\r\nnext")).toBe("' =2+2 secret  next");
+  expect(tpoStudentClipboardCell("\u200B=1+2")).toBe("'\u200B=1+2");
+  expect(tpoStudentClipboardCell("\uFEFF@SUM(1,2)")).toBe("'\uFEFF@SUM(1,2)");
+  expect(tpoStudentClipboardCell("normal\u0000 cell")).toBe("normal  cell");
   expect(tpoStudentClipboardCell(null)).toBe("");
   const fake={...learner(A,"CS1","REG1"),displayName:"-1",programName:"BTech",cohortName:"2026",
    branchName:"CSE",journeyState:"NOT_DECIDED",applicationCount:0,offerCount:0,offersAwaitingAnswer:0,bestSoFar:"none"} as TpoStudentRow;
