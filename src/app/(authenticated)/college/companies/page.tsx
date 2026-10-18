@@ -34,17 +34,17 @@ export default async function CollegeCompaniesPage({
   }
 
   const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="Placements" title="Companies" description="Maintain each recruiting company once and reuse it across drives." />
     <CollegeCompanyCreate collegeId={collegeId}/>
-    <a href={"/api/college/companies/export?"+exportParams.toString()} className="font-semibold text-primary-text underline">Export CSV</a>
+    <a href={"/api/college/companies/export?"+exportParams.toString()} className="font-semibold text-[var(--lms-teal-deep)] underline">Export CSV</a>
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Company
         <input name="q" type="search" maxLength={100} defaultValue={query.q}
           className="min-h-11 rounded-md border border-border px-3" />
       </label>
       <label className="grid gap-1 text-sm">Status
-        <select name="status" defaultValue={query.status} className="min-h-10 rounded-md border border-border px-3">
+        <select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-3">
           <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
         </select>
       </label>
@@ -61,7 +61,7 @@ export default async function CollegeCompaniesPage({
       <label className="flex items-center gap-2 text-sm">
         <input name="showDeleted" type="checkbox" value="1" defaultChecked={query.showDeleted==="1"}/>Show deleted
       </label>
-      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
     </form>
     <p role="status" className="text-sm text-body">Showing {data.items.length} of {data.total} companies {query.showDeleted==="1"?"(including deleted)":""}, searching name &amp; industry only.</p>
     <PlacementEmployerRelationships key={[query.q,query.page,query.pageSize,query.sort,query.showDeleted].join(":")}
