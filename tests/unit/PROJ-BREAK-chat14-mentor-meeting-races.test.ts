@@ -165,8 +165,7 @@ describe("Mentor meeting writes and direct read permissions",()=>{
  });
  it("PROJ-BREAK-MENTOR-351 revoked learner cannot request a meeting after the project lock",async()=>{
   state.access="LEARNER";
-  const learner={...context,membership:{...context.membership!,id:"learner-member",roles:["LEARNER"]}}
-   as RequestContext;
+  const learner={...context,membership:{...context.membership!,id:"learner-member",roles:["LEARNER"]}} as RequestContext;
   await expect(requestProjectMeeting(learner,projectId,{
    title:"Project check-in",startsAt:draft.startsAt,endsAt:draft.endsAt,timeZone:"Asia/Kolkata",
   })).rejects.toThrow("PROJECT_ACCESS_DENIED");
@@ -179,8 +178,7 @@ describe("Mentor meeting writes and direct read permissions",()=>{
  it("PROJ-BREAK-MENTOR-352 revoked requester cannot cancel a meeting or notify others",async()=>{
   state.access="LEARNER";
   state.meetingStatus="REQUESTED";
-  const learner={...context,membership:{...context.membership!,id:"learner-member",roles:["LEARNER"]}}
-   as RequestContext;
+  const learner={...context,membership:{...context.membership!,id:"learner-member",roles:["LEARNER"]}} as RequestContext;
   await expect(transitionProjectMeeting(learner,projectId,meetingId,{
    action:"CANCEL",note:"Not needed",
   })).rejects.toThrow("PROJECT_ACCESS_DENIED");
