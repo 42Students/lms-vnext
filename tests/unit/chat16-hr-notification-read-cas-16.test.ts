@@ -22,7 +22,7 @@ const recruiter:RequestContext={
  },
 };
 type Current={id:string;createdAt:Date;readAt:Date|null};
-function useDatabase(current:Current|null,updated:{id:string;readAt:Date|null}|null){
+function installDatabase(current:Current|null,updated:{id:string;readAt:Date|null}|null){
  const selectLimit=vi.fn(async()=>current?[current]:[]);
  const select=vi.fn(()=>({
   from:vi.fn(()=>({
@@ -73,20 +73,20 @@ describe("chat-16 recruiter notifications versioned acknowledgement transaction"
    {id,createdAt:new Date(token),readAt:new Date("2099-01-02T00:00:00.000Z")},
    {id,createdAt:new Date("2099-01-01T00:00:00.001Z"),readAt:null},
   ]){
-   const f=useDatabase(current,{id,readAt:new Date("2099-01-03T00:00:00.000Z")});
+   const f=installDatabase(current,{id,readAt:new Date("2099-01-03T00:00:00.000Z")});
    await expect(markHrNotificationRead(recruiter,id,{expectedCreatedAt:token})).rejects.toThrow();
    expect(f.tx.update).not.toHaveBeenCalled();
   }
  });
  it("hr-notification-read-19 rejects an optimistic race even if the first locked row looked unread",async()=>{
-  const f=useDatabase({id,createdAt:new Date(token),readAt:null},null);
+  const f=installDatabase({id,createdAt:new Date(token),readAt:null},null);
   await expect(markHrNotificationRead(recruiter,id,{expectedCreatedAt:token})).rejects.toThrow();
   expect(f.tx.update).toHaveBeenCalledOnce();
   expect(f.returning).toHaveBeenCalledOnce();
  });
  it("hr-notification-read-20 returns only the persisted acknowledged timestamp after CAS succeeds",async()=>{
   const readAt=new Date("2099-01-01T00:30:00.000Z");
-  const f=useDatabase({id,createdAt:new Date(token),readAt:null},{id,readAt});
+  const f=installDatabase({id,createdAt:new Date(token),readAt:null},{id,readAt});
   await expect(markHrNotificationRead(recruiter,id,{expectedCreatedAt:token}))
    .resolves.toEqual({id,readAt:"2099-01-01T00:30:00.000Z"});
   expect(f.db.transaction).toHaveBeenCalledOnce();
