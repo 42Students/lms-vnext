@@ -17,11 +17,11 @@ const scopeSelectionSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("organization"),
     organizationId: z.string().uuid(),
-  }),
+  }).strict(),
   z.object({
     kind: z.literal("college"),
     collegeId: z.string().uuid(),
-  }),
+  }).strict(),
 ]);
 
 export type AdminScopeChoices = {
