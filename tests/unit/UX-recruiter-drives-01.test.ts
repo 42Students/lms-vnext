@@ -10,5 +10,8 @@ describe("UX-recruiter-drives-01",()=>{
   expect(source).toMatch(/export\s*\{\s*default\s*\}/);
   const canonical=read("src/app/(authenticated)/hr/drives/page.tsx");
   expect(canonical).toMatch(/export\s+default|export\s*\{\s*default/);
+  expect(read("src/app/(authenticated)/recruiter/drives/loading.tsx")).toContain("GracefulPageLoading");
+  expect(read("src/app/(authenticated)/recruiter/drives/error.tsx")).toContain("GracefulErrorBoundary");
+  expect(canonical).toContain("PageHeader");
  });
 });
