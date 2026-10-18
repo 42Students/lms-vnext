@@ -45,4 +45,18 @@ describe("SA-STUDENT-LOOKUP-CAP-01 truthful supervised placement lookup paging",
     expect(service).toContain("eq(placementJobs.collegeId,collegeId)");
     expect(service).toContain("eq(placementCompanyRelationships.collegeId,collegeId)");
   });
+
+  it("SA-STUDENT-LOOKUP-PLACED-03 derives all-history joining independently from the bounded visible rows", () => {
+    const service=readFileSync("src/modules/placements/college-placement-student-lookup-service.ts","utf8");
+    expect(service).toContain("const joinedRows=await db.selectDistinct({membershipId:placementApplications.membershipId})");
+    expect(service).toContain("eq(placementJobs.collegeId,collegeId)");
+    expect(service).toContain("eq(placementCompanyRelationships.collegeId,collegeId)");
+    expect(service).toContain('eq(placementOffers.status,"ACCEPTED")');
+    expect(service).toContain('eq(placementJoiningOutcomes.status,"JOINED")');
+    expect(service).toContain("inArray(placementApplications.membershipId,visiblePeople.map(person=>person.membershipId))");
+    expect(service).toContain("new Set(joinedRows.map(row=>row.membershipId))");
+    expect(service).toContain("placed:joinedMemberships.has(person.membershipId)");
+    expect(service).not.toContain("placed:applications.items.some");
+    expect(service).not.toContain("placed:rows.some");
+  });
 });
