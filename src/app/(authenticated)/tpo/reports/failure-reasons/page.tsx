@@ -1,3 +1,5 @@
+import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
+import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -45,6 +47,7 @@ export default async function TpoFailureReasonsPage({
   }
 
   const query = await searchParams;
+  if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/failure-reasons"/>;
   const workspace =
     await getPlacementFailureReasonsReport(
       context,

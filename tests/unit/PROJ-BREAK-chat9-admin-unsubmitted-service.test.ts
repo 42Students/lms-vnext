@@ -1,5 +1,7 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {PgDialect} from "drizzle-orm/pg-core";
+import {sql} from "drizzle-orm";
+import {projectSubmissions} from "@/db/schema";
 import type {SQL} from "drizzle-orm";
 import type {RequestContext} from "@/modules/identity/context";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
@@ -26,9 +28,18 @@ vi.mock("@/db/client",()=>({
         {id:"p1",title:"Not submitted A",status:"ACTIVE"},
         {id:"p2",title:"Not submitted B",status:"PLANNED"},
       ];
+      let localFilter:unknown=null;
       const q={
         from:()=>q,
-        where:(filter:unknown)=>{state.filters.push(filter);return q;},
+        where:(filter:unknown)=>{
+          localFilter=filter;
+          state.filters.push(filter);
+          return q;
+        },
+        // Drizzle notExists() embeds the supplied query as an SQLWrapper.
+        // Keep the actual correlated project/submission condition visible,
+        // rather than replacing the critical anti-join with a dummy literal.
+        getSQL:()=>sql`select ${projectSubmissions.id} from ${projectSubmissions} where ${localFilter as SQL}`,
         orderBy:()=>q,
         limit:(n:number)=>{state.limitValues.push(n);return q;},
         offset:(n:number)=>{state.offsetValues.push(n);return q;},

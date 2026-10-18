@@ -1,3 +1,5 @@
+import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
+import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
@@ -47,6 +49,7 @@ export default async function TpoByCompanyReportPage({
   }
 
   const query = await searchParams;
+  if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/by-company"/>;
   const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{}),...(first(query.outcome)?{outcome:first(query.outcome)}:{})});
   if(!viewQuery.success)return <section role="alert" className="rounded-xl border border-border bg-surface p-6"><h1 className="font-semibold text-foreground">Invalid company report filters</h1><p className="mt-2 text-sm text-body">Check search length and page number.</p></section>;
   const workspace = await getPlacementReportWorkspace(context, {

@@ -30,7 +30,7 @@ export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:
    eq(academicPeriods.collegeId,acting.collegeId)))
  .limit(501);
  if(rows.length>500)throw new Error("LESSON_CONTENT_BULK_TOO_LARGE");
- const changed:string[]=[],failures:{id:string;reason:string}[]=[];
+ const changed:string[]=[],failures:{id:string;lessonId:string;reason:string}[]=[];
  for(const row of rows){
   if(row.status==="ARCHIVED"||row.visible===input.visibleToStudents)continue;
   try{
@@ -39,7 +39,7 @@ export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:
     expectedUpdatedAt:row.updatedAt.toISOString(),confirmed:true,
    });
    changed.push(row.id);
-  }catch(error){failures.push({id:row.id,reason:safeCourseVisibilityFailure(error)});}
+  }catch(error){failures.push({id:row.id,lessonId:row.lessonId,reason:safeCourseVisibilityFailure(error)});}
  }
  return {selectedLessons:input.lessonIds.length,matchedContents:rows.length,changed:changed.length,unchanged:rows.length-changed.length-failures.length,failures};
 }
