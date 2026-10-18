@@ -19,3 +19,11 @@ Source-reviewed for the **Learner role journey** and Super Admin courses/content
 - **COURSES-WEAK-DELIVERY-ROSTER-01:** inactive-elective fallback and mismatched offering delivery guards were repaired on `chatgpt/chat-7-b`; mock fixtures now reflect actual ACTIVE/deleted flags. Add real-PostgreSQL tenant/role cross-check before release.
 - **SA-academics-people-67:** previous roster SQL lacked persisted LEARNER role and did not bind enrolments to the offering cohort; these checks and accurate truncation were added. Published item denominators for mixed section-specific content need separate integration verification.
 - Complete the remaining exported `src/modules/courses` functions/learner pages systematically; this ledger documents only reviewed entries.
+
+## Learner Projects cross-module role journey (IIT Dharwad)
+
+| Surface | Invariant | Evidence | Status |
+|---|---|---|---|
+| `createLearnerOwnTask`, `deleteLearnerOwnTask`, `moveOwnLearnerProjectTask`, `pullOwnBacklogTask` | Persisted active learner/project membership rechecked within transaction; only owner-controlled TODO/IN_PROGRESS/BLOCKED paths and eligible project releases. Task creation previously rejected only SHIPPED; now it positively requires `PLANNED` or `IN_PROGRESS`, consistent with pull, delete and status services. | `tests/unit/PROJ-BREAK-chat7-learner-role-journey.test.ts` — `PROJ-BREAK-LEARNER-91..95` (especially `PROJ-BREAK-LEARNER-95 refuses learner-created tasks in cancelled or shipped release states`) | Source fix committed; Vitest and real-PostgreSQL concurrency checks pending |
+
+This additive learner Projects review does not replace the chat-14-owned project function/page coverage ledger.

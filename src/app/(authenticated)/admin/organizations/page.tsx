@@ -24,7 +24,7 @@ type OrganizationRow = Awaited<
 
 export default async function OrganizationsPage({searchParams}:{searchParams:Promise<{q?:string|string[];page?:string|string[];pageSize?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
-  requirePermission(context,"admin-scope.select");
+  requirePermission(context, "admin-scope.select");
   const filters=parseAdminDirectorySearchParams(await searchParams);
   if (!filters) return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin" title="Organizations"/>

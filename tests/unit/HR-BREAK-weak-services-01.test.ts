@@ -22,6 +22,7 @@ import {recruiterVisiblePortfolioCounts} from "@/modules/placements/recruiter-po
 const college="123e4567-e89b-42d3-a456-426614174001";
 const otherCollege="123e4567-e89b-42d3-a456-426614174002";
 const context={user:{id:"recruiter"},recruiter:{
+ userId:"recruiter",companyId:"company-a",status:"ACTIVE",
  grants:[{collegeId:college,companyRelationshipId:"rel-a"}],
 }};
 
@@ -103,6 +104,9 @@ describe("HR-BREAK-weak-services-01: actual service branches with mocked persist
    .rejects.toThrow("placements.recruiter.read");
   expect(mock.getDb).not.toHaveBeenCalled();
   expect(await recruiterVisiblePortfolioCounts(context as never,college,[])).toEqual({});
+  await expect(recruiterVisiblePortfolioCounts({
+   ...context,recruiter:{...context.recruiter,userId:"impersonator"},
+  } as never,college,["job-a"])).rejects.toThrow("placements.recruiter.read");
   expect(mock.getDb).not.toHaveBeenCalled();
  });
 });
