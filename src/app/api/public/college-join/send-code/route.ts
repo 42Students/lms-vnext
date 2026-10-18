@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
+import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import { requestPublicJoinCode, PublicJoinCodeError } from "@/modules/placements/public-join/send-code-service";
 import { deliverPublicRecruiterJoinCode } from "@/modules/messaging/public-join-code-delivery";
 
@@ -8,7 +9,10 @@ export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
-  const input = await request.json().catch(() => null);
+  const body=await readBoundedJsonBody(request);
+  if(body.kind!=="OK")return NextResponse.json({error:body.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"COULD_NOT_SEND_CODE"},
+    {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"no-store"}});
+  const input=body.value;
   // A trusted ingress must overwrite this header. Without explicit proxy
   // attestation this public endpoint fails closed (never rate-limit by spoofed IP).
   const trusted = process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED";

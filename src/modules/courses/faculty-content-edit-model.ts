@@ -32,7 +32,8 @@ export function facultyContentPatch(input: {
       throw new Error("Use a publicly reachable HTTPS hostname.");
     if (input.kind === "YOUTUBE") {
       const host = parsed.hostname.toLowerCase();
-      if (host !== "youtube.com" && !host.endsWith(".youtube.com") && host !== "youtu.be")
+      if (!["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be",
+        "www.youtube-nocookie.com"].includes(host))
         throw new Error("Use a youtube.com or youtu.be link.");
     }
   }

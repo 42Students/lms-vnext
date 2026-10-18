@@ -1,5 +1,7 @@
 import "server-only";
-import {sql} from "drizzle-orm";
+import {eq,sql} from "drizzle-orm";
+import {colleges} from "@/db/schema";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
@@ -118,5 +120,16 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   totalVideos:Number(row.totalVideos),totalAssignments:Number(row.totalAssignments),
   totalQuizzes:Number(row.totalQuizzes),
  }));
+ // Student names and progress may be private. A stale request snapshot
+ // must not disclose them if a Super Admin role is revoked while SQL runs.
+ await getDb().transaction(async tx=>{
+  const [college]=await tx.select({status:colleges.status,organizationId:colleges.organizationId})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new AuthorizationError("courses.read");
+  const live=await assertPersistedPlatformPermission(tx,context,"courses.read",{
+   collegeId,organizationId:college.organizationId,
+  });
+  if(!isSuperAdmin(live))throw new AuthorizationError("courses.read");
+ });
  return {offeringId,collegeId,rows,truncated:result.rows.length>500};
 }
