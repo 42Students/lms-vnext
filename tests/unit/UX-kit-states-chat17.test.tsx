@@ -72,6 +72,29 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(render(<Input required aria-label="Roll number" />)).toContain('required=""');
   });
 
+  it("UX-kit-HARDEN-54 FileUpload preserves externally supplied field help and invalid state",()=>{
+    const enabled=render(<FileUpload id="course-upload" label="Evidence"
+      helper="PDF, 5MB max" aria-describedby="existing-hint" aria-invalid
+      onFiles={()=>{}}/>);
+    expect(enabled).toContain('aria-invalid="true"');
+    expect(enabled).toContain('aria-describedby="existing-hint course-upload-help"');
+    const disabled=render(<FileUpload id="disabled-upload" label="Evidence" disabled
+      aria-describedby="existing-hint" aria-invalid onFiles={()=>{}}/>);
+    expect(disabled).toContain('aria-describedby="existing-hint disabled-upload-unavailable"');
+    expect(disabled).not.toContain('aria-invalid="true"');
+    expect(disabled).toContain('disabled=""');
+  });
+
+  it("UX-kit-HARDEN-57 success notices keep their announcement while a tab is hidden",()=>{
+    const html=render(<InlineNotice tone="success" message="Saved successfully" onDismiss={()=>{}}/>);
+    expect(html).toContain('role="status"');
+    expect(html).toContain("Saved successfully");
+    const source=moduleSource("inline-notice");
+    expect(source).toContain('document.addEventListener("visibilitychange", scheduleWhenVisible)');
+    expect(source).toContain('if (!document.hidden) timer = setTimeout(');
+    expect(source).toContain('document.removeEventListener("visibilitychange", scheduleWhenVisible)');
+  });
+
   it("UX-kit-HARDEN-48 disabled Switch exposes a 44px target but not an interactive cursor",()=>{
     const disabled=render(<Switch label="Placement eligibility" disabled/>);
     expect(disabled).toContain('role="switch"');
@@ -390,6 +413,16 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(allowed).toContain('href="https://example.test/meet"');
     expect(allowed).not.toContain('target="_blank"');
     expect(allowed).toContain("Copy link");
+  });
+
+  it("UX-kit-HARDEN-55 interactive tab indicator does not transition for reduced-motion users",()=>{
+    const html=render(<Tabs items={[
+      {value:"overview",label:"Overview",content:"Project overview"},
+      {value:"tasks",label:"Tasks",content:"Project tasks"},
+    ]} value="overview" onValueChange={()=>{}} ariaLabel="Project tabs"/>);
+    expect(html).toContain('role="tablist"');
+    expect(html).toContain('aria-selected="true"');
+    expect(html).toContain("motion-reduce:transition-none");
   });
 
   it("UX-kit-STATES-15 scroll cue only becomes keyboard-focusable on actual measured overflow", () => {
