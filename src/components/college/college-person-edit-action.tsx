@@ -1,4 +1,6 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
+import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
@@ -18,6 +20,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   membershipId:string;kind:Kind;departments?:Department[];
 }){
   const router=useRouter();
+  const {ask,confirmation}=useCollegeConfirmation();
   const [open,setOpen]=useState(false);
   const [loading,setLoading]=useState(false);
   const [pending,start]=useTransition();
@@ -25,7 +28,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   const [error,setError]=useState("");
   const [success,setSuccess]=useState("");
   const base="/api/college/people/"+encodeURIComponent(membershipId)+"/edit";
-  const field="min-h-10 w-full rounded border border-border bg-surface px-3 text-foreground";
+  const field="min-h-11 w-full rounded border border-border bg-surface px-3 text-foreground";
   async function load(){
     setLoading(true);setError("");setSuccess("");setPerson(null);setOpen(true);
     try{
@@ -38,9 +41,9 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   function patch(key:keyof Person,value:string){
     setPerson(current=>current?{...current,[key]:value}:current);
   }
-  function submit(event:FormEvent<HTMLFormElement>){
+  async function submit(event:FormEvent<HTMLFormElement>){
     event.preventDefault();if(!person)return;
-    if(!window.confirm("Save these changes to this college profile?"))return;
+    if(!(await ask("Save these changes to this college profile?")))return;
     start(async()=>{
       setError("");setSuccess("");
       try{
@@ -63,19 +66,17 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
       }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
     });
   }
-  return <div className="inline-block">
+  return <div className="inline-block">{confirmation}
     <button type="button" onClick={()=>void load()}
-      className="min-h-9 rounded border border-border px-3 text-xs font-semibold text-primary-text">
+      className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">
       {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
     </button>
     {success&&<span role="status" className="ml-2 text-xs text-body">{success}</span>}
-    {open&&<div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <section role="dialog" aria-modal="true" aria-label={kind==="FACULTY"?"Edit Faculty":"Edit Student"}
-        className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-xl bg-surface p-5 shadow-xl">
+    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending}>
         <div className="flex items-start justify-between gap-3">
           <h2 className="text-lg font-semibold">{kind==="FACULTY"?"Edit Faculty":"Edit Student"}</h2>
           <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-            className="min-h-10 rounded border border-border px-3">Close</button>
+            className="min-h-11 rounded border border-border px-3">Close</button>
         </div>
         {loading&&<p role="status" className="mt-4 text-sm">Loading profile…</p>}
         {error&&<p role="alert" className="my-2 text-sm text-error">{error}</p>}
@@ -152,14 +153,13 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>
           <div className="flex gap-2 sm:col-span-2">
-            <button type="submit" disabled={pending} className="min-h-10 rounded bg-primary px-4 text-on-primary disabled:opacity-50">
+            <button type="submit" disabled={pending} className="min-h-11 rounded bg-primary px-4 text-on-primary disabled:opacity-50">
               {pending?"Saving…":"Save changes"}
             </button>
             <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-              className="min-h-10 rounded border border-border px-4">Cancel</button>
+              className="min-h-11 rounded border border-border px-4">Cancel</button>
           </div>
         </form>}
-      </section>
-    </div>}
+    </Dialog>
   </div>;
 }

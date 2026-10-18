@@ -1,4 +1,6 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
+import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 type Faculty={id:string;name:string|null};
@@ -11,6 +13,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
  [busy,setBusy]=useState(false),[options,setOptions]=useState<Faculty[]>([]),
  [selected,setSelected]=useState(""),[upcoming,setUpcoming]=useState(0),
  [error,setError]=useState(""),[receipt,setReceipt]=useState<Receipt|null>(null);
+ const {ask,confirmation}=useCollegeConfirmation();
  const base="/api/college/faculty/"+encodeURIComponent(membershipId)+"/reassign-schedules";
  async function show(){
   setOpen(true);setBusy(true);setError("");setReceipt(null);
@@ -24,7 +27,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
  }
  async function submit(){
   if(!selected||busy)return;
-  if(!window.confirm("Reassign upcoming class schedules for "+name+"? Sessions with clashes are skipped."))return;
+  if(!(await ask("Reassign upcoming class schedules for "+name+"? Sessions with clashes are skipped.")))return;
   setBusy(true);setError("");
   try{const response=await fetch(base,{method:"POST",credentials:"same-origin",
     headers:{"content-type":"application/json"},
@@ -35,15 +38,13 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
   }catch(e){setError(e instanceof Error?e.message:"Reassignment failed");}
   finally{setBusy(false);}
  }
- return <>
-  <button type="button" onClick={()=>void show()} className="min-h-10 rounded border border-border px-4 text-sm font-semibold text-primary-text">
+ return <>{confirmation}
+  <button type="button" onClick={()=>void show()} className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text">
    Reassign class schedules</button>
-  {open?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <section role="dialog" aria-modal="true" aria-label="Reassign class schedules"
-    className="w-full max-w-xl space-y-4 rounded-xl bg-surface p-5">
+  <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}} title="Reassign class schedules" dismissible={!busy}>
     <div className="flex justify-between gap-3"><h2 className="font-semibold">Reassign class schedules</h2>
      <button type="button" disabled={busy} onClick={()=>setOpen(false)}
-      className="min-h-10 rounded border border-border px-3">Close</button></div>
+      className="min-h-11 rounded border border-border px-3">Close</button></div>
     <p className="text-sm">{upcoming} upcoming scheduled session(s) for {name}.</p>
     <label className="grid gap-2 text-sm font-semibold">Assign to
      <select value={selected} onChange={e=>setSelected(e.target.value)}
@@ -64,7 +65,6 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
        {row.title}: {row.reason}</li>)}
      </ul>
     </section>:null}
-   </section>
-  </div>:null}
+  </Dialog>
  </>;
 }

@@ -1,4 +1,5 @@
 "use client";
+import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
 import { useState, type FormEvent } from "react";
 import {apiFetch} from "@/lib/api-fetch";
@@ -14,6 +15,7 @@ type Choices = {
 };
 export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const router=useRouter();
+  const {ask,confirmation}=useCollegeConfirmation();
   const {pending,run:guardedRun}=useGuardedAction({busyLabel:"Registering..."});
   const [result,setResult]=useState<string|null>(null);
   const [savedMemberId,setSavedMemberId]=useState<string|null>(null);
@@ -31,13 +33,13 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [dateOfBirth,setDob]=useState("");
   const [address,setAddress]=useState("");
   const field="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground";
-  function submit(event:FormEvent<HTMLFormElement>) {
+  async function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();setError("");setResult(null);setSavedMemberId(null);
     if(!indianMobileToE164(phoneE164)){setError("Mobile number must be 10 digits");return;}
     if(!programId||!cohortId||!displayName.trim()||!phoneE164.trim()){
       setError("Name, phone, program and batch are required.");return;
     }
-    if(!window.confirm("Register this student and enroll them in the selected batch?"))return;
+    if(!(await ask("Register this student and enroll them in the selected batch?")))return;
     void guardedRun(async()=>{
       try {
         const body=await apiFetch<{
@@ -59,7 +61,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       }catch(reason){setError(reason instanceof Error?reason.message:"Registration failed");}
     });
   }
-  return <form onSubmit={submit} className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
+  return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold">First Name
       <input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
     </label>
@@ -113,8 +115,8 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
         {pending?"Registering…":"Register student"}
       </button>
       {result&&<p role="status" className="text-sm text-body">{result}</p>}
-      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open registered student profile →</Link>:null}
+      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Open registered student profile →</Link>:null}
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}
     </div>
-  </form>;
+  </form></>;
 }
