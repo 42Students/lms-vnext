@@ -27,7 +27,8 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
   for(const label of ["Candidate","Type","CTC (LPA)","Status","Reply by","Joining",
     "Letter of intent","Joined","Deferred","Did not join"])expect(code).toContain(label);
   expect(code).toContain("recruiterOfferStatusLabel(offer.status)");
-  expect(code).toContain("offer.annualCtcInr/100000");
+  expect(code).toContain("(offer.annualCtcInr / 100000)");
+  expect(code).toContain('toLocaleString("en-IN", { maximumFractionDigits: 2 })');
  });
  it("REC-home-drives-53 refreshes a stale recruiter drive after tab focus without hiding data errors",()=>{
   const component=read("src/components/hr/recruiter-drive-focus-refresh.tsx");

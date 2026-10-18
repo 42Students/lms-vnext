@@ -46,6 +46,13 @@ describe("chat-14 HR UX rollout batch 02",()=>{
  it("UX-hr-hr-placements-jobs-jobId-01 guards recruiter responsive page source",()=>{
   const src=readFileSync("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx","utf8");
   expect(src).toContain("min-w-0 max-w-full");
-  expect(src).toContain("overscroll-x-contain");
+  expect(src).toContain("<DataTable");
+  expect(src).toContain('caption="Placement-cell selection history"');
+  expect(src).toContain('caption="Offers for shared applicants at this college"');
+  const table=readFileSync("src/components/ui/data-table.tsx","utf8");
+  const cue=readFileSync("src/components/ui/scroll-cue.tsx","utf8");
+  expect(table).toContain('<ScrollCue axis="x"');
+  expect(cue).toContain("overflow-x-auto overscroll-x-contain");
+  expect(cue).toContain('tabIndex={edges.scrollable ? 0 : -1}');
  });
 });
