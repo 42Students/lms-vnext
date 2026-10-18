@@ -30,3 +30,14 @@ export function recruiterDriveApprovalPolicy(input:{
   return {autoApprove:true,reason:"TRUSTED_DOMAIN"};
  return {autoApprove:false,reason:"REVIEW_REQUIRED"};
 }
+
+/** Explain the actual persisted approval rule in the placement-cell bell;
+ * never infer a public-link policy from a generic verified company grant. */
+export function recruiterAutoApprovalExplanation(reason:string|null|undefined):string{
+ switch(reason){
+  case "TRUSTED_COMPANY":return "trusted company";
+  case "TRUSTED_DOMAIN":return "trusted recruiter email domain";
+  case "APPROVAL_OFF":return "approval is switched off in Settings";
+  default:return "college approval rule";
+ }
+}

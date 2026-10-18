@@ -65,12 +65,15 @@ export function canRecordTpoOfferAction(
     case "EXTEND":
     case "RECORD_ACCEPTED":
     case "RECORD_DECLINED":
-      return status === "ISSUED";
+      // A valid ISSUED offer cannot already have joining history. Corrupted
+      // cross-state evidence is not permission to rewrite the official status.
+      return status === "ISSUED" && joiningStatus === null;
     case "RECORD_JOINED":
       return status === "ACCEPTED" &&
         (joiningStatus === null || joiningStatus === "PENDING");
     case "WITHDRAW":
-      return (status === "ISSUED" || status === "ACCEPTED") &&
-        (status !== "ACCEPTED" || joiningStatus === null || joiningStatus === "PENDING");
+      return (status === "ISSUED" && joiningStatus === null) ||
+        (status === "ACCEPTED" &&
+          (joiningStatus === null || joiningStatus === "PENDING"));
   }
 }
