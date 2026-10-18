@@ -7,12 +7,14 @@ function cell(text:string){
 export function buildHrActivityCsv(rows:readonly HrActivityCsvRow[],additionalRows:boolean){
  const exportRows=rows.slice(0,HR_ACTIVITY_CSV_CAP);
  const out=[["Drive ID","Drive","Event","Occurred (IST)"].map(cell).join(",")];
+ const dateFormat=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",day:"2-digit",
+  month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false});
  for(const row of exportRows) {
-  const date=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",day:"2-digit",
-    month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false})
-    .format(row.occurredAt);
+  const date=Number.isFinite(row.occurredAt.getTime())
+   ?dateFormat.format(row.occurredAt):"Date unavailable";
   out.push([row.jobId,row.title,row.status,date].map(cell).join(","));
  }
- if(additionalRows)out.push(["Export capped","Additional authorized events omitted","",""].map(cell).join(","));
- return {csv:"\uFEFF"+out.join("\r\n")+"\r\n",exported:exportRows.length,capped:additionalRows||rows.length>HR_ACTIVITY_CSV_CAP};
+ const capped=additionalRows||rows.length>HR_ACTIVITY_CSV_CAP;
+ if(capped)out.push(["Export capped","Additional authorized events omitted","",""].map(cell).join(","));
+ return {csv:"\uFEFF"+out.join("\r\n")+"\r\n",exported:exportRows.length,capped};
 }
