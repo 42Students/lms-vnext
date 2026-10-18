@@ -91,7 +91,17 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
     const db = {
       execute: vi.fn(async () => ({ rows: [{ ready: true }] })),
       transaction: vi.fn(async (fn: (value: typeof tx) => Promise<unknown>) => fn(tx)),
-      select: vi.fn(() => { throw new Error("company directory outage"); }),
+      select: vi.fn()
+        .mockImplementationOnce(() => {
+          const preflight = {
+            innerJoin: vi.fn(), where: vi.fn(),
+            limit: vi.fn(async () => [{ id: linkId, domain: "example.org" }]),
+          };
+          preflight.innerJoin.mockReturnValue(preflight);
+          preflight.where.mockReturnValue(preflight);
+          return { from: vi.fn(() => preflight) };
+        })
+        .mockImplementation(() => { throw new Error("company directory outage"); }),
     };
     vi.mocked(getDb).mockReturnValue(db as never);
     const deliver = vi.fn(async (_email: string, _code: string) => true);
@@ -106,7 +116,33 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
     expect(deliver.mock.calls[0]?.[0]).toBe("recruiter@team.example.org");
     expect(deliver.mock.calls[0]?.[1]).toMatch(/^[0-9]{6}$/);
     expect(tx.insert).toHaveBeenCalledTimes(1);
-    expect(db.select).toHaveBeenCalledTimes(1);
+    expect(db.select).toHaveBeenCalledTimes(2);
+  });
+
+  it("REC-JOIN-MX-11 invalid link is denied before any externally observable DNS, challenge or email", async () => {
+    vi.stubEnv("TPO_RECRUITER_OTP_HMAC_SECRET", "secure-network-code-secret".repeat(2));
+    vi.mocked(publicJoinTablesReady).mockResolvedValue(true);
+    const limit = vi.fn(async () => []);
+    const builder = { innerJoin: vi.fn(), where: vi.fn(), limit };
+    builder.innerJoin.mockReturnValue(builder);
+    builder.where.mockReturnValue(builder);
+    const select = vi.fn(() => ({ from: vi.fn(() => builder) }));
+    const transaction = vi.fn();
+    vi.mocked(getDb).mockReturnValue({
+      execute: vi.fn(async () => ({ rows: [{ ready: true }] })),
+      select, transaction,
+    } as never);
+    const deliver = vi.fn(async (_address: string, _otp: string) => true);
+    await expect(requestPublicJoinCode(
+      "COMPANY",
+      { token: "a".repeat(64), email: "recruiter@team.example.org" },
+      "198.51.100.12", deliver,
+    )).rejects.toMatchObject({ code: "INVALID_LINK" });
+    expect(select).toHaveBeenCalledTimes(1);
+    expect(limit).toHaveBeenCalledWith(1);
+    expect(resolveMx).not.toHaveBeenCalled();
+    expect(transaction).not.toHaveBeenCalled();
+    expect(deliver).not.toHaveBeenCalled();
   });
 
 });
