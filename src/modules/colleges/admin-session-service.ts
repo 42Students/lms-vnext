@@ -62,14 +62,21 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
 
 export async function listCollegeAdminSessions(ctx:RequestContext,collegeId:unknown,userId:unknown){
  const target=await authorizedTarget(ctx,collegeId,userId);
- const result=await getDb().execute(sql<{
-  id:string;device_name:string|null;user_agent:string|null;ip_address:string|null;
-  last_seen_at:Date;created_at:Date;expires_at:Date;
- }>`SELECT id,device_name,user_agent,ip_address,last_seen_at,created_at,expires_at
- FROM identity_device_sessions WHERE user_id=${target.userId}::uuid
- AND revoked_at IS NULL AND expires_at>now()
- ORDER BY last_seen_at DESC LIMIT 100`);
- return {target,devices:result.rows};
+ // A Super Admin's session scope/role can be revoked after resolving the
+ // target college. Hold the persisted actor locks while reading device data.
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   organizationId:target.college.organizationId,collegeId:target.college.id,
+  });
+  const result=await tx.execute(sql<{
+   id:string;device_name:string|null;user_agent:string|null;ip_address:string|null;
+   last_seen_at:Date;created_at:Date;expires_at:Date;
+  }>`SELECT id,device_name,user_agent,ip_address,last_seen_at,created_at,expires_at
+   FROM identity_device_sessions WHERE user_id=${target.userId}::uuid
+   AND revoked_at IS NULL AND expires_at>now()
+   ORDER BY last_seen_at DESC LIMIT 100`);
+  return {target,devices:result.rows};
+ });
 }
 
 /** Revocation and audit commit in one database transaction. A compromised
