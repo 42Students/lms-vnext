@@ -90,6 +90,12 @@ The 15-item final-sprint assignment belongs to faculty/courses in `docs/orchestr
 | FAC-courses-R07 | DONE (source/model verified) | `facultyLiveEditorCommand` now exposes the first specific Zod issue; `facultyLiveMutationSchema` validates provider HTTPS, title, end-after-start and twelve-hour limit. `tests/unit/chat5-final-faculty-courses-c.test.ts` — `FAC-courses-R07 returns specific invalid meeting URL...`. |
 | FAC-courses-R08 | DONE (intentional policy) | `facultyLiveWindow` treats college academic periods as metadata, not a scheduling restriction; invalid/reversed time still fails. This is the deliberate safe choice relative to legacy and is already implemented. `tests/unit/chat5-final-faculty-courses-c.test.ts` — `FAC-courses-R08 retains a future/safe meeting time...`. |
 
+### Chat-3 Faculty Calendar strict-link follow-up
+
+| Case | Source and test | Status |
+| --- | --- | --- |
+| FAC-CALENDAR-QUERY-01 | `src/app/(authenticated)/teacher/calendar/page.tsx` rejects unknown or duplicate month and deliveryId URL keys instead of taking the first array entry; `tests/unit/UX-teacher-calendar-strict-scope-query.test.tsx` covers actual SSR invalid, selected, empty and foreign-delivery paths. | Source/test authored; CI and browser acceptance pending |
+
 ## [chat-5] Gap register FIXED-ON-MAIN citation reconciliation (2026-10-18)
 
 The generated tracker still labels eleven faculty/course gaps FIXED-ON-MAIN, but all eleven already have gap-named unit tests and existing acceptance records. `tests/unit/chat5-gap-register-citation-recheck.test.ts` independently verifies the test/acceptance file pairing; tests not executed. **Do not edit `docs/audit/gap-register.md` by hand; regenerate via the tracked script when orchestration permits.**

@@ -19,9 +19,16 @@ export async function GET(request:Request,{params}:RouteContext){
   const query=mentorReviewOverviewSchema.parse({projectId,...filters,page:1});
   const context=await getCurrentRequestContext();
   const first=await getMentorDeliveryReviewOverview(context,query);
+  if(!first.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403,
+   headers:{"Cache-Control":"private, no-store"}});
   const pages=Math.min(10,first.totalPages);
   const rest=await Promise.all(Array.from({length:pages-1},(_,i)=>
    getMentorDeliveryReviewOverview(context,{...query,page:i+2})));
+  // A disabled entitlement or revoked membership during pagination must not
+  // yield a partial CSV with records from an earlier authorized page.
+  if(rest.some(page=>!page.enabled))
+   return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403,
+    headers:{"Cache-Control":"private, no-store"}});
   const rows=[...first.items,...rest.flatMap(row=>row.items)];
   const omitted=Math.max(0,first.total-rows.length);
   return new Response(mentorDeliveryReviewCsv(rows,omitted),{

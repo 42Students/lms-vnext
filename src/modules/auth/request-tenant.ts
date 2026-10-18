@@ -2,6 +2,7 @@ import "server-only";
 
 import { drizzleTenantDomainRepository } from "@/modules/tenant-domains/repository";
 import { resolveTenantFromHost } from "@/modules/tenant-domains/service";
+import {normalizeRequestHost} from "@/modules/tenant-domains/validation";
 import { getPlatformHosts } from "./config";
 
 /**
@@ -44,6 +45,9 @@ export async function resolveRequestTenant(
   if (getPlatformHosts().has(host)) {
     return { kind: "platform", host };
   }
+  // A malformed Host is a rejected request, never a transient DB outage.
+  // Validate before consulting the resolver or poisoning negative cache state.
+  try{normalizeRequestHost(host);}catch{return {kind:"unknown",host};}
 
   const hit = cache.get(host);
   if (hit && hit.expiresAt > Date.now()) return hit.value;
