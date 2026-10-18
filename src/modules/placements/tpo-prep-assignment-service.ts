@@ -14,7 +14,7 @@ import {requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 const uuid=z.string().uuid();
 const inputSchema=z.strictObject({
- offeringId:uuid,dueAt:z.iso.datetime({offset:true}),membershipIds:z.array(uuid).min(1).max(100),
+ offeringId:uuid,dueAt:z.iso.datetime({offset:true}).nullable().optional(),membershipIds:z.array(uuid).min(1).max(100),
 }).refine(data=>new Set(data.membershipIds).size===data.membershipIds.length,
  {message:"Select each student only once",path:["membershipIds"]});
 export class TpoPrepError extends Error{
@@ -46,8 +46,8 @@ export async function listTpoPrepCourseOptions(ctx:RequestContext){
 export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
  const college=await requireTpo(ctx),input=inputSchema.parse(raw);
  await hasPrepTable();
- const due=new Date(input.dueAt);
- if(due.getTime()<=Date.now())throw new TpoPrepError("DUE_DATE_INVALID");
+ const due=input.dueAt?new Date(input.dueAt):null;
+ if(due!==null&&due.getTime()<=Date.now())throw new TpoPrepError("DUE_DATE_INVALID");
  return getDb().transaction(async tx=>{
   // Persisted team permission is locked throughout assignment, audit and notices.
   await requireTpoJobActor(tx,ctx);
@@ -76,7 +76,7 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
    eventType:"PLACEMENTS_TPO_PREP_ASSIGNED",
    subjectType:"course_offering",subjectId:offering.id,subjectLabel:offering.title,
    summary:"TPO assigned preparation course to selected learners",
-   metadata:{selected:input.membershipIds.length,offeringId:offering.id,dueAt:input.dueAt},
+   metadata:{selected:input.membershipIds.length,offeringId:offering.id,dueAt:input.dueAt??null},
   }).returning({id:activityEvents.id});
   if(!event)throw new TpoPrepError("INVALID_SELECTION");
   const results:{id:string;status:"assigned"|"duplicate"|"skipped"}[]=[];
@@ -89,7 +89,8 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
    if(!saved){results.push({id,status:"duplicate"});continue;}
    await tx.insert(inAppNotifications).values({
     userId,eventId:event.id,title:"New preparation course",
-    body:"Your placement cell assigned "+offering.title+". Review it in your courses by the stated due date.",
+    body:"Your placement cell assigned "+offering.title+". Review it in your courses"+
+     (due?". The due date is recorded in your assignment.":"."),
     actionHref:"/learn/courses",
    }).onConflictDoNothing();
    results.push({id,status:"assigned"});
