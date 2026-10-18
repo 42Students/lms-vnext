@@ -24,7 +24,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  if(!parsed.success || !statuses.includes(parsed.data.status))
  return <div className="space-y-5"><PageHeader eyebrow="Super Admin" title={title}/>
   <ErrorState title="Invalid directory filters" description="Check the search, status or page."
-   action={<Link href={path} className="font-semibold text-primary-text">Clear filters</Link>}/></div>;
+   action={<Link href={path} className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/></div>;
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin" title={title}/>

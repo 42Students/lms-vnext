@@ -154,7 +154,7 @@ export function CollegeCreateForm({
           ["Country",country,setCountry,128],
          ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-1 text-xs font-semibold">
           {label}<input value={value} onChange={e=>setter(e.target.value)} maxLength={maxLength}
-           className="min-h-10 rounded border border-border bg-background px-2 text-sm"/>
+           className="min-h-11 rounded border border-border bg-background px-2 text-sm"/>
          </label>)}
         </div>
        </details>

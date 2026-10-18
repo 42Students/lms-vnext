@@ -11,3 +11,7 @@
 
 ## Single truthful empty state
 - Removed the redundant scope-empty panel that appeared above the responsive `DataTable.empty` rendering. The existing college-empty wording now appears only once, including on 320px screens. Test `UX-admin-colleges-04`.
+
+## Cross-audit chat-12 — A12-124 (MAJOR)
+
+The previous rollout retained native page-local text/search/date/number/select or submit controls. At 320/360/390px these lack a consistently guaranteed 16px input font, accessible 44px focus target and audited shared focus styling. Reused the existing shared `Input` (1), `Select` (1), `Button` (1). Kept every original label, filter key/default, GET request, hidden scope control and business action. Announcement primary action no longer requests `text-primary-foreground` against the bright brand fill. Targeted source contract: `tests/unit/UX-admin-colleges-12-01.test.ts`. Real viewport, TypeScript, Vitest and native WebView checks remain orchestrator work; no runtime pass is claimed.

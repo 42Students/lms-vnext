@@ -34,13 +34,13 @@ export default async function CollegeProjectsPage({
   const context = await getCurrentRequestContext();
   const membership = context.membership;
   if (!membership) {
-    return <main className="space-y-4"><PageHeader title="Project workspaces"
+    return <div className="space-y-4"><PageHeader title="Project workspaces"
      description="Select a college to continue."/>
      <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
       Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page.
      </p>
-     <Link href="/dashboard" className="inline-flex min-h-11 items-center text-primary-text underline">Back to dashboard</Link>
-    </main>;
+     <Link href="/dashboard" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to dashboard</Link>
+    </div>;
   }
 
   const params = await searchParams;
@@ -89,20 +89,20 @@ export default async function CollegeProjectsPage({
         title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
-          className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Create workspace
         </Link>}
       />
 
       <nav aria-label="Project workspace tools" className="flex min-w-0 flex-wrap gap-2">
-      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
+      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
+      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
 
       <nav aria-label="Workspace display and archive" className="flex min-w-0 flex-wrap items-center gap-3">
        <ProjectAdminWorkspacePageExport items={items}/>
-       <Link href={viewHref("cards")} aria-current={query.view==="cards"?"page":undefined} className="min-h-11 rounded border border-border px-3 py-2 text-sm text-primary-text">Cards</Link>
-       <Link href={viewHref("table")} aria-current={query.view==="table"?"page":undefined} className="min-h-11 rounded border border-border px-3 py-2 text-sm text-primary-text">List</Link>
-       <Link href="/college/projects?status=ARCHIVED" className="min-h-11 rounded border border-border px-3 py-2 text-sm text-primary-text">Archived workspaces</Link>
+       <Link href={viewHref("cards")} aria-current={query.view==="cards"?"page":undefined} className="min-h-11 rounded border border-border px-3 py-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Cards</Link>
+       <Link href={viewHref("table")} aria-current={query.view==="table"?"page":undefined} className="min-h-11 rounded border border-border px-3 py-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">List</Link>
+       <Link href="/college/projects?status=ARCHIVED" className="min-h-11 rounded border border-border px-3 py-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Archived workspaces</Link>
       </nav>
       <ProjectAdminFilters query={query} />
 

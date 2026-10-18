@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {useRouter} from "next/navigation";
 import {learnerAssessmentCourseHref} from "@/modules/courses/learner-assessment-course-query-model";
 import {learnerAssessmentDrawerSelectionAllowed} from "@/modules/courses/learner-assessment-drawer-scope-model";
@@ -208,7 +209,7 @@ export function LearnerAssessmentOverview({
   if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
     return <div role="alert" className="rounded-lg border border-border bg-surface p-4">
       <p>Couldn&apos;t load your class, so quizzes can&apos;t be shown.</p>
-      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Retry</Link>
+      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>
     </div>;
   }
   if (items.length === 0) {
@@ -375,7 +376,7 @@ export function LearnerAssessmentOverview({
                   <td className="px-4 py-3">{state.label}</td>
                   <td className="px-4 py-3">{item.attemptsUsed===0?"–":item.resultsPublished?"View result":"Not released"}</td>
                   <td className="px-4 py-3">
-                    <Link href={target} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">{state.action}</Link>
+                    <Link href={target} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">{state.action}</Link>
                   </td>
                 </tr>;
               })}</tbody>
@@ -492,7 +493,7 @@ export function LearnerAssessmentOverview({
                     {item.kind === "QUIZ" ? (
                       <Link
                         href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-9 sm:w-auto"
+                        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-11 sm:w-auto"
                       >
                         Attempt history
                       </Link>
@@ -615,14 +616,9 @@ export function LearnerAssessmentOverview({
                       Submitted Link
                     </p>
                     {learnerAssessmentSubmittedLinkHref(selectedAssignment.submissionUrl) ? (
-                      <a
+                      <div className="mt-2"><ThirdPartyLink
                         href={learnerAssessmentSubmittedLinkHref(selectedAssignment.submissionUrl)!}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-2 block break-all text-sm font-semibold text-primary-text underline"
-                      >
-                        {selectedAssignment.submissionUrl}
-                      </a>
+                        label={selectedAssignment.submissionUrl}/></div>
                     ) : (
                       <p className="mt-2 break-all text-sm text-body">
                         {selectedAssignment.submissionUrl}
@@ -695,7 +691,7 @@ export function LearnerAssessmentOverview({
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             Previous
           </button>
@@ -706,7 +702,7 @@ export function LearnerAssessmentOverview({
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             Next
           </button>

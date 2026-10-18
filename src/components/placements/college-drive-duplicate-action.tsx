@@ -1,10 +1,12 @@
 "use client";
+import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 export function CollegeDriveDuplicateAction({jobId}:{jobId:string}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const {ask,confirmation}=useCollegeConfirmation();
  async function duplicate(){
-  if(busy||!window.confirm("Duplicate as new drive? Candidates, results, past deadlines, audience overrides, offers and external links will not be copied."))return;
+  if(busy||!(await ask("Duplicate as new drive? Candidates, results, past deadlines, audience overrides, offers and external links will not be copied.")))return;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/duplicate",{
@@ -18,9 +20,9 @@ export function CollegeDriveDuplicateAction({jobId}:{jobId:string}){
   }catch(e){setError(e instanceof Error?e.message:"Could not duplicate the drive.");}
   finally{setBusy(false);}
  }
- return <div className="inline-flex flex-col gap-1">
+ return <div className="inline-flex flex-col gap-1">{confirmation}
   <button type="button" disabled={busy} onClick={()=>void duplicate()}
-   className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
    {busy?"Creating draft…":"Duplicate as new drive"}</button>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
  </div>;

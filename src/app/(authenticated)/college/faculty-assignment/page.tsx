@@ -67,17 +67,17 @@ export default async function CollegeFacultyAssignmentPage({
           <label className="grid min-w-0 sm:min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Faculty, course or class
             <input name="q" type="search" defaultValue={query.q} maxLength={100}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
           </label>
           <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
             Exact course code
             <input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
           </label>
           <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
             Class
             <select name="sectionCode" defaultValue={query.sectionCode ?? ""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
               <option value="">All classes</option>
               {query.sectionCode&&!classChoices.some(item=>item.code===query.sectionCode)?
                 <option value={query.sectionCode}>Selected class ({query.sectionCode})</option>:null}
@@ -90,7 +90,7 @@ export default async function CollegeFacultyAssignmentPage({
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Assignment lifecycle
             <select name="status" defaultValue={query.status}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
               <option value="ACTIVE">Active</option>
               <option value="ENDED">Ended</option>
               <option value="ALL">All</option>
@@ -99,7 +99,7 @@ export default async function CollegeFacultyAssignmentPage({
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             {FACULTY_ASSIGNMENT_COPY.roleLabel}
             <select name="role" defaultValue={query.role}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
               <option value="ALL">All roles</option>
               <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
               <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS.CO_TEACHER}</option>
@@ -122,7 +122,7 @@ export default async function CollegeFacultyAssignmentPage({
               : "No assignments on this page. Choose an earlier page."}
           </p>
         ) : (
-          <table className="w-full min-w-[48rem] text-left text-sm">
+          <table className="w-full min-w-[48rem] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
             <thead className="bg-muted text-muted-foreground"><tr>
               <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.faculty}</th>
               <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.course}</th>

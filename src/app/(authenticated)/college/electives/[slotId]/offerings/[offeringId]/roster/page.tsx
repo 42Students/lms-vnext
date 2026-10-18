@@ -135,13 +135,13 @@ export default async function ElectiveRoster({
       {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-3">
         <input type="hidden" name="action" value="ASSIGN" />
         <label className="grid gap-1 text-sm">Faculty
-          <select name="membershipId" required defaultValue="" className="min-h-11 rounded border border-border bg-surface p-2">
+          <select name="membershipId" required defaultValue="" className="min-h-11 rounded border border-border bg-surface p-2 text-base sm:text-sm">
             <option value="" disabled>Choose faculty</option>
             {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm">Role
-          <select name="role" className="min-h-11 rounded border border-border bg-surface p-2">
+          <select name="role" className="min-h-11 rounded border border-border bg-surface p-2 text-base sm:text-sm">
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
           </select>
@@ -153,7 +153,7 @@ export default async function ElectiveRoster({
       </form>}
     </section>
     <div role="region" aria-label="Elective offering roster" tabIndex={0} className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-      <table className="w-full min-w-[780px] text-left text-sm">
+      <table className="w-full min-w-[780px] text-left text-sm [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-10 [&_th:first-child]:bg-surface [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-10 [&_td:first-child]:bg-surface">
         <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
           {["Student", "State", "Source", "Since", "Actions"].map(x=><th key={x} scope="col" className={x==="Student"?"sticky left-0 z-20 bg-surface p-3":"p-3"}>{x}</th>)}
         </tr></thead>
@@ -170,7 +170,7 @@ export default async function ElectiveRoster({
                 <input type="hidden" name="membershipId" value={member.membershipId} />
                 <select name="targetOfferingId" required defaultValue=""
                   aria-label="Move to another offering"
-                  className="min-h-11 rounded border border-border bg-surface px-2">
+                  className="min-h-11 rounded border border-border bg-surface px-2 text-base sm:text-sm">
                   <option value="" disabled>Move to another offering</option>
                   {targets.map(t=><option key={t.offeringId} value={t.offeringId}>
                     {t.courseName} ({t.courseCode})</option>)}

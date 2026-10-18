@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {learnerProfileSectionRecoveryNotice,learnerProfileResolveSection} from "@/modules/people/learner-profile-section-recovery-model";
 import {learnerSavedCodingProfiles} from "@/modules/placements/learner-saved-coding-profiles-model";
 import {requireOwnLearnerProfileAccess} from "@/modules/people/learner-profile-access-service";
@@ -137,10 +138,7 @@ export default async function LearnerProfilePage({
           <ul className="mt-3 flex min-w-0 flex-wrap gap-3">
             {learnerSavedCodingProfiles(profile.profileDocument).map(entry => (
               <li key={entry.platform}>
-                <a href={entry.href} rel="noopener noreferrer" target="_blank"
-                  className="inline-flex min-h-11 items-center break-all rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline">
-                  {entry.label} ↗
-                </a>
+                <ThirdPartyLink href={entry.href} label={`${entry.label} ↗`} />
               </li>
             ))}
           </ul>

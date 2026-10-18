@@ -1,3 +1,5 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
 import Link from "next/link";
 import {parseSuperAdminReadinessParams,visibleReadinessChecks} from "@/modules/colleges/admin-readiness-filter";
 import {ErrorState} from "@/components/ui/error-state";
@@ -224,17 +226,17 @@ export default async function CollegeReadinessPage({
           </StatusBadge>
         </div>
 
-        <form className="mt-4 flex flex-wrap items-end gap-3">
+        <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
           <label className="grid gap-1 text-sm font-semibold text-body">Show checks
-            <select name="status" defaultValue={parsed.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="status" defaultValue={parsed.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Setup area
-            <select name="area" defaultValue={parsed.area} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="area" defaultValue={parsed.area} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
-            </select>
-          </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</button>
+            </Select>
+          </label><Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter</Button>
           <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
         </form>
         <p className="mt-2 text-xs text-muted-foreground">Showing {shownChecks.length} of {evaluation.checks.length} required checks; the overall verdict always uses all ten.</p>

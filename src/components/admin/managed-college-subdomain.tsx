@@ -1,16 +1,18 @@
 "use client";
 import {useState} from "react";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 type Managed={ready:boolean;baseDomain:string|null;currentHost:string|null};
 export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;initial:Managed}){
  const router=useRouter(),[state,setState]=useState(initial),[label,setLabel]=useState(
   initial.currentHost&&initial.baseDomain?initial.currentHost.slice(0,-initial.baseDomain.length-1):"");
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
+ const [pendingAction,setPendingAction]=useState<"ALLOT"|"CHANGE"|"REMOVE"|null>(null);
  async function send(action:"ALLOT"|"CHANGE"|"REMOVE"){
   if(!state.ready||busy)return;
   const host=label.trim().toLowerCase();
-  if(!window.confirm(action==="REMOVE"?"Remove this managed web address?":
-   action==="CHANGE"?"Change this college's live web address?":"Allot this platform subdomain?"))return;
   setBusy(true);setMessage("");
   try{
    const res=await fetch("/api/admin/colleges/"+encodeURIComponent(collegeId)+"/subdomain",{
@@ -28,7 +30,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     throw Error(messages[problem.error??""]??problem.error??"Request failed");
    }
    const data=await res.json() as {host:string|null};
-   setState({...state,currentHost:data.host});
+   setState({...state,currentHost:data.host});setPendingAction(null);
    setMessage(data.host?data.host+" is live":"Managed web address removed.");
    router.refresh();
   }catch(err){setMessage(err instanceof Error?err.message:"Unable to update address");}
@@ -43,20 +45,26 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     <p className="text-sm">Current: {state.currentHost??"Not allotted"}</p>
     <label className="grid max-w-md gap-1 text-sm">Subdomain
       <div className="flex items-center gap-2">
-       <input value={label} maxLength={63} autoCapitalize="none" spellCheck={false}
+       <Input value={label} maxLength={63} autoCapitalize="none" spellCheck={false}
         onChange={e=>setLabel(e.target.value)} className="min-h-11 min-w-0 flex-1 rounded border border-border p-2"/>
        <span>.{state.baseDomain}</span>
       </div>
     </label>
     <div className="flex flex-wrap gap-2">
-     <button type="button" disabled={busy||!label.trim()} onClick={()=>void send(state.currentHost?"CHANGE":"ALLOT")}
+     <Button type="button" disabled={busy||!label.trim()} onClick={()=>setPendingAction(state.currentHost?"CHANGE":"ALLOT")}
       className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">
-      {state.currentHost?"Change":"Allot"}</button>
-     {state.currentHost&&<button type="button" disabled={busy} onClick={()=>void send("REMOVE")}
-      className="min-h-11 rounded border border-border px-4 text-sm">Remove</button>}
+      {state.currentHost?"Change":"Allot"}</Button>
+     {state.currentHost&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>setPendingAction("REMOVE")}
+      className="min-h-11 rounded border border-border px-4 text-sm">Remove</Button>}
     </div>
     <p className="text-xs text-muted-foreground">A managed address is routed only when the configured wildcard DNS and TLS infrastructure is operational.</p>
    </>}
+  <ConfirmDialog open={pendingAction!==null} onOpenChange={open=>{if(!open)setPendingAction(null);}}
+   title={pendingAction==="REMOVE"?"Remove this managed web address?":pendingAction==="CHANGE"?"Change this college's live web address?":"Allot this platform subdomain?"}
+   description="Confirm the managed web address change for this college." confirmLabel={pendingAction==="REMOVE"?"Remove":pendingAction==="CHANGE"?"Change":"Allot"}
+   pending={busy} onConfirm={()=>{if(pendingAction)void send(pendingAction);}}>
+   {message?<p role="alert" className="text-sm text-foreground">{message}</p>:null}
+  </ConfirmDialog>
   {message&&<p role="status" className="text-sm">{message}</p>}
  </section>;
 }

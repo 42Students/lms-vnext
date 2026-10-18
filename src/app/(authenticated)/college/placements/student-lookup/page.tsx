@@ -17,14 +17,14 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
  const data=q.length>=3?await lookupCollegeStudentPlacement(await getCurrentRequestContext(),q):null;
  return <div className="space-y-5">
   <PageHeader eyebrow="College Admin · Placements" title="Student placement lookup"
-   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-primary-text underline">Analytics</Link>}/>
+   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Analytics</Link>}/>
   <form action="/college/placements/student-lookup" role="search" className="rounded-xl border border-border bg-surface p-5">
    <label className="grid max-w-xl gap-2 text-sm font-semibold">Name, roll number or email
     <input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}
       placeholder="Find one student in this college"
-      className="min-h-11 rounded border border-border bg-surface px-3"/>
+      className="min-h-11 rounded border border-border bg-surface px-3 text-base sm:text-sm"/>
    </label>
-   <button className="mt-3 min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Search students</button>
+   <button className="mt-3 min-h-11 rounded bg-primary px-4 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Search students</button>
   </form>
   {data&&!data.students.length?<p className="rounded border border-border p-5">No matching college students.</p>:null}
   {data?.students.map(person=><section key={person.membershipId} className="space-y-3 rounded-xl border border-border bg-surface p-5">

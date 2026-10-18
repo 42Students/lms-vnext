@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -76,13 +77,13 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     Select all {eligible.length} on this page</label>
    <strong>{selectedCount} selected</strong>
    {total>eligible.length?<button type="button" disabled={busy||total>3000}
-    onClick={()=>{setAllMatching(true);setSelected([]);}} className="min-h-10 rounded border border-border px-3 text-primary-text">
+    onClick={()=>{setAllMatching(true);setSelected([]);}} className="min-h-11 rounded border border-border px-3 text-primary-text">
     Select all {total.toLocaleString("en-IN")} matching this filter</button>:null}
    {allMatching?<button type="button" onClick={()=>{setAllMatching(false);setSelected([]);}}
-    className="min-h-10 rounded border border-border px-3">Clear selection</button>:null}
+    className="min-h-11 rounded border border-border px-3">Clear selection</button>:null}
    {total>3000?<span className="text-error">Narrow filters to 3,000 or fewer applicants before bulk actions.</span>:null}
    <select aria-label="Bulk application action" value={target} onChange={e=>setTarget(e.target.value)}
-    className="min-h-10 rounded border border-border bg-surface px-3">
+    className="min-h-11 rounded border border-border bg-surface px-3">
     {COLLEGE_APPLICATION_STAGES.filter(s=>s!=="APPLIED").map(stage=><option key={stage} value={stage}>
       {stage==="SHORTLISTED"?"Shortlist":stage==="REJECTED"?"Reject":
        stage==="ASSESSMENT"?"Move to Assessment":stage==="INTERVIEW"?"Move to Interview":
@@ -90,7 +91,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
        stage==="HIRED"?"Mark Hired":stage}</option>)}
    </select>
    <button type="button" disabled={!selectedCount||busy} onClick={()=>chooseBulk(target)}
-    className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
     Act on {selectedCount} selected</button>
    <span className="text-body">Changes are tracked with per-row results and students receive in-app notifications.</span>
   </div>
@@ -105,17 +106,17 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       <p className="text-sm text-body">{row.collegeName} · {row.roleTitle}</p>
       <p className="text-xs text-muted-foreground">{row.source} · {row.ageDays} days since applying</p>
       <div className="flex flex-wrap items-center gap-3">
-        <label className="flex min-h-10 items-center gap-2 text-sm">
+        <label className="flex min-h-11 items-center gap-2 text-sm">
           <input type="checkbox" disabled={row.status!=="SUBMITTED"||busy||allMatching}
            checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/> Select
         </label>
         <button type="button" onClick={()=>void openDetail(row.id)}
-          className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Details</button>
+          className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text">Details</button>
         {row.stage==="REJECTED"?<button type="button" disabled={busy||row.status!=="SUBMITTED"}
-          onClick={()=>selectRow(row,"REINSTATE")} className="min-h-10 rounded border border-border px-3 text-sm">Reinstate</button>:
+          onClick={()=>selectRow(row,"REINSTATE")} className="min-h-11 rounded border border-border px-3 text-sm">Reinstate</button>:
         <select aria-label={"Move "+(row.name??"learner")+" to"} value="" disabled={busy||row.status!=="SUBMITTED"}
           onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
-          className="min-h-10 rounded border border-border bg-surface px-2 text-sm">
+          className="min-h-11 rounded border border-border bg-surface px-2 text-sm">
           <option value="">Move to...</option>
           {(transitions[row.stage]??[]).map(stage=><option key={stage} value={stage}>{stage}</option>)}
         </select>}
@@ -144,13 +145,13 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      <td className="p-3">{row.screening??"Not recorded"}</td>
      <td className="p-3"><div className="flex flex-wrap gap-2">
       <button type="button" onClick={()=>void openDetail(row.id)}
-       className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Details</button>
+       className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text">Details</button>
       {row.stage==="REJECTED"?
        <button type="button" disabled={busy||row.status!=="SUBMITTED"} onClick={()=>selectRow(row,"REINSTATE")}
-        className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Reinstate</button>:
+        className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Reinstate</button>:
        <select aria-label={"Move "+(row.name??"learner")+" to"} value="" disabled={busy||row.status!=="SUBMITTED"}
         onChange={e=>{if(e.target.value)selectRow(row,e.target.value);}}
-        className="min-h-10 max-w-44 rounded border border-border bg-surface px-2">
+        className="min-h-11 max-w-44 rounded border border-border bg-surface px-2">
         <option value="">Move to...</option>
         {(transitions[row.stage]??[]).map(next=><option key={next} value={next}>{next}</option>)}
        </select>}
@@ -161,9 +162,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
     applicationId={detailId} initialDetail={detailPayload??undefined} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
-  {dialog?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <div role="dialog" aria-modal="true" aria-label="Application status update"
-    className="max-h-[90vh] w-full max-w-xl space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl">
+  <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title="Application status update" dismissible={!busy}>
     <h2 className="text-lg font-semibold">{action==="REINSTATE"?"Reinstate this application?":
       target==="REJECTED"?"Reject selected applications":"Move applications to "+target}</h2>
     <p className="text-sm text-body">{selectedCount} application(s) chosen. Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change.
@@ -191,7 +190,6 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      <button type="button" disabled={busy} onClick={()=>{setDialog(false);setError("");setOutcome(null);}}
       className="min-h-11 rounded border border-border px-4">Close</button>
     </div>
-   </div>
-  </div>:null}
+  </Dialog>
  </section>;
 }

@@ -36,7 +36,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4" aria-label="Bulk drive actions">
   <div className="flex flex-wrap items-center gap-3">
    <h2 className="font-semibold">Bulk drives</h2>
-   <label className="flex min-h-10 items-center gap-2 text-sm">
+   <label className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" disabled={!eligible.length||busy}
      checked={eligible.length>0&&eligible.every(row=>selected.includes(row.id))}
      onChange={e=>{setSelected(e.target.checked?eligible.map(row=>row.id).slice(0,25):[]);
@@ -45,11 +45,11 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
    </label>
    <span className="text-sm">{selected.length} selected</span>
    <select aria-label="Drive bulk action" value={action} onChange={e=>{setAction(e.target.value as "OPEN"|"CLOSE");setSelected([]);setPreview(null);setResult(null);setError("");}}
-    className="min-h-10 rounded border border-border bg-surface px-3">
+    className="min-h-11 rounded border border-border bg-surface px-3">
     <option value="CLOSE">Close selected</option><option value="OPEN">Open closed drives</option>
    </select>
    <button type="button" disabled={!canProcess} onClick={()=>void send("PREVIEW")}
-    className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Preview change</button>
+    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Preview change</button>
   </div>
   <div className="grid max-h-40 gap-2 overflow-auto sm:grid-cols-2 lg:grid-cols-4">
    {eligible.map(row=><label key={row.id} className="flex gap-2 rounded border border-border p-2 text-xs">
@@ -63,16 +63,15 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
    <p className="font-semibold">Review impact: {preview.eligible} eligible, {preview.ignored+preview.excluded} skipped.</p>
    {action==="CLOSE"?<p>{preview.pendingLettersWithdrawn} issued offers will be withdrawn across these drives.</p>:
     <p>Previously withdrawn offers will not be reissued when a drive is reopened.</p>}
-   <button type="button" disabled={busy||!preview.eligible} onClick={()=>{
-    if(window.confirm("Confirm "+action.toLowerCase()+" for these "+preview.eligible+" eligible drives?"))void send("CONFIRM");
-   }} className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+   <p>Confirm {action.toLowerCase()} for these {preview.eligible} eligible drives?</p>
+   <button type="button" disabled={busy||!preview.eligible} onClick={()=>void send("CONFIRM")} className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
      {busy?"Processing…":"Confirm "+action.toLowerCase()}</button>
   </div>:null}
   {result?<div role="status" className="space-y-2 text-sm">
    <p>{result.updated} drive(s) updated; {result.skipped} skipped.</p>
    {result.results.filter(row=>row.status==="SKIPPED").map(row=><p key={row.jobId} className="text-warning-text">
     {drives.find(d=>d.id===row.jobId)?.title??row.jobId}: {row.reason}</p>)}
-   {result.skipped>0?<button onClick={()=>void send("PREVIEW")} className="min-h-10 text-primary-text underline">
+   {result.skipped>0?<button onClick={()=>void send("PREVIEW")} className="min-h-11 text-primary-text underline">
     Retry failed</button>:null}
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
@@ -189,39 +192,39 @@ export default async function SuperAdminLearnerAccessTracePage({
         >
           <label className="grid min-w-60 flex-1 gap-2 text-sm font-semibold text-body">
             Name or roll number
-            <input
+            <Input
               type="search"
               name="q"
               maxLength={100}
               defaultValue={query.q}
               placeholder="Find learner"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-base text-foreground"
             />
           </label>
 
           <label className="grid gap-2 text-sm font-semibold text-body">Learner scope
-            <select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+            <Select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
               <option value="all">All active learners</option>
               <option value="only">Only students with stored overrides</option>
               <option value="locked">Only students with locked overrides</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored override module
-            <select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+            <Select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
               <option value="">Any module</option><option value="projects">Projects</option><option value="electives">Electives</option><option value="placements">Placements (ignored below college)</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored rule state
-            <select name="storedValue" defaultValue={query.storedValue} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+            <Select name="storedValue" defaultValue={query.storedValue} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
               <option value="all">Stored On or Off</option><option value="on">Stored On only</option><option value="off">Stored Off only</option>
-            </select>
+            </Select>
           </label>
-          <button
+          <Button
             type="submit"
             className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground hover:bg-primary-hover"
           >
             Search
-          </button>
+          </Button>
 
           <Link
             href={basePath}

@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
 import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-restore";
@@ -61,68 +64,68 @@ export default async function SuperAdminCompaniesPage({
       <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Show deleted (archived) companies →</Link>
       <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">Active companies →</Link>
     </div>
-    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
+    <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Company
-        <input name="q" defaultValue={data.query.q} placeholder="Search company name or domain"
+        <Input name="q" defaultValue={data.query.q} placeholder="Search company name or domain"
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Search in
-        <select name="searchField" defaultValue={data.query.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name="searchField" defaultValue={data.query.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ALL">Name, other name or domain</option><option value="NAME">Name or other name</option><option value="DOMAIN">Any company domain</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Relationship
-        <select name="status" defaultValue={data.query.status}
+        <Select name="status" defaultValue={data.query.status}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Company status
-        <select name="companyStatus" defaultValue={data.query.companyStatus} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name="companyStatus" defaultValue={data.query.companyStatus} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="MATCH">Match relationship filter</option><option value="ACTIVE">Active company</option>
           <option value="ARCHIVED">Archived company</option><option value="ALL">Any company status</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Trust state
-        <select name="trust" defaultValue={data.query.trust} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name="trust" defaultValue={data.query.trust} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All</option><option value="TRUSTED">Trusted</option><option value="UNTRUSTED">Not trusted</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Global verification
-        <select name="verified" defaultValue={data.query.verified}
+        <Select name="verified" defaultValue={data.query.verified}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All companies</option><option value="NOT_VERIFIED">Only not verified</option>
           <option value="VERIFIED">Verified by 42</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">College
-        <select name="collegeId" defaultValue={data.query.collegeId ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name="collegeId" defaultValue={data.query.collegeId ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="">All permitted colleges</option>
           {availableColleges.map(college=><option key={college.id} value={college.id}>{college.name}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Order
-        <select name="sort" defaultValue={data.query.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name="sort" defaultValue={data.query.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="NAME">Company name</option><option value="RECENT">Recently changed relationship</option>
-        </select>
+        </Select>
       </label>
       {data.query.companyId ? <input type="hidden" name="companyId" value={data.query.companyId}/> : null}
       <label className="grid gap-1 text-sm font-semibold text-body">Relationship owner
-        <select name="owner" defaultValue={data.query.owner} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name="owner" defaultValue={data.query.owner} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ALL">Any owner assignment</option><option value="ASSIGNED">Owner assigned</option><option value="UNASSIGNED">Needs an owner</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Company website
-        <select name="website" defaultValue={data.query.website} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name="website" defaultValue={data.query.website} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ALL">Any website state</option><option value="HAS_WEBSITE">Website recorded</option><option value="MISSING_WEBSITE">Website missing</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Relationship changed
-        <select name="changedWithin" defaultValue={data.query.changedWithin} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name="changedWithin" defaultValue={data.query.changedWithin} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ALL">Any time</option><option value="7">Past 7 days</option><option value="30">Past 30 days</option><option value="90">Past 90 days</option>
-        </select>
+        </Select>
       </label>
-      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-5 text-sm font-semibold text-foreground">Filter</button>
+      <Button type="submit" className="min-h-11 self-end rounded-md bg-primary px-5 text-sm font-semibold text-foreground">Filter</Button>
     </form>
     <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
       className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">

@@ -11,3 +11,7 @@
 
 ## Bounded loading and retry
 - Replaced the indefinite loading pulse with the shared `GracefulPageLoading`, preserving “Loading batch promotion preview”. It provides a semantic reduced-motion skeleton and a recovery control after a slow network response. Tests: `UX-admin-batch-promotion-03`.
+
+## Cross-audit chat-12 — A12-093 (MAJOR)
+
+The previous rollout retained native page-local text/search/date/number/select or submit controls. At 320/360/390px these lack a consistently guaranteed 16px input font, accessible 44px focus target and audited shared focus styling. Reused the existing shared `Input` (1), `Select` (2), `Button` (1). Kept every original label, filter key/default, GET request, hidden scope control and business action. Announcement primary action no longer requests `text-primary-foreground` against the bright brand fill. Targeted source contract: `tests/unit/UX-admin-batch-promotion-12-01.test.ts`. Real viewport, TypeScript, Vitest and native WebView checks remain orchestrator work; no runtime pass is claimed.

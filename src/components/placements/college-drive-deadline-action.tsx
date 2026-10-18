@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
@@ -17,7 +18,6 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
   if(!value||busy)return;
   const deadline=new Date(value+"+05:30");
   if(!Number.isFinite(deadline.getTime())){setError("Enter a valid date and time.");return;}
-  if(!window.confirm("Extend deadline for "+title+"?"))return;
   setBusy(true);setError("");setDone("");
   try{
    const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/extend-deadline",{
@@ -34,13 +34,12 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
  }
  return <div className="inline-block">
   <button type="button" onClick={()=>{setOpen(true);setError("");}}
-   className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">Extend deadline</button>
+   className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text">Extend deadline</button>
   {done?<p role="status" className="text-xs">{done}</p>:null}
-  {open?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <section role="dialog" aria-modal="true" aria-label={"Extend deadline — "+title}
-    className="w-full max-w-lg space-y-4 rounded-xl bg-surface p-6 shadow-xl">
+  <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}} title={"Extend deadline — "+title} dismissible={!busy}>
     <h2 className="text-lg font-semibold">Extend deadline — {title}</h2>
     <p className="text-sm">Current deadline: {current}</p>
+    <p className="text-sm text-body">Extend deadline for {title}?</p>
     <label className="grid gap-1 text-sm">New application deadline (IST)
      <input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
       className="min-h-11 rounded border border-border bg-surface px-3"/>
@@ -53,7 +52,6 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
      <button type="button" disabled={busy} onClick={()=>setOpen(false)}
       className="min-h-11 rounded border border-border px-4">Cancel</button>
     </div>
-   </section>
-  </div>:null}
+  </Dialog>
  </div>;
 }
