@@ -32,7 +32,7 @@ export function projectWorkspacePageCsv(
     collegeWorkspaceStatusLabel(item.status,item.riskReasons),
     item.progressPercent,
     item.memberCount,
-    date.format(item.updatedAt),
+    Number.isFinite(item.updatedAt.getTime()) ? date.format(item.updatedAt) : "Date unavailable",
   ]);
   return projectAdminCsv([headings,...rows]);
 }
