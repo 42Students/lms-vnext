@@ -16,7 +16,8 @@ Branch: chatgpt/chat-5-b. Status: **NOT RELEASE-CERTIFIED**. This entry records 
 | PLACEMENTS-CASCADE-01..03 | parsePlacementCascadeId, shouldKeepPlacementCascadeSibling, assertUndoablePlacementCascadeSnapshot | Existing core-state-machines tests: dream/internship/uplift and forbidden exact undo | Atomic sibling rollback, audit, mixed accepted state |
 | PLACEMENTS-EXTERNAL-01..04 | nextExternalOfferStatus, isVerifiedExternalPlacement, countVerifiedExternalPlacements, externalOfferAnnualCtcInr | Existing external-offers-and-deadlines test: all legal/illegal transitions and decimal precision | Real reviewer tenant, historical retention, concurrent review |
 | PLACEMENTS-DEADLINE-01 | isPlacementApplicationDeadlinePassed | Existing external-offers-and-deadlines test: before/at/after boundary | Concurrent apply vs closing drive |
-| PLACEMENTS-JOIN-SM-01 | projectTpoJoiningTracker | **new** extended-state-machines test; only accepted offers, null joining is pending, joined evidence only | Real correction + actor/session revocation |
+| PLACEMENTS-RETENTION-01/02 | collegeApplicationRetentionCutoff; getCollegeApplicationRetentionReport | **new** finite 180-day cutoff, read-only query source restrictions incl. both college joins, withdrawal/rejection and 200-row cap | Actual retention DB query, audit/provenance and tenant wrong-ID tests |
+| PLACEMENTS-JOIN-SM-01 / PLACEMENTS-JOINING-FOLLOWUP-01 | projectTpoJoiningTracker; projectTpoJoiningFollowups; tpoJoiningFollowupCsv | **new** extended-state-machines and retention-and-joining-followups tests: ACCEPTED only; date-missing not overdue; distinct offers; explicit JOINED; CSV truncation | Real correction + actor/session revocation |
 | PLACEMENTS-ROUND-VIEW-01/02 | projectTpoRoundResultTable, filterTpoRoundResultRows, tpoRoundResultViewSchema | **new** chat5-tpo-second-third-behavior.test.ts; prefiltered shortlisted/submitted roster, applied immutability, TALK/CANCELLED/non-live denial | 500+ roster and stage/apply DB race |
 | PLACEMENTS-OFFERS-VIEW-01/02 | offerRegisterQuery, projectOfferRegister, tpoDriveOfferRegisterCsv | **new** second-third behavioural test: exact offers/joining counts, pagination, same CSV filters, formula neutralization | Tenant export API, long-list truncation, privacy |
 | PLACEMENTS-OFFER-EVIDENCE-01 | tpoOfferEvidenceQuery, projectOfferEvidence | **new** second-third behavioural test: validated IDs, persisted chronological events, absence not inference | Wrong-job offer IDOR and stale response |
@@ -34,9 +35,9 @@ Branch: chatgpt/chat-5-b. Status: **NOT RELEASE-CERTIFIED**. This entry records 
 | result-service.stagePlacementRoundResult / applyPlacementRoundResult | Existing P8 stage/apply path; new view matrix forbids editing APPLIED | Transaction rollback, 500+ cap, wrong job/round |
 | tpo-drive-selection-service and selections route | Existing chat5-placements-ux-workflows.test.ts; new selection Zod tests and TPO-2ND-PAGE source contracts | Multi-user race, 403, 409, exactly-one release event |
 | tpo-waitlist-promotion-service and waitlist route | New token and scoped row-lock source contracts and safe error code | **High risk** cross-transaction issuance and capacity races |
-| tpo-joining-tracker-service and joining route | New ACCEPTED-only projection and no-evidence page contract | Other-college data isolation and real correction |
+| tpo-joining-tracker-service and joining route | New ACCEPTED-only projection and no-evidence page contract; **new** joining-followup model counts/state/date/CSV truncation and formula-safety tests | Other-college data isolation and real correction |
 | placement-offer-expiry-sweep-service | Existing pure expiry evidence; implementation uses skipLocked | Scheduler, worker race, stale offer response, audit |
-| college-retention-report-service | Uncovered | **OPEN** persisted retention evidence, wrong tenant, empty state and export |
+| college-retention-report-service | **new** retention cutoff policy and joining followups, plus source predicate/role/tenant assertions in chat5-placements-retention-and-joining-followups.test.ts | **OPEN** persisted tenant scope and report/offer/joins historical DB evidence |
 | TPO first/second third source routes | Existing chat5-ux-tpo-middle-third.test.ts, 42 page contracts; new ten second-third page checks | Live API deny/error/loading and browser viewport/click tests |
 
 ## TPO account BREAK-IT matrix
@@ -57,3 +58,36 @@ Existing chat5-ux-tpo-middle-third.test.ts inventories the TPO second-third 42 r
 ## Release gate (not complete)
 
 Do not mark this ledger complete until CI runs npm run typecheck; Vitest on all new/changed chat-5, TPO-batches and P8 tests; the full suite; isolated PostgreSQL adversarial concurrency, audit/event/notification checks; and 320/360/390px real-browser role journeys. There are **967 root files** under src/modules/placements on the current source listing, so this ledger is an enumerated core slice, **not an exhaustive register of every exported function or route handler**. Missing cases must remain explicit and unaccepted for IIT Dharwad.
+
+## Source-scanned export inventory — 24 core files
+
+Inventory source: direct GitHub reads of the 24 named production placement files at this branch head. The symbol list contains exported runtime declarations (functions, constants and classes) only; types, other modules, other tests and HTTP route handlers are not inventoried here. A checkmark records only a **direct symbol reference in the eight sampled current lane test files**, which is **not evidence that a test was executed or that every branch is asserted**. A circle denotes no direct reference among these eight, not necessarily a missing test across all project suites.
+
+| Module | Runtime export names (✓ direct name reference; ○ not referenced in sampled tests) | Coverage count |
+|---|---|---|
+| application-service.ts | ○ resolveExistingApplication, ○ canReapplyWithdrawnPlacementApplication, ✓ applyToPlacementJob, ○ listOwnPlacementApplications, ○ listPlacementJobApplications, ○ getPlacementApplication, ○ canSelfWithdrawPlacementApplication, ○ withdrawPlacementApplication | 1 / 8 |
+| job-service.ts | ○ listPlacementJobs, ○ getPlacementJob, ✓ createPlacementJob, ○ updatePlacementJob, ✓ publishPlacementJob, ○ mustWithdrawPendingOfferOnDriveStop, ○ closePlacementJob, ○ canCancelPublishedPlacementJob, ○ cancelPlacementJob, ○ archivePlacementJob | 2 / 10 |
+| offer-service.ts | ✓ issuePlacementOffer, ✓ actOnPlacementOffer, ○ previewOwnOfferAcceptanceImpact, ✓ recordPlacementJoiningOutcome, ✓ listOwnPlacementOffers, ○ listPlacementJobOffers, ○ listPlacementOfferCandidates | 4 / 7 |
+| screening-service.ts | ○ listPlacementScreeningQueue, ○ getPlacementScreening, ✓ decidePlacementScreening | 1 / 3 |
+| result-service.ts | ○ listPlacementRoundResults, ✓ stagePlacementRoundResult, ✓ applyPlacementRoundResult, ○ listOwnAppliedPlacementResults | 2 / 4 |
+| round-service.ts | ○ listPlacementRounds, ○ getPlacementRound, ✓ createPlacementRound, ○ updatePlacementRound, ✓ actOnPlacementRound, ○ getTpoRoundReorderReadiness, ○ reorderPlacementRounds | 2 / 7 |
+| tpo-drive-lifecycle-model.ts | ✓ tpoDriveLifecycleSchema, ✓ hasSecureEmployerPortalUrl, ✓ evaluateTpoDriveLifecycle, ✓ tpoDriveReadinessMessage | 4 / 4 |
+| tpo-drive-cancel-model.ts | ○ tpoDriveCancelImpactSchema, ✓ tpoDriveCancelSchema, ✓ evaluateTpoDriveCancellation, ✓ isIssuedOfferCancelable | 3 / 4 |
+| tpo-drive-cancel-service.ts | ○ getTpoDriveCancelPreview, ○ cancelTpoDriveWithPreview | 0 / 2 |
+| tpo-drive-selection-model.ts | ✓ recordSelectionsSchema, ✓ releaseSelectionsSchema, ✓ summarizeSelectionRelease | 3 / 3 |
+| tpo-drive-selection-service.ts | ○ countUnreleasedTpoSelections, ✓ getTpoSelectionWorkspace, ○ recordTpoDriveSelections, ○ verifyAndReleaseTpoSelections | 1 / 4 |
+| tpo-waitlist-promotion-model.ts | ✓ tpoWaitlistPromotionSchema, ✓ waitlistPreviewToken | 2 / 2 |
+| tpo-waitlist-promotion-service.ts | ✓ getTpoWaitlistPreview, ○ offerToNextWaitlisted | 1 / 2 |
+| tpo-joining-tracker-model.ts | ✓ tpoJoiningTrackerQuerySchema, ✓ projectTpoJoiningTracker | 2 / 2 |
+| tpo-joining-tracker-service.ts | ✓ getTpoJoiningTracker | 1 / 1 |
+| tpo-joining-followup-model.ts | ✓ tpoJoiningFollowupQuerySchema, ✓ projectTpoJoiningFollowups, ✓ TPO_JOINING_FOLLOWUP_CSV_LIMIT, ✓ tpoJoiningFollowupCsv | 4 / 4 |
+| tpo-offer-lifecycle-model.ts | ✓ TPO_OFFER_ACTIONS, ✓ tpoOfferLifecycleInputSchema, ✓ canRecordTpoOfferAction | 3 / 3 |
+| tpo-offer-lifecycle-service.ts | ○ recordTpoOfferLifecycle | 0 / 1 |
+| college-retention-report-service.ts | ○ getCollegeApplicationRetentionReport | 0 / 1 |
+| college-retention-report-policy.ts | ✓ COLLEGE_APPLICATION_RETENTION_DAYS, ✓ collegeApplicationRetentionCutoff | 2 / 2 |
+| placement-offer-expiry-sweep-service.ts | ○ sweepExpiredPlacementOffers | 0 / 1 |
+| offer-cascade-undo-service.ts | ○ undoPlacementOfferCascade | 0 / 1 |
+| tpo-drive-deadline-model.ts | ○ tpoDriveDeadlineSchema, ○ evaluateTpoDriveDeadline | 0 / 2 |
+| tpo-drive-deadline-service.ts | ○ getTpoDriveDeadlineState, ○ extendTpoDriveDeadline | 0 / 2 |
+
+Sampled core inventory: **80 runtime exports**, **38 directly referenced names** and **42 with no direct name reference in eight sampled tests**. It is a prioritized gap map, not a certification or an exhaustive 967-file inventory. Unreferenced service exports must be assigned proper behavioural/DB tests, especially mutations and exports.
