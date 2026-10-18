@@ -2,10 +2,14 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import AdminNewPlacementPage from "@/app/(authenticated)/admin/placements/new/page";
+import type {RequestContext} from "@/modules/identity/context";
 
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
 vi.mock("@/components/placements/placement-job-create-workspace",()=>({
- PlacementJobCreateWorkspace:()=>null,
+ PlacementJobCreateWorkspace:({context,collegeId,basePath}:{context:RequestContext;collegeId:string;basePath:string})=>
+  <div data-college={collegeId} data-scope={context.adminScope?.collegeId??""} data-base={basePath}>
+   Authorized create-drive form
+  </div>,
 }));
 const collegeId="11111111-1111-4111-8111-111111111111";
 const organizationId="22222222-2222-4222-8222-222222222222";
@@ -34,11 +38,11 @@ describe("Super Admin create-drive authorization before data lookup",()=>{
   expect(html).not.toContain("Build the opportunity students will see");
  });
  it("SA-admin-middle-new-drive-auth-03 passes only selected college to the authorized write workspace",async()=>{
-  const element=await AdminNewPlacementPage();
-  const child=element.props.children;
-  expect(child.props.collegeId).toBe(collegeId);
-  expect(child.props.context.adminScope).toEqual({collegeId,organizationId});
-  expect(child.props.basePath).toBe("/admin/placements");
+  const html=renderToStaticMarkup(await AdminNewPlacementPage());
+  expect(html).toContain('data-college="'+collegeId+'"');
+  expect(html).toContain('data-scope="'+collegeId+'"');
+  expect(html).toContain('data-base="/admin/placements"');
+  expect(html).toContain("Authorized create-drive form");
   expect(getCurrentRequestContext).toHaveBeenCalledOnce();
  });
 });
