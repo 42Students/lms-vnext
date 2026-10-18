@@ -1,5 +1,6 @@
-import authStyles from "@/components/public/public-auth-skin.module.css";
 "use client";
+
+import authStyles from "@/components/public/public-auth-skin.module.css";
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
