@@ -22,6 +22,7 @@ export default async function MyTrackerReportDetail({
     // An unavailable database is a retryable page error, not a missing report.
     throw error;
   }
+  if(!report)notFound();
   return <article className="space-y-4">
     <PageHeader title={report.publicId} description={report.issueType}/>
     <Link href="/tracker/mine" className="font-semibold text-primary-text underline">Back to my reports</Link>
