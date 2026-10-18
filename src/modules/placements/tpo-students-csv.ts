@@ -19,7 +19,7 @@ export function tpoStudentCsvCell(
     );
 
   const formulaLike =
-    /^[\s﻿​]*[=+\-@]/u.test(raw);
+    /^[\p{Z}\p{Cf}\p{Cc}\p{M}]*[=+\-@]/u.test(raw);
 
   const safe = formulaLike
     ? `'${raw}`
