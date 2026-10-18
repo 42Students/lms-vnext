@@ -54,8 +54,9 @@ describe("College Admin class operations workspace isolation and composite data"
   mock.scope.mockResolvedValue({id:section,collegeId:college,organizationId:org});
   const current={id:section,name:"A",code:"A",programId:program,cohortId:cohort,
    academicPeriodName:"2026",academicPeriodCode:"2026",status:"ACTIVE"};
-  mock.rows.push([current],[],[]);
-  const learnerMembershipId="66666666-6666-4666-8666-666666666666";
+  const learnerChoice={membershipId:"66666666-6666-4666-8666-666666666666",displayName:"Learner"};
+  const facultyChoice={membershipId:"77777777-7777-4777-8777-777777777777",displayName:"Faculty"};
+  mock.rows.push([current],[learnerChoice],[facultyChoice]);
   mock.enrollments.mockResolvedValue([{id:"enrollment"}]);
   mock.roster.mockResolvedValue([{id:"roster"}]);
   mock.faculty.mockResolvedValue([{id:"faculty"}]);
@@ -69,13 +70,15 @@ describe("College Admin class operations workspace isolation and composite data"
   expect(workspace.facultyAssignments).toEqual([{id:"faculty"}]);
   expect(workspace.scheduleEvents).toEqual([{id:"session"}]);
   expect(workspace.courseChoices).toEqual([{id:"course"}]);
+  expect(workspace.learnerChoices).toEqual([learnerChoice]);
+  expect(workspace.facultyChoices).toEqual([facultyChoice]);
   expect(mock.enrollments).toHaveBeenCalledWith(actor,program,cohort);
   expect(mock.roster).toHaveBeenCalledWith(actor,section);
   expect(mock.faculty).toHaveBeenCalledWith(actor,section,true);
   expect(mock.schedule).toHaveBeenCalledWith(actor,section);
   expect(mock.courses).toHaveBeenCalledWith(actor,section);
   expect(mock.select).toHaveBeenCalledTimes(3);
-  expect(learnerMembershipId).not.toBeNull();
+
  });
  it("COL-classes-tenant-03 orphaned/corrupt section period cannot expose a foreign college academic period",async()=>{
   const s=readFileSync("src/modules/academics/section-workspace.ts","utf8");
