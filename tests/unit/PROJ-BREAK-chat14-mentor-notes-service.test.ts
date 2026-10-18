@@ -1,13 +1,13 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
-import {updateMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-service";
+import {getMentorMeetingNotes,updateMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-service";
 
 const state=vi.hoisted(()=>({
  projectStatus:"ACTIVE",meetingStatus:"COMPLETED",access:"MENTOR",
  activeRole:"MENTOR",scopeCollegeId:"college-a",scopeOrganizationId:"org-a",
  activeMembership:true,moduleEnabled:true,meetingPresent:true,
  currentOutcome:"Initial",updatedAt:"2026-10-18T10:00:00.123Z",
- events:0,updates:0,projectLocks:0,meetingLocks:0,
+ events:0,updates:0,projectLocks:0,meetingLocks:0,reads:0,lastReadConditions:"",
 }));
 vi.mock("server-only",()=>({}));
 vi.mock("drizzle-orm",()=>({
@@ -44,6 +44,20 @@ vi.mock("@/modules/activity/service",()=>({
 }));
 vi.mock("@/db/client",()=>({
  getDb:()=>({
+  select:()=>({
+   from:()=>({where:(conditions:unknown)=>({
+    limit:async()=>{
+     state.reads++;
+     state.lastReadConditions=JSON.stringify(conditions);
+     return state.meetingPresent?[{
+      id:"22222222-2222-4222-8222-222222222222",
+      projectId:"11111111-1111-4111-8111-111111111111",
+      title:"Sprint checkpoint",status:state.meetingStatus,
+      outcome:state.currentOutcome,updatedAt:new Date(state.updatedAt),
+     }]:[];
+    },
+   })}),
+  }),
   transaction:async(callback:(tx:unknown)=>Promise<unknown>)=>{
    const tx={
     select:(fields?:unknown)=>({
@@ -95,7 +109,47 @@ beforeEach(()=>{
  state.activeRole="MENTOR";state.scopeCollegeId="college-a";state.scopeOrganizationId="org-a";
  state.activeMembership=true;state.moduleEnabled=true;state.meetingPresent=true;
  state.currentOutcome="Initial";state.updatedAt=input.expectedUpdatedAt;
- state.events=0;state.updates=0;state.projectLocks=0;state.meetingLocks=0;
+ state.events=0;state.updates=0;state.projectLocks=0;state.meetingLocks=0;state.reads=0;state.lastReadConditions="";
+});
+
+describe("PROJ-BREAK-MENTOR-164..167 read-only meeting notes scope",()=>{
+ it("PROJ-BREAK-MENTOR-164 reads exactly the requested meeting inside the scoped project",async()=>{
+  const result=await getMentorMeetingNotes(context,ids);
+  expect(result.projectTitle).toBe("Atlas");
+  expect(result.projectStatus).toBe("ACTIVE");
+  expect(result.meeting).toMatchObject({id:ids.meetingId,status:"COMPLETED",outcome:"Initial"});
+  expect(state.reads).toBe(1);
+  expect(state.lastReadConditions).toContain(ids.projectId);
+  expect(state.lastReadConditions).toContain(ids.meetingId);
+  expect(state.updates).toBe(0);
+  expect(state.events).toBe(0);
+ });
+ it("PROJ-BREAK-MENTOR-165 returns not found without leaking a foreign meeting",async()=>{
+  state.meetingPresent=false;
+  await expect(getMentorMeetingNotes(context,ids))
+   .rejects.toMatchObject({code:"PROJECT_MEETING_NOT_FOUND"});
+  expect(state.reads).toBe(1);
+  expect(state.events).toBe(0);
+ });
+ it("PROJ-BREAK-MENTOR-166 refuses revoked mentor role, tenant scope and module before reading",async()=>{
+  const reject=async()=>{
+   await expect(getMentorMeetingNotes(context,ids))
+    .rejects.toMatchObject({code:"PROJECT_MEETING_ACCESS_DENIED"});
+   expect(state.reads).toBe(0);
+  };
+  state.activeMembership=false;await reject();
+  state.activeMembership=true;state.activeRole="LEARNER";await reject();
+  state.activeRole="MENTOR";state.access="LEARNER";await reject();
+  state.access="MENTOR";state.scopeOrganizationId="foreign-org";await reject();
+  state.scopeOrganizationId="org-a";state.moduleEnabled=false;await reject();
+ });
+ it("PROJ-BREAK-MENTOR-167 rejects malformed meeting identifiers before any data read",async()=>{
+  for(const path of [{...ids,meetingId:"../../../other"},{...ids,organizationId:"foreign"},
+   {...ids,projectId:"not-uuid"}]){
+   await expect(getMentorMeetingNotes(context,path)).rejects.toThrow();
+  }
+  expect(state.reads).toBe(0);
+ });
 });
 
 describe("PROJ-BREAK-MENTOR meeting notes service transactional authorization",()=>{
