@@ -66,6 +66,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     .from(placementJoiningOutcomes)
     .innerJoin(placementOffers,eq(placementOffers.id,placementJoiningOutcomes.offerId))
     .where(and(eq(placementOffers.applicationId,placementApplications.id),
+     eq(placementOffers.status,"ACCEPTED"),
      eq(placementJoiningOutcomes.status,"JOINED"))));
   const stageConditions:Record<Exclude<HrApplicantStage,"ALL">,ReturnType<typeof eq>|ReturnType<typeof exists>>={
    APPLIED:eq(placementApplications.status,"SUBMITTED"),
