@@ -1,5 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
+import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
+import {NextResponse} from "next/server";
 import { tpoBranchSeasonQuerySchema, tpoBranchSeasonCsv } from "@/modules/placements/tpo-branch-season-model";
 import { getTpoBranchSeasonDashboard } from "@/modules/placements/tpo-branch-season-service";
 
@@ -8,9 +10,11 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    const query = tpoBranchSeasonQuerySchema.parse(
-      Object.fromEntries(new URL(request.url).searchParams.entries()),
-    );
+    const params = new URL(request.url).searchParams;
+    if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
+      status:400,headers:{"Cache-Control":"private, no-store"},
+    });
+    const query = tpoBranchSeasonQuerySchema.parse(Object.fromEntries(params.entries()));
     const context = await getCurrentRequestContext();
     const data = await getTpoBranchSeasonDashboard(context, query);
     const csv = tpoBranchSeasonCsv(data.season?.name ?? "No season", data.rows);
