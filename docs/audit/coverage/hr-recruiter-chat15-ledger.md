@@ -247,3 +247,15 @@ These are written source/tests only; **no tests, CI, typecheck, or database comm
 | `listHrNotifications` | `tests/unit/HR-BREAK-chat15-notifications-service-106.test.ts` | Wrong-college IDOR denied; inactive/swapped actor; no grants; multi-college chooser; empty authorized job list does not query notification tables; unexpected body flags rejected | Real employer notification rows, revocation mid-page and exactly-once read receipts |
 
 Behavioral test source has been authored, **not executed**. Existing HR per-export, HTTP, PostgreSQL and UI release gate remains OPEN.
+
+
+## Additional HR account and route-level permission checks — 2026-10-19
+
+| Export or actual HTTP/page | Behavioral case file | Account / state / concurrency claim supported by source test | Unverified gate |
+|---|---|---|---|
+| `listRecruiterCalendarEvents`, `recruiterCalendarQuerySchema` | `tests/unit/HR-BREAK-chat15-calendar-service-107.test.ts` | Invalid or inverted/oversized date range fails before grant lookup, no authorized jobs skips global SQL, draft/archived jobs never authorize event data, revoked grant failures propagate without secondary reads | PostgreSQL interview/slot data and 1k jobs, final cloud CI |
+| `/recruiter/loading`, `/recruiter/error`, `/recruiter/not-found`, `/tracker/loading`, `/tracker/error` | `tests/unit/HR-BREAK-chat15-recruiter-tracker-fallback-108.test.tsx` | Authenticated role loading delegates to bounded loading, errors pass the actual reset action through private-safe boundary, missing recruiter URL offers a return path, visible fallback retry invokes handler once | Timed browser fallback, 320px/390px and keyboard |
+| `hrRecruiterReplySchema` | `tests/unit/HR-BREAK-chat15-reply-bytes-109.test.ts` | NUL/unprintable control bytes rejected before DB TEXT storage; legitimate multiline/trimmed replies retained; strict user ID override denial and 4000-byte limit | Real recruiter HTTP and TPO receipt delivery |
+| `POST /api/placements/recruiter/drives/proposal` | `tests/unit/HR-BREAK-chat15-proposal-post-api-110.test.ts` | Same-origin before body read, valid draft and idempotent receipt statuses, cached principal swap 403, invalid draft denial, private DB/session outages map to sanitized response | PostgreSQL concurrent submission ID, notification exactly once, authenticated browser |
+
+Every test is **authored but unexecuted**; no CI was run. The larger HR, Recruiter and Tracker exhaustive queue remains OPEN.
