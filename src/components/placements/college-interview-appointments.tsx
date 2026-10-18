@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -99,17 +100,17 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
-      }))} className="inline-flex min-h-10 items-center rounded border border-border px-3 text-primary-text">
+      }))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-primary-text">
       Download .ics</a>:null}
      {row.status==="SCHEDULED"?<>
       <button type="button" disabled={busy} onClick={()=>open(row)}
-       className="min-h-10 rounded border border-border px-3 text-primary-text">Edit</button>
+       className="min-h-11 rounded border border-border px-3 text-primary-text">Edit</button>
       <button type="button" disabled={busy} onClick={()=>void decide(row,"COMPLETED")}
-       className="min-h-10 rounded border border-border px-3">Completed</button>
+       className="min-h-11 rounded border border-border px-3">Completed</button>
       <button type="button" disabled={busy} onClick={()=>void decide(row,"NO_SHOW")}
-       className="min-h-10 rounded border border-border px-3">No Show</button>
+       className="min-h-11 rounded border border-border px-3">No Show</button>
       <button type="button" disabled={busy} onClick={()=>void decide(row,"CANCEL")}
-       className="min-h-10 rounded border border-border px-3 text-error">Cancel</button>
+       className="min-h-11 rounded border border-border px-3 text-error">Cancel</button>
      </>:<span className="text-body">Recorded</span>}
     </div></td>
    </tr>)}</tbody>
@@ -117,9 +118,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {!appointments.length?<p className="text-sm text-body">No candidate interviews have been scheduled for this drive.</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   {error&&!show?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {show?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <div role="dialog" aria-modal="true" aria-label={editing?"Edit interview":"Schedule interview"}
-    className="max-h-[90vh] w-full max-w-xl space-y-3 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl">
+  <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}>
     <h3 className="text-lg font-semibold">{editing?"Edit interview":"Schedule interview"}</h3>
     <label className="grid gap-1 text-sm">Round<select value={roundId} disabled={Boolean(editing)}
      onChange={e=>setRoundId(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3">
@@ -153,8 +152,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      <button type="button" disabled={busy} onClick={()=>setShow(false)}
       className="min-h-11 rounded border border-border px-4">Cancel</button>
     </div>
-   </div>
-  </div>:null}
+  </Dialog>
   <ConfirmDialog open={decision!==null} onOpenChange={open=>{if(!open&&!busy)setDecision(null);}}
    title={decision?.action==="CANCEL"?"Cancel interview?":decision?.action==="NO_SHOW"?"Mark No Show?":"Mark interview completed?"}
    description="This action is recorded and the learner will be notified."

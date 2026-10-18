@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -40,9 +41,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
  return <>{confirmation}
   <button type="button" onClick={()=>void show()} className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text">
    Reassign class schedules</button>
-  {open?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <section role="dialog" aria-modal="true" aria-label="Reassign class schedules"
-    className="w-full max-w-xl space-y-4 rounded-xl bg-surface p-5">
+  <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}} title="Reassign class schedules" dismissible={!busy}>
     <div className="flex justify-between gap-3"><h2 className="font-semibold">Reassign class schedules</h2>
      <button type="button" disabled={busy} onClick={()=>setOpen(false)}
       className="min-h-11 rounded border border-border px-3">Close</button></div>
@@ -66,7 +65,6 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
        {row.title}: {row.reason}</li>)}
      </ul>
     </section>:null}
-   </section>
-  </div>:null}
+  </Dialog>
  </>;
 }

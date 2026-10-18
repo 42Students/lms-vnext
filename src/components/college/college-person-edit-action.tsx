@@ -1,4 +1,5 @@
 "use client";
+import {Dialog} from "@/components/ui/dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
 import {useState,useTransition,type FormEvent} from "react";
@@ -71,9 +72,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
       {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
     </button>
     {success&&<span role="status" className="ml-2 text-xs text-body">{success}</span>}
-    {open&&<div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <section role="dialog" aria-modal="true" aria-label={kind==="FACULTY"?"Edit Faculty":"Edit Student"}
-        className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-xl bg-surface p-5 shadow-xl">
+    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending}>
         <div className="flex items-start justify-between gap-3">
           <h2 className="text-lg font-semibold">{kind==="FACULTY"?"Edit Faculty":"Edit Student"}</h2>
           <button type="button" disabled={pending} onClick={()=>setOpen(false)}
@@ -161,7 +160,6 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               className="min-h-11 rounded border border-border px-4">Cancel</button>
           </div>
         </form>}
-      </section>
-    </div>}
+    </Dialog>
   </div>;
 }
