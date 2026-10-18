@@ -19,13 +19,20 @@ describe("HR-BREAK-drive-payload-01: TPO review-safe recruiter job drafts",()=>{
  });
  it("off-campus drives require a safe HTTPS application URL, never javascript, credentials or an on-campus link",()=>{
   for(const externalApplicationUrl of ["","http://careers.example/apply",
-   "javascript:alert(1)","https://user:pass@careers.example/apply","file:///tmp/private"]){
+   "javascript:alert(1)","https://user:pass@careers.example/apply","file:///tmp/private",
+   "https://localhost/apply","https://localhost./apply","https://dev.local./apply",
+   "https://127.0.0.1/apply","https://10.0.0.2/apply","https://192.168.1.1/apply",
+   "https://169.254.169.254/latest/meta-data/"]){
    expect(hrDriveDraftSchema.safeParse({...base(),driveMode:"OFF_CAMPUS",externalApplicationUrl}).success).toBe(false);
   }
   expect(hrDriveDraftSchema.safeParse({...base(),driveMode:"OFF_CAMPUS",
    externalApplicationUrl:"https://careers.example/apply"}).success).toBe(true);
   expect(hrDriveDraftSchema.safeParse({...base(),driveMode:"ON_CAMPUS",
    externalApplicationUrl:"https://careers.example/apply"}).success).toBe(false);
+  const copied=hrDraftFromAuthorizedJob({...job,recruiterDriveMode:"OFF_CAMPUS",
+   externalApplicationUrl:"https://localhost./apply"},[]);
+  expect(copied.externalApplicationUrl).toBe("");
+  expect(hrDriveDraftSchema.safeParse(copied).success).toBe(false);
  });
  it("internships need stated stipend and full-time compensation cannot silently mismatch its parts",()=>{
   expect(hrDriveDraftSchema.safeParse({...base(),employmentType:"INTERNSHIP",stipendMonthlyInr:""}).success).toBe(false);
