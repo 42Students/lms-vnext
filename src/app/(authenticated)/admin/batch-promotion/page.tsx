@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import { CollegePromotionPreviewError, listCollegePromotionOptions,
   previewCollegeBatchPromotion } from "@/modules/academics/college-batch-promotion-service";
 import { readAdminPromotionParams, summarizeAdminPromotion } from "@/modules/academics/admin-batch-promotion-read-model";
@@ -74,21 +75,25 @@ export default async function SuperAdminBatchPromotionPage({
         <h2 className="text-lg font-semibold">Batches</h2>
         <p role="status" className="text-sm text-muted-foreground">{visibleCohorts.length} shown of {options.cohorts.length} batches</p>
       </div>
-      {visibleCohorts.length ? <div className="overflow-x-auto"><table className="min-w-[44rem] w-full text-left text-sm">
-        <thead><tr className="border-b border-border"><th className="p-2">Batch</th><th className="p-2">Semester</th>
-          <th className="p-2">Academic Year</th><th className="p-2">Students</th><th className="p-2">Status</th><th className="p-2">Action</th></tr></thead>
-        <tbody>{visibleCohorts.map(batch=><tr key={batch.id} className="border-b border-border">
-          <td className="p-2">{batch.programName} · {batch.name}</td>
-          <td className="p-2">{batch.currentTermNumber ?? "—"}</td>
-          <td className="p-2">{batch.currentAcademicYearStart ? `${batch.currentAcademicYearStart}–${batch.currentAcademicYearStart+1}` : "—"}</td>
-          <td className="p-2 tabular-nums">{batch.activeLearners}</td>
-          <td className="p-2">{batch.status}</td>
-          <td className="p-2"><Link href={"/admin/batch-promotion?"+new URLSearchParams({
-             ...(input.data.programId?{programId:input.data.programId}:{}),cohortId:batch.id,
-             ...(showCompleted?{showCompleted:"1"}:{}),
-           })} className="font-semibold text-[var(--lms-teal-deep)] underline">Preview →</Link></td>
-        </tr>)}</tbody>
-      </table></div>:<p role="status" className="text-sm text-muted-foreground">No batches match the selected program and status.</p>}
+      <DataTable<(typeof visibleCohorts)[number]>
+        caption="Batches"
+        rows={visibleCohorts}
+        getRowKey={batch=>batch.id}
+        empty={<p role="status" className="text-sm text-muted-foreground">No batches match the selected program and status.</p>}
+        columns={[
+          {key:"batch",header:"Batch",mobilePriority:"primary",cell:batch=><strong>{batch.programName} · {batch.name}</strong>},
+          {key:"semester",header:"Semester",mobilePriority:"secondary",cell:batch=>batch.currentTermNumber??"—"},
+          {key:"year",header:"Academic Year",mobilePriority:"secondary",cell:batch=>batch.currentAcademicYearStart?`${batch.currentAcademicYearStart}–${batch.currentAcademicYearStart+1}`:"—"},
+          {key:"students",header:"Students",mobilePriority:"secondary",cell:batch=><span className="tabular-nums">{batch.activeLearners}</span>},
+          {key:"status",header:"Status",mobilePriority:"secondary",cell:batch=>batch.status},
+          {key:"action",header:"Action",mobilePriority:"action",cell:batch=><Link
+            href={"/admin/batch-promotion?"+new URLSearchParams({
+              ...(input.data.programId?{programId:input.data.programId}:{}),cohortId:batch.id,
+              ...(showCompleted?{showCompleted:"1"}:{}),
+            })}
+            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Preview →</Link>},
+        ]}
+      />
     </section>
     {invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
       action={<Link href="/admin/batch-promotion" className="font-semibold text-[var(--lms-teal-deep)]">Reset selection</Link>} /> :
