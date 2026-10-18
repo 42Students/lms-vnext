@@ -1,0 +1,24 @@
+# Chat-11 defects and hardening log — 2026-10-18
+
+Scope: IIT Dharwad College Admin Projects role journeys, TPO Settings final-sprint and latest unit/typecheck stabilization. All changes are isolated to `chatgpt/chat-11-b`. Findings are source-confirmed; PostgreSQL/Vitest, browser and strict TypeScript execution are **not** claimed.
+
+| ID | Severity | Evidence | Fix | Regression | Validation |
+|---|---|---|---|---|---|
+| CHAT11-PROJ-01 | BLOCKER | `src/app/(authenticated)/college/projects/page.tsx` read `context.membership.collegeId` directly, ignoring explicit Super Admin acting-college scope and bypassing the navigation-level manage check. | `e63d2cf8`: call centrally guarded `getProjectAdminCollegeId(context)`, fail closed and pass selected ID into both scoped services. | `PROJ-COL-SCOPE-01/02/03` in `tests/unit/chat11-college-projects-role-journeys.test.ts` | Auth/service integration pending |
+| CHAT11-PROJ-02 | MAJOR | Same page passed raw `Number(page)`, `Number(pageSize)` and casted arbitrary status directly into service Zod parsing: malformed/overflowing link triggered an error rather than a usable list. | `51ed6eae`, `e63d2cf8`: pure bounds/enum sanitizer, caps search at 120 chars, keeps legitimate filters and gracefully defaults malformed deep links. | `PROJ-COL-QUERY-01/02` | Page browser 320/360/390px pending |
+| CHAT11-PROJ-03 | MAJOR | `replaceCollegeProjectLearners` compared `expectedUpdatedAt` before checking whether the already-applied learner set was unchanged; retry after a timeout falsely returned `PROJECT_MEMBER_CONFLICT`. | `dc9d8ebb`: detect identical no-op under row locks before the stale-token check; mutations with different target sets still use optimistic lock. | `PROJ-COL-RETRY-01`, `PROJ-COL-STALE-03`, `PROJ-COL-TENANT-01` in `tests/integration/chat11-college-project-roster-retry.test.ts` | Real PostgreSQL required |
+| CHAT11-TPO-01 | MAJOR | TPO college-wide rules relied on React state `busy`, leaving a before-render double-submit window; controls below 44px. | `c6f296e2`: synchronous ref latch and 44px controls while retaining old copy/limits. | `TPO-settings-audit-11` in `tests/unit/chat11-tpo-settings-final-hardening.test.ts` | Browser double-click pending |
+| CHAT11-TPO-02 | MAJOR | Personal notification preference API displayed an arbitrary server error string (`result.error`) to TPO; rapid repeat submissions possible. | `6e45a9fd`: bounded friendly mapping for 401/403/409/storage failure, safe non-JSON recovery and ref latch, edited settings retained on failure. | `TPO-settings-audit-80` in `tests/unit/chat11-tpo-settings-final-hardening.test.ts` | Browser failure injection pending |
+| CHAT11-TPO-03 | MAJOR | Course readiness accepted fractional completed counts and duplicate course evidence, potentially producing misleading READY. | `950ff17d`: reject noninteger/duplicate evidence with UNAVAILABLE fail-closed outcome. | `TPO-settings-audit-41` in `tests/unit/chat11-tpo-settings-final-hardening.test.ts` | Service/PostgreSQL acceptance pending |
+| CHAT11-CI-01 | BUILD | TPO settings `as const` navigation test used a union-array `.map` callback generating TypeScript inference errors; college checklist test dereferenced nullable href in a compound condition. | `3a2d4c8f`, `d3987203`: explicit iteration and local narrowed href preserving all assertions. | Existing `chat11-final-TPO-settings-audit-07` and `chat11-college-setup-integrity-round11` unit suites | CI TypeScript rerun required |
+
+## Latest r9 unit-failure disposition
+
+`tests/unit/company-share-mobile-cards.test.ts` is the only chat-11 entry in `docs/orchestrator/unit-failures-r9.md`. On the synchronized main baseline, the tested `src/app/company-share/[token]/page.tsx`, shared DataTable mobile/desktop branches, and `projectCompanyShareRows` match the listed selected-field assertions. This appears fixed by subsequent main changes. **Do not delete or loosen this privacy test**; require the orchestrator to rerun it on the updated branch.
+
+## Remaining blockers and ownership
+
+- The connected GitHub editing surface cannot execute `npm`, `vitest`, `tsc`, local PostgreSQL, or 320/360/390px browser E2E. All authored regression tests are **unexecuted**, not green.
+- Full chat-11 master-queue ledger for TPO course progress/setup/notices/preferences and Super Admin tenants/branding/sign-in/readiness remains incomplete. This log does not certify exhaustive coverage, 90% Projects branch coverage, or IIT Dharwad production readiness.
+- TPO-settings-audit-60 Excel parity and broader tenant/module role matrices must be verified by the orchestrator; CSV-only export is not labelled full Excel/CSV parity.
+- Cross-audit of 26 `/mentor` routes was previously source-completed in `docs/design-system/audits/UX-ROLLOUT-AUDIT-mentor-chat-11.md` (2 BLOCKER, 21 MAJOR source fixes); runtime sign-off pending.
