@@ -10,6 +10,7 @@ export type HrNotificationRecord={id:string;subjectId:string;eventType:string;
 export function projectHrNotifications(rows:readonly HrNotificationRecord[],jobs:readonly {id:string;title:string}[]) {
  const names=new Map(jobs.map(j=>[j.id,j.title]));
  return rows.filter(row=>names.has(row.subjectId)&&
+  Number.isFinite(row.createdAt.getTime())&&
   HR_NOTIFICATION_EVENTS.some(kind=>kind===row.eventType)).map(row=>({
   id:row.id,jobId:row.subjectId,title:names.get(row.subjectId)!,
   label:row.eventType===HR_NOTIFICATION_EVENTS[0]?"Drive published":"Drive closed",

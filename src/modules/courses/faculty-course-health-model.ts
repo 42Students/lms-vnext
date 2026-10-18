@@ -22,10 +22,15 @@ export function selectFacultyCourseHealthCandidates<T extends FacultyCourseHealt
     row.deliveryId === query.deliveryId &&
     (row.status === "PUBLISHED" || (row.kind === "QUIZ" && row.status === "CLOSED")) &&
     (query.kind === "ALL" || row.kind === query.kind),
-  ).sort((a,b) =>
-    (b.dueAt?.getTime() ?? 0) - (a.dueAt?.getTime() ?? 0) ||
-    a.kind.localeCompare(b.kind) ||
-    a.id.localeCompare(b.id));
+  ).sort((a,b) => {
+    const date = (value: Date | null) => {
+      const instant = value?.getTime() ?? 0;
+      return Number.isFinite(instant) ? instant : 0;
+    };
+    return date(b.dueAt) - date(a.dueAt) ||
+      a.kind.localeCompare(b.kind) ||
+      a.id.localeCompare(b.id);
+  });
   const total = matches.length;
   const pageSize = 5;
   const totalPages = Math.max(1,Math.ceil(total/pageSize));
