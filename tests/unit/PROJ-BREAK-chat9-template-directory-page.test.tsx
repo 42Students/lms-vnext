@@ -77,6 +77,20 @@ describe("Super Admin Projects template directory graceful page states", () => {
     expect(state.directoryCalls).toBe(1);
   });
 
+  it("PROJ-BREAK-templates-108 duplicate and unknown filter keys cannot silently expand template query",async()=>{
+    for(const raw of [
+      {q:["own","other"]},{status:["PUBLISHED","ARCHIVED"]},
+      {page:["1","2"]},{collegeId:"other-tenant"},
+      {q:"Dharwad",sort:"secret"},
+    ]){
+      const tree=await SuperAdminProjectTemplatesPage({searchParams:Promise.resolve(raw)});
+      const content=visibleProps(tree).join(" ");
+      expect(content).toContain("Invalid template filters");
+      expect(content).toContain("Clear filters");
+      expect(state.directoryCalls).toBe(0);
+    }
+  });
+
   it("PROJ-BREAK-ux-32 malformed query shows reset without touching directory service", async () => {
     const tree = await SuperAdminProjectTemplatesPage({
       searchParams: Promise.resolve({ status: "ACTIVATED", page: "-99" }),
