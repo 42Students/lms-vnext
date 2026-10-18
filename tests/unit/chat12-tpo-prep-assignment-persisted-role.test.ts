@@ -60,6 +60,7 @@ describe("TPO-students-10 preparation assignment current TPO permission boundary
   expect(lock).toBeGreaterThan(guard);
   expect(notification).toBeGreaterThan(lock);
   expect(src).toContain('eq(departments.collegeId,college.id)');
+  expect(src.match(/isNull\(departments\.archivedAt\)/g)).toHaveLength(2);
   expect(src).toContain('onConflictDoNothing()');
  });
 });
