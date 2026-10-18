@@ -1,6 +1,7 @@
 import "server-only";
 import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {tpoPrepAssignmentInputSchema} from "./tpo-prep-assignment-model";
+import {summarizeTpoPrepAssignment} from "./tpo-prep-assignment-result-model";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,courseOfferings,courses,departments,
  inAppNotifications,learnerProgramEnrollments,membershipRoles,placementTpoPrepAssignments,
@@ -104,15 +105,9 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
    }))).onConflictDoNothing()
    .returning({membershipId:placementTpoPrepAssignments.membershipId}):[];
   const newlyAssigned=new Set(inserted.map(row=>row.membershipId));
-  const results:{id:string;status:"assigned"|"duplicate"|"skipped"}[]=
-   input.membershipIds.map(id=>({
-    id,status:!available.has(id)?"skipped":newlyAssigned.has(id)?"assigned":"duplicate",
-   }));
-  const counts={
-   assigned:results.filter(row=>row.status==="assigned").length,
-   duplicate:results.filter(row=>row.status==="duplicate").length,
-   skipped:results.filter(row=>row.status==="skipped").length,
-  };
+  const {results,counts}=summarizeTpoPrepAssignment(
+   input.membershipIds,new Set(available.keys()),newlyAssigned,
+  );
   if(counts.assigned){
    const [event]=await tx.insert(activityEvents).values({
     collegeId:college.id,organizationId:college.organizationId,

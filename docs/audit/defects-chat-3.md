@@ -188,6 +188,12 @@ The selected `/admin/faculty-assignment`, `/admin/people/directory`, and global 
 
 **Fix:** Each entrypoint now redirects non-Super-Admin actors before the list data load. Existing central permission service checks remain in force. `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts` explicitly verifies `SA-PEOPLE-ROOT-02`. Tests authored, not run; browser and CI checks pending.
 
+### SA-ACADEMICS-SECTION-OPS-039 — Faculty could probe private Section identifiers before administrative role denial (S1)
+
+`getSectionOperationsWorkspace` fetched `loadSectionScope(sectionId)` before its `academics.manage` check. Ordinary Faculty, Mentor and Learner principals lacked permission to manage a Section but could still cause a Section lookup and distinguish internal scope failures from privileged-access denial when supplying arbitrary IDs.
+
+**Fix:** Explicitly require active `COLLEGE_ADMIN` or `SUPER_ADMIN` actor role before the Section ID lookup, then preserve the existing resource-specific `academics.manage` authorization. Direct behavioral `tests/unit/chat3-sa-section-workspace-permission-matrix.test.ts` checks wrong-role no-read, selected-college period SQL, authorized child views and foreign-period fail-closed behavior. CI/database tests pending.
+
 ### SA-ACADEMICS-PROGRAM-READ-038 — college program deletion-readiness counts exposed to ordinary academic readers (S2)
 
 `listProgramContents` returns counts of program semesters, batches and classes for future deletion safety. It required only `academics.read`, which is also granted to active Faculty, Mentor and Learner in the same college and was insufficient as a service boundary for privileged bulk program lifecycle controls.

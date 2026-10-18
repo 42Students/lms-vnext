@@ -139,6 +139,19 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain('job.round_status === "CANCELLED"');
  });
 
+ it("PROJ-HARNESS-PREFLIGHT-19 refuses partially migrated role, publication and lifecycle columns",()=>{
+   for(const pair of [
+     '["placement_job_role_options", "is_primary"]',
+     '["placement_applications", "role_option_id"]',
+     '["placement_jobs", "application_deadline"]',
+     '["placement_jobs", "minimum_annual_ctc_inr"]',
+     '["project_templates", "published_version"]',
+     '["project_releases", "status"]',
+   ])expect(helper).toContain(pair);
+   expect(helper).toContain("information_schema.columns");
+   expect(helper).toContain("registered migration columns missing");
+ });
+
  it("PROJ-HARNESS-GUARD-05 always rolls back transaction and savepoint errors",()=>{
    expect(helper).toContain('if (begun) await client.query("ROLLBACK")');
    expect(helper).toContain("client.release()");
