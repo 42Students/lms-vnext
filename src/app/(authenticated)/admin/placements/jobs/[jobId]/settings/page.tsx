@@ -7,17 +7,9 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { getPlacementJob } from "@/modules/placements/job-service";
+import {driveSettingsIstDate} from "@/modules/placements/admin-drive-settings-date-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
-/** Invalid legacy posting dates must not crash the private drive workspace. */
-function driveSettingsIstDate(value:unknown):string {
- if(!(value instanceof Date)&&typeof value!=="string")return "Not configured";
- const instant=value instanceof Date?value:new Date(value);
- if(!Number.isFinite(instant.getTime()))return "Not configured";
- return new Intl.DateTimeFormat("en-IN",{
-   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
- }).format(instant);
-}
 export default async function DriveSettingsPage({params}:{params:Promise<{jobId:string}>}){
  const {jobId}=await params;
  const context=await getCurrentRequestContext();
