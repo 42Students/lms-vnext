@@ -2,6 +2,7 @@ import "server-only";
 import {and,eq,inArray,isNull} from "drizzle-orm";
 import {replaceCollegeProjectRosterSchema} from "./college-project-roster-model";
 import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {collegeMemberships,membershipRoles,projectInstances,projectMembers,users} from "@/db/schema";
 import {ProjectsServiceError} from "./errors";
 import {requireProjectManageAccess} from "./access";
@@ -21,6 +22,12 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
   }).from(projectInstances).where(eq(projectInstances.id,scope.project.id)).for("update").limit(1);
   if(!project||project.teamGroupId||project.status==="ARCHIVED")
    throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+  // A stale request context cannot authorize a change after account disable,
+  // role removal, tenant switch or membership suspension. Serialize this check
+  // with the locked project and membership rows in the mutation transaction.
+  await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+   collegeId:scope.collegeId,organizationId:scope.organizationId,
+  });
   const existing=await tx.select().from(projectMembers)
    .where(and(eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
    .for("update");

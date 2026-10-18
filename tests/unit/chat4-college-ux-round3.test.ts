@@ -10,7 +10,12 @@ describe("Chat-4 college UX round 3",()=>{
  });
  it("UX-college-batches-cohortId-students-01 adds safe narrow-screen affordances",()=>{
  const page=source("batches/[cohortId]/students");
- expect(page).toContain('<DataTable rows={students}');
+ expect(page).toContain("<DataTable");
+ expect(page).toContain("rows={students}");
+ expect(page).toContain('caption="Students in this batch"');
+ expect(page).toContain('getRowKey={item => item.membershipId}');
+ expect(page).toContain('mobilePriority: "primary"');
+ expect(page).toContain('mobilePriority: "action"');
  expect(page).toContain("min-h-11");
  
  });
