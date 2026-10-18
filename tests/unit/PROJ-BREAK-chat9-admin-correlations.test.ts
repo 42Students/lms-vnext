@@ -16,6 +16,20 @@ const state = vi.hoisted(() => ({
   selected: [] as Record<string, unknown>[],
 }));
 
+type QueryChain = {
+  from: () => QueryChain;
+  innerJoin: () => QueryChain;
+  leftJoin: () => QueryChain;
+  where: () => QueryChain;
+  orderBy: () => QueryChain;
+  limit: () => QueryChain;
+  offset: () => QueryChain;
+  then: (
+    fulfill: (rows: unknown[]) => unknown,
+    reject?: (reason: unknown) => unknown,
+  ) => Promise<unknown>;
+};
+
 vi.mock("@/modules/projects/scope", () => ({
   loadProjectCollegeScope: async (id: string) => ({
     id,
@@ -27,7 +41,7 @@ vi.mock("@/db/client", () => ({
   getDb: () => ({
     select: (columns: Record<string, unknown>) => {
       state.selected.push(columns);
-      const chain = {
+      const chain: QueryChain = {
         from: () => chain,
         innerJoin: () => chain,
         leftJoin: () => chain,
