@@ -292,3 +292,15 @@ No CI or database executed. Test cases are source-authored pending the final int
 | `POST /api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/notes` | `tests/unit/HR-BREAK-chat15-applicant-notes-api-117.test.ts` | Cross-origin forbidden before principal lookup, 16KiB parser cap, invalid/oversized JSON friendly 400/413, authorized job/application note service, revoked private candidate failure does not claim success | Real notes ownership, withdrawn-after-shortlist, audit/event exactly once |
 
 Both cases remain **authored but not executed**. Do not equate mocked behavior with production acceptance.
+
+
+| `GET /api/placements/recruiter/drives/export` | `tests/unit/HR-BREAK-chat15-drive-export-api-118.test.ts` | Exact role principal compared before data read, duplicate/unknown query keys 400 before auth context, wrong-college IDOR nonenumerating 404, authorized search with scoped college and bounded page size, no-store read-only export, private SQL failure sanitized | Real PostgreSQL drive cap, two companies and cross-tenant grants, live spreadsheet/view parity |
+
+
+| `GET /api/placements/recruiter/jobs` | `tests/unit/HR-BREAK-chat15-jobs-api-119.test.ts` | Actual authorized empty read, exact scoped job payload passthrough, central grant denial does not become a global listing, identity backend outage maps to safe error rather than fabricated empty portfolio; GET has no writes | Real persisted active/expired grants, two-company tenancy and API cache/ETag behavior |
+
+
+| `buildHrDrivesCsv` | `tests/unit/HR-BREAK-chat15-drive-csv-120.test.ts` | Malformed persisted deadline is an actionable unavailable value, not an entire failed employer CSV; deliberate no-deadline stays blank; hard 200-row limit with explicit omitted warning; spreadsheet-safe formula text | Real published/closed cross-college PostgreSQL job export and viewer |
+
+
+| `GET /api/placements/recruiter/drives/requests` | `tests/unit/HR-BREAK-chat15-request-api-71.test.ts` extended with HR-DRIVE-REQUEST-121 | Exact college ID must be the only query parameter; repeated/unknown keys are rejected 400 before any actor or request history fetch, alongside prior valid GET no-write/replay tests | Dual-tenant recruiter request history, revoked employer and real DB snapshots |

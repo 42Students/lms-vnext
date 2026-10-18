@@ -200,3 +200,15 @@ Coverage-only without a new defect claim: HR-CALENDAR-SERVICE-107 and HR-TRACKER
 | HR-APPLICANT-NOTES-117 | S2 abuse/resilience | Employer-private applicant note POST also used unbounded `request.json()`. It now bounds at 16KiB and maps invalid/malformed request consistently without touching note storage. | `HR-BREAK-chat15-applicant-notes-api-117.test.ts` | Actual chunked HTTP, own/foreign job and withdrawn candidate E2E |
 
 Tests authored only, not executed, per owner directive.
+
+
+| HR-DRIVES-EXPORT-118 | S2 employer privacy | Recruiter drives CSV silently chose the first query value when duplicated college/filter fields were supplied, and its route only checked an active recruiter profile without asserting the cached recruiter principal matches the authenticated user. It now rejects ambiguous/unknown query keys before data reads and identity mismatch before job search, retaining no-store CSV and exact company grant scoping. | `HR-BREAK-chat15-drive-export-api-118.test.ts` | Real cross-college/organization grants, browser and PostgreSQL pending |
+
+
+| HR-JOBS-API-119 | S2 employer-private caching | `GET /api/placements/recruiter/jobs` returned recruiter-owned job rows without an explicit `Cache-Control: private, no-store` header. The response now prohibits intermediary/browser caching of an authenticated recruiter portfolio, while preserving the central exact-grant job lookup and sanitized error mapping. | `HR-BREAK-chat15-jobs-api-119.test.ts` | Actual response headers and cross-session cache behavior in browser/production proxy pending |
+
+
+| HR-DRIVES-CSV-120 | S3 export resilience | Recruiter drive CSV attempted to format a corrupted persisted deadline without checking validity, causing an entire otherwise authorized export to fail. It now renders a truthful unavailable placeholder for corrupt dates while preserving an intentionally absent deadline as empty. | `HR-BREAK-chat15-drive-csv-120.test.ts` | Real database/browser spreadsheet viewer test pending |
+
+
+| HR-DRIVE-REQUEST-121 | S2 tenant query ambiguity | The employer request history GET accepted repeated `collegeId` values and unknown query fields by silently taking the first value, allowing ambiguous/stale tabs to resolve without explicit intent. It now rejects duplicate and unknown keys before invoking the caller or reading company requests. | `HR-BREAK-chat15-request-api-71.test.ts` (new HR-DRIVE-REQUEST-121 case) | Real HTTP plus two-college role/session matrix pending |
