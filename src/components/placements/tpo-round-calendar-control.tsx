@@ -79,7 +79,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
   </p>;
   return <section className="space-y-4 border-b border-border pb-6">
     <label className="block text-sm font-semibold text-foreground">Drive round
-      <select className="mt-1 block min-h-11 w-full rounded-[9px] border border-border bg-surface p-2 text-body"
+      <select className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2 text-body"
         value={id} onChange={(event) => choose(event.target.value)}>
         <option value="">Select a round</option>
         {choices.map((item) => <option key={item.id} value={item.id}>
@@ -92,7 +92,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
         Duration: {round.durationMinutes ?? "Unknown"} minutes. On-campus rounds
         need a recorded duration for venue collision checking.</p>
       <label className="block text-sm font-semibold text-foreground">Date/time (IST)
-        <input type="datetime-local" className="mt-1 block min-h-11 w-full rounded-[9px] border border-border bg-surface p-2"
+        <input type="datetime-local" className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2"
           value={dateInput} onChange={(event) => setDateInput(event.target.value)} />
       </label>
       {blockedDay?<p role="alert" className="rounded border border-warning bg-warning-subtle p-3 text-sm text-warning-text">
@@ -102,7 +102,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
        Blocked-date storage is unavailable; schedule clashes cannot be verified.
       </p>:null}
       <label className="block text-sm font-semibold text-foreground">Mode
-        <select className="mt-1 block min-h-11 w-full rounded-[9px] border border-border bg-surface p-2"
+        <select className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2"
           value={mode} onChange={(event) => setMode(event.target.value as "ON_CAMPUS" | "VIRTUAL")}>
           <option value="ON_CAMPUS">On campus</option>
           <option value="VIRTUAL">Virtual</option>
@@ -112,7 +112,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
         {mode === "ON_CAMPUS" ? "Venue" : "Meeting URL"}
         <input value={mode === "ON_CAMPUS" ? venue : meetingUrl}
           onChange={(event) => mode === "ON_CAMPUS" ? setVenue(event.target.value) : setMeetingUrl(event.target.value)}
-          className="mt-1 block min-h-11 w-full rounded-[9px] border border-border bg-surface p-2" />
+          className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface p-2" />
       </label>
       <label className="block text-sm font-semibold text-foreground">Cancellation reason (for Cancel only)
         <textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000}
@@ -120,11 +120,11 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
       </label>
       <div className="flex flex-wrap gap-3">
         <button disabled={pending} type="button" onClick={() => void submit("SCHEDULE")}
-          className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
+          className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
           {round.status === "PENDING" ? "Confirm schedule" : "Confirm reschedule"}
         </button>
         <button disabled={pending} type="button" onClick={() => void submit("CANCEL")}
-          className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">
+          className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold disabled:opacity-50">
           Confirm cancellation
         </button>
       </div>

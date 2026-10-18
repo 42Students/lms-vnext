@@ -91,7 +91,7 @@ export function TpoRoundDriveDayReadOnly({
               "/tpo/placements/jobs/" +
               encodeURIComponent(data.job.id)
             }
-            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
           >
             ← Back to job Drive Day
           </Link>
@@ -99,13 +99,13 @@ export function TpoRoundDriveDayReadOnly({
       />
 
       <nav aria-label="Round operational actions" className="flex flex-wrap gap-3">
-        <Link href={destinations.results} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
-        <Link href={destinations.schedule} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
+        <Link href={destinations.results} className="inline-flex min-h-11 md:min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
+        <Link href={destinations.schedule} className="inline-flex min-h-11 md:min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
       </nav>
       <p className="text-sm text-body">
         <a
           href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-          className="inline-flex min-h-10 items-center rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary hover:bg-primary-hover text-primary-foreground"
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary hover:bg-primary-hover text-primary-foreground"
         >
           Export round attendance (CSV)
         </a>
@@ -114,7 +114,7 @@ export function TpoRoundDriveDayReadOnly({
         </span>
         <Link
           href={destinations.noShows}
-          className="ml-3 inline-flex min-h-10 items-center font-semibold text-primary-text hover:underline"
+          className="ml-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:underline"
         >
           Review explicit no-shows →
         </Link>
