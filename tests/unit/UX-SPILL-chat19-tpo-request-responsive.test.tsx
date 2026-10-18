@@ -27,6 +27,14 @@ describe("UX-SPILL-TPO-CLIP-02: request mobile cards retain selection and full f
   expect(html).not.toContain("md:block");
   expect(html).not.toContain("min-w-[46rem]");
  });
+ it("keeps sorting, chooser and reset controls keyboard-focusable and 44px tall",()=>{
+  const html=renderToStaticMarkup(<TpoRequestPageClipboard rows={[row]}/>);
+  expect(html).toMatch(/<select[^>]*min-h-11[^>]*>/);
+  expect(html).toMatch(/<summary[^>]*min-h-11[^>]*>Choose columns<\/summary>/);
+  expect(html).toContain("Reset columns");
+  expect(html).toMatch(/class="[^"]*min-h-11[^"]*"[^>]*>Reset columns<\/button>/);
+  expect(html).toContain("focus-visible:outline-2");
+ });
  it("empty authorized page has no phantom request actions and no exportable selection",()=>{
   const html=renderToStaticMarkup(<TpoRequestPageClipboard rows={[]}/>);
   expect(html).toContain("No requests on this page.");
