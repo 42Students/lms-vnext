@@ -100,3 +100,10 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 | SA-placements-projects-77 | DONE in audited source; DB verification pending | `src/modules/projects/template-service.ts` now records template create, revise, publish, unpublish, duplicate, archive, college assign and revoke in the same transaction as the mutation; the archive and assignment paths use template locks. `template-rollback-service.ts` records restored prior version, new version and preservation of workspaces in-transaction. `mentor-release-write-service.ts` now emits distinct RELEASE_CREATED / UPDATED / DELETED activity rather than a sprint update. Existing persisted mentor reassignment, task assignment, resource, readiness and submission activity writers were independently checked. Event types live in `src/modules/activity/taxonomy.ts`. Source tests: `tests/unit/chat13-superadmin-projects-template-audit-gap77.test.ts` (ten checks), `tests/unit/chat13-superadmin-project-release-audit-gap77.test.ts` (three checks), `tests/unit/chat13-superadmin-projects-provenance-gap77.test.ts` (seven checks). Transactional rollback and event consistency must still be verified with real Postgres; source tests were not run. |
 
 No existing migration was modified and the UX playbook is still awaiting audit approval.
+
+
+## chat-15 final sprint independent verification (not runtime-certified)
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-placements-projects-91 | DONE (source) | `src/components/projects/project-workspace.tsx` exposes sprint creation/edit/delete, task editing/reassignment and admin submission review for writable admin scope; `src/modules/projects/access.ts` retains ADMIN/MENTOR-only lifecycle mutation authorization. `tests/unit/chat15-final-sprint-sa-projects-91.test.ts` → `SA-placements-projects-91 allows admin sprint/task authoring while preserving read-only denial`. Test authored but not executed by this lane; PostgreSQL role matrix/browser acceptance outstanding. |

@@ -85,3 +85,38 @@ The previous raw report `<table>` is now rendered via the shared, audited `DataT
 
 | UX-SPILL-DRIVE-DAY-01 | `src/components/placements/placement-drive-day-overview.tsx`: `PlacementDriveDayOverview` | `tests/unit/chat19-drive-day-candidates-mobile.test.tsx` | Direct SSR of candidate name, employer-visible role/contact, membership, schedule exception, applied outcome and empty rounds; no raw 42rem table | Device/keyboard integration and service-level scoping pending |
 | HR-BREAK-NOTIFICATIONS-02 | `src/components/hr/hr-notification-read-button.tsx` / `src/modules/placements/hr-notification-read-feedback-model.ts` / shared `createHrBellMutationGate` | `tests/unit/HR-BREAK-chat19-notification-ack-02.test.tsx` | Same-tick double submits rejected by synchronous gate; terminal successful state; 401/403/404/409/429 safe feedback; active keyboard/44px; POST expectedCreatedAt preserved | DB CAS race/actual browser event integration remains |
+
+## Additional independent messaging cross-audit
+
+| Gap ID | Exported function / boundary | Behavioral test | Cases |
+|---|---|---|---|
+| HR-BREAK-JOIN-CODE-01 | `src/modules/messaging/public-join-code-delivery.ts`: `deliverPublicRecruiterJoinCode` | `tests/unit/HR-BREAK-chat19-recruiter-join-code-delivery.test.ts` | Invalid OTP and Unicode suffix rejected before network; email recipient runtime policy; empty token; insecure endpoint; missing template; correct POST/recipient/template payload; provider 429 and network rejection fail closed |
+
+This is a second-pair-of-eyes test for the chat-16-owned messaging code and fills the `public-join-code-delivery.ts` unreferenced-file gap in the previously generated WEAK-AREAS snapshot. No source change was necessary based on the boundaries inspected. A real delivery provider and device end-to-end test remain outside mocked unit scope.
+
+## Direct messaging receipt-service and CSV second-pair-of-eyes coverage
+
+| Gap | Export | Direct test and cases | Remaining |
+|---|---|---|---|
+| HR-BREAK-MESSAGING-HISTORY-01 | `src/modules/messaging/receipt-history-service.ts` → `exportTpoMessagingHistory` | `tests/unit/HR-BREAK-chat19-messaging-receipt-history-service.test.ts`: no membership, wrong role, suspended/disabled actor, persisted grant recheck within transaction, unsafe filter validation before DB, 2001-row export cap, accepted vs delivered distinction | PostgreSQL actual query isolation, transaction snapshots and large-data EXPLAIN |
+| HR-BREAK-MESSAGING-HISTORY-01 | same → `listTpoMessagingHistory` | Same direct test: role/tenant checks, page request beyond final page clamps, SQL limit 25 and offset 25, provider acceptance not delivery | Parallel role revocation DB integration |
+| HR-BREAK-MESSAGING-CSV-02 | `src/modules/messaging/receipt-history-export-model.ts` → `messagingHistoryCsv` | `tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts`: Unicode format/zero-width/paragraph separators before spreadsheet formulas, CRLF, embedded quoted CSV, aggregate-only privacy, accurate accepted counts | Imported Excel/LibreOffice validation and actual download HTTP headers |
+
+The receipt-history service had no previous direct test reference in the generated weak-areas snapshot. These are independent tests for the chat-16-owned messaging implementation, not a claim that every messaging service has full database coverage.
+
+## Unowned TPO request clipboard evidence
+
+| ID | Public export | Direct test | Cases |
+|---|---|---|---|
+| UX-SPILL-TPO-CLIP-01 | `requestRowsTsv` in `src/components/placements/tpo-request-page-clipboard.tsx` | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` | Selected visible-column projection, default all-column compatibility, empty selection blocked, Unicode/formula injection, TSV delimiter/row forgery, omitted hidden employer/roll values |
+
+This is an independent TPO/HR workflow review; real clipboard permission denial, selection state changes and mobile browser behavior still need interactive acceptance.
+
+## TPO request mobile component cross-audit
+
+| ID | Component | Direct behavioural evidence | Cases |
+|---|---|---|---|
+
+| UX-SPILL-TPO-CLIP-02 | `TpoRequestPageClipboard` component | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` | SSR verifies responsive DataTable cards, request status, employer/name, record selector, empty state and disabled copy; original copy/export model unaffected |
+
+| UX-SPILL-TPO-CLIP-03 | `sortRequestClipboardRows` and `selectedRequestClipboardRows` in request clipboard model | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` | Immutable newest/oldest sorting, decided-null ordering, exact visible-page subset, no stale prior-page selection leakage |

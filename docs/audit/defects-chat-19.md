@@ -157,3 +157,54 @@ The published `docs/orchestrator/unit-failures-latest.md` still references CI `f
 | UX-college-source-coverage-02 | Page navigation already calls `getProjectAdminCollegeId` before scoped reads; exact required strings currently match. Reintroducing direct `membership.collegeId` as older tests demanded would weaken Super Admin acting-college security. | Retain route/source checks; additionally invoke the actual resolver with College Admin permission allowed and denied, and with recruiter grant but no college membership. Assert no recruiter grant privilege escalation. | `fb918d83` |
 
 No test was skipped, deleted, or made weaker. The two reported failures require a fresh orchestrator cloud run before their current pass status can be stated.
+
+## Rolling CI dd44f0f2 / new chat-19 unit failures
+
+The latest orchestrator unit report named seven additional failed assertions, all in three chat-19-authored tests. The reviewed application sources already produce the intended behavior; these failures were introduced by test helpers, not by weakening the underlying authorization or recovery flows.
+
+| Gap IDs | Failure count | Source/test diagnosis | Correction | Branch commit |
+|---|---:|---|---|---|
+| HR-BREAK-CALENDAR-01 | 1 | `placementCalendarWindow` provides ISO `YYYY-MM-DD` strings. The test accidentally used `/\\\\d/`, matching a literal backslash instead of a decimal digit. | Correct the regex to real `/\\d/` character classes, retaining bounded date checks and invalid input. | `63893f08` |
+| HR-BREAK-CONVO-01 | 1 | Page returns an `ErrorState` with a safe `action` React element linking to Today, but the test's recursive text walker ignored the `action` prop and falsely concluded the link was missing. | Traverse `action` as well as `children/title/description`. Retain forbidden-message redaction assertions. | `3a527874` |
+| HR-BREAK-JOB-02 | 5 | All malformed recruiter filters use a safe `ErrorState` with `action={<Link>Clear filters</Link>}`. The test text walker omitted `action`, incorrectly reporting five separate missing recovery actions. | Read `action` React content; leave all five invalid-filter and no-redirect assertions in place. | `00488860` |
+
+These are evidence-based test corrections against current source. The next cloud CI round determines confirmed pass/fail; no test was skipped or removed.
+
+## Independent messaging receipt history hardening
+
+| Finding ID | Pre-fix severity | Source evidence | Defect and fix | Commit | Direct regression |
+|---|---|---|---|---|---|
+| HR-BREAK-MESSAGING-CSV-02 | MAJOR | `src/modules/messaging/receipt-history-export-model.ts`, prior CSV guard only recognized `\\s`, selected ASCII controls and one zero-width code point | A purpose prefixed with Unicode word-joiner, joiner, or paragraph separator before `=`, `+`, `-`, `@` could bypass CSV formula neutralization. Expanded prefix set to Unicode control, format and separator classes, preserving numeric aggregate exports and quoted CSV. | `ff4cc631` | `tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts` (`56ad0e20`) |
+| HR-BREAK-MESSAGING-HISTORY-01 | COVERAGE | `src/modules/messaging/receipt-history-service.ts`, previously not referenced by unit tests | Exercised both exported service functions using transaction/authorization mocks for TPO vs recruiter vs wrong role, disabled session, persisted grant recheck, malformed filters, bounded pagination and 2001-row cap. No code defect found in reviewed path. | `133cd61c`, `0dc7ace6` | `tests/unit/HR-BREAK-chat19-messaging-receipt-history-service.test.ts` |
+
+Cloud verification of the newly authored service mocks is pending a post-merge CI cycle; this ledger distinguishes authored test coverage from a confirmed passing run.
+
+## Projects independent breaker additions
+
+| ID | Pre-fix severity | Source | Defect / correction | Commit(s) | Regression |
+|---|---|---|---|---|---|
+| PROJ-BREAK-TEAM-MOVE-01 | MAJOR | `src/modules/projects/class-team-split-model.ts` (`movePreviewMember`) | Moving the sole learner out of a team produced an empty group; `classTeamPreviewSchema` disallows empty membership arrays, so the planner could show an impossible-to-submit preview. Deny the move before mutating, preserve immutable prior plan and allow harmless same-team selection. | `eb6e9698` | `tests/unit/PROJ-BREAK-chat19-team-preview-integrity.test.ts` (`4b7229c4`) |
+| PROJ-BREAK-COLLEGE-LOCK-01 | COVERAGE | `src/modules/projects/admin-submission-lock-policy.ts` | Exercised membership FK actor policy for active College Admin, disabled/suspended, wrong org/college, TPO, learner, recruiter grants and Super Admin acting-college denial. No source defect identified. | `f14fbeb2` | `tests/unit/PROJ-BREAK-chat19-admin-delivery-lock-role.test.ts` |
+
+The new planner guard is a source change; browser and PostgreSQL verification remain orchestrator gates.
+
+## Unowned TPO Drive Day responsive roster spillover
+
+| ID | Pre-fix severity | Affected surface | Defect and source correction | Commit | Behavioral regression |
+|---|---|---|---|---|---|
+| UX-SPILL-TPO-ROUND-01 | MAJOR | `src/components/placements/tpo-round-drive-day-read-only.tsx` — `Round applicant roster` | The critical check-in/result controls were inside a 46rem horizontally scrollable table, inaccessible at phone width without horizontal navigation. Converted to the shared `DataTable` with mobile identity and roll number and always-visible attendance and result action cells. Preserved status, eligibility, empty copy, audit warnings and server-controlled mutations; mobile controls are not hidden in `More details`. | `a0ed8a36` | `tests/unit/UX-SPILL-chat19-tpo-round-drive-day-responsive.test.tsx` (`2a27820d`) |
+
+This is an independent unowned responsive UX pickup for the critical TPO/HR placement workflow. A real 320/360/390px screen-reader/browser pass remains an acceptance gate; SSR test validates emitted controls and no wide-table requirement.
+
+## Unowned TPO request clipboard spillover
+
+| ID | Before-fix severity | Source | Defect and fix | Commits | Test |
+|---|---|---|---|---|---|
+| UX-SPILL-TPO-CLIP-01 | MAJOR | `src/components/placements/tpo-request-page-clipboard.tsx` | The Choose columns control hid columns visually, but Copy selected rows still exported **all** fields, including concealed employer/student-number data. TSV also allowed Unicode zero-width/paragraph prefixed spreadsheet formulas and copied rows in original rather than displayed sort order. Scope clipboard fields to selected visible columns, retain canonical headings, preserve displayed sort, neutralize Unicode formulas and strip row/column delimiters. | `a5d72407` | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` (`41ceef55`, `3457acc4`) |
+
+## Further TPO request phone accessibility
+
+| ID | Severity | Source | Problem and correction | Commit | Test |
+|---|---|---|---|---|---|
+
+| UX-SPILL-TPO-CLIP-02 | MAJOR (mobile accessibility) | `src/components/placements/tpo-request-page-clipboard.tsx` | Desktop-only spreadsheet plus separate narrow phone selector showed only student/company, hiding request kind, decision and status on a phone. Replaced dual display with shared `DataTable` cards showing primary identity, additional fields via accessible More details, and selectable actions at every viewport. Kept Select visible page, sortable rows, chosen column controls and clipboard semantics. | `9aea98f0` | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` (`cbc3cd33`) |

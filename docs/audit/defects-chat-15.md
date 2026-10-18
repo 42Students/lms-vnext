@@ -24,3 +24,17 @@ Scope: `chatgpt/chat-15-b`. Findings are source-reviewed; **test execution is pe
 |---|---|---|---|---|
 | HR-SLOT-ACTOR-01 | S2 | `canRecruiterMutateOwnSlot(" "," ")` previously returned true, even though neither actor identity was meaningful. The ownership predicate now rejects whitespace-only actors before comparing identity strings. | `bf7227245751de3009256069fec54349c17840b3` | `tests/unit/hr-interview-slot-model.test.ts` tests correct owner, empty, whitespace, and mismatched creator; authored not run. |
 | HR-ROUND-INPUT-01 / HR-ROUND-CREATE-01 / HR-ROUND-REMOVE-01 | Regression expansion | Exercises invalid body rejection prior to SQL, duplicate/cap protection, correct create/remove receipts, single audit insertion and TPO notification and forbidden edit after slots/results. No production regression observed from source review. | `8362c16b26f262aa3d6fca4904697539bee115d4` | `tests/unit/HR-BREAK-chat15-round-service-03.test.ts` expanded mocked service matrix; PostgreSQL races and rollback remain open. |
+
+
+| PROJ-BREAK-HR-ORG-02 | S1 | The Projects read guard verified the current college and active membership but did not independently verify the membership organization against the project college organization. Cross-organization context now fails before member queries, even if an identical college ID is supplied. HR/TPO hiring grants never substitute for project membership. | `0162447e8df68b14f51d4ff3a71ba018badadbdd` | `tests/unit/PROJ-BREAK-HR-01.test.ts`, `PROJ-BREAK-HR-ORG-02`; tests authored, real PostgreSQL/org invariants not run. |
+
+
+## Chat-15 role/UX findings, continued 2026-10-18 (not executed)
+
+| Defect ID | Severity | Evidence and correction | Source commit | Test and remaining validation |
+|---|---|---|---|---|
+| HR-TENANT-ID-04 | S2 defense in depth | Employer/candidate projection helpers accepted matching empty/whitespace company and college identifiers, so synthetic/corrupted scope rows could satisfy equality and suggest disclosure. Reject missing identifiers in shared candidate, exact-employer, grant-selection and visibility predicates before invoking central permission checks. | `aa4a3b4c`, `16914093`, `551f8d36`, `002cb2ba` | `tests/unit/HR-BREAK-chat15-tenant-identity-04.test.ts` exercises allowed ownership, wrong tenant, empty scope and no permission bypass. Live DB validation outstanding. |
+| UX-TRACKER-ERROR-06 | S3 information disclosure | Ordinary tracker reporters on an unavailable database page were shown private migration number and environment flags. Replaced with a friendly retry-later message that does not claim submission. | `b03db127` | `tests/unit/UX-chat15-hr-tracker-pages-07.test.ts`; browser failure state still unverified. |
+
+
+| HR-REQUEST-CANCEL-INTEGRITY-07 | S1 | A CANCEL command previously permitted an optional draft payload, and the generic request update path would persist that payload even while canceling the formal request, changing what the placement cell historically reviewed. The strict schema now forbids draft on CANCEL and requires it on EDIT/RESUBMIT, so it fails before opening SQL transaction. | `16fa29f3` | `tests/unit/HR-BREAK-chat15-request-cancel-integrity-07.test.ts` (`678d100c`): cancel, edit, resubmit, malicious identity/payload. CI & PostgreSQL replay pending. |

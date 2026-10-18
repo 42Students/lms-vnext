@@ -18,12 +18,14 @@ export class CampaignUnsubscribeInvalid extends Error {
 export async function unsubscribeTpoCampaignRecipient(
   token:string,
 ):Promise<{unsubscribed:true}>{
-  const registered=await getDb().execute<{ready:boolean}>(sql`select to_regclass('public.placement_tpo_email_campaign_recipients') is not null as ready`);
-  if(registered.rows[0]?.ready!==true)throw new Error('TPO_CAMPAIGNS_NOT_REGISTERED');
+  // Verify the purpose-bound recipient token before touching the database.
+  // Untrusted or malformed links must not trigger a privileged storage probe.
   const key=resolveTpoCampaignRecipientSecret(process.env);
   const claim=verifyTpoCampaignRecipientToken(token,key,Date.now());
   if(!claim)throw new CampaignUnsubscribeInvalid();
   const db=getDb();
+  const registered=await db.execute<{ready:boolean}>(sql`select to_regclass('public.placement_tpo_email_campaign_recipients') is not null as ready`);
+  if(registered.rows[0]?.ready!==true)throw new Error('TPO_CAMPAIGNS_NOT_REGISTERED');
   const outcome=await db.transaction(async tx=>{
     const [row]=await tx.select().from(placementTpoEmailCampaignRecipients)
       .where(and(

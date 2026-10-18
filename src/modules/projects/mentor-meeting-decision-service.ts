@@ -7,6 +7,7 @@ import {can} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {requireProjectReadAccess} from "./access";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {ProjectsServiceError} from "./errors";
 import {projectMeetingIdSchema} from "./validation";
@@ -31,6 +32,7 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
    .where(eq(projectInstances.id,scope.project.id)).for("update").limit(1);
   if(!project||project.status==="ARCHIVED"||project.status==="COMPLETED")
    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  await assertPersistedProjectMutationActor(tx,context,scope);
   const [current]=await tx.select().from(projectMeetings).where(and(
    eq(projectMeetings.id,meetingId),eq(projectMeetings.projectId,scope.project.id),
   )).for("update").limit(1);
