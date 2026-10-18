@@ -247,3 +247,7 @@ No Vitest, TypeScript, PostgreSQL or browser execution was performed. `TPO-setti
 | TPO-settings-audit-23 (partial) | `TpoJobTypesEditor`, `setTpoJobTypeActive` | Client no longer disables the **last custom type** when built-ins remain active. Server is authoritative for the combined built-in+custom at-least-one-visible rule, CAS and college/role scope. | `tests/unit/chat11-tpo-job-type-last-custom-visibility.test.ts` | **OPEN**: custom type is not yet used by drive forms, eligibility filters, offers or reports; needs migration and historical typing before closure |
 
 No test execution claimed. The job-type integration must not be marked DONE based on this narrower UI correction.
+
+## Personal preference model matrix — 2026-10-19
+
+`tests/unit/chat11-tpo-personal-preferences-matrix.test.ts` adds `TPO-settings-audit-PREF-02`: all five exact legacy preference fields; unavailable vs source-default vs persisted; no mutation of shared defaults; Zod strict rejection of caller-supplied user/college/member/org, unknown switch, non-boolean values, and invalid optimistic tokens; comparison of each changed switch to avoid false no-op receipts. Persisted multi-device CAS / provider delivery remain unexecuted and open.
