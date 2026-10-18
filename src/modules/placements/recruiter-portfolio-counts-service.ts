@@ -61,7 +61,7 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-    gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
     sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
@@ -89,7 +89,7 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-    gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
     sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
