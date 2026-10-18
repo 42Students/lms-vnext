@@ -26,6 +26,11 @@ describe("Chat-6 recruiter login and mobile layout safety",()=>{
   expect(page).toContain('className="min-w-0 space-y-8"');
   expect(page).toContain("min-w-0 flex-[1_1_14rem]");
   expect(table).toContain("overflow-x-auto");
-  expect(table).toContain("w-full border-collapse");
+  // Shared DataTable is a block/card layout under 640px and a
+  // collapsible-border table from sm onward; no horizontal page scroll.
+  expect(table).toContain('block w-full');
+  expect(table).toContain('sm:table sm:border-collapse');
+  expect(table).toContain('sm:overflow-x-auto');
+  expect(table).toContain('min-w-0');
  });
 });

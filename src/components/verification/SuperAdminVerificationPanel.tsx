@@ -1,7 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useToast} from "@/components/ui/toast";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
 import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import {VerificationExportControl} from "./VerificationExportControl";
@@ -26,6 +26,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  const [reason,setReason]=useState("");
  const [acknowledged,setAcknowledged]=useState(false);
  const [bulkBusy,setBulkBusy]=useState(false);
+ const inFlightRef=useRef(false);
  const [bulkMessage,setBulkMessage]=useState("");
  const candidates=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
  const inSequence=selected&&sequence.length>0&&sequence[sequenceIndex]&&
@@ -39,8 +40,9 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  const skipped=bulkAction==="VERIFY"?chosen.filter(row=>row.missingMarksheet):[];
  const applicable=bulkAction==="VERIFY"?chosen.filter(row=>!row.missingMarksheet):chosen;
  async function submitBulk(){
-  if(!bulkAction||bulkBusy||applicable.length===0||bulkAction==="VERIFY"&&!acknowledged||
+  if(!bulkAction||bulkBusy||inFlightRef.current||applicable.length===0||bulkAction==="VERIFY"&&!acknowledged||
     bulkAction==="SEND_BACK"&&reason.trim().length<3)return;
+  inFlightRef.current=true;
   setBulkBusy(true);setBulkMessage("");
   try{
    const payload=collegeBulkReviewPayload(applicable,bulkAction,reason);
@@ -51,7 +53,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    setBulkMessage(result.summary.succeeded+" verified or sent back; "+result.summary.failed+" not applied. Refresh for current row states.");
    setSelectedKeys([]);setBulkAction(null);setAcknowledged(false);router.refresh();
   }catch(error){setBulkMessage(error instanceof Error?error.message:"Could not finish bulk review.");}
-  finally{setBulkBusy(false);}
+  finally{inFlightRef.current=false;setBulkBusy(false);}
  }
 
  const base=`/admin/colleges/${encodeURIComponent(collegeId)}/verification`;

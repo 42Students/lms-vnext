@@ -13,7 +13,16 @@ describe("College Admin placement register and drive parity",()=>{
  it("COL-placements-08 College drive table has legacy columns mobile cards bulk lifecycle and row actions",()=>{
   const page=src("src/app/(authenticated)/college/placements/drives/page.tsx");
   for(const col of ['"Type"','"Location"','"Deadline"','"Posted"','"Applicants"'])expect(page).toContain(col);
-  expect(page).toContain('aria-label="Drives mobile cards"');
+  // UX playbook: the shared DataTable now renders the mobile card layout
+  // and expandable secondary fields from the same accessible row DOM.
+  expect(page).toContain("DataTable");
+  expect(page).toContain('caption="College placement drives"');
+  expect(page).toContain('mobilePriority:"primary"');
+  expect(page).toContain('mobilePriority:"action"');
+  const table=src("src/components/ui/data-table.tsx");
+  expect(table).toContain('sm:table-row');
+  expect(table).toContain('More details');
+  expect(table).toContain('min-h-11');
   expect(page).toContain("CollegeDriveBulkActions");
   expect(page).toContain("CollegeDriveRowLifecycleAction");
   const bulk=src("src/components/placements/college-drive-bulk-actions.tsx");
