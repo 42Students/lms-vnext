@@ -45,3 +45,34 @@ describe("PROJ-BREAK-TPO-PANEL-01 private quick panel and note boundaries",()=>{
   expect(source).toContain("skipped:input.membershipIds.length-saved.length");
  });
 });
+
+describe("PROJ-BREAK-TPO-PANEL-02 notes endpoint and double-submit recovery",()=>{
+ it("fails closed on disabled learner accounts both for note writes and note reads",()=>{
+  const code=src("tpo-student-notes-service.ts");
+  const activeUsers=code.match(/eq\(users.platformStatus,"ACTIVE"\)/g)??[];
+  const activeMembers=code.match(/eq\(collegeMemberships.status,"ACTIVE"\)/g)??[];
+  expect(activeUsers).toHaveLength(2);
+  expect(activeMembers).toHaveLength(2);
+  expect(code).toContain('eq(collegeMemberships.collegeId,collegeId)');
+ });
+ it("rejects forged origin and oversized JSON stream before invoking private student-note mutations",()=>{
+  const route=readFileSync(resolve(process.cwd(),
+   "src/app/api/placements/tpo/students/notes/route.ts"),"utf8");
+  expect(route).toContain("isSameOriginRequest(req)");
+  expect(route).toContain("readTpoBulkRequestBody(req)");
+  expect(route).not.toContain("await req.json()");
+  expect(route.indexOf("readTpoBulkRequestBody(req)"))
+   .toBeLessThan(route.indexOf("addTpoStudentNotes("));
+  expect(route).toContain("if(error instanceof TpoBulkBodyError)");
+ });
+ it("uses a synchronous click and keyboard latch while preserving the note on failure",()=>{
+  const code=readFileSync(resolve(process.cwd(),
+   "src/components/tpo/tpo-student-note-editor.tsx"),"utf8");
+  expect(code).toContain("if(!membershipIds.length||!note.trim()||busy||inFlight.current)return;");
+  expect(code).toContain("inFlight.current=true;setBusy(true)");
+  expect(code).toContain("finally{inFlight.current=false;setBusy(false);}");
+  expect(code).toContain("void runGuarded(save)");
+  expect(code).toContain("setNote("")");
+  expect(code).toContain("catch(error){setError(");
+ });
+});

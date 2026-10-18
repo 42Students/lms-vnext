@@ -55,6 +55,15 @@
 | `src/modules/placements/tpo-student-profile-facts.ts` | `tpoStudentProfileFacts` | `tests/unit/PROJ-BREAK-TPO-01.test.ts` | masked contact, no raw project metadata, HTTPS-only links | **BEHAVIOURAL** |
 | `src/modules/placements/tpo-team-people-sort-model.ts` | `sortTpoPeople` | `tests/unit/chat12-tpo-history-team-and-sharing-behavior.test.ts` | non-mutating deterministic workload sort | **BEHAVIOURAL** |
 
+## Additional TPO quick-panel and note functions
+
+| Production path | Export | Test file | Evidence and missing cases | Status |
+|---|---|---|---|---|
+| `src/modules/placements/tpo-student-panel-detail-service.ts` | `getTpoStudentPanelDetail` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source guard: TPO, active learner/actor, college-scoped apps, PLACEMENTS-only activity, 100/1000 capped history; real DB negative joins pending | **SOURCE** |
+| `src/modules/placements/tpo-student-notes-service.ts` | `tpoStudentNotesInput` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Strict UUIDs, no duplicate rows, max 100 IDs, note nonempty/2K limit, tenant override rejected | **BEHAVIOURAL** |
+| `src/modules/placements/tpo-student-notes-service.ts` | `addTpoStudentNotes` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source persisted actor and tenant audit guard; per-row transaction, partial selected count; concurrency and rollback pending | **SOURCE** |
+| `src/modules/placements/tpo-student-notes-service.ts` | `listTpoStudentNotes` | `tests/unit/PROJ-BREAK-TPO-PANEL-01.test.ts` | Source guard: wrong tenant, suspended/disabled learner filtered, notes capped at 100; DB role/session race still pending | **SOURCE** |
+
 ## Critical outstanding integration tests
 
 - Actual `getTpoStudentsIntelligence`, `listTpoStudentRequests`, and `getTpoCompaniesView` against a disposable migrated PostgreSQL database, with a wrong-college actor and a disabled TPO membership. Model-level tests are **not** these service tests.
