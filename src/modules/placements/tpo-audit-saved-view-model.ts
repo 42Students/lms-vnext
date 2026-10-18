@@ -1,8 +1,9 @@
 import {z} from "zod";
+import {TPO_AUDIT_KINDS} from "./tpo-audit-model";
 
 /** AUDIT saved views are owner/college private; URLs never provide either ID. */
 export const tpoAuditSavedFiltersSchema=z.strictObject({
- kind:z.string().trim().max(40).default("ALL"),
+ kind:z.enum(["ALL",...TPO_AUDIT_KINDS]).default("ALL"),
  from:z.string().max(10).default(""),
  to:z.string().max(10).default(""),
  q:z.string().trim().max(120).default(""),
@@ -10,7 +11,7 @@ export const tpoAuditSavedFiltersSchema=z.strictObject({
 }).superRefine((value,ctx)=>{
  for(const key of ["from","to"] as const){
   const date=value[key];
-  if(date&&!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+  if(date&&!z.iso.date().safeParse(date).success){
    ctx.addIssue({code:"custom",path:[key],message:"Invalid calendar day"});
   }
  }
