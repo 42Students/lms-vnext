@@ -44,18 +44,18 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
    <label className="grid gap-1 text-sm font-semibold">Late marking allowed for
     <Input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
      onChange={e=>setHours(e.target.value)} aria-describedby="late-marking-help"
-     className="min-h-11 rounded border border-border bg-background px-3"/>
+     className="w-full"/>
     <span id="late-marking-help" className="text-xs font-normal text-muted-foreground">How long after a class ends attendance can be marked or corrected. (hours)</span>
    </label>
    <label className="grid gap-1 text-sm font-semibold">Minimum attendance
     <Input type="number" min={1} max={100} step={1} value={threshold}
      onChange={e=>setThreshold(e.target.value)} aria-describedby="minimum-attendance-help"
-     className="min-h-11 rounded border border-border bg-background px-3"/>
+     className="w-full"/>
     <span id="minimum-attendance-help" className="text-xs font-normal text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
    </label>
   </div>
   <Button variant="primary" type="button" disabled={saving} onClick={requestSave}
-   className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary">{saving?"Saving…":"Save attendance policy"}</Button>
+   className="">{saving?"Saving…":"Save attendance policy"}</Button>
   {message?<p role={failed?"alert":"status"} className="text-sm text-body">{message}</p>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance settings for this college?"
    description="Changes apply to the selected college." confirmVariant="primary" confirmLabel="Save settings"
