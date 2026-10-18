@@ -85,7 +85,7 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
   const control=source("src/components/placements/tpo-recruiter-grant-controls.tsx");
   expect(control).not.toContain("window.confirm");
   expect((control.match(/<ConfirmDialog/g)??[])).toHaveLength(3);
-  expect(control).toContain('"Grant recruiter access to this college/company?');
+  expect(control).toContain("Grant the existing user recruiter access to this college/company?");
   expect(control).toContain('expectedUpdatedAt');
   expect(control).toContain('action: "REVOKE"');
   expect(control).toContain('action:"EXTEND"');
