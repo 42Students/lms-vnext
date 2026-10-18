@@ -45,7 +45,7 @@ describe("HR-BREAK-chat15-round-service-03: transactional recruiter round change
  beforeEach(()=>{
   vi.clearAllMocks();
   mocks.rows=[[job],[ownRound],[],[]];
-  mocks.getDb.mockReturnValue({transaction:(fn:(tx:typeof tx)=>unknown)=>fn(tx)});
+  mocks.getDb.mockReturnValue({transaction:(fn:(database:typeof tx)=>unknown)=>fn(tx)});
   mocks.can.mockReturnValue(true);
   mocks.notify.mockResolvedValue(undefined);
   mocks.update.mockImplementation(()=>({

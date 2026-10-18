@@ -21,6 +21,7 @@ import {normalizeTpoStudentLegacyFilters} from "@/modules/placements/tpo-student
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -200,6 +201,8 @@ export default async function TpoStudentsPage({
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     redirect("/dashboard");
   }
+  // Session claims alone cannot retain student PII after TPO role removal.
+  await requireTpoBatchActor(context);
 
   const incoming=await searchParams;
   const urlError=tpoStudentUrlError(incoming);

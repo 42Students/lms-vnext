@@ -49,3 +49,12 @@ These named regression tests check *existing pieces* of the legacy audit only. A
 | ID | Disposition | Evidence |
 | --- | --- | --- |
 | COL-attendance-09 | DONE (source; runtime pending) | Authoritative academic-period `endDate` and delivery `endedAt` determine `isPast` in IST, current first. The dropdown includes `academicPeriodName` and appends `· past`, keeping repeated offerings unambiguous while preserving exact delivery-ID selection; no guessed semester is manufactured. `tests/unit/college-attendance-gap-closure.test.ts`. Archived offerings without a currently accessible historical delivery remain separate report parity work. |
+
+
+## chat-15 final sprint — guardian SMS (source-reviewed; tests not run)
+
+| Gap ID | Source status | Code and named behavioral assertions |
+|---|---|---|
+| COL-attendance-R02 | DONE (source) | `src/modules/attendance/admin-service.ts` enqueues attendance ABSENT or ABSENT→PRESENT correction SMS only after a real changed, audited attendance event. `src/modules/attendance/parent-sms-model.ts`, `parent-sms-service.ts` and `parent-sms-provider.ts` enforce independently verified guardian phone, explicit opt-in, tenant scope, dedicated Exotel DLT templates, transactionally persisted idempotent outbox and one-shot provider dispatch. `tests/unit/chat15-final-sprint-col-attendance-r02.test.ts` has seven COL-attendance-R02 cases for consent, precise copy, no-op, current record, retry, revoke and same-origin. |
+
+Exotel credentials and registered DLT templates are deployment prerequisites, not evidence that SMS has been sent. The existing test suite has been authored but **not run** here. PostgreSQL outbox replay, provider acceptance and handset receipt need orchestrator and dev-environment verification.
