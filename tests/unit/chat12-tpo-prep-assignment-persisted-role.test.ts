@@ -63,4 +63,19 @@ describe("TPO-students-10 preparation assignment current TPO permission boundary
   expect(src.match(/isNull\(departments\.archivedAt\)/g)).toHaveLength(2);
   expect(src).toContain('onConflictDoNothing()');
  });
+ it("TPO-students-10 optional deadline requires registered nullable storage and preserves the no-deadline state",()=>{
+  const src=readFileSync(new URL("../../src/modules/placements/tpo-prep-assignment-service.ts",import.meta.url),"utf8");
+  const ui=readFileSync(new URL("../../src/components/tpo/tpo-students-assign-prep.tsx",import.meta.url),"utf8");
+  const proposal=readFileSync(new URL("../../docs/proposed-migrations/tpo-students-10-prep-optional-due.sql",import.meta.url),"utf8");
+  expect(src).toContain('dueAt:z.iso.datetime({offset:true}).nullable().optional()');
+  expect(src).toContain('const due=input.dueAt?new Date(input.dueAt):null');
+  expect(src).toContain('if(due===null)');
+  expect(src).toContain("is_nullable='YES'");
+  expect(src).toContain('if(!nullable)throw new TpoPrepError("UNAVAILABLE")');
+  expect(src).toContain('dueAt:due,assignedByUserId:ctx.user.id');
+  expect(ui).toContain('const deadline=dueAt?tpoPrepDueAtUtc(dueAt):null');
+  expect(ui).toContain('dueAt?dueAt+" IST":"No due date"');
+  expect(proposal).toContain("ALTER COLUMN due_at DROP NOT NULL");
+  expect(proposal).toContain("due_at IS NULL OR due_at > created_at");
+ });
 });

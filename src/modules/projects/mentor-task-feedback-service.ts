@@ -16,12 +16,13 @@ export async function getMentorTaskFeedback(context:RequestContext,rawParams:unk
  const membership=context.membership;
  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ // Module-off tenants must not reveal requested project existence.
+ if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const scope=await requireProjectReadAccess(context,projectId);
  if(scope.access!=="MENTOR"||!can(context,"projects.read",{
   collegeId:scope.collegeId,organizationId:scope.organizationId,
  }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
- const modules=await resolveOptionalModuleAccess(context);
- if(!modules.projects.enabled)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const [task]=await getDb().select({id:projectTasks.id,title:projectTasks.title})
   .from(projectTasks)
   .where(and(eq(projectTasks.id,taskId),eq(projectTasks.projectId,scope.project.id)))
