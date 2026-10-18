@@ -441,17 +441,22 @@ export async function getSuperAdminCollegeReadiness(
     verifiedPrimaryDomains,
   };
 
-  // Re-authorize from persisted active user/system-role rows before exposing
-  // tenant counts. A previously valid Super Admin request may finish after
-  // the officer's role has been revoked while independent counts are running.
-  await db.transaction(async tx=>{
+  // A college can be archived while expensive independent readiness counts
+  // run. Never return an old ACTIVE status with a false green readiness gate.
+  // Role and college lifecycle are checked under locks at the response edge.
+  const currentCollege=await db.transaction(async tx=>{
+    const [latest]=await tx.select({status:colleges.status,organizationId:colleges.organizationId})
+      .from(colleges).where(eq(colleges.id,college.id)).for("share").limit(1);
+    if(!latest||latest.organizationId!==college.organizationId)
+      throw new AuthorizationError("college.read");
     await assertPersistedPlatformPermission(tx,context,"college.read",{
-      collegeId:college.id,organizationId:college.organizationId,
+      collegeId:college.id,organizationId:latest.organizationId,
     });
+    return latest;
   });
-
+  facts.collegeStatus=currentCollege.status;
   return {
-    college,
+    college:{...college,status:currentCollege.status},
     evaluation:
       evaluateCollegeReadiness(facts),
     supplemental: {

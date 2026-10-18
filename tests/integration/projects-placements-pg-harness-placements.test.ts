@@ -70,9 +70,9 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
     await withPlacementCase(async({db,learner,drive,candidate})=>{
       await db.expectSqlState(()=>db.query(`
         insert into placement_applications
-        (job_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
-        values ($1,$2,'INTERNAL','ELIGIBLE','{}'::jsonb,$3)`,
-        [drive.jobId,learner.membershipId,learner.userId]),"23505");
+        (job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id)
+        values ($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4)`,
+        [drive.jobId,drive.roleOptionId,learner.membershipId,learner.userId]),"23505");
       await db.expectSqlState(()=>db.query(`
         update placement_application_screenings set status='HOLD' where application_id=$1`,
         [candidate.applicationId]),"23514");
@@ -182,6 +182,63 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       expect(rows).toHaveLength(1);
       expect(rows[0]).toMatchObject({status:"PUBLISHED",has_future_deadline:true,minimum_annual_ctc_inr:800000});
       expect(rows[0]!.published_at).not.toBeNull();
+    });
+  });
+
+  it("PROJ-HARNESS-PLACEMENTS-15 candidate belongs to an active role option of exactly this drive",async()=>{
+    await withPlacementCase(async({db,tenant,actor,learner,drive,candidate})=>{
+      const rows=await db.query<{role_option_id:string;job_id:string;status:string}>(`
+        select a.role_option_id,role.job_id,role.status
+          from placement_applications a
+          join placement_job_role_options role on role.id=a.role_option_id
+         where a.id=$1`,[candidate.applicationId]);
+      expect(rows).toEqual([{role_option_id:drive.roleOptionId,job_id:drive.jobId,status:"ACTIVE"}]);
+      const another=await createPlacementFixture(db,tenant,actor);
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      await expect(createPlacementCandidateFixture(db,{...drive,roleOptionId:another.roleOptionId},learner,actor))
+        .rejects.toThrow(/role option is not active on this drive/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      expect(after[0]?.n).toBe(before[0]?.n);
+    });
+  });
+  it("PROJ-HARNESS-PLACEMENTS-18 a cancelled round cannot receive candidate results",async()=>{
+    await withPlacementCase(async({db,drive,actor,learner})=>{
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_round_results where round_id=$1`,[drive.roundId]);
+      await db.query(`
+        update placement_job_rounds set status='CANCELLED',cancelled_at=now() where id=$1`,
+        [drive.roundId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/cancelled round cannot accept candidate results/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_round_results where round_id=$1`,[drive.roundId]);
+      expect(after[0]?.n).toBe(before[0]?.n);
+    });
+  });
+
+  it("PROJ-HARNESS-PLACEMENTS-17 closed season cannot accept a candidate even with a published job",async()=>{
+    await withPlacementCase(async({db,drive,actor,learner})=>{
+      const before=await db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      await db.query(`
+        update placement_seasons set status='CLOSED',closed_by_user_id=$2,closed_at=now()
+        where id=$1`,[drive.seasonId,actor.userId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/drive is not open for applications/);
+      const after=await db.query<{n:number}>(`
+        select count(*)::int n from placement_applications where job_id=$1`,[drive.jobId]);
+      expect(after[0]?.n).toBe(before[0]?.n);
+    });
+  });
+
+  it("PROJ-HARNESS-PLACEMENTS-16 archived role option cannot be used by a stale draft",async()=>{
+    await withPlacementCase(async({db,drive,actor,learner})=>{
+      await db.query("update placement_job_role_options set status='ARCHIVED',archived_at=now() where id=$1",
+        [drive.roleOptionId]);
+      await expect(createPlacementCandidateFixture(db,drive,learner,actor))
+        .rejects.toThrow(/role option is not active on this drive/);
     });
   });
 

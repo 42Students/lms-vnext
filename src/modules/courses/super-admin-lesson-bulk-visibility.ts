@@ -7,6 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {updateCollegeContentStudentVisibility} from "./college-content-visibility-service";
 import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
+import {CoursesServiceError} from "./errors";
 
 const inputSchema=z.strictObject({
  lessonIds:z.array(z.uuid()).min(1).max(25).refine(ids=>new Set(ids).size===ids.length),
@@ -26,13 +27,21 @@ export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:
  .innerJoin(departments,eq(departments.id,courses.departmentId))
  .innerJoin(academicPeriods,eq(academicPeriods.id,courseOfferings.academicPeriodId))
  .where(and(inArray(lessonContents.lessonId,input.lessonIds),
+   // An item under a draft path or archived ancestor is not currently
+   // student-published: retain its authored visibility until published.
+   eq(courseLearningPaths.status,"PUBLISHED"),
+   eq(courseLessons.status,"ACTIVE"),
+   eq(courseOfferings.status,"ACTIVE"),
+   eq(courses.status,"ACTIVE"),
    eq(departments.collegeId,acting.collegeId),
    eq(academicPeriods.collegeId,acting.collegeId)))
  .limit(501);
- if(rows.length>500)throw new Error("LESSON_CONTENT_BULK_TOO_LARGE");
+ if(rows.length>500)throw new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE");
  const changed:string[]=[],failures:{id:string;lessonId:string;reason:string}[]=[];
  for(const row of rows){
-  if(row.status==="ARCHIVED"||row.visible===input.visibleToStudents)continue;
+  // Bulk course/lesson Show/Hide applies to currently published content only.
+  // Draft and archived content retain their authored visibility for a later publication.
+  if(row.status!=="PUBLISHED"||row.visible===input.visibleToStudents)continue;
   try{
    await updateCollegeContentStudentVisibility(context,{
     lessonContentId:row.id,visibleToStudents:input.visibleToStudents,

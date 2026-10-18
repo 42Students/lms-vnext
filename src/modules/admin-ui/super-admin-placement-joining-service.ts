@@ -5,6 +5,7 @@ import {aliasedColumn} from "@/db/aliased-column";
 import {colleges,collegeMemberships,placementApplications,placementJobs,placementOffers,placementJoiningOutcomes,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
+import {superAdminJoiningIntegrityNote} from "./super-admin-joining-integrity-model";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,SUPER_ADMIN_READ_PAGE_SIZE,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 export async function listSuperAdminJoining(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
  const query=superAdminReadQuerySchema.parse(raw),scope=requireSuperAdminSelectedCollege(context,"placements.read"),db=getDb();
@@ -14,6 +15,7 @@ export async function listSuperAdminJoining(context:RequestContext,raw:unknown):
   joiningDate:placementJoiningOutcomes.joiningDate,
   recordedAt:placementJoiningOutcomes.recordedAt,
   offerRole:aliasedColumn(placementOffers.roleTitle,"admin_joining_offer_role"),
+  offerStatus:placementOffers.status,
   jobId:aliasedColumn(placementJobs.id,"admin_joining_job_id"),
   jobTitle:aliasedColumn(placementJobs.title,"admin_joining_job_title"),
   applicant:aliasedColumn(users.displayName,"admin_joining_applicant_name"),
@@ -36,8 +38,11 @@ export async function listSuperAdminJoining(context:RequestContext,raw:unknown):
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
  return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(r=>({
   id:r.id,title:r.applicant||"Unnamed applicant",subtitle:r.jobTitle+" · "+r.offerRole,
-  status:r.status,details:["Joining date: "+(r.joiningDate??"Not recorded"),
+  status:r.status,details:["Offer status: "+r.offerStatus,
+   "Joining date: "+(r.joiningDate??"Not recorded"),
    "Outcome recorded: "+(r.recordedAt?fmt.format(r.recordedAt)+" IST":"Not recorded"),
+   ...(superAdminJoiningIntegrityNote(r.status,r.offerStatus)
+     ? [superAdminJoiningIntegrityNote(r.status,r.offerStatus)!] : []),
    "Only persisted joining outcomes are shown; missing records are not counted as pending."],
   href:`/admin/placements/joining/${encodeURIComponent(r.id)}`,
  }))};

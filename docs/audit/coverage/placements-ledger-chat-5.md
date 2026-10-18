@@ -340,3 +340,18 @@ TPO-recorded `RECORD_ACCEPTED` now invokes `cascadeTpoRecordedAcceptance` inside
 | PLACEMENTS-TPO-ESCALATE-21 | Withdrawal decision reminder stays PENDING, not auto-approved, and creates at most one durable deduped TPO event and notice for a next-round window | `tests/integration/placements-p8-offers.test.ts` — seeded request with a near round, role-scoped notification, repeat call, persisted state | PostgreSQL execution |
 
 No CI/tests/TypeScript commands were run under the owner's new no-CI-until-final-pass directive. The core placements module remains partially audited, not exhaustive and not release certified.
+
+
+### Owner no-CI sprint: additional behavioural hardening
+
+| Case | Source | Behavioral coverage added | Certification status |
+|---|---|---|---|
+| PLACEMENTS-TPO-ESCALATE-26 | `tpo-withdrawal-escalation-service.ts` rejects a scheduler time whose 24h endpoint overflows JavaScript Date, filters inactive colleges, returns bounded friendly errors | `tests/unit/chat5-tpo-withdrawal-escalation-edge.test.ts` checks 24h IST crossing, overflow, active-college/role scope and dedupe | Source-only, CI deferred |
+| PLACEMENTS-DRIVE-STOP-SM-24 | `tpo-drive-cancel-model.ts`, `tpo-drive-cancel-service.ts` keep already accepted offers, revoke outstanding issued offers, reject stale state | `tests/unit/chat5-tpo-closure-ux-boundary.test.ts` runs the decision matrix and source transaction guards | Source-only, CI deferred |
+| PLACEMENTS-DRIVE-CLOSE-SM-25 | `tpo-drive-close-preview-model.ts` supports close after season end, blocks pending selected or waitlist seats | Same new test runs allowed/blocked state and revision cases | Source-only, CI deferred |
+| UX-PLACEMENTS-CLOSE-22 | `tpo-drive-close-preview-form.tsx` uses safe `apiFetch`, a synchronous `useGuardedAction` lock, 35s timeout, preserved confirmation reason, safe conflict/retry message | `tests/unit/chat5-tpo-closure-ux-boundary.test.ts` checks guard, fields, confirmation and bounded fetch | Browser journey still required |
+| UX-PLACEMENTS-JOINING-23 | `tpo-joining-update-form.tsx` guards duplicate PUT, uses bounded `apiFetch`, keeps date/correction reason on rejection, requires dialog for actual/corrected outcome | Same unit-contract suite | Browser journey still required |
+| UX-PLACEMENTS-REPORT-SCROLL-27 | `report-interactive-table.tsx` column and filter sheets expose named keyboard scroll regions, hidden-bar edge cues and safe-area-aware closures | `tests/unit/chat5-placements-ux-workflows.test.ts`, `docs/audit/ux/scroll-motion-placements.md` | Mobile device acceptance pending |
+| PLACEMENTS-RETENTION-ACTIVE-28 | `getCollegeApplicationRetentionReport` excludes any old withdrawn or rejected application still carrying `ISSUED` or `ACCEPTED` official offer; tenant joins and date cutoff remain | `tests/unit/chat5-placements-retention-and-joining-followups.test.ts` enforces correlated anti-join and no mutations | PostgreSQL integration pending |
+
+No build/test runner was invoked per owner's directive. The comprehensive core function-by-function and all second-third TPO page coverage work remains open.
