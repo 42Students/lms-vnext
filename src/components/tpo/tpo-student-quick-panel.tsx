@@ -61,14 +61,14 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  const participation="/tpo/students/"+encodeURIComponent(student.membershipId)+"/participation";
  return <Drawer open={true} onOpenChange={next=>{if(!next)onClose();}}
   title={"Student panel for "+student.displayName}
-  description={student.branchName+" · "+student.cohortName} footer={   <footer className="flex w-full flex-wrap items-center justify-between gap-2">
+  description={student.branchName+" · "+student.cohortName} footer={   <div className="flex w-full flex-wrap items-center justify-between gap-2">
     <button type="button" disabled={index<=0} onClick={()=>onNavigate(rows[index-1].membershipId)}
       className="min-h-11 rounded border border-border px-3 disabled:opacity-40">← Previous</button>
     <span className="text-xs text-muted-foreground">{index+1} of {rows.length} on this page</span>
     <button type="button" disabled={index<0||index>=rows.length-1}
       onClick={()=>onNavigate(rows[index+1].membershipId)}
       className="min-h-11 rounded border border-border px-3 disabled:opacity-40">Next →</button>
-   </footer>}>
+   </div>}>
    <section className="flex flex-wrap items-start justify-between gap-2 border-b border-border pb-4">
     <div><p className="text-xs text-muted-foreground">TPO · Student</p>
       <h2 className="text-xl font-bold">{student.displayName}</h2>
