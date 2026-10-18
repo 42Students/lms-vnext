@@ -696,7 +696,7 @@ export async function PlacementCalendarWorkspace({
                 }
                 className={
                   state.view === view
-                    ? "inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold capitalize text-on-primary"
+                    ? "inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold capitalize text-foreground"
                     : "inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)]"
                 }
               >
@@ -862,7 +862,7 @@ export async function PlacementCalendarWorkspace({
           <div className="flex items-end">
             <button
               type="submit"
-              className="min-h-11 w-full rounded-md bg-primary px-4 text-sm font-semibold text-on-primary transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="min-h-11 w-full rounded-md bg-primary px-4 text-sm font-semibold text-foreground transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             >
               Apply filters
             </button>
@@ -876,7 +876,7 @@ export async function PlacementCalendarWorkspace({
       {isTpo?<nav aria-label="Filter calendar by event type" className="flex flex-wrap gap-2">
  <Link href={calendarHref(basePath,audience,state,{kind:undefined,kinds:[]})}
   aria-current={!state.kind&&!state.kinds.length?"page":undefined}
-  className={!state.kind&&!state.kinds.length?"inline-flex min-h-11 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
+  className={!state.kind&&!state.kinds.length?"inline-flex min-h-11 items-center rounded-full bg-primary px-3 text-xs font-semibold text-foreground":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
   All events ({eventTypeCountsSource&&blockedDays?.ready?countSourceEvents.length+toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length:"unavailable"})
  </Link>
  {TPO_CALENDAR_CHIP_CHOICES.map(filter=>{
@@ -887,7 +887,7 @@ export async function PlacementCalendarWorkspace({
   return <Link key={filter.value} href={calendarHref(basePath,audience,state,{kind:undefined,kinds:nextKinds})}
    aria-current={active?"page":undefined}
    aria-label={filter.label+" ("+count+"), "+(active?"selected":"not selected")}
-   className={active?"inline-flex min-h-11 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
+   className={active?"inline-flex min-h-11 items-center rounded-full bg-primary px-3 text-xs font-semibold text-foreground":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
    <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-full "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
    {filter.label} ({count})
   </Link>;
