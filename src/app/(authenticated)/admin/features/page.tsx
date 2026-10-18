@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   ADMIN_MODULE_LABELS,
@@ -217,133 +218,42 @@ export default async function SuperAdminFeaturesPage({
           </p>
         </div>
 
-        {result.items.length === 0 ? (
-          <EmptyState
-            title="No colleges on this page"
-            description="No active colleges match the current search and selected Super Admin scope. Check the filters or return to the first page."
-          />
-        ) : (
-          <>
-          <div className="grid gap-3 lg:hidden" aria-label="College module cards">
-            {result.items.map(college => {
-              const summary = collegeModuleCardSummary(college.modules);
-              return <article key={college.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <h3 className="m-0 break-words font-semibold text-foreground">{college.name}</h3>
-                    <p className="mt-1 text-xs text-muted-foreground">{college.code}</p>
-                  </div>
-                  <StatusBadge>{summary.enabled} of {college.modules.length} enabled</StatusBadge>
-                </div>
-                <dl className="mt-4 space-y-3">
-                  {college.modules.map(decision => (
-                    <div key={decision.module} className="flex flex-wrap items-start justify-between gap-2 border-t border-border pt-3">
-                      <dt className="text-sm font-semibold text-foreground">{decision.label}</dt>
-                      <dd className="m-0 min-w-44 text-right">
-                        <ModuleState decision={decision}/>
-                        <details className="mt-2 text-left">
-                         <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
-                          Change {decision.label} →
-                         </summary>
-                         <CollegeFeatureRuleEditor collegeId={college.id}
-                          module={decision.module} stored={decision.stored}
-                          ancestorLocked={decision.ancestorLocked}/>
-                        </details>
-                       </dd>
-                    </div>
-                  ))}
-                </dl>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  {summary.locked} locked · {summary.persisted} rules with persisted source
-                </p>
-                <Link href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
-                  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
-                  View access hierarchy →
-                </Link>
-              </article>;
-            })}
-          </div>
-          <div className="hidden rounded-xl border border-border bg-surface lg:block">
-
-            <table className="w-full min-w-[50rem] border-collapse text-left text-sm">
-              <thead className="bg-muted text-body">
-                <tr>
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    College
-                  </th>
-                  {OPTIONAL_MODULE_KEYS.map(
-                    (module) => (
-                      <th
-                        key={module}
-                        scope="col"
-                        className="border-b border-border px-4 py-3"
-                      >
-                        {ADMIN_MODULE_LABELS[module]}
-                      </th>
-                    ),
-                  )}
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    Module Access
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {result.items.map(
-                  (college) => (
-                    <tr
-                      key={college.id}
-                      className="border-b border-border last:border-b-0"
-                    >
-                      <td className="px-4 py-4 align-top">
-                        <p className="m-0 font-semibold text-foreground">
-                          {college.name}
-                        </p>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {college.code}
-                        </p>
-                      </td>
-
-                      {college.modules.map(
-                        (decision) => (
-                          <td
-                            key={decision.module}
-                            className="px-4 py-4 align-top"
-                          >
-                            <ModuleState decision={decision}/>
-                            <details className="mt-2 min-w-44">
-                             <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)]">
-                              Change {decision.label} →
-                             </summary>
-                             <CollegeFeatureRuleEditor collegeId={college.id}
-                              module={decision.module} stored={decision.stored}
-                              ancestorLocked={decision.ancestorLocked}/>
-                            </details>
-                          </td>
-                        ),
-                      )}
-
-                      <td className="px-4 py-4 align-top">
-                        <Link
-                          href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
-                          className="font-semibold text-[var(--lms-teal-deep)] hover:underline"
-                        >
-                          View hierarchy →
-                        </Link>
-                      </td>
-                    </tr>
-                  ),
-                )}
-              </tbody>
-            </table>
-          </div>
-          </>
-        )}
+        <DataTable<(typeof result.items)[number]> caption="College module matrix"
+          rows={result.items} getRowKey={college=>college.id}
+          empty={<EmptyState title="No colleges on this page"
+            description="No active colleges match the current search and selected Super Admin scope. Check the filters or return to the first page."/>}
+          columns={[
+            {key:"college",header:"College",mobilePriority:"primary",cell:college=>{
+              const summary=collegeModuleCardSummary(college.modules);
+              return <div className="min-w-0 space-y-2">
+                <strong className="break-words">{college.name}</strong>
+                <p className="text-xs text-muted-foreground">{college.code}</p>
+                <StatusBadge>{summary.enabled} of {college.modules.length} enabled</StatusBadge>
+                <p className="text-xs text-muted-foreground">{summary.locked} locked · {summary.persisted} rules with persisted source</p>
+              </div>;
+            }},
+            ...OPTIONAL_MODULE_KEYS.map(module=>({
+              key:module,header:ADMIN_MODULE_LABELS[module],mobilePriority:"secondary" as const,
+              cell:(college:(typeof result.items)[number])=>{
+                const decision=college.modules.find(item=>item.module===module);
+                return decision?<div className="min-w-0">
+                  <ModuleState decision={decision}/>
+                  <details className="mt-2">
+                    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-teal-deep)] underline">
+                      Change {decision.label} →
+                    </summary>
+                    <CollegeFeatureRuleEditor collegeId={college.id} module={decision.module}
+                      stored={decision.stored} ancestorLocked={decision.ancestorLocked}/>
+                  </details>
+                </div>:<span className="text-muted-foreground">—</span>;
+              },
+            })),
+            {key:"moduleAccess",header:"Module Access",mobilePriority:"action",cell:college=>
+              <Link href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
+                className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+                View access hierarchy →
+              </Link>},
+          ]}/>
 
         <nav
           aria-label="Feature Controls pagination"
