@@ -78,6 +78,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-045 · PROJ-BREAK-ux-38/39 / idor-55 | Medium | Verified the shared /admin/projects/[projectId]/[section] boundary against guessed and path-like sections, denied project management scope, and malicious referral/query parameters. Unknown sections terminate before database work, management permission precedes the workspace view, and only at-risk/submissions with documented risk reasons survive breadcrumb encoding. No source defect discovered in this pass. | Test-only `b98b05f` | `tests/unit/PROJ-BREAK-chat9-admin-project-sections.test.tsx`; browser and real session checks OPEN |
 
+| PROJ9-046 · SA-placements-shortlisted-01/07 | High | The Super Admin shortlisted applicant detail previously had no friendly missing-college or denied state before calling its scoped service; a service outage or stale authorization produced a route crash rather than a recoverable screen. The page now validates UUID and selected-college authorization before reading, distinguishes missing from denied, and contains service errors without exposing private screening internals. SQL already scoped screening, job, role, membership and college+organization — behavioral source query tests added. | `62db90e` | `tests/unit/PROJ-BREAK-chat9-sa-shortlisted-detail.test.ts` (`71be091`), `tests/unit/PROJ-BREAK-chat9-sa-shortlisted-page.test.tsx` (`b5a4a7b`); real PG/browser proof OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
