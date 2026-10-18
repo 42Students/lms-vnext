@@ -408,7 +408,7 @@ export async function PlacementDriveWorkspace({
               Students also register on {job.legacyPostingDetails.portal.name}.
               {/^https:\/\/[^/]+/i.test(job.legacyPostingDetails.portal.url)?(
                 <>{" "}<a href={job.legacyPostingDetails.portal.url}
-                  target="_blank" rel="noopener noreferrer" className="text-primary-text underline">Open employer portal</a></>
+                  className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline">Open employer portal</a></>
               ):null}
             </p>
           ):null}
