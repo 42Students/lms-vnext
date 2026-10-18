@@ -464,7 +464,7 @@ export default async function TpoStudentsPage({
           <label className="grid gap-1 text-sm">Birth year
            <input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="min-h-11 w-28 rounded border border-border p-2"/>
           </label>
-          {([["minSkills","Skills"],["minProjects","Projects"],["minCertifications","Certifications"],["minExperiences","Experience entries"]] as const).map(([key,label])=>
+          {([["minSkills","Skills"],["minProjects","Profile project entries (self-reported)"],["minCertifications","Certifications"],["minExperiences","Experience entries"]] as const).map(([key,label])=>
            <label key={key} className="grid gap-1 text-sm">Minimum {label}
             <input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="min-h-11 w-28 rounded border border-border p-2"/>
            </label>)}

@@ -26,7 +26,13 @@ describe("TPO-students-02 roster student deep link and drawer",()=>{
   for(const tab of ["Profile","Placement","Requests","Notes","History"])expect(modal).toContain('"'+tab+'"');
   expect(modal).toContain("onNavigate(rows[index-1].membershipId)");
   expect(modal).toContain("onNavigate(rows[index+1].membershipId)");
-  expect(modal).toContain('role="dialog"');
+  // Shared Drawer renders a native named modal with Escape and focus restoration.
+  const drawer=readFileSync("src/components/ui/drawer.tsx","utf8");
+  expect(modal).toContain("<Drawer open={true}");
+  expect(drawer).toContain("<dialog");
+  expect(drawer).toContain("aria-labelledby={titleId}");
+  expect(drawer).toContain("modal.showModal()");
+  expect(drawer).toContain("opener.current?.focus()");
   expect(modal).toContain("No attention flags derived");
  });
 });
