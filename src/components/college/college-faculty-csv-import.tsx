@@ -34,7 +34,7 @@ export function CollegeFacultyCsvImport(){
     if(action==="IMPORT"){setConfirmed(false);router.refresh();}
   }
   const run=(action:"PREVIEW"|"IMPORT")=>void guardRun(async()=>{
-    try{await submit(action);}catch(reason){
+    try{await submit(action);}catch{
       setError("Faculty import is unavailable. Please try again.");
     }
   });
