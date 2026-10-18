@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -119,34 +120,33 @@ export default async function TpoActorAuditPage({
       <h2 className="text-lg font-semibold text-foreground">
         {data.total} matching canonical record(s)
       </h2>
-      {data.rows.length === 0 ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
-          {data.total === 0
-            ? "No canonical placement events match these exact filters."
-            : "This page is outside the available records. Choose an earlier page."}
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="w-full min-w-[56rem] text-left text-sm">
-            <thead className="bg-surface-subtle">
-              <tr>{["Recorded (IST)", "Actor", "Action", "Entity type", "Entity ID"].map(
-                (heading) => <th key={heading} scope="col" className="border-b border-border p-3">{heading}</th>,
-              )}</tr>
-            </thead>
-            <tbody>{data.rows.map((row) => <tr key={row.id} className="border-b border-border last:border-0">
-              <td className="p-3"><time dateTime={row.occurredAt}>
-                {dateTime.format(new Date(row.occurredAt))}
-              </time></td>
-              <td className="p-3 text-sm">{row.actorName?.trim()||"System / unknown"}</td>
-              <td className="p-3">{row.eventType}</td>
-              <td className="p-3">{row.entityType}</td>
-              <td className="p-3 font-mono text-xs">{tpoAuditEntityHref(row.entityType,row.entityId)?
-                <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!} className="font-semibold text-[var(--lms-teal-deep)] underline">Open {row.entityType.replaceAll("_"," ")} →</Link>:
-                <span title="No safe direct page is registered for this entity type">{row.entityId}</span>}</td>
-            </tr>)}</tbody>
-          </table>
-        </div>
-      )}
+      <DataTable
+        caption="Matching canonical placement audit records"
+        rows={data.rows}
+        getRowKey={(row)=>row.id}
+        empty={<p role="status" className="text-sm text-body">
+          {data.total===0
+            ?"No canonical placement events match these exact filters."
+            :"This page is outside the available records. Choose an earlier page."}
+        </p>}
+        columns={[
+          {key:"when",header:"Recorded (IST)",mobileLabel:"Recorded (IST)",mobilePriority:"secondary",
+           cell:(row)=><time dateTime={row.occurredAt}>{dateTime.format(new Date(row.occurredAt))}</time>},
+          {key:"actor",header:"Actor",mobileLabel:"Actor",mobilePriority:"secondary",
+           cell:(row)=>row.actorName?.trim()||"System / unknown"},
+          {key:"action",header:"Action",mobileLabel:"Action",mobilePriority:"primary",
+           cell:(row)=>row.eventType},
+          {key:"type",header:"Entity type",mobileLabel:"Entity type",mobilePriority:"secondary",
+           cell:(row)=>row.entityType},
+          {key:"entity",header:"Entity ID",mobileLabel:"Entity ID",mobilePriority:"action",
+           cell:(row)=>tpoAuditEntityHref(row.entityType,row.entityId)?
+            <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!}
+             className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+             Open {row.entityType.replaceAll("_"," ")} →
+            </Link>:
+            <span title="No safe direct page is registered for this entity type">{row.entityId}</span>},
+        ]}
+      />
       <nav aria-label="Actor audit pagination" className="flex items-center justify-between gap-3 text-sm">
         <span>Page {data.page} of {data.totalPages}</span>
         <div className="flex gap-4">
