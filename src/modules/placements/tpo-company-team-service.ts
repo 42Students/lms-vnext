@@ -11,6 +11,7 @@ import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import {requirePlacementManageScope} from "./scope";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
+import {prioritizedCompanyTeamRecipients} from "./tpo-company-team-recipient-priority";
 
 export const companyTeamCompanyIdSchema=z.string().uuid();
 const uuid=z.string().uuid();
@@ -184,30 +185,35 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
    }).returning({id:activityEvents.id});
    const subscribers=await tx.select({membershipId:follows.membershipId})
      .from(follows).where(and(eq(follows.collegeId,college.id),eq(follows.companyId,companyId)));
-   const notifyIds=new Set(subscribers.map(f=>f.membershipId));
-   if(input.assigneeId)notifyIds.add(input.assigneeId);
+   const explicitMentions:string[]=[];
    // Explicit @member:<UUID> is an unambiguous, scoped person mention.
-   // Resolve recipients only through active TPO/college-admin memberships.
+   // Recipient membership and college status are still verified below.
    for(const match of input.body.matchAll(/@member:([0-9a-f-]{36})/gi)){
-    if(uuid.safeParse(match[1]).success)notifyIds.add(match[1]);
+    const id=match[1];
+    if(id&&uuid.safeParse(id).success)explicitMentions.push(id);
    }
+   const teammates:string[]=[];
    if(/(?:^|\s)@team(?:\b|$)/i.test(input.body)){
     const colleagues=await tx.selectDistinct({id:collegeMemberships.id}).from(collegeMemberships)
       .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
        inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
       .where(and(eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE")))
-      .limit(250);
-    for(const member of colleagues)notifyIds.add(member.id);
+      .orderBy(asc(collegeMemberships.id)).limit(250);
+    teammates.push(...colleagues.map(row=>row.id));
    }
-   notifyIds.delete(membership.id);
-   if(event&&notifyIds.size>0){
+   const notifyIds=prioritizedCompanyTeamRecipients({
+    actorMembershipId:membership.id,assigneeId:input.assigneeId,
+    mentions:explicitMentions,team:teammates,
+    followers:subscribers.map(row=>row.membershipId),
+   });
+   if(event&&notifyIds.length>0){
     const targets=await tx.selectDistinct({id:collegeMemberships.id,userId:users.id})
       .from(collegeMemberships)
       .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
       .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
         inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
       .where(and(eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE"),
-        inArray(collegeMemberships.id,[...notifyIds].slice(0,250))))
+        inArray(collegeMemberships.id,notifyIds)))
       .limit(250);
     if(targets.length)await tx.insert(inAppNotifications).values(targets.map(member=>({
       eventId:event.id,userId:member.userId,

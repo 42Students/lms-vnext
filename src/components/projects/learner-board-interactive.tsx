@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {LearnerDeleteOwnTask} from "./learner-own-task-controls";
+import {canLearnerMoveOwnTask} from "@/modules/projects/learner-task-status-policy";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerBoardTaskHref,type LearnerTaskBoardUrlFilters} from "@/modules/projects/learner-board-task-detail-model";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;templateKey:string;
@@ -31,11 +32,14 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   const task=tasks.find(row=>row.id===taskId);
   if(!task||busy||readOnly||!membershipId||task.assigneeMembershipId!==membershipId||
     !task.sprintId||sprintState.get(task.sprintId)!=="ACTIVE"||
-    !statuses.includes(task.status as EditableStatus)||task.status===next)return;
+    !canLearnerMoveOwnTask(task.status,next))return;
   let note=restoreNote??null;
   if(next==="BLOCKED"&&!note){
    note=window.prompt("What is blocking this task?",task.blockerReason??"");
-   if(!note?.trim())return;
+  }
+  if(next==="BLOCKED"&&(!note||note.trim().length<3||note.trim().length>2000)){
+   setError("Describe the blocker in 3 to 2,000 characters, then try again.");
+   return;
   }
   setBusy(true);setError("");
   try{
@@ -85,11 +89,14 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   {busy?<p role="status" aria-live="polite" className="text-sm text-body">Saving your change…</p>:null}
   {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
   {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
-  {undo?<button type="button" disabled={busy} className="min-h-10 text-sm font-semibold text-primary-text underline"
+  {undo&&tasks.some(task=>task.id===undo.taskId&&canLearnerMoveOwnTask(task.status,undo.status))?
+   <button type="button" disabled={busy||readOnly} className="min-h-11 text-sm font-semibold text-primary-text underline"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
     Undo last task move
   </button>:null}
-  <div className="overflow-x-auto pb-3">
+  <p className="text-xs text-muted-foreground sm:hidden">Scroll sideways to see all Board lanes.</p>
+  <div role="region" aria-label="Project Board lanes, scroll horizontally to see more"
+    tabIndex={0} className="overflow-x-auto overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    <div className="flex min-w-max gap-3">{lanes.map(lane=>
     <section key={lane.id} aria-label={lane.label}
       onDragOver={event=>{if(statuses.includes(lane.id as EditableStatus))event.preventDefault()}}
@@ -115,7 +122,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
             Pull into sprint
             <select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}
               onChange={event=>{if(event.target.value)void pull(task,event.target.value);}}
-              className="mt-1 min-h-10 w-full rounded border border-border bg-background px-2">
+              className="mt-1 min-h-11 w-full rounded border border-border bg-background px-2">
               <option value="">Choose active sprint</option>
               {sprints.filter(s=>s.status==="ACTIVE").map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
             </select>
@@ -126,9 +133,10 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
           Move {task.title}
           <select aria-label={"Move "+task.title} value={task.status} disabled={busy}
            onChange={event=>void move(task.id,event.target.value as EditableStatus)}
-           className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-2 text-sm">
-            {statuses.map(status=><option key={status} value={status}>
-             {status==="TODO"?"To Do":status==="IN_PROGRESS"?"In Progress":"Blocked"}</option>)}
+           className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2 text-sm">
+            {statuses.filter(status=>status===task.status||canLearnerMoveOwnTask(task.status,status))
+              .map(status=><option key={status} value={status} disabled={status===task.status}>
+               {status==="TODO"?"To Do":status==="IN_PROGRESS"?"In Progress":"Blocked"}</option>)}
           </select>
         </label>:null}
        </li>;

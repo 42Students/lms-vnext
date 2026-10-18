@@ -21,6 +21,7 @@ import { friendlyApiError } from "@/lib/friendly-error";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
 import {savedDeliverySubmissionReadiness} from "@/modules/projects/saved-delivery-submission-readiness";
+import {finalDeliveryUserError} from "@/modules/projects/final-delivery-user-error";
 
 type Submission = {
   id: string;
@@ -187,11 +188,7 @@ export function LearnerFinalDeliveryControl({
       });
       router.refresh();
     } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not save the final draft.",
-      );
+      setError(finalDeliveryUserError(caught));
     } finally {
       pendingRef.current = false;
       setPending(false);
@@ -236,6 +233,10 @@ export function LearnerFinalDeliveryControl({
 
   async function submitDraft(confirmed=false) {
     if (!draft || pendingRef.current) return;
+    if(!canSubmitDraft){
+      showToast({tone:"error",title:"Complete the project checklist before submitting final work."});
+      return;
+    }
     if(!lastSavedUpdatedAt.current){
       showToast({tone:"error",title:"Refresh this final draft before submitting."});
       return;
@@ -269,10 +270,7 @@ export function LearnerFinalDeliveryControl({
       showToast({
         tone: "error",
         title: "Could not submit final delivery",
-        description:
-          caught instanceof Error
-            ? caught.message
-            : undefined,
+        description:finalDeliveryUserError(caught),
       });
     } finally {
       pendingRef.current=false;
@@ -502,6 +500,7 @@ export function FinalReviewControl({
     useState("");
   const [pending, setPending] =
     useState(false);
+  const reviewInFlight=useRef(false);
   function discardDraft(){
     setOpen(false);setFeedback("");setDecision("APPROVED");setStaleReview(false);
   }
@@ -511,7 +510,7 @@ export function FinalReviewControl({
 
   async function review() {
     // A failed optimistic version check must be refreshed before either action.
-    if (pending || staleReview) return;
+    if (pending || reviewInFlight.current || staleReview) return;
     if (
       decision === "CHANGES_REQUESTED" &&
       !feedback.trim()
@@ -519,6 +518,7 @@ export function FinalReviewControl({
       return;
     }
 
+    reviewInFlight.current=true;
     setPending(true);
     try {
       await projectMutation(
@@ -554,6 +554,7 @@ export function FinalReviewControl({
         description: caught instanceof FriendlyFetchError?caught.message:friendlyApiError({}),
       });
     } finally {
+      reviewInFlight.current=false;
       setPending(false);
     }
   }
@@ -685,6 +686,7 @@ export function ProjectEvaluationControl({
   >([emptyEvaluationRow()]);
   const [pending, setPending] =
     useState(false);
+  const evaluationInFlight=useRef(false);
   const [error, setError] =
     useState<string | null>(null);
   const dirty=Boolean(summary.trim())||rows.length!==1||
@@ -729,8 +731,9 @@ export function ProjectEvaluationControl({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    if (!valid) return;
+    if (!valid || evaluationInFlight.current) return;
 
+    evaluationInFlight.current=true;
     setPending(true);
     setError(null);
     try {
@@ -755,12 +758,9 @@ export function ProjectEvaluationControl({
       });
       router.refresh();
     } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not save the evaluation.",
-      );
+      setError(finalDeliveryUserError(caught));
     } finally {
+      evaluationInFlight.current=false;
       setPending(false);
     }
   }

@@ -315,17 +315,21 @@ export function LearnerCourseList({
           </details>
           <details className="rounded-lg border border-border bg-surface px-3 py-2">
             <summary className="cursor-pointer font-semibold">All Courses</summary>
-            <ul className="mt-2 max-h-64 space-y-1 overflow-auto text-body">{periodRows.slice(0,100).map((row,i)=>
+            <ul role="region" aria-label="Scrollable course list" tabIndex={0}
+              className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{periodRows.slice(0,100).map((row,i)=>
               <li key={row.course.deliveryId+"-"+i}>{row.course.courseName}</li>)}</ul>
+            {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for more courses.</p>:null}
             {periodRows.length>100?<p>Showing first 100; search the full list below.</p>:null}
           </details>
           {creditSummary.recordedCount>0?<details className="rounded-lg border border-border bg-surface px-3 py-2">
             <summary className="cursor-pointer font-semibold">Credits Breakdown</summary>
-            <ul className="mt-2 max-h-64 space-y-1 overflow-auto text-body">
+            <ul role="region" aria-label="Scrollable course list" tabIndex={0}
+              className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               {periodRows.map((row,i)=><li key={row.course.deliveryId+"-"+i}>
                 {row.course.courseName} · {row.course.credits===null?"Credits unavailable":row.course.credits+" cr"}
               </li>)}
             </ul>
+            {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for the full credits breakdown.</p>:null}
             <p className="mt-2 font-semibold">Total {creditSummary.credits} Credits</p>
           </details>:null}
         </div>

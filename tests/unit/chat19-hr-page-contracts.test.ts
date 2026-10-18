@@ -22,6 +22,8 @@ describe("HR page-level access, recovery and mobile contracts", () => {
       const source = load(root + route + "/page.tsx");
       expect(source).toContain("getCurrentRequestContext");
       expect(source).toMatch(/hasActiveRecruiter\(context\)/);
+      // A recruiter profile from a different signed-in account cannot authorize page reads.
+      expect(source).toMatch(/if\s*\(\s*!hasActiveRecruiter\(context\)[^\n]*context\.recruiter(?:\?\.)?\.?userId\s*!==\s*context\.user\.id/);
       expect(source).toMatch(/redirect\(/);
     },
   );

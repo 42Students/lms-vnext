@@ -10,7 +10,7 @@ export default async function HrRoundRemovalConfirm({params}:{
  params:Promise<{jobId:string;roundId:string}>;
 }){
  const context=await getCurrentRequestContext();
- if(!hasActiveRecruiter(context))redirect("/dashboard");
+ if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const {jobId,roundId}=await params;
  if(!z.string().uuid().safeParse(jobId).success||!z.string().uuid().safeParse(roundId).success)notFound();
  let rounds:Awaited<ReturnType<typeof listHrRoundEditorRows>>;

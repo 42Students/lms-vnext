@@ -95,6 +95,10 @@ This is the **tested-function ledger for the focused model suite**, not a claim 
 
 | `src/modules/courses/faculty-course-health-model.ts`, `faculty-course-health-service.ts` | `selectFacultyCourseHealthCandidates`, `responseCoverage`, `getFacultyCourseAssessmentHealth` | `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts`, `tests/unit/chat3-faculty-course-health-service-permissions.test.ts` | FAC-HEALTH-CLOSED-02 / FAC-HEALTH-RATE-03 | include CLOSED published quizzes in current Section historical reporting without exposing draft/archived/foreign rows; five-row cap and stale-page clamp |
 
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx` | default `FacultyGradebookPage` | `tests/unit/UX-teacher-gradebook-strict-query-journey.test.tsx` | FAC-GRADEBOOK-UX-01 | SSR rejects duplicated page/search query keys and forged tenant filters before Faculty context fetch, renders authorized empty Section and filtered misses with truthfulness |
+
+| `src/app/(authenticated)/teacher/contacts/page.tsx`, `courses/[deliveryId]/page.tsx`, `courses/[deliveryId]/attendance-corrections/page.tsx`, `courses/[deliveryId]/notices/page.tsx` | four default redirect-only route pages | `tests/unit/UX-teacher-redirect-no-shared-route-journey.test.tsx` | UX-teacher-no-shared-01 | valid deep-link redirect, malformed ID 404, existing persisted Section scope before redirect and revoked teaching denial; no phantom UI/scrollbars |
+
 ## Role/security matrix
 
 - FAC-SCOPE-01/02: Faculty allowed only after central `courses.read` and active teaching role; Learner, Mentor, College Admin, Super Admin, missing membership and foreign tenant denied in unit-model mock contract.

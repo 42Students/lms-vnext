@@ -98,3 +98,26 @@ Every regression listed above is authored but **not executed**. This targeted le
 | `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx` | `Page` | `PROJ-BREAK-ux-14` | SOURCE: college-scope guard, safe retry and denied state; browser outage/revocation journey pending |
 
 | `src/components/projects/super-admin-template-subview-page.tsx` | `SuperAdminTemplateSubviewPage` | `PROJ-BREAK-ux-15; PROJ-BREAK-scale-28` | SOURCE: 404 vs safe error fallback, history-page parser; server render/outage journey pending |
+
+## Additional 2026-10-18 chat-9 breaker cases (source authored; CI pending)
+
+| Export/route/page | Test evidence | Depth and unresolved verification |
+|---|---|---|
+| `parseProjectAdminRiskQuery` (`src/modules/projects/admin-risk-query-model.ts`) | `PROJ-BREAK-ux-19`, `tests/unit/PROJ-BREAK-chat9-admin-page-query-hostility.test.ts` | PURE BEHAVIOR: default/authorized filters; arrays, extra parameters, nondecimal/empty paging fail closed. UI/browser confirmation pending. |
+| `parseProjectAdminSubmissionsQuery` (`src/modules/projects/admin-submissions-query-model.ts`) | `PROJ-BREAK-ux-20`, same test file | PURE BEHAVIOR: preserved valid views and statuses; rejects ambiguous, nondecimal and unknown request values. Browser and full service integration pending. |
+| `formatProjectAdminUpdatedDateIst` (`src/modules/projects/project-admin-date-model.ts`) | `PROJ-BREAK-resilience-20`, `tests/unit/PROJ-BREAK-chat9-admin-export-date-resilience.test.ts` | PURE BEHAVIOR: invalid stored dates render explicit unavailable text; valid IST calendar boundary covered. CI/browser pending. |
+| `projectWorkspacePageCsv` (`src/modules/projects/admin-workspace-page-export-model.ts`) | `PROJ-BREAK-resilience-20`, same test | PURE BEHAVIOR: invalid date cannot crash a page-scoped CSV; valid row, status, formula defense and column integrity retained. CI/spreadsheet importer pending. |
+| `SuperAdminTemplatePageExport` (`src/components/projects/super-admin-template-page-export.tsx`) | `PROJ-BREAK-exports-12/13/14/15`, `tests/unit/PROJ-BREAK-chat9-admin-csv-security.test.ts` | SOURCE: test updated to assert the actual named-rows sanitizer invocation, keeping exact sanitizer requirement; no runtime browser export proof. |
+
+The prior cloud failure report precedes the current-main fast-forward and may include errors already corrected by other lanes. Test authoring and GitHub source comparison are **not** a green Vitest or TypeScript run.
+| `parseProjectAdminAuditQuery` (`src/modules/projects/admin-audit-query-model.ts`) | `PROJ-BREAK-ux-21`, `tests/unit/PROJ-BREAK-chat9-admin-audit-filter-boundary.test.ts` | PURE BEHAVIOR: valid IST-date range and scoped cursor; unknown/duplicate/contradictory filters trigger visible operator warning. Integration against activity DB and browser still pending. |
+
+| `projectAdminServiceQuerySchema` (`src/modules/projects/admin-service-query-model.ts`) | `PROJ-BREAK-scale-21`, `tests/unit/PROJ-BREAK-chat9-service-bounds.test.ts` | PURE BEHAVIOR: service-level rejection of forged/exotic/oversized paging, including direct callers bypassing URL boundary. Full PostgreSQL query replay pending. |
+| `listProjectAdminSnapshots`, `listProjectAdminRiskQueue`, `listProjectAdminSubmissionQueue` (admin insights service) | `PROJ-BREAK-scale-21`, same test | SOURCE wiring to pure service schema; actual pagination query and lock/tenant permission matrix still needs PostgreSQL integration. |
+| `submitProjectSubmission` final delivery regression | `PROJ-BREAK-submissions-10`, `tests/integration/projects-p6b-final-evaluation.test.ts` and `tests/integration/projects-adversarial.test.ts` | INTEGRATION TEST CODE: six P6B and one adversarial call now carry saved draft revision CAS; PostgreSQL and cloud TS compilation **not run**. |
+
+| `formatProjectAdminActivityDateIst`, `safeProjectAdminUtcIso` (`project-admin-date-model.ts`) | `PROJ-BREAK-resilience-21`, `tests/unit/PROJ-BREAK-chat9-admin-export-date-resilience.test.ts` | PURE BEHAVIOR: valid IST and UTC boundaries, invalid Date and null handling. Page wiring SOURCE asserted for at-risk and submission pages; browser/DB malformed-data journey pending. |
+
+| `SuperAdminProjectsPage`, `CollegeProjectsPage` view-to-query adapter | `PROJ-BREAK-ux-22`, `tests/unit/PROJ-BREAK-chat9-admin-view-filter-boundary.test.ts` | PURE BEHAVIOR: service schema rejects display-only keys; SOURCE: both pages project only whitelisted DB query fields yet preserve cards/table links. Authenticated browser/SSR replay and cross-college permissions pending. |
+
+| `CollegeProjectsPage` (`/college/projects`) | `PROJ-BREAK-college-resilience-23/26`, `tests/unit/PROJ-BREAK-chat9-college-project-outage.test.tsx` | MOCK SSR BEHAVIOR: retry state on primary read failure, partial template outage, missing scope, strict view stripping before tenant-scoped service, no raw exception messages. Authenticated browser and real database outage pending. |
