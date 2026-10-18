@@ -169,3 +169,7 @@ The College student import history service used `z.coerce.number()` for page inp
 ## COL-people-directory-PAGE-01 — malformed list pagination
 
 The College People roster's `z.coerce.number()` accepted unambiguous but non-URL-decimal inputs such as `0x19` and `2.5e1`. Replaced with strict decimal-string parsing (retaining validated numeric internal callers), explicit blank-page rejection, and `chat4-college-role-directory-decimal-page.test.ts` covering canonical query round trips. Authored, not run.
+
+## COL-student-import-placement-tenant-01 — S1 foreign program admission defect
+
+The College Admin CSV student-placement service previously checked that `learner_program_enrollments.cohort_id = target section cohort_id`, but not that `learner_program_enrollments.program_id` actually owned that cohort. Because these are independent PostgreSQL FKs, a learner membership in College A referencing a College B program and College A cohort could be admitted to a College A section. The enrollment read now INNER JOINs `cohorts` with both `cohort.id` and `cohort.program_id` constraints, and checks the program's department college before class capacity, insert and audit. A real disposable PG negative case `COL-student-import-placement-tenant-PG-01` and source-order test are authored; not run.
