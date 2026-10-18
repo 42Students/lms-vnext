@@ -8,6 +8,7 @@ import type {
   IdentityDirectory,
   IdentityDirectoryUser,
 } from "./identity";
+import {PeopleServiceError} from "./errors";
 
 /**
  * Identity directory backed by the platform's own `users` table.
@@ -77,6 +78,11 @@ export const localIdentityDirectory: IdentityDirectory = {
   },
 
   async createUser(input) {
+    // Accounts must have at least one verified contact path for OTP login.
+    // The identity resolver enforces this, but direct adapter callers must
+    // not silently allocate unreachable accounts either.
+    if(!input.phoneNumber&&!input.email)
+      throw new PeopleServiceError("IDENTITY_CONTACT_REQUIRED");
     return {
       uid: `lms_${randomUUID()}`,
       phoneNumber: input.phoneNumber ?? null,

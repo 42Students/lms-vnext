@@ -103,3 +103,17 @@ The Weak Areas generated report also names `recruiter-selection-staged-schema.ts
 | `hrDriveDraftSchema`, `hrDriveDraftQuerySchema`, `hrDraftFromAuthorizedJob` | `HR-BREAK-drive-payload-01.test.ts` | TPO-review-safe hire-again, off-campus HTTPS only, deny credentials/scripts, salary parts and internship stipend, invalid duplicate rounds/CGPA/bond/branches, URL mode clashes, prevent conflicting edit/copy/fix | Database-side compensation policy and concurrent proposal reconciliation |
 
 **Working rule:** A test source reference alone is not counted as closed here. The new `HR-BREAK-*.test.ts` test cases invoke the actual function or page directly. Assertions which mock the database do not substitute for transaction, uniqueness, tenant or audit guarantees on real PostgreSQL.
+
+
+## Chat-15 October 18 current-branch hardening (HR-COV-15 continuation)
+
+This section records source/test evidence only, **not executed or PostgreSQL-verified**. Source changes and tests were pushed exclusively to `chatgpt/chat-15-b`.
+
+| Export / route | Behavioural test | Newly checked invariants | Remaining certification |
+|---|---|---|---|
+| `recruiterTeamAttributedDriveCounts`, new `attributeRecruiterTeamJobs` (`src/modules/placements/recruiter-team-drive-count-service.ts`) | `tests/unit/HR-BREAK-chat15-team-attribution-50.test.ts` (`HR-TEAM-ATTR-50`) | Duplicate authorized job rows credited once; conflicting approved request owners fall back to job creator regardless of query order; orphan/nonmatching job request rows excluded; denied college and missing permission do not query DB; exact relationship-scoped allowlist | PostgreSQL conflicting historical approved request fixtures; query plan and actual revoked-grant request must be exercised by CI |
+| `hrDriveAttention` (`src/modules/placements/hr-drive-attention-model.ts`) | `tests/unit/HR-BREAK-chat15-drive-attention-51.test.ts` (`HR-DRIVE-ATTENTION-51`) | Fix `slice(-0)` exposing every overdue row for zero limit; negative/nonfinite limit returns empty; upper bound 50; invalid persisted deadline skipped; future/overdue sorted, exact 7-day boundary, archived/draft/foreign college excluded | Browser Today attention-card rendering and CI run |
+| `requireProjectReadAccess` / `requireProjectLifecycleAccess` (`src/modules/projects/access.ts`, source unchanged) | `tests/unit/PROJ-BREAK-HR-01.test.ts` (`PROJ-BREAK-HR-01`, `PROJ-BREAK-HR-ORG-03`) | TPO-only role denied *before* project ID query; stale assertions updated to expect no SQL instead of allowing object-existence probe; separately test active MENTOR with foreign organization or college has only scope read, no member query | Unit suite and real two-college PostgreSQL role journey |
+| `/tracker/audit-findings` server page | `tests/unit/HR-BREAK-chat15-tracker-audit-page-58.test.ts` (`HR-TRACKER-PAGE-58`) | Actually invokes page with mocked auth and persistence: role/disabled/acting-college denial before SQL; central-permission denial; invalid/multi-valued filters; unavailable datastore; admin empty results; persisted row projection | Live 320px/keyboard flow, genuine admin auth, database outage and CI |
+ 
+The full HR/recruiter/tracker module remains **OPEN for exhaustive certification**: every unlisted service export and API route still requires its own row and role/validation/concurrency/notification tests. Neither existing test names nor the new mocked-boundary suites constitute production confirmation.

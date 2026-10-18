@@ -141,6 +141,13 @@ export const changeCourseTeachingAssignmentRoleInputSchema = z.object({
   role: z.enum(COURSE_TEACHING_ROLES),
   expectedUpdatedAt: z.string().datetime({offset:true}),
 }).strict();
+/** A single class may have several courses; batch writes must commit together. */
+export const createCourseTeachingAssignmentsBatchInputSchema = z.object({
+  deliveryIds: z.array(courseSectionDeliveryIdSchema).min(1).max(10)
+    .refine(ids=>new Set(ids).size===ids.length,"Choose each course only once"),
+  membershipId: z.string().uuid(),
+  role: z.enum(COURSE_TEACHING_ROLES),
+}).strict();
 
 export type CreateCourseInput = z.infer<
   typeof createCourseInputSchema

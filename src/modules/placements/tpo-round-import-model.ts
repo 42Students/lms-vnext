@@ -3,7 +3,7 @@ import {parseSelectionCsv} from "./tpo-selection-import-model";
 import {parseResultXlsx} from "./tpo-result-xlsx-model";
 export const roundImportActionSchema=z.object({
  action:z.literal("STAGE_IMPORT"),confirmed:z.literal(true),
- previewToken:z.string().length(64),
+ previewToken:z.string().regex(/^[0-9a-f]{64}$/, "Invalid round import preview token"),
  missingPolicy:z.enum(["LEAVE_PENDING","MARK_NOT_CLEARED"]),
  overrides:z.array(z.object({line:z.number().int().positive(),applicationId:z.string().uuid()}).strict()).max(1000),
  skippedLines:z.array(z.number().int().positive()).max(1000),

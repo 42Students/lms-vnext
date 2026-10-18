@@ -1,6 +1,6 @@
 import "server-only";
-import {and,eq,inArray,isNull} from "drizzle-orm";
-import {z} from "zod";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
+import {tpoPrepAssignmentInputSchema} from "./tpo-prep-assignment-model";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,courseOfferings,courses,departments,
  inAppNotifications,learnerProgramEnrollments,membershipRoles,placementTpoPrepAssignments,
@@ -10,13 +10,9 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
-import {requireTpoJobActor} from "./tpo-job-write-base";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {placementTableExists} from "./staged-tables";
-const uuid=z.string().uuid();
-const inputSchema=z.strictObject({
- offeringId:uuid,dueAt:z.iso.datetime({offset:true}).nullable().optional(),membershipIds:z.array(uuid).min(1).max(100),
-}).refine(data=>new Set(data.membershipIds).size===data.membershipIds.length,
- {message:"Select each student only once",path:["membershipIds"]});
+const inputSchema=tpoPrepAssignmentInputSchema;
 export class TpoPrepError extends Error{
  constructor(readonly code:"UNAVAILABLE"|"NO_ACTIVE_OFFERING"|"DUE_DATE_INVALID"|"INVALID_SELECTION"){super(code);}
 }
@@ -48,12 +44,29 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
  await hasPrepTable();
  const due=input.dueAt?new Date(input.dueAt):null;
  if(due!==null&&due.getTime()<=Date.now())throw new TpoPrepError("DUE_DATE_INVALID");
+ if(due===null){
+  // The new nullable schema is proposed until the orchestrator registers
+  // its migration. Fail cleanly instead of attempting a NOT NULL insert and
+  // returning a raw database error on an older dev deployment.
+  const nullable=await getDb().execute<{ready:boolean}>(sql`
+   SELECT EXISTS(
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='placement_tpo_prep_assignments'
+      AND column_name='due_at' AND is_nullable='YES'
+   ) AS ready
+  `).then(result=>result.rows[0]?.ready===true).catch(()=>false);
+  if(!nullable)throw new TpoPrepError("UNAVAILABLE");
+ }
  return getDb().transaction(async tx=>{
-  // Persisted team permission is locked throughout assignment, audit and notices.
-  await requireTpoJobActor(tx,ctx);
-  const [lock]=await tx.select({id:colleges.id}).from(colleges)
+  // College first, then live persisted TPO membership, to serialize against
+  // archive, account suspension and role removal before writing any assignments.
+  const [lock]=await tx.select({id:colleges.id,status:colleges.status}).from(colleges)
    .where(eq(colleges.id,college.id)).for("update").limit(1);
-  if(!lock)throw new TpoPrepError("INVALID_SELECTION");
+  if(!lock||lock.status!=="ACTIVE")throw new TpoPrepError("INVALID_SELECTION");
+  const persisted=await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
+  if(!hasMembershipRole(persisted,"TPO"))throw new AuthorizationError("placements.manage");
   const [offering]=await tx.select({id:courseOfferings.id,cohortId:courseOfferings.cohortId,
    title:courses.name}).from(courseOfferings)
    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
@@ -70,34 +83,45 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
    .where(and(inArray(collegeMemberships.id,input.membershipIds),
     eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE")));
   const available=new Map(learners.map(row=>[row.id,row.userId]));
-  const [event]=await tx.insert(activityEvents).values({
-   collegeId:college.id,organizationId:college.organizationId,
-   actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
-   eventType:"PLACEMENTS_TPO_PREP_ASSIGNED",
-   subjectType:"course_offering",subjectId:offering.id,subjectLabel:offering.title,
-   summary:"TPO assigned preparation course to selected learners",
-   metadata:{selected:input.membershipIds.length,offeringId:offering.id,dueAt:input.dueAt??null},
-  }).returning({id:activityEvents.id});
-  if(!event)throw new TpoPrepError("INVALID_SELECTION");
-  const results:{id:string;status:"assigned"|"duplicate"|"skipped"}[]=[];
-  for(const id of input.membershipIds){
-   const userId=available.get(id);
-   if(!userId){results.push({id,status:"skipped"});continue;}
-   const [saved]=await tx.insert(placementTpoPrepAssignments).values({
-    collegeId:college.id,membershipId:id,offeringId:offering.id,dueAt:due,assignedByUserId:ctx.user.id,
-   }).onConflictDoNothing().returning({id:placementTpoPrepAssignments.id});
-   if(!saved){results.push({id,status:"duplicate"});continue;}
-   await tx.insert(inAppNotifications).values({
-    userId,eventId:event.id,title:"New preparation course",
+  // Bulk insert first: a retry that assigns nobody new must not create a
+  // phantom audit event or duplicate notification for the same assignment.
+  const eligibleIds=input.membershipIds.filter(id=>available.has(id));
+  const inserted=eligibleIds.length?await tx.insert(placementTpoPrepAssignments)
+   .values(eligibleIds.map(membershipId=>({
+    collegeId:college.id,membershipId,offeringId:offering.id,dueAt:due,
+    assignedByUserId:ctx.user.id,
+   }))).onConflictDoNothing()
+   .returning({membershipId:placementTpoPrepAssignments.membershipId}):[];
+  const newlyAssigned=new Set(inserted.map(row=>row.membershipId));
+  const results:{id:string;status:"assigned"|"duplicate"|"skipped"}[]=
+   input.membershipIds.map(id=>({
+    id,status:!available.has(id)?"skipped":newlyAssigned.has(id)?"assigned":"duplicate",
+   }));
+  const counts={
+   assigned:results.filter(row=>row.status==="assigned").length,
+   duplicate:results.filter(row=>row.status==="duplicate").length,
+   skipped:results.filter(row=>row.status==="skipped").length,
+  };
+  if(counts.assigned){
+   const [event]=await tx.insert(activityEvents).values({
+    collegeId:college.id,organizationId:college.organizationId,
+    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
+    eventType:"PLACEMENTS_TPO_PREP_ASSIGNED",
+    subjectType:"course_offering",subjectId:offering.id,subjectLabel:offering.title,
+    summary:"TPO assigned preparation course to selected learners",
+    metadata:{selected:input.membershipIds.length,assigned:counts.assigned,
+     duplicate:counts.duplicate,skipped:counts.skipped,offeringId:offering.id,dueAt:input.dueAt??null},
+   }).returning({id:activityEvents.id});
+   if(!event)throw new TpoPrepError("INVALID_SELECTION");
+   await tx.insert(inAppNotifications).values(inserted.map(row=>({
+    userId:available.get(row.membershipId)!,
+    eventId:event.id,title:"New preparation course",
     body:"Your placement cell assigned "+offering.title+". Review it in your courses"+
      (due?". The due date is recorded in your assignment.":"."),
     actionHref:"/learn/courses",
-   }).onConflictDoNothing();
-   results.push({id,status:"assigned"});
+   }))).onConflictDoNothing();
   }
-  return {results,counts:{assigned:results.filter(r=>r.status==="assigned").length,
-   duplicate:results.filter(r=>r.status==="duplicate").length,
-   skipped:results.filter(r=>r.status==="skipped").length}};
+  return {results,counts};
  });
 }
 export async function listOwnTpoPrepAssignments(ctx:RequestContext){

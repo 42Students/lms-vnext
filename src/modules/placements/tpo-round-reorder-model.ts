@@ -5,7 +5,7 @@
 export function roundReorderLockMessage(input:{
  jobStatus:string;roundStatuses:readonly string[];hasExecutionArtifacts:boolean;
 }):string|null{
- if(input.jobStatus==="CLOSED"||input.jobStatus==="CANCELLED"||input.jobStatus==="ARCHIVED")
+ if(input.jobStatus!=="DRAFT"&&input.jobStatus!=="PUBLISHED")
   return "The order is locked because this drive has ended.";
  if(input.roundStatuses.length<2)return "Add at least two rounds to change their order.";
  if(input.hasExecutionArtifacts||input.roundStatuses.some(status=>status!=="PENDING"))
