@@ -98,3 +98,5 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-kit-HARDEN-45:** `DataTable` never includes `mobilePriority="hidden"` columns in `More details`. A restricted cell may remain visible on desktop where its column is appropriate; mobile CSS hides it. SSR tests verify no duplicate/private value inside the disclosure and Chromium test verifies viewport-dependent visibility plus public overflow details. Tests are committed but not claimed passing until CI.
 
 - **UX-kit-HARDEN-47:** disabled `FileUpload` no longer announces an invalid input when the only problem is availability. It retains disabled native semantics and helper/unavailable `aria-describedby` IDs. Unit SSR cases in `UX-kit-states-chat17.test.tsx` check this; browser assistive technology should verify the spoken message.
+
+- **UX-kit-HARDEN-48:** Disabled `Switch` uses the same `has-[:disabled]:cursor-not-allowed` affordance as native Checkbox/Radio. Static JSX test verifies the label and input remain 44px and truly disabled; physical pointer/focus behavior requires browser testing.
