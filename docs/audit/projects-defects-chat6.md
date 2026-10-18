@@ -12,3 +12,9 @@ Scope: adversarial client and permission review. This is a supplemental lane def
 Behaviour and source-contract coverage authored: `tests/unit/chat6-proj-break-final-delivery-errors-16.test.ts` (approved errors, raw-throw redaction, session/conflict/outage), `tests/unit/chat6-proj-break-final-delivery-flight-17-18.test.ts` (synchronous lock placement, finally release, editable rubric preservation). These are pending the owner's consolidated test gate; no local execution claimed.
 
 Source code authored; owner priority postpones CI, browser and database execution until the final consolidated gate. Do not treat these findings as runtime-certified.
+
+## PROJ-BREAK-reviews-19 — revoked reviewer authorization during final-delivery review
+
+- **Severity:** S1 authorization/race. The final-delivery `reviewProjectSubmission` checked lifecycle access before its write transaction, then locked the project and submission but did not recheck whether the administrator or mentor still had a current persisted role and active project membership. A role revocation racing a slow review could allow a result and learner notifications to commit from stale session context.
+- **Fix:** `src/modules/projects/submission-service.ts` now invokes the existing persisted-actor permission guard (`assertCurrentEvaluationActor`, exported from `evaluation-service.ts`) inside the review transaction, after locking submission state and before inserting the review, activity or notifications. Admin path uses persisted user/system/membership permissions; mentor path uses active college membership, active platform user, MENTOR role and active project grant under SHARE locks.
+- **Coverage:** `tests/unit/chat6-proj-break-review-revoked-actor-19.test.ts` checks source enforcement order and both role predicates. Runtime PostgreSQL revocation-vs-review interleavings remain unverified until the owner’s consolidated gate.

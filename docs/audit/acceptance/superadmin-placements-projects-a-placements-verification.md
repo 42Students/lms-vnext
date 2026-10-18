@@ -149,3 +149,6 @@ All four are DONE in reviewed source. No local CI, PostgreSQL or browser run was
 
 
 | SA-RETENTION-STALENESS-08 | DONE in source; CI pending | Super Admin stale/withdrawn/rejected retention queue now uses the same last-activity expression in its 180-day cutoff, display and 200-row oldest-first sort; tie-break application ID. `tests/unit/chat13-super-admin-retention-staleness.test.ts`. Large PostgreSQL dataset and browser pending. |
+
+
+| SA-JOINING-ANOMALY-09 | DONE in source; CI deferred | Super Admin joining directory now shows persisted offer status and flags JOINED outcomes without an ACCEPTED offer. Historical inconsistencies remain visible for investigation; `tests/unit/chat13-super-admin-joining-integrity.test.ts`. |
