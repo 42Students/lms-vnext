@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -67,7 +68,7 @@ export default async function TpoByCompanyReportPage({
           <ReportCsvLink workspace={workspace} kind="by-company" />
           <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
             jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})}
-            className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
             Export visible companies CSV
           </a>
         </div>}
@@ -76,7 +77,7 @@ export default async function TpoByCompanyReportPage({
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/by-company" />
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/by-company" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/by-company" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <ReportMetrics metrics={workspace.report.metrics} />
       <form action="/tpo/reports/by-company" method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
@@ -102,7 +103,7 @@ export default async function TpoByCompanyReportPage({
         className="rounded-xl border border-border bg-surface p-4">
         <p className="text-sm text-body">No company records match these filters within the selected reporting scope.</p>
         <Link href={companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined})}
-          className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
           Clear company filters
         </Link>
       </section>:null}
@@ -139,7 +140,7 @@ export default async function TpoByCompanyReportPage({
         <p className="mt-1 text-sm text-body">These company pages show your college relationship and full persisted history, not just this report season.</p>
         {companyLinks.rows.length===0?<p className="mt-3 text-sm text-body">No company records in this report scope.</p>:
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">{companyLinks.rows.map(row=><li key={row.id}>
-          <Link href={row.href} className="inline-flex min-h-10 max-w-full items-center break-words text-sm font-semibold text-primary-text hover:underline">{row.name} →</Link>
+          <Link href={row.href} className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text hover:underline">{row.name} →</Link>
         </li>)}</ul>}
         {companyLinks.truncated?<p role="status" className="mt-3 text-xs text-muted-foreground">Only the first {companyLinks.rows.length} of {companyLinks.total} company links on this report page are shown; refine your search to narrow the result.</p>:null}
       </section>
