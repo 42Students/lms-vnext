@@ -14,9 +14,13 @@ describe("PR-S2-11 no private resource file downloads",()=>{
     expect(list).toContain('eq(projectResources.status,"ACTIVE")');
     expect(list).toContain('eq(projectResources.visibility,"TEAM")');
     expect(list).toContain("eq(projectResources.projectId,scope.project.id)");
+    // Project UUID alone is not authority to expose another tenant's file row.
+    expect(list).toContain("eq(projectResourceFiles.collegeId, scope.collegeId)");
     expect(list).toContain('eq(projectResourceFiles.status, "READY")');
     expect(list).not.toContain("notExists(");
     // Direct guessed file UUIDs must still check persisted resource visibility.
+    expect(grant).toContain("if (row.collegeId !== scope.collegeId)");
+    expect(grant).toContain('throw new StorageFileError("STORAGE_NOT_FOUND")');
     expect(grant).toContain("if(row.resourceId && !manager)");
     expect(grant).toContain('linked.status!=="ACTIVE"');
     expect(grant).toContain('linked.visibility!=="TEAM"');
