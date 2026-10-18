@@ -1,3 +1,5 @@
+import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 "use client";
 import {useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -16,9 +18,9 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
  const router=useRouter(),[selection,setSelection]=useState<Method>(method);
  const {pending:saving,run:guardedRun}=useGuardedAction({busyLabel:"Saving..."});
  const [message,setMessage]=useState("");
+ const [confirmOpen,setConfirmOpen]=useState(false);
  async function save(){
   if(!ready||saving||selection===method)return;
-  if(!window.confirm("Change allowed sign-in methods for this college? Current sessions stay signed in."))return;
   setMessage("");
   await guardedRun(async()=>{
     try {
@@ -26,7 +28,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
         method:"PUT",headers:{"content-type":"application/json"},credentials:"same-origin",
         body:JSON.stringify({collegeId,method:selection,expectedVersion:version}),
       });
-      setMessage("Sign-in settings saved");router.refresh();
+      setConfirmOpen(false);setMessage("Sign-in settings saved");router.refresh();
     }catch(error){
       setMessage(error instanceof FriendlyFetchError && error.status===409
         ?"Settings changed elsewhere. Refresh before retrying."
@@ -44,10 +46,11 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
     <span><strong className="block text-sm">{choice.label}</strong><span className="text-xs text-muted-foreground">{choice.hint}</span></span>
    </label>)}
   </fieldset>
-  <button type="button" disabled={!ready||saving||selection===method} onClick={()=>void save()}
-   className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+  <Button type="button" disabled={!ready||saving||selection===method} onClick={()=>setConfirmOpen(true)}
+   className="disabled:opacity-50">
    {saving?"Saving…":"Save sign-in settings"}
-  </button>
+  </Button>
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} onConfirm={()=>void save()}/>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   {!ready?<p role="status" className="text-sm text-warning-text">Sign-in method storage is unavailable; changes are disabled.</p>:null}
  </section>;
