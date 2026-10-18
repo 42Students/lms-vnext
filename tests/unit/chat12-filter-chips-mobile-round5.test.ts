@@ -10,7 +10,13 @@ describe("chat12 mobile filters and chips",()=>{
  });
  it("TPO-students-51 exposes an accessible mobile filter disclosure and bottom sheet",()=>{
   const p=s("src/components/tpo/tpo-grid-filter-panel.tsx");
-  expect(p).toContain("open:bottom-0");
+  expect(p).toContain('<BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title="Filter students">');
+  const sheet=s("src/components/ui/bottom-sheet.tsx");
+  expect(sheet).toContain("modal.showModal()");
+  expect(sheet).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");
+  expect(sheet).toContain('aria-labelledby={titleId}');
+  expect(sheet).toContain("opener.current?.focus()");
+  expect(sheet).toContain("bottom-[var(--lms-visual-bottom)]");
   expect(p).toContain("Filter students ({activeCount})");
   expect(s("src/components/tpo/tpo-students-spreadsheet.tsx")).toContain("fields={filters} mobileSheet");
  });
