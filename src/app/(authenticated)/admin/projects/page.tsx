@@ -147,8 +147,8 @@ export default async function SuperAdminProjectsPage({
         }
       />
 
-      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/admin/projects/workspaces/new">Create workspace</Link>
-        <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
+      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold hover:bg-surface" href="/admin/projects/workspaces/new">Create workspace</Link>
+        <Link className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold hover:bg-surface" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
 
       {!templatesResult.ok && (
         <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
@@ -159,9 +159,9 @@ export default async function SuperAdminProjectsPage({
 
       <nav className="flex gap-2 text-sm font-semibold" aria-label="Workspace display mode">
         <Link href={viewHref("table")} aria-current={view==="table"?"page":undefined}
-          className="min-h-11 rounded border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Table</Link>
+          className="min-h-11 rounded-[9px] border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Table</Link>
         <Link href={viewHref("cards")} aria-current={view==="cards"?"page":undefined}
-          className="min-h-11 rounded border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Cards</Link>
+          className="min-h-11 rounded-[9px] border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Cards</Link>
       </nav>
       <ProjectWorkspacePageExport items={result.items.map(item=>({
         id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,
