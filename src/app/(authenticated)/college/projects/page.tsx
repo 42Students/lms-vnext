@@ -12,6 +12,7 @@ import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-adm
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseCollegeProjectsQuery } from "@/modules/projects/college-projects-query-model";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 
@@ -50,8 +51,8 @@ export default async function CollegeProjectsPage({
   const query: ProjectAdminCollectionQuery = parsed.data;
   // Failure to read optional template labels must not hide the actual projects.
   const [result, templatesResult] = await Promise.all([
-    listProjectAdminSnapshots(context, membership.collegeId, query),
-    listAssignedProjectTemplates(context, membership.collegeId)
+    listProjectAdminSnapshots(context, collegeId, query),
+    listAssignedProjectTemplates(context, collegeId)
       .then(value => ({ ok: true as const, value }))
       .catch(() => ({ ok: false as const })),
   ]);
