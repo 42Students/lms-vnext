@@ -147,6 +147,20 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
       .toThrow("Team includes an ineligible learner");
   });
 
+  it("PROJ-COL-STALE-04 never silently reuses another class roster or interprets fetch failures as zero learners", () => {
+    const control = readFileSync("src/components/projects/project-create-control.tsx", "utf8");
+    expect(control).toContain("setLearnerMembershipIds([]);setLoadedRosterSectionId(null)");
+    expect(control).toContain("setLoadedRosterSectionId(sectionId)");
+    expect(control).toContain("loadedRosterSectionId!==sectionId");
+    expect(control).toContain("setRosterError(true)");
+    expect(control).toContain("setClassesError(true)");
+    expect(control).toContain("setRosterRetry(value=>value+1)");
+    expect(control).toContain("setClassesRetry(value=>value+1)");
+    expect(control).toContain("Class roster could not load.");
+    expect(control).toContain("Classes could not load.");
+    expect(control).toContain("if (submitLock.current) return");
+  });
+
   it("PROJ-COL-STALE-02 rejects stale timestamps and repeated roster members", () => {
     const valid = { learnerMembershipIds: [STUDENT],
       expectedUpdatedAt: "2099-04-01T12:00:00.000+05:30" };
