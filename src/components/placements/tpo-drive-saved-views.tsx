@@ -38,9 +38,9 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   <div className="mt-3 flex flex-wrap gap-2">
    <input aria-label="Saved view name" maxLength={50} value={name}
     onChange={e=>setName(e.target.value)} placeholder="e.g. Interviews this week"
-    className="min-h-10 rounded border border-border bg-surface px-3 text-sm"/>
+    className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3 text-sm"/>
    <button type="button" onClick={save}
-    className="min-h-10 rounded border border-primary px-3 text-sm font-semibold text-primary-text">
+    className="min-h-11 md:min-h-9 rounded border border-primary px-3 text-sm font-semibold text-primary-text">
     Save current filters
    </button>
   </div>
@@ -49,7 +49,7 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
    if(!window.confirm("Delete all "+views.length+" saved drive views from this browser?"))return;
    try{localStorage.removeItem(key);setViews([]);setCopied("");setError("");}
    catch{setError("Browser storage is unavailable.");}
-  }} className="mt-2 min-h-10 text-sm font-semibold text-error underline">
+  }} className="mt-2 min-h-11 md:min-h-9 text-sm font-semibold text-error underline">
     Clear all saved views
   </button>:null}
   {views.length?<ul className="mt-3 flex flex-wrap gap-2">{views.map(view=>

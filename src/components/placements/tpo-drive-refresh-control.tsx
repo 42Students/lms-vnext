@@ -12,7 +12,7 @@ export function TpoDriveRefreshControl(){
  },[refresh]);
  return <div className="flex flex-wrap items-center gap-2">
   <button type="button" disabled={pending} onClick={refresh}
-   className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
    {pending?"Refreshing drive workspace…":"Refresh drive workspace"}
   </button>
   {pending?<span role="status" className="text-sm text-body">Refreshing drive workspace…</span>:null}

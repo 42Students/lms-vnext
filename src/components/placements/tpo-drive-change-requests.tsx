@@ -43,10 +43,10 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    <div className="grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-sm">Request type
      <Select value={mode} onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
-      className="min-h-11 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
+      className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
     <label className="grid gap-1 text-sm">Field
      <Select value={field} onChange={e=>setField(e.target.value as typeof field)}
-      className="min-h-11 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
    </div>
    <label className="grid gap-1 text-sm">Change or question
