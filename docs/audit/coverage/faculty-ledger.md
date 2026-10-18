@@ -189,22 +189,35 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-lesson-visibility-model.ts` | `lessonVisibilityCommandSchema`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-lesson-visibility-model.ts` | `lessonVisibleToReader`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-lesson-visibility-model.ts` | `mayEditLessonStudentVisibility`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-lesson-visibility-staged.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-classes-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-classes-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-confirmation.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-editor-command.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-editor-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-lock-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-mutation-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-mutation-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-published-policy.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-save-feedback.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-session-option.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-live-success.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-manual-grade-receipt.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-notices-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-notices-service.ts` | GAP: exported-function test inventory required |
+| `src/modules/courses/faculty-lesson-visibility-staged.ts` | `filterStagedStudentVisibleLessonContents`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-classes-model.ts` | `facultyLiveClassesQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-classes-model.ts` | `safeHttpsMeetingLink`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-classes-model.ts` | `pageFacultyLiveClasses`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-classes-model.ts` | `facultyLiveClassesHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-classes-service.ts` | `getFacultyLiveClasses`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-confirmation.ts` | `facultyLiveConfirmText`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-editor-command.ts` | `facultyLiveEditorCommand`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-editor-model.ts` | `facultyLiveEditorDraft`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-editor-model.ts` | `emptyFacultyLiveDraft`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-lock-model.ts` | `facultyLiveDeliveryLockKey`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveMutationParamsSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveMutationSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveWindow`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-mutation-service.ts` | `commandFacultyLiveClass`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-published-policy.ts` | `facultyLivePublishedMutationAllowed`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-save-feedback.ts` | `facultyLiveSaveFeedback`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-session-option.ts` | `facultyLiveSessionOption`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-live-success.ts` | `facultyLiveMutationSuccess`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-manual-grade-receipt.ts` | `FacultyManualGradeReceiptError`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-manual-grade-receipt.ts` | `facultyManualGradeReceipt`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-manual-grade-receipt.ts` | `beginFacultyManualGradeOperation`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-manual-grade-receipt.ts` | `facultyManualGradeUncertainMessage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-manual-grade-receipt.ts` | `facultyManualGradePublishPrompt`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-manual-grade-receipt.ts` | `facultyManualGradeNeedsRefresh`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-manual-grade-receipt.ts` | `facultyManualGradeSuccessMessage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-notices-model.ts` | `facultyNoticeParamsSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-notices-model.ts` | `FACULTY_SECTION_NOTICES_BLOCKER`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-notices-service.ts` | `getFacultySectionNotices`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-notification-link-model.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-profile-teaching-model.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-profile-teaching-service.ts` | GAP: exported-function test inventory required |
