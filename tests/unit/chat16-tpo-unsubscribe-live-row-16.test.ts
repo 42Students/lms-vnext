@@ -57,6 +57,48 @@ describe("chat-16 TPO recipient unsubscribe live row decision",()=>{
   expect(f.limit).toHaveBeenCalledWith(1);
   expect(f.tx.update).not.toHaveBeenCalled();
  });
+ it("campaign-unsubscribe-service-20 atomically records lead suppression, activity and scoped TPO notice",async()=>{
+  const row:Stored={id:recipient,collegeId:college,campaignId:campaign,leadId:lead,
+   unsubscribedAt:null};
+  const f=fakeDb(true,row);
+  const now=new Date("2026-10-18T11:00:00Z");
+  const changedRecipient=vi.fn(async()=>[{id:recipient}]);
+  const changedLead=vi.fn(async()=>[{id:lead,name:"Recruiter One"}]);
+  const recipientSet=vi.fn(()=>({where:()=>({returning:changedRecipient})}));
+  const leadSet=vi.fn(()=>({where:()=>({returning:changedLead})}));
+  f.tx.update.mockReturnValueOnce({set:recipientSet})
+   .mockReturnValueOnce({set:leadSet});
+  const collegeLimit=vi.fn(async()=>[{organizationId:"org-1"}]);
+  f.tx.select.mockReturnValueOnce({from:()=>({where:()=>({for:()=>({limit:f.limit})})})})
+   .mockReturnValueOnce({from:()=>({where:()=>({limit:collegeLimit})})});
+  const leadActivityValues=vi.fn(async(_input:unknown)=>undefined);
+  const auditValues=vi.fn((_input:unknown)=>({returning:async()=>[{id:"event-1"}]}));
+  const noticeValues=vi.fn((_input:unknown)=>({
+   onConflictDoNothing:async()=>undefined,
+  }));
+  f.tx.insert.mockReturnValueOnce({values:leadActivityValues})
+   .mockReturnValueOnce({values:auditValues})
+   .mockReturnValueOnce({values:noticeValues});
+  const activeTpos=vi.fn(async()=>[{userId:"officer-1"}]);
+  const distinct=vi.fn(()=>({from:()=>({innerJoin:()=>({
+   innerJoin:()=>({where:activeTpos}),
+  })})}));
+  (f.tx as typeof f.tx & {selectDistinct:typeof distinct}).selectDistinct=distinct;
+  await expect(unsubscribeTpoCampaignRecipient(token)).resolves.toEqual({unsubscribed:true});
+  expect(changedRecipient).toHaveBeenCalledOnce();
+  expect(changedLead).toHaveBeenCalledOnce();
+  expect(leadActivityValues).toHaveBeenCalledWith(expect.objectContaining({
+   collegeId:college,leadId:lead,type:"SYSTEM",note:"Unsubscribed from emails",
+  }));
+  expect(auditValues).toHaveBeenCalledWith(expect.objectContaining({
+   collegeId:college,eventType:"PLACEMENTS_RECRUITER_UNSUBSCRIBED",
+   subjectId:lead,summary:"Recruiter One unsubscribed from emails",
+  }));
+  expect(noticeValues).toHaveBeenCalledWith([expect.objectContaining({
+   eventId:"event-1",userId:"officer-1",title:"Recruiter One unsubscribed",
+  })]);
+  expect(now).toBeInstanceOf(Date);
+ });
  it("campaign-unsubscribe-service-19 an already unsubscribed recipient is idempotent, without repeat notifications",async()=>{
   const row:Stored={id:recipient,collegeId:college,campaignId:campaign,
    leadId:lead,unsubscribedAt:new Date("2026-10-18T00:00:00Z")};
