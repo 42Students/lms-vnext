@@ -131,3 +131,10 @@ The initial-policy failure branch deliberately never contacts the provider for t
 | PUBLIC-ENQUIRY-SIZE-22..25 | S2 | Both anonymous endpoints used unbounded `request.json()`; large UTF-8 uploads could allocate the entire body before Zod validation and rate-limits. They now use a shared incremental UTF-8 decoder, 8 KB hard cap, and no-store 413/400 refusal before service work. The signed internal recruiter-mail route retains its separate 20 KB cap via the same stream primitive. | same, `tests/unit/chat16-recruiter-mail-body-bounds-01.test.ts` | `5188bf21103b`, `f1b17089d462`, `0884765c9618`, `875bdbbfb16e` |
 
 No real anonymous provider calls or browser traffic were issued, and these lines do not certify readiness.
+
+
+| PUBLIC-UNSUB-SIZE-26..29 | S2 | Anonymous public opt-out used unbounded `request.formData()`; maliciously large multipart/URL-encoded inputs could allocate before signed-token validation. Parse only within 8 KB, preserve native multipart and 303 verified consent completion. | `tests/unit/chat16-public-campaign-unsubscribe-body-bounds-26.test.ts` (unrun) | `90e60cc563ef` |
+| PUBLIC-JOIN-SIZE-30..33 | S2 | Public college/company join and OTP send endpoints used unbounded `request.json()` before authentication or network-rate checks. All four now fail with no-store 413 for over-cap UTF-8, 400 for invalid JSON, using `readBoundedJsonBody` and existing downstream Zod. | `tests/unit/chat16-public-join-route-stream-guards-30.test.ts` (unrun) | `49a9dae8af33`, `52e4e5022ec6`, `43f37b9f9397`, `078388185f3d`, `59190b170fb3` |
+| PUBLIC-INVITE-SIZE-34..36 | S2 | Public recruiter invite OTP acceptance parsed arbitrary-size JSON before validating a six-digit code. Shared UTF-8 byte guard now protects grant-creation service from oversized anonymous payloads; normal code and readiness behaviour stays unchanged. | `tests/unit/chat16-public-recruiter-invite-accept-byte-cap-34.test.ts` (unrun) | `6b2ef651d6f0` |
+
+These are source/test edits without execution, as required by the owner’s no-CI-gating priority.
