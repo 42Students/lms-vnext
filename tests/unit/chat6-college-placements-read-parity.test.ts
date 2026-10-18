@@ -4,9 +4,18 @@ const src=(name:string)=>readFileSync(name,"utf8");
 describe("College Admin placement register and drive parity",()=>{
  it("COL-placements-07 College pipeline table exposes legacy email college source applied date age and match score",()=>{
   const pipeline=src("src/components/placements/college-application-pipeline-controls.tsx");
+  // The single responsive DataTable retains each legacy column and makes
+  // secondary fields available in the audited phone More details disclosure.
   for(const col of ["Email","College","Source","Applied Date","Age","Match Score"]){
-   expect(pipeline).toContain("<th className=\"p-3\">"+col+"</th>");
+   expect(pipeline).toContain('header:"'+col+'"');
   }
+  expect(pipeline).toContain('<DataTable columns={columns} rows={rows}');
+  expect(pipeline).toContain('mobilePriority:"primary"');
+  expect(pipeline).toContain('mobilePriority:"action"');
+  expect(pipeline).toContain('No persisted match score available');
+  expect(pipeline).not.toContain("<table");
+  const shared=src("src/components/ui/data-table.tsx");
+  expect(shared).toContain("More details");
   const page=src("src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx");
   expect(page).toContain("CollegeApplicationPipelineControls");
  });
