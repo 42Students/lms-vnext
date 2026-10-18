@@ -30,7 +30,7 @@ describe("UX-tpo-LAST-THIRD-01: reports refuse ambiguous scope/filters without i
   expect(source).toContain(`<TpoReportInvalidFilters path="/tpo/reports/${route}"/>`);
   expect(source).toContain('import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters"');
   const check=source.indexOf("if(tpoReportHasAmbiguousFilters(");
-  const lastAwait=source.lastIndexOf("= await searchParams;",check);
+  const lastAwait=source.lastIndexOf("await searchParams;",check);
   expect(lastAwait,route).toBeGreaterThan(-1);
   expect(check,route).toBeGreaterThan(lastAwait);
   expect(source,route).not.toContain("dangerouslySetInnerHTML");
