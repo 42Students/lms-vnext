@@ -4,7 +4,7 @@ import {canSubmitFacultyBulkImport} from "@/modules/people/faculty-bulk-import-s
 
 const ready={
   busy:false,count:2,issue:"",error:"",filename:"faculty.csv",
-  snapshotVersion:4,currentVersion:4,
+  snapshotVersion:4,currentVersion:4,csvMatchesLoaded:true,
 };
 describe("SA-FACULTY-CSV-17 prevent stale bulk onboarding after replacement file",()=>{
  it("allows only a currently validated and named CSV",()=>{
@@ -20,11 +20,15 @@ describe("SA-FACULTY-CSV-17 prevent stale bulk onboarding after replacement file
      {...ready,busy:true},
      {...ready,snapshotVersion:3},
      {...ready,currentVersion:5},
+     {...ready,csvMatchesLoaded:false},
    ])expect(canSubmitFacultyBulkImport(candidate)).toBe(false);
  });
  it("guards against invalid replacement files, out-of-order File.text and double confirm",()=>{
    const view=readFileSync("src/components/admin/super-admin-faculty-bulk-import.tsx","utf8");
    expect(view).toContain("const version=++fileVersion.current");
+   expect(view).toContain("loadedCsv.current=null");
+   expect(view).toContain("loadedCsv.current={version,text}");
+   expect(view).toContain("inputCsv===csv");
    expect(view).toContain('setCsv("");setResults([]);setError("");setFilename(file?.name??"")');
    expect(view).toContain("if(version===fileVersion.current)setCsv(text)");
    expect(view).toContain('if(version===fileVersion.current)setError("Could not read the CSV file.")');
