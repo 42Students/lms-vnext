@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {projectInstances,projectSubmissions,projectDeliveryEvents} from "@/db/schema";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import type {RequestContext} from "@/modules/identity/context";
+import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
 import {canAdminSettleDelivery} from "./admin-submission-review-model";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -20,6 +21,8 @@ export async function lockMentorFinalDelivery(context:RequestContext,projectIdIn
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
    .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
    .for("update").limit(1);
+  if(!project)throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  await assertPersistedProjectMutationActor(tx,context,scope);
   const [submission]=await tx.select().from(projectSubmissions).where(and(
    eq(projectSubmissions.id,submissionId),eq(projectSubmissions.projectId,scope.project.id)))
    .for("update").limit(1);
