@@ -35,6 +35,12 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `src/modules/admin-ui/super-admin-faculty-assignments-csv-service.ts` rejects repeated `status`, `page`, or `q` selectors before `Object.fromEntries` can silently choose the last value.
 - `tests/unit/chat3-sa-faculty-assignments-tenant-pages.test.ts` compiles actual Drizzle join predicates and checks role/scope refusal and bounded page recovery. `tests/unit/chat3-sa-faculty-assignments-csv-http.test.ts` exercises the export entry point, 300-row truncation, duplicate filters, private errors and no-store headers. Cloud CI and PostgreSQL verification pending.
 
+## SA3-FAC-ORG-01 / SA3-PEOPLE-ORG-01 — selected organization integrity
+
+- `getSuperAdminFacultyAssignmentClasses` now joins the persisted selected college row and requires its organization to match the selected organization before exposing class facet names. `tests/unit/chat3-sa-faculty-assignments-tenant-pages.test.ts` asserts the extra organization predicate, not just the class department/term college predicates.
+- `getSuperAdminPeopleFilterOptions` now applies this organization/college ownership join in all four department, program, cohort and class facet readers. `tests/unit/chat3-sa-people-facets-organization-scope.test.ts` compiles every real Drizzle join predicate and rejects wrong-role/disabled accounts before reads.
+- These are SQL-scoping unit contracts, not an assertion that an incorrectly paired college/organization was exercised on a real database. The PostgreSQL isolation journey and CI are pending.
+
 ## Targeted repairs and further release gates
 
 - `COL-people-24`: exact legacy mentor-reassignment confirmation description restored at `src/components/projects/project-admin-reassign-mentor-page.tsx`; must rerun its failing test, and real keyboard/retry browser checks remain.
