@@ -25,6 +25,6 @@ describe("Faculty assignment authoring UX",()=>{
   expect(page).not.toContain("<button ");
   expect(page).not.toContain("<select ");
   expect(page).not.toContain("text-on-primary");
-  expect(page).toContain('min-h-11 items-center');
+  expect(page).toContain('<Checkbox label="Publish now"');
  });
 });

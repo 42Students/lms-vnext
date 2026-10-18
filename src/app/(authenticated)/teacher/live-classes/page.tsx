@@ -34,14 +34,14 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="grid gap-1 text-sm">When
     <select name="view" defaultValue={data.query.view}
-     className="min-h-11 rounded border border-border p-2 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     className="min-h-11 rounded border border-border p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      <option value="UPCOMING">Upcoming and in progress</option>
      <option value="PAST">Past</option>
      <option value="ALL">All</option>
     </select></label>
    <label className="grid gap-1 text-sm">Section
     <select name="deliveryId" defaultValue={data.query.deliveryId??""}
-     className="min-h-11 rounded border border-border p-2 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     className="min-h-11 rounded border border-border p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      <option value="">All assigned Sections</option>
      {data.courses.map(c=><option key={c.deliveryId} value={c.deliveryId}>
       {c.courseName} · {c.sectionName}

@@ -49,7 +49,11 @@ describe("chat-13 final sprint public company share",()=>{
   expect(csv).not.toContain("mail@example.com");
   expect(csv).not.toContain("+919999999999");
   const page=read("src/app/company-share/[token]/page.tsx");
-  expect(page).toContain("columns.map(key=>");
+  // The signed-off UX uses the shared DataTable; it maps the approved columns
+  // once and passes that same map to the responsive mobile/desktop renderer.
+  expect(page).toContain("columns.map((key,index)=>");
+  expect(page).toContain("cell: row=>row.cells[key]");
+  expect(page).toContain("<DataTable columns={tableColumns} rows={result.rows}");
  });
  it("PUB-auth-public-57 stores and renders the TPO's deadline without mixing it with link expiry",()=>{
   const issue=read("src/modules/placements/company-share/manage-service.ts");
