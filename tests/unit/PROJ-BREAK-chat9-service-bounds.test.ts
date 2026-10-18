@@ -23,7 +23,7 @@ describe("IIT Dharwad Projects: hostile pagination never triggers an unbounded d
     for (const name of ["admin-insights-service", "admin-unsubmitted-service"]) {
       const code = source(name);
       expect(code, name).toMatch(/page:\s*z\.coerce\.number\(\)\.int\(\)\.min\(1\)\.max\(100000\)\.default\(1\)/);
-      expect(code, name).toMatch(/pageSize:\s*z\.coerce\.number\(\)\s*\.int\(\)\s*\.min\(10\)\s*\.max\(100\)/);
+      expect(code, name).toMatch(/pageSize:\s*z\.coerce\s*\.number\(\)\s*\.int\(\)\s*\.min\(10\)\s*\.max\(100\)/);
     }
   });
 });
