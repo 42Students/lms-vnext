@@ -39,7 +39,7 @@ const REQUIRED_TABLES = [
   "organizations","colleges","users","college_memberships","membership_roles","system_roles",
   "project_templates","project_template_versions","project_template_college_assignments",
   "project_instances","project_releases","project_sprints","project_tasks","project_resources",
-  "project_members","project_task_submissions","project_submissions",
+  "project_members","project_task_submissions","project_submissions","project_delivery_events",
   "project_submission_reviews","project_evaluations","project_evaluation_items","project_meetings",
   "placement_companies","placement_company_relationships","placement_jobs","placement_job_rounds",
 ] as const;
