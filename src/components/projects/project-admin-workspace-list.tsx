@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ProjectArchiveControl } from "@/components/projects/project-archive-control";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-status-label";
 
 export type ProjectAdminWorkspaceListItem = {
@@ -64,37 +65,36 @@ export function ProjectAdminWorkspaceList({
     );
   }
 
-  if(view==="table")return <div role="region" aria-label="Project workspace table" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] rounded-xl border border-border bg-surface focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
-    <table className="min-w-full text-left text-sm">
-      <thead className="bg-muted"><tr>
-        <th scope="col" className="p-3">Workspace</th><th scope="col" className="p-3">Mentor</th>
-        <th scope="col" className="p-3">Status</th><th scope="col" className="p-3">Progress</th>
-        <th scope="col" className="p-3">Members</th><th scope="col" className="p-3">Action</th>
-      </tr></thead>
-      <tbody>{items.map(item=><tr key={item.id} className="border-t border-border">
-        <td className="p-3 font-semibold">{item.title}
-          <span className="mt-1 block text-xs font-normal text-muted-foreground">
-            {item.templateTitle ?? "No template — attach one"}
-          </span>
-        </td>
-        <td className="p-3">{item.mentorName??"Unassigned"}</td>
-        <td className="p-3"><StatusBadge tone={tone(item.status)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge></td>
-        <td className="min-w-32 p-3"><div className="flex items-center gap-2">
+  if(view==="table")return <DataTable
+    caption="Project workspace table"
+    rows={items}
+    getRowKey={item=>item.id}
+    columns={[
+      {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:item=><>
+        <span className="font-semibold">{item.title}</span>
+        <span className="mt-1 block text-xs text-muted-foreground">{item.templateTitle??"No template — attach one"}</span>
+      </>},
+      {key:"mentor",header:"Mentor",mobilePriority:"secondary",cell:item=>item.mentorName??"Unassigned"},
+      {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
+        <StatusBadge tone={tone(item.status)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>},
+      {key:"progress",header:"Progress",mobilePriority:"secondary",cell:item=>
+        <div className="flex items-center gap-2">
           <div role="progressbar" aria-label={item.title+" progress"} aria-valuemin={0}
             aria-valuemax={100} aria-valuenow={item.progressPercent}
             className="h-2 w-24 overflow-hidden rounded bg-muted">
             <div className="h-full bg-primary" style={{width:item.progressPercent+"%"}}/></div>
           <span className="tabular-nums">{item.progressPercent}%</span>
-        </div></td>
-        <td className="p-3">{item.memberCount}</td>
-        <td className="p-3"><div className="flex flex-wrap items-center gap-2">
-          <Link href={basePath+"/"+item.id} className="font-semibold text-primary-text underline">Open</Link>
+        </div>},
+      {key:"members",header:"Members",mobilePriority:"secondary",cell:item=>item.memberCount},
+      {key:"action",header:"Action",mobilePriority:"action",cell:item=>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href={basePath+"/"+item.id} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open</Link>
           <ProjectArchiveControl projectId={item.id} projectTitle={item.title}
             status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
-        </div></td>
-      </tr>)}</tbody>
-    </table>
-  </div>;
+        </div>},
+    ]}
+    empty={<EmptyState title={emptyTitle} description={emptyDescription}/>}
+  />;
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {items.map((item) => (
