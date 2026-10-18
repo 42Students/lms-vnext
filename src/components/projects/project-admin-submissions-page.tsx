@@ -15,6 +15,7 @@ import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-
 import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {formatProjectAdminActivityDateIst as formatDate} from "@/modules/projects/project-admin-date-model";
 import { DataTable } from "@/components/ui/data-table";
 import {
   listProjectAdminSubmissionQueue,
@@ -34,16 +35,7 @@ function tone(status: string) {
   return "info" as const;
 }
 
-function formatDate(
-  value: Date | null,
-) {
-  if (!value) return "Not submitted";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
-}
+
 
 export async function ProjectAdminSubmissionsPage({
   collegeId,

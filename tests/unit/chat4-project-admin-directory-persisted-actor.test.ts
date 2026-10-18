@@ -96,7 +96,8 @@ describe("PROJ-BREAK-COLLEGE-04-READ-01 persisted project workspace directory ac
  });
  it("denies querying another tenant even with a valid College Admin membership",async()=>{
   mocks.college.mockResolvedValue({id:otherId,organizationId:org});
-  await expect(listProjectAdminSnapshots(collegeAdmin,otherId,{})).rejects.toBeDefined();
+  await expect(listProjectAdminSnapshots(collegeAdmin,otherId,{})).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  expect(mocks.college).not.toHaveBeenCalled();
   expect(mocks.transaction).not.toHaveBeenCalled();
  });
  it("accepts a properly selected Super Admin only through persisted platform roles",async()=>{

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {getSuperAdminPlacementRetentionReport} from "@/modules/admin-ui/super-admin-placement-retention-service";
 import {PageHeader} from "@/components/ui/page-header";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
@@ -8,6 +9,7 @@ export default async function SuperAdminRetentionPage(){
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="space-y-5"><PageHeader eyebrow="Super Admin · Placements" title="Data retention report"/>
   <EmptyState title="Select a college" description="Choose a college to review candidate retention candidates."/></div>;
+ requireSuperAdminSelectedCollege(context,"placements.read");
  const report=await getSuperAdminPlacementRetentionReport(context);
  const fmt=(d:Date)=>d.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"});
  const columns:DataTableColumn<(typeof report.rows)[number]>[]=[
