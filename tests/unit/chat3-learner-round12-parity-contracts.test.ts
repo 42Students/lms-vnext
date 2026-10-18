@@ -44,8 +44,8 @@ describe("chat-3 learner misc second-source verification",()=>{
  });
  it("LEARNER-learning-misc-36 attendance table retains explicit date and start-time headings",()=>{
   const code=source("src/components/attendance/learner-attendance-workspace.tsx");
-  expect(code).toContain(">Day</th>");
-  expect(code).toContain(">Class Start Time</th>");
+  expect(code).toContain('key:"day",header:"Day"');
+  expect(code).toContain('key:"class",header:"Class Start Time"');
  });
  it("LEARNER-learning-misc-38 attendance empty state asks for a course",()=>{
   const code=source("src/components/attendance/learner-attendance-workspace.tsx");
