@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -94,38 +97,38 @@ export async function ProjectAdminReassignMentorPage({
       </section>
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
         aria-label="Search all eligible mentors">
-        {query.q?<input type="hidden" name="q" value={query.q}/>:null}
-        {query.status?<input type="hidden" name="status" value={query.status}/>:null}
-        {query.fromMentorId?<input type="hidden" name="fromMentorId" value={query.fromMentorId}/>:null}
-        <input type="hidden" name="pageSize" value={query.pageSize}/>
+        {query.q?<Input type="hidden" name="q" value={query.q}/>:null}
+        {query.status?<Input type="hidden" name="status" value={query.status}/>:null}
+        {query.fromMentorId?<Input type="hidden" name="fromMentorId" value={query.fromMentorId}/>:null}
+        <Input type="hidden" name="pageSize" value={query.pageSize}/>
         <label className="grid flex-1 gap-1 text-sm font-semibold">
           Search eligible mentors by name or email (across the college)
-          <input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
-            placeholder="Enter mentor name or email" className="min-h-11 rounded-md border border-border p-3"/>
+          <Input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
+            placeholder="Enter mentor name or email" className="min-h-11 rounded-[9px] border border-border p-3"/>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Find mentor</button>
+        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Find mentor</Button>
         {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="min-h-11 rounded-md border px-4 py-3 text-sm">Clear mentor search</Link>:null}
         <p className="w-full text-xs text-muted-foreground">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
       <ProjectAdminFilters query={query} />
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        {query.q ? <input type="hidden" name="q" value={query.q} /> : null}
-        {query.status ? <input type="hidden" name="status" value={query.status} /> : null}
-        {query.pageSize ? <input type="hidden" name="pageSize" value={query.pageSize} /> : null}
+        {query.q ? <Input type="hidden" name="q" value={query.q} /> : null}
+        {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
+        {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}
         <label className="grid gap-1 text-sm font-semibold">
           Filter by current mentor
-          <select name="fromMentorId" defaultValue={fromMentorId ?? ""}
+          <Select name="fromMentorId" defaultValue={fromMentorId ?? ""}
             className="min-h-11 rounded-lg border border-border bg-background px-3 py-2">
             <option value="">All mentors</option>
             <option value="UNASSIGNED">Unassigned</option>
             {mentors.map(mentor => <option key={mentor.membershipId} value={mentor.membershipId}>
               {mentor.displayName ?? mentor.email ?? "Mentor"}
             </option>)}
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
+        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
           Apply mentor filter
-        </button>
+        </Button>
       </form>
       <ProjectMentorReassignment
         collegeId={collegeId}
