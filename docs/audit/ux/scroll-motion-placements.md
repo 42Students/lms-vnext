@@ -11,4 +11,6 @@
 
 The selection dialog is rendered using the shared `Dialog` and nested `ConfirmDialog`; no custom animation or one-off duration was introduced. The shared dialogs own focus containment, backdrop/body lock, and reduced-motion behaviour. Do not call this a browser accessibility pass without testing 320/360/390px, native keyboard focus, wheel/touch, reduced-motion and saved draft behaviour under network failure.
 
+| TPO bulk round-results recorder > Select first 25 unmarked | Undersized text-only selection shortcut | `min-h-11` full action hitbox, no changed stage/apply semantics | `UX-placements-bulk-round-targets-01` |
+
 **Open follow-up:** Inventory remaining scrolling/overlay elements in `src/components/placements` against `docs/audit/ui-surfaces/UI-SURFACES.md` and verify each at mobile breakpoints. Only the containers above were modified and source-checked in this round.
