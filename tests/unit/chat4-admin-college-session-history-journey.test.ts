@@ -15,7 +15,7 @@ describe("SA-colleges-admins-R01 administrator history tenancy and paging",()=>{
 
   it("rejects forged extras, repeated pages, fractional and nondecimal numeric syntax",()=>{
     for(const params of [
-      {page:["1","2"]},{page:"0"},{page:"10001"},{page:"1.2"},
+      {page:["1","2"]},{page:""},{page:"0"},{page:"10001"},{page:"1.2"},
       {page:"1e2"},{page:"0x10"},{page:"-1"},{page:" 1 "},
       {page:"Infinity"},{tenantId:"unrelated"},{userId:"unrelated"},
     ])expect(parseAdminSessionHistoryPage(params)).toBeNull();
