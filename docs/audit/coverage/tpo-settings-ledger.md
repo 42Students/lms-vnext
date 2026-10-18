@@ -49,3 +49,6 @@ Master queue: `docs/orchestrator/queues/master-queue.md`, Pass B/chat-11 item 1.
 | `/tpo/settings/{after-college,blocked-dates,branding,job-types,notices,notifications,prep-readiness,public-link,public-page,recruiters,rules,season,see,team,templates,trusted}` | Enumerated each server page's role-scoped reader, navigation and truthful loading/empty/unknown states; forbidden raw HTML and native confirmation | `tests/unit/chat11-tpo-settings-route-surfaces.test.ts`, `TPO-settings-audit-ROUTES-01` | Runtime rendering, page role matrix, phone sizes, network errors and final legacy parity |
 
 These are named and scope-specific tests, but full per-export coverage of all service functions is **not yet demonstrated**. Database-backed and HTTP E2E tests need execution and additional cases before releasing IIT Dharwad.
+
+
+| `updateTpoCommunicationSettings` and `assertPersistedPlatformPermission` | A user disabled, role revoked, college reassigned or membership suspended between request authentication and DB mutation fails under persisted user/role SHARE locks inside the same transaction | `tests/unit/chat11-tpo-communication-adversarial.test.ts`, `TPO-settings-audit-REVOKE-01`; `7e931c3` | Actual concurrent PostgreSQL role-revocation test |
