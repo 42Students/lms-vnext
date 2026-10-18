@@ -110,3 +110,16 @@ These are named and scope-specific tests, but full per-export coverage of all se
 | `removeBlockedRange` | Revalidation before composite day/version match, scoped range delete and audit | Same named test and commit | Concurrent range delete and 90-day batch performance |
 
 **Runtime status:** Source/test authored without executing code. The audited blocked-date UX and scheduling consumers still require separate live acceptance; this is not a full TPO settings closeout.
+
+## Follow-up verified-source ledger: retry, Excel and tenant-read barrier
+
+| Export / route | New contract | Unit witness | Runtime gap |
+|---|---|---|---|
+| `setTpoJobTypeActive`, `renameTpoJobType`, `setTpoBuiltinJobTypeActive`, `setTpoJobTypeCountsAsPlaced` | Current-state retry before optimistic conflict; monotonically increasing version timestamp, and event only for actual change | `tests/unit/chat11-tpo-job-type-cas-retries.test.ts` — TPO-settings-audit-23 | Two-session PostgreSQL CAS race; job-form and reporting effects |
+| `tpoRecruiterGrantExportRows`, `tpoRecruiterGrantCsv`, `tpoRecruiterGrantXlsx`, `tpoRecruiterGrantExportHref` | Shared capped, tenant-scoped projection; CSV formula escaping and XLSX literal inline strings; original CSV URL stable, format explicit | `tests/unit/chat11-tpo-recruiter-grant-excel-export.test.ts` — TPO-settings-audit-60 | Live Excel compatibility, HTTP tenant scope and PII policy confirmation |
+| `GET /api/placements/tpo/settings/recruiter-grants/export` | Unique allowlisted status/q/format query keys; no arbitrary user/college/page overrides, safe 400, no-store response and both file formats | Same TPO-settings-audit-60 test | Actual-handler 401/403 and export cap DB |
+| `getModuleAccessOverviewMetrics` | Revalidate persisted active system-role inside read transaction, including empty-page response; scope all aggregates to validated visible colleges | `tests/unit/chat11-super-admin-module-metrics-revoked-role.test.ts` — SA-tenants-modules-R01 | PostgreSQL two-session revocation and 100-college stress |
+
+**CI snapshot caveat:** The orchestrator's `unit-failures-latest.md` names three chat-11 failures from older CI `698eb9dd` although the three latest unit test assertions match present source. The two chat-11 test-type errors were corrected with explicitly typed denied-role fixtures and literal trusted-domain conflict codes (`064dca9`, `3b89c60`). New cloud CI, not inference from stale output, decides pass/fail.
+
+| `GET /api/placements/tpo/settings/recruiter-grants/export` — actual handler | 400 on duplicate/unknown/foreign identity filters before principal lookup, signed-in tenant-scope `exportAll` contract, 200 CSV/XLSX content type and ZIP, 403 expired-session no-load | `tests/unit/chat11-tpo-recruiter-grant-export-route.test.ts` — TPO-settings-audit-60; commit `55dfab7` | Live PostgreSQL role matrix and stream abuse |

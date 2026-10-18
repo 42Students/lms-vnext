@@ -164,11 +164,17 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
     unsubscribeUrl:config.origin+"/campaign-unsubscribe/"+encodeURIComponent(token),
    },
   });
-  await db.update(placementTpoEmailCampaignRecipients).set({
+  const [persistedOutcome]=await db.update(placementTpoEmailCampaignRecipients).set({
    status:result?"SENT":"FAILED",sentAt:result?new Date():null,
   }).where(and(eq(placementTpoEmailCampaignRecipients.id,row.id),
+   eq(placementTpoEmailCampaignRecipients.campaignId,id),
    eq(placementTpoEmailCampaignRecipients.status,"QUEUED"),
-   eq(placementTpoEmailCampaignRecipients.collegeId,college.id)));
+   eq(placementTpoEmailCampaignRecipients.collegeId,college.id)))
+   .returning({id:placementTpoEmailCampaignRecipients.id});
+  // Provider acceptance is not permission to claim a persisted SENT result.
+  // A concurrent unsubscribe or lost QUEUED row leaves the outcome unknown,
+  // so do not emit a success activity or finalize a misleading receipt.
+  if(!persistedOutcome)throw new Error("CAMPAIGN_RECIPIENT_OUTCOME_UNCONFIRMED");
   if(result){
    await db.transaction(async tx=>{
     await tx.insert(placementTpoLeadActivities).values({
