@@ -29,7 +29,7 @@ export async function loadTpoBulkApplicationStages(ctx:RequestContext,jobId:stri
  const collegeId=await requireTpoJobCollege(ctx);
  // This exported reader can be called without the bulk-preview controller.
  // Check the live actor, not only the membership roles in a stale cookie.
- await getDb().transaction(async tx=>requireTpoJobActor(tx,ctx),{accessMode:"read only"});
+ await getDb().transaction(async tx=>requireTpoJobActor(tx,ctx));
  const result=new Map<string,StageFact>();
  if(!ids.length)return result;
  if(!await placementTableExists("placement_tpo_application_stages")){

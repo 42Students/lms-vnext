@@ -67,3 +67,35 @@ Each cell must be tested for deactivated user, revoked membership, archived offe
 Run `node scripts/audit/generate-chat7-coverage-ledger.mjs` in the checked-out repository to regenerate `docs/audit/coverage/chat7-generated-symbol-ledger.md`. The generator uses TypeScript AST rather than filename heuristics to enumerate exports across Courses services/models, 79 Courses API handlers, Learner/Quiz/Super Admin course pages, Courses and Attendance UI, and learner Projects services/routes. It scans test source for symbol-name references as **candidate evidence only**; it leaves every row OPEN pending direct behavioural review and passing CI. A passing symbol-name search is not branch coverage, a tenant/role test, or a service integration test.
 
 The orchestrator should commit the deterministic generated ledger after execution, then close every row only when a specific role/state/tenant/expiry/double-submit behavioural assertion and PostgreSQL fixture apply. This does not replace the independent Projects master ledger or its 90% branch-coverage gate.
+
+
+## Chat-7 corrective batch — scoped retry, exports, and Learner embargo (2026-10-18)
+
+| Contract | Source and direct test | Review status |
+|---|---|---|
+| `SA-academics-people-52/53` selected-course Retry failed | `src/modules/courses/super-admin-course-bulk-visibility.ts`, `super-admin-lesson-bulk-visibility.ts`, `src/components/courses/super-admin-course-bulk-visibility.tsx`, `tests/unit/chat7-final-sprint-superadmin-course-visibility.test.ts` | Retry now maps failed content to its course and retries only failed, currently scoped course IDs. No all-success replay after a partial failure. Batch course count 100 and lesson lookup remains capped at 500. Source authored; cloud CI pending. |
+| `SA-academics-people-62` public link preview | `src/modules/courses/super-admin-content-public-link-model.ts`, `tests/unit/chat7-superadmin-content-public-link-safety.test.ts` | Persisted old content URLs are revalidated before a public-link action. Non-HTTPS, credentialed and fragment-bearing URLs fail closed. Source authored; CI pending. |
+| `COURSES-WEAK-EXPORT-SERVICE-01` assignment CSV kind | `src/modules/courses/college-assessment-export-service.ts`, `tests/unit/chat7-college-assessment-export-service-weak.test.ts` | Kind-aware directory filter parity blocks quiz-only `results` and `CLOSED` assignment status before any service query. The previously reported export-pagination failures still need fresh CI verification; this is not proof they are green. |
+| `COURSES7-07` result embargo | `src/modules/courses/learner-quiz-result-release-policy.ts`, `tests/unit/chat7-quiz-result-release-embargo.test.ts` | Server-clock strict release boundary: closed, explicitly published, valid past-or-equal due time; stale open-state flags never disclose answer keys. Authored; CI pending. |
+| `PROJ-BREAK-LEARNER-91..94` project role journey | `tests/unit/PROJ-BREAK-chat7-learner-role-journey.test.ts` | Source and pure-model adversarial tests exercise forged learner ownership, forbidden completion, nonactive/archived role-state guards, tenant IDOR suppression and persisted actor enforcement. Not a substitute for transactional PostgreSQL concurrency tests. |
+
+All prior failing unit tests are retained. The snapshot's failing cases have not been executed in this session; no release closure is asserted.
+
+## Learner assessment and Projects HTTP route breaker batch (2026-10-18)
+
+| Surface / handler | New direct route test | Observed contract and remediation | Status |
+|---|---|---|---|
+| POST `/api/courses/quizzes/[quizId]/submit` | `tests/unit/chat7-learner-assessment-route-boundaries.test.ts` — `COURSES7-07 prevents cross-origin quiz mutation before context, decoding, or submission` | CSRF denial precedes auth and service; server-derived actor and path ID forwarded exactly | Authored, not executed |
+| POST `/api/courses/assignments/[assignmentId]/submit` | Same file — `COURSES7-08 prevents cross-origin assignment mutation before context or submission` | CSRF denial precedes auth and service; route does not trust an actor from the JSON body | Authored, not executed |
+| GET `/api/courses/quizzes/[quizId]/my-attempts` | Same file — `COURSES7-07 and COURSES7-08 read only authenticated own results for the supplied delivery` | Added explicit `Cache-Control: private, no-store` to prohibit retention of released answer keys on shared caches | Source fixed, CI pending |
+| GET `/api/courses/assignments/[assignmentId]/my-submission` | Same file — own results test | Added explicit `Cache-Control: private, no-store` to protect graded feedback and submission history | Source fixed, CI pending |
+| GET `/api/courses/learner/workspace` | Same file — `COURSES7-08 learner workspace GET keeps private course progress uncached` | Added `Cache-Control: private, no-store`; service remains the scope and enrollment authorization boundary | Source fixed, CI pending |
+| DELETE `/api/projects/[projectId]/tasks/[taskId]/learner-own` | `tests/unit/PROJ-BREAK-chat7-learner-task-route-boundaries.test.ts` — `PROJ-BREAK-LEARNER-95`, `98` | Cross-origin denied before actor/service, exact scoped ID delegated, response no-store | Authored, not executed |
+| PATCH `/api/projects/[projectId]/tasks/[taskId]/learner-progress` | Same file — `PROJ-BREAK-LEARNER-96`, `99` | Cross-origin denied before service, authenticated actor and path-bound version payload forwarded | Authored, not executed |
+| POST `/api/projects/[projectId]/tasks/[taskId]/learner-status` | Same file — `PROJ-BREAK-LEARNER-97`, `100`, `101` | CSRF, actor identity, denied status, error mapping via centralized helper; service remains persisted-role gate | Authored, not executed |
+
+Remaining: real PostgreSQL concurrency cases, live role revocation between preflight and transaction, the other Courses API routes, Super Admin UI page-level browser checks, all Learner certificates and discussion transitions. Do not infer execution or passing coverage from authored tests alone.
+
+## Learner discussion direct model suite (2026-10-18)
+
+`tests/unit/chat7-learner-discussion-scope-and-race.test.ts` now exercises six direct behaviors: UUID-scoped remount keys across tenant/delivery switches, explicit-boolean posting capability, no whitespace or double-submits, the canonical 3,900-character persisted text cap, refresh ordering for overlapping requests, and response projection preserving authorized off-page pins without forwarding private fields. `learnerDiscussionMayPost` now delegates message validation to `learnerDiscussionDraftValid`, so oversized drafts do not begin requests guaranteed to fail server-side. No browser/DB runs were performed; discussion service tenant filters and moderation still require independent PostgreSQL checks.

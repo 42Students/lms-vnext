@@ -152,3 +152,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 |---|---|---|---|
 | HR-BREAK-NOTIFICATION-OWNER-06 | `ownsHrNotificationActor` and `markHrNotificationRead` | `tests/unit/HR-BREAK-chat19-notification-ownership.test.ts` | Exact recruiter identity, disabled principal, absent recruiter, mismatched principal, early denial before DB/own-job lookup |
 | HR-BREAK-INBOX-SEARCH-07 | `recruiterMessageSearchLimit`, `filterRecruiterConversations`, `listHrConversations` | `tests/unit/HR-BREAK-chat19-inbox-search-boundary.test.ts` | Distinct 1205 scoped matching threads and last-page 1201–1205, foreign thread excluded, dynamic SQL bound to authorized accessible IDs. Real PostgreSQL large-fanout plan and load tests not run |
+
+## HR Today notifications vs Messages acceptance
+
+| Gap | Route and source | Direct regression | Navigation contract |
+|---|---|---|---|
+| HR-BREAK-TODAY-UNREAD-08 | `hrTodayUnreadAction` from `hr-today-unread-model.ts` | `tests/unit/hr-today-unread-model.test.ts` | The unread system-notification card opens `/hr/notifications` scoped to the selected college and unread-only view; it never opens `/hr/messages` (the conversation alias). Existing no-access exclusion retained. |

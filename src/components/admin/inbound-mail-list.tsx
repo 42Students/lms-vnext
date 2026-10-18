@@ -1,9 +1,10 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Drawer} from "@/components/ui/drawer";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {safeInboundPreview} from "@/modules/inbound-mail/message-model";
+import {createInboundMailTriageGate} from "@/modules/inbound-mail/triage-submit-model";
 export type InboundMailRow={
  id:string;receivedAt:string;fromAddress:string;toAddress:string;
  subject:string;bodyPlain:string;status:string;version:number;
@@ -13,9 +14,10 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
  const [selected,setSelected]=useState<InboundMailRow|null>(null);
  const [overrides,setOverrides]=useState<Record<string,{status:string;version:number}>>({});
  const [busy,setBusy]=useState(false);
+ const triageGate=useRef(createInboundMailTriageGate());
  const [message,setMessage]=useState("");
  async function change(row:InboundMailRow,status:"NEW"|"RESOLVED"){
-  if(busy)return;
+  if(!triageGate.current.tryBegin())return;
   const current=overrides[row.id]??row;
   setBusy(true);setMessage("");
   try{
@@ -29,7 +31,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
    setMessage(status==="RESOLVED"?"Message marked done.":"Message moved back to To read.");
    router.refresh();
   }catch(error){setMessage(error instanceof Error?error.message:"Could not update message status.");}
-  finally{setBusy(false);}
+  finally{triageGate.current.end();setBusy(false);}
  }
 
  return <div className="min-w-0 space-y-3">

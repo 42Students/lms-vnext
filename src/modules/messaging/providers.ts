@@ -2,7 +2,7 @@ import { outboundFetch } from "@/lib/outbound";
 import { readExotelConfig, type ExotelConfig } from "@/modules/notifications/exotel-sms";
 import { readZeptoMailConfig, isSecureMailProviderEndpoint, type ZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
 import type { OutboundProvider } from "./service";
-import {outboundSendSchema,type OutboundSendRequest } from "./model";
+import {outboundSendSchema,normalizeRecipient,type OutboundSendRequest } from "./model";
 import { canContactRecipientAtRuntime } from "./runtime-safety";
 import {isExotelAcceptedResponse} from "./provider-acceptance-model";
 import {isCampaignTemplateKey} from "./template-boundary-model";
@@ -29,9 +29,13 @@ export function createOutboundProvider(
   env: Record<string, string | undefined> = process.env,
 ): OutboundProvider {
   return {
-    async send(request: OutboundSendRequest): Promise<boolean> {
+    async send(rawRequest: OutboundSendRequest): Promise<boolean> {
       // This guard is inside the provider: callers cannot bypass it by passing an unsafe policy.
-      if (!outboundSendSchema.safeParse(request).success) return false;
+      // Use the parsed, canonical address throughout the provider request rather
+      // than validating a trimmed value and sending untrimmed caller input.
+      const parsed = outboundSendSchema.safeParse(rawRequest);
+      if (!parsed.success) return false;
+      const request = {...parsed.data,recipient:normalizeRecipient(parsed.data.channel,parsed.data.recipient)};
       if (!canContactRecipientAtRuntime(request.channel, request.recipient, env)) return false;
       const template = config.templates[request.templateKey];
       if (!template || !isCampaignTemplateKey(request.templateKey)) return false;

@@ -64,6 +64,22 @@ export const collegeBrandingInputSchema = z
 
 export type CollegeBrandingInput = z.infer<typeof collegeBrandingInputSchema>;
 
+/** Optimistic version supplied by an editor, never by tenant identity. */
+export const collegeBrandingSaveSchema=collegeBrandingInputSchema.extend({
+ expectedVersion:z.number().int().nonnegative(),
+});
+const BRANDING_KEYS=[
+ "logoUrl","faviconUrl","loginBackgroundUrl","loginBackgroundUrlMobile",
+ "primaryColor","secondaryColor","supportEmail","supportPhone",
+ "termsUrl","privacyUrl",
+] as const satisfies readonly (keyof CollegeBrandingInput)[];
+
+export function sameCollegeBranding(
+ stored:CollegeBrandingInput,input:CollegeBrandingInput,
+):boolean{
+ return BRANDING_KEYS.every(key=>stored[key]===input[key]);
+}
+
 // ---- colour maths (WCAG 2.x relative luminance) --------------------------
 
 type Rgb = readonly [number, number, number];

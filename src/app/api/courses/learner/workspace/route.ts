@@ -19,7 +19,7 @@ export async function GET(request: Request) {
           "",
       );
 
-    return NextResponse.json({ workspace });
+    return NextResponse.json({ workspace }, {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

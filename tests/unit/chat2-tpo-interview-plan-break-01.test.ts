@@ -1,6 +1,6 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
-import {planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "@/modules/placements/tpo-interview-slot-model";
+import {overlapsInterviewRoom,planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "@/modules/placements/tpo-interview-slot-model";
 import {overlappingInterviewVenue,validInterviewWindow} from "@/modules/placements/tpo-interview-reschedule-model";
 
 // TPO-drive-workspace-44: direct callers must be as safe as schema-validated API callers.
@@ -45,10 +45,40 @@ describe("TPO-BREAK-interview-01 day planner and venue safety",()=>{
 
   const service=readFileSync("src/modules/placements/tpo-interview-slot-service.ts","utf8");
   const section=service.slice(service.indexOf('if(input.action==="ASSIGN_ROOM")'));
-  expect(section).toContain("sameInterviewRoom(other.room,input.room)");
-  expect(section).toContain("other.startsAt<slot.endsAt&&other.endsAt>slot.startsAt");
+  // A large historical slot inventory must not block an unrelated time window.
+  // The DB predicate narrows the bounded normalized-room scan first.
+  expect(section).toContain("lt(placementRoundCandidateSlots.startsAt,slot.endsAt)");
+  expect(section).toContain("gt(placementRoundCandidateSlots.endsAt,slot.startsAt)");
+  expect(section).toContain("overlapsInterviewRoom({...slot,room:input.room},collisions)");
+  expect(section).toContain("lt(placementRoundCandidateSlots.startsAt,slot.endsAt)");
+  expect(section).toContain("gt(placementRoundCandidateSlots.endsAt,slot.startsAt)");
   expect(section).toContain("collisions.length>1000");
   expect(section).toContain("That room is already in use at this time.");
+ });
+ it("TPO-drive-workspace-44 uses the same overlap rules in day generation, bulk room edits and slot assignment",()=>{
+  const beginning=new Date("2026-10-20T04:00:00.000Z");
+  const ending=new Date("2026-10-20T04:30:00.000Z");
+  const proposed={room:"Hall A",startsAt:beginning,endsAt:ending};
+  expect(overlapsInterviewRoom(proposed,[
+   {room:"hall a ",startsAt:new Date("2026-10-20T03:30:00.000Z"),endsAt:beginning},
+  ])).toBe(false); // adjacent: no double booking
+  expect(overlapsInterviewRoom(proposed,[
+   {room:"Ｈａｌｌ　Ａ",startsAt:new Date("2026-10-20T03:59:00.000Z"),endsAt:beginning},
+  ])).toBe(false);
+  expect(overlapsInterviewRoom(proposed,[
+   {room:"Ｈａｌｌ　Ａ",startsAt:new Date("2026-10-20T04:20:00.000Z"),endsAt:new Date("2026-10-20T04:40:00.000Z")},
+  ])).toBe(true);
+  expect(overlapsInterviewRoom(proposed,[
+   {room:"Other room",startsAt:new Date("2026-10-20T04:20:00.000Z"),endsAt:new Date("2026-10-20T04:40:00.000Z")},
+  ])).toBe(false);
+  expect(overlapsInterviewRoom(proposed,[
+   {room:"Hall A",startsAt:new Date("invalid"),endsAt:ending},
+  ])).toBe(true);
+  expect(overlapsInterviewRoom({...proposed,endsAt:beginning},[])).toBe(true);
+  const service=readFileSync("src/modules/placements/tpo-interview-slot-service.ts","utf8");
+  expect(service).toContain("proposed.some(p=>overlapsInterviewRoom(p,existing))");
+  expect(service).toContain("const conflict=overlapsInterviewRoom({...slot,room:input.room}");
+  expect(service).toContain("overlapsInterviewRoom({...slot,room:input.room},collisions)");
  });
  it("rejects slots that run past 23:59 IST instead of silently crossing college days",()=>{
   expect(()=>planInterviewDay({...input,startsAt:"2026-10-20T23:40:00+05:30",durationMinutes:30,slotsPerRoom:1}))

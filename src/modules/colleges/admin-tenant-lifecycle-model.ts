@@ -3,7 +3,12 @@ export const tenantLifecycleQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   organizationId: z.union([z.uuid(), z.literal("")]).default(""),
   status: z.enum(["ACTIVE", "ARCHIVED", "ALL"]).default("ACTIVE"),
-  page: z.coerce.number().int().min(1).max(1000).default(1),
+  // Do not interpret scientific notation, hex or whitespace as a URL page.
+  // Internal callers may pass an already validated numeric page.
+  page: z.union([
+    z.number().int().min(1).max(1000),
+    z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(1000)),
+  ]).default(1),
 });
 /** Reject ambiguous duplicate, unknown and array-valued URL parameters
  * before validating the tenant directory query. Coercing ["1"] to 1 would
