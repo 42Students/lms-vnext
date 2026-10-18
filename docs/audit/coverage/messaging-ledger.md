@@ -132,3 +132,30 @@ Source-verified test authoring only. The cloud CI report `docs/orchestrator/unit
 | Public OTP form | `LoginForm` | Actual React server-rendered controls, a11y tab semantics, phone-only and email-only tenancy, consent | `tests/unit/chat16-auth-form-ssr-accessibility-13.test.ts` | Authored, unrun |
 
 **Unclosed run-required gates:** real PostgreSQL transaction/rollback, simultaneous recipient dedupe across worker instances, exact provider acknowledgements and retry semantics, complete inbox TPO vs recruiter vs other college state transitions, browser keyboard/focus/phone flows and all producer/handler export rows. The Project notification role-filter guard closes one known product defect but must not be mistaken for full project module hardening (chat-14 owns its complete ledger).
+
+## 2026-10-18 endpoint and model-matrix additions
+
+| Module/function | Behaviour now asserted directly | Test | Verification |
+|---|---|---|---|
+| `src/modules/notifications/zeptomail-email.ts:isSecureMailProviderEndpoint` | Deny HTTP, embedded credentials and unparseable provider URL; permit configured HTTPS endpoint | `tests/unit/chat16-otp-provider-resilience-05.test.ts` | Author/test unrun |
+| `src/modules/notifications/zeptomail-email.ts:createZeptoMailEmailProvider` | No outbound HTTP request when provider URL fails scheme/credential guard | Same | Author/test unrun |
+| `src/modules/messaging/providers.ts:createOutboundProvider` | No campaign mail POST to malformed/plaintext/credentialed endpoint | `tests/unit/chat16-provider-channel-boundaries-07.test.ts` | Author/test unrun |
+| `src/modules/messaging/public-join-code-delivery.ts:deliverPublicRecruiterJoinCode` | No recruiter code POST to HTTP loopback URL | Same | Author/test unrun |
+| `src/modules/messaging/campaign-filter-model.ts:campaignFilterSchema, campaignFilterHref` | Search normalization, URL encoding, pagination/state/rogue-field bounds | `tests/unit/chat16-messaging-model-matrix-16.test.ts` | Author/test unrun |
+| `src/modules/messaging/campaign-source-model.ts:campaignSourceSchema` | OTHER detail required; trim and size limits; unknown field denied | Same | Author/test unrun |
+| `src/modules/messaging/engage-audience-model.ts:engageAudienceQuerySchema, summarizeEngageAudience` | Segment counts, unsubscribe, bounce, missing email and NOT_NOW suppression | Same | Author/test unrun |
+| `src/modules/messaging/tpo-campaign-history-copy.ts:tpoCampaignHistoryTime, tpoCampaignHistoryStatus` | 18:40 UTC resolves to next-day 00:10 IST, known/unknown state copy | Same | Author/test unrun |
+| `src/modules/messaging/unsubscribe-model.ts:issueUnsubscribeToken, verifyUnsubscribeToken, unsubscribeConfirmation` | Signed expiring HMAC, expiry exact boundary, tamper denial and GET-side-effect prohibition | Same | Author/test unrun |
+| `src/modules/messaging/template-boundary-model.ts:isCampaignTemplateKey` | OTP/login/magic-link key fragments rejected, campaign keys allowed | Same | Author/test unrun |
+
+**Not yet exercised with a full real environment:** multi-process exact-once, provider credential/DNS allowlist validation, mail SSRF from compromised deployment configuration, and unique receipt replay after a network timeout. Unit assertions alone do not prove production exactly-once delivery.
+
+## TPO aggregate receipt permissions and export bounds (chat-16)
+
+| Source function | Permissions and side effects asserted | Behavioural test | Verification |
+|---|---|---|---|
+| `listTpoMessagingHistory` | Reject learner, disabled TPO and absent membership before DB; scoped to college+organization and persisted TPO permission; page limit 25, provider acceptance truthfully labelled | `tests/unit/chat16-messaging-receipts-tenant-17.test.ts` | Authored, unrun |
+| `exportTpoMessagingHistory` | Same role/scope check; up to 2,000 aggregate rows, never emails/recipient HMAC; explicit error if row 2,001 exists | Same | Authored, unrun |
+| `getTpoMessagingBatch` | UUID validation, wrong-role denial, scoped college+organization detail lookup, no receipt drillthrough for unowned batch; return only aggregate statuses | Same | Authored, unrun |
+
+Remaining integration: actual PostgreSQL query-plan/index verification for 2,000 receipts, snapshot consistency between aggregate batch and receipt rows, race on receipt updates, tamper/cross-college IDOR at HTTP routes, strict same-origin on exporting writes (GET reads must remain side-effect-free).
