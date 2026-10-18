@@ -318,3 +318,8 @@ These fixes do not weaken existing confirmations, selection limits or legacy cop
 ### Drive closure reservation guard — PLACEMENTS-CLOSE-WAIT-12
 
 `tpo-drive-close-preview-service.ts` now counts `PENDING` `placement_waitlist_promotions` under the owning drive, and refuses close both on initial preview and inside the job-row locked mutation transaction. This prevents a drive closing in the two-transaction window after waitlist seat reservation and before offer issuance. `tpo/placements/jobs/[jobId]/close-preview/page.tsx` explicitly says the reserved waitlist offer is pending, rather than mislabelling it a selected company candidate. Tests: `tests/unit/chat5-tpo-second-third-remaining-workflows.test.ts` and `tests/integration/placements-p8-offers.test.ts` (named `PLACEMENTS-CLOSE-WAIT-12`). Cloud test / PostgreSQL CI remains pending.
+
+
+### TPO mutation request-size boundaries (body parsing before Zod)
+
+Four scoped TPO endpoints now call the existing streaming `readTpoBulkRequestBody` helper **after same-origin validation, before JSON parsing**, and map its `400/413/415` transport failures to bounded safe HTTP responses. They are `/api/placements/tpo/jobs/[jobId]/selections` (**PLACEMENTS-SELECTION-BODY-13**), `/waitlist-promote` (**PLACEMENTS-WAIT-BODY-14**), `/api/placements/jobs/[jobId]/offers/lifecycle` (**PLACEMENTS-OFFER-BODY-15**), and `/close-preview` (**PLACEMENTS-CLOSE-BODY-16**). This caps actual body chunks at 64KiB even when Content-Length is absent. Existing strict Zod input validation and actor transaction guards remain unchanged. `tests/unit/chat5-tpo-second-third-behavior.test.ts` includes named route source checks and bounded-reader tests. Neither tests nor compiler were run locally.
