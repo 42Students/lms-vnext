@@ -1,7 +1,6 @@
 import "server-only";
 
 import { and, eq, inArray, ne } from "drizzle-orm";
-import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   placementCompanies, placementCompanyRelationships, placementJobs,
@@ -14,24 +13,8 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-
-export const companyMergeInputSchema = z.object({
-  keepCompanyId: z.string().uuid(),
-  mergeCompanyId: z.string().uuid(),
-  confirm: z.literal(true),
-}).strict().refine(v => v.keepCompanyId !== v.mergeCompanyId, {
-  message: "Choose two different companies.",
-});
-
-export class CompanyMergeError extends Error {
-  constructor(public readonly code:
-    "COMPANY_NOT_FOUND" | "MERGE_SOURCE_SHARED_OUTSIDE_COLLEGE" |
-    "MERGE_SOURCE_UNLINKED" | "MERGE_TARGET_UNLINKED" |
-    "MERGE_COMPANY_INACTIVE") {
-    super(code);
-    this.name = "CompanyMergeError";
-  }
-}
+import {companyMergeInputSchema,CompanyMergeError} from "./admin-company-merge-model";
+export {companyMergeInputSchema,CompanyMergeError} from "./admin-company-merge-model";
 
 /**
  * A merge is permitted only when the source employer identity is exclusive to

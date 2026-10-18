@@ -1,7 +1,9 @@
 import "server-only";
 import { and, count, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { academicPeriods, cohorts, departments, learnerProgramEnrollments, programs, sectionEnrollments, sections } from "@/db/schema";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import { academicPeriods, cohorts, departments, learnerProgramEnrollments, programs, sectionEnrollments, sections,
+  collegeMemberships, membershipRoles, users } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
@@ -25,9 +27,23 @@ export async function placeImportedLearnerInSection(context: RequestContext, enr
       .for("update", {of: sections}).limit(1);
     if (!target || target.status !== "ACTIVE" || target.periodStatus === "CLOSED")
       throw Error("CLASS_UNAVAILABLE");
+    // A session captured before College Admin role revocation cannot write to
+    // an existing academic section after that actor has lost permission.
+    await assertPersistedPlatformPermission(tx,context,"academics.manage",{
+      collegeId:member.collegeId,organizationId:member.organizationId,
+    });
     const [enrollment] = await tx.select({id:learnerProgramEnrollments.id,cohortId:learnerProgramEnrollments.cohortId})
-      .from(learnerProgramEnrollments).where(and(eq(learnerProgramEnrollments.id,enrollmentId),
-        eq(learnerProgramEnrollments.status,"ACTIVE"))).for("update").limit(1);
+      .from(learnerProgramEnrollments)
+      .innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProgramEnrollments.membershipId))
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .innerJoin(membershipRoles,and(
+        eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"LEARNER")))
+      .where(and(eq(learnerProgramEnrollments.id,enrollmentId),
+        eq(learnerProgramEnrollments.status,"ACTIVE"),
+        eq(collegeMemberships.collegeId,member.collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),
+        eq(users.platformStatus,"ACTIVE"))).for("update",{of:learnerProgramEnrollments}).limit(1);
     if (!enrollment || enrollment.cohortId !== target.cohortId) throw Error("CLASS_BATCH_MISMATCH");
     const [existing] = await tx.select({id:sectionEnrollments.id}).from(sectionEnrollments)
       .where(and(eq(sectionEnrollments.learnerEnrollmentId,enrollment.id),
