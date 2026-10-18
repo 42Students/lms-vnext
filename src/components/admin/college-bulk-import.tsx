@@ -9,6 +9,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {collegeBulkImportToast} from "@/modules/colleges/bulk-import-feedback-model";
 import {parseCollegeImportCsv} from "@/modules/colleges/bulk-import-model";
+import {canApplyConfirmedCollegeBulkImport} from "@/modules/colleges/bulk-import-confirmation-model";
 type Result={line:number;code:string;status:"CREATED"|"SKIPPED"|"FAILED";message:string};
 export function CollegeBulkImport({organizations}:{organizations:readonly {id:string;name:string}[]}){
  const versionRef=useRef(0),confirmedVersionRef=useRef(-1),inFlightRef=useRef(false);
@@ -20,8 +21,11 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
  catch(cause){validation=cause instanceof Error?cause.message:"Invalid CSV";}
  function discard(){versionRef.current++;confirmedVersionRef.current=-1;setOpen(false);setCsv("");setResults([]);setError("");setConfirmDiscard(false);setConfirmImport(false);}
  async function submit(){
-  if(inFlightRef.current||busy||!valid||validation||!organizationId||
-     !confirmImport||confirmedVersionRef.current!==versionRef.current)return;
+  if(!canApplyConfirmedCollegeBulkImport({
+   confirmed:confirmImport,inFlight:inFlightRef.current||busy,validRows:valid,
+   validationError:validation,organizationId,
+   selectionVersion:versionRef.current,confirmationVersion:confirmedVersionRef.current,
+  }))return;
   const confirmedOrganization=organizationId,confirmedCsv=csv;
   inFlightRef.current=true;
   setBusy(true);setError("");setResults([]);
