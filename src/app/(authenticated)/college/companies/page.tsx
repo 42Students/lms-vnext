@@ -41,20 +41,20 @@ export default async function CollegeCompaniesPage({
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Company
         <input name="q" type="search" maxLength={100} defaultValue={query.q}
-          className="min-h-11 rounded-md border border-border px-3" />
+          className="min-h-11 rounded-md border border-border px-3 text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">Status
-        <select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-3">
+        <select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-3 text-base sm:text-sm">
           <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm">Sort
-        <select name="sort" defaultValue={query.sort} className="min-h-11 rounded-md border border-border px-3">
+        <select name="sort" defaultValue={query.sort} className="min-h-11 rounded-md border border-border px-3 text-base sm:text-sm">
           <option value="LAST_ACTIVE">Last active</option><option value="COMPANY">Company</option><option value="DRIVES">Drive count</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm">Rows
-        <select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded-md border border-border px-3">
+        <select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded-md border border-border px-3 text-base sm:text-sm">
           {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </select>
       </label>
