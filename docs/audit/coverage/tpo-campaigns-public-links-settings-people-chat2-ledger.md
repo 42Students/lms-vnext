@@ -153,3 +153,12 @@ Page-state coverage is still PARTIAL; these additions do not certify the remaini
 `tests/unit/chat2-tpo-report-all14-page-denial.test.ts` now imports and invokes the **14 actual TPO report server pages** listed in `chat2-tpo-reports-duplicate-params-break-15.test.ts`. For every one: missing membership, College Admin, Learner, disabled TPO identity, and duplicate season selectors are checked ahead of a report database call. Each page's rejected state is validated through the shared redirect or the returned `TpoReportInvalidFilters` route identity. This is **70 per-route behavioral cases**, plus inventory uniqueness. It complements the old static 14-route matrix; no report data fixtures or route were weakened. 
 
 **Still pending**: each report's successful populated/empty/partial/error/browser visual behavior, eventual post-merge CI execution and real database isolation. Server-only role tests do not certify those states.
+
+## 2026-10-19 additional recruiter grant service concurrency coverage
+
+| Export | PostgreSQL behavioural test | Coverage and limits |
+| --- | --- | --- |
+| `changeTpoRecruiterGrant` | `tests/integration/db09-tpo-recruiter-grant-write.test.ts` — `TPO-settings-recruiter-grant-CAS-01` | Real grant → extend → stale retry rejected → second extension → revoke → stale revocation rejected; monotonic millisecond-visible revision and exactly four persisted grant audit events. Service now uses monotonic `updatedAt` on EXTEND and REVOKE to prevent same-millisecond double extension. Tests written, **not executed**. |
+| `tpo/settings/team`, `tpo/settings/public-link` | `tests/unit/chat2-tpo-last-third-runtime-settings-pages.test.tsx` | Direct server component invocation, TPO role denial before data query, real rendering empty/partial and safe link readiness, mobile classes and no leaked team contact fields. Browser journeys pending. |
+
+All other campaign, people and link service rows remain partial until real PostgreSQL isolation/rollback and provider/browser verification. No CI was run by this lane.
