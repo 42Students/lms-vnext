@@ -416,7 +416,18 @@ export async function transitionGroup(context: RequestContext, groupIdInput: str
     const [updated] = await tx.update(lmsGroups).set({
       status: next, version: sql.raw('"version" + 1'), updatedAt: new Date(),
     }).where(eq(lmsGroups.id, group.id)).returning();
-    return updated!;
+    if(!updated)throw new GroupServiceError("GROUP_TRANSITION_INVALID");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_GROUP_STATUS_CHANGED,
+      collegeId:group.collegeId??undefined,
+      subjectType:"lms_group",subjectId:group.id,subjectLabel:group.name,
+      summary:"Group "+group.name+" changed from "+group.status+" to "+next,
+      metadata:{groupId:group.id,fromStatus:group.status,toStatus:next,
+        previousVersion:group.version,version:updated.version},
+      groupKey:"academics:group:"+group.id,
+      dedupeKey:"academics:group:"+group.id+":status:"+updated.version,
+    });
+    return updated;
   });
 }
 
