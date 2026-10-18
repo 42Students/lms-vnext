@@ -74,7 +74,12 @@ describe("TPO release — no internal errors leak in partial results",()=>{
   expect(check).toContain('row?.status!=="ACTIVE"');
   expect(check).toContain('row.seasonCollegeId!==collegeId');
   const writes=service.slice(service.indexOf("export async function recordTpoDriveSelections"));
-  expect(writes.match(/await requireActiveTpoSelectionSeason\(tx,job.id,context.membership!\.collegeId\)/g)).toHaveLength(4);
+  expect(writes.match(/await requireActiveTpoSelectionSeason\(tx,job.id,context.membership!\.collegeId\)/g)).toHaveLength(3);
+  // Reconciliation of a previously issued, matching OFFER remains possible
+  // after closeout. Only new verification, record or issue is disallowed.
+  const prior=service.slice(service.indexOf('if(selection.status==="VERIFIED"'),service.indexOf('if(candidate?.offer&&',service.indexOf('if(selection.status==="VERIFIED"')));
+  expect(prior).not.toContain("await requireActiveTpoSelectionSeason(");
+  expect(prior).toContain('persistedOffer.kind!=="OFFER"');
  });
  it("PLACEMENTS-SELECTION-ERROR-05 never trusts surplus college ID or invalid release version",()=>{
   expect(recordSelectionsSchema.safeParse({action:"RECORD",entries:[],collegeId:id}).success).toBe(false);
