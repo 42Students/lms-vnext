@@ -92,6 +92,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-052 · SA-tenants-exports-12/14 | High | Tenant-directory CSV previously neutralized formula text only when preceded by ordinary whitespace. College or organization names beginning with zero-width format controls, bidi isolates, or combining marks followed by =/+/-/@ could execute spreadsheet formulas despite CSV quoting. The encoder now tests the first visible Unicode character and prefixes an apostrophe while preserving the full original value, quotes and IST dates. | `b271794` | `tests/unit/PROJ-BREAK-chat9-sa-tenant-export-security.test.ts` (`37ff928`) covers Unicode formats, row cap, escaping, duplicate filters and safe output; real downloaded CSV in Excel/LibreOffice OPEN |
 
+| PROJ9-053 · PROJ-BREAK-ux-40/43 | Medium | Global Super Admin template detail and historical version comparison pages previously delegated every GET to the backend and threw uncaught errors for stale permissions or database failure. They now fail closed before querying for denied administrators, preserve not-found handling for malformed/missing IDs and show retry navigation without exposing private version snapshots on service errors. | `ea69a0f`, `bbb3306` | `tests/unit/PROJ-BREAK-chat9-template-detail-pages.test.tsx` (`19b7598`): read denial, malformed UUID, unavailable service, authorized read. Live browser and PostgreSQL role checks OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
