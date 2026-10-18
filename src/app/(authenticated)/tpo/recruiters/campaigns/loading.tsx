@@ -1,1 +1,2 @@
-export default function Loading(){return <section aria-busy="true" className="space-y-4 p-4"><div className="h-8 w-48 animate-pulse rounded bg-surface-secondary"/><div className="h-32 animate-pulse rounded-xl bg-surface-secondary"/></section>;}
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
+export default function Loading(){return <GracefulPageLoading label="Loading your page..."/>;}
