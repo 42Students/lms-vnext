@@ -6,7 +6,7 @@ import {
   membershipRoles,courseOfferings,courses,departments,colleges,organizations,sections,academicPeriods,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
-import {requirePermission} from "@/modules/permissions/policy";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -20,6 +20,8 @@ import {createCourseTeachingAssignmentsBatchInputSchema} from "./validation";
 export async function createCourseTeachingAssignmentsBatch(
  context:RequestContext,rawInput:unknown,
 ){
+ // Fail closed before fetching the requested delivery IDs or faculty identity.
+ const selected=requireSuperAdminSelectedCollege(context,"courses.manage");
  const input=createCourseTeachingAssignmentsBatchInputSchema.parse(rawInput);
  const ids=[...input.deliveryIds].sort();
  const [deliveries,member]=await Promise.all([
@@ -28,9 +30,9 @@ export async function createCourseTeachingAssignmentsBatch(
  ]);
  const first=deliveries[0];
  if(!first)throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
- requirePermission(context,"courses.manage",{
-  organizationId:first.organizationId,collegeId:first.collegeId,
- });
+ if(first.collegeId!==selected.collegeId||
+   (selected.organizationId&&first.organizationId!==selected.organizationId))
+   throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
  if(!deliveries.every(delivery=>
    delivery.collegeId===first.collegeId&&
    delivery.organizationId===first.organizationId&&
