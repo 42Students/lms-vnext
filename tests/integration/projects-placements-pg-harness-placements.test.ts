@@ -88,6 +88,51 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
       }]);
     });
   });
+  it("PROJ-HARNESS-RECRUITER-25 duplicate active grant rejected, revoked grant can be reissued",async()=>{
+    await withPlacementCase(async({db,drive,actor})=>{
+      const recruiter=await createRecruiterFixture(db,drive,actor);
+      await db.expectSqlState(()=>db.query(`
+        insert into placement_recruiter_college_grants
+          (recruiter_user_id,company_relationship_id,granted_by_user_id,valid_until,
+           verification_status,capabilities)
+        values ($1,$2,$3,'2099-12-31T23:59:00Z','VERIFIED',ARRAY['DRIVES']::text[])`,
+        [recruiter.userId,drive.relationshipId,actor.userId]),"23505");
+      await db.query(`
+        update placement_recruiter_college_grants
+          set status='REVOKED',revoked_by_user_id=$2,revoked_at=now()
+        where id=$1`,[recruiter.grantId,actor.userId]);
+      const newGrant=await db.query<{id:string}>(`
+        insert into placement_recruiter_college_grants
+          (recruiter_user_id,company_relationship_id,granted_by_user_id,valid_until,
+           verification_status,capabilities)
+        values ($1,$2,$3,'2099-12-31T23:59:00Z','VERIFIED',ARRAY['DRIVES']::text[])
+        returning id`,[recruiter.userId,drive.relationshipId,actor.userId]);
+      expect(newGrant).toHaveLength(1);
+      const active=await db.query<{n:number}>(`
+        select count(*)::int n from placement_recruiter_college_grants
+        where recruiter_user_id=$1 and status='ACTIVE'`,[recruiter.userId]);
+      expect(active[0]?.n).toBe(1);
+    });
+  });
+
+  it("PROJ-HARNESS-RECRUITER-26 grant capability, verification and expiry constraints fail closed",async()=>{
+    await withPlacementCase(async({db,drive,actor})=>{
+      const recruiter=await createRecruiterFixture(db,drive,actor);
+      for(const [query,values] of [
+        ["update placement_recruiter_college_grants set capabilities=ARRAY['SUPER_ADMIN']::text[] where id=$1",
+          [recruiter.grantId]],
+        ["update placement_recruiter_college_grants set verification_status='UNREVIEWED' where id=$1",
+          [recruiter.grantId]],
+        ["update placement_recruiter_college_grants set valid_until=created_at-interval '1 minute' where id=$1",
+          [recruiter.grantId]],
+      ] as const) await db.expectSqlState(()=>db.query(query,[...values]),"23514");
+      const rows=await db.query<{status:string;verification_status:string}>(`
+        select status,verification_status from placement_recruiter_college_grants
+        where id=$1`,[recruiter.grantId]);
+      expect(rows).toEqual([{status:"ACTIVE",verification_status:"VERIFIED"}]);
+    });
+  });
+
   it("PROJ-HARNESS-RECRUITER-24 a grant failure leaves no orphaned user or company profile",async()=>{
     await withPlacementCase(async({db,actor,drive})=>{
       const before=await db.query<{n:number}>(`
