@@ -14,7 +14,12 @@ describe("learner course thumbnail with verified authored display data", () => {
     });
   });
   it.each(["http://example.edu/a.png", "javascript:alert(1)", "/private.png",
-    "https://user:password@example.edu/a.png", "not a url"])(
+    "https://user:password@example.edu/a.png", "not a url",
+    "https://localhost/admin", "https://app.localhost/secure",
+    "https://127.0.0.1/admin", "https://10.0.0.5/config",
+    "https://192.168.1.1/login", "https://172.16.1.1/config",
+    "https://169.254.169.254/latest/meta-data", "https://[::1]/secure",
+    "https://cdn.example.edu/photo.jpg#token"])(
     "does not render an unsafe thumbnail URL: %s", (value) => {
       expect(learnerCourseCardMedia(value).source).toBe("FALLBACK");
     },

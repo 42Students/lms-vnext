@@ -129,3 +129,22 @@ No tests, migrations or CI were executed. `HR-ROUND-DEPTH-64`, `HR-CALENDAR-DEPT
 | HR-DRIVES-82 | S2 workflow correctness | Recruiter draft hiring round labels accepted internal CR/LF/control characters and visually identical full-width Unicode names as distinct. New validation rejects control chars and compares Unicode-NFKC canonical names before sending to the placement cell. | `HR-BREAK-chat15-drive-round-82.test.ts` | TPO import and browser draft form acceptance |
 
 Additional **coverage without an independently established defect**: `HR-BREAK-chat15-drive-new-page-79.test.tsx`, `HR-BREAK-chat15-proposals-page-80.test.tsx`, `HR-BREAK-chat15-tracker-report-page-81.test.tsx`. None was run; no release readiness is asserted.
+
+
+## HR messaging retry and identity follow-up — 19 October 2026
+
+| Gap | Severity | Issue and fix | Test | Verification |
+|---|---|---|---|---|
+| HR-MESSAGING-83 | S2 reliability | Optional general-conversation directory lookup was awaited without failure recovery, so a transient enrichment failure crashed the entire valid recruiter inbox. Now the main inbox remains available with explicit retry copy and the create-new form stays hidden while general-thread state is unknown. | `HR-BREAK-chat15-messaging-page-83.test.tsx` | Authenticated page/browser test not executed |
+| HR-MESSAGING-84 | S2 defense in depth | Recruiter open/reply HTTP handlers checked active role but did not preflight equality between cached recruiter principal and signed-in user before calling a sensitive service. Both now reject mismatched principal with 403 before persistence and retain same-origin guards. | `HR-BREAK-chat15-messaging-api-84.test.ts` | Actual HTTP, persistence and notification tests not executed |
+
+
+| HR-OFFERS-86 | S2 funnel correctness | HR Hired applicant-stage query trusted a JOINED outcome alone, even when its offer had subsequently been DECLINED, REVOKED, or WITHDRAWN. It now requires both the persisted ACCEPTED offer and JOINED outcome, consistent with offer overview counts. | `HR-BREAK-chat15-hired-offer-86.test.ts` | PostgreSQL history and CI not executed |
+
+
+## Late HR applicant funnel and export follow-up
+
+| Gap | Severity | Impact and safeguard | Regression | Verification |
+|---|---|---|---|---|
+| HR-APPLICANTS-87 | S2 reporting/privacy | A withdrawn applicant with historical PASS, OFFERED, HIRED or FAIL markers could still appear in corresponding active recruiter funnel counts and filtered applicant pages. SQL filters, aggregate counts and the pure projection now require SUBMITTED for active milestones; ALL/WITHDRAWN history remains available. | `HR-BREAK-chat15-withdrawn-stages-87.test.ts` | Actual PostgreSQL withdrawn/offer history, cloud tests and authenticated page pending |
+| HR-OFFER-EXPORT-88 | S2 employer accuracy | Issued-offer CSV route accepted pre-issue selection ledger statuses and could return a misleading empty export with unrelated offer totals. It now refuses such state with 400 before any applicant read, and the offer page no longer advertises the incompatible export action for selection-only filters. | `HR-BREAK-chat15-offer-export-route-88.test.ts` | Cloud tests, browser visibility and selection/offer E2E pending |

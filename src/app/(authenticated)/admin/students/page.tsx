@@ -1,4 +1,7 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {PageHeader} from "@/components/ui/page-header";
+import {formatSuperAdminImportWhen} from "@/modules/admin-ui/super-admin-import-date-model";
 import {ScopedMembershipLifecycleActions} from "@/components/admin/scoped-membership-lifecycle-actions";
 import {CollegePersonEditAction} from "@/components/college/college-person-edit-action";
 import {StudentClassMoveAction} from "@/components/college/student-class-move-action";
@@ -18,6 +21,12 @@ export default async function SuperAdminStudentsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
+ if(!isSuperAdmin(context))return <div className="min-w-0 space-y-5">
+  <PageHeader eyebrow="Super Admin" title="Students"/>
+  <ErrorState title="Student access denied"
+   description="Your account cannot access Super Admin student records."
+   action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+ </div>;
  let peopleFilters:Awaited<ReturnType<typeof getSuperAdminPeopleFilterOptions>>|null=null;
  let choices:Awaited<ReturnType<typeof getSuperAdminStudentRegisterOptions>>|null=null;
  let importHistory:Awaited<ReturnType<typeof listSuperAdminStudentCsvImportHistory>>=[];
@@ -43,7 +52,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    const meta=run.metadata;
    const count=(value:unknown)=>typeof value==="number"&&Number.isSafeInteger(value)&&value>=0?value:0;
    return {
-     when:new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(run.occurredAt),
+     when:formatSuperAdminImportWhen(run.occurredAt),
      students:count(meta.count),created:count(meta.created),failed:count(meta.failed),
    };
  });

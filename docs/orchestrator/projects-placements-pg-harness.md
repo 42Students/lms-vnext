@@ -233,3 +233,18 @@ The shared tenant builder now wraps organization and college inserts in a savepo
 
 ### PROJ-HARNESS-PLACEMENTS-25 follow-up: season currently active, not merely ordered
 A 2098-2099 season has valid start/end order but is not yet in its date window on today's server. The shared ACTIVE placement-season fixture now begins in **2020** and ends June 2099, so today's database date and the published job deadline are both inside the same season. PG case 25 explicitly evaluates `current_date BETWEEN start_date AND end_date`; this intentionally broad date span is test-only and not customer season policy.
+
+### PROJ-HARNESS-PLACEMENTS-32: archived employer relationship gating
+A published drive may outlive an archived global company or archived college-company relationship. The candidate fixture now joins both persisted records with the job's college and refuses a new applicant when either is inactive; PostgreSQL case -32 verifies zero new applications across both valid archive transitions, and GUARD-21 protects the same-college company relationship join. This guards fixture realism, not the production TPO/HR service behavior.
+
+### PROJ-HARNESS-RECRUITER-33: persisted HR capability gate witness
+`fixtureRecruiterCanAccess(db,recruiter,capability)` is a test-only helper to determine expected access using registered profile/grant/relationship/company/college/organization records, live account status, verification, validity and capability. Real PG case -33 changes a verified grant through pending verification, disabled account, archived recruiter profile, expiration and revocation, asserting that no stale fixture claims it can still use DRIVES. This does **not** replace product recruiter permission service testing.
+
+### PROJ-HARNESS-PLACEMENTS-34: duplicate candidate retries
+The canonical role-option/membership unique index guards duplicate applications; a repeated candidate fixture attempt now exercises the entire multi-write savepoint, confirms the original screening/result/offer graph was not changed and then successfully creates a different learner's candidate in the same still-usable PostgreSQL transaction. This test guards harness isolation; the application API is separately responsible for friendly idempotent retry UX.
+
+### PROJ-HARNESS-MEETING-35: explicit UTC↔IST round trip
+The fixture meeting uses UTC timestamps with the Asia/Kolkata label. A real PostgreSQL witness converts both instants using `AT TIME ZONE 'Asia/Kolkata'` and asserts 10:00–10:30 IST plus exactly 1,800 seconds duration, preventing accidental timezone-label-only tests or DST-based shifts in a South India customer workflow.
+
+### PROJ-HARNESS-PLACEMENTS-36: tenant-bounded EXPLAIN syntax witness
+In addition to existing Projects query plans, the real-PG placements suite now issues `EXPLAIN (FORMAT JSON)` for tenant/status-scoped drive listing and college+job+status applicant listing, verifies the planner produces a valid plan and that actual applicant results include the scoped candidate. Tiny rollback-only fixtures do not prove index selection, production latency or 1,000+ tenant scale; those require dedicated load tests.

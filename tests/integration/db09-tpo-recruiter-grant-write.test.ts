@@ -102,6 +102,56 @@ describe.skipIf(!enabled)("DB09 TPO recruiter grants PostgreSQL", () => {
     await expect(changeTpoRecruiterGrant(tpo,request))
       .rejects.toBeInstanceOf(TpoRecruiterGrantConflict);
   });
+  it("TPO-settings-recruiter-grant-CAS-01 rejects a rapid stale extend retry and advances every revision", async () => {
+    if (!pool) throw new Error("DB required");
+    const created = await fixture();
+    const granted = await changeTpoRecruiterGrant(tpo, {
+      action:"GRANT",confirmed:true,
+      companyRelationshipId:created.relationshipId,email:created.email,
+    });
+    const read = async () => {
+      const row = (await pool.query<{updated_at:Date;valid_until:Date}>(`
+        SELECT updated_at,valid_until
+        FROM placement_recruiter_college_grants WHERE id=$1`,[granted.grantId])).rows[0];
+      if (!row) throw new Error("Missing recruiter grant");
+      return row;
+    };
+    const first = await read();
+    const stale = {
+      action:"EXTEND" as const,confirmed:true,grantId:granted.grantId,
+      expectedUpdatedAt:first.updated_at.toISOString(),months:3 as const,
+    };
+    expect((await changeTpoRecruiterGrant(tpo,stale)).outcome).toBe("extended");
+    const second = await read();
+    expect(second.updated_at.getTime()).toBeGreaterThan(first.updated_at.getTime());
+    expect(second.valid_until.getTime()).toBeGreaterThan(first.valid_until.getTime());
+    await expect(changeTpoRecruiterGrant(tpo,stale))
+      .rejects.toBeInstanceOf(TpoRecruiterGrantConflict);
+    const thirdResult = await changeTpoRecruiterGrant(tpo,{
+      ...stale,expectedUpdatedAt:second.updated_at.toISOString(),months:6,
+    });
+    expect(thirdResult.outcome).toBe("extended");
+    const third = await read();
+    expect(third.updated_at.getTime()).toBeGreaterThan(second.updated_at.getTime());
+    expect(third.valid_until.getTime()).toBeGreaterThan(second.valid_until.getTime());
+    const revoked = await changeTpoRecruiterGrant(tpo,{
+      action:"REVOKE",confirmed:true,grantId:granted.grantId,
+      expectedUpdatedAt:third.updated_at.toISOString(),
+    });
+    expect(revoked.outcome).toBe("revoked");
+    const fourth = await read();
+    expect(fourth.updated_at.getTime()).toBeGreaterThan(third.updated_at.getTime());
+    await expect(changeTpoRecruiterGrant(tpo,{
+      action:"REVOKE",confirmed:true,grantId:granted.grantId,
+      expectedUpdatedAt:third.updated_at.toISOString(),
+    })).rejects.toBeInstanceOf(TpoRecruiterGrantConflict);
+    const event = (await pool.query<{total:number}>(`
+      SELECT count(*)::integer AS total FROM activity_events
+      WHERE subject_id=$1 AND event_type IN
+        ('PLACEMENTS_RECRUITER_ACCESS_GRANTED','PLACEMENTS_RECRUITER_ACCESS_EXTENDED','PLACEMENTS_RECRUITER_ACCESS_REVOKED')`,
+      [granted.grantId])).rows[0];
+    expect(event?.total).toBe(4);
+  });
   it("rejects wrong role and foreign relationship before any grants", async () => {
     if (!pool) throw new Error("DB required");
     const local = await fixture();

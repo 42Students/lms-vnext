@@ -36,3 +36,19 @@ Run tests, typecheck and Postgres integration with A/B tenant, dual-role SA, ina
 
 ## Responsive overlay correction — SA-ADMIN-HISTORY-MODAL-10
 The first-third Super Admin import-history overlay in `src/components/admin/super-admin-student-import-history.tsx` now returns focus to the Import History button when native dialog closes, including Escape, and uses a stationary header with one bounded vertical records scroller. Shared DataTable owns horizontal scrolling. `tests/unit/chat13-super-admin-history-modal-ux.test.ts` verifies the authored source contract; real browser/mobile inspection is still required.
+
+
+## Faculty bulk import replacement-file fix — SA-FACULTY-CSV-17
+On the first-third faculty pages, `SuperAdminFacultyBulkImport` clears an old selection when a new file is invalid or slow to read, rejects stale async text completions, revalidates the selection after the destructive confirm dialog and blocks duplicate submissions synchronously. `canSubmitFacultyBulkImport` behavior plus component constraints are covered by `tests/unit/chat13-faculty-bulk-stale-file-guard.test.ts`. Phone and real session acceptance remain pending.
+
+
+## Bulk learner override UX — SA-STUDENT-BULK-18
+The first-third Super Admin student-access widget now validates selected memberships against the currently visible college roster, prevents double submits using a synchronous pending ref, and freezes the confirmed module/action/membership IDs throughout the network request. Denied/stale/invalid server statuses are mapped to friendly guidance instead of raw error codes. Behavioral selection/feedback tests and component interaction contracts: `tests/unit/chat13-student-bulk-stale-roster.test.ts`; browser acceptance pending.
+
+
+## Selected organization college bulk-import approval — SA-COLLEGE-CSV-20
+`CollegeBulkImport` now invalidates confirmation when CSV or organization changes, sends the exact approved snapshot, refuses duplicate clicks with an in-flight ref, and retains the original organization-bound source validation. `canApplyConfirmedCollegeBulkImport` and `tests/unit/chat13-college-bulk-confirmation-snapshot.test.ts` cover version mismatch, empty/bad drafts, 200-record cap and double submit. No real browser or SQL acceptance is asserted.
+
+
+## First-third faculty bulk recovery — SA-FACULTY-CSV-22
+Faculty batch route bounds actual streamed JSON to 4 MB and uses a typed 403 on college mismatch. The UI validates the complete partial-success response rather than silently treating missing results as success, and displays friendly guidance rather than raw machine codes. `tests/unit/chat13-faculty-bulk-response-ux.test.ts` exercises schema, counts, errors and source guard order. Browser/postgres acceptance still pending.

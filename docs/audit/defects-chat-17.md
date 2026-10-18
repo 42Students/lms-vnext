@@ -163,3 +163,19 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-PLACEMENTS-25 time window | S1 (current workflow fidelity) | An ordered future 2098 season still makes today's published jobs out-of-season even while status is ACTIVE, masking real date-based eligibility in service tests. | Start date moved to 2020 while 2099 end remains, and PostgreSQL case 25 checks server current date and job deadline within season. | Authored; final DB gate pending |
 
 | UX-kit-E2E-12 | S2 (stale request state) | Reusing a loading component for a different route/filter kept the original 12s timer and could display a retry warning immediately for a fresh request. | Reset delayed slow flag on changing label/shape/variant/count with cleanup; browser clock witness tests handoff. | Authored; end-of-sprint CI pending |
+
+| PROJ-HARNESS-PLACEMENTS-32 | S1 (stale employer grants) | A published drive could still fabricate new applicants after its employer or college-company relationship was archived. | Persisted active company + active same-college relationship required by fixture; PG case -32 and GUARD-21. | Authored; final database gate pending |
+
+| PROJ-HARNESS-RECRUITER-33 | S1 (revoked HR identity fixture) | An ACTIVE grant alone can mislead role-journey tests into treating disabled, expired, unverified, archived, or revoked recruiter credentials as authorized. | Test-only persisted capability witness with full relational gates, real PG lifecycle test -33 and source GUARD-22. | Authored; final PostgreSQL gate deferred |
+
+| UX-kit-HARDEN-59 | S2 (idempotent notifications) | A repeated event ID supplied to the exported toast reducer could render two indistinguishable notices with duplicate React keys and independent dismiss controls. | Incoming item replaces matching current ID; invalid timed limit defaults to 3; behavioral test HARDEN-59. | Authored; final CI pending |
+
+| UX-kit-E2E-13 | S1 (private cell rendering) | A failed permission lookup must not crash or accidentally serialize a private column into browser HTML on real client hydration. | Added development-only broken-permission table fixture and Chromium test asserting private text absent and public row still usable. | Authored; final browser gate pending |
+
+| PROJ-HARNESS-PLACEMENTS-34 | S1 (retry collision resilience) | Retrying a candidate against the same published drive could fail UNIQUE and poison the surrounding transaction, preventing follow-up tests and obscuring incomplete application graphs. | PG duplicate retry witness checks no graph count changes, original offer remains, separate learner succeeds. | Authored; final DB gate deferred |
+
+| UX-kit-E2E-14 | S2 (phone vertical scroll evidence) | Prior drawer/sheet tests checked accessible labels and safe-area classes but used short content that never actually tested vertical overflow or fade changes. | Developer harness long-content fixtures and real Chromium scroll-edge assertions for nested drawer/sheet. | Authored; browser CI deferred |
+
+| PROJ-HARNESS-MEETING-35 | S2 (IST time authority) | Merely asserting a meeting's `time_zone` text does not prove its persisted UTC start/end represent the intended India-local session or preserved duration. | PostgreSQL `AT TIME ZONE` conversion and epoch delta assertion confirms 10:00–10:30 IST. | Authored; final database gate pending |
+
+| PROJ-HARNESS-PLACEMENTS-36 | S2 (bounded-list query safety) | The integration suite had Projects EXPLAIN witnesses but no equivalent for core TPO drive and applicant list predicates, risking untested SQL plan regressions. | PostgreSQL JSON EXPLAIN for tenant-scoped drives/applicants with actual scoped candidate result; explicitly not a latency proof. | Authored; full scale gate pending |

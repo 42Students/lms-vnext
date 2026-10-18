@@ -75,11 +75,13 @@ function UIKitTestSurface() {
         title="Harness drawer" description="Nested history and focus test.">
         <p>The workspace drawer stays open when its sheet is dismissed.</p>
         <Button onClick={() => setSheetOpen(true)}>Open nested sheet</Button>
+        <div aria-label="Drawer long content" className="h-[950px] min-h-[950px]">Long project activity feed</div>
       </Drawer>
       <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen}
         title="Harness nested sheet" description="Second overlay">
         <p>Sheet content is nested above the workspace drawer.</p>
         <Button onClick={() => setSheetOpen(false)}>Close nested sheet</Button>
+        <div aria-label="Sheet long content" className="h-[950px] min-h-[950px]">More project details</div>
       </BottomSheet>
     </section>
 
@@ -164,6 +166,20 @@ function UIKitTestSurface() {
           {key:"d",header:"Fourth",mobilePriority:"secondary",cell:()=>"Public field 4"},
           {key:"secret",header:"Private desktop-only feedback",mobilePriority:"hidden",
             cell:row=>row.secret},
+        ]}/>
+    </section>
+
+    <section aria-label="Fail closed table fixture">
+      <DataTable caption="Restricted workspace security" empty="No projects"
+        rows={[{id:"secure",name:"Secure workspace",review:"NEVER_SERIALIZE_PRIVATE_REVIEW"}]}
+        getRowKey={row=>row.id} rowHref={()=>{throw new Error("detail route unavailable");}}
+        columns={[
+          {key:"name",header:"Workspace",mobilePriority:"primary",cell:row=>row.name},
+          {key:"review",header:"Private review",mobilePriority:"hidden",
+            mobileHiddenReason:"Review access denied",
+            mobileDetail:{fieldKey:"review",canView:()=>{throw new Error("permission service unavailable");},
+              href:()=>"/mentor/projects/secure/review"},
+            cell:row=>row.review},
         ]}/>
     </section>
 

@@ -10,7 +10,7 @@ export function learnerAssignmentMobileState(
   }
   if(item.dueAt!==null){
     const due=Date.parse(item.dueAt);
-    if(Number.isFinite(due)&&due<nowMs){
+    if(Number.isFinite(due)&&due<=nowMs){
       return {label:"Closed",detail:"Submissions are closed",urgent:true};
     }
     if(Number.isFinite(due)&&due>=nowMs&&due-nowMs<=86_400_000){

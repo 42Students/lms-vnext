@@ -505,3 +505,44 @@ Interactive router transitions and cloud CI still require orchestrator verificat
 | HR-BREAK-DRIVE-DRAFT-SCOPE-38 | MAJOR | `/hr/drives/new` switched between colleges, copied drive requests, edits and resubmissions while reusing the same unkeyed client `HrDriveDraftForm`. Hook state (including unsent private role details, `submittedRef`, idempotency tokens and optimistic versions) could carry into another college/source on URL-only navigation. Moreover, `?copy=REQUEST_ID` used the general NEW localStorage key, so restoring a prior unsent new request could overwrite the authorized copied template. Set a composite per-user/college/mode/request React key and isolate COPY in a source-request-specific local draft namespace. Existing page copy and backend tenant authorization are unchanged. | `tests/unit/HR-BREAK-chat19-drive-draft-scope.test.ts` exercises principal, college, request and action boundaries and source integration. |
 
 Browser navigation and storage-restore tests are pending cloud/orchestrator acceptance; no local execution.
+
+## Recruiter attribution and branch suggestions cross-audit
+
+| ID | Severity | Finding, correction and evidence |
+|---|---|---|
+| HR-BREAK-TEAM-ATTRIBUTION-40 | MAJOR | Company & Team job attribution considered every recruiter request with `approvedJobId` regardless of status, so stale/cancelled/nonapproved rows could count a colleague as the owner. Restrict persisted requests to the autoapproved `DRAFT` state; ignore invalid-status rows in projection and favor actual creator on conflicting approvals. Add explicit current recruiter user equality before team counts and department/branch suggestions; do not query private colleges on a stale/mismatched identity. `tests/unit/HR-BREAK-chat19-team-attribution.test.ts` covers double rows, status transitions, creator fallback, unknown IDs and authorization guards. |
+
+Auth/DB fixtures and browser execution remain orchestrator acceptance gates. No local tests were run.
+
+## HR Today offer follow-ups and Company & Team phone UX
+
+| ID | Severity | Evidence and correction | Regression |
+|---|---|---|---|
+| HR-BREAK-CLOSED-OFFER-41 | MAJOR | HR Today filtered offers to `placement_jobs.status=PUBLISHED`; closing a drive hid still-outstanding ISSUED offer and joining follow-ups. Match the recruiter Today jobs' published-or-closed visibility while keeping strict own-college, unarchived, active learner, SUBMITTED application and SHORTLISTED employer-visible scope. | `tests/unit/HR-BREAK-chat19-closed-offer-company-touch.test.ts` |
+| UX-HR-COMPANY-TOUCH-42 | UX | /hr/company main section tabs, college selection pills and profile link had undersized keyboard/touch targets. Give navigation 44px minimum height and visible keyboard outlines; retain exact wording and route destinations. | Same named suite |
+
+Tests and viewport validation were not run locally.
+
+## Recruiter profile self-service access revocation
+
+| ID | Severity | Cross-audit finding and correction | Regression |
+|---|---|---|---|
+| HR-BREAK-LEAVE-GRANT-43 | MAJOR | `RecruiterProfileAccess` treated any HTTP-200 response to its destructive DELETE as successful revocation, even an expired-session HTML fallback or unrelated JSON; it then removed the college from view and navigated away. Native `window.confirm` and React-only `leaving` state also lacked keyboard-dialog behavior and synchronous double-click exclusion. Require an exact `{access:{grantId,status:"REVOKED"}}` receipt from the already origin-guarded API, reject redirects and malformed JSON, single-flight with ref, and use accessible consequence dialog with explicit 44px controls. On uncertain status retain the college entry and show recovery; never claim success. | `tests/unit/HR-BREAK-chat19-leave-grant.test.ts` checks matched/foreign/malformed receipts, action ordering, confirmation and double-submit guard. |
+
+Cloud/browser/PostgreSQL executions pending; no tests were run.
+
+## Recruiter self-profile cross-account retained React state
+
+| ID | Severity | Finding / correction | Regression |
+|---|---|---|---|
+| HR-BREAK-PROFILE-SCOPE-44 | MAJOR | The HR profile page rendered two long-lived client editors with initial values held in `useState`: personal contact details and visible college grants. Switching signed-in actors, or receiving a grant change on refresh without remount, risked continuing to display a prior recruiter's sensitive unsent details or old grant choices. Key the profile editor on the exact signed-in user ID and the grant control on user + current granted IDs; preserve unsaved state for unrelated same-actor UI refreshes. The API remains the final actor/tenant authority. | Expanded `tests/unit/HR-BREAK-chat19-profile-page.test.ts` with actor-switch projection and page key contract. |
+
+No browser session switch or CI run was performed in this lane.
+
+## HR portfolio withdrawn-application aggregate privacy
+
+| ID | Severity | Defect / correction | Test |
+|---|---|---|---|
+| HR-BREAK-PORTFOLIO-WITHDRAWN-45 | MAJOR | The employer Portfolio counts revalidated SHORTLISTED screening, membership and user but omitted the current `placement_applications.status`; a withdrawn applicant with historical shortlist/offer remained in recruiter-visible shared applicant and offer totals. Use `status=SUBMITTED` in the shared SQL scope for both aggregates, matching HR Today's authorized offer follow-up projection. Deny forged recruiter principals, foreign colleges and inactive users before DB access. | `tests/unit/HR-BREAK-chat19-portfolio-withdrawn.test.ts` checks access failures, no-IDs behavior and both aggregate SQL boundary predicates. |
+
+No PostgreSQL replay or CI execution here. Existing offers remain in persistence for audit; only employer-visible aggregate eligibility changes.
