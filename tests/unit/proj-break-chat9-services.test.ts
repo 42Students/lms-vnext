@@ -32,7 +32,9 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
  it("PROJ-BREAK-races-04 admin status edits serialize stale tabs before changing any child rows",()=>{
   const page=moduleSource("college-project-summary-service");
   expect(page).toContain('for("update")');
-  expect(page).toContain("row.updatedAt.toISOString()!==input.expectedUpdatedAt");
+  expect(page).toContain("row.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt)");
+  expect(page).toContain("if(collegeProjectSummaryMatchesCurrent(row,input))return row");
+  expect(page.indexOf("collegeProjectSummaryMatchesCurrent(row,input)")).toBeGreaterThan(page.indexOf('for("update")'));
   expect(page).toContain("PROJECT_SUBMISSION_CONFLICT");
   expect(page).toContain("recordActivityEventInTransaction(tx,context");
  });
@@ -170,7 +172,9 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(remove).toContain('"DELETED"');
   expect(remove).toContain("recordStorageFileEvent(tx, context");
   expect(remove).toContain("try { await removeStoredObject(row.objectKey); }");
-  expect(remove).toContain("return toProjectFileDto(updated)");
+  expect(remove).toContain("if (!updated.changed) return toProjectFileDto(updated.row)");
+  expect(remove).toContain("return toProjectFileDto(updated.row)");
+  expect(remove).toContain("ne(projectResourceFiles.status, \"DELETED\")");
   const complete=page.slice(page.indexOf("export async function completeProjectFileUpload"),page.indexOf("export async function listProjectFiles"));
   expect(complete).toContain('plan.status === "QUARANTINED"');
   expect(complete).toContain("catch { /* Unreadable DB state is authoritative");
