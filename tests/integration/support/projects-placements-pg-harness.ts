@@ -239,8 +239,7 @@ export async function createMeeting(db: PgHarness, project: ProjectFixture,
   const [row] = await db.query<{id:string}>(`
     insert into project_meetings
       (project_id,title,starts_at,ends_at,time_zone,requested_by_membership_id,created_by_user_id)
-    values ($1,'Review','$2'::timestamptz,'$3'::timestamptz,'Asia/Kolkata',$4,$5) returning id`
-    .replace("'$2'::timestamptz","$2::timestamptz").replace("'$3'::timestamptz","$3::timestamptz"),
+    values ($1,'Review',$2::timestamptz,$3::timestamptz,'Asia/Kolkata',$4,$5) returning id`,
     [project.projectId,"2026-10-20T04:30:00Z","2026-10-20T05:00:00Z",learner.membershipId,author.userId]);
   return row!.id;
 }
