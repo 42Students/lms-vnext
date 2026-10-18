@@ -227,3 +227,7 @@ No runtime CI execution. Numeric internally validated number callers remain supp
 ## Local first-party identity contact boundary
 
 `src/modules/people/local-identity-directory.ts` `createUser` now raises `IDENTITY_CONTACT_REQUIRED` if a direct caller supplies neither email nor phone. This enforces the same login-recoverability rule as `resolveOrCreateIdentity` at the adapter boundary rather than creating unreachable anonymous accounts. `tests/unit/chat4-college-local-identity-directory.test.ts` includes the `COL-people-local-identity-02` negative case; existing ordinary phone/email creation and unique opaque ID cases remain. Cloud CI pending.
+
+## Super Admin verified web address page
+
+`/admin/colleges/[collegeId]/subdomain` has a new actual SSR route test, `tests/unit/chat4-superadmin-college-domain-page-journey.test.tsx` (`SA-colleges-domains-page-01`), exercising selected-college management permission before private domain/verification-token calls, empty and verified hosts, managed subdomain routing, missing/out-of-scope tenant 404, and non-Super Admin denial without domain metadata reads. All rendered tests are mocked, not an actual DNS/TLS check. Cloud CI and staging deployment verification remain required.
