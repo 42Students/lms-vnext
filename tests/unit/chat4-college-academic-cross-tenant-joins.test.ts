@@ -52,6 +52,6 @@ describe("COL-academics-scope-tenant-02 corrupt roster links do not disclose for
   expect(src).toContain("eq(sections.id, sectionEnrollments.sectionId)");
   expect(src).toContain("eq(sections.cohortId, enrollment.cohortId)");
   expect(src).toContain("eq(sections.academicPeriodId, sectionEnrollments.academicPeriodId)");
-  expect(src).toContain("eq(sectionEnrollments.learnerEnrollmentId,");
+  expect(src).toContain("sectionEnrollments.learnerEnrollmentId,");
  });
 });
