@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import type { RequestContext } from "@/modules/identity/context";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
+import { can } from "@/modules/permissions/policy";
 import { createClassTeamWorkspacesSchema } from "@/modules/projects/class-team-create-request";
 
 const collegeA = "11111111-1111-4111-8111-111111111111";
@@ -44,9 +45,12 @@ describe("College Admin Projects class-team creation adversarial scopes", () => 
     expect(getProjectAdminCollegeId(actor)).toBeNull();
     expect(getProjectAdminCollegeId({ ...actor, adminScope: { collegeId: null, organizationId: orgA } })).toBeNull();
     expect(getProjectAdminCollegeId({ ...actor, adminScope: { collegeId: collegeB, organizationId: orgB } })).toBe(collegeB);
-    expect(getProjectAdminCollegeId({ ...actor, adminScope: { collegeId: collegeB, organizationId: orgA } })).toBe(collegeB);
-    // The persisted organization check in requirePermission independently
-    // rejects an A/B mismatch after the selected-college check.
+    const forgedOrg = { ...actor, adminScope: { collegeId: collegeB, organizationId: orgA } };
+    // The navigation helper checks the selected IDs; the write service checks
+    // the *persisted* college/organization pair with requirePermission.
+    expect(can(forgedOrg, "projects.manage", { collegeId: collegeB, organizationId: orgB })).toBe(false);
+    expect(can({ ...actor, adminScope: { collegeId: collegeB, organizationId: orgB } },
+      "projects.manage", { collegeId: collegeB, organizationId: orgB })).toBe(true);
     expect(getProjectAdminCollegeId({ ...actor, adminScope: { collegeId: collegeA, organizationId: orgA } })).toBe(collegeA);
   });
 
