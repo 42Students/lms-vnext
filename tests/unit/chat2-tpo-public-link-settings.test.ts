@@ -13,6 +13,14 @@ describe("TPO-settings-audit-55 recruiter link", () => {
     const page = readFileSync("src/app/(authenticated)/tpo/settings/recruiters/page.tsx", "utf8");
     expect(page).toContain("TpoPublicJoinLinkCard");
   });
+  it("TPO-settings-audit-55 never picks the first of forged duplicate recruiter-grant filters",()=>{
+    const page=readFileSync("src/app/(authenticated)/tpo/settings/recruiters/page.tsx","utf8");
+    expect(page).toContain("Object.values(params).some(Array.isArray)");
+    expect(page).toContain('title="Invalid recruiter access filters"');
+    expect(page).toContain('href="/tpo/settings/recruiters"');
+    expect(page).not.toContain("first(params.status)");
+    expect(page).not.toContain("first(params.page)");
+  });
   it("TPO-settings-audit-55 uses exact legacy labels", () => {
     expect(PUBLIC_JOIN_LINK_COPY.college).toBe("Public link for recruiters");
     expect(PUBLIC_JOIN_LINK_COPY.publicInitial).toBe("Make the link");
