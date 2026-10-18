@@ -164,6 +164,36 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(deniedOnly).not.toContain("More details");
   });
 
+  it("UX-kit-HARDEN-58 hidden cell permissions fail closed if resolver or detail href throws",()=>{
+    type Row={id:string;secret:string};
+    const secretFormatter=vi.fn((row:Row)=>row.secret);
+    const failPermission=vi.fn(()=>{throw new Error("permission unavailable");});
+    const denied=render(<DataTable rows={[{id:"one",secret:"SECRET_ONE"}]}
+      getRowKey={row=>row.id} empty="None" rowHref={()=>{throw new Error("navigation failed");}}
+      columns={[
+        {key:"id",header:"Project",mobilePriority:"primary",cell:(row:Row)=>row.id},
+        {key:"secret",header:"Restricted",mobilePriority:"hidden",
+          mobileHiddenReason:"Private",
+          mobileDetail:{fieldKey:"private",canView:failPermission,href:()=>"/private"},
+          cell:secretFormatter},
+      ]}/>);
+    expect(denied).toContain("one");
+    expect(denied).not.toContain("SECRET_ONE");
+    expect(denied).not.toContain('href="/private"');
+    expect(secretFormatter).not.toHaveBeenCalled();
+    expect(failPermission).toHaveBeenCalledTimes(1);
+    const allowed=render(<DataTable rows={[{id:"two",secret:"VISIBLE_TWO"}]}
+      getRowKey={row=>row.id} empty="None" columns={[
+        {key:"id",header:"Project",mobilePriority:"primary",cell:(row:Row)=>row.id},
+        {key:"secret",header:"Restricted",mobilePriority:"hidden",
+          mobileHiddenReason:"Private",
+          mobileDetail:{fieldKey:"private",canView:()=>true,href:()=>{throw Error("link unavailable");}},
+          cell:secretFormatter},
+      ]}/>);
+    expect(allowed).toContain("VISIBLE_TWO");
+    expect(allowed).not.toContain('href="/private"');
+  });
+
   it("UX-kit-HARDEN-45 explicit mobile-hidden fields never appear in expanded mobile details",()=>{
     type Row={id:string;name:string;secret:string;other:string};
     const columns=[
@@ -296,6 +326,20 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     const {items}=enqueueToast([notices[0]!],notices[1]!);
     expect(new Set(items.map(row=>row.id)).size).toBe(2);
     expect(render(<ToastStack toasts={items} onDismiss={()=>{}}/>)).toContain("Request failed");
+  });
+
+  it("UX-kit-HARDEN-59 repeated toast IDs update rather than duplicate accessible notices",()=>{
+    const old={id:"request-1",title:"Request started",tone:"info" as const};
+    const updated={id:"request-1",title:"Request finished",tone:"success" as const};
+    expect(enqueueToast([old],updated)).toEqual({items:[updated],evictedIds:[]});
+    const repeated=enqueueToast([old],updated,NaN).items;
+    expect(repeated).toHaveLength(1);
+    const html=render(<ToastStack toasts={repeated} onDismiss={()=>{}}/>);
+    expect(html).toContain("Request finished");
+    expect(html).not.toContain("Request started");
+    const numerous=Array.from({length:4},(_,i)=>({...old,id:"id-"+i}));
+    expect(enqueueToast(numerous,updated,NaN).items.filter(t=>t.tone!=="error"))
+      .toHaveLength(3);
   });
 
   it("UX-kit-HARDEN-29 persistent errors never evict and timed toast timers are cleaned up", () => {

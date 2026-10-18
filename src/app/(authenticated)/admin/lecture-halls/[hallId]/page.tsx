@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
+import {EmptyState} from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { collegeHallAvailabilitySchema } from "@/modules/academics/college-hall-availability-model";
@@ -23,6 +25,13 @@ export default async function SuperAdminLectureHallAvailability({
   params: Promise<{ hallId: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const context=await getCurrentRequestContext();
+  if(!context.adminScope?.collegeId)return <div className="space-y-4">
+    <PageHeader eyebrow="Super Admin · Lecture halls" title="Room availability"/>
+    <EmptyState title="Select a college to continue"
+      description="Choose a college in the Super Admin scope selector before viewing private room schedules."/>
+  </div>;
+  requireSuperAdminSelectedCollege(context,"academics.manage");
   const { hallId } = await params;
   const raw = await searchParams;
   const parsed = collegeHallAvailabilitySchema.safeParse({
@@ -31,7 +40,7 @@ export default async function SuperAdminLectureHallAvailability({
   let result: Awaited<ReturnType<typeof getCollegeHallAvailability>> | null = null;
   if (parsed.success) {
     try {
-      result = await getCollegeHallAvailability(await getCurrentRequestContext(), parsed.data);
+      result = await getCollegeHallAvailability(context, parsed.data);
     } catch (error) {
       if (error instanceof CollegeHallAvailabilityNotFoundError) notFound();
       throw error;

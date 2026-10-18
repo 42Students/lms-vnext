@@ -74,6 +74,19 @@ export async function listActiveDeliveryLearners(
     )
     .limit(1);
 
+  // A backed elective can become invalid because its slot/group is detached
+  // or moved to another college. The fully scoped join above then returns no
+  // row. Do not treat that as an ordinary Section delivery and reveal the
+  // entire Section roster: an existing elective link fails closed.
+  if (!elective) {
+    const [backedElective] = await db
+      .select({ id: electiveOfferings.id })
+      .from(electiveOfferings)
+      .where(eq(electiveOfferings.backedDeliveryId, scope.deliveryId))
+      .limit(1);
+    if (backedElective) return [];
+  }
+
   const projection = {
     membershipId: collegeMemberships.id,
     displayName: users.displayName,

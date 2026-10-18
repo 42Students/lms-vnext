@@ -123,6 +123,14 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(cue).toHaveAttribute("data-scroll-end","false");
   });
 
+  test("UX-kit-E2E-13 permission lookup failure never mounts a restricted DataTable cell",async({page})=>{
+    await page.goto(route);
+    const table=page.locator('[data-slot="data-table"]').filter({has:page.getByText("Secure workspace")});
+    await expect(table.getByText("Secure workspace")).toBeVisible();
+    await expect(table).not.toContainText("NEVER_SERIALIZE_PRIVATE_REVIEW");
+    await expect(table.getByRole("link",{name:/View details/})).toHaveCount(0);
+  });
+
   test("UX-kit-HARDEN-45 mobile More details never discloses desktop-only private columns",async({page})=>{
     await page.setViewportSize({width:390,height:780});
     await page.goto(route);
@@ -204,6 +212,20 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
       document.dispatchEvent(new Event("visibilitychange"));
     });
     await expect(note).toHaveCount(0,{timeout:3500});
+  });
+
+  test("UX-kit-E2E-12 loading timeout belongs to the latest request label",async({page})=>{
+    await page.clock.install();
+    await page.goto(route);
+    const loading=page.locator('[data-slot="page-loading"]');
+    await expect(loading).toContainText("Loading projects A");
+    await page.clock.fastForward("11s");
+    await page.getByRole("button",{name:"Switch loading request"}).click();
+    await expect(loading).toContainText("Loading projects B");
+    await page.clock.fastForward("2s");
+    await expect(loading.getByText("This is taking longer than expected.")).toHaveCount(0);
+    await page.clock.fastForward("11s");
+    await expect(loading.getByText("This is taking longer than expected.")).toBeVisible();
   });
 
   test("UX-kit-E2E-11 timed toasts remain readable when the tab is hidden",async({page})=>{

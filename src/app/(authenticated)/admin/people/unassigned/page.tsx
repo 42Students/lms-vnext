@@ -23,7 +23,12 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
     <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Users & Roles</Link>
   </div>;
   const raw = await searchParams;
-  const parsed = adminUnassignedUsersQuerySchema.safeParse({ q: raw.q, platformStatus: raw.platformStatus, role: raw.role, page: raw.page });
+  const validKeys=new Set(["q","platformStatus","role","page"]);
+  const validShape=Object.keys(raw).every(key=>validKeys.has(key))&&
+    Object.values(raw).every(value=>!Array.isArray(value));
+  const parsed = adminUnassignedUsersQuerySchema.safeParse(validShape
+    ?{q:raw.q,platformStatus:raw.platformStatus,role:raw.role,page:raw.page}
+    :{invalid:true});
   if (!parsed.success) return <ErrorState title="Invalid user filters" description="Review search, status, role and page."
     action={<Link href="/admin/people/unassigned">Clear filters</Link>} />;
   const data = await listSuperAdminUnassignedUsers(context, parsed.data);

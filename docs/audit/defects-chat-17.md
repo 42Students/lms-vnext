@@ -157,3 +157,17 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-TENANT-29 | S1 (partial tenant fixture) | Organization INSERT succeeded before college INSERT; a caught college error left an orphan organization inside the outer fixture transaction. | Wrap tenant graph in SAVEPOINT, inject college failure, assert unchanged organization count and successful retry. | Authored; deferred PostgreSQL gate |
 
 | PROJ-HARNESS-PRINCIPAL-30 | S1 (partial role fixture) | Catching a second membership role INSERT error could leave a user with only the first role and an incomplete college membership in a continuing PostgreSQL test. | Nested SAVEPOINT around entire principal graph; forced second-role failure checks no residue and successful retry. | Authored; final PostgreSQL gate deferred |
+
+| UX-kit-HARDEN-58 | S1 (restricted table failure path) | A thrown `canView` or `mobileDetail.href` resolver crashed the whole table. Permission failure should never cause a hidden private formatter to run or expose a link. | Per-row resolver exceptions now fail closed; optional link errors suppress only the link. Unit test verifies no secret formatter call and no navigation. | Authored; final CI pending |
+
+| PROJ-HARNESS-PLACEMENTS-25 time window | S1 (current workflow fidelity) | An ordered future 2098 season still makes today's published jobs out-of-season even while status is ACTIVE, masking real date-based eligibility in service tests. | Start date moved to 2020 while 2099 end remains, and PostgreSQL case 25 checks server current date and job deadline within season. | Authored; final DB gate pending |
+
+| UX-kit-E2E-12 | S2 (stale request state) | Reusing a loading component for a different route/filter kept the original 12s timer and could display a retry warning immediately for a fresh request. | Reset delayed slow flag on changing label/shape/variant/count with cleanup; browser clock witness tests handoff. | Authored; end-of-sprint CI pending |
+
+| PROJ-HARNESS-PLACEMENTS-32 | S1 (stale employer grants) | A published drive could still fabricate new applicants after its employer or college-company relationship was archived. | Persisted active company + active same-college relationship required by fixture; PG case -32 and GUARD-21. | Authored; final database gate pending |
+
+| PROJ-HARNESS-RECRUITER-33 | S1 (revoked HR identity fixture) | An ACTIVE grant alone can mislead role-journey tests into treating disabled, expired, unverified, archived, or revoked recruiter credentials as authorized. | Test-only persisted capability witness with full relational gates, real PG lifecycle test -33 and source GUARD-22. | Authored; final PostgreSQL gate deferred |
+
+| UX-kit-HARDEN-59 | S2 (idempotent notifications) | A repeated event ID supplied to the exported toast reducer could render two indistinguishable notices with duplicate React keys and independent dismiss controls. | Incoming item replaces matching current ID; invalid timed limit defaults to 3; behavioral test HARDEN-59. | Authored; final CI pending |
+
+| UX-kit-E2E-13 | S1 (private cell rendering) | A failed permission lookup must not crash or accidentally serialize a private column into browser HTML on real client hydration. | Added development-only broken-permission table fixture and Chromium test asserting private text absent and public row still usable. | Authored; final browser gate pending |
