@@ -51,9 +51,9 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
  return <section className="space-y-4">
   <div className="flex flex-wrap gap-3">
    <button type="button" onClick={()=>open("RECORD")} disabled={!recordable.length}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">Record a selection</button>
+    className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">Record a selection</button>
    <button type="button" onClick={()=>open("VERIFY_AND_RELEASE")} disabled={!releasable.length}
-    className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+    className="min-h-11 md:min-h-9 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
     Verify and release ({releasable.length})</button>
   </div>
   {lastRecorded>0?<p role="status" className="text-sm font-semibold">{lastRecorded} selection(s) recorded, not yet released.</p>:null}
@@ -81,7 +81,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       Successful releases issue official offers and notify learners.
     </p>:null}
     {mode==="RECORD"?<label className="grid gap-1 text-sm">Package from this drive
-     <select className="min-h-11 rounded border border-border bg-surface px-3" defaultValue=""
+     <select className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3" defaultValue=""
       onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);
         if(option){setRole(option.title);setLpa(option.annualCtcInr==null?"":String(option.annualCtcInr/100000));}}}>
       <option value="">Choose a role package or enter manually</option>
@@ -89,26 +89,26 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
      </select></label>:null}
     {mode==="RECORD"?<div className="grid gap-3 sm:grid-cols-2">
      <label className="grid gap-1 text-sm">Role<input required value={role} onChange={e=>setRole(e.target.value)}
-      maxLength={200} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
+      maxLength={200} className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3"/></label>
      <label className="grid gap-1 text-sm">Package (LPA, optional)<input type="number" min={0} max={1000} step="0.01"
-      value={lpa} onChange={e=>setLpa(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
+      value={lpa} onChange={e=>setLpa(e.target.value)} className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3"/></label>
     </div>:null}
     <label className="grid gap-1 text-sm">Find student
      <input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
-      placeholder="Search name, email or role" className="min-h-11 rounded border border-border bg-surface px-3"/>
+      placeholder="Search name, email or role" className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3"/>
     </label>
     <div className="flex flex-wrap gap-3 text-sm">
-      <button type="button" disabled={pending} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen(previous=>[
+      <button type="button" disabled={pending} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen(previous=>[
        ...new Set([...previous,...(mode==="RECORD"?visibleRecordable.map(x=>x.applicationId):visibleReleasable.map(x=>x.id))])].slice(0,100))}>
        Select matching (max 100)
       </button>
-      <button type="button" disabled={pending||!chosen.length} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen([])}>Clear selection</button>
+      <button type="button" disabled={pending||!chosen.length} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]" onClick={()=>setChosen([])}>Clear selection</button>
     </div>
     <fieldset className="max-h-60 min-h-0 space-y-1 overflow-auto overscroll-contain rounded border border-border p-3 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
      {(mode==="RECORD"?visibleRecordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
        visibleReleasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))
-       .map(item=><label key={item.id} className="flex min-h-11 items-center gap-3 px-2 text-sm">
+       .map(item=><label key={item.id} className="flex min-h-11 md:min-h-9 items-center gap-3 px-2 text-sm">
         <input type="checkbox" checked={chosen.includes(item.id)} disabled={pending} onChange={()=>toggle(item.id)}/>
         <span>{item.name} · {item.note}</span>
        </label>)}
@@ -119,10 +119,10 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     </div>:null}
     <div className="flex gap-3">
      <button type="button" disabled={pending||!chosen.length||(mode==="RECORD"&&!role.trim())}
-      onClick={()=>void submit()} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+      onClick={()=>void submit()} className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
       {pending?"Saving…":mode==="RECORD"?"Record "+chosen.length+" selection(s)":"Verify and release "+chosen.length+" offer(s)"}</button>
      <button type="button" disabled={pending} onClick={()=>{setMode(null);setError("");}}
-      className="min-h-11 rounded border border-border px-4 text-sm">Close</button>
+      className="min-h-11 md:min-h-9 rounded border border-border px-4 text-sm">Close</button>
     </div>
     </div>
   </Dialog>
