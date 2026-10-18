@@ -91,7 +91,7 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
       "Approved delivery has no registered evaluation",base+"?tab=delivery");
   const selected=items.filter(row=>query.focus==="ALL"||row.category===query.focus);
   const pageSize=20,total=selected.length,totalPages=Math.max(1,Math.ceil(total/pageSize));
-  const page=Math.min(query.page,totalPages);
+  const page=Number.isSafeInteger(query.page)?Math.max(1,Math.min(query.page,totalPages)):1;
   return {
     counts:{blockedTasks:blockedTasks.length,reviewTasks:reviewTasks.length,
       pendingMeetings:pendingMeetings.length,scheduledPastDay:scheduledPastDay.length,

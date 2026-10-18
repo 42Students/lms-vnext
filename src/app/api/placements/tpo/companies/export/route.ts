@@ -2,15 +2,15 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportTpoCompanyDirectory,tpoCompaniesQuerySchema} from "@/modules/placements/tpo-companies-view-service";
+import {tpoStudentCsvCell} from "@/modules/placements/tpo-students-csv";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
 function cell(value:unknown):string {
- const text=String(value??"");
- // Spreadsheet applications must not evaluate untrusted names or URLs.
- const safe=/^[\t\r\n]*[=+@-]/.test(text)?"'"+text:text;
- return '"'+safe.replaceAll('"','""')+'"';
+ // Reuse the tested, Unicode- and control-character-safe TPO CSV escape.
+ // Leading spaces, BOM or zero-width characters must not bypass the guard.
+ return tpoStudentCsvCell(String(value??""));
 }
 
 export async function GET(request:Request) {

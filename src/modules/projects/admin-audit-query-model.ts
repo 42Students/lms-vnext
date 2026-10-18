@@ -50,7 +50,13 @@ export function parseProjectAdminAuditQuery(params: ProjectAdminAuditSearchParam
     return value;
   };
 
-  const action = read("action") ?? read("status") ?? read("eventType");
+  const actionAliases=[read("action"),read("status"),read("eventType")]
+    .filter((value):value is string=>Boolean(value));
+  // All three query keys are legacy aliases for ONE filter, not independent
+  // selectors. Conflicting values must never quietly prefer the first.
+  const ambiguousAction=new Set(actionAliases).size>1;
+  if(ambiguousAction)ignoredInvalidFilters=true;
+  const action=ambiguousAction?undefined:actionAliases[0];
   const eventType = action && eventTypes.has(action)
     ? action : undefined;
   if (action && !eventType) ignoredInvalidFilters = true;
