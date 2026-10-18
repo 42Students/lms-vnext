@@ -34,7 +34,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
         <div className="grid min-w-0 gap-4 md:grid-cols-2">
           {[{ label: "Current", value: change.current }, { label: "Selected version", value: change.selected }].map(value =>
             <div key={value.label} className="min-w-0"><h3 className="text-sm font-semibold text-body">{value.label}</h3>
-              <pre className="max-h-80 overflow-y-auto whitespace-pre-wrap break-all rounded-lg bg-muted p-3 text-xs text-body">{value.value}</pre></div>)}
+              <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] whitespace-pre-wrap break-all rounded-lg bg-muted p-3 text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{value.value}</pre></div>)}
         </div>
       </article>)}
     </section> : <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">No content differences from the current version.</p>}
