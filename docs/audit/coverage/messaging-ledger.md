@@ -296,3 +296,14 @@ No outbound network or test runner was invoked in this lane. These tests are aut
 The typecheck report explicitly labels production typecheck and lint PASS. Its one chat-16 test-file error in `tests/unit/chat16-public-recruiter-join-pages-26.test.ts` arose from mocking a non-existent public readiness message. The test now asserts exact current copy, uses real `"READY"`/`"UNAVAILABLE"` preview shapes and the `null`/`"RATE_TABLE_MISSING"` readiness contract, without `as never` placeholders.
 
 `src/app/company-join/[token]/page.tsx` and `src/app/college-join/[token]/page.tsx` now preserve preview failure recovery and fail closed when the independent readiness probe throws. They skip the readiness probe entirely for invalid/expired/revoked preview, leaving the existing safe invalid-link UI. New `UX-public-join-04` and `UX-public-join-05` cases cover both COMPANY and COLLEGE pages. All CI verification remains pending; no tests were run locally and no success is claimed before the next report.
+
+### Additional campaign dispatch preflight and unsubscribe route cases
+
+- `tests/unit/chat16-tpo-campaign-dispatch-readiness-16.test.ts` directly invokes the TPO dispatch readiness service and its early authorization path with a mocked draft-storage registration check. Named cases `tpo-dispatch-readiness-16`–`19` cover verified dedicated non-OTP template, HMAC strength, HTTPS provider endpoint/public origin, unavailable storage, invalid IDs and non-TPO roles. A successful readiness check does **not** prove a campaign was sent, and no provider is contacted by these tests.
+- `tests/unit/chat16-campaign-unsubscribe-ssr-pages-16.test.ts` adds direct public GET/confirmed-page coverage for invalid/expired links, temporary failures, two purpose scopes and the separate explicit confirmation form, with zero GET-side writes.
+
+Neither suite has been executed. Provider, live PostgreSQL and browser behavior still require CI verification.
+
+### Global and placement-cell unsubscribe POST route execution
+
+`tests/unit/chat16-campaign-unsubscribe-post-route-16.test.ts` calls the actual `POST /api/public/campaign-unsubscribe` handler with FormData Requests and mocked token/signature, table registration and TPO recipient mutation collaborators. `campaign-unsubscribe-route-16`–`21` cover same-origin denial before token inspection, missing/unsigned/oversized links, purpose-bound placement-cell scoped redirect, revoked/invalid locked recipient response, unavailable global storage 503 rather than false completion, and signed opaque-key global suppression redirect. Provider and PostgreSQL callbacks are mocked; these tests do not assert physical DB commit or full cross-request races. They are authored pending cloud CI.

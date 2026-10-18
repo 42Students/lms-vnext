@@ -25,6 +25,13 @@ describe("chat-4 College Admin export boundaries", () => {
     expect(csv.split("\r\n")).toHaveLength(3);
   });
 
+  it("COL-export-09 neutralizes Unicode-hidden formulas in College Admin directory exports", () => {
+    const values = ["\u200B=1+1", "\u2067+SUM(1)", "\u0301@IMPORTDATA(1)"];
+    const csv=buildCollegeDirectoryCsv(["Name"],values.map(value=>[value]),false,100);
+    for(const value of values)expect(csv).toContain('"' + "'" + value + '"');
+    expect(csv).not.toContain('"\u200B=1+1"');
+  });
+
   it("COL-export-03 marks truncation without claiming that every record is included", () => {
     const csv=buildCollegeDirectoryCsv(["Name"],[["College A"]],true,100);
     expect(csv).toContain("EXPORT TRUNCATED");
@@ -62,6 +69,22 @@ describe("chat-4 College Admin export boundaries", () => {
     expect(csv).toContain('"\'@bad"');
     expect(csv).toContain("18 Oct 2099");
     expect(csv.endsWith("\r\n")).toBe(true);
+  });
+
+  it("COL-export-08 neutralizes invisible prefix and combining-mark formula payloads in history", () => {
+    const risky = ["\u200B=1+1", "\u2066@IMPORTDATA(1)", "\u0301+SUM(1)", "\t=BAD"];
+    const rows = risky.map(value => ({
+      occurredAt: new Date("2099-10-18T00:00:00.000Z"), eventType: value, summary: value,
+    }));
+    rows.push({
+      occurredAt: new Date("2099-10-18T00:00:00.000Z"),
+      eventType: "safe", summary: "Just text",
+    });
+    const csv = collegeAdminHistoryCsv(rows);
+    for (const payload of risky) {
+      expect(csv).toContain('"' + "'" + payload + '"');
+    }
+    expect(csv).toContain('"Just text"');
   });
 
   it("COL-export-07 caps history at 100 rows and visibly reports truncation", () => {
