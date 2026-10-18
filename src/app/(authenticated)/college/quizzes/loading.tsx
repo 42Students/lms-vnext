@@ -1,8 +1,8 @@
+import {Skeleton} from "@/components/ui/skeleton";
 export default function CollegeQuizzesLoading() {
-  return <div aria-busy="true" aria-label="Loading college quizzes"
-    className="space-y-4">
-    <div className="h-14 animate-pulse rounded-xl bg-muted" />
-    <div className="h-32 animate-pulse rounded-xl bg-muted" />
-    <div className="h-72 animate-pulse rounded-xl bg-muted" />
+  return <div className="min-w-0 space-y-4">
+    <Skeleton variant="line" label="Loading college quizzes" />
+    <Skeleton variant="form" label="Loading college quizzes" />
+    <Skeleton variant="row" count={3} label="Loading college quizzes" />
   </div>;
 }
