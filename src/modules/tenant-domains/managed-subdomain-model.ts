@@ -26,5 +26,10 @@ export function managedHost(label:string,base:string){
  return normalizeTenantHost(label+"."+base);
 }
 export function isManagedHost(host:string,base:string){
- return host.endsWith("."+base)&&host.split(".").length===base.split(".").length+1;
+ // Suffix matching alone can misclassify an empty or invalid first label as a
+ // managed address. Only a canonical, allocatable single DNS label is managed.
+ if(!host.endsWith("."+base))return false;
+ const label=host.slice(0,-(base.length+1));
+ if(!availableSubdomainLabel(label))return false;
+ try{return managedHost(label,base)===host;}catch{return false;}
 }

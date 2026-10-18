@@ -270,6 +270,19 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(disabled).toContain("Enable file selection");
   });
 
+  it("UX-kit-HARDEN-34 file control keeps helper and unavailable reason connected for assistive technology",()=>{
+    const disabled=render(<FileUpload id="final-proof" label="Final proof" onFiles={()=>{}}
+      helper="PDF, at most 5 MB" disabled/>);
+    expect(disabled).toContain('aria-describedby="final-proof-help final-proof-unavailable"');
+    expect(disabled).toContain('id="final-proof-help"');
+    expect(disabled).toContain('id="final-proof-unavailable"');
+    const allowed=render(<FileUpload id="project-proof" label="Evidence" helper="PNG files only"
+      accept=".png" onFiles={()=>{}}/>);
+    expect(allowed).toContain('aria-describedby="project-proof-help"');
+    const source=moduleSource("file-upload");
+    expect(source).toContain('error ? `${id}-error` : null');
+  });
+
   it("UX-kit-STATES-14 HTTPS links display fallback; script, HTTP and credential-bearing URLs never link", () => {
     for (const href of ["javascript:alert(1)", "data:text/html,hi", "http://example.test",
       "https://user:pass@example.test", "not a URL"]) {
