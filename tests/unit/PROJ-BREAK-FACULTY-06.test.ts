@@ -13,6 +13,7 @@ const state=vi.hoisted(()=>({
  projectStatus:"ACTIVE",status:"COMPLETED",
  outcome:"Old note",updatedAt:new Date("2026-10-18T04:35:01.000Z"),
  reads:0,writes:0,events:0,notifications:0,
+ persistedRevoked:false,persistedChecks:0,
 }));
 vi.mock("server-only",()=>({}));
 vi.mock("@/modules/permissions/policy",()=>({can:()=>true}));
@@ -24,6 +25,14 @@ vi.mock("@/modules/projects/access",()=>({
   project:{id:projectId,status:state.projectStatus},collegeId,organizationId,
   access:"MENTOR",
  }),
+}));
+vi.mock("@/modules/projects/persisted-mentor-mutation",()=>({
+ assertPersistedProjectMutationActor:async()=>{
+  state.persistedChecks++;
+  if(state.persistedRevoked)throw Object.assign(new Error("Revoked"),{
+   code:"PROJECT_LIFECYCLE_ACCESS_DENIED",
+  });
+ },
 }));
 vi.mock("@/modules/activity/service",()=>({
  recordActivityEventInTransaction:async()=>{state.events++;return {id:"audit-event"};},
@@ -78,6 +87,19 @@ describe("PROJ-BREAK-FACULTY-06 meeting revisions, duplicate submits and notific
   state.projectStatus="ACTIVE";state.status="COMPLETED";state.outcome="Old note";
   state.updatedAt=new Date(newer);state.reads=0;state.writes=0;
   state.events=0;state.notifications=0;
+  state.persistedRevoked=false;state.persistedChecks=0;
+ });
+ it("PROJ-BREAK-FACULTY-08-01 role revoked after page access cannot write notes or create audit",async()=>{
+  state.persistedRevoked=true;
+  await expect(note(newer,"Secret changed notes"))
+    .rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
+  expect(state).toMatchObject({persistedChecks:1,reads:1,writes:0,events:0,notifications:0});
+ });
+ it("PROJ-BREAK-FACULTY-08-02 role revoked after page access cannot complete or notify a meeting",async()=>{
+  state.persistedRevoked=true;state.status="SCHEDULED";
+  await expect(decide(newer))
+    .rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
+  expect(state).toMatchObject({persistedChecks:1,reads:1,writes:0,events:0,notifications:0});
  });
  it("PROJ-BREAK-FACULTY-06-01 stale note replay wins over no-op and cannot write or notify",async()=>{
   await expect(note(old)).rejects.toMatchObject({code:"PROJECT_MEETING_STALE_VERSION"});
