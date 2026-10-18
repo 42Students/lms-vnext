@@ -60,3 +60,16 @@ Updated 2026-10-18; source branch `chatgpt/chat-16-b`. This is an **in-progress 
 - Functions not listed above across `src/modules/messaging/*`, `src/modules/notifications/*`, `src/modules/inbound-mail/*` and `src/modules/placements/*email*/*message*/*notification*` still need individual ledger rows with executed direct behavioural tests. Missing items include provider adapters, campaign dispatch, recipient persistence, inbound-mail mutations, and all side-effect service branches.
 - Auth/public routes outside the four direct page imports and the existing login/invitation contract suite need executed page-level state coverage. New direct tests address four previously red matrix entries; the generated matrix still must be regenerated and checked.
 - No claim of >90% branch coverage, PostgreSQL integration passing, complete route coverage, or production readiness. These require the local/cloud test harness and a real provider-enabled integration environment.
+
+## Additional direct test inventory — 2026-10-18
+
+| Boundary | New direct test cases | Evidence |
+|---|---|---|
+| Campaign template boundary | `messaging-template-boundary-16`: authentication-template exclusion, bad keys and valid campaign keys | `tests/unit/chat16-messaging-uncovered-pure-models-16.test.ts` |
+| Campaign source and filters | `messaging-campaign-source-16`, `messaging-campaign-filter-16`: strict query inputs, cardinality limits, URL-safe destinations | same |
+| Engage audience preview | `messaging-engage-preview-16`: segment selection, suppression precedence, no contact PII in returned counts | same |
+| Campaign history copy and opt-out timeline | `messaging-history-copy-16`, `messaging-unsubscribe-event-16`: IST display, safe fallback and existing legacy notification text | same |
+| Signed messaging unsubscribe | `messaging-unsubscribe-token-16`: canonical signature, tamper, expiry and no GET-side mutation | same |
+| Public marketing and recovery pages | `UX-chat16-public-home-01`, `UX-chat16-public-universities-02`, `UX-chat16-public-enterprises-03`, `UX-chat16-public-demo-04`, `UX-chat16-forbidden-05`: server-rendered HTML, navigation, CTA and safe forbidden recovery | `tests/unit/chat16-public-marketing-forbidden-pages-16.test.tsx` |
+
+These are newly authored cases, **not an executed green run**. Provider, database concurrency, invitation acceptance and session-expiry browser coverage remain explicit external verification gates. The historical two chat-16 failures named by `unit-failures-latest.md` were independently reconciled against the main-branch gap register; their original 32-ID assertions and status ownership checks were retained unchanged. The typecheck report named no chat-16 errors.
