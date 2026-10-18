@@ -53,7 +53,8 @@ describe("TPO bounded mutation request contracts",()=>{
     const parse=post.indexOf("readTpoBulkRequestBody(request)");
     expect(origin,route).toBeGreaterThanOrEqual(0);
     expect(parse,route).toBeGreaterThan(origin);
-    expect(post,route).toContain("err instanceof TpoBulkBodyError" .replace("err",route.includes("cascade-undo")?"err":"error"));
+    const caught=route.includes("cascade-undo")?"err":"error";
+    expect(post,route).toContain(caught+" instanceof TpoBulkBodyError");
     expect(post,route).toContain("status:");
     expect(post,route).not.toContain("request.json()");
   }
