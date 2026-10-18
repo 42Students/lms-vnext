@@ -88,4 +88,22 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
   expect(css).toContain("--lms-motion-base: 200ms");
   expect(css).toContain("prefers-reduced-motion");
  });
+ it("UX-admin-scroll-motion-11 /admin/projects/readiness and /admin/projects/templates use responsive tables without hidden raw scroll traps",()=>{
+  const page=read("src/components/projects/project-admin-readiness-page.tsx");
+  expect(page.match(/<DataTable</g)?.length).toBe(2);
+  expect(page).not.toMatch(/<table\\b/);
+  expect(page).not.toContain("overflow-x-auto");
+  expect(page).toContain('mobilePriority:"action"');
+  expect(page).toContain("No workspace overrides match these filters.");
+ });
+ it("UX-admin-scroll-motion-12 /admin/students bulk selection gives 25 learners a scroll cue and full touch targets",()=>{
+  const page=read("src/components/admin/super-admin-student-bulk-access.tsx");
+  expect(page).toContain('aria-label="Bulk student selection"');
+  expect(page).toContain("overscroll-contain");
+  expect(page).toContain("[mask-image:linear-gradient(to_bottom");
+  expect(page).toContain("min-h-11");
+  expect(page).not.toContain("min-h-9");
+  expect(page).not.toContain("min-h-10");
+ });
+
 });
