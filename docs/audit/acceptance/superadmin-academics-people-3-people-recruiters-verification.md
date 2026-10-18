@@ -95,3 +95,13 @@ Unresolved: faculty register optional profile fields; platform-wide account bloc
 These rows are source-verified closure evidence, not a statement that cross-college PostgreSQL isolation, cloud CI or browser acceptance was executed. Historical gap status entries above remain authoritative until orchestration validates the new tests.
 
 | SA-academics-people-101 | OPEN — in-place Edit role and concurrency closed; legacy multi-course class/semester batch create still outstanding; CI pending | `src/app/(authenticated)/admin/faculty-assignment/page.tsx`, `src/components/admin/super-admin-faculty-assignment-create.tsx`, `src/modules/courses/teaching-assignment-service.ts`, `src/modules/courses/teaching-assignment-revision.ts`, `src/app/api/courses/teaching-assignments/[assignmentId]/route.ts`; `tests/unit/chat6-faculty-assignment-role-cas-101.test.ts` and `tests/unit/chat6-faculty-assignment-role-http-101.test.ts` test exact role revision, strict boundary, CSRF, tenant ancestry, primary-role constraints, same-millisecond conflict and durable audit. No claim of complete multi-select parity or executed CI. |
+
+## Chat-3 Pass B People and Faculty registration permission follow-up (source/tests authored)
+
+| ID | Status | Verification evidence |
+| --- | --- | --- |
+| SA-LEARNING-FILTER-ROLE-01 | DONE in source, runtime unverified | `getSuperAdminLearningFilterOptions` now checks active system Super Admin before full-college course/cohort selection, protecting these facets from regular Faculty `courses.read`; `tests/unit/chat3-sa-learning-facets-platform-role.test.ts` compiles 2,000-row bounded Drizzle college filters and denies wrong roles. |
+| SA-ACADEMICS-ROOT-01 / SA-PEOPLE-ROOT-01 | DONE in source, runtime unverified | Root Super Admin pages check platform role before academic workspace / membership reads; `tests/unit/chat3-sa-academics-people-root-platform-roles.test.ts`. |
+| SA-ACADEMICS-SECTION-01 | DONE in source, runtime unverified | Privileged Section detail requires system Super Admin beyond generic academic-read permission; `tests/unit/chat3-sa-academics-section-platform-role.test.ts`. |
+
+No recorded execution of the tests or full 320px/keyboard/browser identity journey.

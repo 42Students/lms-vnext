@@ -123,3 +123,11 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | UX-kit-HARDEN-55 | S2 (motion a11y) | Shared interactive Tabs used a color transition even when the user requested reduced motion. | Adds `motion-reduce:transition-none` and ARIA-preserving tab regression HARDEN-55. | Authored; final browser gate pending |
 
 | UX-kit-HARDEN-56 | S2 (pending state a11y) | `Button` rendered `aria-busy` before `...props`, allowing a stale caller-provided false value to override its actual loading state. | `aria-busy` is now derived after spreading native props; regression HARDEN-56 covers loading and idle. | Authored; final CI pending |
+
+| UX-kit-HARDEN-57 | S2 (feedback resilience) | A success notice could auto-dismiss entirely while the operator switched browser tabs, leaving no acknowledgment on return. | `InlineNotice` schedules timeout only on visible documents, resets on visibility change and cleans up listener; HARDEN-57 test. | Authored; browser gate pending |
+
+| UX-kit-E2E-07/08/09 | S2 (browser witness coverage) | SSR assertions cannot establish actual focus reachability, document visibility timers, computed reduced-motion CSS, or DOM accessibility relationships in the shipped UI. | Development-only harness and Playwright cases cover disabled action, hidden-tab notice, FileUpload external description and reduced-motion tab. | Authored; deferred end-of-sprint Chromium gate |
+
+| PROJ-HARNESS-PREFLIGHT-19 | S2 (migration preflight) | A repository whose registered PostgreSQL schema lags the new role-option/published-drive fixture would fail partway through setup with an opaque missing-column error. | Expanded `assertHarnessSchema` required-column preflight before BEGIN; test PREFLIGHT-19 checks protected column names. | Authored; final DB runner pending |
+
+| PROJ-HARNESS-PLACEMENTS-19 | S1 (registered DB ancestry gap) | Drizzle/registered 0029 contains independent FKs for application.job_id and role_option_id; direct SQL can create a job/role option pair from different jobs. Fixture checks are insufficient to enforce database invariants. | Composite parent unique and application composite FK modeled in `src/db/schema/placements.ts`; unnumbered proposed SQL; adversarial real PG case -19 demands SQLSTATE 23503. | **Pending orchestrator migration registration; expected DB test failure until then** |
