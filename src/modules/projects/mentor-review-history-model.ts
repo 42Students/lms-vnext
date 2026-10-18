@@ -16,7 +16,7 @@ export type MentorReviewHistoryQuery = z.infer<typeof mentorReviewHistoryQuerySc
 export function mentorReviewHistoryPagination(total: number, requested: number) {
   const pageSize=20;
   const totalPages=Math.max(1,Math.ceil(total/pageSize));
-  return {total,pageSize,totalPages,page:Math.min(requested,totalPages)};
+  return {total,pageSize,totalPages,page:Number.isSafeInteger(requested)?Math.max(1,Math.min(requested,totalPages)):1};
 }
 export function mentorReviewDecisionLabel(value: string) {
   if (value==="APPROVED") return "Approved";
