@@ -15,6 +15,9 @@ export async function GET(request:Request){
    return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:{"Cache-Control":"private, no-store"}});
   }
   const params=new URL(request.url).searchParams;
+  if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json(
+   {error:"INVALID_REPORT_FILTERS"},
+   {status:400,headers:{"Cache-Control":"private, no-store"}});
   const parsed=companyReportViewSchema.safeParse({
    q:params.get("q")??"",outcome:params.get("outcome")??"ALL",sort:params.get("sort")??"NAME",page:params.get("page")??1,
   });
