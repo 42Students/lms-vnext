@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -21,14 +24,14 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
   <form action="/tpo/calendar/interviews" method="get"
     className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="text-sm font-semibold text-body">Search company, drive or round
-    <input name="q" type="search" maxLength={100} defaultValue={data.q}
+    <Input name="q" type="search" maxLength={100} defaultValue={data.q}
      className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3" />
    </label>
    <label className="text-sm font-semibold text-body">Lookahead
-    <select name="days" defaultValue={String(data.days)} className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="days" defaultValue={String(data.days)} className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
       {[7,14,30,60,90].map(n=><option key={n} value={n}>{n} days</option>)}
-    </select></label>
-   <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground">Apply</button>
+    </Select></label>
+   <Button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground">Apply</Button>
   </form>
   <section aria-label="Interview readiness counts" className="grid grid-cols-2 gap-3 sm:grid-cols-3">
    {Object.entries(data.counts).map(([key,n])=><div key={key} className="rounded-xl border border-border bg-surface p-4">

@@ -1,4 +1,4 @@
-import { LoadingState } from "@/components/ui/loading-state";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { PageHeader } from "@/components/ui/page-header";
 
 export default function CollegeBrandingPreviewLoading() {
@@ -9,7 +9,7 @@ export default function CollegeBrandingPreviewLoading() {
         title="College branding preview"
         description="Retrieving the college's stored public presentation fields."
       />
-      <LoadingState label="Loading branding preview…" />
+      <GracefulPageLoading label="Loading branding preview…" />
     </div>
   );
 }

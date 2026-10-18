@@ -1,7 +1,4 @@
-export default function SemesterCoursesLoading() {
-  return <div aria-label="Loading course mappings" aria-busy="true" className="space-y-4">
-    <div className="h-16 animate-pulse rounded-xl bg-muted" />
-    <div className="h-24 animate-pulse rounded-xl bg-muted" />
-    <div className="h-72 animate-pulse rounded-xl bg-muted" />
-  </div>;
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
+export default function SemesterCoursesLoading(){
+ return <GracefulPageLoading label="Loading course mappings" shape="directory" />;
 }
