@@ -24,11 +24,16 @@ export async function POST(request:Request,{params}:Props){
   const context=await getCurrentRequestContext();
   const bytes=Buffer.from(await file.arrayBuffer());
   const action=form.get("action");
+  if(action==="STAGE_IMPORT"&&form.get("confirmed")!=="true")
+   return NextResponse.json({error:"Confirm the reviewed import before staging."},{status:400});
+  if(action==="STAGE_IMPORT"&&form.get("missingPolicy")==="MARK_NOT_CLEARED"&&
+    form.get("confirmMissingFailure")!=="true")
+   return NextResponse.json({error:"Review and confirm the learners missing from the file."},{status:400});
   const value=action==="PREVIEW"
    ?await previewTpoRoundImport(context,jobId,roundId,bytes,file.name)
    :action==="STAGE_IMPORT"
    ?await stageTpoRoundImport(context,jobId,roundId,bytes,file.name,{
-     action:"STAGE_IMPORT",confirmed:true,previewToken:form.get("previewToken"),
+     action:"STAGE_IMPORT",confirmed:form.get("confirmed")==="true",previewToken:form.get("previewToken"),
      missingPolicy:form.get("missingPolicy"),
      overrides:JSON.parse(String(form.get("overrides")??"[]")),
      skippedLines:JSON.parse(String(form.get("skippedLines")??"[]")),

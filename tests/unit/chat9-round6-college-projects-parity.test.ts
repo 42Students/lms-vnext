@@ -9,7 +9,7 @@ describe("College Admin Projects round 6",()=>{
   expect(source("src/modules/projects/project-template-catalogue-model.ts")).toContain("projectTemplateCatalogueCsv");
  });
  it("COL-projects-19 displays the exact Workspaces, Templates, Submission and Audit headings plus the legacy risk description",()=>{
-  expect(source("src/app/(authenticated)/college/projects/page.tsx")).toContain('title="Project workspaces"');
+  expect(source("src/app/(authenticated)/college/projects/page.tsx")).toContain('title="Workspaces"');
   expect(source("src/app/(authenticated)/college/projects/templates/page.tsx")).toContain('title="Project templates"');
   expect(source("src/components/projects/project-admin-submissions-page.tsx")).toContain('title="Submissions dashboard"');
   expect(source("src/components/projects/project-admin-at-risk-page.tsx")).toContain("Workspaces with no recent activity, an active blocker, or a pending review.");

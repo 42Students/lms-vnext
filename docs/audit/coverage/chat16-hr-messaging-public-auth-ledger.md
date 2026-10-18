@@ -157,3 +157,30 @@ Previously, `dispatchTpoCampaign` loaded all pending contact facts once, then cl
 ### Queued-to-provider outcome persistence CAS
 
 After `outbound.send` returned, the dispatch service previously issued a guarded `QUEUED` → `SENT`/`FAILED` update but ignored whether any recipient row was actually updated. A concurrent unsubscribe or changed row could therefore still generate a false `SENT` activity and success count. The outcome transition is now additionally campaign-ID-scoped, returns the persisted recipient ID and requires a non-empty CAS result before emitting success activities or finalizing receipts. An ambiguous post-provider failure is not automatically retried, to avoid duplicate mail. `tests/unit/chat16-tpo-campaign-live-consent-recheck-16.test.ts` also asserts the order: provider response → persisted CAS → success logging. Tests and real PostgreSQL conflict behavior remain pending cloud CI.
+
+### Role-oriented direct coverage round — 2026-10-18
+
+The following direct behavioural cases are authored but not yet executed by cloud CI:
+
+| Source boundary | Direct test | Behaviours and limitations |
+|---|---|---|
+| `src/modules/messaging/public-join-code-delivery.ts` | `tests/unit/chat16-public-join-code-canonical-recipient-16.test.ts` | Canonical normalized address is checked against runtime allowlist and used consistently in ZeptoMail recipient + template merge fields; rejected contacts are denied before loading provider config; injected fake network transport |
+| `src/modules/notifications/zeptomail-email.ts`, `exotel-sms.ts` | `tests/unit/chat16-otp-provider-ports-16.test.ts` | Transactional OTP format, DLT settings, E.164, accepted SID/status, bounded single-attempt sends, provider refusal and no OTP in structured logs; outbound transport mocked |
+| `src/modules/messaging/engage-audience-service.ts` | `tests/unit/chat16-engage-audience-service-16.test.ts` | Both count-only Engage previews, role and selected-ID validation, persisted authorization before read, duplicate and suppressed counts, no source contact addresses in result; scoped DB transaction mocked |
+| `src/modules/messaging/receipt-detail-service.ts` | `tests/unit/chat16-messaging-batch-detail-service-16.test.ts` | UUID/role validation, revoked persisted grant, 404-like null for missing tenant batch, aggregate counts and no contact key leakage; DB transaction mocked |
+| `src/app/platform/page.tsx`, `src/app/{error,global-error,not-found,loading}.tsx` | `tests/unit/chat16-public-platform-error-loading-pages-16.test.tsx` | Actual server-rendered public platform and fallback pages, safe recovery links, no exception/digest disclosure, loading indicators, and removal of unsupported AI-agent capability claims |
+| `src/app/placements/page.tsx` | `tests/unit/chat16-public-placements-route-16.test.tsx` | Unknown host 404, unpublished college 404, transient public stats outage with no private exception text and recruiting controls disabled; public services mocked |
+
+The marketing route was corrected to describe learner/faculty/mentor/placement/HR workspaces instead of AI agents. These new cases do not establish browser, provider, Postgres, or whole-app green status.
+
+### Public landing, recruiter notifications and draft persistence direct coverage
+
+Additional unexecuted test evidence:
+- `tests/unit/chat16-public-placements-route-16.test.tsx`: real `/placements` SSR tenant discrimination, unpublished page 404, publication read outage, private error-redaction, disabled recruiter enquiry before publication.
+- `tests/unit/chat16-public-platform-error-loading-pages-16.test.tsx`: real platform public marketing and root error/global-error/loading/not-found SSR, non-sensitive failure recovery, accessible loading and no retired AI-feature claims.
+- `tests/unit/chat16-public-auth-real-pages-16.test.tsx` now includes tenant domain resolution outage (no OTP form), revoked/expired/retired-link notices and disabled recruiter email-OTP channel.
+- `tests/unit/chat16-tpo-campaign-draft-create-16.test.ts`: real draft creation service with injected SQL transaction, strict template/selection/role validation, persisted grant before lookup, no recipients after opt-out, HMAC recipient-key persistence, and no send during draft creation.
+- `tests/unit/chat16-tpo-unsubscribe-live-row-16.test.ts`: real scoped campaign recipient service with invalid purpose HMAC, missing registration, missing locked row and already-unsubscribed idempotence; DB transaction mocked.
+- `tests/unit/chat16-hr-notifications-service-16.test.ts`: actual recruiter inbox service with actor, employer grant, multi-college choice, no eligible jobs and scoped job-event projection; DB and grant fetch mocked.
+
+These are authored direct-test cases, not a claim of passed CI, full PostgreSQL concurrency or provider delivery. The source-level stage preserves exact existing role/UI copy except for removing unsupported public AI-agent claims.
