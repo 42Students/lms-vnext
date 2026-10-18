@@ -149,3 +149,13 @@ Source-verified test authoring only. The cloud CI report `docs/orchestrator/unit
 | `src/modules/messaging/template-boundary-model.ts:isCampaignTemplateKey` | OTP/login/magic-link key fragments rejected, campaign keys allowed | Same | Author/test unrun |
 
 **Not yet exercised with a full real environment:** multi-process exact-once, provider credential/DNS allowlist validation, mail SSRF from compromised deployment configuration, and unique receipt replay after a network timeout. Unit assertions alone do not prove production exactly-once delivery.
+
+## TPO aggregate receipt permissions and export bounds (chat-16)
+
+| Source function | Permissions and side effects asserted | Behavioural test | Verification |
+|---|---|---|---|
+| `listTpoMessagingHistory` | Reject learner, disabled TPO and absent membership before DB; scoped to college+organization and persisted TPO permission; page limit 25, provider acceptance truthfully labelled | `tests/unit/chat16-messaging-receipts-tenant-17.test.ts` | Authored, unrun |
+| `exportTpoMessagingHistory` | Same role/scope check; up to 2,000 aggregate rows, never emails/recipient HMAC; explicit error if row 2,001 exists | Same | Authored, unrun |
+| `getTpoMessagingBatch` | UUID validation, wrong-role denial, scoped college+organization detail lookup, no receipt drillthrough for unowned batch; return only aggregate statuses | Same | Authored, unrun |
+
+Remaining integration: actual PostgreSQL query-plan/index verification for 2,000 receipts, snapshot consistency between aggregate batch and receipt rows, race on receipt updates, tamper/cross-college IDOR at HTTP routes, strict same-origin on exporting writes (GET reads must remain side-effect-free).
