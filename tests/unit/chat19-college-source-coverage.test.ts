@@ -36,7 +36,7 @@ describe("chat-19 all /college route entry point source coverage", () => {
     const report = readFileSync("docs/design-system/audits/UX-ROLLOUT-AUDIT-college-chat-19.md","utf8");
     const section = report.split("## All entry-point routes sampled by functional group")[1]
       ?.split("## Non-regression and acceptance requirements")[0] ?? "";
-    const declared = [...section.matchAll(/^\\| \`([^\`]+)\` \\| (\\d+) \\|$/gm)]
+    const declared = [...section.matchAll(/^\| `([^`]+)` \| (\d+) \|$/gm)]
       .map(match => [match[1],Number(match[2])] as const);
     const counted = new Map<string,number>();
     for (const {route} of routes) {
