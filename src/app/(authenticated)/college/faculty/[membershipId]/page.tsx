@@ -30,7 +30,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
         <Link href="/college/faculty" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Back to faculty</Link>
       </div>} />
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="- border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Faculty record</h2>
       <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
         <div><dt className="text-muted-foreground">Title</dt><dd>{data.person.academicTitle ?? "Not recorded"}</dd></div>
@@ -39,7 +39,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <div><dt className="text-muted-foreground">Membership</dt><dd>{data.person.status}</dd></div>
       </dl>
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="- border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
       <form method="get" className="mt-3 flex flex-wrap items-end gap-3"
         action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
