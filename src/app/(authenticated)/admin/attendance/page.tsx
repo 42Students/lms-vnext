@@ -1,4 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import Link from "next/link";
+import {ErrorState} from "@/components/ui/error-state";
 import {
   AdminAttendanceWorkspace,
   type AdminAttendanceWorkspaceData,
@@ -52,6 +54,16 @@ export default async function SuperAdminAttendancePage({
 
   const query = await searchParams;
   const month = query.month || currentMonth();
+  // UX-admin-attendance-01: reject hostile/stale month links before the
+  // data service's strict India-month parser can throw an unhandled error.
+  if(typeof month!=="string" || !/^\\d{4}-(0[1-9]|1[0-2])$/.test(month)){
+    return <div className="min-w-0 space-y-5">
+      <PageHeader title="Attendance" description="Attendance oversight for the selected college."/>
+      <ErrorState title="Invalid attendance month"
+        description="Choose a month in YYYY-MM format and retry."
+        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center font-semibold underline">Reset month filter</Link>}/>
+    </div>;
+  }
   const options =
     await getAdminAttendanceOptions(
       context,
