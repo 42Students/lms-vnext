@@ -270,4 +270,37 @@ describe("Super Admin UX first-third rollout",()=>{
    expect(page).not.toContain("min-h-10");
    expect(page).toContain("min-w-0");
  });
+ it("UX-admin-colleges-02 renders one responsive college directory with labelled actions and pagination",()=>{
+   const page=read("src/app/(authenticated)/admin/colleges/page.tsx");
+   expect(page).toContain('<DataTable columns={columns} rows={visible}');
+   expect(page).toContain('mobilePriority: "primary"');
+   expect(page).toContain('mobilePriority: "action"');
+   expect(page).toContain('<Pagination page={page} pageCount={pages} hrefForPage={href}');
+   expect(page).not.toContain('lg:hidden');
+   expect(page).not.toContain('lg:block');
+   expect(page).toContain('empty={<EmptyState title="No active colleges in this scope"');
+ });
+ it("UX-admin-batch-promotion-02 keeps Preview accessible on phone without a wide table",()=>{
+   const page=read("src/app/(authenticated)/admin/batch-promotion/page.tsx");
+   expect(page).toContain('<DataTable<(typeof visibleCohorts)[number]>');
+   expect(page).toContain('mobilePriority:"action"');
+   expect(page).toContain('No batches match the selected program and status.');
+   expect(page).toContain('cohortId:batch.id');
+   expect(page).not.toContain('min-w-[44rem]');
+ });
+ it("UX-admin-companies-companyId-drives-02 uses responsive history and an explicit empty state",()=>{
+   const page=read("src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx");
+   expect(page).toContain("<DataTable<");
+   expect(page).toContain('mobilePriority:"action"');
+   expect(page).toContain('empty={<EmptyState title="No drives recorded"');
+   expect(page).not.toContain('min-w-[42rem]');
+ });
+ it("UX-admin-features-collegeId-trace-02 exposes learner actions on phones and keeps resolution level visible",()=>{
+  const page=read("src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx");
+  expect(page).toContain('<DataTable<(typeof learners)[number]>');
+  expect(page).toContain('mobilePriority:"action"');
+  expect(page).toContain('No matching learners');
+  expect(page).toContain('overridesModule:query.overridesModule');
+  expect(page).toContain('sticky left-0 z-10 bg-surface');
+ });
 });
