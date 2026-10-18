@@ -61,6 +61,10 @@ Snapshot: 2026-10-18, source branch `chatgpt/chat-3-b`. Role-journal and code-ba
 - `src/modules/admin-ui/super-admin-scoped-people-service.ts` previously selected a learner's latest Section name through raw `section_enrollments` and `sections` joins with no college or cohort/academic-period consistency check. The correlated class display now validates that Section cohort/term match the current program enrollment, and the cohort's program department belongs to the selected college.
 - `tests/unit/chat3-superadmin-scoped-people-pagination.test.ts` compiles the actual class label SQL via `PgDialect`, checks the scoped program/cohort/term and selected college predicates, and retains the original page and role matrix. PostgreSQL mismatched-FK fixtures and browser acceptance remain pending.
 
+### SA-ACADEMICS-BATCH-ROLE-04 — learner identity integrity
+
+The selected-college batch overview now requires a persisted `membership_roles.role = LEARNER` join in both aggregated active class occupancy and the returned learner roster. Its active-user counting query can no longer include otherwise active Faculty/TPO accounts due to inconsistent imported learner-program rows. The actual Drizzle SQL/param assertions live in `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts`. PostgreSQL import-corruption fixtures and browser evidence pending.
+
 ### SA-ACADEMICS-BATCH-EMPTY-03 — no-Section cohort privacy
 
 `getSuperAdminBatchRosterOverview` now short-circuits after scoped class aggregation if no authorized Sections exist. It returns a truthful empty learner roster without running the sensitive membership projection. `tests/unit/chat3-sa-academics-batch-roster-privacy.test.ts` asserts exact two-query behavior and zero roster join activity. Source validated; PostgreSQL fixture and cloud CI pending.
