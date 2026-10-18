@@ -38,7 +38,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
         <label className="grid gap-2 text-sm font-semibold text-body">
           Enrollment lifecycle
           <select name="status" defaultValue={data.filter.status}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
             <option value="ALL">All enrollments</option>
             <option value="ACTIVE">Active</option>
             <option value="COMPLETED">Completed</option>
