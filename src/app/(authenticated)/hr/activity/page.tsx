@@ -65,10 +65,10 @@ export default async function HrJobActivityPage({searchParams}:{
      </Link>
    </div>
    <nav aria-label="Activity history pages" className="flex flex-wrap items-center gap-3">
-     {input.data.page>1?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)+"&page="+(input.data.page-1)}
+     {result.page>1?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)+"&page="+(result.page-1)}
        className="rounded-md border border-border px-3 py-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>:null}
-     <span className="text-xs text-muted-foreground">Page {input.data.page} · up to {input.data.limit} events</span>
-     {result.hasNext?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)+"&page="+(input.data.page+1)}
+     <span className="text-xs text-muted-foreground">Page {result.page} · up to {input.data.limit} events</span>
+     {result.hasNext?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)+"&page="+(result.page+1)}
        className="rounded-md border border-border px-3 py-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>:null}
    </nav>
    <p className="text-xs text-muted-foreground">Read-only hiring history, not the recruiter Messages inbox.</p>
