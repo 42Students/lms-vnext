@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {projectAdminCsv} from "@/modules/projects/project-admin-csv-model";
 type Template={title:string;slug:string;summary:string|null;currentVersion:number;status:string};
 export function SuperAdminTemplatePageExport({items}:{items:Template[]}){
@@ -10,8 +11,8 @@ export function SuperAdminTemplatePageExport({items}:{items:Template[]}){
   const url=URL.createObjectURL(blob);const a=document.createElement("a");
   a.href=url;a.download="project-templates-page.csv";a.click();URL.revokeObjectURL(url);
  }
- return <button type="button" disabled={!items.length} onClick={exportCsv}
-  className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
+ return <Button variant="secondary" type="button" disabled={!items.length} onClick={exportCsv}
+  className="">
   Export templates · CSV
- </button>;
+ </Button>;
 }
