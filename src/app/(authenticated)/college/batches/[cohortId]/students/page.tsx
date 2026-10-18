@@ -63,10 +63,10 @@ export default async function CollegeBatchStudentsPage({
           ilike(learnerProfiles.rollNumber, "%" + q + "%")) : undefined))
       .orderBy(users.displayName).limit(500),
   ]);
-  return <main className="space-y-5">
+  return <main className="min-w-0 overflow-x-clip space-y-5">
     <PageHeader eyebrow="College Admin · Batches" title={"Students · " + batch.name}
       description={batch.program + " · Search the batch roster and move students to another class."}
-      actions={<Link href="/college/batches" className="font-semibold text-primary-text">Back to batches</Link>} />
+      actions={<Link href="/college/batches" className="font-semibold text-[var(--lms-teal-deep)]">Back to batches</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
         <input type="search" name="q" defaultValue={q} maxLength={100}
@@ -80,9 +80,9 @@ export default async function CollegeBatchStudentsPage({
             {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
         </select>
       </label>
-      <button className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Search</button>
+      <button className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Search</button>
     </form>
-    <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+    <div className="overflow-x-auto overscroll-x-contain rounded-xl border border-border bg-surface">
       <p className="p-3 text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
       <table className="w-full min-w-[700px] text-left text-sm">
         <thead className="sticky top-0 z-10 bg-surface"><tr className="border-y border-border">
