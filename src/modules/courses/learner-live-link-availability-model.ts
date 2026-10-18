@@ -1,3 +1,5 @@
+import {learnerSafeExternalContentHref} from "./learner-external-content-link-model";
+
 /**
  * LEARNER-course-detail-R03 — a live meeting is joinable/copyable from the
  * moment the faculty publishes its HTTPS link, including before startsAt.
@@ -5,15 +7,15 @@
  * content must retain the existing release-time restriction.
  *
  * The learner-course service remains responsible for course/delivery access;
- * this helper is deliberately not a permission bypass or URL sanitizer.
+ * this helper sanitizes even legacy-stored URLs at the server read boundary.
  */
 export function learnerVisibleContentExternalUrl(input:{
   contentType:string;
   availability:"SCHEDULED"|"AVAILABLE"|"ENDED";
   externalUrl:string|null;
 }):string|null{
-  if(input.contentType==="LIVE_CLASS"){
-    return input.availability==="ENDED"?null:input.externalUrl;
-  }
-  return input.availability==="AVAILABLE"?input.externalUrl:null;
+  const available=input.contentType==="LIVE_CLASS"
+    ?input.availability!=="ENDED"
+    :input.availability==="AVAILABLE";
+  return available?learnerSafeExternalContentHref(input.externalUrl):null;
 }

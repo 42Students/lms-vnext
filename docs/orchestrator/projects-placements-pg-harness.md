@@ -158,3 +158,12 @@ A regression in `tests/integration/projects-placements-pg-harness-rollback.test.
 `tests/integration/projects-placements-pg-harness-rollback.test.ts` starts two separate real PostgreSQL transactions, inserts distinct organization rows, confirms each session cannot see the other's uncommitted rows, deliberately throws, and verifies that neither row survives. It validates rollback and pooled-connection reuse without committing or touching an existing account. Requires migrated disposable `TEST_DATABASE_URL`; PostgreSQL CI pending.
 
 The managed wildcard domain guard is separate from the PostgreSQL harness. It validates the configured suffix directly, including shorthand IPv4 spellings that appear DNS-like when a fake subdomain is prepended; see `WEAK-tenant-managed-20`. This additional application guard does not alter fixture DB setup.
+
+
+### PROJ-HARNESS-48: realistic ACTIVE state and future fixture dates
+
+The shared graph now explicitly creates an `ACTIVE` project (not an implicit `PLANNED` project with an already-active sprint). Write helpers accept only `ACTIVE` projects, rejecting pre-launch `PLANNED` as well as `COMPLETED` and `ARCHIVED` for task submissions, final drafts/transitions, and meetings. `PROJ-HARNESS-48` verifies both denial and successful activation on real rollback-only PostgreSQL. Meetings and placement seasons use deterministic year-2099 test timestamps instead of near-expiring 2026/2027 fixtures. The source-only `PROJ-HARNESS-GUARD-09` guards these fixture invariants. Requires CI; not claimed passing.
+
+### PROJ-HARNESS-PLACEMENTS-13/14: real application-ready fixture
+
+The shared `createPlacementFixture` builds a published drive with `published_at`, a future (2099) application deadline, a positive INR 800,000 annual pay figure and two openings. `createPlacementCandidateFixture` fails closed if the persisted drive is DRAFT, CLOSED or past its deadline, before inserting application, round or offer rows. Both cases are exercised against disposable PostgreSQL in `projects-placements-pg-harness-placements.test.ts`, and source contract `PROJ-HARNESS-GUARD-10` protects published prerequisites. This is a fixture validity assertion, not a replacement for the real TPO service's publication and eligibility tests.
