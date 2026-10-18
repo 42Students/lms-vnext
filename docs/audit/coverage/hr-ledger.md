@@ -684,3 +684,5 @@ All new checks are **authored but not executed** by this lane. Previously report
 **State:** Coverage inventory is broader, but many exported functions and routes still need independent service-level behaviour, real PostgreSQL tenancy/concurrency, and interactive page checks. This ledger remains OPEN, not release-certified.
 
 | HR-TENANT-ID-16 | `tests/unit/HR-BREAK-chat15-tenant-identity-04.test.ts`: mismatched recruiter grant/session user and null employer denied even when mocked permission returns true; matching active user remains allowed. | Real multi-user revoked session and persistent employer mismatches require DB integration and CI. |
+
+| HR-ACCOUNT-OWNER-17 | `src/modules/placements/hr-conversation-inbox-service.ts` and `hr-notifications-service.ts` fail closed when `context.recruiter.userId` differs from `context.user.id`, before listing any thread or notification. `HR-BREAK-chat15-conversations-10.test.ts` and `HR-BREAK-chat15-notifications-09.test.ts` include swapped user context and no SQL side effects. | PostgreSQL actor swap, renewed-session and account revocation tests; CI pending. |
