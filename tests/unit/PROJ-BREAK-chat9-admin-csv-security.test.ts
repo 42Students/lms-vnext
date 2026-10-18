@@ -7,7 +7,7 @@ import {
 
 describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience", () => {
   it("PROJ-BREAK-exports-10 neutralizes formulas after Unicode isolates, bidi controls and invisible prefixes", () => {
-    for (const prefix of ["", " ", "\t", "\r\n", "\u200B", "\u200F", "\u2060", "\u2066", "\u2069", "\u202E", "\uFEFF", " \u2067\u200B"]) {
+    for (const prefix of ["", " ", "\t", "\r\n", "\u200B", "\u200F", "\u2060", "\u2066", "\u2069", "\u202E", "\uFEFF", "\u034F", "\u061C", "\u180E", "\u0301", " \u2067\u200B"]) {
       for (const op of ["=", "+", "-", "@"]) {
         const payload = prefix + op + "HYPERLINK(1)";
         expect(projectAdminCsvCell(payload), JSON.stringify(payload))
