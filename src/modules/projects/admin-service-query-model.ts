@@ -8,10 +8,10 @@ const decimalPage = (min: number, max: number, fallback: number) => z.union([
   z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(min).max(max)),
 ]).default(fallback);
 
-// Internal callers may supply a presentational "view" or other page-only
-// data. The database service takes only recognized query fields; it never
-// uses arbitrary extras in tenant predicates.
-export const projectAdminServiceQuerySchema = z.object({
+// Internal callers must project away presentational view toggles before
+// entering tenant-scoped services. Unknown fields and injected tenant IDs
+// fail closed rather than silently being accepted as query selectors.
+export const projectAdminServiceQuerySchema = z.strictObject({
   riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
   riskSort: z.enum(["INACTIVE", "WORKSPACE", "SEVERITY"]).optional(),
   q: z.string().trim().max(120).optional(),

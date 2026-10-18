@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {redirect} from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -11,7 +12,7 @@ import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-w
 import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-admin-workspace-page-export";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
-import { parseCollegeProjectsQuery } from "@/modules/projects/college-projects-query-model";
+import {parseCollegeProjectsQuery,canonicalCollegeProjectsPageHref} from "@/modules/projects/college-projects-query-model";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
@@ -49,13 +50,23 @@ export default async function CollegeProjectsPage({
     </div>;
   }
   const query: ProjectAdminCollectionQuery = parsed.data;
+  // The strict service schema accepts database filters only, not the
+  // presentational view toggle. Keep cards/table navigation in the UI.
+  const serviceQuery = {
+    q: query.q, status: query.status, page: query.page, pageSize: query.pageSize,
+  };
   // Failure to read optional template labels must not hide the actual projects.
   const [result, templatesResult] = await Promise.all([
-    listProjectAdminSnapshots(context, collegeId, query),
+    listProjectAdminSnapshots(context, collegeId, serviceQuery),
     listAssignedProjectTemplates(context, collegeId)
       .then(value => ({ ok: true as const, value }))
       .catch(() => ({ ok: false as const })),
   ]);
+  // A workspace archived from another tab can empty an old page bookmark.
+  // Re-open the last valid page with all filters intact; do not show "Page 9
+  // of 2" or lose the user's search after concurrent archive operations.
+  const canonical=canonicalCollegeProjectsPageHref(query,result.totalPages);
+  if(canonical)redirect(canonical);
   const templateTitles = new Map(
     (templatesResult.ok ? templatesResult.value : []).map(template => [template.templateId, template.title]),
   );

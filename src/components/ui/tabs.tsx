@@ -61,7 +61,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
             tabIndex={interactive && index === activeIndex ? 0 : -1}
             onKeyDown={event => keyDown(event, index)}
             onClick={() => { if (interactive) onValueChange?.(item.value); }}
-            className={cx("inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap border-b-2 px-4 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50",
+            className={cx("inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap border-b-2 px-4 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50",
               index === activeIndex ? "border-[var(--lms-teal-deep)] text-foreground" : "border-transparent text-body hover:bg-primary-subtle")}>
             {item.label}
           </button>
