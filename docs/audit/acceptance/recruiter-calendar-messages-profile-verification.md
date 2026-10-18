@@ -214,3 +214,8 @@ All 22 cases were checked against current branch source before insertion. Every 
 | HR-TEAM-REVOKE-32 | `recruiter-company-team-service.ts` | After choosing an employer-college relationship, source query rechecks acting user's ACTIVE recruiter profile, persisted grant and platform status before team contacts are loaded. `tests/unit/recruiter-company-team-scope.test.ts`; real revoked-session PostgreSQL test is outstanding. |
 
 No runtime, database or responsive browser results were claimed; retain these as open acceptance gates.
+
+
+## Chat-15 team directory revocation (2026-10-18)
+
+**HR-TEAM-COLLEGE-33:** `getRecruiterCompanyTeam` now requires an ACTIVE college alongside ACTIVE relationship, company, acting recruiter profile, grant and platform user before exposing team contact emails. Evidence: `tests/unit/recruiter-company-team-scope.test.ts` (added college invariant). CI and real college deactivation acceptance remain outstanding.
