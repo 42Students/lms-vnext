@@ -5,6 +5,7 @@ import { getDb } from "@/db/client";
 import { projectTemplates, projectTemplateVersions } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { ProjectsServiceError } from "./errors";
@@ -18,6 +19,10 @@ export async function editSuperAdminTemplateMetadata(context: RequestContext, ra
       timestampMatches: sql<boolean>`date_trunc('milliseconds', ${projectTemplates.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`.as("template_token_matches"),
     }).from(projectTemplates).where(eq(projectTemplates.id, id)).for("update").limit(1);
     if (!locked) throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+    // The request context can outlive a role or session revocation. The
+    // persisted actor must still have platform-level template management
+    // authority while this parent-row-locked write is in progress.
+    await assertPersistedPlatformPermission(tx, context, "project-template.manage");
     const decision = templateMetadataEditDecision(locked.template, input, locked.timestampMatches);
     if (decision) throw new ProjectsServiceError(decision);
     const [current] = await tx.select().from(projectTemplateVersions).where(and(

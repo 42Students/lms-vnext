@@ -6,6 +6,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {sanitizePublicCollegeBranding} from "./public-branding-model";
 import {
   collegeBrandingSaveSchema,
   sameCollegeBranding,
@@ -98,7 +99,9 @@ export async function getPublicCollegeBranding(collegeId: string) {
     loadBranding(collegeId),
   ]);
   if (!college) return null;
-  return { collegeName: college.name, ...toView(row),
+  const view=toView(row);
+  return { collegeName: college.name, ...view,
+    ...sanitizePublicCollegeBranding(view),
     ...(college.logoObjectPath?.startsWith("branding/"+college.id+"/")?{
       logoUrl:"/api/colleges/"+college.id+"/branding/logo",
     }:{}),
