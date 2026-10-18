@@ -212,3 +212,6 @@ The recruiter fixture wraps global user creation, company profile and verified r
 
 ### PROJ-HARNESS-RECRUITER-25/26: grant lifecycle and validation witnesses
 Real PostgreSQL cases now assert the active-grant unique index rejects a duplicate recruiter/relationship pair; a properly revoked grant can be reissued without leaving two ACTIVE records. They also assert database CHECK refusal for non-whitelisted grant capability, nonexistent verification status, and an expiry older than grant creation. These state/constraint witnesses help HR lanes test safe revocation and reissue, but do not replace runtime recruiter authorization checks.
+
+### PROJ-HARNESS-PLACEMENTS-25: fiscal-year date order
+The canonical placement season was inadvertently authored as 2099-10-01 through 2099-06-30, violating `placement_seasons_dates_ck` before the other PostgreSQL fixtures could start. It now spans **2098-10-01 through 2099-06-30**, with the published job deadline in June 2099; the duplicate ACTIVE season test uses a legal matching interval. Real PG case 25 asserts the interval and deadline inclusion, not merely source date strings.
