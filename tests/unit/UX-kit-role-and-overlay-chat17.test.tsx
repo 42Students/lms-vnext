@@ -115,7 +115,7 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(html).toContain('data-slot="scroll-cue"');
     expect(html).not.toMatch(/role="region"[^>]*aria-label="College projects scrollable columns"/);
     const scrollSource=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
-    expect(scrollSource).toMatch(/label=\\{caption\\s*\\?\\s*caption\\s*\\+\\s*["'] scrollable columns["']/);
+    expect(scrollSource).toMatch(/label=\{caption\s*\?\s*caption\s*\+\s*["'] scrollable columns["']/);
   });
 
   it("UX-kit-HARDEN-30 rejects encoded slash/backslash row links before Next navigation", () => {
