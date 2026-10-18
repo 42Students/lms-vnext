@@ -8,6 +8,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import type {RequestContext} from "@/modules/identity/context";
 import E2EPage from "@/app/e2e/superadmin-login/page";
+import LegacySuperAdminPage from "@/app/superadmin-login/page";
 import PrivacyPage,{metadata as privacyMetadata} from "@/app/privacy-policy/page";
 import DepartmentsPage from "@/app/(authenticated)/college-admin/departments/page";
 import ProgramsPage from "@/app/(authenticated)/college-admin/programs/page";
@@ -29,8 +30,12 @@ beforeEach(()=>vi.clearAllMocks());
 
 describe("chat-16 public/auth redirect pages handle expired sessions and wrong roles",()=>{
  it("UX-e2e-superadmin-login-01 never offers a privileged e2e bypass",()=>{
-  expect(()=>E2EPage()).toThrow("REDIRECT:/");
-  expect(vi.mocked(redirect)).toHaveBeenCalledExactlyOnceWith("/");
+  expect(()=>E2EPage()).toThrow("REDIRECT:/login");
+  expect(vi.mocked(redirect)).toHaveBeenCalledExactlyOnceWith("/login");
+ });
+ it("UX-superadmin-login-16 keeps legacy privileged bookmarks on the explicit first-party OTP path",()=>{
+  expect(()=>LegacySuperAdminPage()).toThrow("REDIRECT:/login");
+  expect(vi.mocked(redirect)).toHaveBeenCalledExactlyOnceWith("/login");
  });
  it("UX-privacy-policy-01 links the stable, existing static policy without an auth request",()=>{
   expect(privacyMetadata.title).toBe("Privacy | 42LMS");

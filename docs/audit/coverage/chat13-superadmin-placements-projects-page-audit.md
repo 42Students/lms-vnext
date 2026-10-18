@@ -63,3 +63,18 @@ The earlier `docs/audit/coverage/admin-first-chat13.md` already inventories the 
 - `SA-SCOPED-CSV-CAP-05`: scoped CSV endpoint now forces 25-row fetches regardless of a manually supplied pageSize. This closes first-250 under-fetch and 1,000-row over-fetch. Mocked service export test written; no browser/CI run.
 - `SA-APPLICATIONS-ACADEMIC-05`: Super Admin application directory academic facets now require current ACTIVE enrollment with a consistent cohort/program. New source test and expanded all-page read-service matrix authored; no PostgreSQL execution.
 - `SA-ADMIN-LEDGER-01`: 39 dedicated placement admin, Super Admin, report, and platform-policy modules dynamically inventoried; 13 `src/modules/admin-ui` Placements read and CSV services are recorded in the central coverage ledger. Existing route audits cover 37 first-third /admin pages and 48 Placements/Projects pages. None of these inventory counts substitutes for an executed accessibility or tenancy role-journey check.
+
+
+## IIT Dharwad Projects breaker follow-up — PROJ-BREAK-SA-33..36
+
+| Case | Source and observable behavior | Evidence |
+|---|---|---|
+| PROJ-BREAK-SA-33 | Super Admin snapshots/at-risk paging rejects coerced hex, exponent, blanks, bad filters and extra keys before any project DB or scope read | `src/modules/projects/admin-insights-service.ts` (newer main's shared service schema retained), `tests/unit/PROJ-BREAK-SA-service-query-boundaries-chat13.test.ts` |
+| PROJ-BREAK-SA-34 | Revoked/changed College Admin membership cannot obtain a project row lock, write event or audit through the lock action | `src/modules/projects/admin-submission-review-service.ts`, `tests/unit/PROJ-BREAK-SA-34-admin-lock-role-revocation.test.ts` |
+| PROJ-BREAK-SA-35 | Legacy Super Admin project redirect rejects learner, disabled user, invalid UUID and unauthorized foreign project before canonical summary redirect | `src/app/(authenticated)/admin/projects/[projectId]/page.tsx`, `tests/unit/PROJ-BREAK-SA-35-legacy-project-redirect.test.ts` |
+| PROJ-BREAK-SA-36 | Mentor name/ID no longer presented as active after user disable even if membership remains ACTIVE | `src/modules/projects/admin-insights-service.ts`, `tests/unit/chat13-project-admin-member-tenant-isolation.test.ts`, `tests/integration/chat13-proj-break-disabled-mentor.test.ts` |
+
+All fixes are source-authored and committed. No local CI/real DB/browser run is asserted, per the owner's defer-CI directive; actual verification and an independent different-lane review remain open.
+
+
+| PROJ-BREAK-SA-37 | Admin workspace card age now accounts for ended membership transitions via a single grouped MAX timestamp query, while name projection stays restricted to active actor and college | `src/modules/projects/admin-insights-service.ts`, `tests/unit/chat13-project-admin-member-tenant-isolation.test.ts`; load/performance and database execution pending |

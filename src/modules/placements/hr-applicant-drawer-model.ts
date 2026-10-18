@@ -6,8 +6,12 @@ export function buildHrApplicantDrawer(
   if (!applicantId) return null;
   // A withdrawn application may remain historically SHORTLISTED. Do not let an
   // already-open applicant URL retain access to private project or contact details.
-  const selected = rows.find(row => row.id === applicantId && row.screening === "SHORTLISTED" && row.status === "SUBMITTED");
-  if (!selected) return null;
+  const matching = rows.filter(row => row.id === applicantId);
+  // A join or pagination bug producing conflicting copies must not let the
+  // first row's private details override a revoked or withdrawn duplicate.
+  if (matching.length !== 1) return null;
+  const selected = matching[0]!;
+  if (selected.screening !== "SHORTLISTED" || selected.status !== "SUBMITTED") return null;
   return {
     id:selected.id,
     name:selected.name?.trim() || "Unnamed applicant",
