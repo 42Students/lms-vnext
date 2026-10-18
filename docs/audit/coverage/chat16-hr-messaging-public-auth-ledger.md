@@ -472,3 +472,13 @@ The existing `changeInboundMailStatusForAdmin` permission matrix, status machine
 | `createZeptoMailEmailProvider` | same (`AUTH-OTP-MERGE-46`) | Exactly one accepted OTP POST, only canonical email address, harmless escaped learner name, malformed/untrusted mobile omitted, valid E.164 preserved, no OTP value in structured logs |
 
 Only provider-template merge variables changed, not SMS DLT wording, auth OTP lifetime, sign-in permission or provider delivery policy. This is direct mocked-transport test authorship, **not a real ZeptoMail acceptance/delivery test**.
+
+
+### 2026-10-19: public join-link first-open telemetry is bounded and POST-only
+
+| Handler | Test | Verification |
+|---|---|---|
+| `POST /api/public/join-link/open` | `tests/unit/chat16-public-join-open-boundary-47.test.ts` (`PUBLIC-JOIN-OPEN-47..49`) | Same-origin denial, 8 KB UTF-8 cap, malformed JSON and forged `collegeId` refusal, only strict `COLLEGE/COMPANY` token passed to service, no-store 200 and generic 503 on unavailable database |
+| `recordPublicJoinOpen` (route invocation) | same | Never called for wrong-origin, oversized, invalid or mass-assigned body. Real PostgreSQL idempotency and activity-event tests remain covered separately and await final CI. |
+
+All added test evidence is authored but **not run**; no provider or database connection was exercised.
