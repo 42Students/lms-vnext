@@ -235,3 +235,7 @@ No runtime CI execution. Numeric internally validated number callers remain supp
 ## Super Admin college verification page
 
 `/admin/colleges/[collegeId]/verification` now rejects nondecimal `page`/`pageSize` URL values (scientific/hex/whitespace/blank) *after* authorized college selection but *before* queue and policy reads. `tests/unit/chat4-superadmin-college-verification-page.test.tsx` (`SA-colleges-verification-FILTER-01`) covers malformed paging, repeated values, denied persisted Super Admin preflight, scoped valid queue, persisted TPO policy and safe scan-cap retry state. Authored, not run; actual verification table/storage, full filter matrix and browser profile-review workflows remain separate gates.
+
+## Super Admin college branding page (rendered route behavior)
+
+`/admin/colleges/[collegeId]/branding` is covered by `tests/unit/chat4-superadmin-branding-page-journey.test.tsx` (`SA-colleges-branding-page-01`): deny non-Super Admin before loading private branding/upload receipts, 404 malformed and foreign-scoped college IDs, no fallback to another college's branding, stored preview and optimistic version 7, signed/uploaded logo manager scoped to the same tenant, and propagate storage failures instead of inventing a successful preview. All assertions use mocked service projections and SSR, **not** actual file uploads or browser-domain appearance; CI execution pending.
