@@ -51,6 +51,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-026 · PROJ-BREAK-ux-30/31/32/33 | Medium | The Super Admin Project templates directory awaited DB results directly without a denied-state gate or recovery. A disabled role, database outage or failing directory service could render a raw route error instead of an actionable page. Added access gate before read, outage fallback retaining validated query filters, and explicit return/retry links. Existing malformed-input and empty-catalogue states remain. | `26a44f0` | Server page React-tree behaviors in `tests/unit/PROJ-BREAK-chat9-template-directory-page.test.tsx` (`9d3dba5`) cover denied, failure, malformed query and empty state; browser/client acceptance OPEN |
 
+| PROJ9-030 · PROJ-BREAK-idor-40/41/42 / scale-26 | Coverage gap | Super Admin template directory had no direct service test for college/organization assignment scoping and denied roles. Added mocked service responses plus Drizzle SQL predicate assertions; no code defect confirmed. | No source change | `tests/unit/PROJ-BREAK-chat9-template-directory-service.test.ts` (`8e2e7d6`), real DB/browser OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
