@@ -3,6 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 type JoiningChoice = "JOINED" | "DEFERRED" | "DID_NOT_JOIN";
 
@@ -16,6 +19,7 @@ export function TpoJoiningUpdateForm({
   initialJoiningDate: string | null;
 }) {
   const router = useRouter();
+  const {run}=useGuardedAction({timeoutMs:35000});
   const [status, setStatus] = useState<JoiningChoice>("JOINED");
   const [joiningDate, setJoiningDate] = useState(initialJoiningDate ?? "");
   const [reason, setReason] = useState("");
@@ -42,34 +46,35 @@ export function TpoJoiningUpdateForm({
       setConfirmOpen(true);
       return;
     }
-    setBusy(true);
-    setError(null);
-    try {
-      const response = await fetch(
-        "/api/placements/offers/" + encodeURIComponent(offerId) + "/joining",
-        {
-          method: "PUT",
-          credentials: "same-origin",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            status,
-            joiningDate: needsDate ? joiningDate : null,
-            reason: needsReason ? reason.trim() : null,
-            correctionReason: corrected ? correctionReason.trim() : null,
-          }),
-        },
-      );
-      if (!response.ok) {
-        throw new Error("The joining update was rejected. Refresh and review the offer.");
+    await run(async()=>{
+      setBusy(true);
+      setError(null);
+      try {
+        await apiFetch(
+          "/api/placements/offers/" + encodeURIComponent(offerId) + "/joining",
+          {
+            method: "PUT",
+            credentials: "same-origin",
+            timeoutMs: 35000,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              status,
+              joiningDate: needsDate ? joiningDate : null,
+              reason: needsReason ? reason.trim() : null,
+              correctionReason: corrected ? correctionReason.trim() : null,
+            }),
+          },
+        );
+        setReason("");
+        setCorrectionReason("");
+        router.refresh();
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : friendlyApiError({}));
+      } finally {
+        setBusy(false);
+        setConfirmOpen(false);
       }
-      setReason("");
-      setCorrectionReason("");
-      router.refresh();
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Could not update joining status.");
-    } finally {
-      setBusy(false);setConfirmOpen(false);
-    }
+    });
   }
 
   return (
