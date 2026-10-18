@@ -1,6 +1,7 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 import {transitionProjectMeeting} from "@/modules/projects/meeting-service";
+import {projectMeetingTransitionInputSchema} from "@/modules/projects/validation";
 
 const projectId="11111111-1111-4111-8111-111111111111";
 const meetingId="22222222-2222-4222-8222-222222222222";
@@ -171,4 +172,22 @@ describe("Legacy meeting transition optimistic concurrency, side effects and act
   expect(state.audits).toBe(1);
   expect(state.notices).toBe(2);
  });
+ it("PROJ-BREAK-MENTOR-394 equivalent IST offsets pass and forged version fields fail strict parsing",async()=>{
+  const iso="2099-01-01T05:30:00.000+05:30";
+  expect(projectMeetingTransitionInputSchema.safeParse({
+   action:"COMPLETE",expectedUpdatedAt:iso,outcome:"Reviewed",
+  }).success).toBe(true);
+  for(const raw of [
+   {action:"COMPLETE",expectedUpdatedAt:"2099-01-01"},
+   {action:"CANCEL",expectedUpdatedAt:"not a date"},
+   {action:"CANCEL",expectedUpdatedAt:version,actorMembershipId:"forged"},
+   {action:"COMPLETE",expectedUpdatedAt:version,collegeId:"foreign"},
+  ])expect(projectMeetingTransitionInputSchema.safeParse(raw).success).toBe(false);
+  await transitionProjectMeeting(mentor,projectId,meetingId,{
+   action:"COMPLETE",expectedUpdatedAt:iso,outcome:"Reviewed",
+  });
+  expect(state.updates).toBe(1);
+  expect(state.audits).toBe(1);
+ });
+
 });
