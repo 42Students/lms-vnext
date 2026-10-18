@@ -1,6 +1,6 @@
 "use client";
 import {DataTable} from "@/components/ui/data-table";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
@@ -12,24 +12,29 @@ type Report={preview:boolean;valid:number;invalid:number;structuralErrors:string
 const header=FACULTY_CSV_COLUMNS.join(",");
 export function CollegeFacultyCsvImport(){
   const router=useRouter();
+  const csvRevision=useRef(0);
   const [csv,setCsv]=useState(header+"\n");
   const [report,setReport]=useState<Report|null>(null);
   const [error,setError]=useState("");
   const [confirmed,setConfirmed]=useState(false);
   const {pending,run:guardRun}=useGuardedAction({busyLabel:"Importing..."});
   async function submit(action:"PREVIEW"|"IMPORT"){
+    const revision=csvRevision.current;
+    const submittedCsv=csv;
     setError("");
     const payload=await apiFetch<{report:Report}>("/api/college/faculty/import",{
       method:"POST",headers:{"content-type":"application/json"},
-      body:JSON.stringify({action,csv,confirm:action==="IMPORT"?confirmed:false}),
+      body:JSON.stringify({action,csv:submittedCsv,confirm:action==="IMPORT"?confirmed:false}),
     });
     if(!payload?.report)throw Error("CSV import could not be completed. Please try again.");
+    // A validation response for a replaced draft must never re-enable import.
+    if(action==="PREVIEW" && revision!==csvRevision.current)return;
     setReport(payload.report as Report);
     if(action==="IMPORT"){setConfirmed(false);router.refresh();}
   }
   const run=(action:"PREVIEW"|"IMPORT")=>void guardRun(async()=>{
     try{await submit(action);}catch(reason){
-      setError(reason instanceof Error?reason.message:"Import unavailable");
+      setError("Faculty import is unavailable. Please try again.");
     }
   });
   const csvResult=report?.results.map(item=>[item.row,item.status,item.detail,item.membershipId??""]
@@ -47,15 +52,23 @@ export function CollegeFacultyCsvImport(){
         Download CSV template
       </a>
       <label className="grid gap-2 text-sm font-semibold">Choose CSV
-        <input type="file" accept=".csv,text/csv" onChange={async event=>{
+        <input type="file" accept=".csv,text/csv" disabled={pending} onChange={async event=>{
           const file=event.currentTarget.files?.[0];
           if(!file)return;
+          const version=++csvRevision.current;
+          setReport(null);setConfirmed(false);setError("");
           if(file.size>1000000){setError("File exceeds 1 MB");return;}
-          setCsv(await file.text());setReport(null);setConfirmed(false);setError("");
+          try{
+            const contents=await file.text();
+            if(csvRevision.current===version)setCsv(contents);
+          }catch{
+            if(csvRevision.current===version)setError("Unable to read CSV. Choose the file again.");
+          }
         }}/>
       </label>
       <label className="grid gap-2 text-sm font-semibold">CSV contents
-        <textarea rows={10} value={csv} onChange={event=>{
+        <textarea rows={10} value={csv} disabled={pending} onChange={event=>{
+          csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);
         }} className="rounded-md border border-border bg-surface p-3 font-mono text-xs"/>
       </label>
