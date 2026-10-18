@@ -70,7 +70,7 @@ export default async function TpoCandidateSchedulePage({
     <div className="flex flex-wrap gap-2">
       {drive.rounds.filter(round=>round.kind==="INTERVIEW").map(round=>
         <Link key={round.id} href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+          className="inline-flex min-h-11 items-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
           Slots and rooms · {round.name}
         </Link>)}
     </div>

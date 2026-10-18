@@ -33,7 +33,7 @@ export default async function TpoOfferLettersPage({
   const evidenceByOfferId=new Map(offers.map((row,index)=>[row.offer.id,projected[index]] as const));
   return <div className="min-w-0 space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Back to drive</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
     <header>
       <h1 className="text-[30px] font-semibold text-[#172033]">{job.title} · Offer letter evidence</h1>
       <p className="mt-2 text-sm text-body">
