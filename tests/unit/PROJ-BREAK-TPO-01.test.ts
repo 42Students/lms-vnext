@@ -45,36 +45,36 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
   mocks.can.mockReturnValue(false);
   mocks.moduleAccess.mockResolvedValue({projects:{enabled:true}});
  });
- it("TPO student-directory permission does not expose unassigned project workspace",async()=>{
-  const context=tpo();
+ it("PROJ-BREAK-TPO-09 TPO role denies both existing and unknown IDs before any project lookup",async()=>{
+  for(const guessed of [PROJECT,FOREIGN,"../other-college"]){
+   await expect(requireProjectReadAccess(tpo(),guessed))
+    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+   await expect(requireProjectManageAccess(tpo(),guessed))
+    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  }
+  expect(mocks.getDb).not.toHaveBeenCalled();
+  expect(mocks.moduleAccess).not.toHaveBeenCalled();
+ });
+ it("a forged mentor session claim cannot bypass missing persisted project member row",async()=>{
+  const context=tpo({membership:{...tpo().membership!,roles:["TPO","MENTOR"]}});
+  mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}],[]];
   await expect(requireProjectReadAccess(context,PROJECT))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  expect(mocks.can).toHaveBeenCalledWith(context,"projects.manage",
-   {organizationId:ORG,collegeId:COLLEGE});
   expect(mocks.select).toHaveBeenCalledTimes(2);
   expect(mocks.moduleAccess).not.toHaveBeenCalled();
  });
- it("a forged membership claim for mentor role cannot bypass persisted membership role check",async()=>{
-  mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}],[{
-   id:"member",role:"MENTOR",roleKind:"MENTOR",canMutate:true,isPrimary:true,
-  }]];
-  await expect(requireProjectReadAccess(tpo(),PROJECT))
-   .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-  expect(mocks.moduleAccess).not.toHaveBeenCalled();
- });
- it("foreign college and foreign organization cannot infer assigned project-membership records",async()=>{
+ it("foreign TPO actors cannot infer existence by college or organization mismatch",async()=>{
   for(const member of [
    {...tpo().membership!,collegeId:FOREIGN},
    {...tpo().membership!,organizationId:FOREIGN,collegeId:COLLEGE},
    {...tpo().membership!,organizationId:FOREIGN,collegeId:FOREIGN},
   ]){
-   mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}]];
    await expect(requireProjectReadAccess(tpo({membership:member}),PROJECT))
     .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   }
-  expect(mocks.select).toHaveBeenCalledTimes(3);
+  expect(mocks.getDb).not.toHaveBeenCalled();
  });
- it("PROJ-BREAK-TPO-02 denies projects and placement data from any wrong college OR organization",async()=>{
+ it("PROJ-BREAK-TPO-02 denies projects and placements in every wrong scope",async()=>{
   const {can:actualCan}=await vi.importActual<typeof import("@/modules/permissions/policy")>(
    "@/modules/permissions/policy");
   const current=actor(["TPO"]);
@@ -83,10 +83,10 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
    {collegeId:college,organizationId:otherOrg},
    {collegeId:other,organizationId:otherOrg},
   ])for(const permission of ["projects.read","projects.manage","placements.read","placements.manage"] as const)
-   expect(actualCan(current,permission,scope),JSON.stringify({scope,permission})).toBe(false);
+   expect(actualCan(current,permission,scope)).toBe(false);
   expect(mocks.select).not.toHaveBeenCalled();
  });
- it("PROJ-BREAK-TPO-03 suspended, disabled or missing memberships cannot view or manage Project data",async()=>{
+ it("PROJ-BREAK-TPO-03 suspended, disabled and removed membership cannot read Projects",async()=>{
   const {can:actualCan}=await vi.importActual<typeof import("@/modules/permissions/policy")>(
    "@/modules/permissions/policy");
   const resource={collegeId:college,organizationId:org};
@@ -94,24 +94,34 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
    {...actor(["TPO"]),membership:null}]){
    for(const permission of ["projects.read","projects.manage","placements.read","placements.manage"] as const)
     expect(actualCan(current,permission,resource)).toBe(false);
+   await expect(requireProjectReadAccess(current,PROJECT))
+    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   }
-  expect(mocks.select).not.toHaveBeenCalled();
+  expect(mocks.getDb).not.toHaveBeenCalled();
  });
- it("repeated stale-tab lifecycle and manage mutations are refused regardless of a known project ID",async()=>{
+ it("repeated stale-tab lifecycle and manage attempts are refused before DB I/O",async()=>{
   for(let attempt=0;attempt<3;attempt++){
-   mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}]];
    await expect(requireProjectManageAccess(tpo(),PROJECT))
     .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
-   mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}],[]];
    await expect(requireProjectLifecycleAccess(tpo(),PROJECT))
     .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   }
-  expect(mocks.moduleAccess).not.toHaveBeenCalled();
+  expect(mocks.getDb).not.toHaveBeenCalled();
  });
- it("rejects non-UUID and nonexistent IDs without granting a guessed record",async()=>{
-  await expect(requireProjectReadAccess(tpo(),"../another-college")).rejects.toBeDefined();
+ it("preserves authentic learner and mentor project membership reads",async()=>{
+  for(const role of ["LEARNER","MENTOR"] as const){
+   vi.clearAllMocks();
+   mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}],[{
+    id:"project-member",role,roleKind:role,canMutate:true,isPrimary:true,
+   }]];
+   const scope=await requireProjectReadAccess(actor([role]),PROJECT);
+   expect(scope.access).toBe(role);
+  }
+ });
+ it("returns PROJECT_NOT_FOUND for a missing record when the actor has a real project viewing role",async()=>{
   mocks.rows=[[]];
-  await expect(requireProjectReadAccess(tpo(),PROJECT)).rejects.toMatchObject({code:"PROJECT_NOT_FOUND"});
+  await expect(requireProjectReadAccess(actor(["MENTOR"]),PROJECT))
+   .rejects.toMatchObject({code:"PROJECT_NOT_FOUND"});
  });
 });
 
@@ -121,8 +131,10 @@ describe("PROJ-BREAK-TPO-02 truthful self-reported portfolio counts",()=>{
   const {resolve}=await import("node:path");
   const grid=readFileSync(resolve(process.cwd(),"src/components/tpo/tpo-students-spreadsheet.tsx"),"utf8");
   const page=readFileSync(resolve(process.cwd(),"src/app/(authenticated)/tpo/students/page.tsx"),"utf8");
-  expect(grid).toContain('key:"projects",label:"Profile projects (self-reported)"');
-  expect(page).toContain('["minProjects","Profile project entries (self-reported)"]');
+  expect(grid).toContain('key:"projects",label:"Projects"');
+  expect(grid).toContain('Self-reported learner profile entries; not verified Projects workspace outcomes');
+  expect(page).toContain('["minProjects","Projects"]');
+  expect(page).toContain('not verified Projects workspace outcomes or released grades.');
   expect(grid).not.toContain('key:"projects",label:"Verified Projects"');
   const {tpoStudentProfileFacts}=await import("@/modules/placements/tpo-student-profile-facts");
   const facts=tpoStudentProfileFacts({projects:[{title:"Claim without approval"},
