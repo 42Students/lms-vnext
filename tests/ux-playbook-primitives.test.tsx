@@ -89,7 +89,9 @@ describe("UX playbook shared behaviour", () => {
     expect(denied).toContain("More details");
     const allowed=renderToStaticMarkup(<DataTable rows={rows} getRowKey={row=>row.id}
       empty={<p>No learners</p>} columns={makeColumns(true)}/>);
-    expect(allowed).toContain("Secret · View details");
+    expect(allowed).toContain("Fields on detail page");
+    expect(allowed).toContain("Secret");
+    expect(allowed).toContain("View details");
   });
   it("E-05 100 rows serialize exactly one responsive table row each",()=>{
     const rows=Array.from({length:100},(_,i)=>({id:"row-"+i}));
