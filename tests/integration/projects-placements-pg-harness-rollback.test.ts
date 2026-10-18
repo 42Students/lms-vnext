@@ -51,4 +51,19 @@ describe("PROJ-HARNESS-ROLLBACK real PostgreSQL: nested rollback and FK integrit
        [f.graph.projectId]))).toHaveLength(1);
    });
  });
+ it("PROJ-HARNESS-ROLLBACK-04 wrong SQLSTATE does not poison the PostgreSQL transaction",async()=>{
+   await withProjectPg(pool,async db=>{
+     const f=await prepared(db);
+     await expect(db.expectSqlState(()=>db.query(
+       "update project_tasks set sequence=-1 where id=$1",[f.graph.taskId]),"23505"))
+       .rejects.toThrow("expected SQLSTATE 23505 but received 23514");
+     const rows=await db.query<{sequence:number}>(
+       "select sequence from project_tasks where id=$1",[f.graph.taskId]);
+     expect(rows).toHaveLength(1);
+     expect(rows[0]!.sequence).toBeGreaterThanOrEqual(0);
+     await db.expectSqlState(()=>db.query(
+       "update project_tasks set sequence=-1 where id=$1",[f.graph.taskId]),"23514");
+     expect((await db.query("select id from project_tasks where id=$1",[f.graph.taskId]))).toHaveLength(1);
+   });
+ });
 });
