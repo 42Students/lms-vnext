@@ -63,3 +63,20 @@ switches, expired session, genuine two-tenant PostgreSQL fixtures, and strict
 TypeScript/Vitest execution. The owner has postponed execution until all lanes
 finish. Therefore this remains **SOURCE FIXED, NOT RUNTIME VERIFIED** and is
 not a sign-off of the whole section.
+
+
+### Read-boundary follow-up: legacy content link previews
+
+`SA-COURSES-PREVIEW-23` (S2): source review showed that
+`safePublicCourseContentUrl` previously allowed HTTPS URLs pointing at local,
+loopback, link-local, RFC1918 and metadata hosts. Although no privileged server
+fetch occurred, an admin opening a malicious course preview could make a request
+from their browser into a local/private network. The preview now reuses the
+already vetted, browser-facing `safeLearnerResourceMaterialHref` policy
+(`e2fa3fe5`). Regression `tests/unit/chat7-admin-courses-content-hardening.test.ts`
+(`9a9f97ac`) covers internal IPs, localhost, metadata endpoints and
+credential/fragment denial. Existing public HTTPS content still previews.
+
+This source fix has not been run against a real browser/DB. It does not
+implement private scanned binary uploads or fix the missing per-course
+visibility inheritance.

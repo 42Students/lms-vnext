@@ -119,3 +119,14 @@ upload integration remain release gates. No CI result was invented and no existi
 All entries are **source-authored only**. Per owner priority, strict compiler,
 unit tests, PostgreSQL integration, devices and CI will be run only after all
 development lanes complete. This is not a claim of test pass or deploy readiness.
+
+
+**SA-COURSES-PREVIEW-23 (S2):** Admin external course content read previews
+previously allowed credential-free HTTPS `localhost`, link-local, RFC1918
+and cloud metadata URLs from legacy DB data. Although rendered links do not
+trigger a privileged backend fetch, clicking them could contact the admin's
+private network. `e2fa3fe5` now reuses the existing material public-link
+sanitizer, and `9a9f97ac` extends
+`tests/unit/chat7-admin-courses-content-hardening.test.ts` with
+localhost, private IPv4, IPv6 loopback and metadata denial.
+Authored-only; verify in browser and with genuine legacy link fixtures.
