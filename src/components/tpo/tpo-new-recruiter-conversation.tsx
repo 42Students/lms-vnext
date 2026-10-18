@@ -92,7 +92,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
      </div>
      <label className="block text-sm font-semibold text-body">Message
       <textarea aria-label="New message" placeholder="Write a message" required maxLength={4000}
-       className="mt-1 min-h-28 w-full rounded-md border border-border bg-surface p-3"
+       className="mt-1 min-h-28 w-full rounded-md border border-border bg-surface p-3 text-base sm:text-sm"
        value={message} onChange={event=>editMessage(event.target.value)}
        onKeyDown={event=>{
         if(event.key==="Enter"&&(event.ctrlKey||event.metaKey||!event.shiftKey)&&
