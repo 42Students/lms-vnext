@@ -4,6 +4,8 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { transitionMentorProjectSprint } from "@/modules/projects/mentor-sprint-write-service";
 
+import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
+  from "@/modules/projects/mentor-command-body";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string;sprintId:string}>};
 export async function POST(request:Request,{params}:RouteContext) {
@@ -13,10 +15,13 @@ export async function POST(request:Request,{params}:RouteContext) {
   try {
     const context=await getCurrentRequestContext();
     const path=await params;
-    const body=await request.json();
+    const body=await readMentorProjectCommandBody(request);
     const sprint=await transitionMentorProjectSprint(context,path,body);
     return NextResponse.json({sprint});
   } catch(error) {
-    return apiErrorResponse(error);
+    if(error instanceof MentorProjectCommandBodyError)
+    return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},
+      {status:error.status});
+  return apiErrorResponse(error);
   }
 }
