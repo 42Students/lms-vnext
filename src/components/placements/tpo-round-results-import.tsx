@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Match={line:number;identity:string;applicationId:string;name:string;outcome:string;status:string|null};
 type Missing={line:number;identity:string;reason:string;suggestions:Array<{applicationId:string;name:string;roll:string|null}>};
 type Preview={previewToken:string;sourceRows:number;candidateCount:number;matched:Match[];
@@ -14,6 +15,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
  const [missingPolicy,setMissingPolicy]=useState<"LEAVE_PENDING"|"MARK_NOT_CLEARED">("LEAVE_PENDING");
  const [confirmMissingFailure,setConfirmMissingFailure]=useState(false);
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");
+ const [confirmOpen,setConfirmOpen]=useState(false);
  const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/import-results";
  async function send(action:"PREVIEW"|"STAGE_IMPORT"){
   if(!file||busy)return;
@@ -41,14 +43,14 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   <h2 className="text-lg font-semibold text-foreground">Import company round results</h2>
   <p className="text-sm text-body">Upload a CSV or Excel (.xlsx) result list. All supplied Application ID, email and roll identifiers must agree.
    Company portal IDs with no matching application are left unmatched. Contradictory IDs, email and roll must be reviewed; a manual match is audited. Nothing is applied to the round until the separate Apply results step.</p>
-  <a href={url} download className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Download CSV template</a>
+  <a href={url} download className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Download CSV template</a>
   <label className="block text-sm font-semibold text-body">Company results file
    <input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}
     className="mt-2 block w-full rounded-md border border-border p-3 text-foreground"/>
   </label>
   <button type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
-   className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Checking…":"Preview matching results"}</button>
   {preview?<div className="space-y-4 rounded-lg border border-border bg-surface-subtle p-4">
    <h3 className="font-semibold">Import preview</h3>
@@ -62,7 +64,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 rounded border border-border bg-surface p-3 sm:grid-cols-2">
      <p className="text-sm">Row {row.line}: {row.identity||"No ID"} · {row.reason}</p>
      <div className="flex flex-wrap gap-2">
-      <select aria-label={"Match row "+row.line} className="min-h-10 flex-1 rounded border border-border bg-surface p-2 text-sm"
+      <select aria-label={"Match row "+row.line} className="min-h-11 flex-1 rounded border border-border bg-surface p-2 text-sm"
        value={overrides[row.line]??""} disabled={busy} onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
        <option value="">Do not match this row</option>
        {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
@@ -88,7 +90,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
      onChange={()=>{setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/> Leave pending (do not change their result)</label>
     <label className="flex gap-2"><input type="radio" checked={missingPolicy==="MARK_NOT_CLEARED"}
      onChange={()=>setMissingPolicy("MARK_NOT_CLEARED")}/> Mark everyone missing as Not cleared</label>
-    {missingPolicy==="MARK_NOT_CLEARED"?<div className="space-y-2 text-error">
+    {missingPolicy==="MARK_NOT_CLEARED"?<div className="space-y-2 text-foreground">
      <p>This also stages Not cleared for {preview.notInFile.length} currently eligible applicants missing from the file. Unmatched source rows must be resolved. Students are not told until results are applied.</p>
      <label className="flex items-center gap-2 text-sm font-semibold">
       <input type="checkbox" checked={confirmMissingFailure} onChange={e=>setConfirmMissingFailure(e.target.checked)}/>
@@ -97,16 +99,21 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     </div>:null}
    </fieldset>
    <button type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
-    (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>{if(window.confirm("Stage this reviewed result import? "+(missingPolicy==="MARK_NOT_CLEARED"?"Applicants not in the file will be marked Not cleared. ":"")+"Results are not published until the separate Apply step."))void send("STAGE_IMPORT");}}
-    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>setConfirmOpen(true)}
+    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
     {busy?"Staging…":"Confirm and stage results"}</button>
   </div>:null}
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
+    title="Stage this reviewed result import?"
+    description={(missingPolicy==="MARK_NOT_CLEARED"?"Applicants not in the file will be marked Not cleared. ":"")+"Results are not published until the separate Apply step."}
+    confirmLabel="Confirm and stage results"
+    onConfirm={()=>{setConfirmOpen(false);void send("STAGE_IMPORT");}}/>
   {report?<div role="status" className="space-y-2 rounded border border-border p-4 text-sm">
    <p className="font-semibold">{report.staged} results staged · {report.skipped} skipped · {report.unmatched} unmatched.</p>
    <div className="max-h-40 overflow-y-auto">{report.results.map((r,i)=><p key={r.line+":"+r.applicationId+":"+i}>
     {r.applicationId}: {r.status} {r.reason??""}</p>)}</div>
    <p>Stage completed. Use the Apply results preview above to publish progression when the round is completed.</p>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error} Re-preview if the round has changed.</p>:null}
+  {error?<p role="alert" className="text-sm text-foreground">{error} Re-preview if the round has changed.</p>:null}
  </section>;
 }
