@@ -12,11 +12,16 @@ export type VerificationEducationRow = {
 
 export function verificationEducationRows(value: unknown): VerificationEducationRow[] {
   if (!Array.isArray(value)) return [];
-  return value.flatMap((entry: unknown, index: number) => {
+  // A malformed or oversized saved snapshot must not exhaust a staff drawer.
+  return value.slice(0,100).flatMap((entry: unknown, index: number) => {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) return [];
     const record = entry as Record<string, unknown>;
-    const string = (key: string): string =>
-      typeof record[key] === "string" ? String(record[key]).slice(0, 200) : "—";
+    const string = (key: string): string => {
+      const field=record[key];
+      if(typeof field==="string")return field.trim().slice(0,200)||"—";
+      if(typeof field==="number"&&Number.isFinite(field))return String(field);
+      return "—";
+    };
     return [{
       id: String(index),
       level: string("educationType"),
@@ -24,7 +29,8 @@ export function verificationEducationRows(value: unknown): VerificationEducation
         ? string("institutionName") : string("institution"),
       year: string("endYear"),
       marks: string("grade"),
-      marksheet: typeof record.marksheetDocumentId === "string" ? "Submitted" as const : "Missing" as const,
+      marksheet: typeof record.marksheetDocumentId === "string" &&
+        record.marksheetDocumentId.trim().length>0 ? "Submitted" as const : "Missing" as const,
     }];
   });
 }

@@ -100,8 +100,8 @@ export function SuperAdminFacultyAssignmentCreate({
 /** Edit retains the persisted assignment ID and declines to create a second
  * primary teacher. The database unique index resolves concurrent editors. */
 export function SuperAdminTeachingRoleEdit({
- assignmentId,role:initialRole,
-}:{assignmentId:string;role:CourseTeachingRole}){
+ assignmentId,role:initialRole,revision,
+}:{assignmentId:string;role:CourseTeachingRole;revision:string}){
  const router=useRouter();
  const [open,setOpen]=useState(false);
  const [role,setRole]=useState<CourseTeachingRole>(initialRole);
@@ -114,11 +114,13 @@ export function SuperAdminTeachingRoleEdit({
    try{
     await apiFetch("/api/courses/teaching-assignments/"+encodeURIComponent(assignmentId),{
       method:"PATCH",headers:{"content-type":"application/json"},
-      body:JSON.stringify({role}),
+      body:JSON.stringify({role,expectedUpdatedAt:revision}),
     });
     setOpen(false);router.refresh();
    }catch(cause){
-    setNotice(cause instanceof FriendlyFetchError?cause.message:
+    setNotice(cause instanceof FriendlyFetchError&&cause.status===409
+      ?"This teaching assignment changed in another tab. Refresh before editing again."
+      :cause instanceof FriendlyFetchError?cause.message:
       "Could not change this teaching role. Refresh and try again.");
    }
   });

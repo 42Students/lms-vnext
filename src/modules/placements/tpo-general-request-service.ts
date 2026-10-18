@@ -10,6 +10,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
+import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
+import {requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 import {tpoGeneralRequestInputSchema,tpoGeneralRequestDecisionSchema,tpoGeneralRequestTarget,
  tpoGeneralRequestPayload} from "./tpo-general-request-model";
@@ -53,6 +55,9 @@ async function requireTpo(ctx:RequestContext){
   throw new AuthorizationError("placements.manage");
  if(!can(ctx,"placements.manage",{collegeId:member.collegeId}))throw new AuthorizationError("placements.manage");
  requirePermission(ctx,"placements.manage",{collegeId:member.collegeId});
+ // A session role may remain cached after the college revokes a TPO account.
+ // Revalidate the live actor before any private request list or review.
+ await requirePersistedTpoMembership(ctx,member.collegeId);
  return requirePlacementManageScope(ctx,member.collegeId);
 }
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
@@ -258,6 +263,9 @@ export async function decideTpoGeneralRequest(ctx:RequestContext,rawId:unknown,r
  const id=sqlUuid.parse(rawId),decision=tpoGeneralRequestDecisionSchema.parse(raw);
  await requireRegistered();
  return getDb().transaction(async tx=>{
+  // Keep an active-role SHARE lock for the entire write transaction so
+  // concurrent membership revocation cannot race the request decision.
+  await requireTpoJobActor(tx,ctx);
   await lockCollege(tx,college.id);
   const [row]=await tx.select().from(placementLearnerGeneralRequests).where(and(
    eq(placementLearnerGeneralRequests.id,id),eq(placementLearnerGeneralRequests.collegeId,college.id),

@@ -15,6 +15,7 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  const source=db.select({
   id:aliasedColumn(courseTeachingAssignments.id,"admin_teacher_assignment_id"),
   role:courseTeachingAssignments.role,startedAt:courseTeachingAssignments.startedAt,
+  updatedAt:courseTeachingAssignments.updatedAt,
   teachingEnded:aliasedColumn(courseTeachingAssignments.endedAt,"admin_teacher_assignment_ended_at"),
   deliveryEnded:aliasedColumn(courseSectionDeliveries.endedAt,"admin_teacher_delivery_ended_at"),
   teacherName:aliasedColumn(users.displayName,"admin_teacher_name"),
@@ -65,6 +66,7 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(value)+" IST";
  return {query:{...query,page},total,totalPages,items:rows.map(row=>({
   id:row.id,title:row.teacherName||"Unnamed faculty",subtitle:row.courseName+" ("+row.courseCode+")",
+  revision:row.updatedAt.toISOString(),
   status:row.teachingEnded||row.deliveryEnded?"ENDED":"ACTIVE",
   details:["Class: "+row.sectionName,"Semester: "+row.periodName,"Year: "+row.periodYear.slice(0,4),
    "Teaching role: "+row.role,"Active: "+(row.teachingEnded||row.deliveryEnded?"No":"Yes"),"Started: "+format(row.startedAt)],
