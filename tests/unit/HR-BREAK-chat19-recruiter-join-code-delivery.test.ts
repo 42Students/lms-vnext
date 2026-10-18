@@ -26,7 +26,7 @@ describe("HR-BREAK-JOIN-CODE-01: recruiter OTP delivery safety and fail-soft han
  it("rejects invalid OTP values before touching an email provider",async()=>{
   for(const value of ["", "abc123","12345","1234567","123456\n","000000\u200b"]){
    const fetcher=vi.fn();
-   expect(await deliverPublicRecruiterJoinCode(address,value,fetcher as typeof fetch)).toBe(false);
+   expect(await deliverPublicRecruiterJoinCode(address,value,fetcher as unknown as typeof fetch)).toBe(false);
    expect(fetcher).not.toHaveBeenCalled();
   }
  });
@@ -34,7 +34,7 @@ describe("HR-BREAK-JOIN-CODE-01: recruiter OTP delivery safety and fail-soft han
   dep.recipient.mockReturnValue(false);
   const fetcher=vi.fn();
   expect(await deliverPublicRecruiterJoinCode("unauthorized@example.edu","123456",
-    fetcher as typeof fetch)).toBe(false);
+    fetcher as unknown as typeof fetch)).toBe(false);
   expect(dep.recipient).toHaveBeenCalledWith("EMAIL","unauthorized@example.edu");
   expect(dep.config).not.toHaveBeenCalled();
   expect(fetcher).not.toHaveBeenCalled();
@@ -42,21 +42,21 @@ describe("HR-BREAK-JOIN-CODE-01: recruiter OTP delivery safety and fail-soft han
  it.each([""," "," \t "])("rejects empty/whitespace API token %j",async token=>{
   dep.config.mockReturnValue({...config,token});
   const fetcher=vi.fn();
-  expect(await deliverPublicRecruiterJoinCode(address,"123456",fetcher as typeof fetch)).toBe(false);
+  expect(await deliverPublicRecruiterJoinCode(address,"123456",fetcher as unknown as typeof fetch)).toBe(false);
   expect(fetcher).not.toHaveBeenCalled();
  });
  it("rejects unsafe endpoint and missing OTP template before fetch",async()=>{
   const fetcher=vi.fn();
   dep.endpoint.mockReturnValue(false);
-  expect(await deliverPublicRecruiterJoinCode(address,"123456",fetcher as typeof fetch)).toBe(false);
+  expect(await deliverPublicRecruiterJoinCode(address,"123456",fetcher as unknown as typeof fetch)).toBe(false);
   dep.endpoint.mockReturnValue(true);
   dep.config.mockReturnValue({...config,otpTemplateKey:""});
-  expect(await deliverPublicRecruiterJoinCode(address,"123456",fetcher as typeof fetch)).toBe(false);
+  expect(await deliverPublicRecruiterJoinCode(address,"123456",fetcher as unknown as typeof fetch)).toBe(false);
   expect(fetcher).not.toHaveBeenCalled();
  });
  it("sends only the intended code and destination using a bounded POST without logging the code",async()=>{
   const fetcher=vi.fn().mockResolvedValue({ok:true});
-  expect(await deliverPublicRecruiterJoinCode(address,"123456",fetcher as typeof fetch)).toBe(true);
+  expect(await deliverPublicRecruiterJoinCode(address,"123456",fetcher as unknown as typeof fetch)).toBe(true);
   expect(fetcher).toHaveBeenCalledOnce();
   const [url,options]=fetcher.mock.calls[0]!;
   expect(url).toBe(config.apiUrl);
@@ -72,8 +72,8 @@ describe("HR-BREAK-JOIN-CODE-01: recruiter OTP delivery safety and fail-soft han
  });
  it("does not claim delivery on provider denial, timeout or connection failure",async()=>{
   const rejected=vi.fn().mockResolvedValue({ok:false,status:429});
-  expect(await deliverPublicRecruiterJoinCode(address,"123456",rejected as typeof fetch)).toBe(false);
+  expect(await deliverPublicRecruiterJoinCode(address,"123456",rejected as unknown as typeof fetch)).toBe(false);
   const thrown=vi.fn().mockRejectedValue(new Error("provider secret / detail"));
-  expect(await deliverPublicRecruiterJoinCode(address,"123456",thrown as typeof fetch)).toBe(false);
+  expect(await deliverPublicRecruiterJoinCode(address,"123456",thrown as unknown as typeof fetch)).toBe(false);
  });
 });
