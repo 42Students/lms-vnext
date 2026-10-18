@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { projectCompletionPercent } from "./progress-percentage-policy";
 import { groupProjectAdminRows } from "./admin-insights-group-model";
 import {
@@ -90,6 +91,13 @@ export async function listProjectAdminSnapshots(
     collegeId: college.id,
   });
 
+  // A valid session snapshot is not enough: the College Admin role may be
+  // removed while a project directory request is in flight. Hold persisted
+  // actor role locks through both the page query and its eight aggregations.
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"projects.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
   const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
@@ -111,8 +119,6 @@ export async function listProjectAdminSnapshots(
       : undefined,
     search,
   );
-  const db = getDb();
-
   const [totalRow, projects] =
     await Promise.all([
       db
@@ -438,6 +444,7 @@ export async function listProjectAdminSnapshots(
       Math.ceil(total / query.pageSize),
     ),
   };
+  });
 }
 
 export async function listProjectAdminRiskQueue(
