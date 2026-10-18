@@ -1,4 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import type {RequestContext} from "@/modules/identity/context";
 const policy=vi.hoisted(()=>({can:vi.fn()}));
 vi.mock("@/modules/permissions/policy",()=>({can:policy.can}));
 import {isRecruiterJobVisible} from "@/modules/placements/recruiter-job-visibility-model";
@@ -11,7 +12,12 @@ import {hrRecruiterGrantLinks} from "@/modules/placements/hr-recruiter-grant-nav
 const college="123e4567-e89b-42d3-a456-426614174001";
 const different="123e4567-e89b-42d3-a456-426614174002";
 const relationship="rel-a";
-const context={recruiter:{grants:[{collegeId:college,companyRelationshipId:relationship}]}};
+const context:RequestContext={
+ user:{id:"recruiter-a",identityUid:"uid-recruiter-a",platformStatus:"ACTIVE",systemRoles:[]},
+ membership:null,
+ recruiter:{userId:"recruiter-a",companyId:"company-a",companyName:"Company A",title:null,status:"ACTIVE",
+  grants:[{id:"grant-a",organizationId:"org-a",collegeId:college,collegeName:"College A",companyRelationshipId:relationship}]},
+};
 const shared={companyId:"company-a",jobCompanyId:"company-a",jobCollegeId:college,
  membershipCollegeId:college,applicationStatus:"SUBMITTED",screeningStatus:"SHORTLISTED",
  membershipStatus:"ACTIVE",userPlatformStatus:"ACTIVE"};
@@ -20,18 +26,19 @@ describe("HR-BREAK-authorization-01: revoked grants, private candidates, cross-t
  beforeEach(()=>policy.can.mockReset());
  it("grants alone never disclose a job without central live permission",()=>{
   policy.can.mockReturnValue(false);
-  expect(isRecruiterJobVisible(context as never,college,relationship)).toBe(false);
+  expect(isRecruiterJobVisible(context,college,relationship)).toBe(false);
   expect(policy.can).toHaveBeenCalledWith(context,"placements.recruiter.read",{
    collegeId:college,placementCompanyRelationshipId:relationship,
   });
   policy.can.mockReturnValue(true);
-  expect(isRecruiterJobVisible(context as never,college,relationship)).toBe(true);
+  expect(isRecruiterJobVisible(context,college,relationship)).toBe(true);
  });
  it("wrong college, wrong relationship, or absent recruiter cannot invoke placement read",()=>{
   policy.can.mockReturnValue(true);
-  expect(isRecruiterJobVisible(context as never,different,relationship)).toBe(false);
-  expect(isRecruiterJobVisible(context as never,college,"rel-b")).toBe(false);
-  expect(isRecruiterJobVisible({recruiter:null} as never,college,relationship)).toBe(false);
+  expect(isRecruiterJobVisible(context,different,relationship)).toBe(false);
+  expect(isRecruiterJobVisible(context,college,"rel-b")).toBe(false);
+  expect(isRecruiterJobVisible({...context,recruiter:null},college,relationship)).toBe(false);
+  expect(isRecruiterJobVisible({...context,recruiter:{...context.recruiter!,userId:"attacker"}},college,relationship)).toBe(false);
   expect(policy.can).not.toHaveBeenCalled();
  });
  it("the single shared applicant disclosure policy fails closed for every private/withdrawn/inactive condition",()=>{

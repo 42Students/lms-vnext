@@ -1,7 +1,7 @@
 import "server-only";
 import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,placementCompanyRelationships,placementCompanies,colleges,users} from "@/db/schema";
+import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,placementCompanyRelationships,placementCompanies,placementRecruiterCollegeGrants,placementRecruiterProfiles,colleges,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
@@ -52,6 +52,14 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementCompanies.status,"ACTIVE")))
    .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
     eq(colleges.status,"ACTIVE")))
+   .innerJoin(placementRecruiterProfiles,and(
+    eq(placementRecruiterProfiles.userId,context.user.id),
+    eq(placementRecruiterProfiles.companyId,placementCompanies.id),
+    eq(placementRecruiterProfiles.status,"ACTIVE")))
+   .innerJoin(placementRecruiterCollegeGrants,and(
+    eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
+    eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -69,6 +77,14 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementCompanies.status,"ACTIVE")))
    .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
     eq(colleges.status,"ACTIVE")))
+   .innerJoin(placementRecruiterProfiles,and(
+    eq(placementRecruiterProfiles.userId,context.user.id),
+    eq(placementRecruiterProfiles.companyId,placementCompanies.id),
+    eq(placementRecruiterProfiles.status,"ACTIVE")))
+   .innerJoin(placementRecruiterCollegeGrants,and(
+    eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
+    eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))

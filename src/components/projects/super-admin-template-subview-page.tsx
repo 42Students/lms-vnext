@@ -116,7 +116,18 @@ export async function SuperAdminTemplateSubviewPage({
       notFound();
     }
 
-    throw error;
+    // Data-layer outages and an expired/revoked permission must not crash a
+    // template subview or accidentally present an empty global template.
+    // The retry points back to the same authorized route, without exposing
+    // exception text or version JSON to an unverified viewer.
+    return <div className="min-w-0 space-y-5">
+      <ProjectAdminNav basePath="/admin/projects" active="templates"/>
+      <PageHeader eyebrow="Super Admin · Projects" title="Template section"/>
+      <ErrorState title="Template section unavailable"
+        description="Template details could not be loaded. No version or college assignment data is shown."
+        action={<Link href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/"+section}
+          className="font-semibold text-[var(--lms-teal-deep)]">Retry template section</Link>}/>
+    </div>;
   }
 
   const sectionTitle =
