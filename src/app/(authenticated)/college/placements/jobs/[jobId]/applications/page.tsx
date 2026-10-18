@@ -36,7 +36,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
-      actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-primary-text underline">Drive overview</Link>} />
+      actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Application filters" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
         <input name="q" defaultValue={query.q} maxLength={100} className="min-h-11 rounded-md border border-border px-2" />
@@ -80,14 +80,14 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
           {filters.cohorts.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </select>
       </label>
-      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">Filter</button>
     </form>
     <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2">
       {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
         <Link key={stage} href={driveApplicationsHref(jobId,{...query,stage,page:1})}
           aria-current={query.stage===stage?"page":undefined}
           className={"inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm font-semibold "+
-            (query.stage===stage?"border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>
+            (query.stage===stage?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border text-body")}>
           {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
           <span className="tabular-nums">{stage==="ALL"?
             Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):
@@ -97,7 +97,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     <div className="flex flex-wrap justify-between gap-3 text-sm">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="font-semibold text-primary-text underline">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+        className="font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
       <p role="status" className="rounded border border-border bg-surface p-5 text-sm">
