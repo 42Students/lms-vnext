@@ -149,8 +149,8 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-round-apply-service.ts` | `applyTpoWholeRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-calendar-model.ts` | `tpoRoundCalendarMutationSchema` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-calendar-model.ts` | `parseIstRoundLocalTime` (function) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/tpo-round-calendar-service.ts` | `listTpoCalendarRoundChoices` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-round-calendar-service.ts` | `decideTpoCalendarRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-calendar-service.ts` | `listTpoCalendarRoundChoices` (function) | `tests/unit/chat2-tpo-calendar-scope-break-13.test.ts` (wrong roles, account status, tenant and invalid payload; CI pending) | PARTIAL |
+| `src/modules/placements/tpo-round-calendar-service.ts` | `decideTpoCalendarRound` (function) | `tests/unit/chat2-tpo-calendar-scope-break-13.test.ts` (wrong roles, account status, tenant and invalid payload; CI pending) | PARTIAL |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TPO_ROUND_ATTENDANCE_STATES` (const) | `tests/unit/chat2-tpo-round-contracts-break-11.test.ts` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundAttendanceState` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-round-drive-day-model.ts` | `TpoRoundRosterSourceStudent` (type) | N/A (compile-time only) | TYPE ONLY |
