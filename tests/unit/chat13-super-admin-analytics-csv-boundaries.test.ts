@@ -51,8 +51,7 @@ describe("Super Admin placement report and CSV privacy/integrity boundaries",()=
  it("SA-SCOPED-CSV-02 prevents formulas via whitespace, directional overrides, tabs and quoted user titles",()=>{
   const rows=[
    {id:uuid,title:' =HYPERLINK("https://evil","Click")',subtitle:"Acme",status:"ACTIVE",details:["safe"]},
-   {id:"other",title:"\u202E@SUM(1,1)",subtitle:"+2+3",status:"ACTIVE",details:["x
-\"quote\""]},
+   {id:"other",title:"\u202E@SUM(1,1)",subtitle:"+2+3",status:"ACTIVE",details:["x\n\"quote\""]},
   ];
   const csv=buildSuperAdminScopedCsv(rows,false);
   expect(csv.startsWith("\ufeff")).toBe(true);
