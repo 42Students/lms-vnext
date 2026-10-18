@@ -221,3 +221,6 @@ Candidate creation now wraps application, screening, staged round result, offer 
 
 ### PROJ-HARNESS-PLACEMENTS-27: rollback whole drive graph
 `createPlacementFixture` now encloses company, college relationship, active-season selection/insertion, published job, primary role option and round in a single savepoint after coordinator authorization. A forced round-insert failure on real PostgreSQL must leave all counts unchanged, including a preexisting active season, then permit a clean retry. This prevents test graph partial data from silently contaminating unrelated assertions.
+
+### PROJ-HARNESS-PROJECT-28: whole-workspace atomicity
+The project fixture now wraps template/version publication, college assignment, project instance, release/sprint/task/resource and mentor/learner roster construction in a single SAVEPOINT. A PostgreSQL witness simulates failure of the final learner roster INSERT after all earlier writes, asserts original table counts restored and verifies a clean subsequent workspace can be constructed. This prevents caller-caught fixture setup exceptions contaminating tenant/run isolation.
