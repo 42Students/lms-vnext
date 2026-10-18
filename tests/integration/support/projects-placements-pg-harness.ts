@@ -81,6 +81,15 @@ export async function assertHarnessSchema(client: PoolClient): Promise<void> {
     ["project_submissions", "submitted_by_membership_id"],
     ["project_delivery_events", "actor_membership_id"],
     ["project_sprints", "start_date"],
+    ["project_instances", "status"],
+    ["project_templates", "published_version"],
+    ["project_releases", "status"],
+    ["placement_jobs", "application_deadline"],
+    ["placement_jobs", "minimum_annual_ctc_inr"],
+    ["placement_job_role_options", "is_primary"],
+    ["placement_applications", "role_option_id"],
+    ["placement_job_rounds", "cancelled_at"],
+    ["placement_seasons", "status"],
   ] as const;
   const missingColumns = await client.query<{tbl: string; col: string}>(`
     select req.tbl, req.col
