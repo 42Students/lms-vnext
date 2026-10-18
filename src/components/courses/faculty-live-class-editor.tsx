@@ -2,6 +2,10 @@
 
 import {useRouter} from "next/navigation";
 import {useMemo,useState} from "react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {facultyLiveEditorCommand} from "@/modules/courses/faculty-live-editor-command";
 import {facultyLiveSaveFeedback} from "@/modules/courses/faculty-live-save-feedback";
 import {facultyLiveEditorDraft,emptyFacultyLiveDraft} from "@/modules/courses/faculty-live-editor-model";
@@ -29,6 +33,7 @@ export function FacultyLiveClassEditor({
   const [startsAt,setStartsAt]=useState("");
   const [endsAt,setEndsAt]=useState("");
   const [pending,setPending]=useState(false);
+  const [confirmOpen,setConfirmOpen]=useState(false);
   const [error,setError]=useState<string|null>(null);
   const [success,setSuccess]=useState<string|null>(null);
   const chosen=useMemo(()=>sessions.find(s=>s.id===selectedId),[sessions,selectedId]);
@@ -58,7 +63,7 @@ export function FacultyLiveClassEditor({
     }
     setError(null);setSuccess(null);
   }
-  async function save(){
+  async function save(confirmed=false){
     if(!deliveryId||pending||!ready)return;
     let payload:ReturnType<typeof facultyLiveEditorCommand>;
     try{payload=facultyLiveEditorCommand({
@@ -70,7 +75,7 @@ export function FacultyLiveClassEditor({
       const timeIssue=facultyIstQuarterHourIssue(startsAt)||facultyIstQuarterHourIssue(endsAt);
       if(timeIssue){setError(timeIssue);return;}
     }
-    if(!window.confirm(facultyLiveConfirmText(action,chosen,choice?.title??"selected lesson")))return;
+    if(!confirmed){setConfirmOpen(true);return;}
     setPending(true);setError(null);setSuccess(null);
     try{
       const result=await fetch(
@@ -89,7 +94,7 @@ export function FacultyLiveClassEditor({
       setSuccess(facultyLiveMutationSuccess(action));
       router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"Unable to save live class.");}
-    finally{setPending(false);}
+    finally{setPending(false);setConfirmOpen(false);}
   }
   return <section aria-label="Manage Faculty live classes"
     className="space-y-3 rounded-xl border border-border bg-surface p-4">
@@ -100,36 +105,36 @@ export function FacultyLiveClassEditor({
     </p>
     <div className="grid gap-3 sm:grid-cols-2">
       <label className="grid gap-1 text-sm">Action
-        <select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
-          className="min-h-10 rounded border border-border bg-background p-2">
+        <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
+          className="text-base sm:text-sm">
           <option value="CREATE">Schedule</option><option value="EDIT">Reschedule / edit</option>
           <option value="CANCEL">Cancel</option>
-        </select>
+        </Select>
       </label>
       {action==="CREATE"?
         <label className="grid gap-1 text-sm">Lesson
-          <select value={lessonId} onChange={e=>setLessonId(e.target.value)}
-            className="min-h-10 rounded border border-border bg-background p-2">
+          <Select value={lessonId} onChange={e=>setLessonId(e.target.value)}
+            className="text-base sm:text-sm">
             {choices.map(x=><option key={x.id} value={x.id}>
               {x.title} · Section {x.deliveryId.slice(0,8)}
             </option>)}
-          </select>
+          </Select>
         </label> :
         <label className="grid gap-1 text-sm">Published session
-          <select value={selectedId} onChange={e=>preloadSession(e.target.value)}
-            className="min-h-10 rounded border border-border bg-background p-2">
+          <Select value={selectedId} onChange={e=>preloadSession(e.target.value)}
+            className="text-base sm:text-sm">
             {sessions.map(x=><option key={x.id} value={x.id}>{facultyLiveSessionOption(x)}</option>)}
-          </select>
+          </Select>
         </label>}
       {action!=="CANCEL"&&<>
         <label className="grid gap-1 text-sm">Title
-          <input value={title} onChange={e=>setTitle(e.target.value)} maxLength={160}
-            required className="min-h-10 rounded border border-border bg-background p-2" />
+          <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={160}
+            required className="text-base sm:text-sm" />
         </label>
         <label className="grid gap-1 text-sm">HTTPS meeting link
-          <input type="url" value={meetingUrl} onChange={e=>setMeetingUrl(e.target.value)}
+          <Input type="url" value={meetingUrl} onChange={e=>setMeetingUrl(e.target.value)}
             placeholder="https://..." required
-            className="min-h-10 rounded border border-border bg-background p-2" />
+            className="text-base sm:text-sm" />
         </label>
         <FacultyIstQuarterHourPicker label="Start" value={startsAt} onChange={setStartsAt}/>
         <FacultyIstQuarterHourPicker label="End" value={endsAt} onChange={setEndsAt}/>
@@ -146,10 +151,14 @@ export function FacultyLiveClassEditor({
     {!ready?<p className="text-sm text-muted-foreground">
       {action==="CREATE"?"No registered lessons are available to schedule.":"No editable published session is available on this page."}
     </p>:null}
-    <button type="button" disabled={!ready||pending} onClick={save}
-      className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    <Button type="button" disabled={!ready||pending} onClick={()=>void save()} variant={action==="CANCEL"?"danger":"primary"}>
       {pending?"Saving…":"Confirm "+(action==="CREATE"?"schedule":action==="EDIT"?"edit":"cancel")}
-    </button>
+    </Button>
+    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+      title={facultyLiveConfirmText(action,chosen,choice?.title??"selected lesson")}
+      confirmLabel={"Confirm "+(action==="CREATE"?"schedule":action==="EDIT"?"edit":"cancel")}
+      confirmVariant={action==="CANCEL"?"danger":"primary"} pending={pending}
+      onConfirm={()=>void save(true)} />
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {success?<p role="status" className="text-sm font-semibold text-foreground">{success}</p>:null}
   </section>;
