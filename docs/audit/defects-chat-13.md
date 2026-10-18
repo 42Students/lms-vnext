@@ -28,6 +28,10 @@ Reviewed: 2026-10-18 (source inspection; tests **not executed**). Scope: Super A
 
 ## Latest unit-failure note reviewed
 
+The refreshed cloud report (`docs/orchestrator/unit-failures-latest.md`, CI `372038db`) additionally listed `SA-ADMIN-FIRST-08` and `PROJ-BREAK-SA-03` among failures. `SA-ADMIN-FIRST-08` had a brittle whitespace-only source assertion despite a runtime formatter test already proving inactive/archived labels; fixed test in `7eb0e7db`. `PROJ-BREAK-SA-03` was a genuine failing state transition caused by the now-fixed escaped-newline guard (`5394c859`). **The refreshed report predates these branch changes; a clean rerun remains required.**
+
+
+
 `docs/orchestrator/unit-failures-latest.md` lists four additional chat-13 failures in academic scroll, class-capacity source formatting, native Drawer modal semantics and legacy academic status whitespace. Their assertions were updated to preserve the exact safety/UX invariants while accepting the current implementations. The newer file supersedes the older `r9` report, which lists `PUB-auth-public-53` in `chat13-final-sprint-public-share.test.ts` and `SA-academics-people-36` in `chat13-super-admin-academic-copy.test.ts`. On the current `main` source, the DataTable maps the selected approved columns to `tableColumns` and uses the same `result.rows`; `legacyAcademicStatus` is called with the expected boolean on batches and cohorts. The reported failures may refer to an older source revision. Do **not** mark them green without the orchestrator rerunning Vitest.
 
 ## Remaining hardening obligations
