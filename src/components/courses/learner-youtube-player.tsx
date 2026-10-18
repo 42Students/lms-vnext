@@ -446,9 +446,9 @@ export function LearnerYouTubePlayer({
         </p>
         <a
           href={externalUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-2 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+          
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
         >
           Open on YouTube ↗
         </a>
@@ -490,9 +490,9 @@ export function LearnerYouTubePlayer({
       {loadFailed ? (
         <a
           href={externalUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-2 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+          
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
         >
           Open on YouTube ↗
         </a>

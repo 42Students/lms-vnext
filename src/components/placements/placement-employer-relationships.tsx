@@ -231,10 +231,10 @@ export function PlacementEmployerRelationships({
                   </p> : null}
                   {item.websiteUrl ? (
                     <a
-                      className="mt-1 inline-block text-xs font-semibold text-primary-text hover:text-primary-hover"
+                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover"
                       href={item.websiteUrl}
-                      target="_blank"
-                      rel="noreferrer"
+                      
+                      rel="noopener noreferrer"
                     >
                       Open employer website →
                     </a>
