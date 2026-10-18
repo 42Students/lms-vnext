@@ -45,8 +45,11 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   const secondary=columns.filter(col=>col.key!==primary?.key &&
     col.mobilePriority!=="action" && col.mobilePriority!=="hidden");
   const shown=secondary.slice(0,3);
-  const extra=[...secondary.slice(3),
-    ...columns.filter(col=>col.mobilePriority==="hidden" && !col.mobileDetail)];
+  // A column explicitly marked "hidden" must never be reintroduced by the
+  // mobile More details disclosure. If access can be recovered, a guarded
+  // mobileDetail link is rendered independently below; otherwise it stays
+  // hidden on phones, even though its desktop cell may still be visible.
+  const extra=secondary.slice(3);
   const visibleOnPhone=new Set([primary?.key,...shown.map(c=>c.key),...actions.map(c=>c.key)]);
   // One row/column DOM tree, one cell formatter call: no duplicated 100-row
   // responsive subtree. Only collapsed secondary fields are repeated in
