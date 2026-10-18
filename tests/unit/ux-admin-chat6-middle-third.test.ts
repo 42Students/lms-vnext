@@ -248,4 +248,19 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
   expect(page).toContain("Personal contact and session information are excluded.");
  });
 
+ it("UX-admin-middle-third-coverage-01 keeps exactly 37 route notes and named acceptance tests",()=>{
+  const list=read("docs/orchestrator/ui-ux/pages-admin.md");
+  const routes=[...list.matchAll(/^- \\[[ x]\\] `([^`]+)`/gm)].map(match=>match[1]!);
+  expect(routes).toHaveLength(111);
+  const slice=routes.slice(37,74);
+  expect(slice).toHaveLength(37);
+  const tests=read("tests/unit/ux-admin-chat6-middle-third.test.ts");
+  for(const route of slice){
+   const slug=route.slice("/admin/".length).replace(/[\\/\\[\\]]+/g,"-");
+   const note=read("docs/audit/ux/admin-"+slug+".md");
+   expect(note).toContain("# "+route+" · UX source review");
+   expect(tests).toContain("UX-admin-"+slug+"-01");
+  }
+ });
+
 });
