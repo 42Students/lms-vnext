@@ -96,7 +96,7 @@ describe("chat-16 messaging campaign, audience and notification boundary behavio
   });
   expect(tpoCampaignUnsubscribeEvent("A & B","a/b").notification.actionHref)
    .toBe("/tpo/recruiters/a%2Fb");
-  expect(tpoCampaignUnsubscribeEvent("A\\nB\\tC","123").notification.title)
+  expect(tpoCampaignUnsubscribeEvent("A\nB\tC","123").notification.title)
    .toBe("A B C unsubscribed");
   expect(tpoCampaignUnsubscribeEvent("x".repeat(300),"123").notification.title)
    .toBe("x".repeat(120)+" unsubscribed");
