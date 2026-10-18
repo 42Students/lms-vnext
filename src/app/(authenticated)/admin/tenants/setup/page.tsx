@@ -28,7 +28,7 @@ export default async function SuperAdminTenantSetup({
  const id=context.adminScope?.collegeId??null;
  const query=await searchParams;
  const tab=tenantSetupTab(query.tab,id!==null);
- const active="border-primary bg-primary-subtle text-primary-text";
+ const active="border-primary bg-primary-subtle text-[var(--lms-teal-deep)]";
  const inactive="border-border text-body hover:bg-surface-subtle";
  const tabLink=(next:Tab)=>"/admin/tenants/setup?tab="+next;
  // Structure forms must never suggest an organization outside this safety scope.
@@ -47,7 +47,7 @@ export default async function SuperAdminTenantSetup({
  const readiness=college?await getSuperAdminCollegeReadiness(context,college.id):null;
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
  return <div className="min-w-0 space-y-6">
-  <Link href="/admin/tenants" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">← Tenant directory</Link>
+  <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Tenant directory</Link>
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."/>
   <section aria-label="Tenant setup overview" className="grid gap-3 sm:grid-cols-3">
@@ -91,7 +91,7 @@ export default async function SuperAdminTenantSetup({
     <div className="rounded-xl border border-border bg-surface p-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="font-semibold">Organizations</h2>
-      <Link href="/admin/organizations" className="text-sm font-semibold text-primary-text underline">Manage all</Link>
+      <Link href="/admin/organizations" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {organizations.slice(0,20).map(o=><li key={o.id} className="rounded border border-border p-2">{o.name}</li>)}
@@ -101,11 +101,11 @@ export default async function SuperAdminTenantSetup({
     <div className="rounded-xl border border-border bg-surface p-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="font-semibold">Colleges</h2>
-      <Link href="/admin/tenants" className="text-sm font-semibold text-primary-text underline">Manage all</Link>
+      <Link href="/admin/tenants" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {list?.items.map(item=><li key={item.id} className="rounded border border-border p-2">
-       <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="font-semibold text-primary-text underline">{item.name}</Link>
+       <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="font-semibold text-[var(--lms-teal-deep)] underline">{item.name}</Link>
        {" · "}{item.code} · {item.status}
       </li>)}
      </ul>
@@ -113,7 +113,7 @@ export default async function SuperAdminTenantSetup({
      <p className="mt-2 text-xs text-muted-foreground">First page only. Archived colleges remain marked; no implicit restoration.</p>
     </div>
    </section>
-   <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Continue to launch setup →</Link>
+   <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Continue to launch setup →</Link>
   </>:college?<>
    <h2 className="text-lg font-semibold">{college.name} · Launch setup</h2>
    <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
@@ -126,29 +126,29 @@ export default async function SuperAdminTenantSetup({
      {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
     ].map(card=><Link key={card.label} href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
      className="min-w-0 rounded-xl border border-border bg-surface p-4 hover:border-primary">
-     <h3 className="font-semibold text-primary-text">{card.label}</h3>
+     <h3 className="font-semibold text-[var(--lms-teal-deep)]">{card.label}</h3>
      <p className="mt-2 text-sm text-body">{card.description}</p>
     </Link>)}
    </div>
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="text-lg font-semibold">Launch checklist</h2>
-     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="text-sm font-semibold text-primary-text underline">Inspect persisted readiness →</Link>
+     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-3 sm:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-foreground">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>
-      <Link href={step.href} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Open workspace →</Link>
+      <Link href={step.href} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Open workspace →</Link>
      </li>)}
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
-  </>:<section role="status" className="rounded-xl border border-border bg-surface p-5">
+  </>:<section role="status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
     <h2 className="font-semibold">No college selected</h2>
     <p className="mt-2 text-sm text-body">No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant.</p>
-    <Link href={tabLink("STRUCTURE")} className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Create or select a college →</Link>
+    <Link href={tabLink("STRUCTURE")} className="mt-3 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Create or select a college →</Link>
   </section>}
  </div>;
 }
