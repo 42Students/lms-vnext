@@ -66,3 +66,15 @@ GitHub source declaration review, October 19, 2026. **This is a symbol map, not 
 | `src/modules/courses/faculty-live-editor-model.ts` | `facultyLiveEditorDraft`, `emptyFacultyLiveDraft` | `FacultyLiveEditableSession` | 15 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-live-lock-model.ts` | `facultyLiveDeliveryLockKey` | — | 5 | Declared; behavioral verification pending |
 | `src/modules/courses/faculty-live-mutation-model.ts` | `facultyLiveMutationParamsSchema`, `facultyLiveMutationSchema`, `facultyLiveWindow` | — | 58 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-live-mutation-service.ts` | `commandFacultyLiveClass` | — | 157 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-live-published-policy.ts` | `facultyLivePublishedMutationAllowed` | — | 5 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-live-save-feedback.ts` | `facultyLiveSaveFeedback` | — | 17 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-live-session-option.ts` | `facultyLiveSessionOption` | — | 6 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-live-success.ts` | `facultyLiveMutationSuccess` | — | 8 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-manual-grade-receipt.ts` | `FacultyManualGradeReceiptError`, `facultyManualGradeReceipt`, `beginFacultyManualGradeOperation`, `facultyManualGradeUncertainMessage`, `facultyManualGradePublishPrompt`, `facultyManualGradeNeedsRefresh`, `facultyManualGradeSuccessMessage` | `FacultyGradeReceiptScope` | 65 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-notices-model.ts` | `facultyNoticeParamsSchema`, `FACULTY_SECTION_NOTICES_BLOCKER` | — | 10 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-notices-service.ts` | `getFacultySectionNotices` | — | 26 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-notification-link-model.ts` | `facultyNotificationActionHref` | — | 19 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-persisted-teaching-guard.ts` | `assertPersistedFacultyTeachingMutation` | — | 52 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-profile-teaching-model.ts` | `facultyProfileTeachingQuerySchema`, `pageOwnFacultyTeaching`, `ownFacultyTeachingHref` | `FacultyProfileTeachingQuery`, `FacultyTeachingRecord` | 46 | Declared; behavioral verification pending |
+| `src/modules/courses/faculty-profile-teaching-service.ts` | `getOwnFacultyTeachingSection` | — | 32 | Declared; behavioral verification pending |
