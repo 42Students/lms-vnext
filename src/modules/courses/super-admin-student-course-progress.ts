@@ -9,6 +9,7 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
 export const superAdminStudentProgressQuery=z.strictObject({offeringId:z.uuid()});
 export type StudentCourseProgressRow={
  membershipId:string;studentName:string;videos:number;assignments:number;quizzes:number;
+ totalVideos:number;totalAssignments:number;totalQuizzes:number;
 };
 export type StudentCourseProgressTotals={videos:number;assignments:number;quizzes:number};
 
@@ -114,12 +115,8 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  const rows=(result.rows as unknown as DbRow[]).slice(0,500).map(row=>({
   membershipId:row.membershipId,studentName:row.studentName,
   videos:Number(row.videos),assignments:Number(row.assignments),quizzes:Number(row.quizzes),
+  totalVideos:Number(row.totalVideos),totalAssignments:Number(row.totalAssignments),
+  totalQuizzes:Number(row.totalQuizzes),
  }));
- const first=result.rows[0] as DbRow|undefined;
- const totals={
-  videos:Number(first?.totalVideos??0),
-  assignments:Number(first?.totalAssignments??0),
-  quizzes:Number(first?.totalQuizzes??0),
- };
- return {offeringId,collegeId,rows,totals,truncated:result.rows.length>500};
+ return {offeringId,collegeId,rows,truncated:result.rows.length>500};
 }
