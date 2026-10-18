@@ -196,9 +196,10 @@ export async function requireProjectLifecycleAccess(
 
 /** Shared mutation gate for the legacy Admin and Mentor project workspaces. */
 export async function requireProjectLifecycleMutationAccess(context: RequestContext, projectIdInput: string) {
-  const scope = await requireProjectLifecycleAccess(context, projectIdInput);
+  // Deny disabled modules before any project ID existence/tenant lookup.
+  // Callers retain their role and tenant checks through the lifecycle guard.
   if (!(await resolveOptionalModuleAccess(context)).projects.enabled) {
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
   }
-  return scope;
+  return requireProjectLifecycleAccess(context, projectIdInput);
 }
