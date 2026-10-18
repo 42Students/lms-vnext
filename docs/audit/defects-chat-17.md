@@ -21,6 +21,9 @@
 | WEAK-tenant-managed-26 | S2 (managed hostname mismatch) | Suffix-only matching treated invalid empty-label and reserved-label addresses as managed. | Require a canonical allocatable prefix and exact normalized host match; test `WEAK-tenant-managed-26`; commit `a00dea1c`. | Fix pushed; cloud pending |
 | PROJ-BREAK-MENTOR-40 | S2 (WebView and touch UI) | Mentor auto-assign invoked native `window.confirm` and used 40px tap targets. | Shared promise-backed confirmation with visible overlay and 44px controls; source/UX regression `PROJ-BREAK-MENTOR-40`, commit `4f664565`. | Fix pushed; browser pending |
 
+| UX-kit-HARDEN-35 | S1 (navigation integrity) | Breadcrumbs previously trusted arbitrary href values, and table/breadcrumb validation could diverge. Future model-provided URLs could become unsafe external destinations or fail to render harmless navigation as intended. | Centralized `isSafeInternalHref`, reused across both widgets, retained `isSafeDataTableHref` API; test `UX-kit-HARDEN-35`. Commits `1239d168`, `df9ec450`, `2f26054a`. | Fix pushed; cloud pending |
+| UX-project-workspaces-41 | S2 (mobile tap target) | College Admin workspace card primary navigation was 36px minimum height, below the accepted 44px mobile target. | Updated card link to min-h-11, commit `496beed0`; browser click target still needs E2E. | Fix pushed; browser pending |
+
 ## Integration fixture hardening
 
 - `PROJ-HARNESS-22..28`: explicit current college, project roster, active user and `can_mutate` checks protect example SQL fixtures against accidental incorrect cross-tenant writes. This is fixture integrity, not proof of product route authorization.
