@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/selection-controls";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Drawer } from "@/components/ui/drawer";
@@ -17,6 +18,9 @@ import { ToastProvider, useToast } from "@/components/ui/toast";
 
 function UIKitTestSurface() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmPending, setConfirmPending] = useState(false);
+  const [confirmInvocations, setConfirmInvocations] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [tab, setTab] = useState("overview");
@@ -36,6 +40,24 @@ function UIKitTestSurface() {
         <p>Dialog body with keyboard focus.</p>
         <Input aria-label="Dialog input" placeholder="Type here"/>
       </Dialog>
+    </section>
+
+    <section aria-label="Pending destructive action fixture">
+      <Button variant="danger" onClick={() => setConfirmOpen(true)}>Review harness deletion</Button>
+      <p data-testid="confirm-invocations">Confirmation requests: {confirmInvocations}</p>
+      <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+        title="Delete harness workspace" confirmLabel="Delete"
+        description="This is only an isolated test and performs no mutation."
+        pending={confirmPending} onConfirm={() => {
+          setConfirmInvocations(count => count + 1);
+          setConfirmPending(true);
+        }}>
+        <p>Pending submissions must not be canceled or duplicated.</p>
+        {confirmPending ? <Button variant="secondary" onClick={() => {
+          setConfirmPending(false);
+          setConfirmOpen(false);
+        }}>Finish harness request</Button> : null}
+      </ConfirmDialog>
     </section>
 
     <section aria-label="Nested overlays fixture">
