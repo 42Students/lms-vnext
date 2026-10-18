@@ -22,12 +22,12 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  if(!parsed.success)return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
   <h1 className="text-lg font-semibold text-foreground">Invalid share-audit filters</h1>
   <p className="text-sm text-body">Choose a valid event kind and page number. No access history was loaded.</p>
-  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="text-primary-text underline">Clear filters</Link>
+  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
  </section>;
  const {kind,page:auditPage}=parsed.data;
  const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
- return <div className="space-y-5">
-  <Link href={back} className="text-sm font-semibold text-primary-text underline">
+ return <div className="min-w-0 space-y-5">
+  <Link href={back} className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">
    Back to company-share preview
   </Link>
   <h1 className="text-2xl font-semibold text-foreground">Company-share access history</h1>
@@ -35,12 +35,12 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
    {tpoCompanyAuditKindSchema.options.map(option=><Link key={option}
     href={tpoCompanyAuditHref(jobId,option)}
     aria-current={kind===option?"page":undefined}
-    className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+    className="rounded border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">
     {option==="ALL"?"All events":option==="VIEW"?"Page views":option==="LOCKED"?"Locked shares":"CSV downloads"}
    </Link>)}
   </nav>
   {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
-    className="inline-flex min-h-10 items-center rounded bg-primary px-4 text-sm font-semibold text-on-primary">
+    className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm font-semibold text-on-primary">
     Export access history CSV
   </a>:null}
   {!result.ready?<p role="status" className="rounded border border-border p-5">
@@ -61,9 +61,9 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
   {result.ready?<nav aria-label="Access history pages" className="flex flex-wrap gap-4 text-sm">
    <span>{result.total} events · Page {result.page} of {result.totalPages}, 25 per page</span>
    {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
-    className="font-semibold text-primary-text underline">Previous</Link>:null}
+    className="font-semibold text-[var(--lms-teal-deep)] underline">Previous</Link>:null}
    {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
-    className="font-semibold text-primary-text underline">Next</Link>:null}
+    className="font-semibold text-[var(--lms-teal-deep)] underline">Next</Link>:null}
   </nav>:null}
  </div>;
 }

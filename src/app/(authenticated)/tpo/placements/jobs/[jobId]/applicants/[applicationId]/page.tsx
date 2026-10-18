@@ -26,8 +26,8 @@ export default async function TpoApplicantDetailPage({params}:Params){
      ["Submitted",new Date(data.application.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST"],
      ["Screening decided",data.application.screeningDecidedAt?
       new Date(data.application.screeningDecidedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not recorded"]];
- return <div className="space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="text-sm font-semibold text-primary-text hover:underline">← Applicant pipeline</Link>
+ return <div className="min-w-0 space-y-6">
+  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Applicant pipeline</Link>
   <PageHeader eyebrow="TPO · Applicant detail"
    title={data.application.student??"Name not recorded"}
    description={data.job.title+" · "+data.application.roleTitle}/>
@@ -40,7 +40,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
       </div>)}
    </dl>
    <Link href={"/tpo/students/"+data.application.membershipId+"/history"}
-    className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
     View student placement history →</Link>
   </section>
   {data.application.screeningUpdatedAt && canReviewApplicant(data.applicantStatus, data.screening) ?

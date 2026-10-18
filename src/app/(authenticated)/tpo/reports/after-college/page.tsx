@@ -24,8 +24,8 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const branches=new Map(data.branches.map(row=>[row.id,row.name]));
  if(branchId&&!branches.has(branchId))return <p role="alert">Invalid branch for this college. <Link href="/tpo/reports/after-college">Clear filters</Link></p>;
  const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
- return <main data-tpo-presentation-report className="space-y-5">
-  <Link href="/tpo/reports" className="text-sm font-semibold text-primary-text underline">← All reports</Link>
+ return <div data-tpo-presentation-report className="space-y-5">
+  <Link href="/tpo/reports" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">← All reports</Link>
       <TpoReportPresentation />
   <PageHeader eyebrow="TPO · Reports" title="After college"
    description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."/>
@@ -35,19 +35,19 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
    </p>:<>
    <form method="get" className="flex flex-wrap items-end gap-3 rounded border border-border p-4">
     <label className="grid gap-1 text-sm">Batch
-     <select name="batchId" defaultValue={batchId??""} className="min-h-10 rounded border border-border p-2">
+     <select name="batchId" defaultValue={batchId??""} className="min-h-11 rounded border border-border p-2">
       <option value="">All current batches</option>
       {batches.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </select></label>
     <label className="grid gap-1 text-sm">Branch
-     <select name="branchId" defaultValue={branchId??""} className="min-h-10 rounded border border-border p-2">
+     <select name="branchId" defaultValue={branchId??""} className="min-h-11 rounded border border-border p-2">
       <option value="">All branches</option>
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
      </select></label>
-    <button type="submit" className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary">Filter</button>
-    <Link href="/tpo/reports/after-college" className="text-primary-text underline">Clear</Link>
+    <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Filter</button>
+    <Link href="/tpo/reports/after-college" className="text-[var(--lms-teal-deep)] underline">Clear</Link>
     <a href={"/api/placements/tpo/reports/after-college?"+query.toString()}
-      className="text-primary-text underline">Download CSV</a>
+      className="text-[var(--lms-teal-deep)] underline">Download CSV</a>
    </form>
    <p className="text-sm text-body">{data.total} students in this reporting population. NAAC 5.2 / NIRF working data only; unreported choices remain Not decided.</p>
    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
@@ -71,5 +71,5 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
    </section>
    {data.rows.length>300?<p className="text-xs text-muted-foreground">Showing the first 300 rows. Download CSV for the complete filtered list.</p>:null}
   </>}
- </main>;
+ </div>;
 }

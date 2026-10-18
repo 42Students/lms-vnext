@@ -16,8 +16,8 @@ export default async function TpoCampaignDraftDetail({params}:{params:Promise<{c
  const deliveryReady=ready?await tpoCampaignDispatchReady():false;
  const recipients=draft?await listTpoCampaignRecipientStatuses(context,campaignId):null;
  if(ready&&!draft)notFound();
- return <main className="space-y-5">
-  <Link href="/tpo/recruiters/campaigns" className="text-sm text-primary-text underline">
+ return <div className="min-w-0 space-y-5">
+  <Link href="/tpo/recruiters/campaigns" className="text-sm text-[var(--lms-teal-deep)] underline">
    ← Campaign history
   </Link>
   {!ready?<p role="alert" className="rounded-md border border-border bg-surface p-5">{CAMPAIGN_DRAFT_UNAVAILABLE}</p>:
@@ -43,7 +43,7 @@ export default async function TpoCampaignDraftDetail({params}:{params:Promise<{c
      {recipients.rows.length?<ul className="divide-y divide-border rounded-lg border border-border">
       {recipients.rows.map(row=><li key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 p-3 text-sm">
        <Link href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
-        className="min-w-0 break-words font-semibold text-primary-text underline">{row.name}</Link>
+        className="min-w-0 break-words font-semibold text-[var(--lms-teal-deep)] underline">{row.name}</Link>
        <span className="rounded border border-border px-2 py-1 text-xs">
         {({PENDING:"Not sent",QUEUED:"Queued · delivery not confirmed",SENT:"Provider accepted",FAILED:"Failed",
           SKIPPED_NO_EMAIL:"Skipped · no email",SKIPPED_UNSUBSCRIBED:"Skipped · opted out",
@@ -54,5 +54,5 @@ export default async function TpoCampaignDraftDetail({params}:{params:Promise<{c
      {recipients.hasMore?<p role="status" className="text-xs">Showing the first 500 recipients.</p>:null}
     </section>:null}
    </article>:null}
- </main>;
+ </div>;
 }
