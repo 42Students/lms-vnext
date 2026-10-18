@@ -5,7 +5,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,learnerProgramEnrollments,membershipRoles,
  placementBatchRegistrationEvents,placementBatchRegistrations,placementExternalOfferEvents,placementExternalOffers,
- placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementApplications,placementJobRounds,placementJobs,placementOffers,users} from "@/db/schema";
+ placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementApplications,placementJobRounds,placementJobs,placementOffers,placementRoundAttendance,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
@@ -255,6 +255,41 @@ async function approveEffect(tx:Tx,ctx:RequestContext,row:typeof placementLearne
    actorUserId:ctx.user.id,source:"TPO",
   });
   return {effect:"REGISTRATION_UPDATED",id:saved.id};
+ }
+ if(row.kind==="ABSENCE_DISPUTE"){
+  // A dispute changes a real persisted ABSENT mark, never merely its queue
+  // status. Recheck ownership/college/round association at decision time.
+  const applicationId=sqlUuid.safeParse(p.applicationId),roundId=sqlUuid.safeParse(p.roundId);
+  if(!applicationId.success||!roundId.success)throw new TpoGeneralRequestError("TARGET_CHANGED");
+  const [record]=await tx.select({id:placementRoundAttendance.id,status:placementRoundAttendance.status})
+   .from(placementRoundAttendance)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementRoundAttendance.applicationId))
+   .innerJoin(placementJobRounds,and(eq(placementJobRounds.id,placementRoundAttendance.roundId),
+    eq(placementJobRounds.jobId,placementApplications.jobId)))
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+   .where(and(eq(placementRoundAttendance.roundId,roundId.data),
+    eq(placementRoundAttendance.applicationId,applicationId.data),
+    eq(placementApplications.membershipId,row.membershipId),
+    eq(placementJobs.collegeId,row.collegeId)))
+   .for("update",{of:placementRoundAttendance}).limit(1);
+  if(!record||record.status!=="ABSENT")throw new TpoGeneralRequestError("TARGET_CHANGED");
+  const now=new Date();
+  const [corrected]=await tx.update(placementRoundAttendance).set({
+   status:"PRESENT",markedByUserId:ctx.user.id,markedAt:now,updatedAt:now,
+  }).where(and(eq(placementRoundAttendance.id,record.id),
+   eq(placementRoundAttendance.status,"ABSENT")))
+   .returning({id:placementRoundAttendance.id});
+  if(!corrected)throw new TpoGeneralRequestError("TARGET_CHANGED");
+  await tx.insert(activityEvents).values({
+   collegeId:row.collegeId,organizationId:ctx.membership!.organizationId,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
+   module:"PLACEMENTS",eventType:"PLACEMENTS_ATTENDANCE_DISPUTE_CORRECTED",
+   subjectType:"placement_round_attendance",subjectId:corrected.id,
+   summary:"TPO corrected round absence after a student dispute",
+   metadata:{requestId:row.id,applicationId:applicationId.data,roundId:roundId.data,
+    previousStatus:"ABSENT",status:"PRESENT"},
+  });
+  return {effect:"ABSENCE_CORRECTED",id:corrected.id};
  }
  throw new TpoGeneralRequestError("EFFECT_UNSUPPORTED");
 }
