@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,gt,inArray,ne,notExists,or} from "drizzle-orm";
+import {and,asc,eq,gt,inArray,isNull,ne,notExists,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobRounds,placementJobs} from "@/db/schema";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
