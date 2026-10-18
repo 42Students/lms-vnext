@@ -21,7 +21,8 @@ describe("UX-courses-attendance-overlay-foundation-01",()=>{
   }
   expect(confirmation).toContain("confirmDisabled");
   expect(confirmation).toContain("pending");
-  expect(confirmation).toContain("onConfirm={onConfirm}");
+  expect(confirmation).toContain("onClick={onConfirm}");
+  expect(confirmation).toContain("disabled={pending || confirmDisabled}");
  });
 
  const cases=[
