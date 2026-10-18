@@ -1,6 +1,7 @@
 import "server-only";
 import { and, count, eq, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
   cohorts, courseOfferings, courseSectionDeliveries, courseTeachingAssignments,
   departments, programTermCourses, programTerms, programs,
@@ -26,7 +27,13 @@ export async function getPromotionFacultyReadiness(
   context: RequestContext, programId: string, cohortId: string, termNumber: number,
 ) {
   const member = await resolveActingCollege(context, "academics.read");
-  const db = getDb();
+  // A captured College Admin/Super Admin session can survive a role revocation.
+  // Hold persisted actor locks while reading the cohort, target mapping and
+  // faculty assignment facts; none can be disclosed after the guard rejects.
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"academics.read",{
+      collegeId:member.collegeId,organizationId:member.organizationId,
+    });
   const [cohort] = await db.select({ id: cohorts.id })
     .from(cohorts).innerJoin(programs, eq(programs.id, cohorts.programId))
     .innerJoin(departments, eq(departments.id, programs.departmentId))
@@ -65,4 +72,5 @@ export async function getPromotionFacultyReadiness(
   return summarizePromotionFacultyReadiness(
     courses.map(row => row.courseId), active.map(item => item.courseId),
   );
+  });
 }

@@ -18,7 +18,7 @@ export function projectTpoInterviewReadiness(
  const states=rounds.map((r)=>{
   const at=r.scheduledAt?Date.parse(r.scheduledAt):NaN;
   const known=Number.isFinite(at);
-  const validDuration=r.durationMinutes!==null&&Number.isSafeInteger(r.durationMinutes)&&r.durationMinutes>0;
+  const validDuration=r.durationMinutes!==null&&Number.isSafeInteger(r.durationMinutes)&&r.durationMinutes>0&&r.durationMinutes<=1440;
   const inWindow=known&&at>=now&&at<=end;
   const active=known&&validDuration&&at<=now&&now<at+r.durationMinutes!*60_000;
   const state=r.status==="PENDING"||!known?"UNSCHEDULED":

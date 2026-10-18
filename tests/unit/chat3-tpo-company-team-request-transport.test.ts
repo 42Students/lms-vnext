@@ -20,6 +20,7 @@ vi.mock("@/lib/api-error",()=>({apiErrorResponse:stubs.apiError}));
 vi.mock("@/lib/request-id",()=>({createRequestId:()=>"chat3reqid"}));
 import {POST} from "@/app/api/placements/tpo/company-team/[companyId]/route";
 import {TpoCompanyTeamError} from "@/modules/placements/tpo-company-team-service";
+import {parseTpoCompanyTeamDraft,tpoCompanyTeamDraftSendKey} from "@/modules/placements/tpo-company-team-draft-model";
 import {ZodError} from "zod";
 
 const companyId="11111111-1111-4111-8111-111111111111";
@@ -125,15 +126,40 @@ describe("TPO-companies-05 Company Team bounded request and replay safety",()=>{
   expect(response.status).toBe(200);
   expect(stubs.mutate).toHaveBeenCalledWith({user:{id:"tpo"}},companyId,input);
  });
- it("retains one pending request and the same UUID after a lost send response",()=>{
+ it("retains a synchronous request lock and session-local retry metadata",()=>{
   const source=readFileSync(join(process.cwd(),
    "src/components/tpo/tpo-company-team-conversation.tsx"),"utf8");
   expect(source).toContain("if(pending.current||busy)return false;");
   expect(source).toContain("pending.current=true;");
   expect(source).toContain("finally{pending.current=false;setBusy(false);}");
-  expect(source).toContain("sendKey.current?.fingerprint!==fingerprint");
-  expect(source).toContain("sendKey.current={fingerprint,key:crypto.randomUUID()}");
+  expect(source).toContain("parseTpoCompanyTeamDraft(sessionStorage.getItem(draftKey))");
+  expect(source).toContain("tpoCompanyTeamDraftSendKey(sendKey.current,fingerprint");
   expect(source).toContain("idempotencyKey:sendKey.current.key");
-  expect(source).toContain("if(ok){sendKey.current=null;");
+  expect(source).toContain("sessionStorage.removeItem(draftKey)");
+  expect(source).toContain("sendKey.current=null;setBody");
+ });
+ it("reuses an existing UUID after a lost response and generates a new one for edited content",()=>{
+  const previous={fingerprint:'["A",false,null,null]',
+   key:"22222222-2222-4222-8222-222222222222"};
+  expect(tpoCompanyTeamDraftSendKey(previous,previous.fingerprint,()=>{
+   throw new Error("A retry must not create a second key");
+  })).toEqual(previous);
+  const different=tpoCompanyTeamDraftSendKey(previous,'["B",false,null,null]',
+   ()=>"33333333-3333-4333-8333-333333333333");
+  expect(different).toEqual({
+   fingerprint:'["B",false,null,null]',
+   key:"33333333-3333-4333-8333-333333333333",
+  });
+ });
+ it("recovers complete drafts but rejects corrupt or overlength session storage",()=>{
+  const draft={body:"తెలుగు",decision:true,assignee:"",
+   dueAt:"",pending:{fingerprint:"example",
+    key:"22222222-2222-4222-8222-222222222222"}};
+  expect(parseTpoCompanyTeamDraft(JSON.stringify(draft))).toEqual(draft);
+  for(const invalid of [
+   "{",JSON.stringify({...draft,body:"x".repeat(4001)}),
+   JSON.stringify({...draft,assignee:"another-college"}),
+   JSON.stringify({...draft,pending:{fingerprint:"example",key:"invalid"}}),
+  ])expect(parseTpoCompanyTeamDraft(invalid)).toBeNull();
  });
 });
