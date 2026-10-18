@@ -86,7 +86,7 @@ export async function getRecruiterCompanyTeam(
       eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
       eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
       eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-      gt(placementRecruiterCollegeGrants.validUntil,sql`now()`,
+      gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
     ))
     .innerJoin(users,and(
       eq(users.id,context.user.id),

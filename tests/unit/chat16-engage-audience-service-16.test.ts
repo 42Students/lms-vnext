@@ -20,8 +20,7 @@ const tpo:RequestContext={
 };
 beforeEach(()=>{
  vi.clearAllMocks();
- vi.mocked(requirePlacementManageScope).mockResolvedValue({id:college,organizationId:org}
-  as Awaited<ReturnType<typeof requirePlacementManageScope>>);
+ vi.mocked(requirePlacementManageScope).mockResolvedValue({id:college,organizationId:org} as Awaited<ReturnType<typeof requirePlacementManageScope>>);
  vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(undefined);
 });
 function database<T>(rows:readonly T[]){
