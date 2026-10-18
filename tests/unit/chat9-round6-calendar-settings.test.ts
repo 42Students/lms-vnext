@@ -22,9 +22,9 @@ describe("chat-9 round 6 calendar and settings",()=>{
  });
  it("TPO-settings-audit-03 uses the original Settings section names in the grouped navigation",()=>{
    const labels=TPO_SETTINGS_NAV_GROUPS.flatMap(g=>g.items.map(x=>x.label));
-   // TPO-settings-audit-03 matches the verified legacy SETTINGS_META labels,
-   // not the pre-audit shorthand that conflicted with the other copy contract.
-   for(const text of ["Placement Rules","Recruiter access","What Companies See","Public placements","Placement Branding"])
+   // TPO-settings-audit-01/03/55: the legacy settings.js People tab is
+   // named Recruiters. Recruiter access remains the page heading only.
+   for(const text of ["Placement Rules","Recruiters","What Companies See","Public placements","Placement Branding"])
     expect(labels).toContain(text);
  });
  it("TPO-settings-audit-13 shows the live offer-rules example and exact placed-number help",()=>{
