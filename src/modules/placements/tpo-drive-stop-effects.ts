@@ -39,21 +39,28 @@ export async function settleDriveWithdrawalRequests(
       eq(placementOffers.status,"ACCEPTED")));
   const acceptedIds=new Set(accepted.map(item=>item.applicationId));
   const now=new Date();
-  let settled=0;
-  const note="Approved (drive "+(mode==="CANCELLED"?"cancelled":"closed")+")";
+  let settled=0,approved=0,rejected=0;
+  const statusLabel=mode==="CANCELLED"?"cancelled":"closed";
+  const approvedNote="Approved (drive "+statusLabel+")";
+  const rejectedNote="Rejected (drive "+statusLabel+"; accepted offer remains valid)";
   const distinctMemberships=new Set<string>();
   for(const entry of requests){
     // An accepted offer is an active commitment; do not mark its application
     // withdrawn without a separate, explicit offer-dispute decision.
-    if(acceptedIds.has(entry.applicationId))continue;
+    // A request associated with an accepted offer cannot remain pending
+    // indefinitely after the drive stops. Reject the withdrawal, preserve
+    // the commitment and retain the officer's reason.
+    const protectedOffer=acceptedIds.has(entry.applicationId);
+    const decision=protectedOffer?"REJECTED":"APPROVED";
+    const note=protectedOffer?rejectedNote:approvedNote;
     const [saved]=await tx.update(placementLearnerRequests).set({
-      status:"APPROVED",decidedByUserId:ctx.user.id,decidedAt:now,
+      status:decision,decidedByUserId:ctx.user.id,decidedAt:now,
       decisionNote:note,updatedAt:now,
     }).where(and(eq(placementLearnerRequests.id,entry.id),
       eq(placementLearnerRequests.status,"PENDING")))
       .returning({id:placementLearnerRequests.id});
     if(!saved)continue;
-    if(entry.applicationStatus==="SUBMITTED"){
+    if(!protectedOffer&&entry.applicationStatus==="SUBMITTED"){
       const [withdrawn]=await tx.update(placementApplications).set({
         status:"WITHDRAWN",withdrawnAt:now,updatedAt:now,
       }).where(and(eq(placementApplications.id,entry.applicationId),
@@ -66,6 +73,7 @@ export async function settleDriveWithdrawalRequests(
     }
     distinctMemberships.add(entry.membershipId);
     settled++;
+    if(protectedOffer)rejected++;else approved++;
   }
   const recipientRows=await tx.select({id:collegeMemberships.id,userId:users.id})
     .from(collegeMemberships)
@@ -78,13 +86,14 @@ export async function settleDriveWithdrawalRequests(
     collegeId,actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
     module:"PLACEMENTS",eventType:"DRIVE_REQUESTS_SETTLED",
     subjectType:"placement_job",subjectId:jobId,
-    summary:note,metadata:{mode,reason,withdrawalsApproved:settled},
+    summary:"Withdrawal requests reviewed after drive "+statusLabel,
+    metadata:{mode,reason,withdrawalsApproved:approved,withdrawalsRejected:rejected},
   }).returning({id:activityEvents.id});
   if(!event)throw new Error("DRIVE_REQUEST_SETTLEMENT_AUDIT_FAILED");
   for(let i=0;i<recipients.length;i+=200){
     await tx.insert(inAppNotifications).values(recipients.slice(i,i+200).map(userId=>({
       userId,eventId:event.id,title:"Your request was answered",
-      body:note+". "+reason,
+      body:"Your withdrawal request was reviewed after the drive ended. Check Requests for the decision. "+reason,
       actionHref:"/learn/my-placements/placement",
     }))).onConflictDoNothing();
   }
