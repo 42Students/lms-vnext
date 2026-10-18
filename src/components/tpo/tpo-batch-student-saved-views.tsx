@@ -5,6 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {tpoBatchViewUrl,type TpoBatchSavedFilter} from "@/modules/placements/tpo-batch-saved-view-model";
 import {batchStudentViewExportHref} from "@/modules/placements/tpo-batch-student-filtered-export-model";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type View={id:string;name:string;query:TpoBatchSavedFilter;pinned:boolean;createdAt:string};
 export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
  const router=useRouter(),params=useSearchParams();
@@ -12,6 +13,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false);
  const [views,setViews]=useState<View[]>([]);
  const [selected,setSelected]=useState("");
+ const [deleteTarget,setDeleteTarget]=useState<View|null>(null);
  const [name,setName]=useState("");
  const [pinned,setPinned]=useState(false);
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -59,12 +61,12 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    <div className="flex flex-wrap gap-2" aria-label="Pinned batch views">
     {views.filter(view=>view.pinned).map(view=><button type="button" key={view.id}
       disabled={busy||guarded} onClick={()=>void openSaved(view)}
-      className="min-h-10 rounded border border-border px-3 text-sm">{view.name}</button>)}
+      className="min-h-11 rounded border border-border px-3 text-sm">{view.name}</button>)}
    </div>
    <label className="block text-sm">View name
     <input value={name} onChange={e=>setName(e.target.value)} maxLength={100}
      className="mt-1 min-h-11 w-full rounded border border-border px-3"/></label>
-   <label className="flex min-h-10 items-center gap-2 text-sm">
+   <label className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</label>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={busy||guarded||!name.trim()} onClick={()=>void action({
@@ -76,23 +78,31 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    </div>
    <ul className="space-y-2">{views.map(view=><li key={view.id}
     className="flex flex-wrap items-center gap-2 rounded border border-border p-2 text-sm">
-    <label className="flex min-h-10 items-center gap-2">
+    <label className="flex min-h-11 items-center gap-2">
      <input type="radio" name="selected-batch-view" checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      {view.name}{view.pinned?" · Pinned":""}
     </label>
     <button type="button" disabled={busy||guarded} onClick={()=>void openSaved(view)}
-     className="min-h-10 rounded border px-2">Open</button>
+     className="min-h-11 rounded border px-2">Open</button>
     <a href={batchStudentViewExportHref(batchId,1,view.query)}
-     className="inline-flex min-h-10 items-center rounded border px-2">Download CSV</a>
-    <button type="button" disabled={busy||guarded} onClick={()=>{
-     if(window.confirm("Delete this saved batch view?"))void run(async()=>{await action({action:"DELETE",id:view.id});});
-    }} className="min-h-10 rounded border px-2">Delete</button>
+     className="inline-flex min-h-11 items-center rounded border px-2">Download CSV</a>
+    <button type="button" disabled={busy||guarded} onClick={()=>setDeleteTarget(view)}
+     className="min-h-11 rounded border px-2">Delete</button>
    </li>)}</ul>
    {selectedView?<p className="text-xs text-body">Selected: {selectedView.name}</p>:null}
    {!views.length?<p className="text-sm">No saved batch views yet.</p>:null}
    {notice?<p role="status" className="text-sm">{notice}</p>:null}
    {error?<p role="alert" className="text-sm">{error}</p>:null}
   </div>:null}
+  <ConfirmDialog open={deleteTarget!==null}
+   onOpenChange={open=>{if(!open&&!busy&&!guarded)setDeleteTarget(null);}}
+   title="Delete this saved batch view?"
+   description={deleteTarget?.name}
+   confirmLabel="Delete" pending={busy||guarded}
+   onConfirm={()=>{if(!deleteTarget||busy||guarded)return;
+    const id=deleteTarget.id;
+    void run(async()=>{const result=await action({action:"DELETE",id});if(result)setDeleteTarget(null);});
+   }}/>
  </section>;
 }
