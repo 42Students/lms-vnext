@@ -148,3 +148,6 @@ These rows establish tests for listed exports only. **Not exhaustive**: 319 acad
 | `revokeCollegeAdminSessions` — same source | same: committed device revocation and audit in same transaction; zero-live-session retries no duplicate audit; scope/user/membership checked | Disposable PG session mutation race and audit FK |
 
 **Important:** The four chat-4 tests in the orchestrator's older `unit-failures-latest.md` were compared against the current `main` source and test assertions. The merged tests now assert real `DataTable` markup and the query parser's behaviour, rather than stale string formatting. The CI failures file may reflect an earlier run; no fresh green CI result was claimed.
+
+
+| `getPromotionFacultyReadiness` and `summarizePromotionFacultyReadiness` (`src/modules/academics/college-promotion-faculty-readiness.ts`) | `tests/unit/chat4-college-promotion-faculty-readiness.test.ts`: zero mapped courses fail closed; absent staff and duplicate teaching assignments do not inflate readiness; source contract checks same-college ACTIVE FACULTY membership, ACTIVE user and current assignment. | Disposable PostgreSQL: revoked faculty + old-term offering fixtures |
