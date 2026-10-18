@@ -58,7 +58,7 @@ export function parseMemberEmailCsv(csv: string): Array<{ rowNumber: number; val
 /** CSV and spreadsheet-formula neutralization for all exported user-supplied fields. */
 export function neutralCsvCell(value: string | number): string {
   let text = String(value);
-  if (/^[\s]*[=+@\-\t\r]/.test(text)) text = "'" + text;
+  if (/^[=+@-]/u.test(text.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}]*/u, ""))) text = "'" + text;
   return '"' + text.replaceAll('"', '""') + '"';
 }
 
