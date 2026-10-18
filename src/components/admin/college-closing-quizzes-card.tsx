@@ -3,7 +3,7 @@ import type {getCollegeClosingQuizzes} from "@/modules/admin-ui/college-dashboar
 type Data=Awaited<ReturnType<typeof getCollegeClosingQuizzes>>;
 export function CollegeClosingQuizzesCard({data}:{data:Data}){
  const date=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-5" aria-label="Quizzes closing this week">
+ return <section className="space-y-3 - border-t border-border pt-5" aria-label="Quizzes closing this week">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h2 className="font-semibold">Quizzes closing this week</h2>
     <p className="text-sm text-body">{data.total} published quiz(es) due in the next 7 days</p></div>

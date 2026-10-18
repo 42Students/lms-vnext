@@ -23,7 +23,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
     </div>
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
       {phases.map(phase => <section key={phase.title}
-        className="rounded-xl border border-border bg-surface p-4">
+        className="- border-t border-border pt-4">
         <h3 className="text-base font-semibold text-foreground">{phase.title}</h3>
         <div className="mt-3 divide-y divide-border">
           {phase.steps.map(step => <div key={step.key}
