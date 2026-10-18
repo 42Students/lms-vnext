@@ -2,6 +2,7 @@
 
 import {useMemo,useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
+import {trySaveReportCsv} from "./report-interactive-table-download-model";
 import {reportTableCsv,reportTableTsv,safeReportDownloadName,type ReportCell} from "./report-interactive-table-export-model";
 
 type Cell=ReportCell;
@@ -43,24 +44,16 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
   }catch{setMessage("Could not copy rows. Use CSV export instead.");}
  }
  function saveCsv(){
-  let url:string|null=null;
-  let link:HTMLAnchorElement|null=null;
-  try{
-   const blob=new Blob(["\uFEFF"+textRows],{type:"text/csv;charset=utf-8"});
-   url=URL.createObjectURL(blob);
-   link=document.createElement("a");
-   link.href=url;
-   link.download=safeReportDownloadName(title);
-   document.body.appendChild(link);
-   link.click();
-   setMessage("Exported "+showing.length+" shown rows.");
-  }catch{
-   setMessage("Could not export shown rows. Try copying the report or refresh and try again.");
-  }finally{
-   link?.remove();
-   // Some browsers consume the Blob only after the click event completes.
-   if(url!==null)window.setTimeout(()=>URL.revokeObjectURL(url),0);
-  }
+  const saved=trySaveReportCsv(textRows,title,{
+   createUrl:text=>URL.createObjectURL(new Blob([text],{type:"text/csv;charset=utf-8"})),
+   createAnchor:()=>document.createElement("a"),
+   appendAnchor:anchor=>{document.body.appendChild(anchor as HTMLAnchorElement);},
+   defer:task=>{window.setTimeout(task,0);},
+   revokeUrl:url=>URL.revokeObjectURL(url),
+  });
+  setMessage(saved
+   ?"Exported "+showing.length+" shown rows."
+   :"Could not export shown rows. Try copying the report or refresh and try again.");
  }
  return <section className="space-y-3" aria-label={title}>
   <h2 className="text-lg font-semibold text-foreground">{title}</h2>
