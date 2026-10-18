@@ -65,7 +65,14 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     </label>
     <details className="relative self-end rounded-md border border-border p-2 text-sm">
      <summary className="cursor-pointer">Column filters ({Object.values(columnFilters).filter(v=>v.trim()).length})</summary>
-     <div className="absolute right-0 top-full z-20 mt-2 max-h-72 min-w-64 space-y-2 overflow-y-auto rounded-md border border-border bg-surface p-3 shadow-lg">
+     <div className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] space-y-2 overflow-y-auto rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-md sm:p-3">
+      <button type="button" onClick={event=>{
+        const disclosure=event.currentTarget.closest("details");
+        disclosure?.removeAttribute("open");
+        disclosure?.querySelector("summary")?.focus();
+      }} className="min-h-11 rounded border border-border px-3 text-sm font-semibold sm:hidden">
+       Close filters
+      </button>
       {displayedColumns.map(col=><label key={col.index} className="grid gap-1 text-xs font-semibold">
        {col.heading}
        <input type="search" maxLength={100} value={columnFilters[col.index]??""}
@@ -76,8 +83,15 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     </details>
     <details className="relative self-end rounded-md border border-border p-2 text-sm">
      <summary className="cursor-pointer">Columns</summary>
-     <fieldset className="absolute right-0 top-full z-10 mt-2 max-h-72 min-w-48 space-y-2 overflow-y-auto rounded-md border border-border bg-surface p-3 shadow-lg">
+     <fieldset className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] space-y-2 overflow-y-auto rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-md sm:p-3">
       <legend className="sr-only">Choose report columns</legend>
+      <button type="button" onClick={event=>{
+        const disclosure=event.currentTarget.closest("details");
+        disclosure?.removeAttribute("open");
+        disclosure?.querySelector("summary")?.focus();
+      }} className="min-h-11 rounded border border-border px-3 text-sm font-semibold sm:hidden">
+       Close columns
+      </button>
       {headings.map((heading,index)=><label key={index} className="flex items-center gap-2 text-xs">
        <input type="checkbox" checked={!hidden.includes(index)}
         disabled={!hidden.includes(index)&&hidden.length===headings.length-1}
