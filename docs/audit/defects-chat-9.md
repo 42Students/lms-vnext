@@ -82,6 +82,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-047 · PROJ-BREAK-archive-03 / idor-56 / scale-21 | Behavioral verification | The Admin unsubmitted directory had only source-level coverage for its DB predicates and scope. New service-level mock exercises selected-college, exclusion of archived/submitted, pagination offsets, role/tenant denial before DB, and SQL ILIKE wildcard escaping, with no new production defect identified. | Test-only `5b3b336` | `tests/unit/PROJ-BREAK-chat9-admin-unsubmitted-service.test.ts`; true PostgreSQL planner/row fixtures OPEN |
 
+| PROJ9-048 · PROJ-BREAK-grading-02/04 / idor-57 | Behavioral verification | Previously source-only rubric evaluation reads now exercise admin and mentor visibility, project/submission binding, hidden learner access before DB, cross-tenant denial, invalid IDs and empty/no-evaluation results without a second item query. No new production defect was required for these read contracts. | Test-only `0ff73da` | `tests/unit/PROJ-BREAK-chat9-evaluation-read.test.ts` demonstrates mocked read behavior; true PostgreSQL authorization and grade publication policy OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
