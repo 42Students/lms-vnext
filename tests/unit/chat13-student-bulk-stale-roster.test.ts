@@ -24,6 +24,14 @@ describe("SA-STUDENT-BULK-18 selected-college bulk controls",()=>{
     expect(copy).not.toContain("INVALID_REQUEST");
   }
  });
+ it("rejects oversized student access commands before reading the administrator",()=>{
+  const route=readFileSync("src/app/api/admin/students/module-access/bulk/route.ts","utf8");
+  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toContain("readBoundedJsonRequest(request,8192)");
+  expect(route.indexOf("readBoundedJsonRequest(request,8192)")).toBeLessThan(
+    route.indexOf("getCurrentRequestContext()"));
+  expect(route).toContain('error:"INVALID_REQUEST"');
+ });
  it("freezes confirmed membership IDs, suppresses duplicate clicks and disables in-flight selectors",()=>{
   const source=readFileSync("src/components/admin/super-admin-student-bulk-access.tsx","utf8");
   expect(source).toContain("if(pendingRef.current||busy)return");
