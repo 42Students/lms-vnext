@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { facultyLifecycleConfirmation } from "@/modules/people/college-faculty-lifecycle-model";
@@ -14,14 +14,17 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
   const [error, setError] = useState("");
   const [success,setSuccess]=useState("");
   const [busy, start] = useTransition();
+  const pendingRef = useRef(false);
   if (status === "ENDED") return null;
   const action = status === "ACTIVE" ? "DEACTIVATE" : "REACTIVATE";
   function submit() {
+    if (pendingRef.current || busy) return;
     if (action === "DEACTIVATE" && reason.trim().length < 3) {
       setError("A reason of at least 3 characters is required.");
       return;
     }
 
+    pendingRef.current = true;
     setError("");setSuccess("");
     start(async () => {
       try {
@@ -42,6 +45,8 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
         router.refresh();
       } catch (reasonError) {
         setError(reasonError instanceof Error ? reasonError.message : "Action failed");
+      } finally {
+        pendingRef.current = false;
       }
     });
   }
