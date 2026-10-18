@@ -1,3 +1,4 @@
+import {StatTile} from "@/components/ui/stat-tile";
 import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -82,10 +83,7 @@ export default async function TpoNoShowReportPage({
           ["Awaiting attendance mark", report.awaitingMarkCount],
           ["Unrecognized statuses", report.unknownCount],
         ].map(([name, value]) => (
-          <div key={name} className="rounded-xl border border-border bg-surface p-5">
-            <p className="text-sm font-medium text-body">{name}</p>
-            <p className="mt-2 text-3xl font-bold tabular-nums text-foreground">{value}</p>
-          </div>
+          <StatTile key={String(name)} label={String(name)} value={value} />
         ))}
       </section>
       {data.round.status !== "COMPLETED" ? (
