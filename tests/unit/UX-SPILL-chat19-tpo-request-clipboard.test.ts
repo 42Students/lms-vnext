@@ -75,6 +75,15 @@ describe("UX-SPILL-TPO-CLIP-01: secure college request clipboard export",()=>{
   expect(lines[1]?.startsWith("'")).toBe(true);
   expect(lines[1]).not.toMatch(/^[=+\-@]/);
  });
+ it("strips Unicode NEL and ASCII controls that can split rows in spreadsheet importers",()=>{
+  const copied=requestRowsTsv([{
+   ...rows[0]!,student:"Learner\u0085=FORMULA\u000bInjected\u0000Row",
+  }],["student"]);
+  const lines=copied.split("\n");
+  expect(lines).toHaveLength(2);
+  expect(lines[1]).toContain("Learner =FORMULA Injected Row");
+  expect(lines[1]).not.toMatch(/[\u0000-\u001f\u007f-\u009f]/);
+ });
  it("removes embedded delimiters so a malicious student cannot forge extra spreadsheet rows",()=>{
   const copied=requestRowsTsv([{...rows[0]!,student:"A\tB\nC\u2028D\u2029E"}],["student","company"]);
   expect(copied.split("\n")).toHaveLength(2);
