@@ -175,7 +175,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
     if(selection.status==="RELEASED"&&selection.releasedOfferId){
       results.push({selectionId:id,applicationId:selection.applicationId,status:"released",offerId:selection.releasedOfferId});continue;
     }
-    if(selection.recordedAt.toISOString()!==input.expectedRecordedAt[id]){
+    if(!matchesTpoSelectionReleaseRevision(selection,selection,input.expectedRecordedAt[id])){
       results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",reason:"Selection changed. Refresh before releasing."});continue;
     }
     const candidate=candidateMap.get(selection.applicationId);
