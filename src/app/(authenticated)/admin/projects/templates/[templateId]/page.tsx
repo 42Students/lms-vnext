@@ -31,14 +31,14 @@ export default async function SuperAdminProjectTemplateDetailPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <ProjectAdminNav
         basePath="/admin/projects"
         active="templates"
       />
       <Link
         href="/admin/projects/templates"
-        className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+        className="inline-flex text-sm font-semibold text-[var(--lms-teal-deep)] hover:text-primary-hover"
       >
         ← Template catalogue
       </Link>
@@ -99,11 +99,11 @@ export default async function SuperAdminProjectTemplateDetailPage({
           blueprint={detail.currentVersion.blueprint}
         />
       ) : (
-        <section className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
+        <section className="rounded-xl border border-border bg-surface p-4 sm:p-6 text-sm text-muted-foreground">
           The current template version could not be resolved.
         </section>
       )}
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Version history
         </h2>
