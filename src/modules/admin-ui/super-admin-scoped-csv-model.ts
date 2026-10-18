@@ -16,12 +16,11 @@ export function superAdminScopedCsvHref(path:string,query:SuperAdminReadQuery){
  if(query.pipelineStage!=="ALL")params.set("pipelineStage",query.pipelineStage);
  if(query.source!=="ALL")params.set("source",query.source);
  if(query.channel!=="ALL")params.set("channel",query.channel);
- if(query.source!=="ALL")params.set("source",query.source);
  for(const key of ["jobId","departmentId","programId","cohortId","sectionId","employmentType"] as const){if(query[key])params.set(key,query[key]);}
  return path+(params.size?"?"+params.toString():"");
 }
 function csvCell(value:string){
- const neutral=/^\s*[=+@\-\t\r]/.test(value)?"'"+value:value;
+ const neutral=/^[\s\u200B-\u200F\u2060\u2066-\u2069\uFEFF\u202A-\u202E]*[=+@\-]/u.test(value)?"'"+value:value;
  return '"'+neutral.replaceAll('"','""')+'"';
 }
 export function buildSuperAdminScopedCsv(rows:readonly SuperAdminReadRow[],truncated:boolean){
