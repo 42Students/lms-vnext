@@ -22,7 +22,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     eq(placementApplicationScreenings.status, "SHORTLISTED"),
   );
   const db = getDb();
-  const grant=context.recruiter?.grants.find(item=>item.collegeId===workspace.college.id);
+  const grant=context.recruiter?.grants.find(item=>item.collegeId===workspace.college.id &&
+    item.companyRelationshipId===workspace.job.companyRelationshipId);
   const [share]=grant?await db.select({columns:placementCompanyRelationships.shareColumnDefaults})
    .from(placementCompanyRelationships)
    .where(and(eq(placementCompanyRelationships.id,grant.companyRelationshipId),
