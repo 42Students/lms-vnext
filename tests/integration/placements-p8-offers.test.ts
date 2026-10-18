@@ -9,6 +9,7 @@ import {
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import {
@@ -259,6 +260,51 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("PLACEMENTS-IDOR-01 refuses a wrong-college TPO, learner issuing an offer and TPO self-acceptance", async () => {
+    const { job, application } = await preparePassedApplication();
+    const foreignTpo: RequestContext = {
+      ...tpo,
+      membership: {
+        ...tpo.membership!,
+        id: SEED_IDS.facultyCollegeBMembership,
+        collegeId: SEED_IDS.collegeB,
+      },
+    };
+    await expect(
+      issuePlacementOffer(foreignTpo, application.id, {
+        roleTitle: "Foreign college must not issue this offer",
+        annualCtcInr: 800_000,
+      }),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(
+      issuePlacementOffer(learner, application.id, {
+        roleTitle: "Learners must not issue their own offers",
+        annualCtcInr: 800_000,
+      }),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+
+    const issued = await issuePlacementOffer(tpo, application.id, {
+      roleTitle: "Authorized software engineer",
+      annualCtcInr: 800_000,
+    });
+    await expect(
+      actOnPlacementOffer(tpo, issued.id, {action: "ACCEPT"}),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(
+      recordPlacementJoiningOutcome(learner, issued.id, {
+        status: "JOINED", joiningDate: "2099-05-21",
+      }),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+
+    // Rejected actions are not partial writes and do not mutate the issuance.
+    const rows = await pool.query<{status: string}>(
+      "select status from placement_offers where id = $1 and application_id = $2",
+      [issued.id,application.id],
+    );
+    expect(rows.rows).toEqual([{status:"ISSUED"}]);
+    expect(job.collegeId).toBe(SEED_IDS.collegeA);
+  });
+
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
     const { application } =
       await preparePassedApplication();
