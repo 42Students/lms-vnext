@@ -17,7 +17,7 @@ export async function DELETE(request:Request,{params}:Route){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {projectId,releaseId}=await params;
-  const result=await writeMentorProjectRelease(await getCurrentRequestContext(),projectId,releaseId,"DELETE",null);
+  const result=await writeMentorProjectRelease(await getCurrentRequestContext(),projectId,releaseId,"DELETE",await request.json());
   return NextResponse.json(result);
  }catch(error){return apiErrorResponse(error);}
 }

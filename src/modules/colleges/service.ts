@@ -180,10 +180,18 @@ export async function listColleges(
           updatedAt: colleges.updatedAt,
         })
         .from(colleges)
+        .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
         .where(
           and(
             eq(colleges.id, selectedCollegeId),
             eq(colleges.status, "ACTIVE"),
+            eq(organizations.status, "ACTIVE"),
+            selectedOrganizationId
+              ? eq(colleges.organizationId, selectedOrganizationId)
+              : undefined,
+            requestedOrganizationId
+              ? eq(colleges.organizationId, requestedOrganizationId)
+              : undefined,
           ),
         )
         .orderBy(asc(colleges.name));

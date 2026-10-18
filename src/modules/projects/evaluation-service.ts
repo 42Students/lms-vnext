@@ -79,7 +79,7 @@ export async function createProjectEvaluation(
         .for("update")
         .limit(1);
 
-      if (!project || project.status === "ARCHIVED") {
+      if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
         throw new ProjectsServiceError(
           "PROJECT_EVALUATION_INVALID_STATE",
         );

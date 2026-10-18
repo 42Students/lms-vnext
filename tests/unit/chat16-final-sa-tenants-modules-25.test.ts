@@ -5,7 +5,9 @@ describe("SA-tenants-modules-25 inline college feature controls",()=>{
  it("SA-tenants-modules-25 renders independent college x module editors with explicit inherited states",()=>{
   const page=read("src/app/(authenticated)/admin/features/page.tsx");
   const editor=read("src/components/admin/college-feature-rule-editor.tsx");
-  expect(page).toContain("college.modules.map(decision");
+  expect(page).toContain("...OPTIONAL_MODULE_KEYS.map(module=>");
+  expect(page).toContain("college.modules.find(item=>item.module===module)");
+  expect(page).toContain("key:module,header:ADMIN_MODULE_LABELS[module]");
   expect(page).toContain("<CollegeFeatureRuleEditor");
   expect(editor).toContain('const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/rules"');
   for(const state of ['value="INHERIT"','value="ON"','value="OFF"'])expect(editor).toContain(state);
