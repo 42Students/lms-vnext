@@ -61,6 +61,8 @@ describe("PROJ-HARNESS source and environment guard",()=>{
    expect(helper).toContain("mr.role = 'LEARNER'");
    expect(helper).toContain("task does not belong to this project");
    expect(helper).toContain("meeting mentor is not active on this project");
+   expect(helper).toContain("project final delivery is closed");
+   expect(helper).toContain("status not in ('ARCHIVED','COMPLETED')");
    expect(helper).toContain("where id=$1 and status='DRAFT'");
    expect(helper).not.toContain("where id=$1 and created_by_membership_id=$2 and status='DRAFT'");
  });
