@@ -142,3 +142,15 @@ The four repaired directory tables are `/tpo/settings/notifications` (subject, m
 124. `/tpo/team/[threadId]`  
 125. `/tpo/team/everyone`  
 126. `/tpo/verification`
+
+
+## Chat-5 final-third audit follow-up — 18 October 2026
+
+**Traceability gap fixed in source; no browser certification.** A source contract test had generated note filenames by lowercasing dynamic route variables, although committed files use membershipId and threadId. The updated test retains source-route slugs in finding IDs but preserves original parameter case in file lookup. In particular:
+- /tpo/students/[membershipId]/history — UX-tpo-students-membershipid-history-02: authorized read-only event history, no persisted data, page cursor and wrong-member notFound; no client-side eligibility change.
+- /tpo/students/[membershipId]/participation — UX-tpo-students-membershipid-participation-02: scoped effective decision, provenance, separate debar paths, undo/concurrency and missing or suspended TPO.
+- /tpo/team/[threadId] — UX-tpo-team-threadid-02: role+thread identifier validation, NOT_REGISTERED state, isolated asks failure, live message pagination and form-action session/origin follow-up.
+
+The three existing notes were amended in place with route-specific UX-CROSS-TPO-NOTE findings, loading/error limitations and test links. All 42 route source assertions remain in tests/unit/chat5-ux-cross-tpo-last.test.ts and the four responsive directory table contracts remain intact. The middle-third after-college report test now requires real 25-row server pagination, explicit first-300-row disclosure and CSV link instead of obsolete full-list rendering.
+
+**Still outstanding:** a truly exhaustive 42-page deployed test with real data/empty/error/loading/403/401 flows, keyboard and screen-reader behaviour at 320/360/390px, focus return for ConfirmDialog and Drawer in WebView, and a side-by-side exact legacy wording comparison. Those were **not run** in this tool session and must not be marked as green.
