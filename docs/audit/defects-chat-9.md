@@ -37,6 +37,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-024 · PROJ-BREAK-races-10/11 | Medium | Repeating a successful college-template assignment revocation after a lost response threw `PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND`, despite the already-revoked row being retained for audit. Under the template row lock, a no-active-assignment update now resolves the latest previously revoked matching row without another write/activity; truly never-assigned colleges still fail. | `6803f26` | `tests/unit/PROJ-BREAK-chat9-template-assignments.test.ts` (`1fdac7a`), mocked persisted state; live PostgreSQL concurrent double submit OPEN |
 
+| PROJ9-025 · PROJ-BREAK-reports-10 | High | Projects submissions overview counted the latest SUBMITTED and CHANGES_REQUESTED deliveries from COMPLETED and ARCHIVED workspaces as presently actionable, although administrators cannot review submissions outside ACTIVE workspaces. This misrepresented pending workload on Super/College Admin dashboards. Both actionable counters now require persisted ACTIVE project status; reviewed historical totals remain visible. | `30dc665` | Rendered-PostgreSQL SQL regression `tests/unit/PROJ-BREAK-chat9-admin-correlations.test.ts` (`f3afbbb`); real fixture count comparison OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
