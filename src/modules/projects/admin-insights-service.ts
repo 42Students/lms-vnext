@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { projectCompletionPercent } from "./progress-percentage-policy";
 import { groupProjectAdminRows } from "./admin-insights-group-model";
 import {
@@ -32,6 +33,8 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import {getProjectAdminCollegeId} from "./admin-college-scope";
+import {ProjectsServiceError} from "./errors";
 import { deriveProjectExecutionReadiness } from "./execution-readiness";
 import {
   deriveProjectRiskReasons,
@@ -81,6 +84,10 @@ export async function listProjectAdminSnapshots(
 ) {
   const query =
     projectAdminQuerySchema.parse(rawQuery);
+  // Never resolve an attacker-supplied tenant ID before the selected actor
+  // is authorized to see that exact college. Prevent an existence oracle.
+  if(getProjectAdminCollegeId(context)!==collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college =
     await loadProjectCollegeScope(
       collegeIdInput,
@@ -90,6 +97,13 @@ export async function listProjectAdminSnapshots(
     collegeId: college.id,
   });
 
+  // A valid session snapshot is not enough: the College Admin role may be
+  // removed while a project directory request is in flight. Hold persisted
+  // actor role locks through both the page query and its eight aggregations.
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"projects.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
   const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
@@ -111,8 +125,6 @@ export async function listProjectAdminSnapshots(
       : undefined,
     search,
   );
-  const db = getDb();
-
   const [totalRow, projects] =
     await Promise.all([
       db
@@ -438,6 +450,7 @@ export async function listProjectAdminSnapshots(
       Math.ceil(total / query.pageSize),
     ),
   };
+  });
 }
 
 export async function listProjectAdminRiskQueue(
@@ -447,6 +460,10 @@ export async function listProjectAdminRiskQueue(
 ) {
   const query =
     projectAdminQuerySchema.parse(rawQuery);
+  // Never resolve an attacker-supplied tenant ID before the selected actor
+  // is authorized to see that exact college. Prevent an existence oracle.
+  if(getProjectAdminCollegeId(context)!==collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college =
     await loadProjectCollegeScope(
       collegeIdInput,
@@ -456,6 +473,10 @@ export async function listProjectAdminRiskQueue(
     collegeId: college.id,
   });
 
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"projects.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
   const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
@@ -535,7 +556,6 @@ export async function listProjectAdminRiskQueue(
       query.riskBucket === "BLOCKER" ? blockedTask :
       query.riskBucket === "REVIEW" ? pendingReview : undefined,
   );
-  const db = getDb();
 
   const [bucketTotals] = await db.select({
     stalled: sql<number>`count(*) filter (where ${lastActivityAt} <= ${staleCutoff})`.mapWith(Number),
@@ -683,6 +703,7 @@ export async function listProjectAdminRiskQueue(
     blockerSignalSupported: true,
     buckets,
   };
+  });
 }
 
 const projectSubmissionQueueQuerySchema =
@@ -702,10 +723,18 @@ const projectSubmissionQueueQuerySchema =
 
 /** COL-projects-13: whole-college cards reflect the latest delivery only. */
 export async function getProjectAdminSubmissionSummary(context: RequestContext, collegeIdInput: string) {
+  // Never resolve an attacker-supplied tenant ID before the selected actor
+  // is authorized to see that exact college. Prevent an existence oracle.
+  if(getProjectAdminCollegeId(context)!==collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college = await loadProjectCollegeScope(collegeIdInput);
   requirePermission(context, "projects.manage", {
     organizationId: college.organizationId, collegeId: college.id,
   });
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"projects.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
   // This reference is evaluated inside a correlated subquery. Drizzle
   // otherwise renders the bare column as "id", which binds to the inner
   // submission table instead of the outer project_instances row.
@@ -715,7 +744,7 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
     where sub.project_id = ${instanceId}
     order by sub.version desc limit 1
   )`;
-  const [row] = await getDb().select({
+  const [row] = await db.select({
     activeWorkspaces: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE')`.mapWith(Number),
     pendingReview: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'SUBMITTED')`.mapWith(Number),
     needsStudentAction: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'CHANGES_REQUESTED')`.mapWith(Number),
@@ -727,6 +756,7 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
     needsStudentAction: row?.needsStudentAction ?? 0,
     reviewed: row?.reviewed ?? 0,
   };
+  });
 }
 
 export async function listProjectAdminSubmissionQueue(
@@ -740,6 +770,10 @@ export async function listProjectAdminSubmissionQueue(
     projectSubmissionQueueQuerySchema.parse(
       rawQuery,
     );
+  // Never resolve an attacker-supplied tenant ID before the selected actor
+  // is authorized to see that exact college. Prevent an existence oracle.
+  if(getProjectAdminCollegeId(context)!==collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const college =
     await loadProjectCollegeScope(
       collegeIdInput,
@@ -748,6 +782,10 @@ export async function listProjectAdminSubmissionQueue(
     organizationId: college.organizationId,
     collegeId: college.id,
   });
+  return getDb().transaction(async db=>{
+    await assertPersistedPlatformPermission(db,context,"projects.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
   // Keep the outer project ID qualified inside the mentor subquery.
   const instanceId = sql.raw('"project_instances"."id"');
   const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
@@ -780,7 +818,6 @@ export async function listProjectAdminSubmissionQueue(
     query.submissionStatus?eq(projectSubmissions.status,query.submissionStatus):undefined,
     search,
   );
-  const db = getDb();
   const [totalRow, rows] =
     await Promise.all([
       db
@@ -853,4 +890,5 @@ export async function listProjectAdminSubmissionQueue(
       Math.ceil(total / query.pageSize),
     ),
   };
+  });
 }
