@@ -63,6 +63,15 @@ describe("PROJ-BREAK-LEARNER-DUE-05 owner isolation, date boundaries and bulk sc
   expect(await listMyLearnerProjectDueStates(actor(),[other])).toEqual([]);
   expect(state.select).not.toHaveBeenCalled();
  });
+ it("does not mark the final millisecond of the 23:59:59.999 IST due day overdue",async()=>{
+  state.tasks=[{projectId:p1,dueDate:"2026-10-18",status:"TODO"}];
+  vi.setSystemTime(new Date("2026-10-18T18:29:59.999Z"));
+  expect(await listMyLearnerProjectDueStates(actor(),[p1]))
+   .toMatchObject([{projectId:p1,date:"2026-10-18",state:"Due soon"}]);
+  vi.setSystemTime(new Date("2026-10-18T18:30:00.000Z"));
+  expect(await listMyLearnerProjectDueStates(actor(),[p1]))
+   .toMatchObject([{projectId:p1,date:"2026-10-18",state:"Overdue"}]);
+ });
  it("groups overdue and 1000+ project/task rows without a separate per-project sort",async()=>{
   const projects=Array.from({length:1000},(_,i)=>("00000000-0000-4000-8000-"+String(i).padStart(12,"0")));
   state.own.mockResolvedValueOnce(projects.map(id=>({memberRole:"LEARNER",project:{id}})));
