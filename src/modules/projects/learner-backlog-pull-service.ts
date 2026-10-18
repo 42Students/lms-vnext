@@ -46,7 +46,8 @@ export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:s
     sprintId:sprint.id,sequence:(last?.sequence??-1)+1,
     updatedAt:new Date(Math.max(Date.now(),task.updatedAt.getTime()+1)),
   }).where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,task.id),
-    isNull(projectTasks.sprintId),eq(projectTasks.updatedAt,task.updatedAt))).returning();
+    isNull(projectTasks.sprintId),
+    sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`)).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const event=await recordActivityEventInTransaction(tx,context,{
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
