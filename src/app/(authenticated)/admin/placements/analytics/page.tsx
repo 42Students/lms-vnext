@@ -21,7 +21,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  });
  if(!parsed.success)return <div className="space-y-4"><PageHeader eyebrow="Super Admin · Placements" title="Analytics"/>
   <p role="alert">Invalid analytics filters. Check the selected dates or filters.</p>
-  <Link href="/admin/placements/analytics" className="text-[var(--lms-teal-deep)] underline">Clear all</Link></div>;
+  <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Clear all</Link></div>;
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Placement Analytics"
