@@ -93,13 +93,14 @@
 - `TPO-BREAK-interview-01`: malformed direct planner input, overlong/invalid slot counts, duplicate normalized rooms, time zone boundary, opaque form schema, fail-closed collisions.
 - `TPO-BREAK-interview-PG-01`: real PostgreSQL partial unique indexes, composite round/job FK across tenants, stale versions, booking shape, savepoint rollback. Requires disposable `TEST_DATABASE_URL`.
 - `TPO-BREAK-round-01`: locked reorder, negative/fractional/out-of-range reorder indices, prototype-property outcome injection, stale round preview token and explicit apply confirmation.
+- `TPO-BREAK-venue-PG-01`: two independent PostgreSQL transactions verify that the same college/venue advisory lock is exclusive; service wiring checks ensure calendar and reschedule both invoke the common guard.
 - Existing `chat2-ledger-round-import-and-scheduling.test.ts` covers some parser/model contracts but cannot substitute for transaction/route/role tests.
 - Activity audit added for slot generation/clearing, cancel-unbooked and change-room-unassigned; duplicate room changes have no side effect.
 
 ## Remaining release blockers
 
 1. **Missing DB service invocation tests** for all TPO/College/HR paths: especially round state transition, candidate booking, learner notification, stale pages and rollback.
-2. **Cross-writer venue serialization**: `decideTpoCalendarRound` uses a projection conflict check while reschedule uses advisory xact locks; must test simultaneous calendar/reschedule writes before calling venue safety complete.
+2. **Cross-writer venue serialization**: calendar scheduling delegates to `actOnPlacementRound`, which uses `requireAvailableRoundVenue` under an advisory xact lock, as does reschedule. The new `tests/integration/chat2-tpo-round-venue-races.test.ts` checks two-session advisory locking, but simultaneous *full service invocation* still needs a disposable test DB fixture and behavioral test.
 3. **Race-free public-facing TPO pages:** last-third route loading/empty/error/partial/denied/phone coverage separate from this ledger.
 4. **No local execution** in the available GitHub connector environment; CI must run `tsc`, Vitest and disposable PostgreSQL integration suite.
 
