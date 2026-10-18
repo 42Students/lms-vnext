@@ -239,7 +239,7 @@ export async function stageTpoRoundImport(
   }catch(e){
    if(addedRank!==null)occupied.delete(addedRank);
    results.push({applicationId:entry.applicationId,line:entry.line,status:"skipped",
-    reason:e instanceof Error?e.message:"Could not stage this result"});}
+    reason:tpoRoundImportStageFailureReason(e)});}
  }
  return {staged:results.filter(r=>r.status==="staged").length,
   skipped:results.filter(r=>r.status==="skipped").length,
