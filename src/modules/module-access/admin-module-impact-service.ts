@@ -4,7 +4,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {and,count,countDistinct,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {colleges,collegeMemberships,membershipRoles,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers} from "@/db/schema";
+import {colleges,collegeMemberships,membershipRoles,users,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 const id=z.uuid();
@@ -34,8 +34,9 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
   .innerJoin(membershipRoles,and(
    eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"LEARNER")))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .where(and(eq(collegeMemberships.collegeId,collegeId),
-   eq(collegeMemberships.status,"ACTIVE")));
+   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
  const students=population?.total??0;
  if(moduleName==="projects"){
   const [row]=await db.select({total:count()}).from(projectMembers)
