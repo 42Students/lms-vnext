@@ -303,3 +303,7 @@ The typecheck report explicitly labels production typecheck and lint PASS. Its o
 - `tests/unit/chat16-campaign-unsubscribe-ssr-pages-16.test.ts` adds direct public GET/confirmed-page coverage for invalid/expired links, temporary failures, two purpose scopes and the separate explicit confirmation form, with zero GET-side writes.
 
 Neither suite has been executed. Provider, live PostgreSQL and browser behavior still require CI verification.
+
+### Global and placement-cell unsubscribe POST route execution
+
+`tests/unit/chat16-campaign-unsubscribe-post-route-16.test.ts` calls the actual `POST /api/public/campaign-unsubscribe` handler with FormData Requests and mocked token/signature, table registration and TPO recipient mutation collaborators. `campaign-unsubscribe-route-16`–`21` cover same-origin denial before token inspection, missing/unsigned/oversized links, purpose-bound placement-cell scoped redirect, revoked/invalid locked recipient response, unavailable global storage 503 rather than false completion, and signed opaque-key global suppression redirect. Provider and PostgreSQL callbacks are mocked; these tests do not assert physical DB commit or full cross-request races. They are authored pending cloud CI.
