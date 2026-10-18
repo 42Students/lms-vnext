@@ -29,7 +29,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const t=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
  const legacyTab=t==="from42"?"from-42":t==="students"?"yours":t;
  const tab=tpoAnnouncementTabSchema.safeParse(legacyTab??"yours");
- if(!tab.success)return <main role="alert" className="p-5">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></main>;
+ if(!tab.success)return <div role="alert" className="p-5">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></div>;
  const pageValue=Array.isArray(raw.page)?raw.page[0]:raw.page;
  const page=pageValue&&/^[1-9][0-9]{0,3}$/.test(pageValue)?Math.min(1000,Number(pageValue)):1;
  const showTeam=Array.isArray(raw.mine)?raw.mine[0]==="0":raw.mine==="0";
@@ -66,7 +66,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    tab:"yours",audience:query.data.audience,
    ...(query.data.targetId?{targetId:query.data.targetId}:{}),
   }).toString()+(query.data.targetIds?.length?query.data.targetIds.map(id=>"&targetIds="+encodeURIComponent(id)).join(""):""):"/tpo/announcements";
- return <main className="space-y-6">
+ return <div className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
    description={tab.data==="from-42"?"What 42 tells placement cells.":
     "What you tell your students, to whom, and who has read it. They read it under Placements."}/>
@@ -84,12 +84,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
       initialAudience={query.success?query.data.audience:"COLLEGE"}
       initialTarget={first(raw.targetId)??""}
       initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
-     <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">Preview audience</button>
+     <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Preview audience</button>
    </form>
    {!query.success?<p role="alert" className="mt-2 text-sm">Choose a valid audience and target ID.</p>:null}
    {preview.failed?<p role="alert" className="mt-3 rounded-lg border border-border p-3 text-sm">
      Could not check the audience right now. Your selection is unchanged.
-     <Link href={retryPreviewHref} className="ml-2 font-semibold text-primary-text underline">Retry audience preview</Link>
+     <Link href={retryPreviewHref} className="ml-2 font-semibold text-[var(--lms-teal-deep)] underline">Retry audience preview</Link>
     </p>:null}
    {audience?<div role="status" className="mt-3 rounded-lg border border-border p-3">
      <p className="text-sm font-semibold text-foreground">Current {query.success?query.data.audience.toLowerCase():"college"} visibility preview</p>
@@ -136,14 +136,14 @@ export default async function TpoAnnouncements({searchParams}:Props){
   <nav aria-label="Announcement tabs" className="flex flex-wrap gap-2">
    {([["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]] as const).map(([value,label])=><Link
     key={value} href={"/tpo/announcements?tab="+value} aria-current={value===tab.data?"page":undefined}
-    className={value===tab.data?"inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm text-on-primary":
+    className={value===tab.data?"inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm text-foreground":
     "inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-body"}>{label}{value==="from-42"&&from42Unread!==null?` (${from42Unread})`:""}</Link>)}
   </nav>
   {tab.data!=="from-42"?<nav aria-label="Announcement author scope" className="flex flex-wrap items-center gap-3 text-sm">
    <Link href={"/tpo/announcements?tab="+tab.data} aria-current={!showTeam?"page":undefined}
-    className={!showTeam?"font-semibold underline underline-offset-4":"text-primary-text"}>Your notices</Link>
+    className={!showTeam?"font-semibold underline underline-offset-4":"text-[var(--lms-teal-deep)]"}>Your notices</Link>
    <Link href={"/tpo/announcements?tab="+tab.data+"&mine=0"} aria-current={showTeam?"page":undefined}
-    className={showTeam?"font-semibold underline underline-offset-4":"text-primary-text"}>All team notices</Link>
+    className={showTeam?"font-semibold underline underline-offset-4":"text-[var(--lms-teal-deep)]"}>All team notices</Link>
   </nav>:null}
   {result.status==="NOT_REGISTERED"?<section role="status" className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
@@ -151,7 +151,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   </section>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
    {result.items.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}
-     {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs text-primary-text">New</span>:null}
+     {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs text-[var(--lms-teal-deep)]">New</span>:null}
     </h2>
     <p className="mt-1 text-xs text-muted-foreground">
       By {row.senderName?.trim()||"Placement team"} ·
@@ -167,12 +167,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
      {tpoNoticeTextParts(row.message).map((part,index)=>part.kind==="link"?
       <a key={index} href={part.value} target="_blank" rel="noopener noreferrer"
-       className="font-semibold text-primary-text underline underline-offset-2">{part.value}</a>:
+       className="font-semibold text-[var(--lms-teal-deep)] underline underline-offset-2">{part.value}</a>:
       <span key={index}>{part.value}</span>)}
     </p>
     {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl}
       target="_blank" rel="noopener noreferrer"
-      className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
+      className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
       {row.buttonLabel} ↗
     </a>:null}
     {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id}/>:null}
@@ -193,23 +193,23 @@ export default async function TpoAnnouncements({searchParams}:Props){
         <legend className="text-sm font-semibold">Button (optional)</legend>
         <label className="grid gap-1 text-sm">Button label
          <input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
-          className="min-h-10 rounded-md border border-border bg-surface px-3"/>
+          className="min-h-11 rounded-md border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">Button link
          <input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
           defaultValue={row.buttonUrl??""} title="The link has to start with https://"
-          className="min-h-10 rounded-md border border-border bg-surface px-3"/>
+          className="min-h-11 rounded-md border border-border bg-surface px-3"/>
         </label>
        </fieldset>
        <label className="grid gap-1 text-sm text-body">Send at (IST)
         <input type="datetime-local" name="sendAt"
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
-         className="min-h-10 rounded border border-border bg-surface px-3"/>
+         className="min-h-11 rounded border border-border bg-surface px-3"/>
        </label>
        <label className="grid gap-1 text-sm text-body">Show until (IST)
         <input type="datetime-local" name="showUntil"
          defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
-         className="min-h-10 rounded border border-border bg-surface px-3"/>
+         className="min-h-11 rounded border border-border bg-surface px-3"/>
        </label>
        <label className="flex items-center gap-2 text-sm text-body">
         <input name="pinned" type="checkbox" defaultChecked={row.isPinned}/> Pinned
@@ -236,7 +236,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
           initialTargets={[]} options={targetOptions}/>
         </fieldset>:null}
        <p className="text-xs text-muted-foreground">Save fails if the notice changed since this page was loaded.</p>
-       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Save notice edits</button>
+       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Save notice edits</button>
       </form>
      </TpoNoticeComposerDialog>:null}
     {tab.data==="yours"?<TpoNoticeDeleteConfirm id={row.id} version={row.version}/>:null}
@@ -245,7 +245,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-4 flex flex-wrap gap-2">
       <input type="hidden" name="expectedVersion" value={row.version}/>
       <input type="hidden" name="action" value={tab.data==="deleted"?"RESTORE":"DELETE"}/>
-      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">
+      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
        {tab.data==="deleted"?"Undo removal":"Remove notice"}
       </button>
      </form>:null}
@@ -255,7 +255,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-2">
       <input type="hidden" name="expectedVersion" value={row.version}/>
       <input type="hidden" name="action" value="UNDO_SEND"/>
-      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">
+      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
        Undo send (30 seconds)
       </button>
      </form>:null}
@@ -269,10 +269,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
    <div className="flex gap-2">
     {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page-1)}
-      className="min-h-10 rounded-md border border-border px-4 py-2 text-primary-text">Previous</Link>:null}
+      className="min-h-11 rounded-md border border-border px-4 py-2 text-[var(--lms-teal-deep)]">Previous</Link>:null}
     {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page+1)}
-      className="min-h-10 rounded-md border border-border px-4 py-2 text-primary-text">Show older</Link>:null}
+      className="min-h-11 rounded-md border border-border px-4 py-2 text-[var(--lms-teal-deep)]">Show older</Link>:null}
    </div>
   </nav>:null}
- </main>;
+ </div>;
 }
