@@ -91,8 +91,8 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                   disabled={pending}
                   aria-pressed={reason === preset}
                   onClick={() => setReason(preset)}
-                  className={`min-h-10 rounded-full border px-3 text-sm font-medium ${reason === preset
-                    ? "border-primary bg-primary-soft text-primary-text"
+                  className={`min-h-11 rounded-full border px-3 text-sm font-medium ${reason === preset
+                    ? "border-primary bg-primary-soft text-foreground"
                     : "border-border bg-surface text-body hover:border-primary"}`}
                 >
                   {preset}
@@ -116,14 +116,14 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             <p className="text-xs text-body">Students see the reason. You can choose a reason above or write your own.</p>
           </div>
           <p className="text-xs text-body">If the drive or counts change after this preview, the cancellation is rejected.</p>
-          {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+          {error ? <p role="alert" className="text-sm text-foreground">{error}</p> : null}
           <label className="flex items-start gap-2 text-sm text-body">
             <input type="checkbox" checked={reviewed} onChange={event=>setReviewed(event.target.checked)}
               disabled={pending} className="mt-1 h-4 w-4 accent-primary"/>
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
           </label>
-          <button type="submit" disabled={pending || !reviewed} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+          <button type="submit" disabled={pending || !reviewed} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-foreground disabled:opacity-50">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </button>
     </form>
