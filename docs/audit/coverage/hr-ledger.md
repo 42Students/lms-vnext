@@ -596,3 +596,58 @@ These paths require one test row **per exported function** after parsing each fi
 | `src/modules/placements/recruiter-today-waiting-model.ts` | `recruiterTodayWaitingRequests` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/recruiter-today-week-events-model.ts` | `recruiterTodayWeekEvents` | **OPEN** — test and role matrix not verified |
 | `src/modules/placements/recruiter-workspace-service.ts` | `getRecruiterPlacementWorkspace` | **OPEN** — test and role matrix not verified |
+
+
+## 2026-10-18 chat-15 additional executable-contract evidence (not CI-certified)
+
+| Gap / function or route | Test file / named assertions | Cases authored | Remaining required acceptance |
+|---|---|---|---|
+| HR-SLOT-ACTOR-01 / `canRecruiterMutateOwnSlot` | `tests/unit/hr-interview-slot-model.test.ts` / `HR-SLOT-ACTOR-01` | Exact same owner allowed; empty/whitespace/mismatched owners denied | Database-side role, membership revocation and real HTTP denial |
+| HR-SLOT-STATE-02 / `slotTransitionAllowed` | `tests/unit/hr-interview-slot-model.test.ts` / `HR-SLOT-STATE-02` | All disallowed terminal transitions; capacity exhausted; invalid booked counts; allowed OFFER/BOOK/CANCEL stages | Concurrent capacity limit enforced in PostgreSQL transaction |
+| HR-ROUND-INPUT-01 / `editHrJobRound` validation | `tests/unit/HR-BREAK-chat15-round-service-03.test.ts` / `HR-ROUND-INPUT-01` | Malformed UUID, forbidden mutation keys, invalid action/version rejected before DB | API size and same-origin request tests; HTTP error recovery |
+| HR-ROUND-CREATE-01, HR-ROUND-CREATE-02 / `editHrJobRound` | same test / `HR-ROUND-CREATE-01`, `HR-ROUND-CREATE-02` | Transactional create emits one event and notification; canonical duplicate and 12-stage cap reject writes | Real SQL uniqueness/parallel insertion, event rollback on notification failure |
+| HR-ROUND-REMOVE-01, HR-ROUND-REMOVE-02 / `editHrJobRound` | same test / `HR-ROUND-REMOVE-01`, `HR-ROUND-REMOVE-02` | Own PENDING round can cancel; existing result/slot blocks cancellation | Concurrent results arrival, SQL CAS and audit persistence in PostgreSQL |
+| HR-BREAK-profile-01 / `isExactRecruiterEmployerRow` | `tests/unit/HR-BREAK-profile-01.test.ts` / identical college ID relationship mismatch case | Fixture now statically typed to the complete `RecruiterContext.grants` shape; preserves multi-college denial checks | CI test-typecheck and revoked grant / relationship database query |
+
+The previously recorded 154-file inventory is not exhaustive behavioural certification; **OPEN** rows stay open until full role-state/tenancy/transactional assertions and CI execution are reviewed. Branch updates are not evidence of a production deploy.
+
+## IIT Dharwad Projects HR-view role boundary (2026-10-18)
+
+| Risk | Evidence | State |
+|---|---|---|
+| PROJ-BREAK-HR-ORG-02: identical college ID with foreign organization | `requireProjectReadAccess` checks membership college **and** membership organization against authoritative project-college scope before project-member lookup. `tests/unit/PROJ-BREAK-HR-01.test.ts` rejects a forged organization context and checks no project membership SELECT or module access. | SOURCE FIX + TEST AUTHORED, not executed |
+| HR/recruiter hiring grant without project membership | `PROJ-BREAK-HR-01` tests no college member, wrong tenant, suspended membership, revoked/inactive recruiter context, and lifecycle denial. | TEST AUTHORED; real database ownership and expired-session checks OPEN |
+
+No HR/Recruiter account obtains Projects access merely through employer/drive grants. Actual PostgreSQL member rows, role revocation and parallel session tests are still required for the IIT Dharwad acceptance gate.
+
+
+## HR interview-slot service adverse matrix (2026-10-18)
+
+| Gap or service behavior | Authored test | Verified in CI? | Remaining work |
+|---|---|---|---|
+| HR-SLOT-SCOPE-01/02 revoked recruiter, missing job, denied write role | `tests/unit/HR-BREAK-chat15-interview-slots-03.test.ts` mocked transaction rejects before slot access/side effects | No | Live cross-company and wrong college SQL fixtures |
+| HR-SLOT-VERSION-01/ACTOR-02 stale tab and wrong creator | Same test requires no update/no TPO notification | No | Parallel locked row races in PostgreSQL |
+| HR-SLOT-STATE-03/04 valid OFFER and capacity/terminal/past enforcement | Same test verifies exactly one TPO action, no writes on invalid stage | No | Real capacity with two simultaneous bookers, rollback behavior |
+| HR-SLOT-INPUT-01 strict tenant/action/version input | Same test requires rejection before transaction | No | HTTP 400/403/409 state and same-origin behavior on real requests |
+
+| HR-SLOT-READ-01/02 / `listHrInterviewSlots` | `tests/unit/HR-BREAK-chat15-interview-slots-03.test.ts`: returns own editable slot, marks another creator's slot read-only; revocation denies before private row read, no side effects | No | Real revocation mid-session, database wrong-college row and alternate account browser flow |
+
+
+## Continuation, HR roles, read journeys and page states (2026-10-18)
+
+| ID | Executable evidence added | Still open |
+|---|---|---|
+| HR-TENANT-ID-04 | `HR-BREAK-chat15-tenant-identity-04.test.ts`: empty/whitespace employer IDs, college IDs, relationship IDs denied for candidate projection, employer-job match, grant selection, and live permission gating | Real database invalid-grant defense, revoked session, runtime response privacy |
+| HR-ROUND-LIST-05 | `HR-BREAK-chat15-round-list-05.test.ts`: invalid job id, disabled recruiter, empty authorized job, denied manage permission, canceled rounds filtered, another author's round read-only, attached result/slot locks edits | Concurrent live PostgreSQL grants/round mutation, rollback |
+| UX-HR-PAGES-07 | `UX-chat15-hr-tracker-pages-07.test.ts`: 8 recruiter page role guards, invalid-filter recovery, HR/recruiter alias parity, tracker outage/error/empty/active-role behavior | Browser 320px, inaccessible focus flow, SSR runtime and expired cookie |
+| UX-TRACKER-ERROR-06 | Source update of `src/app/(authenticated)/tracker/page.tsx` removes operator-only migration and environment names; same UX test checks friendly unavailable copy and suppressed admin-only known-error ID | Manual outage browser run |
+
+The stale CI snapshot in `docs/orchestrator/unit-failures-latest.md` lists `chat15-missed-quiz-release.test.ts` and `learner-assessment-state-filter-model.test.ts`. Their current content has already been corrected to exercise deadline-gated release semantics, and `HR-BREAK-chat15-round-service-03.test.ts` no longer uses a self-referential tx argument. Do not mark those green without a new CI run; keep current assertions intact.
+
+
+## HR request mutation and calendar authorization (2026-10-18, authored/not executed)
+
+| Coverage ID | Authored behavior evidence | Remaining acceptance |
+|---|---|---|
+| HR-REQUEST-CANCEL-INTEGRITY-07 | `recruiterRequestUpdateSchema` rejects CANCEL with any draft (prevents historical terms overwrite) and requires validated draft on EDIT and RESUBMIT. `HR-BREAK-chat15-request-cancel-integrity-07.test.ts` checks all three paths, stale/foreign IDs and parse-before-transaction order | End-to-end HTTP 409/400, concurrent cancellation and request audit history in PostgreSQL |
+| HR-CALENDAR-SCOPE-08 | `HR-BREAK-chat15-calendar-08.test.ts` validates one-day 00:00 through 23:59 IST, foreign job and slot exclusion, calendar query 366-day bound, no SQL when no authorized jobs | Real PostgreSQL slot/round calendar role matrix, event/CSV equality, 320px and keyboard UX |

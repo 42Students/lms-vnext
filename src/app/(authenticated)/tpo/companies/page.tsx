@@ -6,6 +6,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { TpoCompanyMemoryWorkspace } from "@/components/tpo/tpo-company-memory-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoCompanyCreateForm } from "@/components/tpo/tpo-company-create-form";
@@ -72,6 +73,7 @@ export default async function TpoCompanyMemoryPage({
   ) {
     redirect("/dashboard");
   }
+  await requireTpoBatchActor(context);
 
   const raw = await searchParams;
   const name = first(raw.name)?.trim() ?? "";

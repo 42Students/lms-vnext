@@ -51,7 +51,7 @@ export function createZeptoMailEmailProvider(
       if (
         !config.token.trim() ||
         !isSecureMailProviderEndpoint(config.apiUrl) ||
-        !config.otpTemplateKey ||
+        !config.otpTemplateKey.trim() ||
         !isValidRecipient("EMAIL", message.toEmail) ||
         !/^[0-9]{4,8}$/.test(message.code)
       ) {

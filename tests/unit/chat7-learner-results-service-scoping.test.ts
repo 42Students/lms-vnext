@@ -90,7 +90,8 @@ describe("COURSES7-07 / COURSES7-08 learner owner isolation and historical submi
  it("reveals score and correctness only after CLOSED plus explicit result release",async()=>{
   state.attempts=[attempt];state.answers=[answer];
   state.quizScope.mockResolvedValueOnce({status:"CLOSED",resultsPublished:true,
-   deliveryId:null,offeringId:"77777777-7777-4777-8777-777777777777"});
+   // The source release gate also requires the persisted due time to be over.
+   dueAt:new Date("2026-01-01T00:00:00Z"),deliveryId:null,offeringId:"77777777-7777-4777-8777-777777777777"});
   const out=await getMyQuizAttempts(context,quizId,deliveryId);
   expect(out[0].resultsVisible).toBe(true);
   expect(out[0].score).toBe(10);

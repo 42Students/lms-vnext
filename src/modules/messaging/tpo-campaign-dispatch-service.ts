@@ -11,6 +11,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {readOutboundProviderConfig,createOutboundProvider} from "./providers";
+import {readZeptoMailConfig,isSecureMailProviderEndpoint} from "@/modules/notifications/zeptomail-email";
 import {issueTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "./tpo-campaign-recipient-token";
 import {campaignRecipientDisposition} from "./tpo-campaign-send-policy";
 import {tpoCampaignDraftStorageReady,getTpoCampaignDraft} from "./tpo-campaign-draft-service";
@@ -23,13 +24,15 @@ export class TpoCampaignDispatchError extends Error{
 }
 function configuration(){
  const provider=process.env.TPO_CAMPAIGN_ZEPTO_TEMPLATE_KEY??"";
+ const mail=readZeptoMailConfig();
  const key=resolveTpoCampaignRecipientSecret(process.env);
  const origin=process.env.APP_PUBLIC_URL??"";
  let url:URL;
  try{url=new URL(origin);}catch{throw new TpoCampaignDispatchError("NOT_READY");}
  if(process.env.TPO_CAMPAIGNS_READY!=="VERIFIED"||
-   !isCampaignTemplateKey(provider)||provider===process.env.ZEPTOMAIL_OTP_TEMPLATE_KEY||
-   !process.env.ZEPTOMAIL_TOKEN||Buffer.byteLength(key,"utf8")<32||
+   !isCampaignTemplateKey(provider)||provider===mail.otpTemplateKey||
+   !mail.token.trim()||!isSecureMailProviderEndpoint(mail.apiUrl)||
+   Buffer.byteLength(key,"utf8")<32||
    url.protocol!=="https:"||url.username||url.password||url.search||url.hash)
    throw new TpoCampaignDispatchError("NOT_READY");
  return {provider,key,origin:url.origin};
@@ -51,8 +54,10 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
  const member=context.membership;
  if(!member||!hasMembershipRole(context,"TPO")||member.status!=="ACTIVE"||
   context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
- const college=await requirePlacementManageScope(context,member.collegeId);
+ // Provider readiness is tenant-independent; refuse disabled delivery
+ // before touching college storage, while still denying unauthenticated roles.
  const config=configuration();
+ const college=await requirePlacementManageScope(context,member.collegeId);
  if(!await tpoCampaignDraftStorageReady())throw new TpoCampaignDispatchError("NOT_READY");
  const draft=await getTpoCampaignDraft(context,id);
  if(!draft)throw new TpoCampaignDispatchError("NOT_FOUND");

@@ -267,6 +267,20 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
       .toContain("Projects (0)");
   });
 
+  it("UX-kit-HARDEN-37 filter drawer closes on viewport resize even without matchMedia",()=>{
+    const source=moduleSource("filter-bar");
+    expect(source).toContain('typeof window.matchMedia === "function"');
+    expect(source).toContain('media?.matches ?? window.innerWidth >= 640');
+    expect(source).toContain('window.addEventListener("resize", resize)');
+    expect(source).toContain('window.removeEventListener("resize", resize)');
+    expect(source).toContain('media?.removeEventListener("change", resize)');
+    expect(source).toContain('document.body.style.overflow = priorOverflow');
+    const html=render(<FilterBar title="Filter project tasks" activeCount={2}
+      search={<Input aria-label="Search tasks"/>} filters="My tasks only"/>);
+    expect(html).toContain("Filter project tasks (2)");
+    expect(html).toContain("Search tasks");
+  });
+
   it("UX-kit-STATES-12 card, heading, stat and native disclosure maintain semantic hierarchy", () => {
     const card=render(<Card as="article" title="Sprint A" description="Five tasks"
       footer={<Button>Review</Button>}><p>Active sprint</p></Card>);

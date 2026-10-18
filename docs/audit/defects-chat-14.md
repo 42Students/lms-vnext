@@ -125,3 +125,28 @@ The lead inspected existing PostgreSQL integration sources `mentor-project-close
 | PROJ-BREAK-MENTOR-119..121 | S1 stale-version, double-review and audit consistency | On a stale deep link naming an older `SUBMITTED` version, latest version was not explicitly checked. After the same transactional project lock used by draft creation, the service now requires the target row to equal the highest persisted version; invalid/locked/unentitled requests cannot generate review, audit or notifications. | `b9996474`, above mocked-transaction regression | Mocked transaction only; PG rollback/parallel-browser actions pending |
 
 **Blockers remain:** GitHub queue showed CI runs still queued; no in-process Vitest/TypeScript/PostgreSQL/browser execution or independent peer review was performed. Other-lane failures do not belong to chat-14. This note does not claim all 83 global failures are fixed.
+
+
+## Refreshed cloud CI e2fbd697 lane failures: regression triage
+
+The earlier PR-S2-11 source-text failure is **absent** from the newer `docs/orchestrator/unit-failures-latest.md`; this is a change in reported failures, not a sign-off of the entire project. The refreshed report lists 8 chat-14 failures. Corrections to all 8 listed assertions were pushed as four narrowly scoped commits:
+
+| Failure group | Count | Diagnosis | Correction |
+|---|---:|---|---|
+| `PROJ-BREAK-chat14-mentor-review-pages.test.tsx` (83) | 1 | `singleValueMentorFilters` incorrectly discarded the authorized `projectId` selector instead of passing it to the strict UUID Zod schema; malicious/invalid IDs looked valid as absent selectors. | `45ebe30a` forwards `projectId` and `projectStatus` to schema while still ignoring unrelated identity fields; existing rendered invalid-URL test remains strict |
+| `projects-mentor-route-guards-chat14.test.ts` | 4 | Tests were stale after stronger 128KiB JSON decoding replaced bare `request.json()` for meeting decisions/reschedules and sprint/task transitions. | `79879566` requires *the actual decoder* to appear after `isSameOriginRequest(request)`, checks bounded reader error handling when used, retains authenticated service, method, 403, and no-raw-error assertions |
+| `learner-projects-gap-verification.test.ts` (LEARNER-projects-40) | 1 | Team final-submit confirmation had drifted from exact legacy copy; service behavior unchanged. | `f599f3b1` restores `Submit on behalf of your team?` while retaining the newer explanatory description and submission evidence/summary validation |
+| `w03-project-admin-audit.test.ts` | 2 | W03 static assertions demanded inline `searchParams.*` parsing and an unconditional college requirement, ignoring the refactored validated parser and narrowly authorized platform-wide template audit. | `c17ce3c3` inspects `parseProjectAdminAuditQuery` and exact legacy filters plus `mayReadGlobalProjectAudit` (active unscoped Super Admin + `activity.read`) instead of weakening the security contract |
+
+**Verification:** Source/test comparisons performed after these commits; no local Vitest, typecheck, authenticated browser or fresh cloud results were available for this four-commit batch. Do not mark tests passing until the next actual CI run.
+
+
+## Additional Mentor state integrity and coverage (18 October 2026)
+
+| ID | Severity | Evidence / fix | Regression | Gating |
+|---|---|---|---|---|
+| PROJ-BREAK-MENTOR-122..129 | S2 | Pure risk/readiness classifier now clamps malformed direct-call page numbers, and archived/completed/unknown project states do not generate actionable task/meeting risks. Tests compare Oct 18 23:59 and Oct 19 00:00 IST, absent work vs actual 0%, recorded blockers/reviews, high-priority filters and fully released work. | `4e2aa292`, `641dedaf`, 3 model ledger exports | Authored/unrun; true query permission and browser parity remain open |
+| PROJ-BREAK-MENTOR-130..133 | S1 stale-token replay | `writeMentorProjectRelease` used raw `new Date()` for PATCH `updatedAt`. Two edits in one millisecond could retain the same optimistic version and permit a stale-tab replay. Added monotonic +1ms update helper, while rejecting corrupted timestamps; normal actual clock still wins. | `e67bb65d`, `4b3054c6`, `263858fb`; mapped in canonical ledger | Unit model authored/unrun, actual concurrent PostgreSQL patch & audit once still required |
+| PROJ-BREAK-MENTOR-134..153 | Coverage only | Added deterministic pure-model tests for 11 Mentor workspace-evidence exports (safe href, no inferred percent, criteria visibility, review state, exact task URL, team/primary counts, latest delivery and resource safety) and four Team coverage exports (filters, primary assignment separation, numeric sorting, hostile URL, page clamp). | `cac81353`, `fa33e268`, `cdfda8e2` ledger | Authored/unrun; no claim of source-to-database authorization or 90% branch coverage |
+
+No CI pass, production sign-off or independent review is implied.

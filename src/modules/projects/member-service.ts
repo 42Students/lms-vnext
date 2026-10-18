@@ -27,6 +27,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission,type PermissionTransaction} from "@/modules/permissions/persisted-actor";
 import type { ProjectMemberRole } from "./constants";
 import {
   ProjectsServiceError,
@@ -65,11 +66,12 @@ function mapMemberConstraint(error: unknown) {
 }
 
 async function loadEligibleMembership(
+  tx: PermissionTransaction,
   membershipId: string,
   collegeId: string,
   role: ProjectMemberRole,
 ) {
-  const [membership] = await getDb()
+  const [membership] = await tx
     .select({
       id: collegeMemberships.id,
       collegeId: collegeMemberships.collegeId,
@@ -98,6 +100,7 @@ async function loadEligibleMembership(
         eq(collegeMemberships.status, "ACTIVE"),
       ),
     )
+    .for("share")
     .limit(1);
 
   if (!membership || membership.platformStatus !== "ACTIVE") {
@@ -301,6 +304,9 @@ export async function reassignProjectPrimaryMentor(
           "PROJECT_INVALID_STATE",
         );
       }
+      await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+      });
 
       const [eligibleTarget] = await tx
         .select({
@@ -676,18 +682,21 @@ export async function addProjectMember(
   const input =
     addProjectMemberInputSchema.parse(rawInput);
 
-  await loadEligibleMembership(
-    input.membershipId,
-    scope.collegeId,
-    input.role,
-  );
 
   try {
     const [member] = await getDb().transaction(async tx => {
-      const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId })
+      const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId,status:projectInstances.status })
         .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
-      if (input.role === "LEARNER" && project?.teamGroupId)
+      if(!project||project.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+      await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+      });
+      if (input.role === "LEARNER" && project.teamGroupId)
         throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
+      // Lock the actual target membership, its platform user and role
+      // together with this project write. A pre-transaction eligibility
+      // snapshot could be revoked immediately before assignment.
+      await loadEligibleMembership(tx,input.membershipId,scope.collegeId,input.role);
       const [created]=await tx.insert(projectMembers).values({
         projectId: scope.project.id,
         membershipId: input.membershipId,
@@ -751,7 +760,10 @@ export async function updateProjectMember(
       const [project]=await tx.select({status:projectInstances.status})
         .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
         .for("update").limit(1);
-      if(!project)throw new ProjectsServiceError("PROJECT_NOT_FOUND");
+      if(!project||project.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+      await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+      });
       const [fresh]=await tx.select().from(projectMembers)
         .where(and(
           eq(projectMembers.id,member.id),eq(projectMembers.projectId,scope.project.id),
@@ -817,7 +829,11 @@ export async function endProjectMember(
   return getDb().transaction(async tx => {
     const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId,status:projectInstances.status })
       .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
-    if (member.role === "LEARNER" && project?.teamGroupId)
+    if(!project||project.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+    await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+      });
+    if (member.role === "LEARNER" && project.teamGroupId)
       throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
     const [fresh] = await tx.select().from(projectMembers)
       .where(and(eq(projectMembers.id, member.id), isNull(projectMembers.endedAt)))

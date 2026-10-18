@@ -94,7 +94,8 @@ export async function requireProjectReadAccess(
     context.user.platformStatus !== "ACTIVE" ||
     !membership ||
     membership.status !== "ACTIVE" ||
-    membership.collegeId !== scope.collegeId
+    membership.collegeId !== scope.collegeId ||
+    membership.organizationId !== scope.organizationId
   ) {
     throw new ProjectsServiceError(
       "PROJECT_ACCESS_DENIED",

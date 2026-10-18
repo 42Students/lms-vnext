@@ -27,7 +27,7 @@ Tests are in:
 | `empty-state.tsx` | `EmptyState` | STATES-08; HARDEN-06 | empty is not alert; optional recovery |
 | `error-state.tsx` | `ErrorState` | STATES-08; HARDEN-06 | alert is not success, explicit recovery |
 | `file-upload.tsx` | `FileUpload, fileSizeIsValid, fileMatchesAccept, mustClearFileSelection` | STATES-13; HARDEN-05; HARDEN-28; HARDEN-34 | disabled/unavailable fallback, size/type, combined assistive helper/error IDs |
-| `filter-bar.tsx` | `FilterBar` | STATES-11; HARDEN-19 | search visible, sanitize activeCount, overlay keyboard contract |
+| `filter-bar.tsx` | `FilterBar` | STATES-11; HARDEN-19; HARDEN-37 | search visible, activeCount clamp, WebView media fallback, focus/keyboard cleanup |
 | `form-field.tsx` | `FormField` | STATES-03; HARDEN-03 | id association, helper/error, invalid merge |
 | `graceful-page-loading.tsx` | `GracefulPageLoading` | STATES-07; HARDEN-13 | directory/card, readable loading, timeout source |
 | `inline-notice.tsx` | `InlineNotice` | STATES-08; HARDEN-07 | alert/status semantics and dismiss action |
@@ -74,3 +74,17 @@ Tests are in:
 
 - **UX-kit-HARDEN-27:** the single listed chat-17 unit regression was re-read against `DataTable` and `ScrollCue`. It preserves **exactly one** formatter call per row, rejects unsafe row links and renders an accessible caption while SSR lacks physical overflow. Its brittle implementation-string assertion was replaced with semantic caption/scroll-label patterns, and ordered formatter calls are now explicitly asserted. Requires a refreshed cloud runner to confirm passing; the published report is from an older commit.
 - **UX-kit-HARDEN-36:** hidden field detail authorization is **per-row**, not global to the table. Rows without `mobileDetail.canView(row)` do not run or serialize the sensitive cell formatter, disclose a fallback value on mobile, or render an unauthorized detail link. Mixed-permission assertions cover the leak and authorized row continuity.
+
+- **UX-kit-HARDEN-37:** `FilterBar` no longer requires `window.matchMedia` on embedded WebViews; it listens for resize and restores listener, body overflow and focus on closing. Source and SSR assertions are in `tests/unit/UX-kit-states-chat17.test.tsx`.
+
+## Interactive browser contract additions — UX-kit-HARDEN-38/39, UX-kit-E2E-01..03
+
+- `ToastProvider` no longer assumes `crypto.randomUUID()` exists in embedded mobile WebViews: provider-scoped monotonically unique React keys have no security significance. `UX-kit-HARDEN-38` verifies static fallback and persistent error behavior.
+- `useOverlayWebview` now reacts to `window.resize` **in addition to** `visualViewport` events, updating dialog available height/top/bottom on engines that lack `visualViewport`. `UX-kit-HARDEN-39` checks listener registration and teardown.
+- `src/app/e2e/chat17-ui-kit/page.tsx` returns `notFound()` unless `NODE_ENV === "development"`; its companion client module mounts real `Dialog`, `Tabs`, `ScrollCue`, `FilterBar`, `FileUpload`, and `ToastProvider`. It carries no live tenant data, and is intended only for developer/CI browser verification.
+- `tests/e2e/chat17-ui-kit-interactions.spec.ts` uses Chromium to exercise actual native Escape/focus return; arrow navigation skipping disabled tabs; measured horizontal overflow cue, resize-to-no-overflow cue removal and reactivation; filter overlay with missing `matchMedia`; hostile, oversized, valid, and invalidated `FileList`; and toasts with `crypto.randomUUID` made unavailable. `tests/unit/UX-kit-dev-harness-chat17.test.ts` checks that the route cannot become an exposed production fixture.
+- Run `npm run test:e2e:chat17:kit` with Playwright browsers installed and a development server; the script also includes the isolated native URL parsing witness. These tests are **authored but not confirmed passing** by this connector-only session. Other controls (nested bottom-sheet history, real reduced-motion hardware, screen readers, and authenticated route permissions) remain separate gates.
+
+- **UX-kit-E2E-04:** the development-only harness mounts a real `Drawer` with a nested `BottomSheet`. Browser test `tests/e2e/chat17-ui-kit-interactions.spec.ts` checks that closing the nested sheet returns to the parent drawer's history marker without closing the parent; a subsequent genuine Back dismisses the drawer and restores opener focus. Native Chromium result is still pending.
+
+- **UX-kit-E2E-05:** the development-only browser harness includes a real `Skeleton` and keyboard-native `Disclosure`. Playwright emulates `prefers-reduced-motion: reduce`, inspects the *actual* computed skeleton pseudo-element animation duration, and toggles disclosure using Enter and Space while confirming hidden content remains nonvisible when closed. This is a browser acceptance test awaiting CI execution, not a claim of full motion/screen-reader certification.

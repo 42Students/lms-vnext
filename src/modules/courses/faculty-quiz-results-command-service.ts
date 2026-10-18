@@ -10,6 +10,7 @@ import {CoursesServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {facultyQuizResultsCommandSchema,facultyQuizResultsTransition} from "./faculty-quiz-results-command-model";
+import {assertPersistedFacultyTeachingMutation} from "./faculty-persisted-teaching-guard";
 import {z} from "zod";
 export async function commandFacultyQuizResults(context:RequestContext,rawQuizId:unknown,raw:unknown){
  const quizId=z.string().uuid().parse(rawQuizId),input=facultyQuizResultsCommandSchema.parse(raw);
@@ -27,6 +28,7 @@ export async function commandFacultyQuizResults(context:RequestContext,rawQuizId
     .where(and(eq(courseQuizzes.id,quizId),eq(courseQuizzes.deliveryId,input.deliveryId)))
     .for("update").limit(1);
   if(!quiz)throw new CoursesServiceError("QUIZ_NOT_FOUND");
+  await assertPersistedFacultyTeachingMutation(tx,context,input.deliveryId,delivery);
   if(quiz.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
     throw new CoursesServiceError("QUIZ_RESULTS_STALE_VERSION");
   if(!facultyQuizResultsTransition(quiz.status,quiz.resultsPublished,input.action,quiz.dueAt))
