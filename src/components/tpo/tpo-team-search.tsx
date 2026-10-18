@@ -25,7 +25,7 @@ export function TpoTeamSearch({value}:{value:string}){
   Search conversations
   <input ref={ref} type="search" name="q" maxLength={120} defaultValue={value}
    placeholder="Search (press /)"
-   className="mt-1 block min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3"
+   className="mt-1 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3"
    onChange={event=>{
     const query=event.currentTarget.value.trim();
     if(timer.current)clearTimeout(timer.current);
