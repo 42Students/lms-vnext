@@ -40,3 +40,7 @@ The first-third Super Admin import-history overlay in `src/components/admin/supe
 
 ## Faculty bulk import replacement-file fix — SA-FACULTY-CSV-17
 On the first-third faculty pages, `SuperAdminFacultyBulkImport` clears an old selection when a new file is invalid or slow to read, rejects stale async text completions, revalidates the selection after the destructive confirm dialog and blocks duplicate submissions synchronously. `canSubmitFacultyBulkImport` behavior plus component constraints are covered by `tests/unit/chat13-faculty-bulk-stale-file-guard.test.ts`. Phone and real session acceptance remain pending.
+
+
+## Bulk learner override UX — SA-STUDENT-BULK-18
+The first-third Super Admin student-access widget now validates selected memberships against the currently visible college roster, prevents double submits using a synchronous pending ref, and freezes the confirmed module/action/membership IDs throughout the network request. Denied/stale/invalid server statuses are mapped to friendly guidance instead of raw error codes. Behavioral selection/feedback tests and component interaction contracts: `tests/unit/chat13-student-bulk-stale-roster.test.ts`; browser acceptance pending.
