@@ -85,8 +85,9 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
  });
  const next=rows.find(row=>row.canPromote)??null;
  const token=waitlistPreviewToken(jobId,{
-  updatedAt:job.updatedAt.toISOString(),rounds,promotions:promotions.map(p=>[p.id,p.status,p.applicationId,p.seatNumber]),
-  activeOffers,rows,freeSeats,
+  updatedAt:job.updatedAt.toISOString(),rounds,
+  ...canonicalWaitlistPreviewCollections(promotions,activeOffers),
+  rows,freeSeats,
  });
  return {job:{...job,updatedAt:job.updatedAt.toISOString()},lastRoundId:last?.id??null,
   storageReady,freeSeats,activeOffers:occupiedOfferSeats,rows,next,previewToken:token};
