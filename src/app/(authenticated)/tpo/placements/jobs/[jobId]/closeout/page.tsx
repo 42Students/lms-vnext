@@ -33,14 +33,14 @@ export default async function TpoDriveCloseoutPage({
     <Link className="text-sm font-semibold text-[var(--lms-teal-deep)]"
       href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}>← Back to drive</Link>
     <header>
-      <h1 className="text-2xl font-bold text-foreground">{data.job.title} · Close-out summary</h1>
+      <h1 className="text-[30px] font-semibold text-[#172033]">{data.job.title} · Close-out summary</h1>
       <p className="mt-2 text-sm text-body">
         Current persisted facts for a {data.job.status.toLowerCase()} drive.
         These numbers are not a finalized, immutable historical snapshot.
       </p>
     </header>
     <a href={"/api/placements/tpo/drives/" + encodeURIComponent(data.job.id) + "/closeout/export"}
-      className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+      className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-primary-foreground">
       Export CSV
     </a>
     <section aria-label="Close-out metrics" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
