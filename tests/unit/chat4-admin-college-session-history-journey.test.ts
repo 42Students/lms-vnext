@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { parseAdminSessionHistoryPage } from "@/modules/colleges/admin-session-query-model";
+import { parseAdminSessionHistoryPage, adminSessionHistoryPageSchema } from "@/modules/colleges/admin-session-query-model";
 
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 
@@ -11,6 +11,9 @@ describe("SA-colleges-admins-R01 administrator history tenancy and paging",()=>{
     expect(parseAdminSessionHistoryPage({page:"1"})).toBe(1);
     expect(parseAdminSessionHistoryPage({page:"10000"})).toBe(10000);
     expect(parseAdminSessionHistoryPage({page:"0002"})).toBe(2);
+    expect(adminSessionHistoryPageSchema.parse(2)).toBe(2);
+    expect(adminSessionHistoryPageSchema.safeParse("1e2").success).toBe(false);
+    expect(adminSessionHistoryPageSchema.safeParse("0x10").success).toBe(false);
   });
 
   it("rejects forged extras, repeated pages, fractional and nondecimal numeric syntax",()=>{
@@ -32,6 +35,7 @@ describe("SA-colleges-admins-R01 administrator history tenancy and paging",()=>{
 
   it("requires persisted admin authorization and scoped administrator subject before returning history",()=>{
     const service=source("src/modules/colleges/admin-session-service.ts");
+    expect(service).toContain("adminSessionHistoryPageSchema.parse(rawPage)");
     const authorized=service.indexOf("async function authorizedTarget(");
     const history=service.indexOf("export async function listCollegeAdminHistory(");
     expect(authorized).toBeGreaterThan(-1);
