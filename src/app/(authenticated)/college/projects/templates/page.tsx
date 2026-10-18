@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {ProjectAdminMissingCollege} from "@/components/projects/project-admin-missing-college";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -68,13 +70,13 @@ export default async function CollegeProjectTemplatesPage({
         className="flex flex-wrap items-end gap-3">
         <label className="min-w-52 flex-1 text-sm font-semibold text-foreground">
           Search templates
-          <input type="search" name="q" maxLength={120} defaultValue={q}
+          <Input type="search" name="q" maxLength={120} defaultValue={q}
             placeholder="Search by template or version"
-            className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-base font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
+            className="mt-1" />
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] inline-flex items-center">
+        <Button type="submit" variant="secondary">
           Search
-        </button>
+        </Button>
         {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">
           Clear search
         </Link> : null}
