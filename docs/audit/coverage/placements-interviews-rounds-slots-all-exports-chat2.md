@@ -127,12 +127,12 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-interview-reschedule-model.ts` | `tpoInterviewRescheduleSchema` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-interview-reschedule-model.ts` | `validInterviewWindow` (function) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-interview-reschedule-model.ts` | `overlappingInterviewVenue` (function) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/tpo-interview-reschedule-service.ts` | `rescheduleTpoInterview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-reschedule-service.ts` | `rescheduleTpoInterview` (function) | `tests/unit/chat2-tpo-service-denial-break-09.test.ts` (**denial-only; DB flows missing**) | PARTIAL |
 | `src/modules/placements/tpo-interview-slot-model.ts` | `tpoInterviewSlotActionSchema` (const) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-interview-slot-model.ts` | `sameInterviewRoom` (function) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-interview-slot-model.ts` | `planInterviewDay` (function) | \`tests/unit/chat2-tpo-interview-plan-break-01.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/tpo-interview-slot-service.ts` | `getTpoInterviewSlotWorkspace` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
-| `src/modules/placements/tpo-interview-slot-service.ts` | `mutateTpoInterviewSlots` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-interview-slot-service.ts` | `getTpoInterviewSlotWorkspace` (function) | `tests/unit/chat2-tpo-service-denial-break-09.test.ts` (**denial-only; DB flows missing**) | PARTIAL |
+| `src/modules/placements/tpo-interview-slot-service.ts` | `mutateTpoInterviewSlots` (function) | `tests/unit/chat2-tpo-service-denial-break-09.test.ts` (**denial-only; DB flows missing**) | PARTIAL |
 | `src/modules/placements/tpo-live-round-job-link-model.ts` | `tpoLiveRoundJobHref` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-live-round-search-model.ts` | `tpoLiveRoundSearchSchema` (const) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-live-round-search-model.ts` | `filterTpoLiveRoundSearch` (function) | \`tests/unit/chat2-tpo-round-csv-and-lifecycle-break-03.test.ts\` (CI pending) | TEST AUTHORED |
@@ -145,7 +145,7 @@ Scope: **all 71** `src/modules/placements/*interview*/*round*/*slot*` TypeScript
 | `src/modules/placements/tpo-round-apply-model.ts` | `RoundApplyRow` (type) | N/A (compile-time only) | TYPE ONLY |
 | `src/modules/placements/tpo-round-apply-model.ts` | `summarizeRoundApply` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-apply-model.ts` | `roundApplyPreviewToken` (function) | \`tests/unit/chat2-tpo-round-state-break-01.test.ts\` (CI pending) | TEST AUTHORED |
-| `src/modules/placements/tpo-round-apply-service.ts` | `getTpoRoundApplyPreview` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
+| `src/modules/placements/tpo-round-apply-service.ts` | `getTpoRoundApplyPreview` (function) | `tests/unit/chat2-tpo-service-denial-break-09.test.ts` (**denial-only; DB flows missing**) | PARTIAL |
 | `src/modules/placements/tpo-round-apply-service.ts` | `applyTpoWholeRound` (function) | **NO DIRECT BEHAVIOURAL TEST — GAP** | OPEN |
 | `src/modules/placements/tpo-round-calendar-model.ts` | `tpoRoundCalendarMutationSchema` (const) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
 | `src/modules/placements/tpo-round-calendar-model.ts` | `parseIstRoundLocalTime` (function) | \`tests/unit/chat2-ledger-round-import-and-scheduling.test.ts\` (CI pending) | TEST AUTHORED |
