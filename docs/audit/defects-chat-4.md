@@ -185,3 +185,7 @@ Semester/batch directory numeric schemas used `z.coerce.number()`, interpreting 
 ## COL-people-local-identity-02 — orphaned first-party account creation
 
 The first-party identity directory adapter generated a fresh `lms_*` identity even on direct `createUser` calls lacking both phone and email; such a person has no OTP sign-in or recovery contact. It now throws `PeopleServiceError("IDENTITY_CONTACT_REQUIRED")`, mirroring the higher-level resolver. A regression test was appended to the local directory suite; not executed.
+
+## SA-colleges-verification-FILTER-01 — S2 numeric query ambiguity
+
+The Super Admin college verification page passed `page`/`pageSize` directly to a shared Zod coercion schema, accepting strings like `1e2` or `0x10` as valid pages. It now rejects nondecimal input explicitly before queue/policy database access, retaining existing strict unknown-key/array rejection and user-visible Reset recovery. A rendered route test covers invalid, denied, policy and scan-cap states; not run.
