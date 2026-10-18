@@ -70,6 +70,7 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
     vi.mocked(getCurrentDeviceSession).mockRejectedValue(new SessionAuthenticationError("SESSION_REVOKED"));
     const result = await GET();
     expect(result.status).toBe(401);
+    expect(result.headers.get("Cache-Control")).toBe("private, no-store");
     expect(result.headers.get("x-request-id")).toBe("test-ref");
     expect(await result.text()).not.toContain("lms_session");
     expect(listActiveSessions).not.toHaveBeenCalled();
@@ -88,6 +89,7 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
     vi.mocked(isSameOriginRequest).mockReturnValue(false);
     const result = await DELETE_OTHERS(request());
     expect(result.status).toBe(403);
+    expect(result.headers.get("Cache-Control")).toBe("private, no-store");
     expect(await result.json()).toEqual({ error: "INVALID_ORIGIN" });
     expect(getCurrentDeviceSession).not.toHaveBeenCalled();
     expect(revokeOtherSessions).not.toHaveBeenCalled();
@@ -109,10 +111,12 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
     vi.mocked(isSameOriginRequest).mockReturnValue(false);
     const denied = await DELETE_ONE(request(deviceUrl + "/" + otherSessionId), route(otherSessionId));
     expect(denied.status).toBe(403);
+    expect(denied.headers.get("Cache-Control")).toBe("private, no-store");
     expect(getCurrentDeviceSession).not.toHaveBeenCalled();
     vi.mocked(isSameOriginRequest).mockReturnValue(true);
     const malformed = await DELETE_ONE(request(deviceUrl + "/invalid-id"), route("invalid-id"));
     expect(malformed.status).toBe(400);
+    expect(malformed.headers.get("Cache-Control")).toBe("private, no-store");
     expect((await malformed.json()).error).toBe("INVALID_REQUEST");
     expect(revokeOwnSession).not.toHaveBeenCalled();
     expect(getCurrentDeviceSession).toHaveBeenCalledOnce();
@@ -122,6 +126,7 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
     vi.mocked(revokeOwnSession).mockResolvedValue(false);
     const denied = await DELETE_ONE(request(deviceUrl + "/" + otherSessionId), route(otherSessionId));
     expect(denied.status).toBe(404);
+    expect(denied.headers.get("Cache-Control")).toBe("private, no-store");
     expect(await denied.json()).toEqual({ error: "SESSION_NOT_FOUND" });
     expect(revokeOwnSession).toHaveBeenCalledWith(otherSessionId, userId);
     expect(revokeOtherSessions).not.toHaveBeenCalled();
@@ -137,6 +142,7 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
     expect(await first.json()).toEqual({ ok: true });
     const second = await DELETE_ONE(request(deviceUrl + "/" + otherSessionId), route(otherSessionId));
     expect(second.status).toBe(503);
+    expect(second.headers.get("Cache-Control")).toBe("private, no-store");
     expect(second.headers.get("x-request-id")).toBe("test-ref");
     expect(await second.text()).not.toContain("secret connection string");
     expect(revokeOwnSession).toHaveBeenCalledTimes(2);

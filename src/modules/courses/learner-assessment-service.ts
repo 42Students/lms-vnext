@@ -3,6 +3,7 @@ import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {learnerProgramEnrollments,sectionEnrollments,sections} from "@/db/schema";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {CoursesServiceError} from "./errors";
 import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import {listLearnerCourseDeliveries} from "./learner-course-service";
 import {listOwnLearnerAssessmentRows} from "./learner-assessment-flat-query";
@@ -60,6 +61,10 @@ export async function getLearnerAssessmentOverview(
     classScope="UNAVAILABLE";
   }
   const selectedCourseId=learnerAssessmentAuthorizedCourse(options.courseId,deliveries);
+  // A forged, malformed, or no-longer-enrolled course filter must not silently
+  // reset to "All courses"; retain only the explicit empty-filter behavior.
+  const requestedCourse=options.courseId!==undefined&&options.courseId!==null&&options.courseId!=="";
+  if(requestedCourse&&!selectedCourseId)throw new CoursesServiceError("COURSE_NOT_FOUND");
   const scopedDeliveries=selectedCourseId?deliveries.filter(row=>row.courseId===selectedCourseId):deliveries;
   const {assignments,quizzes}=await listOwnLearnerAssessmentRows(scopedDeliveries,context.membership!.id,snapshotNowMs);
 
