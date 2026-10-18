@@ -300,22 +300,57 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-quiz-results-command-model.ts` | `facultyQuizResultsTransition`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-quiz-results-command-service.ts` | `commandFacultyQuizResults`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-quiz-results-legacy-model.ts` | `legacyQuizResultsWriteAllowed`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-regrade-feedback-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-report-completeness.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-report-csv-request.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-report-csv-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-report-csv.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-report-pdf.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-report-students.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-report-time.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-reports-hub-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-reports-hub-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-response-followup-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-response-followup-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-results-export.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-results-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-results-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-roster-display-model.ts` | GAP: exported-function test inventory required |
+| `src/modules/courses/faculty-regrade-feedback-model.ts` | `facultyRegradeFeedbackAllowed`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-completeness.ts` | `facultyReportIsIncomplete`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv-request.ts` | `facultyReportCsvRequestSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv-request.ts` | `facultyReportCsvHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv-request.ts` | `parseFacultyCsvDownloadUrl`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv-request.ts` | `facultyCsvAttachmentHeaders`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv-service.ts` | `getFacultyReportCsvForDownload`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv.ts` | `facultyReportCsvSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv.ts` | `neutralizeFacultyCsvCell`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv.ts` | `facultyReportCsv`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv.ts` | `facultyReportCsvFilename`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv.ts` | `facultyCsvIstTimestamp`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv.ts` | `FACULTY_REPORT_CSV_MAX_ROWS`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv.ts` | `capFacultyReportCsvRows`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-csv.ts` | `facultyCsvLearnerLabel`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-pdf.ts` | `buildFacultyReportPdf`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-students.ts` | `FACULTY_REPORT_PAGE_SIZE`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-students.ts` | `facultyReportStudentPage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-students.ts` | `facultyReportLearnerName`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-report-time.ts` | `facultyReportIstTimestamp`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-reports-hub-model.ts` | `facultyReportsHubQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-reports-hub-model.ts` | `facultyReportHubHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-reports-hub-model.ts` | `publishedReportBreakdown`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-reports-hub-model.ts` | `attendanceReportCounts`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-reports-hub-model.ts` | `parseFacultyReportsHubLocation`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-reports-hub-service.ts` | `getFacultyReportsHub`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-response-followup-model.ts` | `facultyResponseFollowUpQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-response-followup-model.ts` | `selectPastDueAssessments`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-response-followup-model.ts` | `facultyResponseFollowUpPage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-response-followup-model.ts` | `facultyResponseFollowUpHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-response-followup-model.ts` | `limitedMissingLearners`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-response-followup-model.ts` | `parseFacultyFollowUpSearchParams`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-response-followup-model.ts` | `facultyFollowupEmptyState`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-response-followup-service.ts` | `getFacultyResponseFollowUps`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-export.ts` | `facultyResultsCsvCell`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-export.ts` | `facultyResultExportAverage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-export.ts` | `facultyResultsPageCsv`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-export.ts` | `facultyResultsCsvHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-model.ts` | `facultyResultsQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-model.ts` | `safeFacultyDueTime`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-model.ts` | `filterFacultyResultCandidates`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-model.ts` | `paginateFacultyResults`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-model.ts` | `facultyResultsHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-model.ts` | `facultyRecordedResponseRate`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-model.ts` | `parseFacultyResultsSearchParams`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-model.ts` | `facultyResultsEmptyState`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-results-service.ts` | `getFacultyAssessmentResults`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-roster-display-model.ts` | `facultyRosterDisplayName`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-roster-display-model.ts` | `sortFacultyRosterByRollThenName`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-roster-display-model.ts` | `facultyRosterMetrics`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-roster-display-model.ts` | `facultyRosterPhotoPreview`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-roster-export.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-route-access-model.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-schedule-service.ts` | GAP: exported-function test inventory required |
