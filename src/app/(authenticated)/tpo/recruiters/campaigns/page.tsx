@@ -29,7 +29,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
      .map(([value,label])=><Link key={value} href={"/tpo/recruiters?view="+value}
        aria-current={value==="campaigns"?"page":undefined}
        className={value==="campaigns"
-         ?"inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+         ?"inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground"
          :"inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body"}>
        {label}
      </Link>)}
@@ -43,11 +43,11 @@ export default async function CampaignHistory({searchParams}:PageProps){
      placeholder="Filter by purpose" className="mt-1 block min-h-11 rounded border border-border px-3"/>
    </label>
    <button type="submit" className="min-h-11 rounded border border-border px-3 text-sm">Apply</button>
-   <Link href="/tpo/recruiters/campaigns" className="text-sm text-[var(--lms-teal-deep)] underline">Clear</Link>
+   <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline">Clear</Link>
   </form>
   <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
    <Link href="/tpo/recruiters/campaigns/new"
-    className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+    className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
     New email campaign
    </Link>
    <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)]">Back to Engage</Link>
@@ -63,7 +63,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     <ul className="grid gap-3 sm:grid-cols-2">
      {drafts.rows.map(item=><li key={item.campaign_id}
       className="rounded-md border border-border bg-surface p-4">
-      <Link className="font-semibold text-[var(--lms-teal-deep)] underline"
+      <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline"
        href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}>
        {item.title}
       </Link>
@@ -85,7 +85,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     {result.rows.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <h2 className="break-words font-semibold text-foreground">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
-        className="text-[var(--lms-teal-deep)] underline-offset-2 hover:underline">{row.purpose}</Link>
+        className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline-offset-2 hover:underline">{row.purpose}</Link>
       </h2>
       <p className="mt-1 text-xs text-muted-foreground">{tpoCampaignHistoryTime(row.createdAt)} IST · {row.status}</p>
       <dl className="mt-3 grid grid-cols-2 gap-2 text-sm text-body">
