@@ -5,6 +5,7 @@ import {
   projectAdminCsvCell,
 } from "@/modules/projects/project-admin-csv-model";
 import {projectWorkspacePageCsv} from "@/modules/projects/admin-workspace-page-export-model";
+import {projectTemplateCatalogueCsv} from "@/modules/projects/project-template-catalogue-model";
 
 describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience", () => {
   it("PROJ-BREAK-exports-10 neutralizes formulas after Unicode isolates, bidi controls and invisible prefixes", () => {
@@ -31,6 +32,21 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     }
     expect(projectAdminCsvCell("Line one\nLine two")).toBe('"Line one\nLine two"');
     expect(projectAdminCsvCell("ordinary value")).toBe('"ordinary value"');
+  });
+
+  it("PROJ-BREAK-exports-17 college template catalogue rejects Unicode-mark hidden formulas", () => {
+    const csv = projectTemplateCatalogueCsv([{
+      templateId: "template-1",
+      title: "\u034F\u061C=HYPERLINK(1)",
+      version: 2,
+      sections: {overview:1,releases:0,sprints:1,tasks:2,resources:0},
+    }]);
+    expect(csv.startsWith("\uFEFF")).toBe(true);
+    expect(csv).toContain('"\'\u034F\u061C=HYPERLINK(1)"');
+    expect(csv).toContain('"2","4","1","0","1","2","0"');
+    expect(csv.match(/\uFEFF/g)).toHaveLength(1);
+    expect(readFileSync("src/modules/projects/project-template-catalogue-model.ts","utf8"))
+      .toContain("return projectAdminCsv(lines)");
   });
 
   it("PROJ-BREAK-exports-11 escapes multiline, quotes and comma fields without adding columns", () => {
