@@ -117,7 +117,7 @@ No page UI/UX restyling was introduced.
 - REC-home-drives-R04 [FIXED-ON-MAIN] recruiter/home-drives
 - REC-home-drives-R05 [FIXED-ON-MAIN] recruiter/home-drives
 - REC-home-drives-R06 [FIXED-ON-MAIN] recruiter/home-drives
-- REC-home-drives-R07 [OPEN] recruiter/home-drives
+- REC-home-drives-R07 [NOT-A-GAP] recruiter/home-drives — owner requires IST everywhere; existing acceptance and named test: tests/unit/recruiter-home-drives-chat7-r7.test.ts
 
 ## chat-7 (11)
 
