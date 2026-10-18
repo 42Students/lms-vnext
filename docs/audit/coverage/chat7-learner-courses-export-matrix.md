@@ -157,3 +157,19 @@
 | `learner-quiz-correctness-visibility-model.ts` | `canReviewLearnerQuizCorrectAnswers` | Not individually linked in this inventory |
 | `learner-quiz-deadline-display-model.ts` | `learnerQuizDeadlineDisplay` | Not individually linked in this inventory |
 | `learner-quiz-deadline-warning-model.ts` | `learnerQuizDeadlineWarning` | Not individually linked in this inventory |
+| `learner-quiz-draft-scope-model.ts` | `normalizeLearnerQuizDraftForQuestions` | Not individually linked in this inventory |
+| `learner-quiz-draft.ts` | `LearnerQuizDraft` | Not individually linked in this inventory |
+| `learner-quiz-draft.ts` | `parseLearnerQuizDraft` | Not individually linked in this inventory |
+| `learner-quiz-empty-question-model.ts` | `learnerQuizEmptyQuestionMessage` | Not individually linked in this inventory |
+| `learner-quiz-history-model.ts` | `learnerQuizHistoryQuerySchema` | Authored direct model regression, unrun |
+| `learner-quiz-history-model.ts` | `ownQuizHistorySelection` | Authored direct model regression, unrun |
+| `learner-quiz-history-model.ts` | `learnerAttemptResultLabel` | Authored direct model regression, unrun |
+| `learner-quiz-history-model.ts` | `learnerQuizAttemptDateLabel` | Authored direct model regression, unrun |
+| `learner-quiz-history-model.ts` | `learnerQuizQuestionAwardLabel` | Authored direct model regression, unrun |
+| `learner-quiz-history-model.ts` | `learnerQuizSelectedAnswerMessage` | Authored direct model regression, unrun |
+| `learner-quiz-mobile-model.ts` | `learnerQuizMobileState` | Not individually linked in this inventory |
+| `learner-quiz-question-nav-model.ts` | `learnerQuizQuestionNavState` | Not individually linked in this inventory |
+| `learner-quiz-refresh-failure-model.ts` | `learnerQuizRefreshFailureMessage` | Not individually linked in this inventory |
+| `learner-quiz-request-race-model.ts` | `learnerQuizRequestCurrent` | Not individually linked in this inventory |
+| `learner-quiz-response-id-model.ts` | `requireLearnerQuizResponseId` | Not individually linked in this inventory |
+| `learner-quiz-result-release-policy.ts` | `learnerQuizResultsReleased` | Not individually linked in this inventory |
