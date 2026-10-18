@@ -3,7 +3,7 @@ import {Drawer} from "@/components/ui/drawer";
 import {apiFetch} from "@/lib/api-fetch";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
@@ -22,26 +22,47 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  onNavigate:(membershipId:string)=>void;onClose:()=>void;recordedOutcome?:AfterCollegeOutcome|null;
 }){
  const [tab,setTab]=useState<Tab>("Profile");
- const [detail,setDetail]=useState<PanelDetail|null>(null);
+ // Tie cached data to its membership so a rapid Next/Previous never shows
+ // another learner's private notes while a fresh request is in flight.
+ const [storedDetail,setStoredDetail]=useState<{studentId:string;value:PanelDetail}|null>(null);
+ const detail=storedDetail?.studentId===student.membershipId?storedDetail.value:null;
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
+ const activeLoad=useRef<AbortController|null>(null);
+
  async function fetchDetail(){
+  activeLoad.current?.abort();
+  const controller=new AbortController();
+  activeLoad.current=controller;
   setLoading(true);setError("");
-  try{const body=await apiFetch<{student:unknown;applications:PanelDetail["applications"];requests:PanelDetail["requests"];notes:PanelDetail["notes"];studentNotes:PanelDetail["studentNotes"];teamHistory:PanelDetail["teamHistory"];truncated?:boolean}>("/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",{cache:"no-store"});
+  try{
+   const body=await apiFetch<{student:unknown;applications:PanelDetail["applications"];requests:PanelDetail["requests"];notes:PanelDetail["notes"];studentNotes:PanelDetail["studentNotes"];teamHistory:PanelDetail["teamHistory"];truncated?:boolean}>(
+    "/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",
+    {cache:"no-store",signal:controller.signal});
+   if(controller.signal.aborted||activeLoad.current!==controller)return;
    if(!body?.student)throw Error("Could not load student records. Please try again.");
-   setDetail(body as PanelDetail);
-  }catch(e){setError(e instanceof Error?e.message:"Could not load student records");}
-  finally{setLoading(false);}
+   setStoredDetail({studentId:student.membershipId,value:body as PanelDetail});
+  }catch(e){
+   if(!controller.signal.aborted&&activeLoad.current===controller)
+    setError(e instanceof Error?e.message:"Could not load student records. Please try again.");
+  }finally{
+   if(activeLoad.current===controller){
+    activeLoad.current=null;
+    setLoading(false);
+   }
+  }
  }
  async function chooseTab(next:Tab){
   setTab(next);setError("");
-  if(next!=="Requests"&&next!=="Notes"&&next!=="History"&&next!=="Placement"||detail)return;
-  await fetchDetail();
+  if((next==="Requests"||next==="Notes"||next==="History"||next==="Placement")&&!detail)
+   await fetchDetail();
  }
  useEffect(()=>{
   let live=true;
-  void Promise.resolve().then(()=>{if(live)return fetchDetail();});
-  return ()=>{live=false;};
+  void Promise.resolve().then(()=>{if(live)void fetchDetail();});
+  return ()=>{live=false;activeLoad.current?.abort();activeLoad.current=null;};
+ // Only a learner identity change starts a fresh load; tab changes are user-initiated.
+ // eslint-disable-next-line react-hooks/exhaustive-deps
  },[student.membershipId]);
  const when=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
