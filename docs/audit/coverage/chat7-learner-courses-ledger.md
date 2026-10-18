@@ -25,3 +25,38 @@ Additional UI: `tests/unit/UX-courses-learner-quiz-table-01.test.ts`, `UX-course
 | `friendlyApiError` — `src/lib/friendly-error.ts` | Test B `GR-quiz-read-01` | 403 and 500 do not echo untrusted code |
 
 Route handlers and database-backed functions not yet mapped are outstanding. These tests were authored but **not executed**; local checkout/TypeScript/PostgreSQL runner unavailable in this session. Do not interpret source-level tests as runtime or tenancy guarantees.
+
+## Additional direct model matrices (not included in initial 14-row table)
+
+`tests/unit/chat7-learner-course-discussion-coverage.test.ts` adds nine direct discussion and one component contract cases:
+- `learnerDiscussionCanPost`: only explicit boolean true authorizes posting.
+- `createLearnerDiscussionHistoryFlight`: overlapping pagination blocked, retry unlocked.
+- `learnerDiscussionDraftValid` / `LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH`: nonempty trimmed text, exact 3900-character limit.
+- `learnerDiscussionRefreshIsCurrent`: latest safe integer only; out-of-order, fractional and zero denied.
+- `formatDiscussionReply`: scoped reply marker vs top-level text.
+- `learnerDiscussionListResponse`: authorized pins and paging forwarded; extra internal fields dropped.
+- `learnerDiscussionScopeKey`: valid delivery UUID only.
+- `learnerDiscussionTimeLabel` / `learnerDiscussionRelativeTimeLabel`: invalid timestamps, IST and minute/hour/day boundaries.
+- `src/components/courses/learner-course-discussion.tsx`: reader uses actual draft, permission and anti-race guards.
+
+`tests/unit/chat7-learner-course-list-model-coverage.test.ts` adds fourteen deterministic learner course listing/discovery cases:
+- `learnerCourseHasActiveFilters`: search, type, progress, term, continue, sort.
+- `learnerCourseMatchesSearch`: course/instructor/semester metadata, invalid query normalization.
+- `learnerCourseCardNextLabel`: read-only, unpublished, overdue, quiz, assignment, content and completed.
+- `learnerCourseCardProgress`: no denominator, NaN, nonfinite, lower/upper clamp.
+- `learnerCourseHasContinueAction`: active published path with real action.
+- `learnerCourseFilteredEmptyTitle`: all filter-based empty recovery copies.
+- `learnerCourseMatchesProgress`: tracked counts across all result states.
+- `sortLearnerCourseCards`: regular-before-elective, name, progress, due, recent and invalid mode.
+- `learnerCourseMatchesTermState`: server authoritative readOnly rather than browser date.
+- `resolveLearnerCourseTypeFilter`: reset vanished elective/core options.
+- `learnerCourseTabPersistentQuery`: omit route-only filters; cap value and key count.
+- `learnerCourseCreditSummary`: ignore negative, missing and nonfinite credits.
+- `resolveLearnerCoursePeriod`: prefer only authorized available semester.
+- `learnerCourseImageResetKey`: delivery/image scoped reset, no previous course state.
+
+The combined direct model pass now exercises **37 exported learner-model functions** across quizzes, assignments, discussions and course listing. The inventories at `docs/audit/coverage/chat7-learner-course-file-inventory.md` still show 128 learner-prefixed files and 79 API routes. Other exports and integration paths remain **not verified**.
+
+## Certificate feature inventory
+
+A recursive repository path search for `certificat` returned only two faculty profile certification *test* files and **no `src/modules/courses/` certificate source or dedicated course certificate route**. This is an implementation/ownership gap, not evidence the feature exists or is tested; clarify parity requirements before authoring artificial passing certificate tests.
