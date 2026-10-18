@@ -188,3 +188,13 @@ Cloud typecheck, unit, PostgreSQL and browser checks are pending; these are sour
 | Service | Threat / corrected contract | Test | Pending |
 |---|---|---|---|
 | `readTpoLearnerPrepOutcomes` | A persisted TPO/College Admin membership may be revoked after enrolment/content/progress joins start. Before returning READY, NEEDS_PREP, UNCONFIGURED or UNAVAILABLE, the service validates the active college and persisted `placements.manage` actor inside a transaction holding SHARE locks. Empty-roster path still validates the officer through its initial persisted actor lookup. Same-college learner/enrollment pair, active identities and 5000-row cap are preserved. | `tests/unit/chat11-tpo-prep-long-read-role-revocation.test.ts` — `TPO-settings-audit-PREP-ROLE-12` | Cloud CI + genuine role-revocation/read race and 5000 learner scale |
+
+## Current ACTIVE college through write and label-read transactions
+
+| Service | Added protection | Regression | Runtime gap |
+|---|---|---|---|
+| Five `tpo-job-type-write-service.ts` mutations | Read ACTIVE college under `for update` before persisted officer guard and any setting read, no-op, CAS, activity event. No mutation or success from stale tab after college archival. | `tests/unit/chat11-tpo-job-type-archived-college.test.ts` — TPO-settings-audit-23; `2e9247b`, `904b90d` | Actual concurrent tenant archive / write test |
+| `createBlockedDate`, `deleteBlockedDate`, `removeBlockedRange` | Same ACTIVE college lifecycle gate for schedule block creation/removal, including no-op and CAS conflicts | `tests/unit/chat11-tpo-settings-archived-college-safety.test.ts` — TPO-settings-audit-43; `e03b354`, `bbd346a` | PostgreSQL date-range/archival race test |
+| `saveTpoOutcomeLabels`, `readTpoOutcomeLabels` | Saved labels and versions cannot be edited or read after archived college/role removal; writes use ACTIVE college `for update`, reads hold college `for share` and persisted permission until label data is fetched | Same test — TPO-settings-audit-OUTCOME-CAS-01; `a39921a`, `8ed5e99`, `bbd346a` | Concurrent read/archive/role revocation E2E |
+
+**Status:** source changes and tests authored; tests/TypeScript/PostgreSQL/browser not executed in this lane.
