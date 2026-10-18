@@ -78,3 +78,21 @@ Caveats: the unit test snapshot in `docs/orchestrator/unit-failures-latest.md` s
 | `learnerDiscussionDraftValid` | Trimmed, nonempty, shared 3,900-character maximum | `tests/unit/chat7-learner-media-notice-boundary.test.ts` — `LEARNER-DISCUSSION-LIMIT-01` |
 
 Authoring note: no tests were executed in this lane. CI and PostgreSQL/browser verification are not claimed complete. Certificates and the remaining non-audited learner course exports are still outside this incremental test matrix.
+
+## Owner master queue priority (2026-10-18): Projects learner journeys, then courses and Admin content
+
+The owner suspended iterative CI/test-failure triage until all lane queues finish. This section records new source work and authored regression behavior; no green CI or browser/PG run is claimed.
+
+| Export/page | Function/role/UX cases | Test |
+|---|---|---|
+| `/learn/projects/[projectId]` | Learner grant is checked before malformed Board search/priority/status/sprint/release/sort/assignee filters are rejected; invalid filters show a safe Clear filters action without broadening task visibility | `tests/unit/PROJ-BREAK-chat7-learner-board-filters-and-scroll.test.ts` — `PROJ-BREAK-LEARNER-96` |
+| `filterLearnerBoardTasks`, `sortLearnerBoardTasks`, `learnerBoardEmptyState`, `learnerBoardActiveFilterCount` | Own-member filter, sectioned release/sprint constraints, deterministic sorting, empty vs filtered empty, nonmutation | `tests/unit/PROJ-BREAK-chat7-learner-board-filters-and-scroll.test.ts` |
+| `learnerTaskProgressInputSchema`, `learnerTaskTransitionAllowed`, `canLearnerMoveOwnTask`, `/api/projects/[projectId]/tasks/[taskId]/learner-progress` | Disallow TODO, DONE, IN_REVIEW, ACCEPTED transitions; validate blocker length and ownership boundary; route origin guard; persisted role recheck under task transaction; audit and mentor notification | `tests/unit/PROJ-BREAK-chat7-learner-progress-transition-matrix.test.ts` — `PROJ-BREAK-LEARNER-98` |
+| `LearnerBoardInteractive` | Drag-and-drop, select and Undo consult the same transition allowlist; keyboard-focusable horizontal lanes and 44px actions | `tests/unit/PROJ-BREAK-chat7-learner-progress-transition-matrix.test.ts`; `tests/unit/PROJ-BREAK-chat7-learner-board-filters-and-scroll.test.ts` — `PROJ-BREAK-LEARNER-97/98` |
+| `LearnerCourseList` | Long all-course and credits lists show a scroll hint, named focus region and bounded vertical scrolling | `tests/unit/UX-chat7-learner-scroll-motion-01.test.ts` — `UX-LEARN-scroll-01` |
+| `LearnerAssessmentOverview` | Submitted quiz list shows more-content hint; accessible scroll region and focus ring | `tests/unit/UX-chat7-learner-scroll-motion-01.test.ts` — `UX-LEARN-scroll-02` |
+| `CollegeAssignmentReview` | 44px grade publication, retry and delivery-picker controls | `tests/unit/chat7-superadmin-course-assessment-ux-boundaries.test.ts` — `SA-academics-people-64` |
+| `CollegeQuizAttempts` | Named keyboard-accessible attempt scroll, visible cue, 44px pagination, section choice and response controls | `tests/unit/chat7-superadmin-course-assessment-ux-boundaries.test.ts` — `SA-academics-people-65` |
+| `/admin/assignments` | Reject a quiz-only result filter before session/DB reads; no-college fallback and direct in-page grading stay scoped | `tests/unit/chat7-superadmin-course-assessment-ux-boundaries.test.ts` — `SA-academics-people-64` |
+
+See `docs/audit/ux/scroll-motion-courses.md` for the changed containers. Backend PostgreSQL race/rollback coverage and visual phone verification remain unexecuted. No claim of exhaustive coverage of 345 course files is made.

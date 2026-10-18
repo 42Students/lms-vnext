@@ -82,3 +82,19 @@ Source inspection: 2026-10-18. Branch: `chatgpt/chat-11-b`. **Partial, source-re
 | ID | Surface | Corrected state | Test | Pending |
 |---|---|---|---|---|
 | SA-tenants-modules-LOGIN-CAS-03 | `CollegeSigninMethodForm` | Successful API response is checked for supported channel and safe integer policy version before showing saved; local committed method/token replace stale initial prop on subsequent edits; invalid successful response remains non-success with safe error, existing confirm/role guards preserved | `tests/unit/chat11-super-admin-signin-editor-cas.test.ts`; commits `209ec08`, `8d02a4d` | Browser two back-to-back saves during route refresh and PostgreSQL optimistic concurrency |
+
+## Owner no-CI queue pass — Super Admin tenant lifecycle and branding
+
+| Export | Current protection / change | Behavioral coverage still to add |
+|---|---|---|
+| `createOrganization` / `renameOrganization` | Persisted `organization.manage` role before transaction writes; rename locks live parent row to serialize with archival | DB system-role revocation and concurrent create/rename/archival |
+| `archiveOrganization` | Persisted role, parent FOR UPDATE lock, then active-child existence test inside SAME transaction; prevents creating college between old check and archive | Concurrent create-college / archive-organization race and rollback/activity |
+| `restoreOrganization` | Persisted role and archived parent FOR UPDATE lock before restore; active-name unique DB constraint remains authoritative | Parallel restore vs duplicate active name, selected-scope denial |
+| `listArchivedOrganizations` | College-scoped Super Admin now derives parent organization from selected college, forbids mismatching scope, and rechecks persisted role before returning bounded archived names | Selected college with missing selected organization; other-college name privacy |
+| `createCollege` | Persisted `college.manage` role and parent organization ACTIVE SHARE lock inside insertion transaction; cannot create tenant during concurrent parent archival | Concurrent create/archive parents and selected platform scope |
+| `updateCollege` / `archiveCollege` / `restoreCollege` | Persisted `college.manage` role before commit, update and restore require locked ACTIVE parent; existing read preflight and selection scope kept | Real multi-session role revocation, archive/restore and feature initialization |
+| `uploadCollegeLogo` | PUT, HEAD and metadata verification provider errors now clean their unique uncommitted private object on best effort, map to safe `LOGO_UPLOAD_FAILED`, and leave old visible logo pointer untouched; earlier DB transaction failure already cleaned up | Cloud storage aborted PUT, metadata mismatch, upload failure and delete failure tests |
+| `readAdminCollegeSignInPolicy` / `saveAdminCollegeSignInPolicy` | Earlier current-role and version-CAS guards unchanged; test coverage and staged table readiness still tracked separately | Super Admin two-session policy conflicts and effective host login behavior |
+| `getSuperAdminCollegeReadiness` | Persisted late role check already present; readiness unknown missing tables must not appear ready | DB rollback/missing relation and concurrent unarchive consistency |
+
+Scope: `src/modules/organizations/service.ts`, `src/modules/colleges/service.ts`, `src/modules/colleges/admin-branding-logo-service.ts`. Cloud CI has intentionally not been run under owner direction. Never claim PostgreSQL evidence from source inspection.
