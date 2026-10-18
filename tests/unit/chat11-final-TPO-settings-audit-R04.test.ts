@@ -18,6 +18,8 @@ describe("TPO-settings-audit-R04 persisted audit saved views across devices",()=
    {action:"CREATE",name:"Audit list",filters,collegeId:id},
    {action:"CREATE",name:"Audit list",filters:{...filters,userId:id}},
    {action:"CREATE",name:"Audit list",filters:{...filters,from:"2026-10-31",to:"2026-10-01"}},
+   {action:"CREATE",name:"Audit list",filters:{...filters,kind:"DRIVE"}},
+   {action:"CREATE",name:"Audit list",filters:{...filters,from:"2026-02-30"}},
    {action:"CREATE",name:"",filters},
    {action:"PIN",id,pinned:true},
    {action:"DELETE",id,expectedRevision:"not-a-uuid"},
@@ -29,10 +31,10 @@ describe("TPO-settings-audit-R04 persisted audit saved views across devices",()=
   expect(parsed).toEqual({query:filters,pinned:true,usedAt:"2099-01-01T00:00:00.000Z",revision:id});
   expect(tpoAuditStoredView({query:{...filters,organizationId:id},pinned:true})).toBeNull();
   expect(tpoAuditStoredView({query:filters,pinned:false,usedAt:"bad"})).toMatchObject({usedAt:null,revision:null});
-  const href=tpoAuditSavedViewHref({...filters,kind:"DRIVE",who:"A & B"});
+  const href=tpoAuditSavedViewHref({...filters,kind:"OFFER",who:"A & B"});
   const query=new URL(href,"https://college.example").searchParams;
   expect(query.get("who")).toBe("A & B");
-  expect(query.get("kind")).toBe("DRIVE");
+  expect(query.get("kind")).toBe("OFFER");
   expect(href).toMatch(/^\/tpo\/audit\?/);
  });
  it("TPO-settings-audit-R04 persists scope AUDIT by actor and college with live permissions, caps and CAS",()=>{
