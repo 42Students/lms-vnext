@@ -138,7 +138,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   for(const route of routes){
    const page=api(route);
    expect(page).toContain("isSameOriginRequest(request)");
-   expect(page).toContain("status: 403");
+   expect(page).toMatch(/status:\\s*403/);
    expect(page.indexOf("isSameOriginRequest(request)")).toBeLessThan(page.indexOf("getCurrentRequestContext()"));
    expect(page).toContain("apiErrorResponse(error)");
   }
