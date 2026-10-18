@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
+import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 import {
   todayIstDate, tpoCalendarExportQuerySchema,
 } from "@/modules/placements/tpo-calendar-export-model";
@@ -21,13 +22,15 @@ export default async function TpoCalendarExportPage({
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     redirect("/dashboard");
   }
+  // Even malformed-filter feedback requires a currently authorized TPO actor.
+  await requirePersistedTpoMembership(context,context.membership.collegeId);
   const query = await searchParams;
   const today = todayIstDate(new Date());
   const nextWeek = new Date(Date.parse(today + "T00:00:00.000Z") + 6 * 86400000)
     .toISOString().slice(0, 10);
   const parsed = tpoCalendarExportQuerySchema.safeParse({
-    from: first(query.from) ?? today,
-    to: first(query.to) ?? nextWeek,
+    from: Array.isArray(query.from) ? query.from : (query.from ?? today),
+    to: Array.isArray(query.to) ? query.to : (query.to ?? nextWeek),
   });
   const result = parsed.success
     ? await getTpoCalendarRoundExport(context, parsed.data)
