@@ -3,6 +3,7 @@ import {and,asc,eq,gt,inArray,ne,notExists,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobRounds,placementJobs} from "@/db/schema";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
+import {recruiterTodayRoundsNeedingSlots} from "./hr-today-open-slots-model";
 
 /** REC-home-drives-01: only a scheduled future interview without an active
  * employer slot needs a slot proposal. Never use suppressed application data. */
@@ -33,7 +34,5 @@ export async function listRecruiterTodayRoundsNeedingSlots(
   .from(hrInterviewSlots)
   .where(and(inArray(hrInterviewSlots.roundId,rounds.map(r=>r.id)),
    eq(hrInterviewSlots.collegeId,collegeId),ne(hrInterviewSlots.status,"CANCELLED")));
- const prepared=new Set(covered.filter(row=>row.status==="PROPOSED").map(row=>row.roundId));
- return rounds.slice(0,8)
-  .map(round=>({...round,needsOffer:prepared.has(round.id)}));
+ return recruiterTodayRoundsNeedingSlots(rounds,covered);
 }
