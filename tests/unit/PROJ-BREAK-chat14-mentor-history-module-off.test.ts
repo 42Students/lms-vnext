@@ -2,6 +2,7 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 import {getMentorProjectActivityHistory} from "@/modules/projects/mentor-project-activity-service";
 import {getMentorDeliveryReviewOverview} from "@/modules/projects/mentor-review-overview-service";
+import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
 
 const state=vi.hoisted(()=>({enabled:false,scopeCalls:0,dbCalls:0}));
 const context={
@@ -25,6 +26,9 @@ vi.mock("@/modules/projects/access",()=>({
    project:{id:projectId,title:"PRIVATE IIT Project",status:"ACTIVE"}};
  },
 }));
+vi.mock("@/modules/projects/resource-service",()=>({
+ listProjectResources:async()=>{throw new Error("Disabled project resolved resources");},
+}));
 vi.mock("@/db/client",()=>({
  getDb:()=>{state.dbCalls++;throw new Error("Unlicensed tenant queried database");},
 }));
@@ -42,6 +46,15 @@ describe("Private Mentor audit and review project data",()=>{
  it("PROJ-BREAK-MENTOR-240 denies review overview before a disabled tenant can enumerate project ID",async()=>{
   await expect(getMentorDeliveryReviewOverview(context,{projectId}))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  expect(state.scopeCalls).toBe(0);
+  expect(state.dbCalls).toBe(0);
+ });
+ it("PROJ-BREAK-MENTOR-242 conceals disabled resource-directory project title and skips private resource reads",async()=>{
+  const view=await getMentorResourceDirectory(context,{projectId});
+  expect(view.enabled).toBe(false);
+  expect(view.projectTitle).toBe("");
+  expect(view.registered).toBe(0);
+  expect(view.items).toEqual([]);
   expect(state.scopeCalls).toBe(0);
   expect(state.dbCalls).toBe(0);
  });

@@ -14,10 +14,13 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   params:Promise<{projectId:string}>;searchParams:Promise<Search>;
 }){
   const [{projectId},raw]=await Promise.all([params,searchParams]);
-  const parsed=mentorRiskReadinessQuerySchema.safeParse({
-    projectId,focus:first(raw.focus)??undefined,
-    taskPriority:first(raw.taskPriority)??undefined,page:first(raw.page)??undefined,
-  });
+  // Repeated URL parameters are ambiguous and cannot be reduced to the first.
+  const parsed=mentorRiskReadinessQuerySchema.safeParse(
+    Object.values(raw).some(Array.isArray)?null:{
+      projectId,focus:first(raw.focus)??undefined,
+      taskPriority:first(raw.taskPriority)??undefined,page:first(raw.page)??undefined,
+    },
+  );
   if(!parsed.success)return <section role="alert">
     <h1>Invalid risk/readiness filters</h1>
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>

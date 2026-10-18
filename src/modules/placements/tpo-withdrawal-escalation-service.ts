@@ -9,8 +9,15 @@ import {activityEvents,collegeMemberships,colleges,inAppNotifications,membership
  * next scheduled round. No read endpoint or user-facing GET performs writes.
  * activity_events.dedupe_key is a durable per-request idempotency guard.
  */
+/** The scheduler clock is trusted only after validating it. The 24-hour
+ * boundary includes the exact endpoint and never crosses via local timezone. */
+export function tpoWithdrawalEscalationWindow(now:Date):{from:Date;through:Date}{
+ const milliseconds=now.getTime();
+ if(!Number.isFinite(milliseconds))throw new Error("Invalid withdrawal escalation clock");
+ return {from:new Date(milliseconds),through:new Date(milliseconds+24*60*60*1000)};
+}
 export async function escalatePendingWithdrawalRequests(now:Date=new Date()){
- const until=new Date(now.getTime()+24*60*60*1000);
+ const {from,through:until}=tpoWithdrawalEscalationWindow(now);
  const db=getDb();
  const candidates=await db.select({
   requestId:placementLearnerRequests.id,
@@ -29,7 +36,7 @@ export async function escalatePendingWithdrawalRequests(now:Date=new Date()){
   .innerJoin(placementJobRounds,eq(placementJobRounds.jobId,placementJobs.id))
   .where(and(eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
    eq(placementLearnerRequests.status,"PENDING"),eq(placementApplications.status,"SUBMITTED"),
-   eq(placementJobRounds.status,"SCHEDULED"),gt(placementJobRounds.scheduledAt,now),
+   eq(placementJobRounds.status,"SCHEDULED"),gt(placementJobRounds.scheduledAt,from),
    lte(placementJobRounds.scheduledAt,until),eq(collegeMemberships.collegeId,placementJobs.collegeId)))
   .orderBy(asc(placementJobRounds.scheduledAt)).limit(4000);
  const earliest=new Map<string,(typeof candidates)[number]>();
@@ -80,8 +87,10 @@ export async function escalatePendingWithdrawalRequests(now:Date=new Date()){
    });
    if(outcome==="escalated")escalated++;
    else if(outcome==="already")alreadyEscalated++;
-  }catch(e){errors.push({requestId:candidate.requestId,
-   reason:e instanceof Error?e.message:"Escalation failed"});}
+  }catch{
+   // Do not expose SQLSTATE, provider details, PII, or a stack in API results.
+   errors.push({requestId:candidate.requestId,reason:"Escalation could not be completed. Retry later."});
+  }
  }
  return {examined:earliest.size,escalated,alreadyEscalated,
   noRecipients,errors:errors.slice(0,100),truncated:candidates.length===4000};

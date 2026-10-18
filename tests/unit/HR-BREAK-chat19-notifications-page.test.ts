@@ -93,4 +93,10 @@ describe("HR-BREAK-chat19-notifications-page: recruiter-scoped page behavior",()
   expect(links(output)).toContain("/hr/notifications?collegeId="+college);
   expect(links(output)).toContain("/hr/notifications?collegeId="+other);
  });
+ it("HR-BREAK-NOTIFICATIONS-PRINCIPAL-29 blocks cross-user recruiter identity before any notice read",async()=>{
+  m.context.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"different-user"}});
+  await expect(view()).rejects.toThrow("REDIRECT");
+  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  expect(m.notifications).not.toHaveBeenCalled();
+ });
 });
