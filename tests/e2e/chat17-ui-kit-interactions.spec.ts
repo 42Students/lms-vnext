@@ -78,6 +78,32 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(page.getByRole("button",{name:"Open harness drawer"})).toBeFocused();
   });
 
+  test("UX-kit-E2E-14 vertical overflow cues remain scrollable in drawer and sheet on phone",async({page})=>{
+    await page.setViewportSize({width:390,height:640});
+    await page.goto(route);
+    await page.getByRole("button",{name:"Open harness drawer"}).click();
+    const drawer=page.getByRole("dialog",{name:"Harness drawer"});
+    const drawerCue=drawer.locator('[data-slot="scroll-cue"][data-axis="y"]');
+    await expect(drawerCue).toHaveAttribute("data-scroll-end","true");
+    await drawer.getByRole("button",{name:"Open nested sheet"}).click();
+    const sheet=page.getByRole("dialog",{name:"Harness nested sheet"});
+    const cue=sheet.locator('[data-slot="scroll-cue"][data-axis="y"]');
+    await expect(cue).toHaveAttribute("data-scroll-end","true");
+    await cue.locator("[role=region]").evaluate(node=>{
+      node.scrollTop=node.scrollHeight;
+      node.dispatchEvent(new Event("scroll"));
+    });
+    await expect(cue).toHaveAttribute("data-scroll-start","true");
+    await expect(cue).toHaveAttribute("data-scroll-end","false");
+    await sheet.getByRole("button",{name:"Close nested sheet"}).click();
+    await expect(drawer).toBeVisible();
+    await drawerCue.locator("[role=region]").evaluate(node=>{
+      node.scrollTop=node.scrollHeight;
+      node.dispatchEvent(new Event("scroll"));
+    });
+    await expect(drawerCue).toHaveAttribute("data-scroll-start","true");
+  });
+
   test("scroll cues use measured edges and filter drawer works without matchMedia",async({page})=>{
     await page.setViewportSize({width:390,height:780});
     await page.goto(route);

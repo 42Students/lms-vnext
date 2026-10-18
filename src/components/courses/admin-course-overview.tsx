@@ -257,7 +257,7 @@ export function AdminCourseOverview({
               "/" +
               offering.id
             }
-            className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Open learning
           </Link> : null}
@@ -493,29 +493,29 @@ export function AdminCourseOverview({
          className="flex flex-wrap items-end gap-3 rounded border border-border bg-surface p-3">
          <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-sm font-semibold">Search courses
           <input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
-           placeholder="Name, code or department" className="min-h-10 min-w-0 w-full rounded border border-border bg-background p-2"/>
+           placeholder="Name, code or department" className="min-h-11 min-w-0 w-full rounded border border-border bg-background p-2"/>
          </label>
          <label className="grid gap-1 text-sm font-semibold">Sort
           <select name="sort" defaultValue={catalogueQuery.sort}
-           className="min-h-10 rounded border border-border bg-background p-2">
+           className="min-h-11 rounded border border-border bg-background p-2">
            <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
            <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
           </select>
          </label>
          {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-sm font-semibold">Per page
           <select name="pageSize" defaultValue={catalogueQuery.pageSize??"25"}
-           className="min-h-10 rounded border border-border bg-background p-2">
+           className="min-h-11 rounded border border-border bg-background p-2">
            <option value="25">25</option><option value="50">50</option><option value="100">100</option>
           </select>
          </label>:null}
-         <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+         <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
-          className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
           Export CSV
          </a>
-         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm"
+         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm"
           href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses",courseBasePath)}>Refresh</Link>:null}
-         <Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm" href={courseBasePath}>Clear</Link>
+         <Link className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm" href={courseBasePath}>Clear</Link>
         </form>:null}
         {catalogue&&catalogue.total>1000?<p className="text-xs text-muted-foreground">
          Export CSV includes up to the first 1,000 matching courses. Narrow filters to export a smaller set.

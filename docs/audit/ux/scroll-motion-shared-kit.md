@@ -23,3 +23,9 @@ Signed-off source: `docs/orchestrator/briefs/ux-scroll-motion-pass.md` and globa
 **Tests:** `tests/unit/UX-kit-scroll-motion-01.test.tsx` (8 tests, including direct coverage for bottom-sheet, loading-state, selection-controls and use-confirm-flow). Wired to `ux:audit:unit`; previous suites retained. No claims of running TypeScript, Vitest, ESLint, 320/360/390 screenshots or assistive technology. These are pending orchestrator execution.
 
 **Caution:** No scrollbar chrome is deliberately visible. The ScrollCue fades appear only on actual overflow, not when everything is already visible. All backdrop, Escape and focus return behavior remains unchanged.
+
+## 2026-10-19: additional chat-17 scroll/motion witnesses
+
+- **ScrollCue multiple siblings:** All direct child elements are observed after each subtree child-list mutation and on mount. This prevents a secondary filter/table child resizing under a fixed-size scroll viewport from leaving stale visible fades. Source case `UX-kit-scroll-motion-09`, dev-browser `UX-kit-E2E-10` and `E2E-14` (nested vertical overlay) cover both axes; browser CI is deferred.
+- **Motion:** The Switch track and `::after` thumb both opt out of transition under reduced motion, as do interactive Tabs. `UX-kit-scroll-motion-10` checks the exact shared style gates, with browser computed-style case `E2E-09` for tab duration.
+- **Loading/notifications:** PageLoading/GracefulPageLoading reset slow-recovery timers on changed request identity, and InlineNotice/ToastProvider keep timed success feedback during background visibility; these are motion-adjacent interaction timing guarantees rather than animation changes.
