@@ -1,3 +1,4 @@
+import {DataTable} from "@/components/ui/data-table";
 "use client";
 
 import Link from "next/link";
@@ -346,28 +347,18 @@ export function TpoCompanyMemoryWorkspace({
             {company.drives.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">No drives yet.</p>
             ) : (
-              <div className="mt-3 overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border text-muted-foreground">
-                    <tr><th className="py-2">Role</th><th>Status</th><th>Year</th><th>Applied</th><th>Created</th></tr>
-                  </thead>
-                  <tbody>
-                    {visibleDrives.map(drive => (
-                      <tr className="border-b border-border last:border-0" key={drive.id}>
-                        <td className="py-3">
-                          <Link className="text-[var(--lms-teal-deep)] hover:underline"
-                            href={"/tpo/placements/jobs/" + encodeURIComponent(drive.id)}>
-                            {drive.jobTitle}
-                          </Link>
-                        </td>
-                        <td>{statusLabel(drive.status)}</td>
-                        <td>{new Intl.DateTimeFormat("en-IN",{year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(drive.createdAt))}</td>
-                        <td>{drive.applied} · {drive.offers} offers</td>
-                        <td>{dateLabel(drive.createdAt)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="mt-3">
+                <DataTable rows={visibleDrives} getRowKey={drive=>drive.id}
+                  caption="Company drives" empty={<p>No matching drives.</p>}
+                  columns={[
+                    {key:"role",header:"Role",mobilePriority:"primary",cell:drive=>
+                      <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline"
+                        href={"/tpo/placements/jobs/" + encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>},
+                    {key:"status",header:"Status",mobilePriority:"secondary",cell:drive=>statusLabel(drive.status)},
+                    {key:"year",header:"Year",mobilePriority:"secondary",cell:drive=>new Intl.DateTimeFormat("en-IN",{year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(drive.createdAt))},
+                    {key:"applied",header:"Applied",mobilePriority:"secondary",cell:drive=>drive.applied+" · "+drive.offers+" offers"},
+                    {key:"created",header:"Created",mobilePriority:"secondary",cell:drive=>dateLabel(drive.createdAt)},
+                  ]}/>
               </div>
             )}
           </section>
