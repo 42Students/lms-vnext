@@ -55,6 +55,8 @@ describe("IIT Dharwad project isolation: TPO cross-product breaker",()=>{
  it("PROJ-BREAK-TPO-05 project notices may only link to learner/mentor views; never TPO or HR private project destinations",()=>{
   expect(projectNoticeHref("LEARNER",college)).toBe("/learn/projects/"+college);
   expect(projectNoticeHref("MENTOR",college)).toBe("/mentor/projects/"+college);
+  expect(projectNoticeHref("MENTOR","../../admin")).toBe("/mentor/projects/..%2F..%2Fadmin");
+  expect(projectNoticeHref("LEARNER","a?b#c")).toBe("/learn/projects/a%3Fb%23c");
   const code=source("src/modules/projects/project-notification-service.ts");
   for(const guard of ["isNull(projectMembers.endedAt)","eq(collegeMemberships.collegeId, notice.collegeId)",
    'eq(collegeMemberships.status, "ACTIVE")','eq(users.platformStatus, "ACTIVE")',
