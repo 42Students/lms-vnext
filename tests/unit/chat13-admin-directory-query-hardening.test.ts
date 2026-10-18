@@ -47,5 +47,10 @@ describe("SA-DIRECTORY-QUERY-12 all Super Admin placement directory pagination a
     if(roundtrip.success)expect(roundtrip.data).toEqual(parsed);
     expect(scopedSearchLike("%_\\")).toBe("%\\%\\_\\\\%");
     expect(superAdminReadPages(51,25)).toBe(3);
+    expect(superAdminReadPages(51,0)).toBe(3);
+    expect(superAdminReadPages(51,NaN)).toBe(3);
+    expect(superAdminReadPages(Infinity,25)).toBe(1);
+    expect(superAdminReadPages(-10,25)).toBe(1);
+    expect(superAdminReadPages(25,50)).toBe(1);
   });
 });
