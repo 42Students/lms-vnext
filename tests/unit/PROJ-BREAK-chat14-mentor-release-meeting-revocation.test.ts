@@ -98,11 +98,18 @@ beforeEach(()=>{
  state.meetingReads=0;state.writes=0;state.events=0;
 });
 describe("Mentor release and meeting authorization regression",()=>{
- it("PROJ-BREAK-MENTOR-210 aborts release creation after Mentor role revocation under parent lock",async()=>{
-  await expect(writeMentorProjectRelease(context,projectId,null,"POST",{title:"First release"}))
-   .rejects.toThrow("PROJECT_LIFECYCLE_ACCESS_DENIED");
-  expect(state.projectLocks).toBe(1);
-  expect(state.actorChecks).toBe(1);
+ it("PROJ-BREAK-MENTOR-210 aborts release create edit and delete after Mentor revocation under parent lock",async()=>{
+  const cases=[
+   ["POST",null,{title:"First release"}],
+   ["PATCH",meetingId,{title:"Renamed release",expectedUpdatedAt:"2099-01-01T00:00:00.000Z"}],
+   ["DELETE",meetingId,{expectedUpdatedAt:"2099-01-01T00:00:00.000Z"}],
+  ] as const;
+  for(const [operation,releaseId,input] of cases){
+   await expect(writeMentorProjectRelease(context,projectId,releaseId,operation,input))
+    .rejects.toThrow("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  }
+  expect(state.projectLocks).toBe(3);
+  expect(state.actorChecks).toBe(3);
   expect(state.releaseReads).toBe(0);
   expect(state.writes).toBe(0);
   expect(state.events).toBe(0);
