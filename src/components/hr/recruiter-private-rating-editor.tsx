@@ -3,7 +3,15 @@ import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 type Review={rating:number|null;note:string;updatedAt:string|null};
 const empty:Review={rating:null,note:"",updatedAt:null};
-export function RecruiterPrivateRatingEditor({jobId,applicationId}:{jobId:string;applicationId:string}){
+type PrivateRatingEditorProps={jobId:string;applicationId:string};
+/** The App Router can reuse this component as focused applicant changes.
+ * Remount private state for each job AND candidate to prevent cross-person
+ * notes or optimistic tokens from appearing in another candidate's editor. */
+export function RecruiterPrivateRatingEditor(props:PrivateRatingEditorProps){
+ return <RecruiterPrivateRatingEditorState
+  key={props.jobId+":"+props.applicationId} {...props}/>;
+}
+function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEditorProps){
  const endpoint="/api/placements/recruiter/jobs/"+encodeURIComponent(jobId)+
   "/applicants/"+encodeURIComponent(applicationId)+"/private-rating";
  const [saved,setSaved]=useState<Review>(empty);
