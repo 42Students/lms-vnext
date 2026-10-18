@@ -47,6 +47,7 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
   if(f.offer.status==="ACCEPTED")counts.accepted++;
   if(f.offer.status==="DECLINED")counts.declined++;
   if(f.offer.status==="WITHDRAWN")counts.withdrawn++;
+  if(f.offer.status==="EXPIRED")counts.expired++;
  }
  const match=selectOfferRegisterFacts(facts,status,search,joiningState,kind,expiry,asOf,minCtcLpa,maxCtcLpa);
  const totalPages=Math.max(1,Math.ceil(match.length/OFFER_REGISTER_PAGE_SIZE));
