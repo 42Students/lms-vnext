@@ -74,7 +74,8 @@ describe("PROJ-BREAK-HR-01: HR/Recruiter cannot traverse college project member 
    await expect(requireProjectReadAccess({...tpo,membership} as never,projectId))
     .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   }
-  expect(mocks.select).toHaveBeenCalledTimes(2);
+  // Inactive roles must not look up even a public-looking project ID.
+  expect(mocks.select).not.toHaveBeenCalled();
  });
  it("rejects inactive recruiter sessions independently of company grant",async()=>{
   const suspended={...recruiter,user:{...recruiter.user,platformStatus:"SUSPENDED"}};
