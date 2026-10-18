@@ -20,7 +20,8 @@ export function SuperAdminStudentImportHistory({runs}:{runs:readonly Run[]}) {
         <button type="button" onClick={()=>dialogRef.current?.close()}
           className="min-h-11 rounded border border-border px-4 font-semibold">Close</button>
       </div>
-      <div className="mt-4 max-h-[60dvh] overflow-y-auto">
+      <div role="region" aria-label="Bulk import history records" tabIndex={0}
+        className="mt-4 max-h-[60dvh] overflow-x-auto overscroll-x-contain overflow-y-auto overscroll-contain">
         <DataTable caption="Bulk import history records"
           rows={runs.map((run,index)=>({...run,index}))}
           getRowKey={run=>String(run.index)}

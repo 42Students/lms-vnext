@@ -108,3 +108,7 @@ The existing source/SQL tests additionally check persisted ownership predicates;
 ## AUTH-sessions-11 active-only revocation accounting
 
 `revokeAllSessionsForUser`, `revokeOtherSessions`, and `revokeOwnSession` now constrain SQL UPDATEs with `expires_at > now()` in addition to persisted owner and not-yet-revoked predicates. An already expired device must not be reported as a newly revoked live device, and sign-out-other-devices must not inflate its success count with inert sessions. `tests/unit/chat6-auth-session-service-behaviour.test.ts` asserts the SQL contracts, while its mocked adapter verifies zero-row retry behavior. Actual PostgreSQL expired-session fixture and concurrent expiry/revoke tests still pending. Unit tests authored, **not executed**.
+
+## AUTH-sessions-12 bounded last-seen write for stale sessions
+
+The throttled `resolveSession` last-seen UPDATE now includes `revoked_at IS NULL` and `expires_at > now()`, so bookkeeping never modifies a session row already rendered unusable by revocation or expiry. `tests/unit/chat6-auth-session-service-behaviour.test.ts` includes the AUTH-sessions-12 SQL contract and existing behaviour verifies rejected rows never trigger last-seen writes. This is **not** full protection against concurrent revocation occurring after the initial authenticated SELECT; PostgreSQL transaction-level acceptance of that race remains open, and this change makes no such claim. Tests authored; CI pending.

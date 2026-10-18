@@ -157,3 +157,7 @@ The three `COL-academics-scope-tenant-PG-01` cases in `tests/integration/chat4-c
 ## COL-people-import-history-01 — invalid history page and metadata resilience
 
 The College student import history service used `z.coerce.number()` for page input, accepting scientific notation/hex/boolean coercion in direct calls, and passed corrupt negative/fractional/non-finite metadata counters to page statistics. Replaced with bounded decimal-only URL strings or already validated positive integer pages (1–500), plus `safeCount` requiring nonnegative safe integers. `tests/unit/chat4-college-student-import-history.test.ts` verifies input, role, persisted actor revocation, lookahead pagination and safe counts; **authored, not run**.
+
+## SA-people-audit-ACTOR-01 — S1 sensitive read after actor revocation
+
+`listSuperAdminPersonAudit` previously fetched the person's selected-college membership, then independently selected private identity and platform audit records without another persisted Super Admin authorization. A session's role could be revoked between these reads. Now the final audit query runs in a transaction with `assertPersistedPlatformPermission(tx,context,"people.manage",{collegeId,organizationId})`, holding the actor lock until the event data is read. `tests/unit/chat4-superadmin-person-audit-actor.test.ts` covers stale-role rejection, no global fallback, missing target, audit query bounds. **Source committed; CI and PostgreSQL race pending.**
