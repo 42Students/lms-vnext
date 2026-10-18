@@ -205,9 +205,19 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     if(conflict){
      skipped.push({applicationId:slot.applicationId!,reason:"Room already has an overlapping slot"});continue;
     }
-    await tx.update(placementRoundCandidateSlots).set({
+    // A concurrent slot cancellation, move or previous room edit must not
+    // silently overwrite a stale bulk assignment and notify the wrong learner.
+    // Abort the whole transaction on a lost compare-and-swap.
+    const [saved]=await tx.update(placementRoundCandidateSlots).set({
      room:input.room,version:slot.version+1,updatedAt:new Date(),
-    }).where(eq(placementRoundCandidateSlots.id,slot.id));
+    }).where(and(
+     eq(placementRoundCandidateSlots.id,slot.id),
+     eq(placementRoundCandidateSlots.roundId,info.round.id),
+     eq(placementRoundCandidateSlots.status,"BOOKED"),
+     eq(placementRoundCandidateSlots.applicationId,slot.applicationId!),
+     eq(placementRoundCandidateSlots.version,slot.version),
+    )).returning({id:placementRoundCandidateSlots.id});
+    if(!saved)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
     await notice(tx,context,job,slot.applicationId!,"PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED",
      "Your interview room for "+job.title+" is now "+input.room+".");
     slot.room=input.room;
