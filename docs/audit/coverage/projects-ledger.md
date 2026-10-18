@@ -151,20 +151,29 @@ Sources reviewed: `docs/audit/coverage/projects-mentor-services-ledger.md` (ment
 | `src/modules/projects/learner-project-goals-service.ts` | `getLearnerProjectGoals` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-project-list-empty-model.ts` | `learnerProjectListEmptyState` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-project-mobile-filter-model.ts` | `learnerProjectMobileFilterSummary` | **GAP** | **GAP — behaviour untested** |
-| `src/modules/projects/learner-project-progress-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-progress-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-review-notification-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-search-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-sort-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-tab-alias-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-tab-href-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-team-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-team-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-project-work-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-sprint-progress-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-task-criteria-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-task-progress-model.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
-| `src/modules/projects/learner-task-progress-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
+| `src/modules/projects/learner-project-progress-model.ts` | `summarizeLearnerProjectProgress` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-progress-service.ts` | `listMyLearnerProjectProgress` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectTaskReviewNotice` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectDeliveryReviewNotice` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-review-notification-model.ts` | `learnerProjectDeliveryReopenedNotice` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-search-model.ts` | `learnerProjectMatchesSearch` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-sort-model.ts` | `compareNumberedTeamProjects` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-sort-model.ts` | `sortLearnerProjectRows` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-tab-alias-model.ts` | `canonicalLearnerProjectTab` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-tab-alias-model.ts` | `LEARNER_PROJECT_DETAIL_TABS` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-tab-href-model.ts` | `learnerProjectTabHref` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-team-model.ts` | `summarizeLearnerProjectTeams` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-team-service.ts` | `listMyLearnerProjectTeams` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-work-model.ts` | `learnerProjectHasBlockedTasks` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-project-work-model.ts` | `learnerProjectHasNoTrackedTasks` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-sprint-progress-model.ts` | `learnerSprintRollup` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-sprint-progress-model.ts` | `learnerSprintProgress` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-task-criteria-model.ts` | `learnerTaskCriteriaPreview` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskTransitionAllowed` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskProgressSuccess` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskProgressParamsSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-task-progress-model.ts` | `learnerTaskProgressInputSchema` | **GAP** | **GAP — behaviour untested** |
+| `src/modules/projects/learner-task-progress-service.ts` | `updateLearnerProjectTaskProgress` | **GAP** | **GAP — behaviour untested** |
 | `src/modules/projects/learner-task-status-policy.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/learner-task-status-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
 | `src/modules/projects/lifecycle-service.ts` | **EXPORT AUDIT PENDING** | **GAP** | Need each export, allowed/forbidden transitions, IDOR, CAS, audit/notification |
