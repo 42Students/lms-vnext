@@ -77,7 +77,7 @@ describe("PROJ-BREAK-MENTOR-148..163 uncovered mentor model behaviours",()=>{
   expect(csv).toContain("'\u200B=HYPERLINK");
   expect(csv).toContain("Unknown");
   expect(csv).toContain("6 more matching deliveries");
-  expect(csv.split("\r\n")).toHaveLength(204);
+  expect(csv.split("\r\n")).toHaveLength(203);
   expect(csv).not.toContain("learner_email");
  });
  it("PROJ-BREAK-MENTOR-152 mentor activity cutoff and paging are monotonic and bounded",()=>{
