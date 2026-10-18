@@ -1,7 +1,9 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {z} from "zod";
+import {isValidElement,type ReactNode} from "react";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
+import {hrApplicantFilterSchema} from "@/modules/placements/hr-job-applicants-model";
 const m=vi.hoisted(()=>({ctx:vi.fn(),read:vi.fn(),redirect:vi.fn(),notFound:vi.fn(),
  alias:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:m.ctx}));
@@ -23,6 +25,13 @@ const actor:RequestContext={
 const page=(jobId=job,q:Record<string,unknown>={})=>HrJobPage({
  params:Promise.resolve({jobId}),searchParams:Promise.resolve(q) as never,
 });
+function pageText(node:ReactNode):string{
+ if(Array.isArray(node))return node.map(pageText).join(" ");
+ if(typeof node==="string"||typeof node==="number")return String(node);
+ if(!isValidElement(node))return "";
+ const p=node.props as {children?:ReactNode;title?:string;description?:string};
+ return [p.title??"",p.description??"",pageText(p.children)].join(" ");
+}
 describe("HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect",()=>{
  beforeEach(()=>{
   vi.clearAllMocks();m.ctx.mockResolvedValue(actor);
@@ -46,6 +55,17 @@ describe("HR-BREAK-chat19-legacy-navigation-job-page: authorize then redirect",(
   await expect(page("../other-tenant")).rejects.toThrow("NOT_FOUND");
   expect(m.notFound).toHaveBeenCalled();
  });
+ it.each([{stage:"SUPER_ADMIN"},{page:"0"},{applicant:"not-a-uuid"},
+  {offerPage:"-3"},{offerState:"private"}])(
+  "invalid hiring query %j gets inline recovery, not a raw Zod exception",async bad=>{
+   m.read.mockImplementation(async(_actor:unknown,_job:string,filters:unknown)=>
+    hrApplicantFilterSchema.parse(filters));
+   const result=await page(job,bad);
+   expect(pageText(result)).toContain("Invalid hiring filters");
+   expect(pageText(result)).toContain("Clear filters");
+   expect(m.notFound).not.toHaveBeenCalled();
+   expect(m.redirect).not.toHaveBeenCalled();
+  });
  it("legacy Messages redirect happens only after hiring job authorization",async()=>{
   m.read.mockResolvedValue({workspace:{job:{id:job}}});
   await expect(page(job,{tab:"messages"})).rejects.toThrow("REDIRECT");
