@@ -126,9 +126,9 @@ describe("chat-5 offers, waitlist eligibility, expiry and cascade invariants",()
   expect(selectDuePlacementOfferIds(rows,afterDue)).toEqual(["early","later"]);
  });
  it("PLACEMENTS-EXPIRY-03 minimum response clock excludes IST Sunday exactly",()=>{
-  const saturday2330=new Date("2026-10-17T18:00:00.000Z");
+  const saturday2330=new Date("2099-10-17T18:00:00.000Z");
   expect(minimumOfferResponseDeadline(saturday2330,1).toISOString())
-   .toBe("2026-10-18T19:00:00.000Z");
+   .toBe("2099-10-18T19:00:00.000Z");
   expect(()=>minimumOfferResponseDeadline(saturday2330,0)).toThrow();
   expect(()=>minimumOfferResponseDeadline(new Date(Number.NaN),1)).toThrow();
  });
