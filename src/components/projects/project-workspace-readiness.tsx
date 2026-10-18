@@ -51,7 +51,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       ))}
     </nav>
     <PageHeader title={copy.title} eyebrow="Projects" description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side." />
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="border-b border-border py-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-semibold">Current readiness</h2>
         <span className={readiness.finalSubmission.canSubmitDraft?"font-semibold text-success":"font-semibold text-warning-text"}>
