@@ -78,7 +78,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     <PageHeader  title="Semesters"
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —." />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
-    <section className="rounded-xl border border-border bg-surface p-4" aria-label="Semester filters">
+    <section className="border-b border-border pb-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Semester or program
           <Input name="q" type="search" defaultValue={data.query.q} maxLength={100}
