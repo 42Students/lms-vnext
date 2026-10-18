@@ -28,7 +28,7 @@ vi.mock("@/modules/projects/mentor-attention",()=>({
  deriveMentorProjectAttention:(rows:unknown)=>rows,
 }));
 vi.mock("@/db/schema",()=>({
- activityEvents:{groupKey:"activity.group_key",module:"activity.module",
+ activityEvents:{__table:"activity",groupKey:"activity.group_key",module:"activity.module",
   collegeId:"activity.college_id",organizationId:"activity.organization_id",
   occurredAt:"activity.occurred_at"},
  projectMeetings:{id:"meeting.id",projectId:"meeting.project_id",status:"meeting.status",
@@ -57,7 +57,11 @@ vi.mock("@/db/client",()=>({
    state.queries.push(record);
    const result=()=>record.table==="activity"?state.activityRows:[];
    const q={
-    from:(table:unknown)=>{record.table=String(table);return q;},
+    from:(table:unknown)=>{
+     record.table=table&&typeof table==="object"&&"__table" in table
+      ?String(table.__table):String(table);
+     return q;
+    },
     where:(condition:unknown)=>{record.where=condition;return q;},
     groupBy:(group:unknown)=>{record.groupBy=group;return Promise.resolve(result());},
     orderBy:()=>{record.orderBy=true;return Promise.resolve(result());},
