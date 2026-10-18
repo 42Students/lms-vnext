@@ -16,7 +16,7 @@ import {
   hrDraftFromAuthorizedJob,
 } from "@/modules/placements/hr-drive-draft-model";
 import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-workspace-service";
-import { hrDriveSessionStorageKey } from "@/modules/placements/hr-unsent-draft-storage-model";
+import { hrDriveSessionStorageKey,hrDriveDraftFormStateKey } from "@/modules/placements/hr-unsent-draft-storage-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {listRecruiterCollegeBranches} from "@/modules/placements/recruiter-college-branch-service";
@@ -113,8 +113,12 @@ export default async function RecruiterRequestDrivePage({
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Record an outside-platform drive
     </Link>
-    <HrDriveDraftForm initial={initial} branchSuggestions={branchSuggestions} sourceJobTitle={fromJob?.job.title ?? null}
-      storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)}
+    <HrDriveDraftForm
+      key={hrDriveDraftFormStateKey(context.user.id,collegeId,
+        query.fix?"FIX":query.edit?"EDIT":query.copy?"COPY":query.from?"FROM":"NEW",
+        requestId??query.from??null)}
+      initial={initial} branchSuggestions={branchSuggestions} sourceJobTitle={fromJob?.job.title ?? null}
+      storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,query.copy??fromJob?.job.id)}
       feedbackKey={hrDriveSessionStorageKey(context.user.id,collegeId,null)+":feedback"}
       collegeId={collegeId} sourceJobId={fromJob?.job.id??null}
       fixRequestId={query.copy?null:request?.id??null} fixUpdatedAt={query.copy?null:request?.updatedAt.toISOString()??null}

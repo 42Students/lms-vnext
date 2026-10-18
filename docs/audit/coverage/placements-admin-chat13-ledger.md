@@ -157,3 +157,6 @@ The other half of the admin coverage boundary lives in `src/modules/admin-ui/`, 
 
 
 | `src/modules/admin-ui/super-admin-read-directory-model.ts` — `superAdminReadQuerySchema`, `readAdminQuery`, `superAdminReadPages`, `superAdminReadHref`, `scopedSearchLike` | Decimal-only paging and allowed sizes; duplicate arrays, malicious filters and invalid UUIDs denied. URL round-trip retains selected authorized facets and literal wildcard escaping; internal page-count math is finite. | `SA-DIRECTORY-QUERY-12` in `tests/unit/chat13-admin-directory-query-hardening.test.ts` | Executable pure-parser/URL/count cases authored; cloud CI deferred |
+
+
+| `src/app/api/admin/placements/hiring-report/export/route.ts` — `GET` | GET is read-only, strict query filters, duplicate URL keys rejected before selected-college read, error on invalid scope, 5000 cap/truncation and private no-store CSV response | `SA-HIRING-EXPORT-13` in `tests/unit/chat13-super-admin-hiring-export-route.test.ts` | Route-level exercised through mocked authorized read and real CSV output; no CI/browser execution per owner instruction |

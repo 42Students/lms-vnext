@@ -46,6 +46,25 @@ describe("SA-tenants-modules-BRAND-PNG-06 validated branding asset structure",()
    chunk("IHDR",ihdr),chunk("ABCD",Buffer.alloc(0)),chunk("IDAT",idat),chunk("IEND",Buffer.alloc(0)),
   ]))).toBe(false);
  });
+ it("SA-tenants-modules-BRAND-PNG-07 rejects invalid deflate, decompression bombs and scanline filters",()=>{
+  const invalidDeflate=png([
+   chunk("IHDR",ihdr),chunk("IDAT",Buffer.from("not-zlib")),chunk("IEND",Buffer.alloc(0)),
+  ]);
+  expect(verifyCollegeLogoPngChunks(invalidDeflate)).toBe(false);
+  const invalidFilter=png([
+   chunk("IHDR",ihdr),chunk("IDAT",deflateSync(Buffer.from([9,0,0,0,0]))),
+   chunk("IEND",Buffer.alloc(0)),
+  ]);
+  expect(verifyCollegeLogoPngChunks(invalidFilter)).toBe(false);
+  const oversizedScanline=png([
+   chunk("IHDR",ihdr),chunk("IDAT",deflateSync(Buffer.alloc(10000))),
+   chunk("IEND",Buffer.alloc(0)),
+  ]);
+  expect(verifyCollegeLogoPngChunks(oversizedScanline)).toBe(false);
+  const wrongSig=baseline();
+  wrongSig[0]=0;
+  expect(verifyCollegeLogoPngChunks(wrongSig)).toBe(false);
+ });
  it("rejects oversized compressed payload and interlaced-crop masquerades",()=>{
   const huge=new Uint8Array(2*1024*1024+1);
   expect(verifyCollegeLogoPngChunks(huge)).toBe(false);

@@ -146,3 +146,14 @@ This is **link-based live content metadata** hardening only. It does not bypass 
 | `listOwnLearnerAssignmentMaterialLinks`, `assignmentMaterialTableReady` | Verify scoped delivery/enrolment first, deny draft/hidden/unpublished learner assignments before optional table probe, return honest disabled state when table absent, project only safe public HTTPS URLs | `tests/unit/chat7-learner-assignment-materials-service.test.ts` — `LEARNER-ASSIGNMENT-MATERIALS-04` |
 
 Both tests were authored without execution as requested. Role/tenant and scheduled embargo require later PostgreSQL/route verification for certification.
+
+## Continued security closure: signed media, upload metadata, bulk scope
+
+| Export / route | New explicit contract | Behavioral or boundary test |
+|---|---|---|
+| `playbackGrantRefreshDelay` | Expired/invalid grants renew at zero delay; a near-expiry grant does not wait beyond expiry; short grants over 1 second back off 1 second to avoid a renewal burst | `tests/unit/learner-video-grant-model.test.ts` — `LEARNER-VIDEO-GRANT-02` |
+| `getLearnerCourseFileReference` | A direct R2 file redirect is valid only for a `RESOURCE`, never a `VIDEO`; video bytes require the independent playback-grant path, even if a resource ID and delivery ID are both known | `tests/unit/chat7-learner-course-file-embargo.test.ts` — `LEARNER-COURSE-FILE-SCOPE-03` (source/authorization behavior); database type-negative verification pending |
+| `learnerAssignmentUploadHeadersSafe`, `validateLearnerAssignmentUploadGrant` | Exact six-header PUT capability; extra `x-amz-meta-*` fields rejected in addition to missing, malformed and unsafe headers | `tests/unit/learner-assignment-file-model.test.ts` — `LEARNER-FILE-GRANT-05` |
+| `bulkSuperAdminLessonVisibility`, `bulkSuperAdminCourseVisibility` | SQL counts currently published lesson contents under published paths, active offering/course/lesson, matching department and academic-period college; draft-only rows do not consume the 500-row safety cap | `tests/unit/chat7-superadmin-bulk-published-only.test.ts`, `tests/unit/chat7-superadmin-course-bulk-typed-boundaries.test.ts` — `SA-COURSES-BULK-PUBLISHED-06/SA-COURSES-BULK-SCOPE-07` |
+
+The owner has deferred CI and PostgreSQL integration until final all-lane completion. These changes are committed to the lane branch but neither a green test run nor tenant-race sign-off is claimed.

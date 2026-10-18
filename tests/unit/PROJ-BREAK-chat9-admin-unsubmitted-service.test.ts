@@ -12,7 +12,7 @@ const otherCollegeId="22222222-2222-4222-8222-222222222222";
 const organizationId="33333333-3333-4333-8333-333333333333";
 const state=vi.hoisted(()=>({
   selects:0,filters:[] as unknown[],
-  limitValues:[] as number[],offsetValues:[] as number[],readOnly:true,
+  limitValues:[] as number[],offsetValues:[] as number[],readOnly:true,revoked:false,liveChecks:0,
 }));
 vi.mock("@/modules/projects/scope",()=>({
   loadProjectCollegeScope:async(id:string)=>({
@@ -20,8 +20,15 @@ vi.mock("@/modules/projects/scope",()=>({
       ?"44444444-4444-4444-8444-444444444444":organizationId,
   }),
 }));
+vi.mock("@/modules/permissions/persisted-actor",()=>({
+  assertPersistedPlatformPermission:async(_transaction:unknown,ctx:RequestContext)=>{
+    state.liveChecks++;
+    if(state.revoked)throw new Error("Missing permission: projects.manage");
+    return ctx;
+  },
+}));
 vi.mock("@/db/client",()=>({
-  getDb:()=>({
+  getDb:()=>{const db={
     select:(columns:Record<string,unknown>)=>{
       state.selects+=1;
       const rows="value" in columns?[{value:2}]:[
@@ -49,7 +56,9 @@ vi.mock("@/db/client",()=>({
     },
     update:()=>{state.readOnly=false;throw Error("READ_ONLY_VIOLATION");},
     insert:()=>{state.readOnly=false;throw Error("READ_ONLY_VIOLATION");},
-  }),
+  };
+  return {...db,transaction:<T>(fn:(tx:typeof db)=>Promise<T>)=>fn(db)};
+  },
 }));
 const admin=():RequestContext=>({
   user:{id:"55555555-5555-4555-8555-555555555555",
@@ -59,7 +68,7 @@ const admin=():RequestContext=>({
   adminScope:null,
 });
 const render=(value:unknown)=>new PgDialect().sqlToQuery(value as SQL);
-beforeEach(()=>{state.selects=0;state.filters=[];state.limitValues=[];state.offsetValues=[];state.readOnly=true;});
+beforeEach(()=>{state.selects=0;state.filters=[];state.limitValues=[];state.offsetValues=[];state.readOnly=true;state.revoked=false;state.liveChecks=0;});
 describe("IIT Dharwad Projects Admin unsubmitted workspaces service permissions and pagination",()=>{
   it("PROJ-BREAK-archive-03 scoped list excludes archived and all already-submitted workspaces",async()=>{
     const result=await listProjectAdminUnsubmitted(admin(),collegeId,{
@@ -82,14 +91,22 @@ describe("IIT Dharwad Projects Admin unsubmitted workspaces service permissions 
   it("PROJ-BREAK-idor-56 unrelated college, inactive and learner actors fail before any project query",async()=>{
     const ctx=admin();
     await expect(listProjectAdminUnsubmitted(ctx,otherCollegeId,{}))
-      .rejects.toThrow("Missing permission: projects.manage");
+      .rejects.toThrow("PROJECT_ACCESS_DENIED");
     await expect(listProjectAdminUnsubmitted({
       ...ctx,membership:{...ctx.membership!,roles:["LEARNER"]},
-    },collegeId,{})).rejects.toThrow("Missing permission: projects.manage");
+    },collegeId,{})).rejects.toThrow("PROJECT_ACCESS_DENIED");
     await expect(listProjectAdminUnsubmitted({
       ...ctx,user:{...ctx.user,platformStatus:"DISABLED"},
     },collegeId,{})).rejects.toThrow("Missing permission: projects.manage");
     expect(state.selects).toBe(0);
+  });
+  it("PROJ-BREAK-idor-60 a revoked request actor cannot read even an empty authorized tenant directory",async()=>{
+    state.revoked=true;
+    await expect(listProjectAdminUnsubmitted(admin(),collegeId,{}))
+      .rejects.toThrow("Missing permission: projects.manage");
+    expect(state.liveChecks).toBe(1);
+    expect(state.selects).toBe(0);
+    expect(state.offsetValues).toHaveLength(0);
   });
   it("PROJ-BREAK-scale-21 rejects hostile offsets before loading college scope or DB",async()=>{
     for(const input of [{page:0},{page:100001},{page:1.5},{pageSize:101},{pageSize:0},{q:"x".repeat(121)}]){
