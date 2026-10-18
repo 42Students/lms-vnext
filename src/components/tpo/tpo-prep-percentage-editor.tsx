@@ -1,34 +1,47 @@
 "use client";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useRef,useState} from "react";
 export function TpoPrepPercentageEditor({initial,version}:{initial:number;version:string|null}){
  const router=useRouter(),[percent,setPercent]=useState(initial),[busy,setBusy]=useState(false);
+ const [saved,setSaved]=useState(initial),[currentVersion,setCurrentVersion]=useState(version);
  const [error,setError]=useState(""),[message,setMessage]=useState("");
+ const inFlight=useRef(false);
  async function save(){
-  if(!Number.isInteger(percent)||percent<0||percent>100||busy)return;
+  if(!Number.isInteger(percent)||percent<0||percent>100||percent===saved||inFlight.current)return;
+  inFlight.current=true;
   setBusy(true);setError("");setMessage("");
   try{
    const response=await fetch("/api/placements/tpo/settings/communication",{
     method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({section:"PREP_THRESHOLD",prepThresholdPct:percent,expectedVersion:version}),
+    body:JSON.stringify({section:"PREP_THRESHOLD",prepThresholdPct:percent,expectedVersion:currentVersion}),
    });
-   const result=await response.json() as {error?:string};
-   if(!response.ok)throw Error(result.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
-    "Could not save threshold. Refresh and try again.");
+   const result=await response.json().catch(()=>({})) as {error?:string;version?:string};
+   if(!response.ok){
+    setError(response.status===401?"Your session expired. Sign in again.":
+     response.status===403?"You no longer have permission to change the readiness bar.":
+     response.status===409||result.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
+     response.status===503||result.error==="TPO_SETTINGS_PENDING"?"Readiness settings are temporarily unavailable. Try again.":
+     "Could not save threshold. Refresh and try again.");
+    return;
+   }
+   setSaved(percent);setCurrentVersion(result.version??currentVersion);
    setMessage("Readiness bar saved");router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Could not save threshold.");}
-  finally{setBusy(false);}
+  }catch{
+   setError("Could not save threshold. Check the connection and try again.");
+  }finally{
+   inFlight.current=false;setBusy(false);
+  }
  }
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
   <h3 className="font-semibold">Readiness bar</h3>
   <p className="text-sm text-body">A student needs average progress of at least this percentage in the selected preparation courses.</p>
   <label className="block text-sm">Average progress required (%)
    <input type="number" min={0} max={100} step={1} value={percent} disabled={busy}
-    onChange={e=>setPercent(Number(e.target.value))}
+    onChange={e=>setPercent(e.target.value===""?-1:Number(e.target.value))}
     className="mt-1 block min-h-11 w-28 rounded border border-border bg-surface px-3"/>
   </label>
   <p className="text-xs text-muted-foreground">This threshold is applied to learner course-progress records when the selected preparation courses have published content. Unavailable records are not treated as a failed learner.</p>
-  <button type="button" disabled={busy||percent===initial||percent<0||percent>100}
+  <button type="button" disabled={busy||percent===saved||!Number.isInteger(percent)||percent<0||percent>100}
    onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save changes</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
