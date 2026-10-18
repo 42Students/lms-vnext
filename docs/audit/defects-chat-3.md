@@ -166,6 +166,10 @@ The Faculty teaching-assignment class picker and four People filter-option SQL r
 
 **Fix:** Calculate the verified current delivery roster before querying records. Skip historical record reads for empty rosters; constrain the record SQL by both authorized event IDs and currently enrolled membership IDs and enforce active same-college memberships/users. `tests/unit/chat3-faculty-attendance-workspace-tenant-boundary.test.ts` compiles the actual Drizzle WHERE predicate and checks empty/unauthorized no-read paths. The separate grade/submission mutation ownership and historical audit retention remain unchanged. Real PostgreSQL malformed-record and college-transfer fixtures, UI attendance comparison and CI are still outstanding.
 
+### FAC-HEALTH-RATE-029 — corrupt assessment response totals produce misleading percentages (S2)
+
+`responseCoverage` previously clamped negative or overcounted submissions into plausible 0% or 100%, and could emit `NaN` for nonfinite inputs. Since the report reflects actual persisted response state, impossible numerator/denominator values are integrity defects, not evidence of completion. The model now returns `null` for noninteger/nonfinite/negative/overcounted values, while preserving 0–100% for valid scores. Test: `tests/unit/chat3-faculty-course-health-closed-quiz-model.test.ts`, `FAC-HEALTH-RATE-03` (authored; CI pending).
+
 ### FAC-HEALTH-CLOSED-028 — completed quizzes silently absent from Faculty Section health (S2)
 
 The Faculty Section health model filtered assessment rows to `status === "PUBLISHED"` only. A quiz becomes `CLOSED` after its deadline or results release while remaining legitimate teaching evidence; both the Faculty results and reports-hub models already include closed quizzes. The health page therefore dropped completed quizzes from its count, response coverage and drilldown, misleading instructors about earlier assessments.
