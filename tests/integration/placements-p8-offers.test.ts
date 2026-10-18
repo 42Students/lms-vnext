@@ -340,6 +340,29 @@ describe("Placement P8 offers and joining", () => {
     expect(stillOne.rows[0]?.count).toBe(1);
   });
 
+  it("PLACEMENTS-SELECTION-RACE-DB-01 concurrent exact selection submits create one row and one audit",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const request={action:"RECORD" as const,entries:[{
+      applicationId:application.id,roleTitle:"Offer engineer",annualCtcInr:900_000,
+    }]};
+    const settled=await Promise.allSettled([
+      recordTpoDriveSelections(tpo,job.id,request),
+      recordTpoDriveSelections(tpo,job.id,request),
+    ]);
+    expect(settled.map(result=>result.status)).toEqual(["fulfilled","fulfilled"]);
+    const rows=await pool.query<{id:string}>(
+      "select id from placement_drive_selections where job_id = $1",[job.id]);
+    expect(rows.rows).toHaveLength(1);
+    const audit=await pool.query<{count:number}>(
+      "select count(*)::integer as count from activity_events where subject_id = $1 and event_type = $2",
+      [job.id,"PLACEMENTS_TPO_SELECTION_RECORDED"]);
+    expect(audit.rows[0]?.count).toBe(1);
+    for(const outcome of settled)if(outcome.status==="fulfilled"){
+      expect(outcome.value.selectionIds).toEqual([rows.rows[0]?.id]);
+      expect(outcome.value.recorded).toBe(1);
+    }
+  });
+
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {
     const { application } =
       await preparePassedApplication();
