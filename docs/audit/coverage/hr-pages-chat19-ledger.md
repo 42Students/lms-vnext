@@ -186,3 +186,9 @@ This is an independent TPO/HR workflow review; real clipboard permission denial,
 |---|---|---|---|
 | HR-BREAK-MAIL-REDIRECT-13 | Public recruiter join-code and recruiter message digest provider POST | `tests/unit/HR-BREAK-chat19-recruiter-join-code-delivery.test.ts`, `tests/unit/HR-BREAK-chat19-mail-redirect-boundary.test.ts`: never follow redirects; no retries of non-idempotent content; sanitization, allowlist/provider failure and correct Reply-To | Live SMTP/provider config and host allowlist review |
 | HR-BREAK-TEAM-GRANT-14 | `getRecruiterCompanyTeam` persisted selected grant ID | `tests/unit/HR-BREAK-chat19-company-team-grant-id.test.ts`: exact grant ID, user and relationship binding, ACTIVE conditions, same-college selector and borrowed recruiter exclusion | SQL integration test with two same-relationship grants and first revoked |
+
+## HR Today withdrawn applicant privacy
+
+| ID | Boundary | Direct behavioral test | Remaining |
+|---|---|---|---|
+| HR-BREAK-OFFER-FOLLOWUP-15 | `listRecruiterTodayOfferActions`, shared `isRecruiterSharedCandidateAllowed` | `tests/unit/HR-BREAK-chat19-today-offer-withdrawn.test.ts`: withdrawn/rejected/suspended/foreign candidates not shared; SQL offer aggregate requires SUBMITTED application and same college, active person, shortlist, published/unarchived job. | Persisted withdrawal/offer race and staged PostgreSQL tests remain cloud integration gates. |
