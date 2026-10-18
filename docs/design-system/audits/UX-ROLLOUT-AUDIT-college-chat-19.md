@@ -29,43 +29,45 @@ This is a **source-level audit**, not evidence of a complete rendered-component 
 
 ## All entry-point routes sampled by functional group
 
+Counts below are verified against the owner-maintained 85-entry route manifest. The `/college` index is counted under **dashboard**.
+
 | Group after /college | Entry-point routes scanned |
 |---|---:|
-| `academics` | 11 |
-| `activity` | 11 |
+| `academics` | 2 |
+| `activity` | 2 |
 | `announcements` | 1 |
 | `assignments` | 1 |
-| `attendance` | 1111 |
+| `attendance` | 4 |
 | `batch-promotion` | 1 |
-| `batches` | 11 |
+| `batches` | 2 |
 | `branding` | 1 |
-| `classes` | 11 |
+| `classes` | 2 |
 | `college-profile` | 1 |
 | `companies` | 1 |
-| `contacts` | 11 |
+| `contacts` | 2 |
 | `course-progress` | 1 |
-| `courses` | 11 |
+| `courses` | 2 |
 | `dashboard` | 1 |
 | `departments` | 1 |
 | `domains` | 1 |
-| `electives` | 111 |
-| `faculty` | 111 |
+| `electives` | 3 |
+| `faculty` | 3 |
 | `faculty-assignment` | 1 |
-| `groups` | 1111 |
+| `groups` | 4 |
 | `hiring-dashboard` | 1 |
-| `lecture-halls` | 11 |
+| `lecture-halls` | 2 |
 | `lessons` | 1 |
 | `live-classes` | 1 |
-| `people` | 11 |
-| `placements` | 11111111111111 |
+| `people` | 2 |
+| `placements` | 14 |
 | `profile` | 1 |
 | `programs` | 1 |
-| `projects` | 111111111111111 |
+| `projects` | 15 |
 | `quizzes` | 1 |
 | `resources` | 1 |
 | `semester-courses` | 1 |
 | `semesters` | 1 |
-| `students` | 1111 |
+| `students` | 4 |
 | `verification` | 1 |
 | `videos` | 1 |
 | **Total** | **85** |
