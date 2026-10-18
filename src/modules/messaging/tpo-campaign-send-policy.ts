@@ -34,6 +34,7 @@ export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:
   // A roster with 600 unsubscribed contacts and 1 eligible lead is sendable.
   const suppressed={NO_EMAIL:0,UNSUBSCRIBED:0,BOUNCED:0,NOT_NOW:0,DUPLICATE:0};
   const seen=new Set<string>();
+  const seenIds=new Set<string>();
   const recipientIds:string[]=[];
   for(const row of candidates){
     const state=campaignRecipientDisposition(row);
