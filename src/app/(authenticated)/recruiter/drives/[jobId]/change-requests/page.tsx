@@ -15,9 +15,9 @@ export default async function RecruiterChangeRequestsPage({params}:{params:Promi
  if(data.party!=="COMPANY")notFound();
  return <div className="space-y-5">
   <PageHeader eyebrow="Recruiter · Drive" title={data.job.title+" · Change requests"}
-   description="Suggest changes to the college, reply to their questions and review recorded decisions."/>
-  <Link href={"/recruiter/drives/"+encodeURIComponent(jobId)}
-   className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Back to drive</Link>
+   description="Suggest changes to the college, reply to their questions and review recorded decisions."
+   actions={<Link href={"/recruiter/drives/"+encodeURIComponent(jobId)}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to drive</Link>}/>
   {!data.storageReady?<p role="status" className="rounded border border-border bg-surface p-5 text-sm">
    {data.pendingMessage} The college cannot receive changes here until registration is complete.</p>:
    <TpoDriveChangeRequests jobId={jobId} party={data.party} userId={context.user.id} requests={data.requests}/>}

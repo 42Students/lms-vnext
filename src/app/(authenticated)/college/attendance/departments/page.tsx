@@ -24,11 +24,11 @@ export default async function CollegeDepartmentAttendancePage({
   const parsed = collegeDepartmentInsightsQuerySchema.safeParse(
     departmentInsightsQueryFromSearchParams(await searchParams),
   );
-  if (!parsed.success) return <div className="min-w-0 space-y-4">
+  if (!parsed.success) return <div className="min-w-0 overflow-x-clip space-y-4">
     <PageHeader eyebrow="College Admin" title="Attendance by Department" />
     <ErrorState title="Invalid department filters"
       description="The search or page value is invalid. No attendance evidence was loaded."
-      action={<Link href="/college/attendance/departments" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/college/attendance/departments" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
   const [data, policy] = await Promise.all([
     listCollegeDepartmentInsights(context, "ATTENDANCE", parsed.data),

@@ -26,7 +26,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   const overview = await getLearnerAssessmentOverview(await getCurrentRequestContext());
   const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
   if (resolution.kind === "none") notFound();
-  if (resolution.kind === "choose") return <div className="space-y-6">
+  if (resolution.kind === "choose") return <div className="min-w-0 space-y-6">
     <Link href="/learn/allAssignments" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)]">← All Assignments</Link>
     <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
     <ul className="divide-y divide-border rounded-xl border border-border bg-surface">

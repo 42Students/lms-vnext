@@ -25,16 +25,16 @@ export default async function CollegeElectivesPage({
     <h1 className="text-xl font-semibold">Electives is turned off for this college</h1>
     <p className="text-sm text-body">Your college administrator can ask 42Students to switch Electives back on.
       Existing elective records are kept; this page cannot create or change electives while the module is off.</p>
-    <Link href="/college" className="text-sm font-semibold text-primary-text underline">Return to college dashboard</Link>
+    <Link href="/college" className="text-sm font-semibold text-[var(--lms-teal-deep)] underline">Return to college dashboard</Link>
   </main>;
 
   const raw = readCollegeStructureParams(await searchParams);
   const parsed = collegeElectiveQuerySchema.safeParse(raw);
-  if (!parsed.success) return <div className="min-w-0 space-y-4">
+  if (!parsed.success) return <div className="min-w-0 overflow-x-clip space-y-4">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Electives" />
     <ErrorState title="Invalid elective filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
-      action={<Link href="/college/electives" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/college/electives" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
   </div>;
   const [data, options] = await Promise.all([
     listCollegeElectives(context, parsed.data),
@@ -43,7 +43,7 @@ export default async function CollegeElectivesPage({
   return <div className="space-y-4">
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={electiveCsvHref(data.query)}
-      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       Export filtered electives CSV
     </Link>
     <p className="text-xs text-muted-foreground">Exports up to {ELECTIVES_EXPORT_CAP} matching elective slots; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>

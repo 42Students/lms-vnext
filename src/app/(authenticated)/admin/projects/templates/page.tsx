@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -20,34 +24,34 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
 }){
  const raw=await searchParams;
  const query=templateDirectoryQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page});
- if(!query.success)return <div className="space-y-5">
+ if(!query.success)return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Projects" title="Templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
-   action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Clear filters</Link>}/>
+   action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  const data=await listSuperAdminTemplateDirectory(context,query.data);
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">New template →</Link>:undefined}/>
-  <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
+  <form method="get" className="grid min-w-0 grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
-    <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
+    <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Status
-    <select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
      {statuses.map(x=><option key={x} value={x}>{x}</option>)}
-    </select>
+    </Select>
    </label>
-   <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+   <Button type="submit" className="self-end">Filter</Button>
   </form>
   <SuperAdminTemplatePageExport items={data.items}/>
   <p className="text-xs text-muted-foreground">{data.total} templates · page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
   {data.items.length?<div className="grid gap-4 md:grid-cols-2">
-   {data.items.map(item=><article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-5">
+   {data.items.map(item=><article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
     <div className="flex flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
      <StatusBadge tone={tone(item.status)}>{item.status}</StatusBadge>
@@ -63,15 +67,12 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
     <div className="mt-3 flex flex-wrap items-center gap-3">
       <Link href={`/admin/projects/templates/${encodeURIComponent(item.id)}`}
-       className="inline-flex min-h-10 items-center font-semibold text-primary-text">Inspect template →</Link>
+       className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Inspect template →</Link>
       {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
         templateId={item.id} title={item.title} status={item.status}/>:null}
     </div>
    </article>)}
   </div>:<EmptyState title="No matching templates" description="No global template metadata matches these filters."/>}
-  <nav aria-label="Template pages" className="flex flex-wrap gap-3 text-sm">
-   {data.query.page>1?<Link href={templateDirectoryHref({...data.query,page:data.query.page-1})} className="font-semibold text-primary-text">Previous</Link>:null}
-   {data.query.page<data.totalPages?<Link href={templateDirectoryHref({...data.query,page:data.query.page+1})} className="font-semibold text-primary-text">Next</Link>:null}
-  </nav>
+  <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateDirectoryHref({...data.query,page})} label="Template pages" />
  </div>;
 }

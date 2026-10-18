@@ -38,13 +38,13 @@ export default async function TpoCalendarPage({
   const parsed=parseTpoCalendarUrl({
     date:first(raw.date),view:first(raw.view)??initialTpoCalendarView(agent),company:first(raw.company),kind:first(raw.kind),
   });
-  if(!parsed.success)return <main className="space-y-4">
+  if(!parsed.success)return <div className="space-y-4">
     <h1 className="text-xl font-semibold">Invalid calendar filters</h1>
     <p role="alert" className="rounded border border-border bg-surface p-4 text-sm text-body">
       Enter a valid day, calendar view, event kind and company filter. No events were queried.
     </p>
     <Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline">Reset calendar filters</Link>
-  </main>;
+  </div>;
   return (
     <div className="space-y-4">
       <Link href="/tpo/calendar/export"

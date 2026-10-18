@@ -1,3 +1,4 @@
+import {PageHeader} from "@/components/ui/page-header";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -15,21 +16,21 @@ export default async function TpoRecruiterConversationPage({params}:{
   placementTableExists("placement_tpo_message_threads"),
   placementTableExists("placement_tpo_messages"),
  ]);
- if(!threadsReady||!messagesReady)return <main className="space-y-3">
-  <h1 className="text-xl font-semibold">Recruiter conversations unavailable</h1>
+ if(!threadsReady||!messagesReady)return <div className="space-y-3">
+  <PageHeader eyebrow="TPO · Messages" title="Recruiter conversations unavailable"/>
   <p role="alert" className="text-sm text-body">
    Recruiter messaging tables are not registered. No messages were loaded.
   </p>
-  <Link href="/tpo/messages" className="text-primary-text underline">Back to messages</Link>
- </main>;
+  <Link href="/tpo/messages" className="text-[var(--lms-teal-deep)] underline">Back to messages</Link>
+ </div>;
  const {threadId}=await params;
  const data=await getTpoRecruiterThreadDetail(context,threadId);
  if(!data)notFound();
- return <main className="space-y-5">
-  <Link href="/tpo/messages" className="text-sm font-semibold text-primary-text">
+ return <div className="space-y-5">
+  <Link href="/tpo/messages" className="text-sm font-semibold text-[var(--lms-teal-deep)]">
    ← All conversations
   </Link>
-  <h1 className="text-xl font-semibold text-foreground">Recruiter conversation</h1>
+  <PageHeader eyebrow="TPO · Messages" title="Recruiter conversation"/>
   <p className="text-sm text-body">{data.total} messages · Showing the latest 100</p>
   <section role="log" aria-live="polite" aria-busy={false} aria-label="Conversation messages" className="space-y-3">
    {data.messages.length===0?<p role="status">No messages yet.</p>:data.messages.map((item,index)=>
@@ -52,5 +53,5 @@ export default async function TpoRecruiterConversationPage({params}:{
   </section>
   <TpoRecruiterMessageReply threadId={threadId} actorUserId={context.user.id} unread={data.messages.some(item=>item.senderType==="RECRUITER"&&!item.readAt)} />
   <p className="text-xs text-muted-foreground">Reading and sending require explicit confirmation.</p>
- </main>;
+ </div>;
 }

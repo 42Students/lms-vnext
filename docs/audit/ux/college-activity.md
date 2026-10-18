@@ -1,7 +1,7 @@
-# UX excellence: /college/activity
+# UX review: /college/activity
 
-- Before: page-level actions or content lacked one or more narrow-screen affordances.
-- Changes: 44px minimum action targets; constrain page width on phones in `src/app/(authenticated)/college/activity/page.tsx`.
-- State/interaction review: preserves current route validation, permission checks, legacy wording, empty states and server data decisions; this change is visual/accessibility only.
-- Regression: `tests/unit/chat4-college-ux-round1.test.ts` — `UX-college-activity-01`.
-- Verification: source check authored, not executed; browser, mobile and accessibility tests remain for orchestrator. Leave the page checklist unchecked until tests pass.
+- Route: `src/app/(authenticated)/college/activity/page.tsx`. Owner: chat-4, first half of /college.
+- Legacy wording: retained verbatim; no navigation, permission or business-rule changes.
+- Source changes: primary foreground contrast; accessible deep-teal links; bounded table scrolling; horizontal overflow containment.
+- States: preserved existing permission/empty/error/success states; shared primitives retain focus, reduced-motion and loading contracts. No direct DataTable on this route; downstream list controls retain their own empty copy.
+- Test authored: `tests/unit/UX-college-college-activity-01.test.ts`; runtime/browser and CI validation pending.

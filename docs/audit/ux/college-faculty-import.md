@@ -1,9 +1,7 @@
-# UI/UX excellence — /college/faculty/import
+# UX review: /college/faculty/import
 
-Initial concern: narrow-screen page content, small interaction targets or long list/table reading.
-
-Implemented: constrain narrow-screen content width. Code: `src/app/(authenticated)/college/faculty/import/page.tsx`.
-
-No text, business state, filters, backend routes, mutation semantics, or tenant scope changes. Existing empty and recovery behaviors unchanged; browser acceptance at 320px, focus order, reduced motion and screen readers is still pending.
-
-Regression contract: `tests/unit/chat4-college-ux-round6.test.ts` named `UX-college-faculty-import-01`. Tests written, not run; do not check off until green.
+- Route: `src/app/(authenticated)/college/faculty/import/page.tsx`; checked current authorized College source and signed-off playbook.
+- Legacy titles and labels retained verbatim; no permission, route or API contract changed.
+- Changes: accessible links; horizontal overflow containment.
+- Accessibility/states: No direct DataTable; shared underlying workspace owns list and empty state. Existing error/empty/denied and form behaviors retained.
+- Test authored: `tests/unit/UX-college-college-faculty-import-01.test.ts`; CI/browser not run, no checklist sign-off claimed.
