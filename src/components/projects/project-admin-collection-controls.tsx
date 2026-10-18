@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 
 export type ProjectAdminCollectionQuery = {
   view?:"cards"|"table";
@@ -68,11 +71,11 @@ export function ProjectAdminFilters({
   return (
     <form
       method="get"
-      className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
+      className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
     >
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Search
-        <input
+        <Input
           name={legacyWorkspaces ? "search" : "q"}
           type="search"
           defaultValue={query.q ?? ""}
@@ -82,7 +85,7 @@ export function ProjectAdminFilters({
       </label>
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Workspace status
-        <select
+        <Select
           name="status"
           defaultValue={query.status ?? ""}
           className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
@@ -93,7 +96,7 @@ export function ProjectAdminFilters({
               {label(status)}
             </option>
           ))}
-        </select>
+        </Select>
       </label>
       {filterView?<input type="hidden" name="view" value={filterView}/>:query.view?<input type="hidden" name="view" value={query.view}/>:null}
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
@@ -101,18 +104,18 @@ export function ProjectAdminFilters({
       {includeRiskSort ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Sort by
-          <select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
+          <Select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
             className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
             <option value="INACTIVE">Inactive</option>
             <option value="SEVERITY">Severity</option>
             <option value="WORKSPACE">Workspace</option>
-          </select>
+          </Select>
         </label>
       ) : null}
       {includeSubmissionStatus ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Submission status
-          <select
+          <Select
             name="submissionStatus"
             defaultValue={
               query.submissionStatus ?? ""
@@ -125,12 +128,12 @@ export function ProjectAdminFilters({
                 {status==="UNDER_REVIEW"?"Under Review":status==="DRAFT_REVISING"?"Draft (revising)":label(status)}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
       ) : null}
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Rows
-        <select
+        <Select
           name="pageSize"
           defaultValue={String(
             query.pageSize ?? (legacyWorkspaces ? 20 : 25),
@@ -142,14 +145,14 @@ export function ProjectAdminFilters({
               {size}
             </option>
           ))}
-        </select>
+        </Select>
       </label>
-      <button
+      <Button
         type="submit"
-        className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+        className="rounded-[9px]"
       >
         Apply
-      </button>
+      </Button>
       <Link
         href={filterView?"?view=NOT_SUBMITTED":"?"}
         className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-body hover:bg-muted"
