@@ -15,13 +15,16 @@ describe("chat-9 last-third admin UX rollout, batch 04",()=>{
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
   expect(page).not.toContain("text-primary-text");
   expect(page).not.toContain("min-h-10");
-  expect(page).toMatch(/PageHeader|SuperAdminContentDirectoryPage|redirect\(|export\s*\{\s*default\s*\}/);
+  expect(page).toContain('aria-labelledby="register-student-heading"');
+  expect(page).toContain('aria-labelledby="bulk-register-students-heading"');
+  expect(page).toMatch(/PageHeader|SuperAdminContentDirectoryPage|AdminScopedReadPage|redirect\(|export\s*\{\s*default\s*\}/);
  });
  it("UX-admin-tenants-01 preserves shared UX and scoped route behavior",()=>{
   const page=source("src/app/(authenticated)/admin/tenants/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
   expect(page).not.toContain("text-primary-text");
   expect(page).not.toContain("min-h-10");
+  for(const component of ["<Input","<Select","<Button","<Pagination"])expect(page).toContain(component);
   expect(page).toMatch(/PageHeader|SuperAdminContentDirectoryPage|redirect\(|export\s*\{\s*default\s*\}/);
  });
  it("UX-admin-tenants-create-01 preserves shared UX and scoped route behavior",()=>{
