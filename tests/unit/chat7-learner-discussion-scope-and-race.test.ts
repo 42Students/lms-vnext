@@ -29,6 +29,7 @@ describe("COURSES7-11 Learner discussion access and response isolation",()=>{
   }
   expect(learnerDiscussionMayPost("Hello",false,false)).toBe(false);
   expect(learnerDiscussionMayPost("Hello",true,true)).toBe(false);
+  expect(learnerDiscussionMayPost("x".repeat(3901),true,false)).toBe(false);
  });
  it("COURSES7-11 enforces the same finite message length used for all persisted writers",()=>{
   expect(LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH).toBe(3900);
