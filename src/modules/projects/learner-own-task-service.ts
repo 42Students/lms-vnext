@@ -84,6 +84,14 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
    .for("update").limit(1):[null];
   if(task.sprintId&&sprint?.status!=="ACTIVE")
    throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  // A shipped release is immutable even if a stale sprint row remains ACTIVE.
+  if(sprint){
+   const [release]=await tx.select({status:projectReleases.status}).from(projectReleases)
+    .where(and(eq(projectReleases.id,sprint.releaseId),
+      eq(projectReleases.projectId,projectId))).for("share").limit(1);
+   if(!release||!["PLANNED","IN_PROGRESS"].includes(release.status))
+    throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  }
   const [comment]=await tx.select({id:projectTaskComments.id}).from(projectTaskComments)
    .where(and(eq(projectTaskComments.projectId,projectId),eq(projectTaskComments.taskId,taskId))).limit(1);
   const [attempt]=await tx.select({id:projectTaskSubmissions.id}).from(projectTaskSubmissions)
