@@ -173,3 +173,13 @@ Page-level **coverage-only** additions: `HR-BREAK-chat15-activity-page-96.test.t
 | HR-ACTIVITY-CSV-102 | S3 correctness | Activity CSV could throw on invalid date; if rows exceeded the hard cap with no explicit downstream-more flag, it silently truncated without the warning row. Now safe-dates and independently determines the cap marker. | `HR-BREAK-chat15-activity-csv-102.test.ts` | CI, real 200+ event history pending |
 | HR-NOTIFICATIONS-CSV-103 | S3 resilience | Notification export could crash formatting an invalid Date and print NaN omitted counts from a corrupt aggregate total. It now uses safe dates/aggregate totals. | `HR-BREAK-chat15-notification-csv-103.test.ts` | CI, real read/unread export pending |
 | HR-EXPORT-104 | S2 query authorization clarity | Five recruiter GET CSV endpoints silently accepted duplicate sensitive filters and unknown query keys; now return INVALID_QUERY before private service reads. | `HR-BREAK-chat15-export-query-104.test.ts` | Authenticated HTTP, paging and cache checks pending |
+
+
+## Recruiter message and proposal entry defects — October 19
+
+| ID | Severity | Source-level defect and fix | Regression | Release gate |
+|---|---|---|---|---|
+| HR-MESSAGING-109 | S2 request validation | Recruiter reply form schema accepted NUL and other unprintable bytes that PostgreSQL TEXT refuses; unstructured persistence failures could result. Form input now rejects controls except intentional whitespace for multiline replies. | `HR-BREAK-chat15-reply-bytes-109.test.ts` | Actual HTTP/DB test and final CI |
+| HR-PROPOSAL-API-110 | S2 access and resilience | Employer drive proposal POST checked active recruiter but not cached recruiter principal equality before entering service; context/backend failures and unexpected DB errors could reject the HTTP route without safe response. Added principal check and common sanitized error mapping while retaining replay semantics and 403 origin guard. | `HR-BREAK-chat15-proposal-post-api-110.test.ts` | Concurrent PostgreSQL submission and TPO notice audit |
+
+Coverage-only without a new defect claim: HR-CALENDAR-SERVICE-107 and HR-TRACKER-FALLBACK-108 behavior tests; pending live verification.
