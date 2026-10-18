@@ -117,4 +117,15 @@ describe("chat-16 OTP channel acceptance, validation and graceful failure", () =
     expect(outboundFetch).not.toHaveBeenCalled();
   });
 
+  it("AUTH-OTP-EXOTEL-04 rejects whitespace-only credentials and sender registration without an outbound POST", async () => {
+    for (const change of [
+      { apiKey: " " }, { apiToken: "\t " },
+      { dltEntityId: "  " }, { otpSenderId: "\n" }, { otpDltTemplateId: " " },
+    ]) {
+      const provider = createExotelSmsProvider({ ...smsConfig, ...change });
+      expect(await provider.sendOtp("+919876543210", "123456")).toBe(false);
+    }
+    expect(outboundFetch).not.toHaveBeenCalled();
+  });
+
 });
