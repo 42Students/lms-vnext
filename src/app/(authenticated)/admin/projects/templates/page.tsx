@@ -20,14 +20,14 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
 }){
  const raw=await searchParams;
  const query=templateDirectoryQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page});
- if(!query.success)return <div className="space-y-5">
+ if(!query.success)return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Projects" title="Templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
-   action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Clear filters</Link>}/>
+   action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  const data=await listSuperAdminTemplateDirectory(context,query.data);
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-5">
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
@@ -47,7 +47,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <SuperAdminTemplatePageExport items={data.items}/>
   <p className="text-xs text-muted-foreground">{data.total} templates · page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
   {data.items.length?<div className="grid gap-4 md:grid-cols-2">
-   {data.items.map(item=><article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-5">
+   {data.items.map(item=><article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
     <div className="flex flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
      <StatusBadge tone={tone(item.status)}>{item.status}</StatusBadge>
@@ -63,15 +63,15 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
     <div className="mt-3 flex flex-wrap items-center gap-3">
       <Link href={`/admin/projects/templates/${encodeURIComponent(item.id)}`}
-       className="inline-flex min-h-10 items-center font-semibold text-primary-text">Inspect template →</Link>
+       className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Inspect template →</Link>
       {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
         templateId={item.id} title={item.title} status={item.status}/>:null}
     </div>
    </article>)}
   </div>:<EmptyState title="No matching templates" description="No global template metadata matches these filters."/>}
   <nav aria-label="Template pages" className="flex flex-wrap gap-3 text-sm">
-   {data.query.page>1?<Link href={templateDirectoryHref({...data.query,page:data.query.page-1})} className="font-semibold text-primary-text">Previous</Link>:null}
-   {data.query.page<data.totalPages?<Link href={templateDirectoryHref({...data.query,page:data.query.page+1})} className="font-semibold text-primary-text">Next</Link>:null}
+   {data.query.page>1?<Link href={templateDirectoryHref({...data.query,page:data.query.page-1})} className="font-semibold text-[var(--lms-teal-deep)]">Previous</Link>:null}
+   {data.query.page<data.totalPages?<Link href={templateDirectoryHref({...data.query,page:data.query.page+1})} className="font-semibold text-[var(--lms-teal-deep)]">Next</Link>:null}
   </nav>
  </div>;
 }

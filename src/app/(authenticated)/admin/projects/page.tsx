@@ -38,7 +38,7 @@ export default async function SuperAdminProjectsPage({
 
   if (!collegeId) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <ProjectAdminNav
           basePath="/admin/projects"
           active="workspaces"
@@ -82,7 +82,7 @@ export default async function SuperAdminProjectsPage({
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <ProjectAdminNav
         basePath="/admin/projects"
         active="workspaces"
@@ -113,10 +113,10 @@ export default async function SuperAdminProjectsPage({
       <nav className="flex gap-2 text-sm font-semibold" aria-label="Workspace display mode">
         <Link href={"/admin/projects?view=table"+(query.q?"&q="+encodeURIComponent(query.q):"")+
           (query.status?"&status="+query.status:"")} aria-current={view==="table"?"page":undefined}
-          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">Table</Link>
+          className="min-h-11 rounded border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Table</Link>
         <Link href={"/admin/projects?view=cards"+(query.q?"&q="+encodeURIComponent(query.q):"")+
           (query.status?"&status="+query.status:"")} aria-current={view==="cards"?"page":undefined}
-          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">Cards</Link>
+          className="min-h-11 rounded border border-border px-3 py-2 text-[var(--lms-teal-deep)]">Cards</Link>
       </nav>
       <ProjectWorkspacePageExport items={result.items.map(item=>({
         id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,

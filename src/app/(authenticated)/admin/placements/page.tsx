@@ -43,7 +43,7 @@ export default async function AdminPlacementsPage({searchParams}:{searchParams:P
         actions={
           <Link
             href="/admin/placements/new"
-            className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] motion-safe:transition-colors motion-reduce:transition-none hover:border-primary-hover hover:bg-primary-hover"
           >
             New drive
           </Link>
