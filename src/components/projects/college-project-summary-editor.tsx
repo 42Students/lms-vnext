@@ -46,7 +46,7 @@ export function CollegeProjectSummaryEditor({project}:{project:Project}){
      {project.status==="ACTIVE"&&<option value="COMPLETED">Completed</option>}
     </Select></label>
    <p className="text-xs text-muted-foreground">Activating requires a Mentor; completing requires an approved final submission.</p>
-   <div className="flex gap-2"><Button type="button" className="rounded bg-primary px-3 py-2 text-on-primary"
+   <div className="flex gap-2"><Button type="button" className=""
     disabled={busy||!title.trim()} onClick={()=>void save()}>{busy?"Saving…":"Save changes"}</Button>
     <Button type="button" variant="secondary" className="min-h-10" disabled={busy}
      onClick={()=>setOpen(false)}>Cancel</Button></div>
