@@ -90,6 +90,36 @@ describe("WEAK-tenant-domains service authorization, idempotency and hostile hos
     expect(repo.createDomain).not.toHaveBeenCalled();
   });
 
+  it("WEAK-tenant-domains-17 parallel same-host create recovers uniqueness winner in own college",async()=>{
+    const repo=makeRepo();
+    const winner=domain({verificationToken:"winner-token"});
+    repo.findByHost.mockResolvedValueOnce(null).mockResolvedValueOnce(winner);
+    repo.createDomain.mockRejectedValueOnce(Object.assign(new Error("unique host"),{code:"23505"}));
+    const freshToken=vi.fn(()=>"loser-token");
+    await expect(createTenantDomain(asSuperAdmin(),{collegeId:OWNER,host:HOST},repo,freshToken))
+      .resolves.toEqual(winner);
+    expect(repo.findByHost).toHaveBeenCalledTimes(2);
+    expect(repo.createDomain).toHaveBeenCalledOnce();
+    expect(freshToken).toHaveBeenCalledOnce();
+  });
+
+  it("WEAK-tenant-domains-18 unique race never returns another college's host or raw SQLSTATE",async()=>{
+    const repo=makeRepo();
+    repo.findByHost.mockResolvedValueOnce(null).mockResolvedValueOnce(domain({collegeId:OTHER}));
+    repo.createDomain.mockRejectedValueOnce(Object.assign(new Error("23505 raw"),{code:"23505"}));
+    await expect(createTenantDomain(asSuperAdmin(),{collegeId:OWNER,host:HOST},repo))
+      .rejects.toMatchObject({code:"HOST_CONFLICT"});
+    expect(repo.createDomain).toHaveBeenCalledOnce();
+  });
+
+  it("WEAK-tenant-domains-19 non-unique storage failures are not disguised as domain conflicts",async()=>{
+    const repo=makeRepo();
+    repo.createDomain.mockRejectedValueOnce(Object.assign(new Error("database timeout"),{code:"57014"}));
+    await expect(createTenantDomain(asSuperAdmin(),{collegeId:OWNER,host:HOST},repo))
+      .rejects.toMatchObject({message:"database timeout",code:"57014"});
+    expect(repo.findByHost).toHaveBeenCalledOnce();
+  });
+
   it("WEAK-tenant-domains-11 proof failure is recorded, not misreported as verified",async()=>{
     const repo=makeRepo();
     const verify=vi.fn(async()=>({verified:false as const,result:"TXT_RECORD_MISSING" as const}));
