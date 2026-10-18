@@ -68,6 +68,17 @@ describe("chat-16 HR/Recruiter inbox account break-it journeys",()=>{
   expect(listOwnRecruiterPlacementJobs).toHaveBeenCalledTimes(1);
   expect(getDb).not.toHaveBeenCalled();
  });
+ it("HR-BREAK-TENANCY-08 drops another college's general thread even if an upstream result is contaminated",async()=>{
+  const leaked=[
+   {id:"forged-other-college",collegeId:collegeB,recruiterUserId:ctx.user.id,jobId:null},
+   {id:"forged-other-recruiter",collegeId:collegeA,recruiterUserId:"user-b",jobId:null},
+  ] as unknown as Awaited<ReturnType<typeof listMessageThreads>>;
+  vi.mocked(listMessageThreads).mockResolvedValue(leaked);
+  const result=await listHrConversations(ctx,{});
+  expect(result).toMatchObject({status:"READY",items:[],total:0});
+  expect(listOwnRecruiterPlacementJobs).toHaveBeenCalledWith(ctx,collegeA,{jobIds:[]});
+  expect(getDb).not.toHaveBeenCalled();
+ });
  it("HR-BREAK-ACCESS-07 denies a removed last grant rather than returning a global inbox",async()=>{
   const result=await listHrConversations({...ctx,recruiter:{...ctx.recruiter!,grants:[]}},{});
   expect(result).toMatchObject({status:"NO_ACCESS",collegeId:null,items:[]});
