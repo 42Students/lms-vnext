@@ -33,7 +33,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   ] as const;
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="At-risk & readiness drill-in"
-      description={data.projectTitle+" · "+data.projectStatus}
+      description={data.enabled?data.projectTitle+" · "+data.projectStatus:"Projects are disabled. No private task, meeting or delivery evidence was loaded."}
       actions={<Link href={base}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Full project workspace

@@ -38,13 +38,18 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   select distinct m.id as membership_id,
    coalesce(nullif(btrim(u.display_name),''),'Student') as student_name
   from course_section_deliveries d
-   join section_enrollments se on se.section_id=d.section_id
-    and se.academic_period_id=(select academic_period_id from course_offerings where id=d.offering_id)
-    and se.status='ACTIVE'
-   join learner_program_enrollments e on e.id=se.learner_enrollment_id and e.status='ACTIVE'
+   join course_offerings o on o.id=d.offering_id
+   join sections s on s.id=d.section_id and s.status='ACTIVE'
+    and s.cohort_id=o.cohort_id and s.academic_period_id=o.academic_period_id
+   join section_enrollments se on se.section_id=s.id
+    and se.academic_period_id=o.academic_period_id and se.status='ACTIVE'
+   join learner_program_enrollments e on e.id=se.learner_enrollment_id
+    and e.cohort_id=o.cohort_id and e.status='ACTIVE'
    join college_memberships m on m.id=e.membership_id and m.status='ACTIVE'
+   join membership_roles role on role.membership_id=m.id and role.role='LEARNER'
    join users u on u.id=m.user_id and u.platform_status='ACTIVE'
-   where d.offering_id=${offeringId}::uuid and m.college_id=${collegeId}::uuid
+   where d.offering_id=${offeringId}::uuid and d.ended_at is null
+    and m.college_id=${collegeId}::uuid
  ), published_items as (
   select lc.id,lc.content_type from lesson_contents lc
   join course_lessons l on l.id=lc.lesson_id and l.status='ACTIVE'
@@ -78,11 +83,11 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  (select count(*)::int from published_assignments) as "totalAssignments",
  (select count(*)::int from published_quizzes) as "totalQuizzes"
  from roster r order by r.student_name,r.membership_id
- limit 500
+ limit 501
  `);
  type DbRow={membershipId:string;studentName:string;videos:number;assignments:number;quizzes:number;
   totalVideos:number;totalAssignments:number;totalQuizzes:number};
- const rows=(result.rows as unknown as DbRow[]).map(row=>({
+ const rows=(result.rows as unknown as DbRow[]).slice(0,500).map(row=>({
   membershipId:row.membershipId,studentName:row.studentName,
   videos:Number(row.videos),assignments:Number(row.assignments),quizzes:Number(row.quizzes),
  }));
@@ -92,5 +97,5 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   assignments:Number(first?.totalAssignments??0),
   quizzes:Number(first?.totalQuizzes??0),
  };
- return {offeringId,collegeId,rows,totals,truncated:rows.length===500};
+ return {offeringId,collegeId,rows,totals,truncated:result.rows.length>500};
 }

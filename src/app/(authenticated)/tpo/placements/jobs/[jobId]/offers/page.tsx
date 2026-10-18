@@ -32,7 +32,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  if(parsed.data.minCtcLpa!==undefined)csvFilters.set("minCtcLpa",String(parsed.data.minCtcLpa));
  if(parsed.data.maxCtcLpa!==undefined)csvFilters.set("maxCtcLpa",String(parsed.data.maxCtcLpa));
  const csvHref="/api/placements/tpo/jobs/"+encodeURIComponent(data.job.id)+"/offers/export?"+csvFilters.toString();
- const tabs=[["ALL","All",data.counts.all],["ISSUED","Issued",data.counts.issued],["ACCEPTED","Accepted",data.counts.accepted],["DECLINED","Declined",data.counts.declined],["WITHDRAWN","Withdrawn",data.counts.withdrawn]] as const;
+ const tabs=[["ALL","All",data.counts.all],["ISSUED","Issued",data.counts.issued],["ACCEPTED","Accepted",data.counts.accepted],["DECLINED","Declined",data.counts.declined],["WITHDRAWN","Withdrawn",data.counts.withdrawn],["EXPIRED","Expired",data.counts.expired]] as const;
  return <div className="min-w-0 space-y-6">
   <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Back to drive</Link>
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."

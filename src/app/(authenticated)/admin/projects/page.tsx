@@ -64,17 +64,19 @@ export default async function SuperAdminProjectsPage({
   const query: ProjectAdminCollectionQuery = parsed.data;
   const view = parsed.data.view;
 
-  const [result, templates] = await Promise.all([
+  // Template discovery is optional to listing scoped project workspaces.
+  // Keep the workspace page usable during a transient template-store failure.
+  const [result, templatesResult] = await Promise.all([
     listProjectAdminSnapshots(
       context,
       collegeId,
       query,
     ),
-    listAssignedProjectTemplates(
-      context,
-      collegeId,
-    ),
+    listAssignedProjectTemplates(context, collegeId)
+      .then(value => ({ok:true as const,value}))
+      .catch(() => ({ok:false as const})),
   ]);
+  const templates=templatesResult.ok?templatesResult.value:[];
 
   return (
     <div className="min-w-0 space-y-6">
@@ -103,6 +105,11 @@ export default async function SuperAdminProjectsPage({
       <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/admin/projects/workspaces/new">Create workspace</Link>
         <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
 
+      {!templatesResult.ok && (
+        <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+          Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
+        </p>
+      )}
       <ProjectAdminFilters query={query} legacyWorkspaces />
 
       <nav className="flex gap-2 text-sm font-semibold" aria-label="Workspace display mode">

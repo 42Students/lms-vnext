@@ -1,4 +1,5 @@
 import {collegeWorkspaceStatusLabel} from "./college-workspace-status-label";
+import {projectAdminCsv,projectAdminCsvCell} from "./project-admin-csv-model";
 
 export type VisibleWorkspaceExportRow = {
   title: string;
@@ -14,12 +15,7 @@ const headings = ["Workspace","Mentor","Status","Progress %","Members","Last cha
 
 /** Spreadsheet-safe CSV escaping for user-authored project workspace names. */
 export function projectWorkspaceCsvCell(value: string | number | null): string {
-  const raw = value === null ? "" : String(value);
-  const safe = typeof value === "string" &&
-    /^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+\-@]/u.test(value)
-    ? "'" + raw
-    : raw;
-  return '"' + safe.replaceAll('"','""') + '"';
+  return projectAdminCsvCell(value);
 }
 
 /** Export *only* the already scoped visible results, never re-query the tenant. */
@@ -38,7 +34,5 @@ export function projectWorkspacePageCsv(
     item.memberCount,
     date.format(item.updatedAt),
   ]);
-  return "\uFEFF" + [headings,...rows]
-    .map(row => row.map(projectWorkspaceCsvCell).join(","))
-    .join("\r\n") + "\r\n";
+  return projectAdminCsv([headings,...rows]);
 }

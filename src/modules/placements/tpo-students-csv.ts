@@ -19,7 +19,7 @@ export function tpoStudentCsvCell(
     );
 
   const formulaLike =
-    /^[\s﻿​]*[=+\-@]/u.test(raw);
+    /^[\p{Z}\p{Cf}\p{Cc}\p{M}]*[=+\-@]/u.test(raw);
 
   const safe = formulaLike
     ? `'${raw}`
@@ -85,7 +85,7 @@ export function exportTpoStudentsCsv(
       row.readinessSignal,
       row.cgpa,
       row.tenthPct,row.twelfthPct,row.diplomaPct,row.ugPct,
-      row.passingYear,row.gapYears,row.marksVerified?"Yes":"No",
+      row.passingYear,row.gapYears,row.marksVerified==null?"":row.marksVerified?"Yes":"No",
       row.isLateralEntry==null?"":row.isLateralEntry?"Yes":"No",
       row.journeyState,afterCollege[row.membershipId]??"",
       row.activeBacklogs,

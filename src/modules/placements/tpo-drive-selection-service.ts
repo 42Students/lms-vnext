@@ -245,7 +245,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
         const [locked]=await tx.select().from(placementDriveSelections)
           .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
           .for("update").limit(1);
-        if(!locked||locked.recordedAt.toISOString()!==input.expectedRecordedAt[id]||
+        if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id])||
           !["SELECTED","VERIFIED"].includes(locked.status))throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
         if(locked.status==="SELECTED"){
           await tx.update(placementDriveSelections).set({

@@ -24,6 +24,13 @@ export async function getMentorTeamHistory(
       context.user.platformStatus !== "ACTIVE") {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
+  const modules = await resolveOptionalModuleAccess(context);
+  if (!modules.projects.enabled) {
+    return {
+      enabled: false as const,title:"",query,
+      ...mentorTeamHistoryPage(0,1),items:[],
+    };
+  }
   const scope = await requireProjectReadAccess(context, query.projectId);
   if (scope.access !== "MENTOR" ||
       !can(context, "projects.read", {
@@ -31,15 +38,6 @@ export async function getMentorTeamHistory(
         organizationId: scope.organizationId,
       })) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  }
-  const modules = await resolveOptionalModuleAccess(context);
-  if (!modules.projects.enabled) {
-    return {
-      enabled: false as const,
-      title: scope.project.title,
-      query, ...mentorTeamHistoryPage(0, 1),
-      items: [],
-    };
   }
 
   const filters = and(

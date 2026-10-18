@@ -64,3 +64,7 @@ Source: `docs/orchestrator/ui-ux/pages-admin.md`, pages 38–74 of that file's `
 ## Session-revoke action hardening — chat-6 (AUTH-sessions-07)
 
 Admin-college administrator session revocation uses a synchronous single-flight guard and `apiFetch` to prevent double submissions and to translate network/HTML failures into friendly copy. Failed submissions remain inside the confirmation dialog with a visible retry message; only successful revocation closes it and refreshes the listing. Covered by `tests/unit/chat6-auth-revoke-admin-flight-and-errors.test.ts`. Cloud CI, authenticated browser, and database races still require execution.
+
+## SA-admin-middle-application-context-02 request-scope consistency
+
+`/admin/placements/applications/[applicationId]` previously called `getCurrentRequestContext()` separately for detail and stage history. The page now acquires one authenticated selected-college context and passes the **identical** scope to both services. `tests/unit/chat6-super-admin-application-history-auth.test.ts` invokes the actual server page and asserts one context lookup, identical scoped arguments, no history access when the application is not visible, and no detail read after revoked-session failure. The history service independently repeats selected-college authorization and the detail service verifies college/organization joins. These are mocked role-journey tests, not a PostgreSQL concurrent-revocation certificate. Authored, not run.

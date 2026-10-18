@@ -88,7 +88,7 @@ describe("UX-tpo-first-third-requests-01 role, filter recovery, honest empty sta
   expect(html).toContain("Last 30 days");
   expect(html).toContain("All history");
   expect(html).toContain("Nothing is waiting for you.");
-  expect(html).toContain("No requests");
+  expect(html).toContain("Withdrawals, off-campus offers, registration changes and disputes from students show up here.");
   expect(mocks.inbox).toHaveBeenCalledTimes(1);
   expect(mocks.jobs).toHaveBeenCalledTimes(1);
   expect(mocks.afterCollege).toHaveBeenCalledWith(ctx(["TPO"]),[]);
