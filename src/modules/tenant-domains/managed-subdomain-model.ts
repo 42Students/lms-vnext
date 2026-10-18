@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {isIP} from "node:net";
 import {availableSubdomainLabel,subdomainLabelSchema} from "./college-subdomain-model";
 import {normalizeTenantHost} from "./validation";
 export const managedSubdomainRequest=z.strictObject({
@@ -17,7 +18,9 @@ export function managedBaseDomain(base:string|undefined,wildcardReady:boolean):s
   const host=normalizeTenantHost("test."+base);
   if(!host.startsWith("test."))return null;
   const suffix=host.slice(5);
-  if(suffix.split(".").length<2||suffix==="localhost")return null;
+  // Prefixing with "test." makes even a literal IPv4 address look like a
+  // valid DNS hostname to normalizeTenantHost. Reject the suffix itself.
+  if(suffix.split(".").length<2||suffix==="localhost"||isIP(suffix)!==0)return null;
   return suffix;
  }catch{return null;}
 }
