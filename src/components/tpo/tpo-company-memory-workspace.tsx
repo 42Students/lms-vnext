@@ -4,7 +4,7 @@ import {DataTable} from "@/components/ui/data-table";
 import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
 import {companyDriveCsv} from "@/modules/placements/tpo-company-drive-export-model";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -100,6 +100,8 @@ export function TpoCompanyMemoryWorkspace({
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
   const [driveSearch,setDriveSearch]=useState("");
+  // A newer retry or route change must win over a slower older response.
+  const activeLoad=useRef<AbortController|null>(null);
 
   type LoadResult = { company: CompanyMemory | null; phase: Phase; message: string };
   const load = useCallback(async (signal?: AbortSignal): Promise<LoadResult | null> => {
@@ -140,18 +142,28 @@ export function TpoCompanyMemoryWorkspace({
   }
 
   function retry() {
+    activeLoad.current?.abort();
+    const controller=new AbortController();
+    activeLoad.current=controller;
     setCompany(null);
     setPhase("loading");
     setError("");
-    void load().then(applyLoad);
+    void load(controller.signal).then(result => {
+      if(!controller.signal.aborted&&activeLoad.current===controller)applyLoad(result);
+    });
   }
 
   useEffect(() => {
-    const controller = new AbortController();
+    const controller=new AbortController();
+    activeLoad.current?.abort();
+    activeLoad.current=controller;
     void load(controller.signal).then(result => {
-      if (!controller.signal.aborted) applyLoad(result);
+      if(!controller.signal.aborted&&activeLoad.current===controller)applyLoad(result);
     });
-    return () => controller.abort();
+    return () => {
+      activeLoad.current?.abort();
+      activeLoad.current=null;
+    };
   }, [load]);
 
   const activeContacts = useMemo(
