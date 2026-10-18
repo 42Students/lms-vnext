@@ -95,7 +95,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden sm:table-header-group sm:bg-[#fafbfc]">
           <tr>{columns.map(col=><th key={col.key} scope="col"
-            className={cx("border-b border-[#e5e9f0] px-4 py-[11px] text-xs font-semibold leading-[18px] text-body sm:sticky sm:top-0 sm:z-10 sm:bg-[#fafbfc] sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
+            className={cx("border-b border-[#e5e9f0] px-4 py-[11px] text-xs font-semibold leading-[18px] text-[#a9a7ae] sm:sticky sm:top-0 sm:z-10 sm:bg-[#fafbfc] sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
         </thead>
         <tbody className="block space-y-3 sm:table-row-group sm:space-y-0">
           {prepared.map(item=><tr key={item.key}
