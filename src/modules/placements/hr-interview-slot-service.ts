@@ -37,7 +37,7 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
    eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
    eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-   gt(placementRecruiterCollegeGrants.validUntil,sql`now()`),
+   gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
    sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED"),
     isNull(placementJobs.archivedAt),
