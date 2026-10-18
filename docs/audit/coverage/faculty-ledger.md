@@ -107,22 +107,49 @@ Status: INCOMPLETE. Tests have not been executed; do not use this ledger for rel
 | `src/modules/courses/faculty-contacts-filter-model.ts` | `parseFacultyContactsQuery`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-contacts-service.ts` | `listFacultyContacts`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-contacts-service.ts` | `getFacultyContactDetail`: GAP — behavioural test needed |
-| `src/modules/courses/faculty-content-edit-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-content-input-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-content-order-ui-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-content-preview-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-card-summary-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-card-summary-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-health-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-health-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-home-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-home-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-list-model.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-list-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-navigation.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-route-errors.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-course-service.ts` | GAP: exported-function test inventory required |
-| `src/modules/courses/faculty-discussion-history-model.ts` | GAP: exported-function test inventory required |
+| `src/modules/courses/faculty-content-edit-model.ts` | `facultyContentPatch`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-edit-model.ts` | `facultyContentDraftChanged`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-edit-model.ts` | `facultyContentMayChangeOpen`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-edit-model.ts` | `facultyContentSaveReceiptMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-edit-model.ts` | `facultyContentMaySave`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-input-model.ts` | `facultyYouTubeLinkIssue`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-input-model.ts` | `facultyLiveClassIssue`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-order-ui-model.ts` | `facultyMoveContentId`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-order-ui-model.ts` | `facultyContentOrderDirty`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-order-ui-model.ts` | `facultyResetContentOrder`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-order-ui-model.ts` | `facultyContentOrderValid`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-order-ui-model.ts` | `facultyContentOrderReceiptMatches`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-preview-model.ts` | `facultyContentExternalHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-content-preview-model.ts` | `facultyYouTubeEmbed`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-card-summary-model.ts` | `countFacultyCourseCardItems`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-card-summary-service.ts` | `listFacultyCourseCardSummaries`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-health-model.ts` | `facultyCourseHealthParamsSchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-health-model.ts` | `selectFacultyCourseHealthCandidates`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-health-model.ts` | `facultyCourseHealthHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-health-model.ts` | `responseCoverage`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-health-service.ts` | `getFacultyCourseAssessmentHealth`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-home-model.ts` | `buildFacultyCourseHomeSignals`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-home-service.ts` | `getFacultyCourseHomeSignals`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-list-model.ts` | `facultyCourseListQuerySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-list-model.ts` | `FACULTY_COURSE_LIST_PAGE_SIZE`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-list-model.ts` | `pageFacultyCourseList`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-list-model.ts` | `facultyCourseListHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-list-model.ts` | `facultyCourseWorkspaceRevokedError`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-list-model.ts` | `parseFacultyCourseListLocation`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-list-service.ts` | `getFacultyCourseList`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-navigation.ts` | `facultyCourseTabs`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-navigation.ts` | `isFacultyCourseTab`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-navigation.ts` | `facultyCourseTabHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-navigation.ts` | `facultyCourseTabFromPath`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-navigation.ts` | `validFacultyDefaultDeliveryId`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-route-errors.ts` | `hidesFacultyCourseRouteError`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-service.ts` | `listFacultyCourseDeliveries`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-course-service.ts` | `getFacultyCourseWorkspace`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `facultyDiscussionHistorySchema`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `discussionHistoryPagination`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `facultyDiscussionHistoryHref`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `discussionHistoryLabel`: GAP — behavioural test needed |
+| `src/modules/courses/faculty-discussion-history-model.ts` | `parseFacultyDiscussionHistoryLocation`: GAP — behavioural test needed |
 | `src/modules/courses/faculty-discussion-history-service.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-discussion-moderation-model.ts` | GAP: exported-function test inventory required |
 | `src/modules/courses/faculty-discussion-participation-model.ts` | GAP: exported-function test inventory required |
