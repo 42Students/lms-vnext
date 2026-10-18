@@ -17,7 +17,7 @@ export function SuperAdminTemplateArchiveControl({templateId,title,status}:{
   finally{setBusy(false);}
  }
  return <span><button type="button" disabled={busy} onClick={()=>void archive()}
-    className="min-h-10 rounded border border-border px-3 text-xs font-semibold disabled:opacity-50">
+    className="text-xs">
     {busy?"Archiving…":"Archive"}</button>
     {error?<span role="alert" className="block text-xs text-error">{error}</span>:null}
   </span>;
