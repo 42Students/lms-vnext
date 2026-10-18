@@ -1,6 +1,7 @@
 # MASTER QUEUE (owner: use every lane at full throttle, never idle)
 
 ## NORTH STAR (owner, 2026-10-19, VERY IMPORTANT, GO NOW): vNext must look the SAME as the old LMS
+EXACT MATCH RULE (owner): everything the user sees must match the old LMS exactly: layout, spacing, sizes, colours, radii, borders, fonts and weights, icons, labels, interaction and hover behaviour, empty/loading/error looks, modals, popups, toasts. Not "inspired by", not "close": the same. If a detail is not in docs/design, the orchestrator will measure the old LMS page and add it; ask by writing the page and detail in docs/audit/ux/old-lms-measure-requests.md, never guess.
 Stakeholders must not feel this is a new app. The old LMS was measured live; references are in docs/design/: old-lms-shell-spec.md, old-lms-shell.css (exact rules), old-lms-pages.md (page anatomy), vnext-vs-old-lms-gap.md (gap table and build order). Read them before touching UI. Primary buttons are now solid #0a7c88 with WHITE text and the font is Inter (already landed in src/app/globals.css and src/app/layout.tsx).
 Ownership, to avoid conflicts:
 - ORCHESTRATOR (do NOT edit): src/components/shell/**, src/app/globals.css, src/app/layout.tsx, the authenticated layout wrappers. The shell (icon rail that expands on hover, top bar with command search and avatar, one white page canvas) is being rebuilt there; do not touch those files.
