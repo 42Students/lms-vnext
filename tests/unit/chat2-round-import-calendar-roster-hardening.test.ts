@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {roundImportActionSchema,uniqueTpoRoundImportRoster,matchTpoRoundImportRoster,parseTpoRoundImport,ROUND_IMPORT_TEMPLATE} from "@/modules/placements/tpo-round-import-model";
+import {roundImportActionSchema,uniqueTpoRoundImportRoster,matchTpoRoundImportRoster,parseTpoRoundImport,tpoRoundImportStageFailureReason,ROUND_IMPORT_TEMPLATE} from "@/modules/placements/tpo-round-import-model";
 import {tpoRoundImportPreviewToken} from "@/modules/placements/tpo-round-import-preview-token";
 import {tpoRoundCalendarMutationSchema,parseIstRoundLocalTime} from "@/modules/placements/tpo-round-calendar-model";
 import {tpoInterviewRescheduleSchema,validInterviewWindow,overlappingInterviewVenue} from "@/modules/placements/tpo-interview-reschedule-model";
@@ -27,6 +27,16 @@ describe("chat-2 round import, calendar, roster and privacy behavioural coverage
    {...valid,skippedLines:[3,3]},{...valid,skippedLines:[2]},
    {...valid,collegeId:uuid(8)}
   ])expect(roundImportActionSchema.safeParse(bad).success).toBe(false);
+ });
+ it("TPO-drive-workspace-40 never returns raw SQL, credentials or tenant IDs as row errors",()=>{
+  const raw="password=secret; select * from placement_round_results; 42Students internal key";
+  for(const cause of [new Error(raw),raw,{message:raw},null]){
+   const safe=tpoRoundImportStageFailureReason(cause);
+   expect(safe).toContain("Refresh the round");
+   expect(safe).not.toContain("password");
+   expect(safe).not.toContain("placement_round_results");
+   expect(safe).not.toContain("secret");
+  }
  });
  it("TPO-drive-workspace-40 resolves duplicates without guessing between different JOIN evidence",()=>{
   expect(uniqueTpoRoundImportRoster([roster[0],{...roster[0]},roster[1]])).toEqual(roster);

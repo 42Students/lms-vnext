@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useRef, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { ScrollCue } from "@/components/ui/scroll-cue";
+import { DataTable } from "@/components/ui/data-table";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
@@ -20,6 +20,7 @@ type MappingRead = {
 export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const inFlight=useRef(false);
   const [programId, setProgramId] = useState("");
   const [termId, setTermId] = useState("");
   const [draftByTerm, setDraftByTerm] = useState<Record<string, string[]>>({});
@@ -30,7 +31,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const [draggedId, setDraggedId] = useState<string | null>(null);
 
   async function send() {
-    if (!confirm) return;
+    if (!confirm || inFlight.current) return;
+    inFlight.current=true;
     start(async () => {
       try {
         const create = confirm.type === "ADD";
@@ -54,7 +56,9 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       } catch (cause) {
         setError(cause instanceof FriendlyFetchError && cause.code
           ? collegeTermMappingErrorMessage(cause.code)
-          : cause instanceof Error ? cause.message : "Unable to change mapping");
+          : "Unable to change mapping. Refresh and try again.");
+      }finally{
+        inFlight.current=false;
       }
     });
   }
@@ -81,6 +85,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   }
 
   function updateMapping(id: string, creditsValue: string, position: number) {
+    if(inFlight.current)return;
     const parsed = collegeTermCourseUpdateSchema.safeParse({
       credits: creditsValue.trim() === "" ? 3 : Number(creditsValue), position,
     });
@@ -89,6 +94,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       return;
     }
     setError(null);
+    inFlight.current=true;
     start(async () => {
       try {
         await apiFetch("/api/academics/semester-course-mappings/" + encodeURIComponent(id), {
@@ -104,7 +110,9 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       } catch (cause) {
         setError(cause instanceof FriendlyFetchError && cause.code
           ? collegeTermMappingErrorMessage(cause.code)
-          : cause instanceof Error ? cause.message : "Unable to update mapping.");
+          : "Unable to update mapping. Refresh and try again.");
+      }finally{
+        inFlight.current=false;
       }
     });
   }
@@ -156,86 +164,87 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     </form>
     {!termId ? <p className="text-sm text-body">Select a program and semester to view mapped courses.</p> :
     currentMappings.length === 0 ? <p className="text-sm text-body">No courses mapped to this semester.</p> :
-      <ScrollCue axis="x" label="Semester course mappings"><table className="w-full min-w-[40rem] text-left text-sm">
-        <thead><tr>
-          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.courseName}</th>
-          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.courseCode}</th>
-          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.credits}</th>
-          <th scope="col" className="px-2 py-2">Order</th>
-          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.actions}</th>
-        </tr></thead>
-        <tbody>{currentMappings.map(row => <tr key={row.id} className="border-t border-border"
-          draggable={!pending} onDragStart={event => { setDraggedId(row.id); event.dataTransfer.effectAllowed = "move"; }}
-          onDragEnd={() => setDraggedId(null)}
-          onDragOver={event => { if (draggedId && draggedId !== row.id) event.preventDefault(); }}
-          onDrop={event => {
-            event.preventDefault();
-            const source = currentMappings.find(item => item.id === draggedId);
-            if (source && source.termId === row.termId && source.id !== row.id) {
-              const index = orderedPeers(row).findIndex(item => item.id === row.id) + 1;
-              updateMapping(source.id, String(source.credits ?? 3), index);
-            }
-            setDraggedId(null);
-          }}>
-          <td className="px-2 py-2">
-            <span className="font-semibold">{row.courseName}</span>
-            {row.staffingWarning && <p role="status" title={row.staffingTooltip ?? undefined} className="mt-1 text-xs font-semibold text-warning">
-              {row.staffingWarning}
-            </p>}
-          </td>
-          <td className="px-2 py-2">{row.courseCode}</td>
-          <td className="px-2 py-2">{row.credits ?? "—"}</td>
-          <td className="px-2 py-2">{orderedPeers(row).findIndex(peer => peer.id === row.id) + 1}</td>
-          <td className="px-2 py-2">
-            {editing?.id === row.id ? (
-              <form aria-label={"Edit mapping for " + row.courseName} className="grid gap-2"
-                onSubmit={event => {
+      <DataTable
+        caption="Semester course mappings"
+        rows={currentMappings}
+        getRowKey={row=>row.id}
+        empty={<p>No courses mapped to this semester.</p>}
+        columns={[
+          {key:"course",header:TERM_MAPPING_COPY.columns.courseName,mobilePriority:"primary",cell:row=>
+            <div draggable={!pending}
+              onDragStart={event=>{setDraggedId(row.id);event.dataTransfer.effectAllowed="move";}}
+              onDragEnd={()=>setDraggedId(null)}
+              onDragOver={event=>{if(draggedId && draggedId!==row.id)event.preventDefault();}}
+              onDrop={event=>{
+                event.preventDefault();
+                const source=currentMappings.find(item=>item.id===draggedId);
+                if(source && source.termId===row.termId && source.id!==row.id){
+                  const index=orderedPeers(row).findIndex(item=>item.id===row.id)+1;
+                  updateMapping(source.id,String(source.credits??3),index);
+                }
+                setDraggedId(null);
+              }}>
+              <span className="font-semibold">{row.courseName}</span>
+              {row.staffingWarning&&<p role="status"
+                title={row.staffingTooltip??undefined}
+                className="mt-1 text-xs font-semibold text-warning">{row.staffingWarning}</p>}
+            </div>},
+          {key:"code",header:TERM_MAPPING_COPY.columns.courseCode,mobilePriority:"secondary",cell:row=>row.courseCode},
+          {key:"credits",header:TERM_MAPPING_COPY.columns.credits,mobilePriority:"secondary",cell:row=>row.credits??"—"},
+          {key:"order",header:"Order",mobilePriority:"secondary",cell:row=>
+            orderedPeers(row).findIndex(peer=>peer.id===row.id)+1},
+          {key:"actions",header:TERM_MAPPING_COPY.columns.actions,mobilePriority:"action",cell:row=>
+            editing?.id===row.id ? (
+              <form aria-label={"Edit mapping for "+row.courseName} className="grid gap-2"
+                onSubmit={event=>{
                   event.preventDefault();
-                  updateMapping(row.id, editing.credits, Number(editing.position));
+                  updateMapping(row.id,editing.credits,Number(editing.position));
                 }}>
                 <label className="text-xs">Credits
-                  <input type="number" min={1} max={10} step={1} required value={editing.credits}
-                    onChange={event => setEditing({ ...editing, credits: event.target.value })}
-                    className="block min-h-11 w-24 rounded border border-border bg-surface px-2" />
+                  <input type="number" min={1} max={10} step={1} required
+                    value={editing.credits}
+                    onChange={event=>setEditing({...editing,credits:event.target.value})}
+                    className="block min-h-11 w-24 rounded border border-border bg-surface px-2"/>
                 </label>
                 <label className="text-xs">Order
-                  <input type="number" min={1} max={orderedPeers(row).length} step={1} value={editing.position}
-                    onChange={event => setEditing({ ...editing, position: event.target.value })}
-                    className="block min-h-11 w-24 rounded border border-border bg-surface px-2" />
+                  <input type="number" min={1} max={orderedPeers(row).length} step={1}
+                    value={editing.position}
+                    onChange={event=>setEditing({...editing,position:event.target.value})}
+                    className="block min-h-11 w-24 rounded border border-border bg-surface px-2"/>
                 </label>
                 <div className="flex gap-2">
                   <button type="submit" disabled={pending}
                     className="min-h-11 rounded border border-border px-2 text-xs font-semibold">Save</button>
-                  <button type="button" disabled={pending} onClick={() => setEditing(null)}
+                  <button type="button" disabled={pending} onClick={()=>setEditing(null)}
                     className="min-h-11 rounded border border-border px-2 text-xs">Cancel</button>
                 </div>
               </form>
             ) : (
               <div className="flex flex-wrap gap-2">
-                <button type="button" disabled={pending} className="min-h-11 rounded border border-border px-2 text-xs"
-                  onClick={() => setEditing({
-                    id: row.id, credits: row.credits === null ? "3" : String(row.credits),
-                    position: String(orderedPeers(row).findIndex(item => item.id === row.id) + 1),
+                <button type="button" disabled={pending}
+                  className="min-h-11 rounded border border-border px-2 text-xs"
+                  onClick={()=>setEditing({
+                    id:row.id,credits:row.credits===null?"3":String(row.credits),
+                    position:String(orderedPeers(row).findIndex(item=>item.id===row.id)+1),
                   })}>Edit</button>
-                <button type="button" disabled={pending || orderedPeers(row)[0]?.id === row.id}
+                <button type="button" disabled={pending||orderedPeers(row)[0]?.id===row.id}
                   className="min-h-11 rounded border border-border px-2 text-xs"
-                  aria-label={"Move " + row.courseName + " up"}
-                  onClick={() => updateMapping(row.id, row.credits === null ? "3" : String(row.credits),
-                    orderedPeers(row).findIndex(item => item.id === row.id))}>↑</button>
-                <button type="button" disabled={pending || orderedPeers(row).at(-1)?.id === row.id}
+                  aria-label={"Move "+row.courseName+" up"}
+                  onClick={()=>updateMapping(row.id,row.credits===null?"3":String(row.credits),
+                    orderedPeers(row).findIndex(item=>item.id===row.id))}>↑</button>
+                <button type="button" disabled={pending||orderedPeers(row).at(-1)?.id===row.id}
                   className="min-h-11 rounded border border-border px-2 text-xs"
-                  aria-label={"Move " + row.courseName + " down"}
-                  onClick={() => updateMapping(row.id, row.credits === null ? "" : String(row.credits),
-                    orderedPeers(row).findIndex(item => item.id === row.id) + 2)}>↓</button>
+                  aria-label={"Move "+row.courseName+" down"}
+                  onClick={()=>updateMapping(row.id,row.credits===null?"":String(row.credits),
+                    orderedPeers(row).findIndex(item=>item.id===row.id)+2)}>↓</button>
                 <Button size="sm" variant="danger" disabled={pending}
-                  onClick={() => { setError(null); setNotice(null); setConfirm({ type: "REMOVE", id: row.id }); }}>
+                  onClick={()=>{setError(null);setNotice(null);setConfirm({type:"REMOVE",id:row.id});}}>
                   {TERM_MAPPING_COPY.removeButton}
                 </Button>
               </div>
-            )}
-          </td>
-        </tr>)}</tbody>
-      </table></ScrollCue>}
+            )},
+        ]}
+      />}
     {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
     {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
     <ConfirmDialog open={confirm !== null} onOpenChange={value => { if (!value && !pending) setConfirm(null); }}

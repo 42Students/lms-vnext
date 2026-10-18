@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
+import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getPlacementFailureReasonsReport} from "@/modules/placements/report-extra-service";
 import {tpoRoundFailureCsvQuerySchema,tpoRoundFailureCsv} from "@/modules/placements/tpo-round-failure-csv-model";
@@ -11,7 +12,11 @@ export async function GET(request:Request){
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"TPO"))
    return NextResponse.json({error:"UNAUTHORIZED"},{status:403,headers:{"Cache-Control":"private, no-store"}});
-  const query=tpoRoundFailureCsvQuerySchema.parse(Object.fromEntries(new URL(request.url).searchParams.entries()));
+  const params=new URL(request.url).searchParams;
+  if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
+   status:400,headers:{"Cache-Control":"private, no-store"},
+  });
+  const query=tpoRoundFailureCsvQuerySchema.parse(Object.fromEntries(params.entries()));
   const report=await getPlacementFailureReasonsReport(context,{
    collegeId:context.membership.collegeId,...query,
   });
