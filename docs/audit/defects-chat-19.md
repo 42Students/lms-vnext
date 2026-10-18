@@ -208,3 +208,10 @@ This is an independent unowned responsive UX pickup for the critical TPO/HR plac
 |---|---|---|---|---|---|
 
 | UX-SPILL-TPO-CLIP-02 | MAJOR (mobile accessibility) | `src/components/placements/tpo-request-page-clipboard.tsx` | Desktop-only spreadsheet plus separate narrow phone selector showed only student/company, hiding request kind, decision and status on a phone. Replaced dual display with shared `DataTable` cards showing primary identity, additional fields via accessible More details, and selectable actions at every viewport. Kept Select visible page, sortable rows, chosen column controls and clipboard semantics. | `9aea98f0` | `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` (`cbc3cd33`) |
+
+## Further request clipboard hardening
+
+| ID | Before-fix severity | Source | Issue and remediation | Commit | Test |
+|---|---|---|---|---|---|
+| UX-SPILL-TPO-CLIP-03 | COVERAGE | `src/components/placements/tpo-request-page-clipboard.tsx` | Extracted immutable visible-row sorting and selected-row projection so clipboard output matches chosen sort order and stale IDs from prior pages cannot be copied. | `108622ce` | `tests/unit/UX-SPILL-chat19-tpo-request-clipboard.test.ts` (`e0c33c4c`) |
+| UX-SPILL-TPO-CLIP-04 | MAJOR | Same clipboard serializer | NEL (U+0085), vertical tabs and other Unicode control codes were not stripped by the narrow tab/CR/LF separator cleanup. Spreadsheet importers can treat them as row separators. Replace Unicode control and line/paragraph separators with spaces before formula neutralization; preserve the authorized visible-column restriction. | `cbc0d6e4` | Same direct unit suite (`5e2a2efa`) |
