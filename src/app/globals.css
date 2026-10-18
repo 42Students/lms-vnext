@@ -11,8 +11,11 @@
  */
 :root {
   --lms-primary: #26bac7;
-  /* Contrast-safe semantic foreground; canonical legacy teal remains unchanged. */
-  --lms-on-primary: #1a1d21;
+  /* Owner north star: primary BUTTONS match the old LMS (solid #0a7c88 with WHITE text, AA 5:1).
+     The bright canonical teal stays available as --lms-primary for accents, rings and info. */
+  --lms-button-primary: #0a7c88;
+  --lms-button-primary-hover: #086873;
+  --lms-on-primary: #ffffff;
   --lms-link-text: #0e7c87;
   --lms-primary-hover: #1e9aa8;
   --lms-primary-text: #1a95a1;
@@ -74,7 +77,7 @@
   --card-foreground: var(--lms-foreground);
   --popover: var(--lms-surface);
   --popover-foreground: var(--lms-foreground);
-  --primary: var(--lms-primary);
+  --primary: var(--lms-button-primary);
   --primary-foreground: var(--lms-on-primary);
   --secondary: var(--lms-neutral-50);
   --secondary-foreground: var(--lms-foreground);
@@ -100,7 +103,7 @@
   --color-on-primary: var(--primary-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary-hover: var(--lms-primary-hover);
+  --color-primary-hover: var(--lms-button-primary-hover);
   --color-primary-text: var(--lms-link-text);
   --color-link: var(--lms-link-text);
   --color-primary-subtle: var(--lms-primary-subtle);
@@ -141,7 +144,9 @@ body {
 body {
   background: var(--lms-page-background);
   color: var(--lms-foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 /* 42 Tracker-only contrast theme. The tracker nav removes the attribute on exit. */
@@ -157,8 +162,8 @@ body {
   --lms-neutral-100: #1e293b;
   --lms-neutral-50: #172337;
   --lms-primary-text: #75dce3;
-  /* On-primary stays dark even when page foreground flips to light in tracker. */
-  --lms-on-primary: #1a1d21;
+  /* White on the solid teal button also in the tracker theme. */
+  --lms-on-primary: #ffffff;
   --lms-link-text: #75dce3;
   --lms-primary-subtle: #164e57;
 }
@@ -287,3 +292,7 @@ dialog[data-slot="bottom-sheet"][open] > div {
     scroll-behavior: auto !important;
   }
 }
+
+/* Numbers read as data: tabular figures in tables and metric values; mono face for codes and IDs. */
+table, [data-slot="data-table"], .tabular-nums { font-variant-numeric: tabular-nums; }
+code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }

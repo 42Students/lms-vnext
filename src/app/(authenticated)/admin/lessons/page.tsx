@@ -14,13 +14,14 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { listCollegeLessons } from "@/modules/courses/college-learning-directory-service";
-import { adminLearningHref, adminLearningQuerySchema, adminLessonStats } from "@/modules/courses/admin-learning-read-model";
+import { adminLearningHref, adminLessonStats } from "@/modules/courses/admin-learning-read-model";
+import {parseSuperAdminLearningQuery} from "@/modules/admin-ui/super-admin-learning-query-model";
 
 export default async function SuperAdminLessonsPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
-  const parsed = adminLearningQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page,courseCode:raw.courseCode||undefined,cohortCode:raw.cohortCode||undefined });
+  const parsed = parseSuperAdminLearningQuery(raw);
   if (!parsed.success) return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
@@ -32,7 +33,21 @@ export default async function SuperAdminLessonsPage({
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its lessons." />
   </div>;
   requireSuperAdminSelectedCollege(context,"courses.manage");
-  const [data,filters,paths] = await Promise.all([listCollegeLessons(context, parsed.data),getSuperAdminLearningFilterOptions(context),listSuperAdminLearningPathPicker(context)]);
+  const [dataResult,filtersResult,pathsResult]=await Promise.allSettled([
+    listCollegeLessons(context,parsed.data),
+    getSuperAdminLearningFilterOptions(context),
+    listSuperAdminLearningPathPicker(context),
+  ]);
+  if(dataResult.status==="rejected")return <div className="space-y-5">
+    <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
+    <ErrorState title="Lessons unavailable"
+      description="The lesson directory could not be loaded. Your filters have not changed."
+      action={<Link href={adminLearningHref("LESSONS",parsed.data)}
+        className="font-semibold text-[var(--lms-teal-deep)]">Retry loading lessons</Link>} />
+  </div>;
+  const data=dataResult.value;
+  const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
+  const paths=pathsResult.status==="fulfilled"?pathsResult.value:[];
   const summary = adminLessonStats(data.items);
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons"
@@ -54,7 +69,14 @@ export default async function SuperAdminLessonsPage({
     </form>
     <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
-    <SuperAdminLessonCreate paths={paths}/>
+    {filtersResult.status==="rejected"?<p role="status"
+      className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+      Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
+    </p>:null}
+    {pathsResult.status==="fulfilled"?<SuperAdminLessonCreate paths={paths}/>:
+      <p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+        Lesson creation options are temporarily unavailable. Existing lessons remain visible.
+      </p>}
     {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.items.map(lesson => <article key={lesson.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
