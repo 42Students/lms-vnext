@@ -761,6 +761,7 @@ export async function listProjectAdminSubmissionQueue(
           projectInstances.slug,
           searchPattern,
         ),
+        sql`${projectInstances.id}::text ilike ${searchPattern}`,
       )
     : undefined;
   const where = and(
