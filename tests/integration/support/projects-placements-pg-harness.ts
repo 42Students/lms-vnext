@@ -108,7 +108,7 @@ export async function withProjectPg<T>(pool: Pool, action: (db: PgHarness) => Pr
       },
       async expectSqlState(operation: () => Promise<unknown>, code: string) {
         let failed = false;
-        await this.savepoint(async () => {
+        await db.savepoint(async () => {
           try { await operation(); } catch (error) {
             failed = true;
             if ((error as {code?: string}).code !== code) {
