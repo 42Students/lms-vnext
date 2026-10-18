@@ -15,7 +15,8 @@ export function escapeMentorMeetingSearch(raw:string){
 }
 export function mentorTeamMeetingsPage(total:number,requested:number){
   const pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
-  return {total,pageSize,totalPages,page:Math.min(requested,totalPages)};
+  const page=Number.isSafeInteger(requested)?Math.max(1,Math.min(requested,totalPages)):1;
+  return {total,pageSize,totalPages,page};
 }
 export function mentorTeamMeetingsHref(query:
   Pick<MentorTeamMeetingsQuery,"projectId"|"status"|"page"> &
