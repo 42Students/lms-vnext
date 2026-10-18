@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {evaluateTpoDriveLifecycle,hasSecureEmployerPortalUrl,tpoDriveLifecycleSchema,tpoDriveReadinessMessage,type TpoDriveReadinessFacts} from "@/modules/placements/tpo-drive-lifecycle-model";
-import {canReleaseAnotherHeldOffer,isPlacementOfferResponseExpired,minimumOfferResponseDeadline,placementOfferLockedDecisionTime} from "@/modules/placements/offer-college-rules-policy";
+import {canReleaseAnotherHeldOffer,isPlacementOfferResponseExpired,minimumOfferResponseDeadline,placementOfferLockedDecisionTime,canReplayFinalOfferResponseAfterExpiry} from "@/modules/placements/offer-college-rules-policy";
 import {canAddPlacementHeldOffer,canShowLearnerSelfApply,verifiedExternalHeldOffers} from "@/modules/placements/held-offer-policy";
 import {isPlacementInternship,parsePlacementCascadeId,shouldKeepPlacementCascadeSibling} from "@/modules/placements/placement-cascade-policy";
 import {assertUndoablePlacementCascadeSnapshot} from "@/modules/placements/placement-cascade-undo-policy";
@@ -107,6 +107,19 @@ describe("chat-5 offers, waitlist eligibility, expiry and cascade invariants",()
   for(const change of [{registrationState:"REGISTER_FIRST" as const},{debarred:true},
    {hasApplication:true},{canSelfApply:false},{deadlinePassed:true},{heldOfferEligible:false}])
    expect(canShowLearnerSelfApply({...base,...change})).toBe(false);
+ });
+ it("PLACEMENTS-OFFER-RETRY-05 permits exact same-actor, already-durable response retries after expiry only",()=>{
+  const facts={status:"ACCEPTED",respondedByUserId:"learner-A",actorUserId:"learner-A"} as const;
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"ACCEPT"})).toBe(true);
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"DECLINE"})).toBe(false);
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"WITHDRAW"})).toBe(false);
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"ACCEPT",actorUserId:"learner-B"})).toBe(false);
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"ACCEPT",respondedByUserId:null})).toBe(false);
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"ACCEPT",status:"ISSUED"})).toBe(false);
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"ACCEPT",status:"WITHDRAWN"})).toBe(false);
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"DECLINE",status:"DECLINED"})).toBe(true);
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"ACCEPT",status:"DECLINED"})).toBe(false);
+  expect(canReplayFinalOfferResponseAfterExpiry({...facts,action:"DECLINE",status:"ACCEPTED"})).toBe(false);
  });
  it("PLACEMENTS-EXPIRY-01 exact expiry is not actionable, including invalid Date",()=>{
   expect(isPlacementOfferResponseExpired(due,new Date(due.getTime()-1))).toBe(false);
