@@ -25,3 +25,29 @@ export function createHrBellMutationGate(){
   end():void{inFlight=false;},
  };
 }
+
+/** Treat JSON returned to a persistent notification bell as untrusted.
+ * Never navigate to a URL other than a recruiter-scoped hiring job. */
+export function parseHrBellResponse(raw:unknown):HrBellResponse|null{
+ if(!raw||typeof raw!=="object")return null;
+ const candidate=raw as Record<string,unknown>;
+ const status=candidate.status;
+ if(status!=="READY"&&status!=="CHOOSE_COLLEGE"&&status!=="NO_ACCESS")return null;
+ if(typeof candidate.unread!=="number"||!Number.isSafeInteger(candidate.unread)||
+    candidate.unread<0||!Array.isArray(candidate.items)||candidate.items.length>10)return null;
+ const items:HrBellNotification[]=[];
+ for(const unknownItem of candidate.items){
+  if(!unknownItem||typeof unknownItem!=="object")return null;
+  const item=unknownItem as Record<string,unknown>;
+  if(typeof item.id!=="string"||typeof item.label!=="string"||
+     typeof item.at!=="string"||typeof item.href!=="string"||
+     typeof item.unread!=="boolean"||item.label.length>500||
+     !Number.isFinite(Date.parse(item.at))||
+     !/^\/hr\/placements\/jobs\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.href)){
+   return null;
+  }
+  items.push({id:item.id,label:item.label,unread:item.unread,at:item.at,href:item.href});
+ }
+ if(status!=="READY"&&(items.length!==0||candidate.unread!==0))return null;
+ return {status,unread:candidate.unread,items};
+}

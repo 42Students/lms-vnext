@@ -246,6 +246,30 @@ The retired Faculty notices bookmark path used `facultyNoticeParamsSchema.parse(
 
 **Fix:** `safeParse` and `notFound()` before any request context or Section read; still call `getFacultySectionNotices` before redirect on valid IDs, so revoked teaching assignments cannot be bypassed. `tests/unit/UX-teacher-redirect-no-shared-route-journey.test.tsx` verifies this and three additional alias routes. Runtime/browser acceptance pending.
 
+### SA-RECRUITERS-PARTIAL-044 — transient account-status query failure hides valid recruiter directory (S2)
+
+The Super Admin recruiter index correctly caught failures of its main account list, but fetched summary counts afterward with no recovery. A summary-only DB outage therefore made the whole page fail despite the available account list. The page now returns the scoped list and a nullable summary; its client component displays **Unavailable** plus Retry totals, never fake `0` counts. The role gate remains before both queries. Direct page behavior test: `tests/unit/chat3-sa-recruiter-directory-partial-service.test.tsx`, SA-RECRUITERS-PARTIAL-01 (authored; cloud CI not yet run).
+
+### SA-PEOPLE-DIRECTORY-QUERY-041 — ambiguous or injected people directory filters silently ignored (S2)
+
+The Super Admin directory extracted only six known URL fields, ignoring arbitrary selectors and passing potential array-valued query keys to Zod coercion. A bookmarked `?page=1&page=999` or injected `collegeId` could be ambiguously processed rather than returning the explicit invalid-filter recovery. The directory now requires exact recognized single-valued URL keys before parsing and before privileged roster reads. `tests/unit/chat3-sa-people-directory-strict-url-ssr.test.tsx` checks duplicate/forged/invalid state, genuine empty and wrong role. Source/test authored, runtime CI pending.
+
+### FAC-CALENDAR-QUERY-045 — ambiguous duplicate Faculty calendar filter accepted as first value (S2)
+
+The Faculty calendar applied `first(raw.month)` and `first(raw.deliveryId)`, silently accepting duplicated URL parameters and ignoring unrecognized tenant selectors. This could mislead users about which Section/month had actually been requested and undermine auditability of copied links. The SSR route now rejects array-valued or unknown query selectors outright with the existing **Invalid month or Section filter** clear-filters recovery. `tests/unit/UX-teacher-calendar-strict-scope-query.test.tsx` exercises invalid/valid/foreign deep links. Runtime and mobile-browser acceptance pending.
+
+### FAC-ASSESSMENT-SCALE-046 — very large Faculty lessons overflow next-position calculation (S2)
+
+The batched Faculty assessment overview calculated the next authored lesson position using `Math.max(...sequences)`, which spreads one argument per lesson content/assessment card. Large lessons can exceed V8's argument limit and fail the entire index, even if the batched SQL succeeded. The service now uses an iterative `nextFacultyLessonContentSequence` model which preserves zero-index and sparse order but rejects invalid/unsafe persisted sequence values. `tests/unit/chat3-faculty-assessment-sequence-scale.test.ts` covers 130,000 items plus boundary/tenant targeting. CI and large PostgreSQL dataset acceptance pending.
+
+### FAC-LIVE-SCALE-042 — unbounded teaching workspace fanout (S2)
+
+`getFacultyLiveClasses` used `Promise.all` across every assigned Section, potentially exhausting PostgreSQL connections for accounts with many teaching deliveries. The service now loads the same verified deliveries in ordered batches with at most eight concurrent workspace calls. The helper rejects unsafe concurrency and propagates revoked-scope failure. `tests/unit/chat3-faculty-live-classes-scaled-service.test.ts` verifies actual authorization, filtering, throughput and ordering. CI and realistic large-college profiling pending.
+
+### FAC-GRADEBOOK-SCALE-043 — serial assessment report reads (S2)
+
+Faculty gradebook enumerated up to 100 assessments strictly one at a time, causing avoidable sequential DB latency. The model now uses ordered batches of at most six concurrent queries for assignment and quiz report reads, without changing actual published score calculations or the 100-assessment safety cap. `tests/unit/chat3-faculty-gradebook-bounded-report-batch.test.ts` and existing gradebook service journey cover ordering, bounds, failure and published-score fidelity; full DB profiling deferred.
+
 ### FAC-GRADEBOOK-UX-032 — repeated page key bypassed strict Faculty query rules (S2)
 
 The Faculty gradebook only verified allowed query-key **names**, not that Next.js had received exactly one value per key. For example `?page=1&page=999` becomes `page: ["1","999"]`; the Zod `coerce.number` path can also accept an array of one value. This silently accepts an ambiguous deep link despite the code's intended strict filter validation.

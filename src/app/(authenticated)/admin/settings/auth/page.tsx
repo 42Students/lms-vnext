@@ -1,12 +1,22 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
-import {requirePermission} from "@/modules/permissions/policy";
+import {can} from "@/modules/permissions/policy";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {ErrorState} from "@/components/ui/error-state";
 import {platformAuthPostureItems} from "@/modules/platform-settings/auth-posture-model";
 import {LEGACY_TENANT_SETTING_SPECS} from "@/modules/platform-settings/legacy-setting-specs";
 export default async function SuperAdminAuthSettings(){
  const context=await getCurrentRequestContext();
- requirePermission(context,"admin-scope.select");
+ // Privileged auth posture is read-only, but even the key inventory must not
+ // be presented to a disabled actor or a college-only account on a deep link.
+ if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
+  return <div className="min-w-0 space-y-6">
+   <PageHeader eyebrow="Super Admin · Platform Security" title="Authentication settings"/>
+   <ErrorState title="Authentication settings access denied"
+    description="Your account cannot view privileged authentication policies."
+    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+  </div>;
  return <div className="min-w-0 space-y-6">
   <Link href="/admin/settings" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Platform settings</Link>
   <PageHeader eyebrow="Super Admin · Platform Security" title="Authentication settings"

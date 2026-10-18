@@ -204,7 +204,18 @@ export async function createGroup(context: RequestContext, raw: unknown) {
     createdByUserId: context.user.id,
     createdByType: actorType(context),
   }).returning();
-    return created!;
+    if(!created)throw new GroupServiceError("GROUP_CREATE_FAILED");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_GROUP_CREATED,
+      collegeId:created.collegeId??undefined,
+      subjectType:"lms_group",subjectId:created.id,subjectLabel:created.name,
+      summary:"Group "+created.name+" created",
+      metadata:{groupId:created.id,kind:created.kind,ownerScope:created.ownerScope,
+        status:created.status,capacity:created.capacity},
+      groupKey:"academics:group:"+created.id,
+      dedupeKey:"academics:group:"+created.id+":created",
+    });
+    return created;
   });
 }
 
@@ -405,7 +416,18 @@ export async function transitionGroup(context: RequestContext, groupIdInput: str
     const [updated] = await tx.update(lmsGroups).set({
       status: next, version: sql.raw('"version" + 1'), updatedAt: new Date(),
     }).where(eq(lmsGroups.id, group.id)).returning();
-    return updated!;
+    if(!updated)throw new GroupServiceError("GROUP_TRANSITION_INVALID");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_GROUP_STATUS_CHANGED,
+      collegeId:group.collegeId??undefined,
+      subjectType:"lms_group",subjectId:group.id,subjectLabel:group.name,
+      summary:"Group "+group.name+" changed from "+group.status+" to "+next,
+      metadata:{groupId:group.id,fromStatus:group.status,toStatus:next,
+        previousVersion:group.version,version:updated.version},
+      groupKey:"academics:group:"+group.id,
+      dedupeKey:"academics:group:"+group.id+":status:"+updated.version,
+    });
+    return updated;
   });
 }
 
@@ -433,7 +455,17 @@ export async function attachProjectTeamGroup(context: RequestContext, projectIdI
     const [updated] = await tx.update(projectInstances)
       .set({ teamGroupId: group.id, updatedAt: new Date() })
       .where(eq(projectInstances.id, project.id)).returning();
-    return updated!;
+    if(!updated)throw new GroupServiceError("PROJECT_TEAM_PROJECT_NOT_ATTACHABLE");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_GROUP_UPDATED,
+      collegeId:group.collegeId,
+      subjectType:"lms_group",subjectId:group.id,subjectLabel:group.name,
+      summary:"Project team group "+group.name+" linked to project",
+      metadata:{groupId:group.id,projectId:updated.id,action:"ATTACH_PROJECT_TEAM"},
+      groupKey:"academics:group:"+group.id,
+      dedupeKey:"academics:group:"+group.id+":attached:"+updated.id,
+    });
+    return updated;
   });
 }
 

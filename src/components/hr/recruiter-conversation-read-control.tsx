@@ -2,7 +2,11 @@
 import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
 import {hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
+/** Acknowledgement's on-open guard belongs to ONE thread, not its router slot. */
 export function RecruiterConversationReadControl({threadId}:{threadId:string}){
+ return <RecruiterConversationReadControlState key={threadId} threadId={threadId}/>;
+}
+function RecruiterConversationReadControlState({threadId}:{threadId:string}){
  const router=useRouter();
  const [busy,setBusy]=useState(false);
  const acknowledgePending=useRef(false);

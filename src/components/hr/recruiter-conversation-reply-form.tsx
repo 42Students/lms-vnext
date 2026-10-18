@@ -4,7 +4,11 @@ import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {hrReplySuccess,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
+/** Never carry a recruiter draft across two different employer-college threads. */
 export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
+ return <RecruiterConversationReplyFormState key={threadId} threadId={threadId}/>;
+}
+function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
  const router=useRouter();
  const {run:runGuarded}=useGuardedAction({timeoutMs:15000});
  const formRef=useRef<HTMLFormElement>(null);
