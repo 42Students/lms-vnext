@@ -72,6 +72,8 @@ Branch: `chatgpt/chat-9-b`. Owner: chat-9. These are observed source-level findi
 
 | PROJ9-042 · SA-placements-student-lookup-05/07 | High | The Super Admin selected-college placement history joined `placementCompanyRelationships` solely by relationship ID without independently asserting its `collegeId`. A malformed cross-tenant job→company relationship could allow a selected-college query to attach another college's company name. The join now enforces the same selected college as the job, while keeping the existing learner and job tenancy gates. | `64f3a5f` | `tests/unit/PROJ-BREAK-chat9-sa-student-lookup-tenant.test.ts` (`f7a57f0`), rendered join predicates + role/input denial; real FK-corruption/PG fixture pending |
 
+| PROJ9-043 · PROJ-BREAK-state-28/30 | Medium | The global template actions UI offered “Republish” and “Return to draft” for ARCHIVED templates even though both backend publish/unpublish functions reject an archived template. These dead actions always produced errors and misrepresented the immutable archive state. Controls now follow the exact lifecycle action matrix: DRAFT publish, PUBLISHED unpublish, ARCHIVED duplicate-only; unknown states disable all global lifecycle mutations. | `77dbf6f`, `675c36f` | `tests/unit/PROJ-BREAK-chat9-template-action-states.test.ts` (`ff8a32c`) exercises all states and wiring; browser click-flow verification OPEN |
+
 ## Outstanding release gates (not yet closed)
 
 - Live PostgreSQL integration tests for wrong-tenant IDs, serializable races, rollback and event/notification dedupe; chat-17 owns shared fixtures. Static service assertions alone cannot establish real DB behavior.
