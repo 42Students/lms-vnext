@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
-import { parsePeoplePage, peoplePageState } from "@/modules/admin-ui/people-pagination";
+import { parsePeoplePage,parsePeoplePageSize, peoplePageState } from "@/modules/admin-ui/people-pagination";
 import {
   DataTable,
   type DataTableColumn,
@@ -92,7 +92,7 @@ export default async function SuperAdminPeoplePage({
   const q=(one(rawQ)??"").trim().slice(0,100);
   const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].includes(normalizedRole??"ALL")?normalizedRole??"ALL":"ALL";
   const status=["ALL","ACTIVE","SUSPENDED","ENDED"].includes(normalizedStatus??"ALL")?normalizedStatus??"ALL":"ALL";
-  const pageSize=[10,20,50].includes(Number(one(rawPageSize)))?Number(rawPageSize):10;
+  const pageSize=parsePeoplePageSize(rawPageSize);
   const base=new URLSearchParams({...q?{q}:{},...role!=="ALL"?{role}:{},...status!=="ALL"?{status}:{},...(pageSize!==10?{pageSize:String(pageSize)}:{})});
   const href=(target:number)=>"/admin/people?"+new URLSearchParams({...Object.fromEntries(base),...(target>1?{page:String(target)}:{})}).toString();
   const requestedPage = parsePeoplePage(one(pageParam));
