@@ -362,6 +362,20 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
     });
   });
 
+  it("PROJ-HARNESS-TASK-20 submitted task transitions to IN_REVIEW and prevents duplicate submission",async()=>{
+    await withProjectPg(pool,async db=>{
+      const f=await actors(db);
+      const id=await createTaskSubmission(db,f.project,f.learner);
+      expect(id).toBeTruthy();
+      const rows=await db.query<{status:string}>(`
+        select status from project_tasks where id=$1`,[f.project.taskId]);
+      expect(rows).toEqual([{status:"IN_REVIEW"}]);
+      await expect(createTaskSubmission(db,f.project,f.learner))
+        .rejects.toThrow(/task sprint or task state/);
+      expect(await count(db,"project_task_submissions")).toBe(1);
+    });
+  });
+
   it("PROJ-HARNESS-47 task submissions need the assigned learner and an active sprint", async () => {
     await withProjectPg(pool, async db => {
       const f=await actors(db);
