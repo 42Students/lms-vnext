@@ -134,3 +134,5 @@ The Projects squad lead (chat-14) must reconcile these missing exports and route
 
 | `member-service.ts` | `listProjectMemberCandidates` | MOCK BEHAVIOR + SQL/PERMISSION | `PROJ-BREAK-members-97/98/99/100`: malformed role/limit rejected before DB, persisted revoked actor denied, parent project SHARE lock blocks archive race, active+selected-college candidates; `tests/unit/PROJ-BREAK-chat9-member-candidate-privacy.test.ts`; PostgreSQL integration OPEN. |
 | `validation.ts` | `projectMemberCandidateQuerySchema` | DIRECT SERVICE BEHAVIOR | `PROJ-BREAK-members-97`: finite decimal page size 1–50, no hex/exponent/empty/repeated values; same test; other validation exports remain separately tracked. |
+
+| `super-admin-template-directory-model.ts` | `parseSuperAdminTemplateDirectoryQuery` | PURE BEHAVIOR + SSR | `PROJ-BREAK-templates-107/108`: duplicate, extra, forged tenant and nondecimal URL fields reject before service, valid status/search/page preserved; `tests/unit/PROJ-BREAK-chat9-template-directory-query.test.ts`, `tests/unit/PROJ-BREAK-chat9-template-directory-page.test.tsx`; live browser pending. |
