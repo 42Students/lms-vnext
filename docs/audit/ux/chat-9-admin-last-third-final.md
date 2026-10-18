@@ -17,3 +17,13 @@
 All 37 route files and 37 audit notes are present. Source-only verification of route file presence, no remaining route-local `text-primary-text` or `min-h-10`, all 14 bounded loading surfaces, and all 58 named test cases was performed through GitHub file inspection.
 
 **Not executed or certified here:** `npm run typecheck`, `npm run lint`, `npm run ux:guard`, `npm run ux:audit:source`, `npm run ux:audit:unit`, the focused Vitest suites, 320/360/390px browser checks, keyboard/AT and screenshot evidence. No GitHub Actions run was available for this lane's branch at the time of verification. Run those on the same SHA, fix any findings, then tick routes individually. Do not call this independent sign-off.
+
+## Round 9 regression repair (2026-10-18)
+
+- Read `docs/orchestrator/unit-failures-r9.md`, chat-9's eight reported test files (nine named failing test cases).
+- Restored exact College Projects `Project workspaces` headings (normal and scope-recovery states) and the original at-risk description.
+- Removed the vNext-only `Academic periods` item from the College/Super Admin legacy Academic Setup tab strip. The existing overview remains reachable via the Departments links; `/college/academics` selects the Departments tab.
+- Restored `Recruiter accounts` as the Super Admin recruiter directory heading to match its tab, and `Recruiters` as the TPO settings navigation label. The other actions, status badges, permissions, and layout components remain unchanged.
+- Added `tests/unit/ux-admin-chat9-round9-legacy.test.ts` (four assertions) without deleting or weakening previous tests.
+- Verified 15 targeted source assertions against the branch. **Execution pending:** Vitest/typecheck/lint/UX guard and device accessibility checks. No claim of green CI or completed browser acceptance.
+- /admin last-third still has **37/37 source-reviewed routes and 37 route notes**; the page checklist must remain unchecked until acceptance evidence passes.
