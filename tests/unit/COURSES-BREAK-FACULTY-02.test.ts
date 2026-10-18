@@ -4,7 +4,8 @@ import {readFacultyQuizCommandBody,facultyQuizAcceptsContentType,
 
 function request(body:string|Uint8Array,contentType="application/json",extra:Record<string,string>={}){
  return new Request("https://college.invalid/api/courses/quizzes",{
-  method:"POST",headers:{"content-type":contentType,...extra},body,
+  method:"POST",headers:{"content-type":contentType,...extra},
+  body:typeof body==="string"?body:new Uint8Array(body).buffer,
  });
 }
 async function expectBodyError(request:Request,code:FacultyQuizBodyError["code"],status:number){
