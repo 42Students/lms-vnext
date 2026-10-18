@@ -7,7 +7,9 @@ import {
 
 const state=vi.hoisted(()=>({
  moduleEnabled:true,scopeCalls:0,projectLocks:0,meetingReads:0,
- persistedChecks:0,writes:0,audits:0,notices:0,lockConditions:"",
+ persistedChecks:0,mentorDenied:true,learnerChecks:0,learnerDenied:true,
+ access:"MENTOR",meetingStatus:"SCHEDULED",windowChecks:0,expiresAfterLock:false,
+ writes:0,audits:0,notices:0,lockConditions:"",
 }));
 const projectId="11111111-1111-4111-8111-111111111111";
 const meetingId="22222222-2222-4222-8222-222222222222";
@@ -16,7 +18,7 @@ const context={
  membership:{id:"mentor-member",collegeId:"college-a",organizationId:"org-a",
   roles:["MENTOR"],status:"ACTIVE"},
 } as unknown as RequestContext;
-const scope={access:"MENTOR",collegeId:"college-a",organizationId:"org-a",
+const scope={collegeId:"college-a",organizationId:"org-a",
  project:{id:projectId,status:"ACTIVE"}};
 vi.mock("server-only",()=>({}));
 vi.mock("drizzle-orm",()=>({
@@ -34,16 +36,28 @@ vi.mock("@/db/schema",()=>({
  projectSprints:{id:"sprint.id"},projectTasks:{id:"task.id"},
 }));
 vi.mock("@/modules/projects/access",()=>({
- requireProjectReadAccess:async()=>{state.scopeCalls++;return scope;},
- requireProjectLifecycleMutationAccess:async()=>{state.scopeCalls++;return scope;},
+ requireProjectReadAccess:async()=>{state.scopeCalls++;return {...scope,access:state.access};},
+ requireProjectLifecycleMutationAccess:async()=>{state.scopeCalls++;return {...scope,access:state.access};},
 }));
 vi.mock("@/modules/module-access/service",()=>({
  resolveOptionalModuleAccess:async()=>({projects:{enabled:state.moduleEnabled}}),
 }));
+vi.mock("@/modules/projects/learner-mutation-guard",()=>({
+ assertPersistedLearnerProjectMutation:async()=>{
+  state.learnerChecks++;
+  if(state.learnerDenied)throw new Error("PROJECT_ACCESS_DENIED");
+ },
+}));
+vi.mock("@/modules/projects/meeting-window-policy",()=>({
+ isFutureProjectMeetingWindow:()=>{
+  state.windowChecks++;
+  return !(state.expiresAfterLock&&state.windowChecks===2);
+ },
+}));
 vi.mock("@/modules/projects/persisted-mentor-mutation",()=>({
  assertPersistedProjectMutationActor:async()=>{
   state.persistedChecks++;
-  throw new Error("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  if(state.mentorDenied)throw new Error("PROJECT_LIFECYCLE_ACCESS_DENIED");
  },
 }));
 vi.mock("@/modules/activity/service",()=>({
@@ -59,8 +73,8 @@ vi.mock("@/db/client",()=>({
    from:()=>({
     where:()=>({limit:async()=>{
      state.meetingReads++;
-     return [{id:meetingId,projectId,status:"SCHEDULED",title:"Mentor review",
-      requestedByMembershipId:null,updatedAt:new Date("2099-01-01T00:00:00.000Z")}];
+     return [{id:meetingId,projectId,status:state.meetingStatus,title:"Mentor review",
+      requestedByMembershipId:"learner-member",updatedAt:new Date("2099-01-01T00:00:00.000Z")}];
     }}),
    }),
   }),
@@ -69,6 +83,7 @@ vi.mock("@/db/client",()=>({
     select:()=>({
      from:(table:unknown)=>({
       where:(conditions:unknown)=>({
+       limit:async()=>{state.meetingReads++;return [];},
        for:()=>({
         limit:async()=>{
          if(table && typeof table==="object" && "collegeId" in table){
@@ -92,7 +107,10 @@ vi.mock("@/db/client",()=>({
 }));
 beforeEach(()=>{
  state.moduleEnabled=true;state.scopeCalls=0;state.projectLocks=0;
- state.meetingReads=0;state.persistedChecks=0;
+ state.meetingReads=0;state.persistedChecks=0;state.mentorDenied=true;
+ state.learnerChecks=0;state.learnerDenied=true;
+ state.access="MENTOR";state.meetingStatus="SCHEDULED";
+ state.windowChecks=0;state.expiresAfterLock=false;
  state.writes=0;state.audits=0;state.notices=0;state.lockConditions="";
 });
 const draft={
@@ -145,4 +163,43 @@ describe("Mentor meeting writes and direct read permissions",()=>{
   expect(state.meetingReads).toBe(1);
   expect(state.writes+state.audits+state.notices).toBe(0);
  });
+ it("PROJ-BREAK-MENTOR-351 revoked learner cannot request a meeting after the project lock",async()=>{
+  state.access="LEARNER";
+  const learner={...context,membership:{...context.membership!,id:"learner-member",roles:["LEARNER"]}}
+   as RequestContext;
+  await expect(requestProjectMeeting(learner,projectId,{
+   title:"Project check-in",startsAt:draft.startsAt,endsAt:draft.endsAt,timeZone:"Asia/Kolkata",
+  })).rejects.toThrow("PROJECT_ACCESS_DENIED");
+  expect(state.projectLocks).toBe(1);
+  expect(state.lockConditions).toContain("project.college_id");
+  expect(state.learnerChecks).toBe(1);
+  expect(state.meetingReads).toBe(0);
+  expect(state.writes+state.audits+state.notices).toBe(0);
+ });
+ it("PROJ-BREAK-MENTOR-352 revoked requester cannot cancel a meeting or notify others",async()=>{
+  state.access="LEARNER";
+  state.meetingStatus="REQUESTED";
+  const learner={...context,membership:{...context.membership!,id:"learner-member",roles:["LEARNER"]}}
+   as RequestContext;
+  await expect(transitionProjectMeeting(learner,projectId,meetingId,{
+   action:"CANCEL",note:"Not needed",
+  })).rejects.toThrow("PROJECT_ACCESS_DENIED");
+  expect(state.projectLocks).toBe(1);
+  expect(state.learnerChecks).toBe(1);
+  expect(state.meetingReads).toBe(1);
+  expect(state.writes+state.audits+state.notices).toBe(0);
+ });
+ it("PROJ-BREAK-MENTOR-353 delayed meeting scheduling rechecks the future window under lock",async()=>{
+  state.expiresAfterLock=true;
+  state.mentorDenied=false;
+  // The first window check passes before transaction entry; the second
+  // simulates the clock crossing startsAt while a parent row lock is awaited.
+  state.persistedChecks=0;
+  await expect(scheduleProjectMeeting(context,projectId,null,draft))
+   .rejects.toMatchObject({code:"PROJECT_MEETING_INVALID_STATE"});
+  expect(state.windowChecks).toBe(2);
+  expect(state.projectLocks).toBe(1);
+  expect(state.writes+state.audits+state.notices).toBe(0);
+ });
+
 });
