@@ -74,9 +74,16 @@ describe("chat-3 final sprint TPO Companies",()=>{
  });
  it("TPO-companies-26 create-company confirmation provides dialog Escape and keyboard focus trap",()=>{
   const code=source("src/components/tpo/tpo-company-create-form.tsx");
-  expect(code).toContain("e.key===\"Escape\"");
-  expect(code).toContain("aria-modal");
-  expect(code).toContain("modalRef");
+  // The native shared Dialog uses showModal() for browser-managed focus
+  // containment and onCancel for Escape, rather than a bespoke Tab trap.
+  const dialog=source("src/components/ui/dialog.tsx");
+  expect(code).toContain("<Dialog open={open}");
+  expect(code).toContain("onOpenChange={next=>{if(!next)close();}}");
+  expect(code).toContain("if(pending)return;");
+  expect(dialog).toContain("modal.showModal()");
+  expect(dialog).toContain("onCancel={event =>");
+  expect(dialog).toContain("opener.current?.focus()");
+  expect(dialog).toContain("aria-labelledby={titleId}");
  });
  it("TPO-companies-27 canonical directory offers export, sort and create-drive action",()=>{
   const code=source("src/app/(authenticated)/tpo/companies/page.tsx");
@@ -120,8 +127,9 @@ describe("chat-3 final sprint TPO Companies",()=>{
   const page=source("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx");
   expect(page).not.toContain("offer.candidateName");
   expect(page).not.toContain("offer.learnerName");
-  expect(page).toContain("Company hiring cards");
-  expect(page).toContain("Joining");
+  expect(page).toContain("Hiring history");
+  expect(page).toContain("rows={hiringHistory}");
+  expect(page).toContain("header:\"Joining\"");
   expect(page).toContain("Confirmed joined learners");
  });
  it("TPO-companies-13 company identity prefill is consumed by authorized create workspace",()=>{
