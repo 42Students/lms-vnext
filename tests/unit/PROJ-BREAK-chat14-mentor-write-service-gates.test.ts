@@ -1,6 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
-import {ProjectsServiceError} from "@/modules/projects/errors";
 import {autoAssignProjectTasks} from "@/modules/projects/mentor-auto-assign-service";
 import {moveMentorBacklogTask,createMentorBacklogTask} from "@/modules/projects/mentor-backlog-service";
 import {deleteMentorProjectSprint} from "@/modules/projects/mentor-sprint-delete-service";
