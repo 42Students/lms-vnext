@@ -18,7 +18,7 @@ export default async function TpoManageCompanyPage({
   if (!company) notFound();
   return <div className="space-y-5">
     <Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-      className="font-semibold text-primary-text hover:underline">
+      className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
       ← Company details
     </Link>
     <PageHeader eyebrow="TPO · Companies" title={company.name + " · Relationship settings"}

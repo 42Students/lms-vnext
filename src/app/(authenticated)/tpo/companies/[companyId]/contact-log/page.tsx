@@ -50,7 +50,7 @@ export default async function TpoCompanyContactLogPage({
     <div className="space-y-6">
       <Link
         href={"/tpo/companies/" + encodeURIComponent(companyId)}
-        className="text-sm font-semibold text-primary-text hover:underline"
+        className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
       >
         ← Company details
       </Link>
@@ -89,7 +89,7 @@ export default async function TpoCompanyContactLogPage({
               <select
                 name="type"
                 defaultValue={log.type}
-                className="mt-2 block min-h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
+                className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
               >
                 {["ALL", "CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE", "SYSTEM"].map((type) => (
                   <option key={type} value={type}>{type === "ALL" ? "All types" : type}</option>
@@ -98,7 +98,7 @@ export default async function TpoCompanyContactLogPage({
             </label>
             <button
               type="submit"
-              className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+              className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]"
             >
               Filter
             </button>
@@ -144,12 +144,12 @@ export default async function TpoCompanyContactLogPage({
             <span className="text-body">Page {log.page} of {log.pages}</span>
             <div className="flex gap-3">
               {log.page > 1 ? (
-                <Link href={href(log.page - 1)} className="font-semibold text-primary-text hover:underline">
+                <Link href={href(log.page - 1)} className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
                   ← Previous
                 </Link>
               ) : null}
               {log.pages !== null && log.page < log.pages ? (
-                <Link href={href(log.page + 1)} className="font-semibold text-primary-text hover:underline">
+                <Link href={href(log.page + 1)} className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
                   Next →
                 </Link>
               ) : null}
