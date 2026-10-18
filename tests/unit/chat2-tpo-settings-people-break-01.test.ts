@@ -80,12 +80,13 @@ describe("TPO-BREAK-settings-people-01 tenant and evidence-based team permission
   expect(tpoSettingsCollegeIdSchema.safeParse(college).success).toBe(true);
   for(const value of ["", "other-tenant", "not-a-uuid"])
    expect(tpoSettingsCollegeIdSchema.safeParse(value).success).toBe(false);
-  const company={scope:"COMPANY",action:"REPLACE",companyId:other,confirmed:true};
+  const company={scope:"COMPANY",action:"REPLACE",companyId:other,confirmed:true,expectedLinkId:college};
   expect(tpoPublicJoinLinkChangeSchema.safeParse(company).success).toBe(true);
   for(const patch of [{confirmed:false},{companyId:"not-a-uuid"},{scope:"COLLEGE"},
-   {unexpectedTenant:college}])
+   {unexpectedTenant:college},{expectedLinkId:"not-a-uuid"}])
    expect(tpoPublicJoinLinkChangeSchema.safeParse({...company,...patch}).success).toBe(false);
-  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",companyId:other,enabled:false}).success).toBe(true);
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",companyId:other,enabled:false}).success).toBe(false);
+  expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",companyId:other,expectedLinkId:college,enabled:false}).success).toBe(true);
   expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COMPANY",enabled:false}).success).toBe(false);
   expect(publicJoinLinkPath("COMPANY","hello/world")).toBe("/company-join/hello%2Fworld");
  });
