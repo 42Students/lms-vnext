@@ -14,7 +14,11 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
  const [pending,setPending]=useState(false);
  const [error,setError]=useState<string|null>(null);
  const [lastAction,setLastAction]=useState<boolean|null>(null);
- async function apply(visibleToStudents:boolean,ids=selected){
+ const currentIds=new Set(courses.map(course=>course.id));
+ const selectedInScope=selected.filter(id=>currentIds.has(id));
+ async function apply(visibleToStudents:boolean,ids=selectedInScope){
+  // Never send IDs from a previous acting-college or an earlier page.
+  ids=ids.filter(id=>currentIds.has(id));
   if(!ids.length||pending)return;
   if(!window.confirm((visibleToStudents?"Show":"Hide")+" published lesson content in "+
     ids.length+" selected course(s) to students?"))return;
@@ -33,25 +37,28 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   <h3 className="font-semibold text-foreground">Students see it</h3>
   <p className="text-sm text-body">Show to students or hide from students across published lesson content in selected courses. Archived or unpublished content remains unchanged.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm">
-   <input type="checkbox" checked={courses.length>0&&selected.length===courses.length}
+   <input type="checkbox" checked={courses.length>0&&selectedInScope.length===courses.length}
     disabled={pending||!courses.length}
     onChange={e=>setSelected(e.target.checked?courses.map(course=>course.id):[])}/>
    Select all courses on this page
   </label>
   <ScrollCue axis="y" label="Bulk course selection" viewportClassName="max-h-48"><div className="grid gap-2 sm:grid-cols-2">
    {courses.map(course=><label key={course.id} className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={selected.includes(course.id)} disabled={pending}
-     onChange={e=>setSelected(ids=>e.target.checked?[...ids,course.id]:ids.filter(id=>id!==course.id))}/>
+    <input type="checkbox" checked={selectedInScope.includes(course.id)} disabled={pending}
+     onChange={e=>setSelected(ids=>{
+      const scoped=ids.filter(id=>currentIds.has(id));
+      return e.target.checked?[...new Set([...scoped,course.id])]:scoped.filter(id=>id!==course.id);
+     })}/>
     <span>{course.name}</span>
    </label>)}
   </div></ScrollCue>
-  <p className="text-xs text-muted-foreground" role="status">{selected.length} selected</p>
+  <p className="text-xs text-muted-foreground" role="status">{selectedInScope.length} selected</p>
   <div className="flex flex-wrap gap-2">
-   <button type="button" disabled={!selected.length||pending}
+   <button type="button" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(true)}
     className="min-h-11 rounded-md border border-border px-4 font-semibold disabled:opacity-50">
     {pending?"Updating…":"Show to students"}</button>
-   <button type="button" disabled={!selected.length||pending}
+   <button type="button" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(false)}
     className="min-h-11 rounded-md border border-border px-4 font-semibold disabled:opacity-50">
     Hide from students</button>
