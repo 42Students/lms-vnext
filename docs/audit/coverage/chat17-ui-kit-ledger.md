@@ -125,3 +125,5 @@ The **generated** `docs/audit/ux/COVERAGE-MATRIX.md` currently lists five Projec
 - **UX-UNOWNED-GRID-11:** Both College Admin academic directories now have shared horizontal `ScrollCue` and 44px action links, retaining conditional table cells and original commands. Unit source regression `tests/unit/UX-college-academic-directory-scroll-chat17.test.ts`; real narrow-screen table header and focus/a11y acceptance remains pending.
 
 - **UX-kit-HARDEN-51:** The native `Switch` has both track and `::after` sliding thumb transitions. `motion-reduce:after:transition-none` prevents the thumb animating when reduced motion is requested; `UX-kit-states-chat17.test.tsx` verifies both transition gates. Live reduced-motion browser computation remains pending.
+
+- **UX-kit-HARDEN-52:** Pagination caps finite page counts at `Number.MAX_SAFE_INTEGER` instead of emitting duplicate page keys/navigation links beyond JavaScript's exact integer range. Unit case verifies distinct adjacent page links at the extreme boundary and rejects scientific-notation URLs. Actual backend pagination remains capped separately.
