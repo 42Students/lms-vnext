@@ -77,4 +77,18 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   expect(s).toContain("useGuardedAction");
   expect(s).toContain("expectedImpact: preview.impact");
  });
+ it("UX-cross-tpo-second-C13-012 after-college report paginates 300-row evidence while retaining CSV",()=>{
+  const s=read("src/app/(authenticated)/tpo/reports/after-college/page.tsx");
+  expect(s).toContain("data.rows.slice((page-1)*25,page*25)");
+  expect(s).toContain('<Pagination page={page}');
+  expect(s).toContain("data.rows.length>300");
+  expect(s).toContain("Download CSV");
+ });
+ it("UX-cross-tpo-second-C13-013 campaign recipients paginate and preserve storage cap disclosure",()=>{
+  const s=read("src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx");
+  expect(s).toContain('recipients.rows.slice((page-1)*25,page*25)');
+  expect(s).toContain("<Pagination page={page}");
+  expect(s).toContain("recipients.hasMore");
+  expect(s).toContain("TpoCampaignSendControl");
+ });
 });
