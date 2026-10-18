@@ -7,6 +7,7 @@ export function isRecruiterJobVisible(
   collegeId: string,
   relationshipId: string,
 ): boolean {
+  if (!collegeId.trim() || !relationshipId.trim()) return false;
   return Boolean(
     context.recruiter?.grants.some(grant =>
       grant.collegeId === collegeId && grant.companyRelationshipId === relationshipId

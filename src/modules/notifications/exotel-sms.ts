@@ -40,12 +40,12 @@ export function readExotelConfig(
 
 function configured(config: ExotelConfig) {
   return Boolean(
-    config.apiKey &&
-      config.apiToken &&
-      config.accountSid &&
-      config.dltEntityId &&
-      config.otpSenderId &&
-      config.otpDltTemplateId,
+    config.apiKey.trim() &&
+      config.apiToken.trim() &&
+      config.accountSid.trim() &&
+      config.dltEntityId.trim() &&
+      config.otpSenderId.trim() &&
+      config.otpDltTemplateId.trim(),
   );
 }
 
