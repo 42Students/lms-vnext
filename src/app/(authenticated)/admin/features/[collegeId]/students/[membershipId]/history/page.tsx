@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -18,21 +21,21 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
    description={"Recent authorized module override and lock changes for "+(result.learnerName||"this learner")+". Changes are shown 40 at a time, newest first. The optional module filter is applied to the scoped audit query."}/>
   <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="grid gap-1 text-sm font-semibold text-body">Module
-    <select name="module" defaultValue={cursor.data.module} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+    <Select name="module" defaultValue={cursor.data.module} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
      <option value="all">All modules</option><option value="projects">Projects</option><option value="electives">Electives</option>
-    </select>
+    </Select>
    </label>
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Actor name
-    <input name="actorName" maxLength={100} defaultValue={cursor.data.actorName}
+    <Input name="actorName" maxLength={100} defaultValue={cursor.data.actorName}
      className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">From (India day)
-    <input type="date" name="from" defaultValue={cursor.data.from} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+    <Input type="date" name="from" defaultValue={cursor.data.from} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">To (India day)
-    <input type="date" name="to" defaultValue={cursor.data.to} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+    <Input type="date" name="to" defaultValue={cursor.data.to} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
    </label>
-   <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter history</button>
+   <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter history</Button>
    <Link href={studentRuleHistoryHref(collegeId,membershipId,null)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]">Clear</Link>
   </form>
   <Link href={studentRuleHistoryExportHref(collegeId,membershipId,

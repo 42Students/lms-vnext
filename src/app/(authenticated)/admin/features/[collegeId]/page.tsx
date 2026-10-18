@@ -1,3 +1,6 @@
+import {Button} from "@/components/ui/button";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -201,32 +204,32 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4" aria-label="Filter stored module overrides">
         <label className="grid gap-1 text-sm font-semibold text-body">Stored descendant module
-          <select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="">All modules</option>
             {OPTIONAL_MODULE_KEYS.map(key => <option key={key} value={key}>{ADMIN_MODULE_LABELS[key]}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Stored scope
-          <select name="scope" defaultValue={result.scopeFilter ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="scope" defaultValue={result.scopeFilter ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="">All descendant scopes</option>
             {(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"] as const).map(key =>
               <option key={key} value={key}>{MODULE_SCOPE_LABELS[key]}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Lock state
-          <select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">All stored rules</option><option value="LOCKED">Locked rules only</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Stored value
-          <select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">Any stored value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Exact scope ID (optional)
-          <input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+          <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter overrides</button>
+        <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter overrides</Button>
         <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Reset</Link>
       </form>
 
