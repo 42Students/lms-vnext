@@ -16,3 +16,11 @@ Scope: `chatgpt/chat-15-b`. Findings are source-reviewed; **test execution is pe
 1. **Do not merge or certify solely from this defect register.** The branch still needs strict typecheck, Vitest (including new tests), full PostgreSQL role/tenancy and concurrency integration, event/notification rollback verification, and phone/keyboard recovery checks.
 2. Exhaustive HR/Recruiter exported-function + route ledger closure is still open in `docs/audit/coverage/hr-ledger.md`. Current ledger is a high-risk slice, not full module acceptance.
 3. Validate TPO, HR and recruiter roles on project data for IIT Dharwad: unauthorized tenant data, revoked membership, stale tabs, duplicate actions, expired sessions.
+
+
+## 2026-10-18 chat-15 follow-up (source fixes; not run)
+
+| Defect ID | Severity | Defect and change | Branch commit | Acceptance evidence |
+|---|---|---|---|---|
+| HR-SLOT-ACTOR-01 | S2 | `canRecruiterMutateOwnSlot(" "," ")` previously returned true, even though neither actor identity was meaningful. The ownership predicate now rejects whitespace-only actors before comparing identity strings. | `bf7227245751de3009256069fec54349c17840b3` | `tests/unit/hr-interview-slot-model.test.ts` tests correct owner, empty, whitespace, and mismatched creator; authored not run. |
+| HR-ROUND-INPUT-01 / HR-ROUND-CREATE-01 / HR-ROUND-REMOVE-01 | Regression expansion | Exercises invalid body rejection prior to SQL, duplicate/cap protection, correct create/remove receipts, single audit insertion and TPO notification and forbidden edit after slots/results. No production regression observed from source review. | `8362c16b26f262aa3d6fca4904697539bee115d4` | `tests/unit/HR-BREAK-chat15-round-service-03.test.ts` expanded mocked service matrix; PostgreSQL races and rollback remain open. |

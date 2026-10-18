@@ -118,6 +118,41 @@ describe("UX-kit-HARDEN-23 authorization boundaries and WebView history", () => 
     expect(scrollSource).toMatch(/label=\{caption\s*\?\s*caption\s*\+\s*["'] scrollable columns["']/);
   });
 
+  it("UX-kit-HARDEN-36 redacts mixed-permission hidden cells and never exposes denied detail links", () => {
+    type Row = { id: string; title: string; canView: boolean; secret: string };
+    const formatSecret=vi.fn((row:Row)=>row.secret);
+    const detailHref=vi.fn((row:Row)=>"/college/projects/"+row.id+"/details");
+    const columns=[
+      {key:"title",header:"Workspace",mobilePriority:"primary" as const,
+        cell:(row:Row)=>row.title},
+      {key:"secret",header:"Private review",mobilePriority:"hidden" as const,
+        mobileHiddenReason:"Review details require permission",
+        mobileDetail:{fieldKey:"secret",href:detailHref,canView:(row:Row)=>row.canView},
+        cell:formatSecret},
+    ];
+    const rows:Row[]=[
+      {id:"allowed",title:"Allowed workspace",canView:true,secret:"Visible review"},
+      {id:"denied",title:"Restricted workspace",canView:false,secret:"DO_NOT_RENDER_PRIVATE"},
+    ];
+    const html=render(<DataTable rows={rows} columns={columns}
+      getRowKey={row=>row.id} empty={<p>No projects</p>}/>);
+    expect(html).toContain("Allowed workspace");
+    expect(html).toContain("Restricted workspace");
+    expect(html).toContain("Visible review");
+    expect(html).not.toContain("DO_NOT_RENDER_PRIVATE");
+    expect(formatSecret).toHaveBeenCalledTimes(1);
+    expect(detailHref).toHaveBeenCalledTimes(1);
+    expect(html).toContain('href="/college/projects/allowed/details"');
+    expect(html).not.toContain('href="/college/projects/denied/details"');
+    expect((html.match(/· View details/g)??[])).toHaveLength(1);
+
+    const deniedOnly=render(<DataTable rows={[rows[1]!]} columns={columns}
+      getRowKey={row=>row.id} empty="Empty"/>);
+    expect(deniedOnly).not.toContain("DO_NOT_RENDER_PRIVATE");
+    expect(deniedOnly).not.toContain("Fields on detail page");
+    expect(deniedOnly).not.toContain("More details");
+  });
+
   it("UX-kit-HARDEN-30 rejects encoded slash/backslash row links before Next navigation", () => {
     for (const href of [
       "https://attacker.test", "//attacker.test", "/\\\\attacker.test",

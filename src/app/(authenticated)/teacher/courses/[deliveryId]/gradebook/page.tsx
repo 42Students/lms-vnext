@@ -47,7 +47,7 @@ export default async function FacultyGradebookPage({
           administrator to request a gradebook report. No grades have been changed.
         </p>
         <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           Return to your course
         </Link>
       </section>;
