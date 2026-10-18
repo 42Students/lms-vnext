@@ -42,3 +42,9 @@ These plug direct behavioral test gaps in the previous generated weak-areas snap
 | ID | Source | Unit behavior | Browser/DB acceptance |
 |---|---|---|---|
 | PROJ-BREAK-TEAM-CSV-02 | `exportClassTeamsCsv` | `tests/unit/PROJ-BREAK-chat19-class-team-csv-unicode.test.ts`: invisible Unicode formula prefixes; malicious roll labels; quoted formulas; strict supplied roster only; no extra row lookup/mutation | Spreadsheet import execution and actual class-roster authorization remain integration checks |
+
+## IIT Dharwad individual project creation outcome export
+
+| ID | Component and model | Direct test | Security acceptance |
+|---|---|---|---|
+| PROJ-BREAK-OUTCOME-CSV-03 | `ClassTeamWorkspaceCreator` → `classTeamCreationOutcomeCsv` | `tests/unit/PROJ-BREAK-chat19-class-team-outcome-csv.test.ts` | Neutralize quoted/unquoted formula and Unicode combining-mark prefix, escape multiline labels, export only service-visible results, never enumerate unrelated roster IDs, empty-safe no-result behavior, defer Blob cleanup. Live browser downloads and DB tenant authorization remain separate orchestrator CI gates. |
