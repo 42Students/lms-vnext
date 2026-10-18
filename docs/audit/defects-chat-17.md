@@ -151,3 +151,5 @@ All newly authored tests remain pending cloud execution; migration retains the p
 | PROJ-HARNESS-PROJECT-28 | S1 (partial workspace fixtures) | Creating a Project failed late on learner roster INSERT but left template, workspace, task and member partial graph in the outer transaction when a caller caught the error. | Wrap all graph INSERTs in a SAVEPOINT, inject late roster failure, verify counts unchanged, retry. | Authored; PostgreSQL gate deferred |
 
 | UX-kit-E2E-10 | S2 (scroll cue correctness) | Only the first child of a scroll viewport was observed, so secondary child CSS resize could change overflow without updating fades or accessible region semantics. | Observe all direct children on mount/mutations; real browser test grows/shrinks only the second direct child. | Authored; browser CI deferred |
+
+| UX-kit-E2E-11 | S2 (toast accessibility) | ToastProvider could silently auto-dismiss success/info notifications entirely while a user worked in another tab. | Visibility-aware timer scheduling pauses while hidden, resumes on return and cleans evicted duration metadata; real browser test added. | Authored; browser CI deferred |

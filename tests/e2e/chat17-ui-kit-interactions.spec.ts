@@ -206,6 +206,24 @@ test.describe("UX-kit-E2E-01 real browser shared UI states",()=>{
     await expect(note).toHaveCount(0,{timeout:3500});
   });
 
+  test("UX-kit-E2E-11 timed toasts remain readable when the tab is hidden",async({page})=>{
+    await page.goto(route);
+    await page.evaluate(()=>{
+      Object.defineProperty(document,"hidden",{configurable:true,get:()=>true});
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await page.getByRole("button",{name:"Show success notice"}).click();
+    const toast=page.getByRole("status").filter({hasText:"Saved harness result"});
+    await expect(toast).toBeVisible();
+    await page.waitForTimeout(5200);
+    await expect(toast).toBeVisible();
+    await page.evaluate(()=>{
+      Object.defineProperty(document,"hidden",{configurable:true,get:()=>false});
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await expect(toast).toHaveCount(0,{timeout:9000});
+  });
+
   test("UX-kit-E2E-09 upload retains external help and Tabs honor reduced motion",async({page})=>{
     await page.emulateMedia({reducedMotion:"reduce"});
     await page.goto(route);
