@@ -26,7 +26,7 @@ Tests are in:
 | `drawer.tsx` | `Drawer` | STATES-05; HARDEN-16 | nondismissible title, route history, scroll |
 | `empty-state.tsx` | `EmptyState` | STATES-08; HARDEN-06 | empty is not alert; optional recovery |
 | `error-state.tsx` | `ErrorState` | STATES-08; HARDEN-06 | alert is not success, explicit recovery |
-| `file-upload.tsx` | `FileUpload, fileSizeIsValid, fileMatchesAccept, mustClearFileSelection` | STATES-13; HARDEN-05; HARDEN-28 | disabled/unavailable fallback, type/size, cleared stale selection |
+| `file-upload.tsx` | `FileUpload, fileSizeIsValid, fileMatchesAccept, mustClearFileSelection` | STATES-13; HARDEN-05; HARDEN-28; HARDEN-34 | disabled/unavailable fallback, size/type, combined assistive helper/error IDs |
 | `filter-bar.tsx` | `FilterBar` | STATES-11; HARDEN-19 | search visible, sanitize activeCount, overlay keyboard contract |
 | `form-field.tsx` | `FormField` | STATES-03; HARDEN-03 | id association, helper/error, invalid merge |
 | `graceful-page-loading.tsx` | `GracefulPageLoading` | STATES-07; HARDEN-13 | directory/card, readable loading, timeout source |
@@ -44,7 +44,7 @@ Tests are in:
 | `skeleton.tsx` | `Skeleton` | STATES-07; HARDEN-13 | zero/NaN/high count bounded, reduced-motion |
 | `stat-tile.tsx` | `StatTile` | STATES-12; HARDEN-11 | finite number, invalid fallback, link |
 | `status-badge.tsx` | `StatusBadge` | STATES-08; HARDEN-10 | five tones/readable labels |
-| `tabs.tsx` | `Tabs, tabNextEnabled` | STATES-10; HARDEN-18 | zero/all disabled, skip disabled and selected panel |
+| `tabs.tsx` | `Tabs, tabNextEnabled` | STATES-10; HARDEN-18; HARDEN-33 | zero/all disabled, stale tab selection fallback, one reachable panel |
 | `textarea.tsx` | `Textarea` | STATES-02; HARDEN-02 | disabled, invalid |
 | `third-party-link.tsx` | `ThirdPartyLink` | STATES-14; HARDEN-14; HARDEN-32 | reject HTTP/js/credentials/backslash/controls; same-tab/copy fallback |
 | `toast.tsx` | `enqueueToast, clearEvictedToastTimers, ToastStack, ToastProvider, useToast` | HARDEN-15; HARDEN-29 | persistent errors, bounded info, timer cleanup, viewport |
@@ -63,3 +63,5 @@ Tests are in:
 **Interaction gates not yet certified:** browser-level focus trap, Escape/back-button sequencing for nested Dialog/Drawer/BottomSheet, actual resize-triggered scroll fade, screen-reader announcement order, upload selection/reselection via real `FileList`, touch keyboard occlusion, reduced-motion timelines, and click/double-submit concurrency. SSR/source tests are necessary but insufficient; do not mark all account journeys unbreakable on this ledger alone.
 
 **CI commands:** `npm run test:ux:kit:hardening` and `npm run typecheck`. Re-run with source `main` rebased into `chatgpt/chat-17-b` and update this ledger based on cloud results.
+
+- **UX-kit-HARDEN-33..34:** Tabs now select the first enabled panel when an old bookmark points to a missing/disabled tab, with consistent selected ARIA and keyboard tabstop. FileUpload connects helper, error and unavailable text with combined IDs rather than replacing one with another. Corresponding `tests/unit/UX-kit-states-chat17.test.tsx` cases guard both.
