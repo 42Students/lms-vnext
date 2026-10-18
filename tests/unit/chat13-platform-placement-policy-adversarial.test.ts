@@ -53,6 +53,32 @@ describe("Super Admin placement policy adversarial boundaries", () => {
     expect(body).toContain('.for("update")');
   });
 
+  it("SA-PLACEMENT-POLICY-06 prevents the legacy tenant settings endpoint bypassing the shared duration lock",()=>{
+    const policy=source();
+    const legacy=readFileSync("src/modules/platform-settings/admin-editor-service.ts","utf8");
+    const signature="pg_advisory_xact_lock(42, 130038)";
+    expect(policy).toContain(signature);
+    expect(legacy).toContain(signature);
+    expect(legacy).toContain("placementPolicyValidate(placementPolicy.key,Number(value))");
+    expect(legacy).toContain('spec.key==="interview.durationMinMinutes"');
+    expect(legacy).toContain('spec.key==="interview.durationMaxMinutes"');
+    expect(legacy).toContain('placementPolicyValidate("interview.durationMinMinutes",minimum)');
+    expect(legacy).toContain('placementPolicyValidate("interview.durationMaxMinutes",maximum)');
+    const fn=legacy.split("export async function saveAdminTenantSettings")[1]?.split("export async function addUnlistedTenantSetting")[0]??"";
+    const tx=fn.indexOf("getDb().transaction(async tx=>{");
+    const lock=fn.indexOf(signature);
+    const roles=fn.indexOf("assertPersistedPlatformPermission(tx,ctx");
+    const counterpart=fn.indexOf("const [other]=await tx.select(");
+    const write=fn.indexOf("let version=current?.version??0");
+    expect(tx).toBeGreaterThanOrEqual(0);
+    expect(lock).toBeGreaterThan(tx);
+    expect(roles).toBeGreaterThan(lock);
+    expect(counterpart).toBeGreaterThan(roles);
+    expect(write).toBeGreaterThan(counterpart);
+    expect(legacy).toContain("LEGACY_TENANT_SETTING_MAP.has(key)");
+    expect(legacy).toContain('new TenantSettingEditorError("INVALID_SETTING")');
+  });
+
   it("SA-PLACEMENT-POLICY-05 atomically audits every persisted global policy write without impersonating a college actor",()=>{
     const svc=source();
     const taxonomy=readFileSync("src/modules/activity/taxonomy.ts","utf8");
