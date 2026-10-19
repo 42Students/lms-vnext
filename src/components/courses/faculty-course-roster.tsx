@@ -209,19 +209,19 @@ export function FacultyCourseRoster({
                     </StatusBadge>
                     {deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
                       "/students/"+encodeURIComponent(learner.membershipId)}
-                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline">
+                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline sm:min-h-9">
                       View student details →
                     </Link>:null}
                   </div>
                 </div>},
               {key:"phone",header:"Phone",mobilePriority:"secondary" as const,
                 cell:(learner)=>learner.phoneE164?<a href={`tel:${learner.phoneE164}`}
-                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text"
+                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text sm:min-h-9"
                   aria-label={`Call ${nameOf(learner)}`}>{learner.phoneE164}</a>:
                   <span className="text-muted-foreground">No number</span>},
               {key:"email",header:"Email",mobilePriority:"secondary" as const,
                 cell:(learner)=>learner.email?<a href={`mailto:${learner.email}`}
-                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text"
+                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text sm:min-h-9"
                   aria-label={`Email ${nameOf(learner)}`}>{learner.email}</a>:
                   <span className="text-muted-foreground">No email</span>},
             ]}

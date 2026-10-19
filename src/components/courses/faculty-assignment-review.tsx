@@ -280,7 +280,7 @@ function SubmissionGradeCard({
   }
 
   return (
-    <section className="rounded-lg border border-border bg-surface p-4">
+    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h4 className="m-0 text-sm font-semibold text-foreground">
@@ -316,7 +316,7 @@ function SubmissionGradeCard({
         </StatusBadge>
       </div>
 
-      <div className="mt-3 rounded-md bg-[var(--lms-neutral-50)] p-3">
+      <div className="mt-3 rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)] p-3">
         {submission.submissionType === "FILE" && filesEnabled ? (
           <div className="space-y-3">
             {submission.textContent?<div>
