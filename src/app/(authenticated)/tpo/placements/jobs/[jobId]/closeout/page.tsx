@@ -40,12 +40,12 @@ export default async function TpoDriveCloseoutPage({
       </p>
     </header>
     <a href={"/api/placements/tpo/drives/" + encodeURIComponent(data.job.id) + "/closeout/export"}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
       Export CSV
     </a>
-    <section aria-label="Close-out metrics" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <section aria-label="Close-out metrics" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
       {cells.map(([label, value]) => <div key={label}
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+        className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0">
         <p className="text-sm font-medium text-body">{label}</p>
         <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
           {value === null ? "Unavailable" : value}
