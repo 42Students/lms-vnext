@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -116,7 +118,7 @@ export default async function TpoLeadsReportPage({
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
-      <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
        <p className="min-w-0 flex-1 text-sm text-body">This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.</p>
        <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Open Engage →</Link>
        <Link href="/tpo/companies" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Company memory →</Link>
@@ -130,13 +132,13 @@ export default async function TpoLeadsReportPage({
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-60 flex-1 gap-1 text-sm font-semibold">Company
-         <select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+         <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="">All companies</option>
           {companyEngagement.filter(row=>row.companyId).map(row=>
            <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}
-         </select>
+         </Select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Filter</button>
+        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Filter</Button>
         {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
          className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
        </form>
@@ -157,7 +159,7 @@ export default async function TpoLeadsReportPage({
 
       <section
         aria-label="Lead reporting scope"
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+        className="border-t border-border py-4 text-sm leading-6 text-body"
       >
         <p className="font-semibold text-foreground">
           Reporting methodology
@@ -172,7 +174,7 @@ export default async function TpoLeadsReportPage({
         {metrics.map(([label, value]) => (
           <div
             key={label}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
+            className="border-b border-border py-4"
           >
             <p className="text-xs font-semibold uppercase text-body">
               {label}
@@ -183,7 +185,7 @@ export default async function TpoLeadsReportPage({
           </div>
         ))}
 
-        <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <div className="border-b border-border py-4">
           <p className="text-xs font-semibold uppercase text-body">
             Recruiter account linkage rate
           </p>
@@ -212,7 +214,7 @@ export default async function TpoLeadsReportPage({
             ["No next step", health.noNextStep],
             ["Unassigned", health.unassigned],
           ] as const).map(([label, value]) => (
-            <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+            <div key={label} className="border-b border-border py-4">
               <p className="text-xs font-semibold uppercase text-body">{label}</p>
               <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">{reportNumber(value)}</p>
             </div>

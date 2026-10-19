@@ -274,7 +274,7 @@ export function FacultyCourseRoster({
         {preview&&facultyRosterPhotoPreview(preview.photoDownloadUrl)?
           <img src={facultyRosterPhotoPreview(preview.photoDownloadUrl)!}
             alt={"Profile photograph of "+nameOf(preview)}
-            className="mx-auto max-h-[60vh] max-w-full rounded-lg object-contain"/>:
+            className="mx-auto max-h-[60vh] max-w-full rounded-[var(--lms-control-radius)] object-contain"/>:
           <div className="space-y-3 text-center">
             <div aria-hidden="true" className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">
               {preview?initials(nameOf(preview)):""}
