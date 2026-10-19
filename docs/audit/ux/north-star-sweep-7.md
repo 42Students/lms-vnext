@@ -614,4 +614,38 @@ The following routes and components were reviewed from current branch source and
 - [x] `src/components/projects/learner-project-goals.tsx`
 - [x] `src/components/projects/learner-project-tabs.tsx`
 
-**Source sweep status:** 256/256 original inventory entries reviewed (150 edited, 106 unchanged); 3 extra course UI components discovered and edited. No lane-7 files on `main` were modified. Runtime pixel/parity signoff, TypeScript validation and CI are intentionally deferred to orchestration.
+**Source sweep status at prior pass:** 256/256 original inventory entries read, but the later control-level audit found hand-rolled controls in previously checked files. Do not treat a source-reviewed checkbox as pixel-parity signoff. Runtime visual parity, TypeScript validation and CI remain deferred to orchestration.
+
+## Owner checkpoint re-audit — 2026-10-19, fresh-main continuation
+
+First integrated origin/main commit `3de148112368b7201378f721841a5d4348ec9f6d` with a two-parent merge, preserving the lane-only style changes without overwriting already-landed changes from the other lanes. Main's newer Super Admin courses navigation won the overlapping change, while the lane-only learner-course styles were retained. Continued exclusively on `chatgpt/chat-7-b`.
+
+**23 previously inventoried course/learner components received another control-level pass (one new commit per file; no CI):**
+
+- [x] `src/components/courses/admin-assessment-read-directory.tsx` — shared filter submit button
+- [x] `src/components/courses/admin-course-create-panel.tsx` — shared duplicate cancellation
+- [x] `src/components/courses/admin-course-overview.tsx` — shared course search input
+- [x] `src/components/courses/admin-offering-section-preview.tsx` — shared section select and action
+- [x] `src/components/courses/learner-course-state-retry.tsx` — shared retry button
+- [x] `src/components/courses/learner-live-class-link.tsx` — shared meeting-copy action
+- [x] `src/components/courses/learner-rich-response-editor.tsx` — legacy field tokens; retained native textarea because its cursor-selection ref requires the actual element, while the shared Textarea currently does not forward refs
+- [x] `src/components/courses/learner-roadmap-item-dialog.tsx` — shared dialog opener
+- [x] `src/components/courses/super-admin-content-actions.tsx` — shared edit/publish/delete buttons
+- [x] `src/components/courses/super-admin-course-bulk-visibility.tsx` — shared checkboxes and hide action
+- [x] `src/components/courses/super-admin-lesson-bulk-visibility.tsx` — shared checkboxes
+- [x] `src/components/courses/learner-video-player.tsx` — shared playback-speed select and retry button
+- [x] `src/components/courses/learner-course-list.tsx` — shared semester/term/progress/sort inputs, filter chips, retry and load more buttons
+- [x] `src/components/courses/learner-assessment-overview.tsx` — shared assignment/quiz filters, CTA and pagination buttons
+- [x] `src/components/courses/learner-course-workspace.tsx` — shared disabled submission action
+- [x] `src/components/courses/learner-course-discussion.tsx` — shared moderation/reply/jump buttons; native textarea intentionally retained to preserve composer focus ref
+- [x] `src/components/courses/learner-course-attendance.tsx` — shared month input
+- [x] `src/components/courses/assignment-submission-control.tsx` — shared link kind select
+- [x] `src/components/courses/learner-quiz-attempt.tsx` — shared quiz navigation/review buttons and native-semantics shared Checkbox/Radio choices
+- [x] `src/components/courses/assignment-multipart-parts-editor.tsx` — shared URL, caption and link kind controls
+- [x] `src/components/courses/lesson-resource-materials-control.tsx` — shared materials fields
+- [x] `src/components/courses/quiz-attempt-control.tsx` — shared radio/checkbox choices
+- [x] `src/components/courses/assignment-file-submission-control.tsx` — shared file picker and final confirmation checkbox
+
+**Parity boundaries:** No learner, admin or course wording changed; no API route, data, option value, disabled guard, submission flow, keyboard semantics, modal lifecycle or content order intentionally changed. Course filters retain `aria-pressed`, quiz answers retain single/multiple grouping, discussion composer retains native `ref`, and assignment text cursor selection retains native `ref`. Source-level inspection checked matching `Button`/`Select` close tags and first-position `"use client"` directives. Existing self-closing `<div />` skeletons and native textareas are intentional, not unbalanced tags. No build, typecheck, lint, tests, CI, application run, or deployment performed.
+
+**Still open:** screenshot-by-screenshot pixel comparison against old LMS, plus raw-control re-audit of any remaining non-course learner-owned component implementations. The previous checklist's checked status means reviewed, not verified pixel-identical.

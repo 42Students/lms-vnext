@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 type Answer={id:string;promptSnapshot:string;questionType:string;pointsPossible:number;pointsAwarded:number;
@@ -38,14 +39,14 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     className="min-h-11 rounded border border-border px-2">
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
    </select></label>:null}
-  <button type="button" disabled={loading} onClick={()=>opened?setOpened(false):void open()}
-   aria-expanded={opened} className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">
+  <Button variant="secondary" type="button" disabled={loading} onClick={()=>opened?setOpened(false):void open()}
+   aria-expanded={opened} className="min-h-11 px-3">
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
-  </button>
+  </Button>
   {opened?<div role="region" aria-label="Quiz submissions, scroll for more attempts" tabIndex={0}
    className="max-h-80 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-error">{error}
-    <button type="button" className="underline" disabled={loading} onClick={()=>void open(page)}>Retry</button>
+    <Button variant="ghost" type="button"  disabled={loading} onClick={()=>void open(page)}>Retry</Button>
    </div>:null}
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
@@ -85,12 +86,12 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     {!loading&&!error?<nav aria-label="Quiz submission pages" className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3 text-xs">
       <span>Page {page} · up to 25 attempts per page</span>
       <div className="flex items-center gap-3">
-       <button type="button" disabled={loading||page<=1}
+       <Button variant="secondary" type="button" disabled={loading||page<=1}
         onClick={()=>{setLearnerSearch("");void open(page-1);}}
-        className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Previous</button>
-       <button type="button" disabled={loading||!hasMore}
+        className="min-h-11 px-3">Previous</Button>
+       <Button variant="secondary" type="button" disabled={loading||!hasMore}
         onClick={()=>{setLearnerSearch("");void open(page+1);}}
-        className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Next</button>
+        className="min-h-11 px-3">Next</Button>
       </div>
      </nav>:null}
   </div>:null}

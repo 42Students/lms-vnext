@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Drawer } from "@/components/ui/drawer";
@@ -703,8 +703,8 @@ export function FacultyAttendanceWorkspace({
             />
           ) : (
             <section className="min-w-0">
-              <ScrollCue axis="x" label="Faculty attendance monthly grid" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border">
-              <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
+              
+              <Table scrollLabel="Faculty attendance monthly grid" className="min-w-[48rem]">
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
                     <th className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-3">
@@ -808,8 +808,8 @@ export function FacultyAttendanceWorkspace({
                     </tr>
                   ))}
                 </tbody>
-              </table>
-              </ScrollCue>
+              </Table>
+              
               <p className="mt-4 text-xs leading-5 text-muted-foreground">
                 P = Present · A = Absent · — = Not marked yet · ✖ = No class · S = future class · x/y = present sessions / all sessions that day.
               </p>

@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -36,9 +37,9 @@ export default async function LearnerPlacementRulesPage({
               This is not a placement eligibility decision or a college-issued clearance.
             </p>
           </div>
-          <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-body">
+          <Badge  tone="neutral">
             {preparation.recordedCount} of {preparation.totalCount} signals recorded
-          </span>
+          </Badge>
         </div>
         {!preparation.hasAcademicEvidence ? (
           <p role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">

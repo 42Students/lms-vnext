@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {useState} from "react";
@@ -54,10 +55,10 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    </div>
   </div>
   {!readOnly?<section className="space-y-2">
-    <button type="button" onClick={()=>adding?guard.requestClose():setAdding(true)}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    <Button variant="secondary" type="button" onClick={()=>adding?guard.requestClose():setAdding(true)}
+      className="min-h-11 px-3">
       Add backlog task
-    </button>
+    </Button>
     {adding?<form onSubmit={async e=>{
       e.preventDefault();if(busy)return;setError("");
       if(!title.trim()||!Number.isInteger(points?Number(points):0)||
@@ -115,12 +116,12 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         <Textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
-      <div className="flex items-end gap-2"><button type="submit"
+      <div className="flex items-end gap-2"><Button variant="primary" type="submit"
         disabled={busy||!title.trim()||(points!==""&&
           (!Number.isInteger(Number(points))||Number(points)<0||Number(points)>1000))}
-        className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
-      <button type="button" onClick={guard.requestClose}
-        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Cancel</button></div>
+        className="min-h-11 px-3">Add task</Button>
+      <Button variant="secondary" type="button" onClick={guard.requestClose}
+        className="min-h-11 px-3">Cancel</Button></div>
     </form>:null}
   </section>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
@@ -157,11 +158,11 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   {!readOnly&&returnable.length>0?<details><summary className="cursor-pointer text-sm font-semibold text-link">
     Return unfinished tasks to backlog</summary>
     <div className="mt-2 space-y-2">
-     {returnable.map(task=><button key={task.id} type="button" disabled={busy}
+     {returnable.map(task=><Button variant="secondary" key={task.id} type="button" disabled={busy}
         onClick={()=>setMoveRequest({task,targetSprintId:null})}
-        className="block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-left text-sm">
+        className="block min-h-11 w-full p-2 text-left">
         {task.title} · Return to backlog
-       </button>)}
+       </Button>)}
     </div>
   </details>:null}
   <ConfirmDialog open={moveRequest!==null} onOpenChange={open=>{if(!open&&!busy)setMoveRequest(null);}}

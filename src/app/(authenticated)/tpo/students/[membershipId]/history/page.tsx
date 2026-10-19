@@ -85,7 +85,7 @@ export default async function TpoLearnerPlacementHistoryPage({
         when an accepted offer has a recorded JOINED outcome.
       </p>
       {history.items.length === 0 ? (
-        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body">
+        <p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
           No persisted placement applications were found for this learner on this page.
           External placement records and unmigrated placement registration sources are
           not included.
