@@ -64,7 +64,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   <Button variant="secondary" type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
    >
    {busy?"Checking…":"Preview matching results"}</Button>
-  {preview?<div className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
+  {preview?<div className="space-y-4 border-t border-border pt-4">
    <h3 className="font-semibold">Import preview</h3>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
    <div className="max-h-44 min-w-0 overflow-auto">
