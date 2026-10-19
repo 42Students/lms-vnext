@@ -116,16 +116,47 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <dl aria-label="Loaded-page eligibility evidence" className="grid grid-cols-2 gap-2 md:grid-cols-3">{[["Loaded",pageSummary.assessed],["Eligible",pageSummary.eligible],["Ineligible",pageSummary.ineligible],["Not decided",pageSummary.undecided],["Needs review",pageSummary.needsReview],["Direct overrides",pageSummary.directOverrides]].map(([name,count])=><div key={name} className="min-w-0 border-l-2 border-border px-3 py-2 [overflow-wrap:anywhere]"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
  <p className="text-xs text-muted-foreground">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
- {visible.length===0?<p role="status">{result.students.length===0?"No active learners found on this page.":"No students match these filters. Clear the filters or change the page."}</p>:<ul id="batch-student-decisions" className="space-y-2">
- {visible.map(s=><li className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm" key={s.membershipId}>
-  <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{s.name}</strong><span>{s.ambiguous?"Needs review":batchDecisionLabel(s.decision)}</span></div>
-  <p className="text-xs text-muted-foreground">Roll number: {s.rollNumber??"Not recorded"} · Class: {s.ambiguous?"Multiple active classes":s.className??"Not assigned"}</p>
-  <p className="text-xs text-muted-foreground">Branch: {s.branch} · Program: {s.program}</p>
-  <p className="text-xs text-muted-foreground">Registration: {s.registration?batchRegistrationLabel(s.registration.choice):"Unavailable"}{s.registration?.source?" · via "+batchSourceLabel(s.registration.source):""}</p>
-  <p className="text-xs text-muted-foreground">Source: {batchSourceLabel(s.source)}{s.reason?" · "+s.reason:""}</p>
-  {!finished&&!s.ambiguous?<TpoBatchInlineDecision membershipId={s.membershipId} batchId={batchId} expected={s.direct}/>:null}
-  <Link className="mt-2 inline-flex min-h-9 items-center text-link underline" href={"/tpo/students/"+s.membershipId+"/participation"}>Open learner participation</Link>
- </li>)}</ul>}
+ <div id="batch-student-decisions" className="min-w-0">
+  <DataTable rows={visible} getRowKey={student=>student.membershipId}
+   caption={"Batch students · page "+result.page}
+   empty={<p role="status">{result.students.length===0?
+    "No active learners found on this page.":"No students match these filters. Clear the filters or change the page."}</p>}
+   columns={[
+    {key:"student",header:"Student",mobilePriority:"primary" as const,cell:student=>
+     <div className="min-w-0 space-y-1">
+      <strong className="block break-words text-foreground">{student.name}</strong>
+      <p className="text-xs text-muted-foreground">Roll no.: {student.rollNumber??"Not recorded"}</p>
+      <p className="text-xs text-muted-foreground">Class: {student.ambiguous?"Multiple active classes":student.className??"Not assigned"}</p>
+      <p className="text-xs text-muted-foreground">Branch: {student.branch} · Program: {student.program}</p>
+     </div>},
+    {key:"decision",header:"Eligibility",mobilePriority:"secondary" as const,cell:student=>
+     <Badge tone={student.ambiguous?"warning":
+      student.decision==="ELIGIBLE"?"success":
+      student.decision==="INELIGIBLE"?"error":"neutral"}>
+      {student.ambiguous?"Needs review":batchDecisionLabel(student.decision)}
+     </Badge>},
+    {key:"registration",header:"Registration",mobilePriority:"secondary" as const,cell:student=>
+     <span className="text-sm text-body">
+      {student.registration?batchRegistrationLabel(student.registration.choice):"Unavailable"}
+      {student.registration?.source?" · via "+batchSourceLabel(student.registration.source):""}
+     </span>},
+    {key:"source",header:"Decision source",mobilePriority:"secondary" as const,cell:student=>
+     <div className="text-sm text-body">
+      {batchSourceLabel(student.source)}
+      {student.reason?<p className="mt-1 break-words text-xs text-muted-foreground">{student.reason}</p>:null}
+     </div>},
+    {key:"actions",header:"Actions",mobilePriority:"action" as const,cell:student=>
+     <div className="min-w-0 space-y-2">
+      {!finished&&!student.ambiguous?
+       <TpoBatchInlineDecision membershipId={student.membershipId}
+        batchId={batchId} expected={student.direct}/>:null}
+      <Link href={"/tpo/students/"+encodeURIComponent(student.membershipId)+"/participation"}
+       className="inline-flex min-h-11 items-center text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+       Open learner participation
+      </Link>
+     </div>},
+   ]}/>
+ </div>
  <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Previous</Link>:null}
  {result.hasMore?<Link href={href(result.page+1)} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Next</Link>:null}</nav>
  </div>;
