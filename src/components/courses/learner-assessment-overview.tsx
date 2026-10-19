@@ -101,16 +101,6 @@ function formatDate(value:string|null) {
   return learnerAssessmentDateLabel(value);
 }
 
-function Metric({
-  label,
-  value,
-}: {
-  label: string;
-  value: number;
-}) {
-  return <StatTile label={label} value={value} />;
-}
-
 const PAGE_SIZE = 20;
 
 export function LearnerAssessmentOverview({
@@ -247,7 +237,7 @@ export function LearnerAssessmentOverview({
           </Disclosure>
         </section>
       ) : (<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <Metric
+        <StatTile
           label={
             kind === "ASSIGNMENT"
               ? "Assignments"
@@ -255,13 +245,13 @@ export function LearnerAssessmentOverview({
           }
           value={scopedAttentionItems.length}
         />
-        <Metric
+        <StatTile
           label="Courses"
           value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
         />
-        <Metric label="Needs action" value={actionCounts.pending} />
-        <Metric label="Overdue / missed" value={actionCounts.overdue} />
-        <Metric
+        <StatTile label="Needs action" value={actionCounts.pending} />
+        <StatTile label="Overdue / missed" value={actionCounts.overdue} />
+        <StatTile
           label={
             kind === "ASSIGNMENT"
               ? "Submitted"
