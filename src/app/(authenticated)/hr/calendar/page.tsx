@@ -153,7 +153,7 @@ function RecruiterCalendarEventCard({
   const href = eventHref(event);
 
   return (
-    <article className="rounded-xl border border-border bg-surface p-4">
+    <article className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
@@ -376,7 +376,7 @@ export default async function HrCalendarPage({
             ].map(([label, value]) => (
               <div
                 key={String(label)}
-                className="rounded-xl border border-border bg-surface p-4"
+                className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4"
               >
                 <p className="text-xs font-semibold text-muted-foreground">
                   {label}
@@ -394,7 +394,7 @@ export default async function HrCalendarPage({
             {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {calendar.resultsDue.map(item => (
                 <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                  className="min-w-0 rounded-lg border border-border bg-muted p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                  className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                   <span className="block break-words font-semibold text-primary-text">{item.roundName}</span>
                   <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
                   <span className="mt-2 block text-xs text-muted-foreground">Due {eventDateTime(item.dueAt)} IST · {item.status}</span>
@@ -522,7 +522,7 @@ export default async function HrCalendarPage({
           </section>
 
           {nextVisible ? (
-            <section className="rounded-xl border border-border bg-muted p-4">
+            <section className="rounded-[var(--lms-radius-card)] border border-border bg-muted p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Next event in this period
               </p>
@@ -545,7 +545,7 @@ export default async function HrCalendarPage({
           {eventCount === 0 ? (
             <section
               role="status"
-              className="rounded-xl border border-border bg-surface p-8 text-center"
+              className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-8 text-center"
             >
               <h2 className="text-lg font-semibold text-foreground">
                 {view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
@@ -560,11 +560,11 @@ export default async function HrCalendarPage({
           {view !== "agenda" ? (
             <section
               aria-label={`${view} recruiter calendar`}
-              className="rounded-xl border border-border bg-surface p-3 md:overflow-x-auto"
+              className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 md:overflow-x-auto"
             >
               <div className="space-y-4 md:hidden">
                 {mobileDays.map((day) => (
-                  <article key={day.day} className="space-y-3 rounded-lg border border-border bg-muted p-3">
+                  <article key={day.day} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
                     <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
                     <div className="grid gap-3">
                       {day.events.map((event) => (
@@ -622,7 +622,7 @@ export default async function HrCalendarPage({
                       key={day}
                       aria-label={`${dateLabel(day)}: ${events.length + resultsDue.length} events`}
                       className={
-                        "min-h-32 rounded-lg border border-border p-2 " +
+                        "min-h-32 rounded-[var(--lms-control-radius)] border border-border p-2 " +
                         (outsideMonth
                           ? "bg-muted/40"
                           : "bg-muted")
@@ -731,7 +731,7 @@ export default async function HrCalendarPage({
                       <RecruiterCalendarEventCard key={event.id} event={event} />
                     ))}
                     {day.resultsDue.map((item) => (
-                      <article key={"due:" + item.id} className="rounded-xl border border-border bg-surface p-4">
+                      <article key={"due:" + item.id} className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due</p>
                         <h4 className="mt-2 font-semibold text-foreground">{item.roundName}</h4>
                         <p className="mt-1 text-sm text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</p>
