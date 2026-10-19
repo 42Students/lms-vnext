@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import { Button } from "@/components/ui/button";
 type Preview={count:number;day:string;alreadySent:boolean;allowed:boolean;reason:string|null;previewToken:string|null};
 export function TpoRemindNonApplicants({jobId}:{jobId:string}){
  const [open,setOpen]=useState(false);const [preview,setPreview]=useState<Preview|null>(null);
@@ -31,9 +32,8 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
   finally{setBusy(false);}
  }
  return <div className="inline-flex flex-col gap-1">
-  <button type="button" disabled={busy} onClick={()=>void previewReminder()}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
-   {busy?"Checking…":"Remind students who haven't applied"}</button>
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>void previewReminder()}>
+   {busy?"Checking…":"Remind students who haven't applied"}</Button>
   {outcome?<span role="status" className="text-xs text-body">{outcome}</span>:null}
   {error&&!open?<span role="alert" className="text-xs text-error">{error}</span>:null}
   {open&&preview?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
