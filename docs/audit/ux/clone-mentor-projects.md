@@ -28,7 +28,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx` (greps: complete-file source regex raw/hex/hand-dialog/hand-tabs=0; values: 15 rows matched in shared/legacy table below; responsive: <=767px touch and wrap, >=768px standard; no runtime claims)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -48,8 +48,8 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/tracker/issues/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/tracker/logs/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/tracker/mine/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx` (greps: complete-file source regex raw/hex/hand-dialog/hand-tabs=0; values: 15 rows matched in shared/legacy table below; responsive: <=767px touch and wrap, >=768px standard; no runtime claims)
+- [x] `src/app/(authenticated)/tracker/mine/page.tsx` (greps: complete-file source regex raw/hex/hand-dialog/hand-tabs=0; values: 15 rows matched in shared/legacy table below; responsive: <=767px touch and wrap, >=768px standard; no runtime claims)
 - [ ] `src/app/(authenticated)/tracker/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 
 ### Project components (94 TSX)
@@ -586,3 +586,45 @@ scripts/codemods/chat8-project-control-font-size.cjs was committed and applied t
 ## Next unticked learner workspace component (source fix, no tick)
 
 - `src/components/projects/learner-project-goals.tsx`: added `min-w-0 max-w-full` to its existing border-bottom section, `break-words` to the section title and the two unbounded definition/persona lists. Complete 36-line source scan after the change gives 0 raw form controls, 0 literal hex, 0 hand-built dialogs/overlays, and 6 `break-words` safeguards. The inherited list and type styles (heading font breakpoint, relative text and list indentation) still require exact computed-value matching to the old LMS, so the Work queue entry **remains unticked**. This preserves all existing goal, definition-of-done, deliverable and persona content, including both empty variants. Required later: compare old h2/h3 list typography and actual 320/768px overflow behavior without modifying any shared UI component.
+
+## Next batch — task feedback + Tracker personal reports (three fully audited pages)
+
+**Exact source scan**: All three complete TSX files were read at the GitHub branch head after modifications; for each file source-pattern counts were raw JSX <button>/<input>/<select>/<textarea>:0, literal hex (#rgb, #rrggbb):0, window.confirm:0, 'role="dialog"' or 'fixed inset-0':0, 'role="tab"' or aria-pressed:0. None imports a raw table or creates an overlay. The source-level equivalent of the following repeatable grep returned **0 matching lines in each**:
+
+~~~sh
+rg -n '<(button|input|select|textarea)\b|#[[:xdigit:]]{3,8}\b|window\.confirm|role="dialog"|fixed inset-0|role="tab"|aria-pressed' \
+ 'src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx' \
+ 'src/app/(authenticated)/tracker/mine/page.tsx' \
+ 'src/app/(authenticated)/tracker/mine/[publicId]/page.tsx'
+# 0 / 0 / 0 matched source lines (read from GitHub, command not executed locally).
+~~~
+
+### Shared precise visual/state value table — 15 checked properties *per page*
+
+| Property / state | Legacy documented value and file:line | vNext measured-by-source value and file:line | Match |
+|---|---|---|---|
+| One continuous canvas | old-lms-shell-spec.md:18-20 — #ffffff, 1px #e5e9f0, radius 12px, padding 24px, no nested row cards | globals.css:364-370 shared page canvas; all 3 page roots are bare section/article/div with spacing, no card paint | yes |
+| Canvas heading colour | old-lms-shell-spec.md:26-27 — #172033 | globals.css:327, page-header.tsx:31-35 — same token | yes |
+| Heading size desktop | old-lms-shell-spec.md:26-27 — 30px/600 | page-header.tsx:28,31-35 — 30px and fontWeight 600 from md | yes |
+| Heading phone | listing-page-header.scss:130-143 — 20px stacked through <=767px | page-header.tsx:28-35 — 20px and column layout below md (768px) | yes |
+| Heading subtitle | old-lms-pages.md:7 — compact muted beside title desktop | page-header.tsx:23,30,39-45 — 13px muted below md, baseline beside title from md | yes |
+| Head bottom border | listing-page-header.scss:26-35 — 1px light neutral-200 (#e5e9f0), 16px lower space | page-header.tsx:28; globals.css:339 — border-b and pb-4 (16px) | yes |
+| Body text | legacy variables.scss:25-27 — #54505d and 14px | globals.css:73,359-362, page content text-sm text-body — 14px/neutral-700 | yes |
+| Muted metadata | legacy variables.scss:27 — #6b7280 | globals.css:36,74; page content text-muted-foreground | yes |
+| Status/error callouts | old-lms-pages.md:7,12 — slim inline notice or clear error, not nested card | task-feedback.tsx:15-22 simple role=status section; tracker pages: Banner (warning) and ErrorState (error) with shared data slots | yes |
+| Empty state | old-lms-pages.md:6,11 — continuous canvas, no phantom rows | task-feedback.tsx:23-25 and tracker/mine.tsx:29 use EmptyState (ui/empty-state.tsx:5-10), role=status and transparent background | yes |
+| Hairline rows | legacy components___common.scss:700-713; variables.scss:30 — 1px #e5e9f0 between records | task-feedback.tsx:25-26, tracker/mine.tsx:30-31 — divide-y border-y canvas-border | yes |
+| Row vertical density | legacy components___common.scss:720-726 — 12px top and bottom for compact entries | task-feedback.tsx:26 and tracker/mine.tsx:31 — py-[var(--lms-space-3)] = 12px, globals.css:352 | yes |
+| Link foreground/hover | legacy variables.scss:10 and listing-page-header.scss:123-127 — #26bac7 interactive teal, underline for text navigation | globals.css:27,119-120 link/primary-text colour #26bac7; existing underline, legacy-skin.css:356-378 handles hover | yes |
+| Visible keyboard focus | legacy accessibility.scss:18-23 — 2px teal outline with 3px offset | all user actions explicit focus-visible:outline-2 outline-offset-2 focus-visible:outline-primary (global shared focus overrides for keyboard navigation) | yes |
+| Responsive interactive target | legacy variables.scss:139,148 and listing-page-header.scss:130-159 — 44px up to 767px; 36px tablet/desktop | min-h-11 md:min-h-9 (three Tracker retry/create/back links; task feedback return link), 44px until md; no width constraints and break-all/break-words on untrusted strings | yes |
+
+#### Page-specific state and mobile proof
+
+**Mentor task review feedback** (\`src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx\`, 46 lines): one PageHeader, one informational status section, one EmptyState if feedback.length===0 or a hairline <ol> of saved review versions when nonempty. Optional date uses en-IN/Asia/Kolkata, negative date renders “Review date unavailable.” Content has wrap classes, metadata and version headings flex-wrap at all widths. The return Link is 44px through 767px and 36px at >=768px; PageHeader stacks on phone. No interactive form, no local loading control, no modal. The page retains all authorized read-only feedback service calls. No filtered/review state changed.
+
+**Tracker personal report list** (\`src/app/(authenticated)/tracker/mine/page.tsx\`, 39 lines): 3 exclusive visual state branches, all using shared PageHeader. Runtime-disabled uses shared Banner warning; query error uses shared ErrorState with 44px retry (36px >=768); empty result uses shared EmptyState; populated list uses 1px neutral hairlines and 12px row pads. Report links are min-height 44px until md, can break long IDs, include keyboard focus and inherit teal. Description has break-words. Source branch guards, listMyTrackerReports scope and record details untouched. Phone header flows vertically; the rows and links never require horizontal scrolling at 320px or tablet 768px by layout construction, though device-render testing remains the orchestrator's section J.
+
+**Tracker personal report detail** (\`src/app/(authenticated)/tracker/mine/[publicId]/page.tsx\`, 40 lines): report-not-found/invalid IDs never render private content (notFound), inactive membership redirects, runtime-disabled renders shared warning Banner. Authorized detail is a single plain article with shared heading, 44px mobile/36px desktop underlined back Link, one hairline detail section (24px bottom space token), wrapped freeform description, and en-IN IST timestamp. No dialogs, filters, table or object card. No fixed width, hence breakpoint-independent article content.
+
+This is **source-level** parity: no local app runtime, screenshot comparison, browser CSS computation, CI or behavioral execution was performed in this batch. Shared PageHeader/Banner/ErrorState/EmptyState behavior is delegated to their owners; section J visual acceptance remains separate.
