@@ -338,7 +338,7 @@ export function TenantDomainManager({
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Name
                         </dt>
-                        <dd className="mt-1 break-all rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
+                        <dd className="mt-1 break-all rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
                           {dnsName(domain.host)}
                         </dd>
                       </div>
@@ -346,7 +346,7 @@ export function TenantDomainManager({
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Value
                         </dt>
-                        <dd className="mt-1 break-all rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
+                        <dd className="mt-1 break-all rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
                           {dnsValue(
                             domain.verificationToken,
                           )}
