@@ -494,7 +494,7 @@ export default async function HrCalendarPage({
               aria-label={`${view} recruiter calendar`}
               className={styles.boardFrame}
             >
-              <div className="space-y-4 md:hidden">
+              <div className="space-y-4 min-[861px]:hidden">
                 {mobileDays.map((day) => (
                   <article key={day.day} className={styles.mobileDay}>
                     <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
@@ -518,7 +518,7 @@ export default async function HrCalendarPage({
                   </p>
                 ) : null}
               </div>
-              <CalendarGrid className={"hidden md:grid "+styles.board}>
+              <CalendarGrid className={"hidden min-[861px]:grid "+styles.board}>
                 {[
                   "Mon",
                   "Tue",
