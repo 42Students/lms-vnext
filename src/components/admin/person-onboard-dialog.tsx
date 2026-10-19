@@ -142,7 +142,7 @@ export function PersonOnboardDialog({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          {forcedRole?<div className="grid gap-3 md:col-span-2 sm:grid-cols-2">
+          {forcedRole?<div className="grid min-w-0 gap-[var(--lms-space-3)] md:col-span-2 md:grid-cols-2">
             <label className="grid gap-1 text-xs font-semibold text-body">First Name
               <Input value={firstName} maxLength={120} required onChange={e=>setFirstName(e.target.value)} placeholder="First name"/>
             </label>
