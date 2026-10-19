@@ -29,7 +29,7 @@ export default async function MembershipDetail({params}:{params:Promise<{members
   </div>
   {isSuperAdmin(context)&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
     <SuperAdminPlatformBlockAction userId={detail.userId} status={detail.platformStatus}/>:null}
-  <dl className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
+  <dl className="grid gap-4 border-b border-border pb-5 sm:grid-cols-2">
    {fields.map(field=><div key={field.label}>
     <dt className="text-xs font-semibold text-muted-foreground">{field.label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{field.value}</dd>
