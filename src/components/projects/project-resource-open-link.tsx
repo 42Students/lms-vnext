@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { Banner } from "@/components/ui/banner";
 import {useState} from "react";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 
@@ -10,12 +12,8 @@ export function ProjectResourceOpenLink({url,linkText="Open resource ↗"}:{
  const [notice,setNotice]=useState("");
  const invalidAddressMessage = "This resource has an invalid address.";
  const safe=url?safeProjectExternalHref(url):null;
- if(!url)return <p role="status" className="mt-3 text-sm text-muted-foreground">
-  This resource has no link or file attached yet.
- </p>;
- if(!safe)return <p role="alert" className="mt-3 text-sm text-error">
-  {invalidAddressMessage}
- </p>;
+ if(!url)return <Alert tone="info" className="mt-3">This resource has no link or file attached yet.</Alert>;
+ if(!safe)return <Alert tone="error" className="mt-3">{invalidAddressMessage}</Alert>;
  function open(){
   const popup=window.open(safe??"","_blank");
   if(popup)popup.opener=null;
@@ -27,9 +25,9 @@ export function ProjectResourceOpenLink({url,linkText="Open resource ↗"}:{
   <Button variant="ghost" type="button" onClick={open} className="text-link underline">
    {linkText}
   </Button>
-  {notice?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-2 text-body">
-   <p>{notice}</p><a href={safe} target="_blank" rel="noopener noreferrer"
-    className="mt-1 block break-all font-semibold text-link underline">{safe}</a>
-  </div>:null}
+  {notice?<Banner tone="warning" action={<a href={safe} target="_blank" rel="noopener noreferrer"
+    className="block break-all font-semibold text-link underline">Open safe link</a>}>
+   {notice}
+  </Banner>:null}
  </div>;
 }
