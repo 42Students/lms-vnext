@@ -92,13 +92,15 @@ export function MultiSelect({
             {selected.map(item => {
               const option = options.find(candidate => candidate.value === item);
               const canRemove = !disabled && !readOnly && !option?.disabled;
+              const displayLabel = typeof option?.label === "string" || typeof option?.label === "number"
+                ? String(option.label) : item;
               return (
                 <li key={item} className="inline-flex min-h-9 max-w-full items-center gap-1 rounded-[6px] border border-[var(--lms-neutral-200)] bg-[var(--lms-primary-subtle)] pl-2 text-[13px] leading-5 text-[var(--lms-body-text)] max-[767px]:min-h-11">
                   <span className="min-w-0 break-words">
                     {option?.label ?? item}
                   </span>
                   <Button type="button" variant="ghost" size="icon-sm"
-                    disabled={!canRemove} aria-label={`Remove ${item}`}
+                    disabled={!canRemove} aria-label={`Remove ${displayLabel}`}
                     onClick={() => remove(item)}
                     className="!h-9 !w-9 !min-w-9 !rounded-[6px] !p-0 max-[767px]:!h-11 max-[767px]:!w-11 max-[767px]:!min-w-11">
                     <span aria-hidden="true">×</span>
