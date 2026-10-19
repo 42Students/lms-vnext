@@ -1,4 +1,5 @@
 "use client";
+import { Input } from "@/components/ui/input";
 
 import {useEffect,useRef} from "react";
 import {useRouter} from "next/navigation";
@@ -21,7 +22,7 @@ export function TpoInboxSearch({value,placeholder}:{
   window.addEventListener("keydown",onKey);
   return ()=>{window.removeEventListener("keydown",onKey);if(timer.current)clearTimeout(timer.current);};
  },[]);
- return <input ref={searchInput} name="q" type="search" defaultValue={value} maxLength={120}
+ return <Input ref={searchInput} name="q" type="search" defaultValue={value} maxLength={120}
   placeholder={placeholder}
   className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
   onChange={event=>{
