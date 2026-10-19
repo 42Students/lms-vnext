@@ -80,7 +80,7 @@ export async function AppShell({
       <PageTitle superAdmin={superAdmin} />
       <div className="min-h-dvh bg-background text-foreground">
         <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-[var(--lms-link-text)] focus:outline-2 focus:outline-[var(--lms-teal-deep)]">Skip to content</a>
-      <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar fixed inset-y-0 left-0 z-20 hidden flex-col lg:flex">
+      <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar fixed inset-y-0 left-0 z-20 hidden flex-col md:flex">
         <div className="flex h-20 shrink-0 items-center justify-center border-b border-[#f1f4f9] px-2">
           <Link href="/dashboard" aria-label="42Students LMS home"
             className="inline-flex h-11 w-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7]">
