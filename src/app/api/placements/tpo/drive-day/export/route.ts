@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoLiveDriveDaySummary} from "@/modules/placements/tpo-live-drive-day-service";
@@ -17,7 +18,7 @@ export async function GET(request:Request){
   const rows=sortTpoDriveDayRows(filterTpoDriveDayIssues(filterTpoLiveRoundSearch(snapshot.rows,q),issue),sort);
   return new Response("\uFEFF"+serializeTpoLiveDriveDayCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-drive-day-live-snapshot.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-drive-day-live-snapshot", "csv") + '"',
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Scope":"authorized-capped-live-round-snapshot",
