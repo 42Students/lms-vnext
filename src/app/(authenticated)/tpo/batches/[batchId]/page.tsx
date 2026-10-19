@@ -1,5 +1,4 @@
 import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
-import batchStyles from "@/components/tpo/legacy-batch-eligibility.module.css";
 import Link from "next/link";
 import {tpoBatchReturnHref} from "@/modules/placements/tpo-batch-return-model";
 import { redirect } from "next/navigation";
@@ -37,7 +36,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
  return <div className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
  <Link href={backHref} className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Placement eligibility</Link>
- {undoable?<details className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+ {undoable?<details className="border-b border-border py-3">
   <summary className="min-h-11 cursor-pointer font-semibold text-link"
    title={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}>
    Undo last decision
@@ -46,14 +45,14 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
  </details>:null}
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
- {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="rounded border border-border bg-surface p-3 text-sm">
+ {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
   Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
    className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Do it</Link>
   </p>:ready&&!lifecycle?.invitedAt&&invitePreview.invitable>0?<p data-testid="batch.suggest"
-   className="rounded border border-border bg-surface p-3 text-sm">
+   className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
    Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
     className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
-  </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="rounded border border-border bg-surface p-3 text-sm">
+  </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
    Suggested: remind them to register <Link href="#batch-reminder" className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
   </p>:null}
  {own?<Link href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}
@@ -94,19 +93,19 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm text-muted-foreground">{summary.complete?
    "Inherited learner, class and batch decisions for the active roster.":
    "Partial snapshot: only the first "+eligibility.limit+" learners were assessed. Do not treat these counts as batch totals."}</p>
-  <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+  <dl className="grid grid-cols-2 gap-2 md:grid-cols-4">
    {[
     ["Eligible",summary.eligible],["Ineligible",summary.ineligible],
     ["Not decided",summary.undecided],["Needs review",summary.needsReview],
-   ].map(([label,value])=><div key={label} className="min-w-0 border-l-2 border-border px-3 py-2 text-sm">
+   ].map(([label,value])=><div key={label} className="min-w-0 border-l-2 border-border px-3 py-2 text-sm [overflow-wrap:anywhere]">
     <dt>{label}</dt><dd className="font-semibold tabular-nums">{value}</dd>
    </div>)}
   </dl>
   {summary.complete&&summary.assessed>0?
-   <StackedMetricBar className={batchStyles.bar} maximum={summary.assessed}
+   <StackedMetricBar maximum={summary.assessed}
     label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+summary.undecided+" not decided, "+summary.needsReview+" need review"}
     segments={[{label:"Eligible",value:summary.eligible,tone:"success"},
-      {label:"Ineligible",value:summary.ineligible,tone:"error"},
+      {label:"Ineligible",value:summary.ineligible,tone:"warning"},
       {label:"Not decided",value:summary.undecided,tone:"primary"}]} />:null}
   <p className="text-sm">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
@@ -132,6 +131,6 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  </section>
 
 
- <p className="rounded border border-border p-4 text-sm">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
+ <p className="text-sm text-muted-foreground">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
  </div>;
 }
