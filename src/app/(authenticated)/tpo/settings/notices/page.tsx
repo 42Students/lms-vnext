@@ -25,7 +25,7 @@ export default async function TpoStudentNoticesSettings(){
   hasMore:announcements.status==="READY"&&announcements.hasMore});
  return <div className="min-w-0 space-y-5">
   <TpoSettingsNav active="notices"/>
-  <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)] sm:text-[30px]">Student Notices &amp; Preparation</h1>
+  <h1 className="m-0 text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Student Notices &amp; Preparation</h1>
   <p className="text-sm text-body">Use registered placement announcements and preparation settings. This page does not enable email/SMS delivery, bulk learner targeting or unregistered configuration switches.</p>
   <section className="space-y-3 border-t border-border pt-5">
    <h2 className="font-semibold">College placement notices</h2>
@@ -39,7 +39,7 @@ export default async function TpoStudentNoticesSettings(){
    <Link href={view.prepHref} className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Configure available preparation courses</Link>
   </section>
   {communication.ready?<TpoSmsCapEditor key={ctx.membership?.collegeId??"unscoped"} initial={communication.smsMonthlyCap} version={communication.version}/>:
-   <p role="status" className="rounded-lg border border-border p-4 text-sm">Communication settings are not available in this database.</p>}
+   <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border p-4 text-sm">Communication settings are not available in this database.</p>}
   {communication.ready?<TpoOptionalEmailsEditor key={ctx.membership?.collegeId??"unscoped"} initial={{
     notifyDriveOpenEmail:communication.notifyDriveOpenEmail,
     notifyResultApplied:communication.notifyResultApplied,
