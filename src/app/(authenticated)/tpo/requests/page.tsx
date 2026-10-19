@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {TpoGeneralRequestsPanel} from "@/components/placements/tpo-general-requests-panel";
 import {placementTableExists} from "@/modules/placements/staged-tables";
@@ -85,22 +86,22 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     <form method="get" action="/tpo/requests" className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
       <input type="hidden" name="status" value={data.query.status}/>
       <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" name="urgentOnly" value="true" defaultChecked={data.query.urgentOnly===true}/> Urgent only</label>
-      <label className="text-sm">Request kind<select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</select></label>
-      <label className="text-sm">Drive<select name="jobId" defaultValue={data.query.jobId??""} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+      <label className="text-sm">Request kind<Select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</Select></label>
+      <label className="text-sm">Drive<Select name="jobId" defaultValue={data.query.jobId??""} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
        <option value="">All drives</option>
        {data.query.jobId&&!jobChoices.some(row=>row.job.id===data.query.jobId)?<option value={data.query.jobId}>Previously selected drive</option>:null}
        {jobChoices.map(row=><option value={row.job.id} key={row.job.id}>{row.company.name} · {row.job.title}</option>)}
-      </select></label>
+      </Select></label>
       <label className="min-w-0 flex-1 text-sm">Search student number, student, job or company
         <input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
       </label>
       <label className="text-sm">Page size
-        <select name="pageSize" defaultValue={String(data.query.pageSize)} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+        <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
           <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="500">500</option>
-        </select>
+        </Select>
       </label>
-      <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></select></label>
-      <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></select></label>
+      <label className="text-sm">Age<Select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></Select></label>
+      <label className="text-sm">Order<Select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></Select></label>
       <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Apply</button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Clear search, age and drive filters</Link>
     </form>
