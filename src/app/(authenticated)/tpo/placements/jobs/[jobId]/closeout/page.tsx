@@ -33,7 +33,7 @@ export default async function TpoDriveCloseoutPage({
     <Link className="text-sm font-semibold text-[var(--lms-teal-deep)]"
       href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}>← Back to drive</Link>
     <header>
-      <h1 className="text-[30px] font-semibold text-[#172033]">{data.job.title} · Close-out summary</h1>
+      <h1 className="font-semibold text-[30px] text-[#172033]">{data.job.title} · Close-out summary</h1>
       <p className="mt-2 text-sm text-body">
         Current persisted facts for a {data.job.status.toLowerCase()} drive.
         These numbers are not a finalized, immutable historical snapshot.
