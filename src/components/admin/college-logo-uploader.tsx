@@ -69,16 +69,16 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  return <section aria-label="College logo upload" className="space-y-3 border-t border-border pt-4">
   <h3 className="font-semibold">College logo</h3>
   <p className="text-sm text-body">Upload a square logo. Choose a crop area; the saved image is a 200-pixel-or-larger PNG. Original files are not made public.</p>
-  {(savedUrl||currentUrl)?<div className="w-fit rounded-[var(--lms-control-radius)] border border-border p-3">
+  {(savedUrl||currentUrl)?<div className="w-fit rounded-[var(--lms-control-radius,9px)] border border-border p-3">
    <img src={savedUrl||currentUrl!} alt="Current college logo" className="h-24 w-24 object-contain"/>
   </div>:null}
   {canEdit?<><label className="block text-sm font-medium">Select logo to crop
     <input type="file" accept="image/png,image/jpeg,image/webp" disabled={busy}
      onChange={e=>select(e.target.files?.[0]??null)}
-     className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
+     className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-2"/>
    </label>
    {file&&preview?<div className="space-y-3">
-    <div className="relative h-52 w-52 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
+    <div className="relative h-52 w-52 overflow-hidden rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle">
       <img src={preview} alt="Selected logo crop preview" className="h-full w-full object-cover"
        style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
     </div>

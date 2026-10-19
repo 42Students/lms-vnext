@@ -33,9 +33,9 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
  return <section aria-label="At a glance" className="space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
    <h2 className="font-semibold">At a glance</h2>
-   <button type="button" disabled={refreshing} onClick={()=>void refresh()}
-     className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
-     {refreshing?"Refreshing…":"Retry"}</button>
+   <Button type="button" variant="secondary" disabled={refreshing} onClick={()=>void refresh()}
+     className="min-h-11 sm:min-h-9">
+     {refreshing?"Refreshing…":"Retry"}</Button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!counts&&refreshing?<div role="status" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

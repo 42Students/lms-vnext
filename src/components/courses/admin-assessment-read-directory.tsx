@@ -1,4 +1,7 @@
 import Link from "next/link";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -27,31 +30,31 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} />
     <form action={base} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment title
-        <input name="q" type="search" maxLength={100} defaultValue={data.query.q}
-          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
+          className="min-h-11 sm:min-h-9" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+        <Select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9">
           <option value="ALL">All</option><option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
           {!assignment ? <option value="CLOSED">Closed</option> : null}
           <option value="ARCHIVED">Archived</option>
-        </select>
+        </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course code
-        <input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+        <Input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 sm:min-h-9"/>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Audience
-        <select name="scope" defaultValue={data.query.scope} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+        <Select name="scope" defaultValue={data.query.scope} className="min-h-11 sm:min-h-9">
           <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
-        </select>
+        </Select>
       </label>
       {!assignment?<label className="grid gap-1 text-sm font-semibold text-body">Results
-        <select name="results" defaultValue={data.query.results} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+        <Select name="results" defaultValue={data.query.results} className="min-h-11 sm:min-h-9">
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
-        </select>
+        </Select>
       </label>:null}
-      <button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <Button type="submit" className="min-h-11 self-end sm:min-h-9">Filter</Button>
     </form>
     <p className="text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length ? <div className="divide-y divide-border border-y border-border">

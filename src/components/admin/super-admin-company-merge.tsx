@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
 type Company = { id: string; name: string };
 export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]}) {
@@ -30,21 +32,21 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
   }
   return <div className="mt-3 space-y-2">
     <label className="grid gap-1 text-xs font-semibold text-body">Keep company
-      <select className="min-h-10 rounded border border-border bg-surface px-2 text-foreground"
+      <Select className="min-h-9 w-full"
         value={keep} onChange={e=>setKeep(e.target.value)}>
         {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-xs font-semibold text-body">Merge duplicate
-      <select className="min-h-10 rounded border border-border bg-surface px-2 text-foreground"
+      <Select className="min-h-9 w-full"
         value={source} onChange={e=>setSource(e.target.value)}>
         {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
-      </select>
+      </Select>
     </label>
-    <button type="button" disabled={busy||keep===source} onClick={merge}
-      className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+    <Button type="button" variant="danger" disabled={busy||keep===source} onClick={merge}
+      className="min-h-9">
       {busy?"Merging…":"Review and merge"}
-    </button>
+    </Button>
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {result?<p role="status" className="text-sm text-body">{result}</p>:null}
   </div>;

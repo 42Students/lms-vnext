@@ -2,6 +2,8 @@
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
  companyId:string;name:string;domains:readonly string[];aliases:readonly string[];
@@ -30,24 +32,24 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
   await mutate(kind,"ADD",value);
  }
  return <section aria-label={"Domains and other names for "+name}
-  className="mt-3 space-y-3 rounded border border-border p-3 text-sm">
+  className="mt-3 space-y-3 border-b border-border pb-5 text-sm">
   {(["domains","aliases"] as const).map(kind=>{
    const entries=kind==="domains"?domains:aliases;
    return <div key={kind} className="space-y-2">
     <h3 className="font-semibold">{kind==="domains"?"Domains":"Other names"}</h3>
     <form className="flex flex-wrap gap-2" onSubmit={e=>void add(e,kind)}>
-     <input name="value" aria-label={kind==="domains"?"Company domain or email":"Company other name"}
+     <Input name="value" aria-label={kind==="domains"?"Company domain or email":"Company other name"}
       maxLength={kind==="domains"?253:160} required disabled={pending}
       placeholder={kind==="domains"?"company.com or name@company.com":"e.g. TCS"}
-      className="min-h-10 min-w-0 flex-1 rounded border border-border bg-surface p-2"/>
-     <button type="submit" disabled={pending}
-      className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Add</button>
+      className="min-w-0 flex-1"/>
+     <Button type="submit" disabled={pending}
+      className="min-h-9">Add</Button>
     </form>
     <ul className="space-y-1">{entries.map(value=><li key={value} className="flex items-center justify-between gap-2">
      <span className="break-all">{value}</span>
-     <button type="button" disabled={pending||(kind==="domains"&&domains.length<=1)}
+     <Button type="button" variant="secondary" disabled={pending||(kind==="domains"&&domains.length<=1)}
       onClick={()=>void mutate(kind,"REMOVE",value)}
-      className="min-h-10 rounded border border-border px-3 text-primary-text disabled:opacity-50">Remove</button>
+      className="min-h-9">Remove</Button>
     </li>)}</ul>
    </div>;
   })}

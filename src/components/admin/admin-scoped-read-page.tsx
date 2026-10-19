@@ -61,7 +61,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   ?[summaries[0].value,summaries[1].value,summaries[2].value]:null;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow={peopleFilters?"People":"Super Admin · Read-only"} title={title} description={description}/>
-  {peopleFilters&&!peopleSummary?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+  {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
   {peopleSummary?<section aria-label={title+" overview"} className="grid divide-y divide-border border-y border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">

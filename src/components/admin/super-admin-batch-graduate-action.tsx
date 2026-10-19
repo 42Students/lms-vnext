@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Button} from "@/components/ui/button";
 export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;name:string}){
  const router=useRouter();
  const [open,setOpen]=useState(false);
@@ -27,8 +28,8 @@ export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;n
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not graduate this batch. Try again.");}
  }
  return <div className="space-y-2">
-  <button type="button" disabled={pending} onClick={()=>{setError("");setOpen(true);}}
-   className="min-h-11 rounded-md border border-border bg-surface px-4 font-semibold text-primary-text focus-visible:ring-2 focus-visible:ring-primary">Mark graduated</button>
+  <Button type="button" variant="secondary" disabled={pending} onClick={()=>{setError("");setOpen(true);}}
+   className="min-h-11 sm:min-h-9">Mark graduated</Button>
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <ConfirmDialog open={open} onOpenChange={setOpen} title={"Mark "+name+" graduated?"}

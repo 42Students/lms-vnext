@@ -213,7 +213,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           ) : null}
 
           {section.note ? (
-            <p className="rounded-[var(--lms-control-radius)] bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
+            <p className="rounded-[var(--lms-control-radius,9px)] bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
               {section.note}
             </p>
           ) : null}

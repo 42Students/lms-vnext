@@ -38,7 +38,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
   finally{pendingRef.current=false;setBusy(false);}
  }
  return <section aria-label="Bulk student access" className="space-y-3 border-b border-border pb-5">
-  <div className="flex flex-wrap justify-between gap-3"><h2 className="text-xl font-semibold text-[var(--lms-heading)]">Bulk module access</h2>
+  <div className="flex flex-wrap justify-between gap-3"><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Bulk module access</h2>
    <p role="status" className="text-sm text-muted-foreground">{selected.length}/25 students selected</p></div>
   <p className="text-xs text-muted-foreground">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm">

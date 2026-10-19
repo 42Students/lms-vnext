@@ -355,7 +355,7 @@ export function PlacementOfferControls({
       ) : null}
 
       {candidates.length === 0 ? (
-        <p className="m-0 px-5 py-6 text-sm text-muted-foreground">
+        <p className="m-0 py-6 text-sm text-muted-foreground">
           No shortlisted candidates are available for offer review.
         </p>
       ) : (
@@ -375,7 +375,7 @@ export function PlacementOfferControls({
             return (
               <div
                 key={item.applicationId}
-                className="grid gap-4 px-5 py-5"
+                className="grid gap-4 py-5"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
@@ -431,7 +431,7 @@ export function PlacementOfferControls({
                 </div>
 
                 {item.offer ? (
-                  <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4 text-sm text-body">
+                  <div className="border-b border-border py-4 text-sm text-body">
                     <p className="m-0 font-semibold text-foreground">
                       {item.offer.kind === "LOI" ? "Letter of intent · " : ""}
                       {item.offer.roleTitle}
@@ -652,7 +652,7 @@ export function PlacementOfferControls({
                 ) : null}
 
                 {accepted && draft ? (
-                  <div className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-4 lg:grid-cols-4">
+                  <div className="grid gap-3 border-b border-border py-4 lg:grid-cols-4">
                     <label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Joining outcome

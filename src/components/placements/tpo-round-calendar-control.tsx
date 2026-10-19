@@ -119,8 +119,8 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
           className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
       </label>
       <label className="block text-sm font-semibold text-foreground">Cancellation reason (for Cancel only)
-        <Textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000}
-          className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
+        <textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000}
+          className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9" />
       </label>
       <div className="flex flex-wrap gap-3">
         <Button variant="primary" disabled={pending} type="button" onClick={() => void submit("SCHEDULE")}

@@ -350,7 +350,7 @@ export default async function HrCalendarPage({
         <>
           <section
             aria-label="Recruiter calendar summary"
-            className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+            className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-2 xl:grid-cols-5"
           >
             {[
               [
@@ -376,7 +376,7 @@ export default async function HrCalendarPage({
             ].map(([label, value]) => (
               <div
                 key={String(label)}
-                className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4"
+                className="border-b border-border p-4 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
               >
                 <p className="text-xs font-semibold text-muted-foreground">
                   {label}
@@ -545,7 +545,7 @@ export default async function HrCalendarPage({
           {eventCount === 0 ? (
             <section
               role="status"
-              className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-8 text-center"
+              className="border-b border-border py-8 text-center"
             >
               <h2 className="text-lg font-semibold text-foreground">
                 {view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
