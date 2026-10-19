@@ -19,7 +19,8 @@ export function topbarConfigForPath(pathname: string): TopbarConfig {
     searchHref: "/admin/people/directory",
     newHref: pathname.startsWith("/admin/placements") ? "/admin/placements/new" :
       pathname.startsWith("/admin/projects") ? "/admin/projects/workspaces/new" :
-      pathname.startsWith("/admin/tenants") ? "/admin/tenants/create" : null,
+      pathname.startsWith("/admin/tenants") ? "/admin/tenants/create" :
+      "/admin/tenants/create",
     messagesHref: null, notificationsHref: "/notifications",
   };
   if (pathname === "/college" || pathname.startsWith("/college/")) return {
@@ -65,10 +66,12 @@ export function topbarCommands(
   navigation: readonly ShellNavItem[],
 ): { label: string; href: string }[] {
   const portal = topbarConfigForPath(pathname).portal;
-  const prefix = portal === "other" ? "/dashboard" : "/" + portal + "/";
+  const prefixes = portal === "hr" ? ["/hr/", "/recruiter/"] :
+    portal === "teacher" ? ["/teacher/", "/teach/"] :
+    portal === "other" ? ["/dashboard"] : ["/" + portal + "/"];
   const seen = new Set<string>();
   return navigation.filter(item => (
-    (item.href === "/" + portal || item.href.startsWith(prefix)) &&
+    (item.href === "/" + portal || prefixes.some(prefix => item.href.startsWith(prefix))) &&
     !seen.has(item.href) && Boolean(seen.add(item.href))
   )).map(({ label, href }) => ({ label, href }));
 }
