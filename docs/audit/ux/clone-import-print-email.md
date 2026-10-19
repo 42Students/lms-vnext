@@ -644,3 +644,156 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 | Regression | No content or route behavior rewrite permitted | Assessment query, CSV href and actions preserved; shared Button still owns click behavior | Source read verified; no tests or CI run |
 
 **Scoped grep equivalent on complete file:** native lowercase button/input/select/textarea/table = `0`; CSS hex literal = `0`; shared Button open/close = `1/1`. Reproduce without running app: `grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' src/components/courses/college-assessment-aggregate.tsx` (expected **0** matching lines in this file). Phone/tablet proof is strictly a breakpoint/class inspection: `min-h-11` at 0–767px and `md:min-h-9` at 768px and above. Side-by-side browser screenshots and printer preview are **not performed**. G4/G5 remain unchecked.
+
+## G4/G5 report export and admin directory nine-file pass — chat-6
+
+This pass uses the **old LMS SCSS numeric source**, not an inferred screenshot. All nine vNext TSX sources were fetched from the committed branch after edits. Never tick G4 or G5 for these limited source checks: the strict rule requires every old-LMS state, whole-repository evidence and actual comparative phone/print rendering, which are still unavailable. No application, TypeScript, lint, test, CI or actual browser print run.
+
+### File completion queue (source-level only)
+- [x] `src/components/courses/faculty-course-roster.tsx` — Roster CSV export, per-learner paginated DataTable, phone/email links, avatar preview and print-only initials; **remains unverified for strict parity:** Printed roster retains only the current page of 25; no complete multi-page historical print baseline.
+- [x] `src/components/admin/department-directory.tsx` — Department CSV link, live filter, name-sort header, result count, paging and printed static header; **remains unverified for strict parity:** Printed list uses the current filtered page, not necessarily the whole authorized directory.
+- [x] `src/components/admin/admin-program-directory.tsx` — Program create form, CSV export, filtering, pagination, disabled/loading/empty; **remains unverified for strict parity:** Original program form states and print pagination metrics not supplied.
+- [x] `src/components/admin/super-admin-interview-operations.tsx` — Super Admin interview CSV export, filtered date/sort, per-row ICS and conflict table; **remains unverified for strict parity:** ICS/content-disposition exact historical template and print page-breaks unavailable.
+- [x] `src/components/admin/college-at-glance-panel.tsx` — College metric refresh and four tiles; loading and retry states; **remains unverified for strict parity:** Dashboard PDF/certificate/receipt print geometry unknown.
+- [x] `src/components/placements/tpo-round-apply-control.tsx` — TPO entire-round consequence preview, CSV report, confirmation and results copy; **remains unverified for strict parity:** No exact historical outcome-stepper or email notification template, runtime unavailable.
+- [x] `src/components/placements/college-hiring-funnel.tsx` — College hiring funnel CSV link, department/program/batch/date filters, charts, company DataTable; **remains unverified for strict parity:** Legacy funnel metric layout chart axes, PDF and print chart output unavailable.
+- [x] `src/components/admin/people-pagination.tsx` — People directory paginator and count; paper controls excluded; **remains unverified for strict parity:** Historical people-directory print page sequencing unverified.
+- [x] `src/components/admin/academic-directory-refresh.tsx` — Academic directory Refresh and busy state; **remains unverified for strict parity:** Historical disabled spinner timing and actual computed focus unverified.
+- [ ] **Next file:** `src/components/placements/tpo-bulk-round-result-recorder.tsx` — finish TPO results staging/export review row states and print controls.
+
+### File:line value and state matrix
+
+Reference: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` specifies mobile max-width **767px** with a 44px minimum; `docs/design/ui-clone-checklist.md:46-47` records the old button **36px**, **9px radius**, **14px/650**. `docs/design/legacy-styles/components___accessibility.scss:18-21` specifies a teal **2px outline + 3px offset**. `src/app/globals.css:29,334-337` resolves `--lms-primary-text` and 36px/9px control tokens; shared `Button` owns loading/hover/disabled and stays unchanged. Legacy report print/PDF/email reference files are not present.
+
+#### `src/components/courses/faculty-course-roster.tsx`
+
+| Property/state | Old LMS file:line and exact value | vNext file:line and value | Verification |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: 44px minimum at ≤767px | `src/components/courses/faculty-course-roster.tsx:161, 168, 214, 221, 226, 240 (+1)`: `min-h-11` in 7 source instance(s) | Source token only; no phone device |
+| Tablet/desktop minimum | `ui-clone-checklist.md:46-47`: 36px, 9px radius, 14px/650 | `src/components/courses/faculty-course-roster.tsx:161, 168, 214, 221, 226, 240 (+1)`: `md:min-h-9` in 7 source instance(s), shared radius | Source token only; no computed DOM |
+| Focus | `components___accessibility.scss:18-21`: 2px solid teal, 3px offset | `src/components/courses/faculty-course-roster.tsx:n/a`: explicit anchor offset-3 where present; others inherit shared Button | Explicit link source matches; inherited shared offset mismatch/unmeasured remains OPEN |
+| Result/empty/loading | `old-lms-pages.md:9`: compact table, status, thin hairlines | `src/components/courses/faculty-course-roster.tsx:193`: shared DataTable (when used); status `:n/a`, alert `:n/a` | Existing empty/disabled logic preserved; browser not run |
+| Print output | Legacy authenticated report print template missing | `src/components/courses/faculty-course-roster.tsx:161, 165, 203, 235`: 4 `print:hidden` source line(s); print expansion `:161, 165, 203, 206, 235` | vNext paper rules only; historical match unavailable |
+| Behavior | No complete historical wizard/result fixture | Roster CSV export, per-learner paginated DataTable, phone/email links, avatar preview and print-only initials. Printed roster retains only the current page of 25; no complete multi-page historical print baseline | Source reviewed, no runtime validation |
+
+#### `src/components/admin/department-directory.tsx`
+
+| Property/state | Old LMS file:line and exact value | vNext file:line and value | Verification |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: 44px minimum at ≤767px | `src/components/admin/department-directory.tsx:79, 91, 100, 126`: `min-h-11` in 4 source instance(s) | Source token only; no phone device |
+| Tablet/desktop minimum | `ui-clone-checklist.md:46-47`: 36px, 9px radius, 14px/650 | `src/components/admin/department-directory.tsx:79, 91, 100, 126`: `md:min-h-9` in 4 source instance(s), shared radius | Source token only; no computed DOM |
+| Focus | `components___accessibility.scss:18-21`: 2px solid teal, 3px offset | `src/components/admin/department-directory.tsx:100`: explicit anchor offset-3 where present; others inherit shared Button | Explicit link source matches; inherited shared offset mismatch/unmeasured remains OPEN |
+| Result/empty/loading | `old-lms-pages.md:9`: compact table, status, thin hairlines | `src/components/admin/department-directory.tsx:121`: shared DataTable (when used); status `:118, 141`, alert `:n/a` | Existing empty/disabled logic preserved; browser not run |
+| Print output | Legacy authenticated report print template missing | `src/components/admin/department-directory.tsx:70, 126, 147`: 3 `print:hidden` source line(s); print expansion `:70, 124, 126, 147` | vNext paper rules only; historical match unavailable |
+| Behavior | No complete historical wizard/result fixture | Department CSV link, live filter, name-sort header, result count, paging and printed static header. Printed list uses the current filtered page, not necessarily the whole authorized directory | Source reviewed, no runtime validation |
+
+#### `src/components/admin/admin-program-directory.tsx`
+
+| Property/state | Old LMS file:line and exact value | vNext file:line and value | Verification |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: 44px minimum at ≤767px | `src/components/admin/admin-program-directory.tsx:151, 163, 169, 174, 180, 189 (+4)`: `min-h-11` in 10 source instance(s) | Source token only; no phone device |
+| Tablet/desktop minimum | `ui-clone-checklist.md:46-47`: 36px, 9px radius, 14px/650 | `src/components/admin/admin-program-directory.tsx:151, 163, 169, 174, 180, 189 (+4)`: `md:min-h-9` in 10 source instance(s), shared radius | Source token only; no computed DOM |
+| Focus | `components___accessibility.scss:18-21`: 2px solid teal, 3px offset | `src/components/admin/admin-program-directory.tsx:201`: explicit anchor offset-3 where present; others inherit shared Button | Explicit link source matches; inherited shared offset mismatch/unmeasured remains OPEN |
+| Result/empty/loading | `old-lms-pages.md:9`: compact table, status, thin hairlines | `src/components/admin/admin-program-directory.tsx:210`: shared DataTable (when used); status `:143, 207`, alert `:n/a` | Existing empty/disabled logic preserved; browser not run |
+| Print output | Legacy authenticated report print template missing | `src/components/admin/admin-program-directory.tsx:137, 186, 220`: 3 `print:hidden` source line(s); print expansion `:137, 186, 220` | vNext paper rules only; historical match unavailable |
+| Behavior | No complete historical wizard/result fixture | Program create form, CSV export, filtering, pagination, disabled/loading/empty. Original program form states and print pagination metrics not supplied | Source reviewed, no runtime validation |
+
+#### `src/components/admin/super-admin-interview-operations.tsx`
+
+| Property/state | Old LMS file:line and exact value | vNext file:line and value | Verification |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: 44px minimum at ≤767px | `src/components/admin/super-admin-interview-operations.tsx:27, 49, 53, 60, 81, 83`: `min-h-11` in 6 source instance(s) | Source token only; no phone device |
+| Tablet/desktop minimum | `ui-clone-checklist.md:46-47`: 36px, 9px radius, 14px/650 | `src/components/admin/super-admin-interview-operations.tsx:53, 60, 81, 83`: `md:min-h-9` in 4 source instance(s), shared radius | Source token only; no computed DOM |
+| Focus | `components___accessibility.scss:18-21`: 2px solid teal, 3px offset | `src/components/admin/super-admin-interview-operations.tsx:60`: explicit anchor offset-3 where present; others inherit shared Button | Explicit link source matches; inherited shared offset mismatch/unmeasured remains OPEN |
+| Result/empty/loading | `old-lms-pages.md:9`: compact table, status, thin hairlines | `src/components/admin/super-admin-interview-operations.tsx:64`: shared DataTable (when used); status `:57, 61`, alert `:62` | Existing empty/disabled logic preserved; browser not run |
+| Print output | Legacy authenticated report print template missing | `src/components/admin/super-admin-interview-operations.tsx:43, 60, 81, 83`: 4 `print:hidden` source line(s); print expansion `:43, 60, 81, 83` | vNext paper rules only; historical match unavailable |
+| Behavior | No complete historical wizard/result fixture | Super Admin interview CSV export, filtered date/sort, per-row ICS and conflict table. ICS/content-disposition exact historical template and print page-breaks unavailable | Source reviewed, no runtime validation |
+
+#### `src/components/admin/college-at-glance-panel.tsx`
+
+| Property/state | Old LMS file:line and exact value | vNext file:line and value | Verification |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: 44px minimum at ≤767px | `src/components/admin/college-at-glance-panel.tsx:39`: `min-h-11` in 1 source instance(s) | Source token only; no phone device |
+| Tablet/desktop minimum | `ui-clone-checklist.md:46-47`: 36px, 9px radius, 14px/650 | `src/components/admin/college-at-glance-panel.tsx:39`: `md:min-h-9` in 1 source instance(s), shared radius | Source token only; no computed DOM |
+| Focus | `components___accessibility.scss:18-21`: 2px solid teal, 3px offset | `src/components/admin/college-at-glance-panel.tsx:n/a`: explicit anchor offset-3 where present; others inherit shared Button | Explicit link source matches; inherited shared offset mismatch/unmeasured remains OPEN |
+| Result/empty/loading | `old-lms-pages.md:9`: compact table, status, thin hairlines | `src/components/admin/college-at-glance-panel.tsx:n/a`: shared DataTable (when used); status `:51`, alert `:n/a` | Existing empty/disabled logic preserved; browser not run |
+| Print output | Legacy authenticated report print template missing | `src/components/admin/college-at-glance-panel.tsx:39`: 1 `print:hidden` source line(s); print expansion `:39` | vNext paper rules only; historical match unavailable |
+| Behavior | No complete historical wizard/result fixture | College metric refresh and four tiles; loading and retry states. Dashboard PDF/certificate/receipt print geometry unknown | Source reviewed, no runtime validation |
+
+#### `src/components/placements/tpo-round-apply-control.tsx`
+
+| Property/state | Old LMS file:line and exact value | vNext file:line and value | Verification |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: 44px minimum at ≤767px | `src/components/placements/tpo-round-apply-control.tsx:47, 65, 73, 75, 84, 88`: `min-h-11` in 6 source instance(s) | Source token only; no phone device |
+| Tablet/desktop minimum | `ui-clone-checklist.md:46-47`: 36px, 9px radius, 14px/650 | `src/components/placements/tpo-round-apply-control.tsx:47, 65, 73, 75, 84, 88`: `md:min-h-9` in 6 source instance(s), shared radius | Source token only; no computed DOM |
+| Focus | `components___accessibility.scss:18-21`: 2px solid teal, 3px offset | `src/components/placements/tpo-round-apply-control.tsx:n/a`: explicit anchor offset-3 where present; others inherit shared Button | Explicit link source matches; inherited shared offset mismatch/unmeasured remains OPEN |
+| Result/empty/loading | `old-lms-pages.md:9`: compact table, status, thin hairlines | `src/components/placements/tpo-round-apply-control.tsx:n/a`: shared DataTable (when used); status `:79`, alert `:n/a` | Existing empty/disabled logic preserved; browser not run |
+| Print output | Legacy authenticated report print template missing | `src/components/placements/tpo-round-apply-control.tsx:47, 65, 71, 84, 88`: 5 `print:hidden` source line(s); print expansion `:47, 59, 65, 71, 81, 84 (+1)` | vNext paper rules only; historical match unavailable |
+| Behavior | No complete historical wizard/result fixture | TPO entire-round consequence preview, CSV report, confirmation and results copy. No exact historical outcome-stepper or email notification template, runtime unavailable | Source reviewed, no runtime validation |
+
+#### `src/components/placements/college-hiring-funnel.tsx`
+
+| Property/state | Old LMS file:line and exact value | vNext file:line and value | Verification |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: 44px minimum at ≤767px | `src/components/placements/college-hiring-funnel.tsx:31, 33, 40, 46, 52, 58 (+3)`: `min-h-11` in 9 source instance(s) | Source token only; no phone device |
+| Tablet/desktop minimum | `ui-clone-checklist.md:46-47`: 36px, 9px radius, 14px/650 | `src/components/placements/college-hiring-funnel.tsx:31, 33, 40, 46, 52, 58 (+3)`: `md:min-h-9` in 9 source instance(s), shared radius | Source token only; no computed DOM |
+| Focus | `components___accessibility.scss:18-21`: 2px solid teal, 3px offset | `src/components/placements/college-hiring-funnel.tsx:31, 33, 40, 46, 52, 58 (+2)`: explicit anchor offset-3 where present; others inherit shared Button | Explicit link source matches; inherited shared offset mismatch/unmeasured remains OPEN |
+| Result/empty/loading | `old-lms-pages.md:9`: compact table, status, thin hairlines | `src/components/placements/college-hiring-funnel.tsx:95`: shared DataTable (when used); status `:108`, alert `:n/a` | Existing empty/disabled logic preserved; browser not run |
+| Print output | Legacy authenticated report print template missing | `src/components/placements/college-hiring-funnel.tsx:30, 36`: 2 `print:hidden` source line(s); print expansion `:30, 36` | vNext paper rules only; historical match unavailable |
+| Behavior | No complete historical wizard/result fixture | College hiring funnel CSV link, department/program/batch/date filters, charts, company DataTable. Legacy funnel metric layout chart axes, PDF and print chart output unavailable | Source reviewed, no runtime validation |
+
+#### `src/components/admin/people-pagination.tsx`
+
+| Property/state | Old LMS file:line and exact value | vNext file:line and value | Verification |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: 44px minimum at ≤767px | `src/components/admin/people-pagination.tsx:n/a`: `min-h-11` in 0 source instance(s) | Source token only; no phone device |
+| Tablet/desktop minimum | `ui-clone-checklist.md:46-47`: 36px, 9px radius, 14px/650 | `src/components/admin/people-pagination.tsx:n/a`: `md:min-h-9` in 0 source instance(s), shared radius | Source token only; no computed DOM |
+| Focus | `components___accessibility.scss:18-21`: 2px solid teal, 3px offset | `src/components/admin/people-pagination.tsx:n/a`: explicit anchor offset-3 where present; others inherit shared Button | Explicit link source matches; inherited shared offset mismatch/unmeasured remains OPEN |
+| Result/empty/loading | `old-lms-pages.md:9`: compact table, status, thin hairlines | `src/components/admin/people-pagination.tsx:n/a`: shared DataTable (when used); status `:n/a`, alert `:n/a` | Existing empty/disabled logic preserved; browser not run |
+| Print output | Legacy authenticated report print template missing | `src/components/admin/people-pagination.tsx:19`: 1 `print:hidden` source line(s); print expansion `:19` | vNext paper rules only; historical match unavailable |
+| Behavior | No complete historical wizard/result fixture | People directory paginator and count; paper controls excluded. Historical people-directory print page sequencing unverified | Source reviewed, no runtime validation |
+
+#### `src/components/admin/academic-directory-refresh.tsx`
+
+| Property/state | Old LMS file:line and exact value | vNext file:line and value | Verification |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: 44px minimum at ≤767px | `src/components/admin/academic-directory-refresh.tsx:8`: `min-h-11` in 1 source instance(s) | Source token only; no phone device |
+| Tablet/desktop minimum | `ui-clone-checklist.md:46-47`: 36px, 9px radius, 14px/650 | `src/components/admin/academic-directory-refresh.tsx:8`: `md:min-h-9` in 1 source instance(s), shared radius | Source token only; no computed DOM |
+| Focus | `components___accessibility.scss:18-21`: 2px solid teal, 3px offset | `src/components/admin/academic-directory-refresh.tsx:n/a`: explicit anchor offset-3 where present; others inherit shared Button | Explicit link source matches; inherited shared offset mismatch/unmeasured remains OPEN |
+| Result/empty/loading | `old-lms-pages.md:9`: compact table, status, thin hairlines | `src/components/admin/academic-directory-refresh.tsx:n/a`: shared DataTable (when used); status `:n/a`, alert `:n/a` | Existing empty/disabled logic preserved; browser not run |
+| Print output | Legacy authenticated report print template missing | `src/components/admin/academic-directory-refresh.tsx:8`: 1 `print:hidden` source line(s); print expansion `:8` | vNext paper rules only; historical match unavailable |
+| Behavior | No complete historical wizard/result fixture | Academic directory Refresh and busy state. Historical disabled spinner timing and actual computed focus unverified | Source reviewed, no runtime validation |
+
+### Exact lexical grep proof from full fetched files
+
+| File | Native `button/input/select/textarea/table` | CSS hex | `<Button>` open/close | Print-hidden source lines |
+|---|---|---:|---:|---|
+| `src/components/courses/faculty-course-roster.tsx` | 0/0/0/0/0 | 0 | 4/4 | 4 |
+| `src/components/admin/department-directory.tsx` | 0/0/0/0/0 | 0 | 6/6 | 3 |
+| `src/components/admin/admin-program-directory.tsx` | 0/0/0/0/0 | 0 | 5/5 | 3 |
+| `src/components/admin/super-admin-interview-operations.tsx` | 0/0/0/0/0 | 0 | 1/1 | 4 |
+| `src/components/admin/college-at-glance-panel.tsx` | 0/0/0/0/0 | 0 | 1/1 | 1 |
+| `src/components/placements/tpo-round-apply-control.tsx` | 0/0/0/0/0 | 0 | 6/6 | 5 |
+| `src/components/placements/college-hiring-funnel.tsx` | 0/2/0/0/0 | 0 | 1/1 | 2 |
+| `src/components/admin/people-pagination.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/academic-directory-refresh.tsx` | 0/0/0/0/0 | 0 | 1/1 | 1 |
+
+**Scope caveat:** `college-hiring-funnel.tsx` retains two native `<input type="hidden">` values for the selected season and job in a GET form (not visual hand-rolled controls). Every other native control count in the nine files is 0. Source tag counts are lexical, not a TypeScript parse. In `faculty-course-roster.tsx`, CSV exports omit phone/email and the DataTable prints only the *current page*; neither behavior was changed by the styling pass.
+
+Reproduce on checkout (command **not executed**):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+  src/components/courses/faculty-course-roster.tsx \
+  src/components/admin/department-directory.tsx \
+  src/components/admin/admin-program-directory.tsx \
+  src/components/admin/super-admin-interview-operations.tsx \
+  src/components/admin/college-at-glance-panel.tsx \
+  src/components/placements/tpo-round-apply-control.tsx \
+  src/components/placements/college-hiring-funnel.tsx \
+  src/components/admin/people-pagination.tsx \
+  src/components/admin/academic-directory-refresh.tsx
+```
+
+**Responsive source proof:** all locally sized visible controls use `min-h-11` (44px) through 767px; where present, `md:min-h-9` lowers the minimum to 36px beginning 768px. Flex-wrapped filter strips remain multi-row on narrow screens; the roster's telephone/email links no longer shrink prematurely at 640px. `print:hidden` excludes controls; static report data remains, and the department sort header has a separate print-only label. Printed paginated rosters/results are not guaranteed to include every record. This is *not* a screenshot/device/actual print verification.
+
+**G4/G5 still [ ]**: old-LMS all-state value tables, global raw-control grep, print/PDF/certificate/offer-letter/receipt and provider-hosted email fixtures, browser screenshots and TypeScript proof are outstanding.
