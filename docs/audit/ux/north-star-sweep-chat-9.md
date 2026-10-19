@@ -393,3 +393,20 @@ compiler or browser visual test.
 - `PageCanvas` explicitly gives its 24px padding precedence over any caller-supplied inline padding; existing media-query resets cannot shrink the authenticated canvas.
 
 **Static source review:** re-read all newly modified TSX files and inspected `Checkbox`, `Input`, `Select`, `Button`, `Link` and `PageHeader` closing tag names. No incomplete `</Select>`, `</Button>`, `</Link>` or other truncated touched closing tags were detected. Visible raw controls in the previously scanned last-third Super Admin routes have been replaced with shared controls where suitable; hidden inputs and native crop sliders are intentionally exempt. **No runtime execution, build, lint, typecheck, screenshot tests or CI.** Browser visual parity still needs checking.
+
+
+## Chat-9 fifth pass — old-LMS internal-page anatomy (2026-10-19)
+
+**Branch synchronization:** merged `main` commit `3de148112368b7201378f721841a5d4348ec9f6d` into `chatgpt/chat-9-b` before this pass, preserving the seven outstanding lane edits. The branch was 0 commits behind after the merge. No force push and no push to `main`.
+
+**Shared components reused rather than duplicated:**
+- `PageHeader`: keeps 30px/600 title, single-line adjacent grey subtitle and right actions. Its optional `needsDoingItems` slot now renders genuine `NeedsDoingChips` links immediately below the title/action row inside one layout child; parent `space-y` rules cannot split the two pieces.
+- `NeedsDoingChips`: use the legacy `--lms-radius-pill` from `docs/design/legacy-styles/components___variables.scss`.
+- `Tabs`: Super Admin route-group navigation, Project template subviews and Projects workspace/submission display modes all reuse the same teal-underlined shared navigation component. Actual loaded counts are shown on workspace/submission and template section tabs; absent counts are not invented.
+- `ListToolbar`: displays server-grounded filtered total count; actual Projects workspace and submission CSV export controls are passed into its `exportAction` slot without changing export authorization or API behavior.
+- `Banner`: the existing degraded-read and out-of-scope warnings in Projects, readiness and Tenant Settings use the slim pale-yellow shared notice, preserving original text.
+- `DataTable`: already provides the legacy hairline header/row treatment on the same single white authenticated canvas, including Projects workspace table and unsubmitted submissions table; avoided duplicating or nesting page-level canvas wrappers.
+
+**Pages updated:** `/admin/projects`, Projects at-risk, submissions and readiness, Super Admin template detail/subview navigation, route-aware grouped tabs and `/admin/settings`. Existing individual page sections, filter controls, query parameters, counts, backend reads, status labels and permissions are unchanged.
+
+**Source-level verification:** re-fetched the affected TSX files and checked named `Tabs`, `Banner`, `ListToolbar`, `NeedsDoingChips`, `PageHeader` and their closings for truncated or mismatched tag spelling. No known broken closing tags found in the touched markup. As instructed, **no application code, lint, typecheck, tests, build or CI** was executed. Pixel parity remains unverified until the owner runs and visually compares the application.
