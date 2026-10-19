@@ -45,14 +45,14 @@ export default async function CampaignHistory({searchParams}:PageProps){
      placeholder="Filter by purpose" className="mt-1 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3"/>
    </label>
    <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Apply</Button>
-   <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-link underline">Clear</Link>
+   <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-link underline lms-inline-link">Clear</Link>
   </form>
   <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
    <Link href="/tpo/recruiters/campaigns/new"
     className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
     New email campaign
    </Link>
-   <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-link">Back to Engage</Link>
+   <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-link lms-inline-link">Back to Engage</Link>
    <Link href={"/api/placements/tpo/campaigns/history/export"+(first(params.purpose)?"?purpose="+encodeURIComponent(first(params.purpose)!):"")}
      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link">Export filtered history as CSV</Link>
   </nav>
@@ -65,7 +65,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     <ul className="grid gap-3 sm:grid-cols-2">
      {drafts.rows.map(item=><li key={item.campaign_id}
       className="border-b border-border py-4">
-      <Link className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-link underline"
+      <Link className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-link underline lms-inline-link"
        href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}>
        {item.title}
       </Link>
@@ -99,8 +99,8 @@ export default async function CampaignHistory({searchParams}:PageProps){
     </li>)}
   </ol>:<p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">No emails sent from Engage yet.</p>}
   <nav className="flex flex-wrap gap-3" aria-label="Campaign history pagination">
-    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">Previous</Link>:null}
-    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">Next</Link>:null}
+    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link">Previous</Link>:null}
+    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link">Next</Link>:null}
   </nav>
  </div>;
 }
