@@ -59,12 +59,12 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/recruiters/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/settings/auth/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/settings/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/students/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/settings/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
+- [ ] `src/app/(authenticated)/admin/students/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
+- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/tenants/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/verification/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/verification/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/admin/videos/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 
 ### College Projects (16 route pages)
@@ -73,7 +73,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/at-risk/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/audit/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/college/projects/create/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/college/projects/create/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/college/projects/page.tsx` — source-level patch applied; Missing banner state snapshots and scoped grep (still unticked)
 - [ ] `src/app/(authenticated)/college/projects/readiness/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/reassign-mentor/page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -82,7 +82,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/college/projects/templates/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/app/(authenticated)/college/projects/workspaces/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 
 ### Admin/college-owned Projects UI (30 components)
@@ -101,7 +101,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-admin-submission-review.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-admin-submissions-page.tsx` — source-level patch applied; Missing complete unsubmitted table scan (still unticked)
-- [ ] `src/components/projects/project-admin-workspace-list.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/project-admin-workspace-list.tsx` — reviewed source-level clone edit; missing full grep, computed values, phone/tablet and runtime proof
 - [ ] `src/components/projects/project-admin-workspace-page-export.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-template-catalogue-export.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-template-controls.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -243,3 +243,26 @@ The ten matches above are **only known changed occurrences** and are not claimed
 
 ### Exact continuation
 - [ ] `src/components/projects/project-admin-workspace-list.tsx`: review card-vs-list layout, responsive overflow, interactive archive control, status geometry and item-level empty states against legacy source, then continue through the remaining admin and college Projects helpers. Audit `src/components/projects/project-admin-submissions-page.tsx` for any remaining card-in-card metric summaries.
+
+
+## Replacement continuation — tenant fallback and Project details (2026-10-20 IST)
+
+Seven further distinct owner files changed and re-read. These replace hand-rolled scope/empty warnings with shared UX states, make project-card titles keyboard-actionable, remove a duplicated in-body settings link (the PageHeader action remains), and restore the missing `PageBackLink` import for Super Admin Students. **No queue item ticked.**
+
+| Edited file:line re-read from branch | Source-matched pattern | Missing before STRICT TICK |
+| --- | --- | --- |
+| `src/app/(authenticated)/college/projects/create/page.tsx:15` | `old-lms-pages.md:5-10` one canvas and shared error recovery | Full scoped greps, browser/computed-state proof, phone/tablet and JSX execution verification |
+| `src/app/(authenticated)/admin/verification/page.tsx:37` | `old-lms-pages.md:5-10` section-level empty-state treatment | Full scoped greps, browser/computed-state proof, phone/tablet and JSX execution verification |
+| `src/app/(authenticated)/admin/students/page.tsx:4` | `ui-clone-checklist.md:24` JSX/no-regression source correctness | Full scoped greps, browser/computed-state proof, phone/tablet and JSX execution verification |
+| `src/app/(authenticated)/admin/tenants/create/page.tsx:45,51` | `old-lms-pages.md:10` slim warning strips for unavailable scoped actions | Full scoped greps, browser/computed-state proof, phone/tablet and JSX execution verification |
+| `src/app/(authenticated)/admin/settings/page.tsx:88` | `old-lms-pages.md:6` primary links in PageHeader action row, not repeated in body | Full scoped greps, browser/computed-state proof, phone/tablet and JSX execution verification |
+| `src/components/projects/project-admin-workspace-list.tsx:120` | `old-lms-pages.md:10` clickable list item, focus-visible state | Full scoped greps, browser/computed-state proof, phone/tablet and JSX execution verification |
+| `src/app/(authenticated)/college/projects/workspaces/new/page.tsx:20` | `old-lms-pages.md:10` banner with inline recovery action | Full scoped greps, browser/computed-state proof, phone/tablet and JSX execution verification |
+
+### Codemod: feedback strips across repeated Projects editors
+- `scripts/codemods/chat10-project-feedback-banners.cjs` committed for **10 owned client components**. Recognizes only direct `error`/`message`/`notice`/`success` inline `role=alert/status` feedback whose content is the matching variable, and maps them to shared `Banner tone=error/success`. It preserves conditions, message text and the existing dialog/actions. The file list is fixed; scripts do not touch other lanes, `src/components/ui/*` or the global skin.
+- **Not run:** dry run `node scripts/codemods/chat10-project-feedback-banners.cjs`, then apply only after review with `node scripts/codemods/chat10-project-feedback-banners.cjs --write`. The orchestrator must inspect rewritten JSX and run TypeScript, source greps and mobile/desktop parity before ticking the 10 components. A changed file is not considered done until those checks pass.
+- The prior eyebrow codemods similarly remain unexecuted. No app, test, CI, CSS computed value or screenshot was executed in this lane.
+
+### Next exact file (after this commit)
+- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx` — check remaining custom no-college status, numbered setup pills and 375px/768px grid behaviour. Then continue `src/app/(authenticated)/admin/tenants/page.tsx` and other unticked Projects template views.
