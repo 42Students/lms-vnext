@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -39,30 +41,30 @@ export default async function CollegeCompaniesPage({
     <PageHeader eyebrow="Placements" title="Companies" description="Maintain each recruiting company once and reuse it across drives." />
     <CollegeCompanyCreate collegeId={collegeId}/>
     <a href={"/api/college/companies/export?"+exportParams.toString()} className="font-semibold text-link underline">Export CSV</a>
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
+    <form method="get" className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Company
-        <input name="q" type="search" maxLength={100} defaultValue={query.q}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm" />
+        <Input name="q" type="search" maxLength={100} defaultValue={query.q}
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm" />
       </label>
       <label className="grid gap-1 text-sm">Status
-        <Select name="status" defaultValue={query.status} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm">
+        <Select name="status" defaultValue={query.status} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm">
           <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Sort
-        <Select name="sort" defaultValue={query.sort} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm">
+        <Select name="sort" defaultValue={query.sort} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm">
           <option value="LAST_ACTIVE">Last active</option><option value="COMPANY">Company</option><option value="DRIVES">Drive count</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Rows
-        <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm">
+        <Select name="pageSize" defaultValue={query.pageSize} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm">
           {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>
       </label>
       <label className="flex items-center gap-2 text-sm">
         <input name="showDeleted" type="checkbox" value="1" defaultChecked={query.showDeleted==="1"}/>Show deleted
       </label>
-      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</Button>
     </form>
     <p role="status" className="text-sm text-body">Showing {data.items.length} of {data.total} companies {query.showDeleted==="1"?"(including deleted)":""}, searching name &amp; industry only.</p>
     <PlacementEmployerRelationships key={[query.q,query.page,query.pageSize,query.sort,query.showDeleted].join(":")}
