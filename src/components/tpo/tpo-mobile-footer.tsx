@@ -31,7 +31,7 @@ export function TpoMobileFooter(){
     className={"h-full min-h-14 w-full rounded-none px-1 py-2 text-xs font-semibold "+(moreOpen?"bg-primary-subtle text-primary-text":"text-body")}>More</Button>;
    return <Link key={link.label} href={link.href}
     aria-current={active?"page":undefined}
-    className={"flex min-h-14 items-center justify-center px-1 py-2 text-center text-xs font-semibold "+(active?"bg-primary-subtle text-primary-text":"text-body")}>
+    className={"flex min-h-14 items-center justify-center px-1 py-2 text-center text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"bg-primary-subtle text-primary-text":"text-body")}>
     {link.label}
    </Link>;
   })}
