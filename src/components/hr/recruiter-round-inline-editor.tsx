@@ -116,7 +116,7 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
        variant="secondary" className="border-error text-error">Remove</Button>:null}
       <Button type="button" disabled={pending} onClick={requestClose}
        variant="secondary">Cancel</Button>
-      <Button type="submit" disabled={pending}
+      <Button type="submit" loading={pending} disabled={pending}
        >
        {pending?"Saving…":active?"Save changes":"Add round"}</Button>
      </div>
