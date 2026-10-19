@@ -200,7 +200,7 @@ export function TpoCompanyMemoryWorkspace({
     <section className="space-y-5" aria-label={"Company Memory for " + company.name}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <Link className="text-sm text-link hover:underline" href="/tpo/recruiters?view=companies">
+          <Link className="text-sm text-link hover:underline lms-inline-link" href="/tpo/recruiters?view=companies">
             ← Companies
           </Link>
           <h1 className="mt-1 text-[30px] font-semibold leading-9 tracking-[-0.02em] text-[var(--lms-heading)]">{company.name}</h1>
@@ -298,7 +298,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.people.map(person => (
                   <div key={person.id} className="flex items-center justify-between gap-3 py-3">
                     <div>
-                      <Link className="font-medium text-link hover:underline"
+                      <Link className="font-medium text-link hover:underline lms-inline-link"
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
                       </Link>
@@ -332,7 +332,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
                   <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<currentTimeMs()?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
-                  <Link className="text-sm text-link underline"
+                  <Link className="text-sm text-link underline lms-inline-link"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}
               </ul>}
@@ -367,7 +367,7 @@ export function TpoCompanyMemoryWorkspace({
                   caption="Company drives" empty={<p>No matching drives.</p>}
                   columns={[
                     {key:"role",header:"Role",mobilePriority:"primary",cell:drive=>
-                      <Link className="inline-flex min-h-9 items-center font-semibold text-link hover:underline"
+                      <Link className="inline-flex min-h-9 items-center font-semibold text-link hover:underline lms-inline-link"
                         href={"/tpo/placements/jobs/" + encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>},
                     {key:"status",header:"Status",mobilePriority:"secondary",cell:drive=>statusLabel(drive.status)},
                     {key:"year",header:"Year",mobilePriority:"secondary",cell:drive=>new Intl.DateTimeFormat("en-IN",{year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(drive.createdAt))},
