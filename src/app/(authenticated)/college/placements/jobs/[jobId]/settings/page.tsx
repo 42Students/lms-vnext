@@ -34,7 +34,7 @@ export default async function CollegeDriveSettingsPage({
   ):[];
   return <div className="space-y-6">
     <PageHeader title="Settings" description={drive.title}
-      actions={<Link className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      actions={<Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         href={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"}>Overview</Link>}/>
     {job.status==="DRAFT"&&eligibilityPolicy?
       <section aria-label="Edit drive" className="min-w-0 space-y-3">

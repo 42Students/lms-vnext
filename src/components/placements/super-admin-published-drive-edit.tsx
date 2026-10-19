@@ -49,7 +49,7 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
    }
   });
  }
- const cls="w-full";
+ const cls="min-h-11 w-full min-[768px]:min-h-9";
  return <section className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold">Edit published drive</h2>
   <p className="text-xs text-body">Edits apply to future applicants. Existing applications and offer decisions remain unchanged.</p>
