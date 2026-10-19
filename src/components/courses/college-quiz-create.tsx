@@ -4,6 +4,11 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 
+import { DateInput } from "@/components/ui/date-input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -116,7 +121,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      <Input maxLength={255} required value={title} disabled={busy}
       onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold">Deadline (IST, required before publishing)
-     <Input type="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
+     <DateInput mode="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
       className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold">Maximum attempts
      <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
