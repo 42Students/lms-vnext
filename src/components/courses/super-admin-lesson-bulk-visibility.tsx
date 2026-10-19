@@ -36,7 +36,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
     <Checkbox checked={lessons.length>0&&selected.length===lessons.length}
       onChange={e=>setSelected(e.target.checked?lessons.map(l=>l.id):[])} disabled={pending}/> Select all on this page
   </label>
-  <div className="grid max-h-48 gap-2 overflow-y-auto sm:grid-cols-2">
+  <div className="grid max-h-48 gap-2 overflow-y-auto md:grid-cols-2">
    {lessons.map(lesson=><label key={lesson.id} className="flex min-h-10 items-center gap-3 border-b border-border px-3 py-2 text-sm">
     <Checkbox checked={selected.includes(lesson.id)} disabled={pending}
      onChange={e=>setSelected(list=>e.target.checked?[...list,lesson.id]:list.filter(id=>id!==lesson.id))}/>
