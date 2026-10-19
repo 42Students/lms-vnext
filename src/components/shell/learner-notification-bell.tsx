@@ -72,7 +72,8 @@ export function LearnerNotificationBell(){
  useEffect(()=>{
   if(!open||mobile)return;
   const escape=(event:KeyboardEvent)=>{
-   if(event.key!=="Escape")return;
+   if(event.defaultPrevented||event.key!=="Escape"||
+      !(event.target instanceof Node)||!root.current?.contains(event.target))return;
    event.preventDefault();
    setOpen(false);
    trigger.current?.focus();
@@ -138,7 +139,8 @@ export function LearnerNotificationBell(){
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-topbar-unread)] px-1 text-[10px] font-bold leading-none text-white">
      {count>99?"99+":count}</span>:null}
   </Button>
-  {open ? mobile ? <Drawer id="lms-learner-mobile-notifications" open={open} onOpenChange={setOpen} title="Notifications" className={style.learnerNotificationDrawer} bodyClassName={style.learnerNotificationDrawerBody} footer={panelFooter}>{panelBody}</Drawer> : <PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}>
+  {open ? mobile ? <Drawer id="lms-learner-mobile-notifications" open={open} onOpenChange={setOpen} title="Notifications" className={style.learnerNotificationDrawer} bodyClassName={style.learnerNotificationDrawerBody} footer={panelFooter}>{panelBody}</Drawer> : <PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}
+  onDismiss={()=>{setOpen(false);trigger.current?.focus();}}>
    <div className="flex items-center justify-between">
     <h2 id="learner-notification-title" className="m-0 text-lg font-semibold leading-[1.3] text-foreground">Notifications</h2>
     <Button variant="ghost" type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
