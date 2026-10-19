@@ -377,3 +377,87 @@ The suite was not executed.
 
 No topbar, HR-owned pages or data behavior were changed in this scan.
 B3 and B4 both remain **[ ]** under the strict tick rule.
+
+## Chat-19 follow-up: route transitions, portal headings and role-home links
+
+This is a **source-complete bounded-file pass**, not a B3/B4 category sign-off.
+The values below are compared to the actual legacy rules, with behavioral
+modernizations clearly separated. No app, test, lint or CI task was run.
+
+### Route-transition source-value table
+
+| Interaction/value | Legacy evidence | vNext file:line | Result |
+|---|---|---|---|
+| Entrance opacity 0→1 | `components___learn-layout.scss:49-58`: keyframe 0 to 1 | `route-transition.css:4-7`: same | Match |
+| Entrance translateY 8→0px | `components___learn-layout.scss:49-58` | `route-transition.css:5-6`: 8→0 | Match |
+| Entrance speed/easing | `components___learn-layout.scss:60-69`: 250ms ease-out when no reduction | `route-transition.css:20-21`: 250ms ease-out when no reduction | Match |
+| Learner exit opacity | `components___learn-layout.scss:71-86`: 0.78 | `route-transition.css:14-17`: .78 | Match |
+| Exit translate/scale | `components___learn-layout.scss:77-79`: translateY(6px) scale(.998) | `route-transition.css:15-19`: same | Match |
+| Exit easing/duration | `components___learn-layout.scss:71-74`: 220ms opacity, 260ms transform, cubic-bezier(.2,.8,.2,1) | `route-transition.css:20-24`: same | Match |
+| Pending stacking hint | `components___learn-layout.scss:79`: will-change opacity, transform | `route-transition.css:17-20`: same | Match |
+| Ready-state transform | `components___learn-layout.scss:81-86`: no transform/stacking context on ready | `route-transition.tsx:54-56` attribute removed on ready | Source structure matches |
+| Reduced motion | `components___learn-layout.scss:577-585`: disable animation/transition | `route-transition.css:26-29` disables animation/transition/transform | Same intent; broader override |
+| Learner-only exit | `learn-layout.scss:71-86` scoped to `.learn-layout--learner` | `route-transition.tsx:11,55` scoped to learner only | Match |
+| Query-only filters | No old source equivalent in that SCSS slice | `route-transition.tsx:54` key=`pathname`; `onNavigate` ignores same pathname, including ?page= and #hash | Modern behavior, not source parity |
+| Modified/other-target links | Old click middleware outside inspected SCSS | `route-transition.tsx:23-35` skips modified, external, download, disabled, non-self target; URL parse guarded | Modern safety check |
+| Back/Forward navigation | Legacy pages router transition behavior not defined by SCSS | `route-transition.tsx:39-48`: popstate starts exit only for a changed pathname; listener cleanup | Modern correctness adaptation |
+| Failed navigation reset | No old recovery timeout specified | `route-transition.tsx:18-22,49-52`: 3000ms fallback clears pending opacity | Adaptation, NOT exact original |
+| Full-screen accessibility | Old source defines page wrapper only | `app-shell.tsx:124-126` keeps animation inside main, with `aria-busy` only during learner exit | Structural/source adaptation |
+
+**Responsive proof:** `route-transition.css:4-29` has no viewport-dependent
+values, so phone ≤767px, tablet 768–1199px and desktop ≥1200px receive
+the same 250ms entrance, 220/260ms learner exit. Media query for
+`prefers-reduced-motion:reduce` disables transforms at all three sizes.
+Neither topbar nor sidebar is nested within the animated element
+(`app-shell.tsx:104-126`), preventing the route animation from shifting
+the 96→256px rail or 68px topbar. Browser layout proof remains
+unperformed under checklist J.
+
+### B3: role-scoped headings and safe sidebar home
+
+| State | Old LMS reference | Current implementation | Outcome |
+|---|---|---|---|
+| TPO expanded section labels only | `old-lms-shell.css:49-53`: sections for TPO sidebar | `sidebar-nav.tsx:20-25,87`: `sectionLabel(item,sidebarPortal)` requires portal `tpo` | Match; College Admin Placement cell shortcut no longer produces false TPO heading |
+| Non-TPO grouping | Other role menus in `old-lms-shell.css:49-53` have no TPO labels | `sidebar-nav.tsx:89-95`: a hairline for group break without TPO heading | Structure match; visual pending |
+| Collapsed section separator | `old-lms-shell.css:50-51`: 22px and 1px #f1f4f9 | `sidebar-legacy.css:54-61,205-227`: same | Match |
+| Desktop expansion | `old-lms-shell.css:13,18`: relative 96→256px flex push in 150ms | `sidebar-legacy.css:6-25`: same; focus-within additionally expands | Match with a11y enhancement |
+| Brand logo size | `old-lms-shell.css:12`: 38×36px | `app-shell.tsx:79-84` and `shell-nav-icons.tsx:65-70`: 38×36px | Match dimensions |
+| Brand link destination | No exact old destination value measured; one account menu active | `app-shell.tsx:54-55,80`: first permitted `navigation[0]?.href` rather than always `/dashboard` | Functional safety, not a visual comparison |
+| Sidebar failure fallback | Legacy source doesn't specify a fallback route | `app-shell.tsx:87`: `ShellWidgetBoundary` fallback uses same authorized role landing page | Functional safety, not a visual comparison |
+| Mobile drawer | `components___antddesign.scss:305-359`: 82% max300px, safe area, touch scroll | `mobile-navigation.tsx:25-36`; `sidebar-legacy.css:187-225` | CSS values match, physical viewport still unverified |
+
+**Source grep-equivalent scope:** The previous exhaustive connected-source
+scan of all 41 `src/components/shell/**/*.{ts,tsx,css}` blobs found
+**0** raw opening `button/input/select/textarea` tags and **50**
+`lms-desktop-sidebar|fl-d-panel-l|lms-sidebar-item` references, all
+in `app-shell.tsx` (1), `sidebar-nav.tsx` (2), and
+`sidebar-legacy.css` (47). Changes this turn added no raw controls and
+no new rail-selector occurrences. The exact follow-up full-checkout
+commands remain:
+
+```sh
+git grep -n -I -E 'lms-desktop-sidebar|fl-d-panel-l|lms-sidebar-item' -- src
+git grep -n -I -E '<(button|input|select|textarea)([[:space:]>])' -- src/components/shell src/components/tpo
+git grep -n -I -E 'route-transitioning|pageSlideIn|nprogress|progress' -- src/components/shell src/app
+node scripts/audit/chat19-shell-grep.cjs
+```
+
+They were **not executed** here, so no whole-checkout counts are invented.
+Source assertions were updated in
+`tests/unit/chat19-shell-route-transitions.test.ts`,
+`tests/unit/chat19-north-star-legacy-sidebar.test.ts` and
+`tests/unit/chat19-shell-sidebar-clone.test.ts`; none were executed.
+Opening/closing JSX markup of the route wrapper, sidebar link and logo
+remains paired after the edits. `shell-nav-icons.tsx:3` still imports
+`legacyAntPaths` from `./legacy-ant-paths`.
+
+**Strict status:** B3 `[ ]` (needs browser icon/hover/tablet proof and
+full-checkout command output); B4 `[ ]` (modern top progress strip
+has no old-LMS equivalent, pending pixel proof of loader/footers and
+full-checkout command output). Route behavior and per-file source work
+are complete; do not mislabel them as perfect pixel equality.
+
+**Next practical file:** `src/components/shell/sidebar-legacy.css`,
+if orchestrator provides screenshot diffs; otherwise
+`scripts/audit/chat19-shell-grep.cjs` for full-checkout evidence
+after local checkout.
