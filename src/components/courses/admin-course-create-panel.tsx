@@ -287,7 +287,7 @@ export function AdminCourseCreatePanel({
         </p>:null}
         {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}”</strong>
-          <button type="button" className="font-semibold text-primary-text underline" onClick={()=>router.replace(courseBasePath)}>Cancel copy</button>
+          <Button variant="ghost" type="button" className="font-semibold text-primary-text underline" onClick={()=>router.replace(courseBasePath)}>Cancel copy</Button>
           <p className="w-full text-xs text-muted-foreground">Only catalog name, code, description and department are copied. Existing course content, offerings and assignments are not copied.</p>
         </div>:null}
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
