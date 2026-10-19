@@ -319,27 +319,30 @@ export function LearnerCourseOverview({
             ) : null}
           </div>
           <div className="flex max-w-md flex-wrap gap-2">
-            <Badge tone="neutral">
+            <Badge  tone="neutral">
               {workspace.course.code}
             </Badge>
             {meta.credits !== null ? (
-              <Badge tone="neutral">
+              <Badge  tone="neutral">
                 {meta.credits} Credits
               </Badge>
             ) : null}
-            <Badge tone="neutral">
+            <Badge  tone="neutral">
               {meta.sectionName}
             </Badge>
-            <Badge tone="neutral">
+            <Badge  tone="neutral">
               {meta.academicPeriodName}
             </Badge>
             {meta.instructors.length===0 ? (
-              <Badge tone="neutral">
+              <Badge  tone="neutral">
                 Faculty not recorded
               </Badge>
             ) : null}
             {meta.instructors.map((instructor) => (
-              <Badge tone="neutral" key={instructor.membershipId}>
+              <Badge
+                key={instructor.membershipId}
+                
+               tone="neutral">
                 {instructor.name}
                 {instructor.role === "PRIMARY"
                   ? " · Faculty"
