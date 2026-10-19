@@ -138,7 +138,7 @@
 @media (max-width:767px) {
   .searchOpen .search { max-width:calc(100vw - 20px); }
   .searchOpen .dropdown { width:100%; max-width:100%; }
-  .menu { border-radius:14px; padding:16px; }
+  .menu { position:fixed; top:calc(58px + env(safe-area-inset-top,0px)); left:12px; right:12px; width:calc(100vw - 24px); max-width:calc(100vw - 24px); border-radius:14px; padding:16px; }
   .menu, .createOptions { max-height:calc(100dvh - 76px); overflow-y:auto; overscroll-behavior:contain; }
 }
 @media (prefers-reduced-motion:reduce) {
