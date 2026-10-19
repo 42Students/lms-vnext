@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { Tabs } from "@/components/ui/tabs";
 import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPORT_CAP } from "@/modules/placements/college-drive-applications-model";
 import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
