@@ -89,19 +89,19 @@ export default async function TpoByCompanyReportPage({
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">Search company name
-          <Input type="search" name="q" maxLength={100} defaultValue={view.query.q} className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
+          <Input type="search" name="q" maxLength={100} defaultValue={view.query.q} className="min-h-11 sm:min-h-9 w-full"/>
         </label><label className="grid gap-1 text-sm font-semibold text-body">Recorded placement outcome
           <Select name="outcome" defaultValue={view.query.outcome}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 sm:min-h-9">
             <option value="ALL">All companies</option><option value="HAS_PLACED">At least one placed learner</option>
             <option value="NO_PLACED">No placed learners recorded</option>
           </Select>
         </label><label className="grid gap-1 text-sm font-semibold text-body">Order companies
-          <Select name="sort" defaultValue={view.query.sort} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          <Select name="sort" defaultValue={view.query.sort} className="min-h-11 sm:min-h-9">
             <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>
             <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="APPLICATIONS_DESC">Submitted applications (high first)</option><option value="DRIVES_DESC">Recorded drives (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option><option value="HIGHEST_CTC_DESC">Highest accepted full-time CTC (high first)</option>
           </Select>
-        </label><Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</Button>
+        </label><Button type="submit" className="min-h-11 sm:min-h-9">Apply</Button>
       </form>
       <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope; the visible-companies CSV matches this search, order and page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
