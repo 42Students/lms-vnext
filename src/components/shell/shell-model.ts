@@ -106,7 +106,16 @@ export function scopedShellNavigation(items: readonly ShellNavItem[], pathname: 
  // The legacy shell displays one account's navigation at a time. A single
  // stray row from another portal must not leak into the active icon rail.
  const pathPortal = navPortal(pathname);
- const selected = pathPortal && portals.includes(pathPortal) ? pathPortal :
+ const tpoRows = items.filter(item => navPortal(item.href) === "tpo");
+ // College Admin-only has one shortcut into Placement cell, not a separate
+ // TPO role. Visiting it must not replace the entire college sidebar with
+ // a one-item fake TPO menu. A genuine TPO account has its full TPO rows.
+ const collegePlacementShortcut = pathPortal === "tpo" &&
+  portals.includes("college") && tpoRows.length === 1 &&
+  tpoRows[0]?.href === "/tpo/home" &&
+  tpoRows[0]?.label.replace(/ · Placements$/, "") === "Placement cell";
+ const selected = collegePlacementShortcut ? "college" :
+  pathPortal && portals.includes(pathPortal) ? pathPortal :
   portals.includes("college") ? "college" : portals[0]!;
  return items.filter(item => {
   const portal = navPortal(item.href);

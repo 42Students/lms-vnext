@@ -17,8 +17,11 @@ import "./sidebar-legacy.css";
 
 /** Only TPO displays uppercase group words in the legacy shell.
  * Recruiter, learner, faculty and admin lists separate groups with hairlines. */
-function sectionLabel(item:ShellNavItem):string|null{
- if(!item.group||!item.href.startsWith("/tpo/"))return null;
+function sectionLabel(item:ShellNavItem,portal:string):string|null{
+ // A College Admin's one "Placement cell" shortcut points at /tpo/home;
+ // its college sidebar must not suddenly acquire a TPO section heading.
+ if(portal!=="tpo"||!item.group||!item.href.startsWith("/tpo/")||
+    (item.href==="/tpo/home"&&item.label==="Placement cell"))return null;
  return item.group in TPO_SECTION_LABELS
   ?TPO_SECTION_LABELS[item.group as keyof typeof TPO_SECTION_LABELS]
   :null;
@@ -44,9 +47,15 @@ export function SidebarNav({
  const pathname=usePathname();
  const [tpoCounts,setTpoCounts]=useState<TpoShellCounters|null>(null);
  const visibleItems=scopedShellNavigation(items,pathname);
- const sidebarPortal=pathname==="/tpo"||pathname.startsWith("/tpo/")
-  ?"tpo":pathname==="/hr"||pathname.startsWith("/hr/")||
-   pathname==="/recruiter"||pathname.startsWith("/recruiter/")?"recruiter":"other";
+ // A college-only Placement cell shortcut still renders the college menu
+ // while the URL is /tpo/home. Derive rail styling from the visible role,
+ // not only the URL, so it does not acquire TPO headings/scrollbar chrome.
+ const collegeSelected=visibleItems.some(item=>
+  item.href==="/college"||item.href.startsWith("/college/"));
+ const sidebarPortal=collegeSelected?"other":
+  pathname==="/tpo"||pathname.startsWith("/tpo/")
+   ?"tpo":pathname==="/hr"||pathname.startsWith("/hr/")||
+    pathname==="/recruiter"||pathname.startsWith("/recruiter/")?"recruiter":"other";
  useEffect(()=>{
   if(!pathname.startsWith("/tpo/"))return;
   let active=true;
@@ -82,7 +91,7 @@ export function SidebarNav({
    const startsNewGroup=Boolean(item.group)&&(index===0||item.group!==previousGroup);
    const active=legacySidebarItemActive(pathname,item,
     superAdminGroup?.title??null,collegeGroup?.title??null);
-   const label=sectionLabel(item);
+   const label=sectionLabel(item,sidebarPortal);
    const count=tpoCounts?tpoItemCount(item.href,tpoCounts):null;
    const badge=count===null?null:shellUnreadBadge(count);
    return <Fragment key={item.href}>
