@@ -29,7 +29,7 @@ export default async function AccountSecurityPage() {
       {rows === null ? (
         <ErrorState description="Your current session could not be listed."
           action={<Link href="/account/security"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Try again</Link>}/>
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">Try again</Link>}/>
       ) : rows.length === 0 ? (
         <EmptyState
           title="No active devices"
