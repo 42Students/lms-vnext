@@ -56,12 +56,12 @@ export function CollegeLegacyDriveSettings({
         <p>{action.confirmation}</p>
         <div className="flex flex-wrap gap-3">
           <Button type="button" disabled={busy} onClick={closeDrive}
-            className="min-h-11 sm:min-h-9">Yes</Button>
+            className="min-h-11 min-[768px]:min-h-9">Yes</Button>
           <Button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-            variant="secondary" className="min-h-11 sm:min-h-9">No</Button>
+            variant="secondary" className="min-h-11 min-[768px]:min-h-9">No</Button>
         </div>
       </div>:<Button type="button" disabled={busy}
-        onClick={()=>setConfirmation("CLOSE")} variant="secondary" className="min-h-11 sm:min-h-9">
+        onClick={()=>setConfirmation("CLOSE")} variant="secondary" className="min-h-11 min-[768px]:min-h-9">
         {action.label}
       </Button>}
     </div>:null}
@@ -69,13 +69,13 @@ export function CollegeLegacyDriveSettings({
       {confirmation==="REOPEN"?<div role="group" aria-label={reopen.confirmation} className="space-y-3">
         <p>{reopen.confirmation}</p>
         <Button type="button" disabled={busy} onClick={()=>void reopenDrive()}
-          className="min-h-11 sm:min-h-9">
+          className="min-h-11 min-[768px]:min-h-9">
           {busy?"Reopening…":"Yes, reopen"}
         </Button>
         <Button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-          variant="secondary" className="ml-2 min-h-11 sm:min-h-9">Cancel</Button>
+          variant="secondary" className="ml-2 min-h-11 min-[768px]:min-h-9">Cancel</Button>
       </div>:<Button type="button" disabled={busy} onClick={()=>setConfirmation("REOPEN")}
-        variant="secondary" className="min-h-11 sm:min-h-9">{reopen.label}</Button>}
+        variant="secondary" className="min-h-11 min-[768px]:min-h-9">{reopen.label}</Button>}
     </div>:null}
     {feedback?<p role="status">{feedback}</p>:null}
   </section>;

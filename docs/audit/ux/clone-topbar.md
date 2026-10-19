@@ -283,3 +283,77 @@ Synced to `origin/main` at `60f960b7816e` before the sprint batch. The recruiter
 **STRICT TICK DECISION:** all four `clone-topbar.md` categories remain **unticked**: global grep, desktop/mobile rendered proof, all-portal count provenance, and exact missing legacy state behavior cannot be truthfully certified without integration and screenshot evidence.
 
 **Next file:** `src/components/shell/topbar/command-search.tsx` — finish command palette empty/error/open/focus states and align its popover geometry to the legacy CSS, then update B2 evidence.
+
+
+## 2026-10-19 final source sweep — chat-13
+
+### B1 exact topbar comparison after token migration
+
+| Property/state | Legacy CSS/SCSS reference (file:line) | Current vNext source (file:line) | Result |
+| --- | --- | --- | --- |
+| Header height and gap | `docs/design/old-lms-shell.css:56` — 68px; gap 18px | `src/components/shell/topbar/topbar.module.css:14-22` — 68px; gap 18px | Source matched |
+| Header border and shadow | `old-lms-shell.css:56` — 1px #e7ecf2; 0 1px 3px rgba(26,45,72,.035) | `topbar.module.css:24-25`, `src/app/globals.css:328,340-350` | Source matched |
+| Command layout | `old-lms-shell.css:57` — auto minmax(220px,380px) 1fr; gap12px | `topbar.module.css:27`; `legacy-topbar.tsx:36-65` | Source matched |
+| Search width and shortcut | `old-lms-shell-spec.md:15-17` 291x36px, pale #f8fafc; `old-lms-shell.css:58` Ctrl K muted #5b6b82 | `topbar.module.css:29-33`, `command-search.tsx:121-145`; values `globals.css:329-333` | Source matched |
+| Primary new action | `old-lms-shell-spec.md:16,25` — 82x36px, radius9, #0a7c88, white, 14px/650 | `topbar.module.css:40-41`, `globals.css:17-18,37,333-336` | Matched where an authorized New destination exists |
+| Icon controls and unread badge | `old-lms-shell-spec.md:16`, `legacy-styles/components___notification-drawer.scss:27-60` — 36px shell, count font10/min16 | `topbar.module.css:43-45`, `notification-actions.tsx:18-31`, `globals.css:334` | Geometry matched; some portal Messages destinations absent |
+| Org/account label | `old-lms-shell.css:61-63` — 12px weight600, #334155, org 38px control, max260 | `topbar.module.css:47,350-384`, `organization-switcher.tsx:50-67`, token `globals.css:329` | Source matched; native selector differs from old AntD instance |
+| Avatar | `old-lms-shell.css:64-66` 42px outer, 38px inner | `topbar.module.css:48-50`, `account-menu.tsx:105-112` | Size matched; profile photo state not available in request context |
+| Account dropdown | `legacy-styles/components___dropdown.scss:96-126` — 280px, 6px, 16x24px, shadow 9px 11px 28px rgba(0,0,0,.1), phone inset12/radius14 | `topbar.module.css:51-54,139-143`, `account-menu.tsx:112-132` | Source values matched; no browser screenshot |
+| Header tablet | `old-lms-shell.css:67-72` — 768–1199px gap10, padding14, search grid min180, org 170–190 | `topbar.module.css:62-68,387-391` | Breakpoint declaration matched |
+| Header mobile | `old-lms-shell.css:73-85` — ≤767px gap8, min-height58, search icon36, New38, avatar40/36 | `topbar.module.css:69-86` | Breakpoint declaration matched |
+
+### B2 state and responsive parity — latest files
+
+| Behavior/property | Legacy source (file:line) | vNext source (file:line) | Result |
+| --- | --- | --- | --- |
+| Desktop dropdown surface | `legacy-styles/components___notification-drawer.scss:113-147` — 360–420px width, max-height520, radius12, 1px neutral200, layered shadow, 200ms entry | `topbar.module.css:507-525`; `tpo-bell-panel.tsx:153-160`, `hr-recruiter-bell.tsx:112-122`, `learner-notification-bell.tsx:134-142` use shared `PopoverPanel` | Source style matched |
+| Mobile drawer mode | `notification-drawer.scss:400-445` — ≤767px shared full-width Drawer, safe areas, close44 | All three bell components use `matchMedia("(max-width:767px)")` and shared `Drawer`; `topbar.module.css:337-354,527-549` and learner mobile rules near `:499-503` | Source mode and breakpoint matched; touch test not performed |
+| List rows | `notification-drawer.scss:180-224` — inset12, gap6, radius8, 12x16px, neutral hover/active/focus | `topbar.module.css:308-335,515-523`; `tpo-bell-panel.tsx:119-135`, recruiter and learner bell row links | Source styling matched, portal text/content preserved |
+| Footer | `notification-drawer.scss:323-356` — 12x20px, neutral50, border neutral200, controls44 | `topbar.module.css:471-473,529-536,553-554`; each portal's footer node passed into shared popup/drawer | Source styling matched |
+| Empty state | `notification-drawer.scss:275-321` — centered 32x20, icon36 neutral400/60%, 14px text and max260 explanation | `topbar/notification-empty.tsx:1-16`, `topbar.module.css:464-468,557-560`, all three bell imports | Reusable source values matched; exact icon silhouette not visually verified |
+| Command results | Old header hint `old-lms-shell.css:58`; generic legacy dropdown `legacy-styles/components___dropdown.scss:155-184` | `command-search.tsx:143-215` shared `PopoverListbox`, search field and keyboard controls in `:121-176` | Migrated to shared primitive; original result-specific state baseline absent |
+
+### Coverage: exact scope and unresolved strict blockers
+
+Source-content grep equivalent (the GitHub connector exposes file bytes but not a mounted working tree) **after the latest main merge**:
+
+| Scoped search pattern | Result |
+| --- | --- |
+| `<(button|input|select|textarea)(?=[\\s>])` in all **17** directly owned topbar/shell/bell `.ts/.tsx` files | **0** native controls |
+| `#[0-9a-fA-F]{3,8}\\b` in `topbar.module.css` | **0** literal hex colors; 17 exact values moved to `src/app/globals.css:329-338` or reused existing neutral tokens |
+| `</(Select|Button|Drawer|PopoverPanel|PopoverListbox)(?!>)` in edited topbar TSX | **0** malformed closers observed |
+| `rounded-full|border-b-2|#[0-9a-fA-F]{3,8}\\b|<(button|input|select|textarea)(?=[\\s>])` in first **36** Super Admin first-third page wrappers | **0** native/raw-control, local hex and hand-rolled chip/tab instances from the source sweep |
+| The same source-pattern group in **56 directly imported Super Admin page components** plus the three delegated page components | Existing matches reduced to **0** after the announcement, branding and offering-tabs conversions detailed below |
+
+**First-third files actively migrated in this pass:**
+
+- `src/components/courses/admin-offering-learning-page.tsx`: four old `border-b-2` anchor tabs replaced with the shared `Tabs` through `src/components/courses/course-detail-anchor-tabs.tsx`. Existing fragment navigation, labels, PageHeader and panels preserved.
+- `src/components/admin/college-branding-form.tsx`: remaining two native picker hex literals centralized in `src/components/ui/branding-color-tokens.ts` (required because input[type=color] does not accept `var(...)`).
+- `src/components/announcements/announcement-admin-workspace.tsx`: list item card-in-canvas wrappers flattened to top borders and the handwritten empty card replaced with shared `EmptyState`.
+- `src/components/shell/topbar/topbar.module.css`: all remaining hex values replaced with their exact shared theme tokens.
+- `src/components/shell/topbar/command-search.tsx`: custom listbox wrapper replaced with shared `PopoverListbox`.
+- `src/components/shell/topbar/account-menu.tsx`: keyboard focus selectors now use the shared popover `data-slot`; mobile overlay full viewport inset and visible focus styling added.
+- `src/components/tpo/tpo-bell-panel.tsx`, `src/components/hr/hr-recruiter-bell.tsx`, `src/components/shell/learner-notification-bell.tsx`: desktop shared popover/mobile shared Drawer; central unread token; common empty state; server-specific read/refresh APIs unchanged.
+
+**Strict tick status remains four open items**. The required *full-repository* `grep -rnE` counts, full value/state comparison for every caller, runtime phone/tablet interaction proof and command palette original-result baseline cannot be established from the connected source alone, and the global raw-control search is not known to be zero. Per the owner STRICT TICK RULE, none of B1/B2 is falsely checked. The appendix distinguishes completed source files from outstanding verification.
+
+### Remaining work requiring proof
+
+- [ ] Full-repository `grep -rnE '<(button|input|select|textarea)' src --include='*.tsx'` and `grep -rnE 'fixed inset-0|role="dialog"|#[0-9a-fA-F]{3,8}' src`, not just category-file scans.
+- [ ] Keyboard/focus/tab order and actual rendered responsive screenshot comparison at representative 320px, 375px, 768px and desktop sizes.
+- [ ] Confirm the old command-palette *result* hover/empty/loading/error behavior beyond the supplied generic dropdown SCSS; do not guess missing legacy properties.
+- [ ] Verify Messages link and unread provenance for every portal where the role has a supported inbox. Do not introduce unauthorized destinations or fabricated counts.
+
+
+## Mainline reconciliation and completed file inventory (2026-10-19)
+
+After syncing `main` at `d54978d84992`, preserved the newer upstream `src/components/courses/course-detail-anchor-tabs.tsx` and `src/components/courses/admin-offering-learning-page.tsx` rather than keeping a duplicate `AdminOfferingSectionTabs`. The upstream implementation already uses the shared `Tabs` and preserves `deliveryId` plus hash/scroll offsets. The earlier historical notes describe prior chat-13 work, not a second active tabs component; `admin-offering-section-tabs.tsx` is **not in the current branch**.
+
+Preserved the upstream recruiter `ShellNavGlyph` icon and reconciled chat-13's shared `TopbarNotificationEmpty`, accessible list semantics, exact unread-red token, 8px list rows, and shared Drawer body inset. No duplicate control element was introduced.
+
+**Completed, inspected source files:** `src/components/shell/topbar/command-search.tsx` (shared PopoverListbox), `account-menu.tsx`, `organization-switcher.tsx`, `legacy-topbar.tsx`, `notification-actions.tsx`, `topbar.module.css`, `notification-empty.tsx`, `src/components/tpo/tpo-bell-panel.tsx`, `src/components/hr/hr-recruiter-bell.tsx`, `src/components/shell/learner-notification-bell.tsx`, `src/app/globals.css`, `src/components/admin/college-branding-form.tsx`, `src/components/ui/branding-color-tokens.ts`, `src/components/announcements/announcement-admin-workspace.tsx`, and the upstream `course-detail-anchor-tabs.tsx`.
+
+**First-third Super Admin:** 36 route wrappers plus 56 directly imported components and three shared page delegates were inspected at source level. No remaining native `<button>`, `<input>`, `<select>`, `<textarea>`, one-off `rounded-full` pills, `border-b-2` tabs or literal hex colors were observed in that inspected scope after fixing the offering tabs, branding swatches, and announcement cards. This is not evidence that every route's nested *transitive* imports or runtime states have been compared visually.
+
+**Strict rule outcome:** B1/B2 remain unticked. The full-repository grep and all-portal hover/focus/disabled/error/empty and responsive checks have not been fully established, and several portal-specific Messages routes/unread counts are intentionally undefined. Do not mark the four topbar items completed on the strength of these scoped source checks. The source-level visual sweep has advanced substantially, but pixel-level and runtime parity are unverified.

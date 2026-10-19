@@ -1,3 +1,4 @@
+import { Banner } from "@/components/ui/banner";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -27,12 +28,10 @@ export default async function TrackerReportPage({
       <Link href="/tracker/mine" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         My reports
       </Link>}
-    {!ready ? <div role="status" className="border-y border-border py-5">
-      <p className="font-semibold">Reports are temporarily unavailable.</p>
-      <p className="mt-2 text-sm text-body">
-        Try again soon. Your report has not been submitted.
-      </p>
-    </div> : <TrackerReportForm contextPrefill={contextPrefill} canSearchSimilar={isSuperAdmin(context)}
+    {!ready ? <Banner tone="warning">
+      <strong>Reports are temporarily unavailable.</strong>
+      <span>Try again soon. Your report has not been submitted.</span>
+    </Banner> : <TrackerReportForm contextPrefill={contextPrefill} canSearchSimilar={isSuperAdmin(context)}
       knownErrorId={isSuperAdmin(context)?knownErrorId:undefined} />}
   </div>;
 }

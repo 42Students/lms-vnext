@@ -1,6 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { EmptyState } from "@/components/ui/empty-state";
+import styles from "./legacy-project-board.module.css";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
@@ -38,6 +38,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null),
  [visibleLimit,setVisibleLimit]=useState(150);
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
+ const [dragging,setDragging]=useState(false);
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
   if(!undo)return;
@@ -182,22 +183,25 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   </p>
   {matching.length===0?<EmptyState title={tasks.length===0?"No tasks on this board yet.":"No tasks match these filters."}
     description={tasks.length===0?"Create the first one to give the team somewhere to start.":"Clear all to see the board."} />:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   {undo?<Button variant="ghost" type="button" disabled={busy} 
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
-  <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0}
-    className="overflow-x-auto overscroll-x-contain pb-3 [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><div className="flex min-w-max gap-3">
+  <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
+    className={styles.scrollRegion}><div className={styles.track}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
+    className={[styles.lane, lane.id==="BACKLOG"?styles.backlogLane:"", lanes.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
+    data-can-drop={!readOnly&&!busy&&editable.includes(lane.id as typeof editable[number])}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
-    <h2 className="flex items-center justify-between gap-2 font-semibold"><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h2>
-    <ul className="mt-3 space-y-2">{lane.tasks.map(task=>{
+    <h2 className={styles.header}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h2>
+    <ul className={styles.body}>{lane.tasks.map(task=>{
      const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
        editable.includes(task.status as typeof editable[number]);
      return <li key={task.id} draggable={canMove}
-      onDragStart={e=>e.dataTransfer.setData("text/plain",task.id)}
-      className="space-y-2 rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm">
+      onDragStart={e=>{e.dataTransfer.setData("text/plain",task.id);setDragging(true);}}
+       onDragEnd={()=>setDragging(false)}
+      className={"space-y-2 border p-3 text-sm "+styles.card}>
       <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
         className="min-h-11 text-left">{task.title}</Button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>

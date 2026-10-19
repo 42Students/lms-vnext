@@ -27,3 +27,57 @@
 @media (prefers-reduced-motion:reduce) {
  .lms-route-progress-segment {animation:none;transform:none;width:100%;}
 }
+
+/* Exact overlay box: lms2-fe/prod-2026
+ * src/styles/components/_common.scss:1008-1019.
+ * AntD large Spin in src/components/Loader/loader.js:18-30.
+ */
+.lms-legacy-page-loader {
+ position:fixed;
+ top:0;
+ left:0;
+ width:100%;
+ height:100%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ z-index:999;
+ background:rgba(255,255,255,.99);
+}
+.lms-legacy-loader-spin {
+ margin:20px 0;
+ margin-bottom:20px;
+ padding:30px 50px;
+ text-align:center;
+ border-radius:4px;
+}
+.lms-legacy-loader-dots {
+ position:relative;
+ display:inline-block;
+ width:32px;
+ height:32px;
+ animation:lms-legacy-spin-rotate 1.2s linear infinite;
+ transform:rotate(45deg);
+}
+.lms-legacy-loader-dots i {
+ position:absolute;
+ display:block;
+ width:14px;
+ height:14px;
+ background:#26bac7;
+ border-radius:100%;
+ opacity:.7;
+}
+.lms-legacy-loader-dots i:nth-child(1) {top:0;left:0;}
+.lms-legacy-loader-dots i:nth-child(2) {top:0;right:0;}
+.lms-legacy-loader-dots i:nth-child(3) {bottom:0;right:0;}
+.lms-legacy-loader-dots i:nth-child(4) {bottom:0;left:0;}
+@keyframes lms-legacy-spin-rotate {
+ from {transform:rotate(45deg);}
+ to {transform:rotate(405deg);}
+}
+.lms-legacy-loader-recovery {margin-top:12px;text-align:center;}
+.lms-legacy-loader-recovery p {margin:0 0 8px;color:#84828b;font-size:14px;}
+@media (prefers-reduced-motion:reduce) {
+ .lms-legacy-loader-dots {animation:none;}
+}

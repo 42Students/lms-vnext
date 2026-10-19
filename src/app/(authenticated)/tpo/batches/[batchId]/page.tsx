@@ -34,10 +34,9 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    eligible:summary.complete?summary.eligible:null,undecided:summary.complete?summary.undecided:null,
    invited:Boolean(lifecycle?.invitedAt),deadline:lifecycle?.registrationDeadline??null,
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
- const tabs=[{label:"Students",href:"students"},{label:"Registrations",href:"registrations"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
  return <div className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
- <Link href={backHref} className="text-sm text-link underline lms-inline-link">← Placement eligibility</Link>
- {undoable?<details className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+ <Link href={backHref} className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Placement eligibility</Link>
+ {undoable?<details className="border-b border-border py-3">
   <summary className="min-h-11 cursor-pointer font-semibold text-link"
    title={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}>
    Undo last decision
@@ -46,18 +45,18 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
  </details>:null}
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
- {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="rounded border border-border bg-surface p-3 text-sm">
+ {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
   Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
-   className="ml-2 font-semibold text-link underline" data-testid="batch.suggest-do">Do it</Link>
+   className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Do it</Link>
   </p>:ready&&!lifecycle?.invitedAt&&invitePreview.invitable>0?<p data-testid="batch.suggest"
-   className="rounded border border-border bg-surface p-3 text-sm">
+   className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
    Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
-    className="ml-2 font-semibold text-link underline" data-testid="batch.suggest-do">Show me</Link>
-  </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="rounded border border-border bg-surface p-3 text-sm">
-   Suggested: remind them to register <Link href="#batch-reminder" className="ml-2 font-semibold text-link underline lms-inline-link" data-testid="batch.suggest-do">Show me</Link>
+    className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
+  </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
+   Suggested: remind them to register <Link href="#batch-reminder" className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
   </p>:null}
  {own?<Link href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    {own.total} {own.total===1?"student is":"students are"} decided individually
    {own.uncertain>0?", "+own.uncertain+" need class review":own.different===0?", all the same as their class or batch":", "+own.different+" differ from their class or batch"} →
   </Link>:<p role="status" className="text-sm text-body">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
@@ -67,7 +66,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
       <p className="text-sm text-body">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
       {decision.reason?<p className="text-xs text-muted-foreground">Reason: {decision.reason}</p>:null}
     </div>
-    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link">
+    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       {lifecycle?.finishedAt?"Review batch decision":"Set batch decision"} →
     </Link>
   </div>
@@ -89,16 +88,16 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   invitedAt:lifecycle.invitedAt?.toISOString()??null,finishedAt:lifecycle.finishedAt?.toISOString()??null,
   expectedVersion:lifecycle.updatedAt.toISOString(),
  }:null}/>:null}
- <section aria-label="Batch eligibility snapshot" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ <section aria-label="Batch eligibility snapshot" className="min-w-0 space-y-3 border-b border-border py-4">
   <h2 className="font-semibold">Eligibility decisions</h2>
   <p className="text-sm text-muted-foreground">{summary.complete?
    "Inherited learner, class and batch decisions for the active roster.":
    "Partial snapshot: only the first "+eligibility.limit+" learners were assessed. Do not treat these counts as batch totals."}</p>
-  <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+  <dl className="grid grid-cols-2 gap-2 md:grid-cols-4">
    {[
     ["Eligible",summary.eligible],["Ineligible",summary.ineligible],
     ["Not decided",summary.undecided],["Needs review",summary.needsReview],
-   ].map(([label,value])=><div key={label} className="rounded border border-border p-2 text-sm">
+   ].map(([label,value])=><div key={label} className="min-w-0 border-l-2 border-border px-3 py-2 text-sm [overflow-wrap:anywhere]">
     <dt>{label}</dt><dd className="font-semibold tabular-nums">{value}</dd>
    </div>)}
   </dl>
@@ -111,28 +110,27 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>
-  <Link href={"/tpo/batches/"+batchId+"/students"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Open Students</Link>
+  <Link href={"/tpo/batches/"+batchId+"/students"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open Students</Link>
  </section>
 
  <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
-  className="scroll-mt-24 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 target:animate-pulse">
+  className="scroll-mt-24 space-y-3 border-b border-border py-4 target:animate-pulse">
   <h2 className="font-semibold">Next step</h2>
   <h3 className="text-lg font-semibold">{next.title}</h3>
   <p className="text-sm text-body">{next.detail}</p>
   <div className="flex flex-wrap gap-3">
    <Link href={"/tpo/batches/"+batchId+next.href}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     {next.button} →
    </Link>
    {registrations.available&&(registrations.registered??0)>0?<Link href={"/tpo/batches/"+batchId+"/students"}
-    className="inline-flex min-h-9 items-center text-sm font-semibold text-link">
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     {registrations.registered} students registered: continue on Students →
    </Link>:null}
   </div>
  </section>
 
 
- <nav aria-label="Batch workspace" className="flex flex-wrap gap-2">{tabs.map(tab=><Link key={tab.href} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm" href={"/tpo/batches/"+batchId+"/"+tab.href}>{tab.label}</Link>)}</nav>
- <p className="rounded border border-border p-4 text-sm">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
+ <p className="text-sm text-muted-foreground">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
  </div>;
 }

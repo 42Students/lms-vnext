@@ -187,3 +187,48 @@ G4 and G5 remain unticked under the STRICT TICK RULE; no tests, parser, typechec
 - [ ] **Unresolved next source file:** `src/modules/courses/faculty-report-pdf.ts`; compare its existing PDF stream only with real legacy letter/PDF samples when supplied. Then compare hosted email HTML with legacy output. Do not invent styling or mark parity complete.
 
 **No CI, no tests, no lint, no typecheck, no app execution.** Codemod `scripts/codemods/chat6-report-export-links.cjs` from previous turn remains an orchestrator-run dry-run/apply instruction, not executed here.
+
+## Scoped PDF/export file audit — 2026-10-19 (current lane)
+
+**Work queue — source remediation completed; G4/G5 parity ticks remain OPEN.**
+- [x] `src/modules/courses/faculty-report-pdf.ts`: keep section heading, divider and first result on one PDF page where possible; preserve existing PDF/1.4 stream, output escaping, Courier, page size and footer
+- [x] `src/components/courses/faculty-report-download.tsx`: failed-download anchor/object URL cleanup, 44px touch target through 767px, shared secondary Button, incomplete-report ConfirmDialog and print-hidden control
+- [x] `src/components/courses/faculty-report-csv-download.tsx`: source-backed 44px phone / 36px desktop link, legacy keyboard focus 2px / 3px and `--lms-primary-text`, print-hidden action
+- [x] `src/components/courses/college-content-csv-export.tsx`: fail-safe object URL/anchor cleanup, shared secondary Button, phone/desktop hit targets and print-hidden action; CSV header and caller filename preserved
+- [x] `tests/unit/faculty-report-pdf.test.ts`: added source-only regression coverage for a section heading that would otherwise be orphaned at the end of the page; **test not executed**
+
+### Property/value ledger with exact source positions
+
+| Property and state | Historical reference value | vNext source value | Source verdict |
+|---|---|---|---|
+| Phone action touch height (up to 767px) | `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193,209-214`: 44px | `faculty-report-download.tsx:50`; `faculty-report-csv-download.tsx:14`; `college-content-csv-export.tsx:22`: `min-h-11` = 44px until `md` | **Matches responsive source rule**, not rendered proof |
+| Desktop action height (from 768px) | `docs/design/ui-clone-checklist.md:46-47`: live TPO 36px | Same three files: `md:min-h-9` = 36px; `src/app/globals.css:331` `--lms-control-height:36px` | **Matches source rule**, render/computed styles unverified |
+| Keyboard focus ring thickness | `components___accessibility.scss:19-21`: solid 2px | `faculty-report-csv-download.tsx:14`: `focus-visible:outline-2` | **Matches** |
+| Keyboard focus ring offset | `components___accessibility.scss:19-21`: 3px | `faculty-report-csv-download.tsx:14`: `focus-visible:outline-offset-[3px]` | **Matches** |
+| Keyboard focus ring color (light theme) | `components___accessibility.scss:19-21` uses `$teal-text`; `components___variables.scss:12` = `#1a95a1` | `faculty-report-csv-download.tsx:14` uses `--lms-primary-text`; `src/app/globals.css:29` = `#1a95a1` | **Matches light-theme source** |
+| Shared secondary control radius | `components___button.scss:1-12` uses older generic 8px; later observed TPO button spec `ui-clone-checklist.md:46-47` says 9px | `src/app/globals.css:333` `--lms-control-radius:9px`; secondary Button and CSV link inherit token | **Matches newer TPO owner spec**, not old generic button |
+| Paper-only action hiding | No old LMS printed report rule among 24 checked-in SCSS files | PDF/CSV wrappers use `print:hidden` (PDF/Faculty CSV), college CSV Button `print:hidden` | **Unverifiable against old paper output** |
+| PDF media box, page size | No corresponding historical PDF source in `docs/design/legacy-styles` | `faculty-report-pdf.ts:13,98`: 595 × 842 points | **Open** |
+| PDF font, body/footer positions | No comparable legacy PDF font/margins | `faculty-report-pdf.ts:85,89-98`: Courier, 9pt body, 8pt footer, left 42pt, top 48pt, 12pt leading, footer baseline 35pt | **Open** |
+| Section heading widow prevention | No legacy PDF section pagination source | `faculty-report-pdf.ts:54-70`: reserve first heading and row before breaking; `tests/unit/faculty-report-pdf.test.ts` exercises threshold | **Source behavior covered, unexecuted** |
+| Download cleanup on success/failure | No legacy download-object lifetime specified | `faculty-report-download.tsx:23-41`, `college-content-csv-export.tsx:5-20`: remove anchor; delayed URL revocation on handoff, immediate cleanup on failed handoff | **Source behavior covered, unexecuted** |
+| Email header/footer/CTA, offer letter, certificate/receipt appearance | External hosted templates; no matching output provided | Code uses template keys/merge data; no faithful visual source | **G5 blocked** |
+
+### Source grep proof and responsive scope
+
+The following counts come from complete **GitHub connector file reads** of exactly the five listed files (four production sources plus the PDF unit test); they are not a local shell execution or a repository-wide grep.
+
+| Scoped expression (equivalent to `grep -oE` over each file) | Observed total in all five files |
+|---|---:|
+| `<button[ >]` / `<input[ >]` / `<select[ >]` / `<textarea[ >]` | 0 / 0 / 0 / 0 |
+| `<table[ >]` | 0 |
+| Hard-coded CSS hex (`#[0-9a-fA-F]{3,6}`) | 0 |
+| `rounded-full` / `border-b-2` hand-rolls | 0 |
+
+For reproducibility in a checkout: `grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,6}|rounded-full|border-b-2' src/modules/courses/faculty-report-pdf.ts src/components/courses/faculty-report-download.tsx src/components/courses/faculty-report-csv-download.tsx src/components/courses/college-content-csv-export.tsx tests/unit/faculty-report-pdf.test.ts`. Connector read equivalent: **0 literal matches**. This does not prove a zero across every page/portal.
+
+Responsive source evidence: legacy `@media (max-width:767px)` uses a 44px touch minimum; the controls use `min-h-11 md:min-h-9` with a default `md` breakpoint of 768px. Their row wrapper is `flex flex-wrap`. The PDF document itself is fixed-paper output, not a responsive web page. Actual browser phone/tablet screenshot and printer/PDF viewer proof were **not performed**.
+
+Legacy template discovery: the connected legacy backend `42Students/lms` (`master`, 316 tree items) and frontend `42Students/lms2-fe` (`main`, 783 items) were searched by filename for PDF/print/certificate/letter/receipt/email-template candidates. The frontend contains PDF-viewer components but no named email/offer/certificate template; neither tree supplied an authenticated printed report template. This is filename-level evidence, not a proof that no template exists outside those repositories. Also, all 24 checked-in `docs/design/legacy-styles/*.scss` sources were read and yielded **0** `@media print` or `@page` declarations.
+
+**Strict status:** G4 and G5 stay **[ ]** because their global source coverage, computed visual values, screenshots, printed legacy PDF/letter/receipt/certificate and hosted email HTML are still unavailable. The five entries above mark *scoped source edits/review*, not category parity.

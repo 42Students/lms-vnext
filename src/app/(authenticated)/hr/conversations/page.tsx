@@ -1,9 +1,12 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ErrorState } from "@/components/ui/error-state";
+import { Alert } from "@/components/ui/alert";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import Link from "next/link";
 import {redirect} from "next/navigation";
@@ -36,9 +39,10 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
  const raw=await searchParams;
  const parsed=hrConversationQuerySchema.safeParse({collegeId:raw.collegeId,q:raw.q,page:raw.page,unreadOnly:raw.unreadOnly,sort:raw.sort,scope:raw.scope});
- if(!parsed.success)return <div role="alert" className="space-y-3">
+ if(!parsed.success)return <div className="min-w-0 space-y-3">
   <PageHeader title="Conversations"/>
-  <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link></div>;
+  <ErrorState title="Invalid conversation filters." description="Review the college and conversation filters."
+    action={<Link href="/hr/conversations" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>}/></div>;
  const result=await listHrConversations(context,parsed.data);
  const generalLookup=result.status==="READY"
   ?await listHrConversations(context,{
@@ -72,16 +76,18 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    description={result.status==="READY"
     ? result.unreadInView+" unread across "+result.items.filter(row=>row.unread>0).length+" conversation(s) on this page"
     : "Conversations with the placement cell, one per drive, plus a general one."}/>
-  <Link href="/hr/notifications" className="inline-flex min-h-11 sm:min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>
+  <Link href="/hr/notifications" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
-   {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
-    className="block rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 sm:min-h-9">{g.collegeName}</Link>)}
+   <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(g=>({
+     key:g.collegeId,label:g.collegeName,
+     href:"/hr/conversations?collegeId="+encodeURIComponent(g.collegeId),
+    }))}/>
   </section>:<>
    {decisionNoticeResult && !decisionNoticeResult.ok?
-     <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-sm text-body">
+     <Alert tone="warning">
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
-     </p>:null}
+     </Alert>:null}
    {decisionNotices.length>0?<section aria-label="Drive request decisions"
      className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Drive request decisions</h2>
@@ -91,7 +97,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
       <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
       <p className="mt-1 text-xs text-muted-foreground">{when(item.createdAt)} IST</p>
-      <Link href={item.href} className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <Link href={item.href} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        View your drive request
       </Link>
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
@@ -107,7 +113,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
     {generalThread?<details className="mt-3 border-b border-border py-3">
-      <summary className="min-h-9 max-sm:min-h-11 cursor-pointer rounded-[var(--lms-control-radius)] py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Message the placement cell · General</summary>
+      <summary className="min-h-9 max-md:min-h-11 cursor-pointer rounded-[var(--lms-control-radius)] py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Message the placement cell · General</summary>
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
       {generalThread.preview&&!generalHistory&&!generalHistoryResult?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
@@ -127,22 +133,22 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </ol></ScrollCue>:null}
       {generalHistoryResult?.ok?<div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>:null}
       <Link href={"/hr/conversations/"+generalThread.id}
-        className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open full conversation</Link>
+        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open full conversation</Link>
     </details>:null}
     {generalLookup && !generalLookup.ok?
       <p role="status" className="mt-3 text-sm text-body">
         General conversation preview is temporarily unavailable. Refresh to try again; existing conversations remain accessible.
       </p>:null}
     {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
-      <input name="collegeId" type="hidden" value={result.collegeId}/>
+      <Input name="collegeId" type="hidden" value={result.collegeId}/>
       <Button type="submit">Open general conversation</Button>
     </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
    <form method="get" action="/hr/conversations" className="flex flex-wrap gap-2">
-    <input type="hidden" name="collegeId" value={result.collegeId}/>
-    <input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
-    <input type="hidden" name="scope" value={parsed.data.scope}/>
+    <Input type="hidden" name="collegeId" value={result.collegeId}/>
+    <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
+    <Input type="hidden" name="scope" value={parsed.data.scope}/>
     <label className="text-sm text-body">Order
      <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
@@ -168,8 +174,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      action="/api/placements/recruiter/conversations/acknowledge"
      className="flex flex-wrap items-center gap-3">
      {result.items.filter(row=>row.unread>0).map(row=>
-      <input key={row.id} type="hidden" name="threadId" value={row.id}/>)}
-     <input type="hidden" name="returnTo" value={hrConversationsHref({
+      <Input key={row.id} type="hidden" name="threadId" value={row.id}/>)}
+     <Input type="hidden" name="returnTo" value={hrConversationsHref({
       collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,
       sort:parsed.data.sort,scope:parsed.data.scope,page:result.page,
      })}/>
@@ -178,21 +184,21 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="divide-y divide-border border-y border-border">
-    {visibleRows.map(row=><li key={row.id} className="rounded-[8px] px-4 py-3 transition-colors duration-200 hover:bg-[var(--lms-neutral-50)]">
+    {visibleRows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] px-4 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
      <Link href={"/hr/conversations/"+row.id}
-      className="block min-h-9 max-sm:min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
+      className="block min-h-9 max-md:min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}
      {row.preview?<p className="mt-2 break-words text-sm text-body">
       {row.preview.senderType==="RECRUITER"?"You: ":"Placement cell: "}{row.preview.text}
      </p>:null}
      <p className="mt-2 text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
     </li>)}
-   </ol>:<p role="status" className="border-y border-border py-5 text-body">No matching conversations with the placement cell for this college.</p>}
+   </ol>:<EmptyState title="No matching conversations" description="No matching conversations with the placement cell for this college."/>}
    <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
-      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
     {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}
-      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
    </nav>
   </>}
  </div>;

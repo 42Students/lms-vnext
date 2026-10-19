@@ -182,3 +182,57 @@ All edited source files were fetched again after writing and inspected for the r
 Source search observed `ReportBarChart` on seven TPO report pages, `MetricBar` across 17 placements/courses/projects pages, `StackedMetricBar` in two TPO batch pages, `CalendarGrid` on teacher, HR, learner attendance, learner class schedule and two placements calendars, `BoardColumn` in mentor and learner projects plus mentor task allocation, and separate recruiter stage board. Shared primitive files are owned by chat-17 and were **not** modified. Still open: source-by-source values/hover/focus/mobile for all 17 MetricBar instances; all boards' keyboard/touch behavior; report and HR Excel typed cells; full-row filtered/sorted views; whole-repo greps and phone/tablet screenshots.
 
 **Strict checklist remains unchecked:** no computed-style report, no full repository checkout grep, no browser-side comparison, no actual CSV/XLSX download and no CI or runtime verification. Work is source-reviewed only.
+
+
+### Final E8 roster alignment and remaining exceptions
+- `src/components/tpo/recruiter-leads-workspace.tsx:67-85`, `src/modules/placements/tpo-recruiter-table-view-model.ts:1-7`, and `src/modules/placements/tpo-recruiter-export-model.ts:29-65` now use the legacy relative order of **all represented** Engage fields (Contact / Status / Stage / Company / Email / Phone / Flags / Owner / Last activity / Next follow-up / Invite / Added / Source / Company drives); Email, Phone and Added are hidden by default, matching `lms2-fe@prod-2026/src/pages/tpo/recruiters/index.js:363-416`. Previously saved visibility selections remain valid by key. **Not complete:** old `Designation` and `Students placed` headers are not available in this vNext export view; historical per-column formatted value contracts and layout states require parity verification.
+- `src/app/(authenticated)/tpo/students/page.tsx` now uses `students.csv` on the filtered CSV link, matching `lms2-fe@prod-2026/src/pages/tpo/students/index.js:274-276`. `src/components/tpo/tpo-students-spreadsheet.tsx` uses the same base for selected/export-visible paths. The backend TPO students XLSX/CSV attachments were updated to that name, but the route-exported data schema is intentionally not changed without proving all fields against the old data projection.
+- An additional source-only review of the edited JSX, CSS modules and backend filenames did not find any doubled quote before `className`, and each edited `<CalendarGrid>` had exactly one matching `</CalendarGrid>`. Shared Button/Select/Input/CalendarGrid/MetricBar implementations were not modified. **No CI or runtime verification.**
+
+
+### TPO batch eligibility meter and chart content-preservation check
+- `lms2-fe@prod-2026/src/styles/components/_tpo-batches.scss:2-6,39-42` uses **6px** track, `#e7ecf2` track fill, `#15803d` Eligible and `#b91c1c` Ineligible. `src/components/tpo/legacy-batch-eligibility.module.css` scopes those exact values to `StackedMetricBar` from `src/app/(authenticated)/tpo/batches/page.tsx` and `batches/[batchId]/page.tsx`; the detail page also fixes the prior Ineligible `warning` orange tone to `error`. Additional Not decided / Needs review segments belong to vNext content and are retained. Other stacked/proportional bar usages still need value proof; **do not tick E7 progress**.
+- `src/components/placements/report-bar-chart.tsx` keeps the original vNext visible `{value} {units}` string in the new three-track layout (a source-review follow-up corrected the first draft, which had temporarily hidden units in a tooltip). The original TPO template is numerical only, but keeping vNext's on-screen units is the explicitly required non-content regression guard.
+
+
+## 2026-10-19 next board batch — three complete source migrations
+
+**Scope:** `src/components/projects/mentor-lane-board.tsx`, `learner-board-interactive.tsx`, and `mentor-task-allocation.tsx`. All three now consume `src/components/projects/legacy-project-board.module.css`. The shared `src/components/ui/board-column.tsx` remained unchanged; the CSS module overrides its lane sizes locally without changing its props. Data, filters, task details, links, selection, existing move/assign actions, and drag/drop handlers were preserved; a local drag-state flag provides the legacy hover-suppression and drop-target styling. The allocation file also restores a previously missing `BoardColumn` import.
+
+### Value proof — original SCSS versus scoped CSS
+
+| Property/state | Old LMS source and exact value | vNext source and exact value | Source result |
+| --- | --- | --- | --- |
+| Board layout and gap | `lms2-fe@prod-2026/src/styles/components/_learn-projects.scss:3953-59`: horizontal flex; gap `$space-3=12px`; x-scroll and 8px bottom pad | `legacy-project-board.module.css:7-13,95-99`: flex, gap 12px, x-scroll and 8px bottom pad | Match |
+| Scrollbar/keyboard | `_learn-projects.scss:3960-69`: hidden Firefox/WebKit scrollbar; scroll retained | `legacy-project-board.module.css:95-104`: no scrollbar chrome; `mentor-lane-board.tsx:191`, `learner-board-interactive.tsx:104`, `mentor-task-allocation.tsx:195` preserve tab-focusable scroll regions | Match of scroll surface; runtime key-wheel not tested |
+| Desktop lane width | `_learn-projects.scss:3972-78`: workflow 320px; backlog 260px at :3982-85 | `legacy-project-board.module.css:14-31`: flex-basis/width 320px, backlog 260px, with !important against shared width utility | Match |
+| Single lane width | `_learn-projects.scss:3987-93`: flex grow and max-width 640px | `legacy-project-board.module.css:32-37`: `singleLane` conditional, grow and max-width 640px | Match |
+| Lane border/shape/background | `_learn-projects.scss:4159-68`: 1px `rgba(#26bac7,.16)`, 20px radius, 12px padding, teal 4%-to-white vertical gradient, 260px min-height, 12px grid gap | `legacy-project-board.module.css:14-26`; shared `BoardColumn` still contributes `p-3=12px` | Match |
+| Elevation resting/hover | `_learn-projects.scss:37-40,4177-83`: e2 `0 1px 2px rgba(#1a1d21,.04),0 8px 20px rgba(#1a1d21,.05)`; hover e3 `0 2px 6px rgba(...,.05),0 14px 32px rgba(...,.09)`, lift 1px, teal border 28% | `legacy-project-board.module.css:26-41,68-76` copied exact shadows and hover lift | Match |
+| Hover/focus transition | `_learn-projects.scss:42-50,4172-76,4314-25`: 200ms cubic-bezier(0.2,0,0,1), 2px teal focus outline | `legacy-project-board.module.css:27,72-93,101-104` same duration/easing/ring; focus applied to card :focus-within to preserve nested actions | Visual match; focus-trigger semantics differ, remains an exception |
+| Header | `_learn-projects.scss:4193-4203,4223-39`: 8px gap, 8px bottom padding, fine border, 14px/600 label | `legacy-project-board.module.css:38-49`; counts preserve shared Badge in two lane views | Match for header surface; badge measurements still owned by chat-14 |
+| Lane body | `_learn-projects.scss:4249-59`: internal scroll `min(62vh,720px)`, 8px gap, 4px inset, overscroll contain | `legacy-project-board.module.css:50-61`: same | Match |
+| Task card | `_learn-projects.scss:4299-4335`: white, 1px border rgba(`#e5e9f0`,.85), 16px radius, 12px padding, e2/e3 hover elevations | `legacy-project-board.module.css:62-93` plus each card's `p-3` | Match in CSS; source retains functional nested actions |
+| Drop target/disabled | `_learn-projects.scss:3995-4007,4207-21`: suppress hover translation while dragging; accepted lane teal 90% border, 7% background, two-layer teal shadow; unsupported target 55% opacity | `legacy-project-board.module.css:77-92`; each caller supplies `data-dragging` and `data-can-drop` based on existing role/status rules | Match for defined native drag states; interaction not browser-tested |
+| Phone snapping | `_learn-projects.scss:5662-5697`: <=767px horizontal snap proximity, columns 82% wide, filtered one lane 100%, lane max-height 58vh | `legacy-project-board.module.css:106-120`: same breakpoint/values; parent still x-scrollable and each lane has snap-start | Source responsive match |
+| Tablet rule | Original desktop rules until <=767px; horizontal overflow handles narrow tablets | Module preserves desktop 320px lanes and scroll for >767px | Source responsive match |
+| Reduced motion | Original reduced-motion approach in `_learn-projects.scss` | `legacy-project-board.module.css:121-123`: no transition when user prefers reduced motion | Added safe safeguard, no behavioural regression |
+
+### Source-search (equivalent to scoped grep) and responsive proof
+
+Fetched **all three complete current branch file bodies** after editing and scanned them with regex; these are actual source-search counts, not a browser/layout assertion.
+
+| Scan (reproducible shell expression for orchestrator) | Result in three listed files |
+| --- | --- |
+| `grep -o '<BoardColumn' <three files> \| wc -l` | 3 opens |
+| `grep -o '</BoardColumn>' <three files> \| wc -l` | 3 closes |
+| `grep -Eo 'data-dragging=|data-can-drop=|onDragEnd=' <three files> \| sort \| uniq -c` | 3 of each |
+| `grep -Eo 'min-w-max\|w-64\|w-72' <three files> \| wc -l` | 0 obsolete widths |
+| `grep -Eo '<select\b\|<input\b' <three files> \| wc -l` | 0 raw form controls |
+| `grep -Eo 'styles\.(track\|lane\|body\|card)' <three files>` | 12 class references, 4 per file |
+| Quote/source guard `/["']{2}\s*className|["']\s+"className/` on each full body | 0 matches |
+| `grep -Ec '@media \(max-width: 767px\)|@media \(prefers-reduced-motion: reduce\)' legacy-project-board.module.css` | 2 media rules |
+
+**Responsive proof status:** desktop/phone/tablet source rules line-by-line verified against the original SCSS, with no physical browser rendered or computed-style screenshot. The user and orchestrator have asked for stricter responsive comparison, so do not call this a visual pass.
+
+**Completed source migrations (3 files):** `mentor-lane-board.tsx`, `learner-board-interactive.tsx`, `mentor-task-allocation.tsx`. The shared scoped stylesheet is also finished for those callers. **Overall G6 remains [ ]** because other kanban variants, selection/drag touch tests, full repo grep and any remaining state differences are not covered; do not tick the umbrella item. Next unticked E7 target: `src/components/placements/placement-calendar-workspace.tsx` to review 42-day/week/day responsiveness, then `src/components/placements/tpo-week-hour-calendar.tsx`.

@@ -1,4 +1,7 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+import { PageLoading } from "@/components/ui/page-loading";
+
 import { useEffect, useRef, useState } from "react";
 import { parseLearnerPlaybackGrant, storageApiError } from "@/modules/courses/learner-storage-ui-model";
 
@@ -35,8 +38,8 @@ export function FacultyVideoPreview({videoId,deliveryId}:{videoId:string;deliver
   return()=>{controller.abort();if(timeout)clearTimeout(timeout);if(video){video.pause();video.removeAttribute("src");video.removeAttribute("poster");video.load();}};
  },[videoId,deliveryId]);
  return <section aria-label="Video preview" className="space-y-2">
-  {loading?<p role="status" className="text-sm text-muted-foreground">Preparing preview…</p>:null}
+  {loading?<PageLoading label="Preparing video preview" variant="card" count={1} />:null}
   <video ref={videoRef} controls preload="metadata" className="aspect-video w-full max-w-2xl rounded-[var(--lms-control-radius)] bg-foreground"/>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
  </section>;
 }

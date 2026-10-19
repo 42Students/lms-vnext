@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -10,8 +11,7 @@ export default function RecruiterProfileError({
   reset: () => void;
 }) {
   return (
-    <section
-      role="alert"
+    <Alert tone="error"
       className="space-y-4"
     >
       <PageHeader title={"Couldn't load your recruiter profile"} />
@@ -23,6 +23,6 @@ export default function RecruiterProfileError({
       <Button className="mt-5" onClick={reset}>
         Retry
       </Button>
-    </section>
+    </Alert>
   );
 }

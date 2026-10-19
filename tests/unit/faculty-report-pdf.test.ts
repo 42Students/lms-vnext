@@ -39,6 +39,19 @@ describe("Faculty PDF reports", () => {
     expect(pdf).toContain("Page 1 of " + pages.length);
   });
 
+  it("keeps a section heading with its first row across a page boundary", () => {
+    const pdf = buildFacultyReportPdf({
+      ...base,
+      summary: Array.from({ length: 49 }, (_, index) => "Summary " + index),
+      sections: [{ title: "Learner results", rows: ["Student A: 9/10"] }],
+    });
+    const streams = [...pdf.matchAll(/stream\n([\s\S]*?)endstream/g)].map(match => match[1]);
+    expect(streams.length).toBe(2);
+    expect(streams[0]).not.toContain("(LEARNER RESULTS)");
+    expect(streams[1]).toContain("(LEARNER RESULTS)");
+    expect(streams[1]).toContain("(Student A: 9/10)");
+  });
+
   it("normalizes non-ASCII text to PDF-safe printable content", () => {
     const pdf = buildFacultyReportPdf({ ...base, title: "École – Report" });
     expect(pdf).toContain("(Ecole ? Report)");

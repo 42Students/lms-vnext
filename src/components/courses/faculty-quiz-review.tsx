@@ -1,9 +1,14 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+
 
 import {useEffect,useRef,useState} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -86,6 +91,7 @@ export function FacultyQuizReview({
 }) {
   const router = useRouter();
   const openedOnce=useRef(false);
+  const resultUpdatePending=useRef(false);
   const actions = quizReviewActions({
     deliveryOwned,
     status,
@@ -102,6 +108,7 @@ export function FacultyQuizReview({
   const [error, setError] =
     useState<string | null>(null);
   const [notice,setNotice]=useState<string|null>(null);
+  const [confirmPublished,setConfirmPublished]=useState<boolean|null>(null);
 
   useEffect(()=>{
     if(autoOpen&&actions.canReviewAttempts&&!openedOnce.current){
@@ -151,13 +158,8 @@ export function FacultyQuizReview({
   async function setResults(
     published: boolean,
   ) {
-    if (!window.confirm(published
-      ? "Release results? Learners can view their scores and correct answers."
-      : "Withhold results? Learners will no longer see scores or answers."
-    )) {
-      return;
-    }
-
+    if (resultUpdatePending.current) return;
+    resultUpdatePending.current=true;
     setError(null);setNotice(null);
     setSavingResults(true);
 
@@ -193,16 +195,19 @@ export function FacultyQuizReview({
         "Could not update Quiz result visibility. Check your connection and try again.",
       );
     } finally {
+      resultUpdatePending.current=false;
       setSavingResults(false);
+      setConfirmPublished(null);
     }
   }
 
   return (
     <>
-      {notice?<p role="status" className="mt-2 text-sm text-success">{notice}</p>:null}
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      {notice?<Alert tone="success" className="mt-[var(--lms-space-2)]">{notice}</Alert>:null}
+      <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         <Button
           size="sm"
+          className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={load}
         >
@@ -212,9 +217,10 @@ export function FacultyQuizReview({
         {actions.canPublishResults ? (
           <Button
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={savingResults}
             onClick={() =>
-              setResults(true)
+              setConfirmPublished(true)
             }
           >
             {savingResults
@@ -226,10 +232,11 @@ export function FacultyQuizReview({
         {actions.canHideResults ? (
           <Button
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={savingResults}
             onClick={() =>
-              setResults(false)
+              setConfirmPublished(false)
             }
           >
             {savingResults
@@ -267,9 +274,10 @@ export function FacultyQuizReview({
           {actions.canPublishResults ? (
             <Button
               size="sm"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               disabled={savingResults}
               onClick={() =>
-                setResults(true)
+                setConfirmPublished(true)
               }
             >
               {savingResults
@@ -280,10 +288,11 @@ export function FacultyQuizReview({
           {actions.canHideResults ? (
             <Button
               size="sm"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={savingResults}
               onClick={() =>
-                setResults(false)
+                setConfirmPublished(false)
               }
             >
               {savingResults
@@ -293,6 +302,7 @@ export function FacultyQuizReview({
           ) : null}
           <Button
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={loading}
             onClick={load}
@@ -305,27 +315,14 @@ export function FacultyQuizReview({
         </div>
       </div>
 
-      {loading ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          Loading attempts…
-        </p>
-      ) : null}
+      {loading ? <LoadingState label="Loading attempts…" /> : null}
 
       {error ? (
-        <p
-          role="alert"
-          className="mt-3 text-sm font-semibold text-error"
-        >
-          {error}
-        </p>
+        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
       ) : null}
 
-      {!loading &&
-      attempts &&
-      attempts.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          No submissions yet
-        </p>
+      {!loading && attempts && attempts.length === 0 ? (
+        <EmptyState title="No submissions yet" description="" />
       ) : null}
 
       {!loading && attempts ? <p className="text-sm font-semibold text-foreground">{attempts.length} submission(s)</p> : null}
@@ -366,7 +363,7 @@ export function FacultyQuizReview({
                   (answer, index) => (
                     <div
                       key={answer.id}
-                      className="rounded-[var(--lms-control-radius)] border border-border p-3"
+                      className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-[var(--lms-space-3)]"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <p className="m-0 text-sm font-semibold text-foreground">
@@ -440,6 +437,18 @@ export function FacultyQuizReview({
       ) : null}
       </div>
       </Drawer>
+      <ConfirmDialog
+        open={confirmPublished !== null}
+        onOpenChange={nextOpen => { if (!nextOpen && !savingResults) setConfirmPublished(null); }}
+        title={confirmPublished ? "Release quiz results" : "Withhold quiz results"}
+        description={confirmPublished
+          ? "Release results? Learners can view their scores and correct answers."
+          : "Withhold results? Learners will no longer see scores or answers."}
+        confirmLabel={confirmPublished ? "Release results" : "Withhold results"}
+        confirmVariant={confirmPublished ? "primary" : "danger"}
+        pending={savingResults}
+        onConfirm={() => { if (confirmPublished !== null) void setResults(confirmPublished); }}
+      />
     </>
   );
 }
