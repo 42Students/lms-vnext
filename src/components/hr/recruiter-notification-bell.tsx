@@ -79,7 +79,7 @@ export function RecruiterNotificationBell(){
      aria-label="Close notifications" className="min-h-9 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
    </div>
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
-    <button type="button" onClick={()=>void load()} className="ml-2 inline-flex min-h-9 items-center text-sm text-primary-text underline">Retry</button>
+    <button type="button" onClick={()=>void load()} className="ml-2 inline-flex min-h-9 items-center text-sm text-primary-text underline hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</button>
    </div>:null}
    {data?.status==="CHOOSE_COLLEGE"?
     <div className="mt-3 space-y-2 text-sm">{data.choices?.map(item=>
@@ -95,7 +95,7 @@ export function RecruiterNotificationBell(){
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-9 py-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="block min-h-9 py-3 text-sm text-primary-text hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
