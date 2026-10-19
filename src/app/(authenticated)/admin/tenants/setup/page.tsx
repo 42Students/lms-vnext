@@ -91,11 +91,16 @@ export default async function SuperAdminTenantSetup({
     <p className="mt-2 break-words text-sm font-semibold">{college?.name??(id?"Selected college":"No college selected")}</p>
    </article>
   </section>
-  <Tabs ariaLabel="Tenant Setup steps" renderPanel={false} value={tab}
-   items={[
-    {value:"STRUCTURE",label:"1. Tenant structure",href:tabLink("STRUCTURE")},
-    {value:"LAUNCH",label:"2. Launch setup",href:tabLink("LAUNCH")},
-   ]}/>
+  <nav aria-label="Tenant Setup steps" className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-1">
+   <Link href={tabLink("STRUCTURE")} aria-current={tab==="STRUCTURE"?"page":undefined}
+    className={"inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] px-3 text-sm font-semibold transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9 "+(tab==="STRUCTURE"?active:inactive)}>
+    1. Tenant structure
+   </Link>
+   <Link href={tabLink("LAUNCH")} aria-current={tab==="LAUNCH"?"page":undefined}
+    className={"inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] px-4 text-sm font-semibold transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9 "+(tab==="LAUNCH"?active:inactive)}>
+    2. Launch setup
+   </Link>
+  </nav>
   {tab==="STRUCTURE"?<>
    <section aria-label="Create organization and college" className="grid min-w-0 gap-4 xl:grid-cols-2">
     <div className="min-w-0 space-y-3 border-b border-border pb-5">

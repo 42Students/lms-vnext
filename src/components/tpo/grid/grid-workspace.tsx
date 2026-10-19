@@ -15,17 +15,21 @@ type GridWorkspaceProps<Row>={
  rows:readonly Row[];
  columns:readonly TpoGridColumn<Row>[];
  rowKey:(row:Row)=>string;
- children:ReactNode;
+ children:ReactNode|((visibleKeys:readonly string[])=>ReactNode);
+ columnScope?:"url"|"local";
+ columnStorageKey?:string;
  filters?:readonly TpoFilterField[];
  selection?:Selection;
  rollOf?:(row:Row)=>string|null|undefined;
  savedViews?:ReactNode;
  extraActions?:ReactNode;
+ act?:(shown:readonly Row[],selected:readonly Row[],clear:()=>void)=>ReactNode;
  exportName?:string;
  xlsxHref?:string|null;
  searchPlaceholder?:string;
  searchParam?:string;
  filterTitle?:string;
+ searchMaxLength?:number;
 };
 
 const safeTsv=(value:unknown)=>{
@@ -36,9 +40,10 @@ const safeTsv=(value:unknown)=>{
 /** Legacy TPO list chrome. Accepts only the authorized rows supplied by the page:
  * search persists in its URL, and copy/paste/export never fetch broader datasets. */
 export function GridWorkspace<Row>({
- rows,columns,rowKey,children,filters=[],selection,rollOf,savedViews,extraActions,
+ rows,columns,rowKey,children,filters=[],selection,rollOf,savedViews,extraActions,act,
  exportName="tpo-grid",xlsxHref,searchPlaceholder="Search name, roll no., anything",
- searchParam="search",filterTitle="Filters",
+ searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
+ searchMaxLength=120,
 }:GridWorkspaceProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const id=useId();
@@ -51,18 +56,39 @@ export function GridWorkspace<Row>({
  const [pasteOpen,setPasteOpen]=useState(false);
  const [pasteText,setPasteText]=useState("");
  const [notice,setNotice]=useState("");
+ const [localKeys,setLocalKeys]=useState<string[]>([]);
  const permitted=useMemo(()=>columns.filter(column=>!column.exportOnly).map(column=>column.key),[columns]);
- const activeKeys=parseTpoGridColumns(params.get("columns")??undefined,permitted);
+ const keySignature=permitted.join(",");
+ useEffect(()=>{
+  if(columnScope!=="local"||!columnStorageKey)return;
+  try{const raw=window.localStorage.getItem(columnStorageKey);
+   if(raw)setLocalKeys(parseTpoGridColumns(raw,permitted));
+  }catch{/* Local storage is optional; default columns remain available. */}
+ },[columnScope,columnStorageKey,keySignature]);
+ const urlKeys=parseTpoGridColumns(params.get("columns")??undefined,permitted);
+ const activeKeys=columnScope==="local"&&localKeys.length?localKeys:urlKeys.length&&columnScope==="url"?urlKeys:permitted;
  const chosen=chosenTpoGridColumns(columns,activeKeys.length?activeKeys:permitted)
    .filter(column=>!column.exportOnly);
  const pageIds=useMemo(()=>new Set(rows.map(rowKey)),[rows,rowKey]);
  const selectedPage=rows.filter(row=>selection?.selected.includes(rowKey(row)));
+ const clearPageSelection=()=>{
+  if(!selection)return;
+  const pageIdsNow=new Set(rows.map(rowKey));
+  selection.onChange(selection.selected.filter(key=>!pageIdsNow.has(key)));
+ };
  const exportedRows=selectedPage.length?selectedPage:rows;
  const activeFilters=filters.filter(field=>{
   const raw=params.get(field.urlKey??"filter."+field.key);
   return raw!==null&&raw!==""&&raw!==(field.allValue??"");
  });
  const searchKey=params.toString();
+ const hasNarrowing=Boolean(querySearch.trim())||activeFilters.length>0;
+ const clearNarrowing=()=>{
+  const updates:Record<string,string>={[searchParam]:""};
+  for(const field of filters)updates[field.urlKey??"filter."+field.key]="";
+  const next=updateTpoGridQuery(new URLSearchParams(params.toString()),updates);
+  setTyped("");router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
+ };
  useEffect(()=>{setTyped(querySearch);},[querySearch]);
  useEffect(()=>{
   if(typed.trim()===querySearch)return;
@@ -73,6 +99,12 @@ export function GridWorkspace<Row>({
   return ()=>window.clearTimeout(timer);
  },[typed,querySearch,searchKey,pathname,router,searchParam]);
  const changeColumns=(keys:string[])=>{
+  if(columnScope==="local"){
+   setLocalKeys(keys);
+   if(columnStorageKey){try{window.localStorage.setItem(columnStorageKey,keys.join(","));}
+    catch{/* Keep the in-page preference even with storage disabled. */}}
+   return;
+  }
   const reset=keys.length===permitted.length&&keys.every((key,index)=>key===permitted[index]);
   const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:reset?"":keys.join(",")},false);
   router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
@@ -120,7 +152,7 @@ export function GridWorkspace<Row>({
  return <section className="min-w-0 space-y-3" aria-label="TPO grid workspace" data-tpo-grid-workspace>
   <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label="TPO table tools">
    <div className="flex min-w-[190px] max-w-lg flex-1 items-center gap-2">
-    <Input aria-label="Search table" value={typed} maxLength={200}
+    <Input aria-label="Search table" value={typed} maxLength={searchMaxLength}
      placeholder={searchPlaceholder} onChange={event=>setTyped(event.target.value)}/>
     <Button variant="secondary" type="button" onClick={()=>{
      const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{[searchParam]:typed.trim()});
@@ -179,11 +211,24 @@ export function GridWorkspace<Row>({
   </div>:null}
   <div className="flex flex-wrap items-center justify-between gap-2 border-y border-border py-2 text-sm">
    <span role="status">{rows.length} items in this view{selection?" · "+selectedPage.length+" selected":""}</span>
-   {selection?.selected.length?<Button variant="ghost" type="button" onClick={()=>selection.onChange(
-     selection.selected.filter(key=>!pageIds.has(key))
-   )}>Clear page selection</Button>:null}
+   {selection&&rows.length?<Button variant="secondary" type="button"
+    disabled={selectedPage.length===rows.length}
+    onClick={()=>selection.onChange([...new Set([...selection.selected,...rows.map(rowKey)])])}>
+    Act on all {rows.length}
+   </Button>:null}
   </div>
+  {rows.length===0&&hasNarrowing?<div role="status" className="flex flex-wrap items-center gap-2 text-sm">
+   <span>{querySearch.trim()?"No rows match the search and active filters.":"No rows match the active filters."}</span>
+   <Button variant="secondary" type="button" onClick={clearNarrowing}>Clear search and filters</Button>
+  </div>:null}
+  {selection&&selectedPage.length?<div role="region" aria-label="Act on these"
+    className="flex flex-wrap items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle px-3 py-2 text-sm">
+    <strong>{selectedPage.length} selected</strong>
+    {act?.(rows,selectedPage,clearPageSelection)}
+    <Button variant="secondary" type="button" onClick={()=>void copyRows()}>Copy selected</Button>
+    <Button variant="ghost" type="button" onClick={clearPageSelection}>Clear page selection</Button>
+   </div>:null}
   {notice?<p role="status" className="text-xs text-muted-foreground">{notice}</p>:null}
-  {children}
+  {typeof children==="function"?children(activeKeys):children}
  </section>;
 }

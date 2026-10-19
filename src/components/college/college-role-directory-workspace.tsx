@@ -345,7 +345,7 @@ export async function CollegeRoleDirectoryWorkspace({
           </label>
             </div>
           </Disclosure>
-          <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          <Button variant="primary" type="submit">
             Apply
           </Button>
           <Link href={path} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">

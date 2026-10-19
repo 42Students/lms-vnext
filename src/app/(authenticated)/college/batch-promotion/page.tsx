@@ -154,7 +154,7 @@ export default async function CollegeBatchPromotionPage({
                 academicYearStart={preview.plan.academicYearStart!} />
             ) : null}
         </section>
-        <section aria-label="Learner-level preview" className="min-w-0 rounded-[8px] border border-border bg-surface">
+        <section aria-label="Learner-level preview" className="min-w-0 border-t border-border pt-4">
           <h2 className="border-b border-border p-4 text-lg font-semibold text-foreground">Learner blockers</h2>
           <DataTable rows={preview.learners} getRowKey={learner=>learner.membershipId} caption="Learner blockers"
             columns={[
