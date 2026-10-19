@@ -82,6 +82,13 @@ export function GridWorkspace<Row>({
   return raw!==null&&raw!==""&&raw!==(field.allValue??"");
  });
  const searchKey=params.toString();
+ const hasNarrowing=Boolean(querySearch.trim())||activeFilters.length>0;
+ const clearNarrowing=()=>{
+  const updates:Record<string,string>={[searchParam]:""};
+  for(const field of filters)updates[field.urlKey??"filter."+field.key]="";
+  const next=updateTpoGridQuery(new URLSearchParams(params.toString()),updates);
+  setTyped("");router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
+ };
  useEffect(()=>{setTyped(querySearch);},[querySearch]);
  useEffect(()=>{
   if(typed.trim()===querySearch)return;
@@ -210,6 +217,10 @@ export function GridWorkspace<Row>({
     Act on all {rows.length}
    </Button>:null}
   </div>
+  {rows.length===0&&hasNarrowing?<div role="status" className="flex flex-wrap items-center gap-2 text-sm">
+   <span>{querySearch.trim()?"No rows match the search and active filters.":"No rows match the active filters."}</span>
+   <Button variant="secondary" type="button" onClick={clearNarrowing}>Clear search and filters</Button>
+  </div>:null}
   {selection&&selectedPage.length?<div role="region" aria-label="Act on these"
     className="flex flex-wrap items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle px-3 py-2 text-sm">
     <strong>{selectedPage.length} selected</strong>
