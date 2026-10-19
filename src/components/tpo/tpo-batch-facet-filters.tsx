@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {useState} from "react";
@@ -41,28 +42,28 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
     <fieldset className="space-y-1"><legend className="font-semibold text-sm">State</legend>
      {(["In placements","Not started","Finished"] as const).map(value=>
       <label key={value} className="flex min-h-9 items-center gap-2 text-sm">
-       <input type="checkbox" name="facetState" value={value} checked={selected.states.includes(value)}
+       <Checkbox name="facetState" value={value} checked={selected.states.includes(value)}
         onChange={()=>toggleState(value)}/>
        {value} ({facetCount({...selected,states:[...new Set([...selected.states,value])]})})
       </label>)}
     </fieldset>
     <fieldset className="space-y-1"><legend className="font-semibold text-sm">Department</legend>
      {departments.map(value=><label key={value} className="flex min-h-9 items-center gap-2 text-sm">
-      <input type="checkbox" name="facetDepartment" value={value} checked={selected.departments.includes(value)}
+      <Checkbox name="facetDepartment" value={value} checked={selected.departments.includes(value)}
        onChange={()=>toggleDepartment(value)}/>
       {value} ({facetCount({...selected,departments:[...new Set([...selected.departments,value])]})})
      </label>)}
     </fieldset>
     <fieldset className="space-y-1"><legend className="font-semibold text-sm">Program</legend>
      {programs.map(value=><label key={value} className="flex min-h-9 items-center gap-2 text-sm">
-      <input type="checkbox" name="facetProgram" value={value} checked={selected.programs.includes(value)}
+      <Checkbox name="facetProgram" value={value} checked={selected.programs.includes(value)}
        onChange={()=>toggleProgram(value)}/>
       {value} ({facetCount({...selected,programs:[...new Set([...selected.programs,value])]})})
      </label>)}
     </fieldset>
     <fieldset className="space-y-1"><legend className="font-semibold text-sm">Final year</legend>
      {allYears.map(value=><label key={value} className="flex min-h-9 items-center gap-2 text-sm">
-      <input type="checkbox" name="facetFinalYear" value={value} checked={selected.finalYears.includes(value)}
+      <Checkbox name="facetFinalYear" value={value} checked={selected.finalYears.includes(value)}
        onChange={()=>toggleYear(value)}/>
       {value} ({facetCount({...selected,finalYears:[...new Set([...selected.finalYears,value])]})})
      </label>)}
