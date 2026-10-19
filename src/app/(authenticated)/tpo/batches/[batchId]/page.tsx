@@ -45,7 +45,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
  </details>:null}
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
- {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="rounded border border-border bg-surface p-3 text-sm">
+ {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
   Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
    className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Do it</Link>
   </p>:ready&&!lifecycle?.invitedAt&&invitePreview.invitable>0?<p data-testid="batch.suggest"
