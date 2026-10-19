@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState,type KeyboardEvent} from "react";
 import {tpoBatchShortcut,tpoBatchVisibleSelection,tpoBatchSelectedClipboard}
  from "@/modules/placements/tpo-batch-keyboard-actions-model";
@@ -34,16 +35,16 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
   className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
    <strong className="text-sm">Student actions · {valid.length} selected on this page</strong>
-   <button type="button" aria-expanded={expanded} onClick={()=>setExpanded(v=>!v)}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm md:hidden">Actions</button>
+   <Button variant="secondary" type="button" aria-expanded={expanded} onClick={()=>setExpanded(v=>!v)}
+    className="min-h-11 px-3 md:hidden">Actions</Button>
   </div>
   <p className="text-xs text-body">Focus this area: Ctrl/Cmd+A selects visible rows, Ctrl/Cmd+C copies selected names and roll numbers. Shortcuts never intercept an input field.</p>
   <div className={expanded?"flex flex-wrap gap-2":"hidden flex-wrap gap-2 md:flex"}>
-   <button type="button" onClick={selectVisible} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Select visible</button>
-   <button type="button" onClick={()=>{setSelected([]);setMessage("");}}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Clear selection</button>
-   <button type="button" disabled={!valid.length} onClick={()=>void copy()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Copy selected</button>
+   <Button variant="secondary" type="button" onClick={selectVisible} className="min-h-9 px-3">Select visible</Button>
+   <Button variant="secondary" type="button" onClick={()=>{setSelected([]);setMessage("");}}
+    className="min-h-9 px-3">Clear selection</Button>
+   <Button variant="secondary" type="button" disabled={!valid.length} onClick={()=>void copy()}
+    className="min-h-9 px-3">Copy selected</Button>
    <a href={downloadHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Export filtered page CSV</a>
   </div>
   <label className="flex min-h-10 items-center gap-2 text-sm">
