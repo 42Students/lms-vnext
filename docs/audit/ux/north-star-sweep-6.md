@@ -227,3 +227,54 @@ src/components/courses/college-lesson-visibility-controls.tsx
 - Three further source commits reconciled remaining direct-route white-card stacks found by a source scan of **all 37 assigned admin page files**: `admin/lecture-halls/[hallId]`, `admin/lessons`, and `admin/placements/applications/[applicationId]`. Converted schedule-date native controls to shared UI and changed lesson, hall and stage-history cards to hairline lists.
 - Total for this continuation: **30 source commits on 30 source files**, plus ledger updates; branch-only writes. The only direct-route rounded-xl remaining in this sweep is an intentional invalid-filter alert in `admin/inbound-mail`; status/warning banners and genuinely independent calendar panels remain deliberately separate.
 - No compile, test, CI, browser run, deployment or pixel comparison was performed.
+
+## Continued visual parity — follow-up source batches (2026-10-19)
+
+- Started from lane commit `78913ba68079218abfdcb32b6d7ff7f9b969b98f`; `main` was initially an ancestor and required no additional fast-forward at that moment. **40 new [chat-6] source commits**, touching **36 distinct source files**, were then pushed to `chatgpt/chat-6-b` (four ~10-commit batches).
+- Expanded the **Super Admin second-third route sweep** into the directly delegated placement-calendar, interview operations, drive workspace, job-create/draft-edit, requests, application pipeline and detail drawer, content authoring, membership-role pickers and report components. No page copy, permission check, tenant policy, API payload or business workflow was deliberately changed.
+- Replaced broken CSS utility suffixes in the calendar (including white-on-white event labels), normalized link/button contrast, dialog and confirm-danger styling, control radii and spacing; moved more outer page-level cards and nested white panels to simple hairline rows while retaining independent alerts, forms, modals, calendar cells and actionable panels.
+- Reviewed the **auth/session UI** through `account/security/page.tsx`, `auth/device-list.tsx`, `admin/colleges/[collegeId]/admins/[userId]/page.tsx` and `admin-revoke-sessions.tsx`: shared controls, compact session rows, safe focus outlines, destructive confirmation treatment; no session-token, expiry, authentication or revocation logic changed.
+- Final direct-route source sweep rechecked all 37 assigned pages for hard-coded hex colours, malformed CSS variable suffixes, hard-coded shadows and old 9px control radii. Replaced remaining direct-route `rounded-[9px]` occurrences with `rounded-[var(--lms-control-radius)]` in seven files. Retained intentionally independent semantic warning and error banners.
+- **No app run, TypeScript compiler, unit tests, CI, screenshots or pixel-diff** per directive. Selected source files were inspected for JSX control open/close consistency and invalid utility suffixes; this is not runtime or strict compilation certification.
+- **Concurrent upstream movement:** after these writes, `main` advanced hundreds of commits and diverged from this lane. The last inspected common ancestor was `a748025f00f3f580a414e9185115a16660318c4a`. Six placement files had upstream edits overlapping this continuation. Do **not** force-reset the lane or invent a conflict-free merge: reconcile those files with the latest `main` in a subsequent integration pass. All current source changes remain preserved on `chatgpt/chat-6-b`; no writes to `main`.
+
+### Files changed in this follow-up
+
+```text
+src/app/(authenticated)/account/security/page.tsx
+src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx
+src/app/(authenticated)/admin/inbound-mail/page.tsx
+src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx
+src/app/(authenticated)/admin/people/unassigned/page.tsx
+src/app/(authenticated)/admin/placements/analytics/page.tsx
+src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx
+src/app/(authenticated)/admin/placements/drives/page.tsx
+src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx
+src/app/(authenticated)/admin/placements/page.tsx
+src/app/(authenticated)/admin/placements/retention/page.tsx
+src/components/admin/admin-revoke-sessions.tsx
+src/components/admin/admin-scoped-csv-control.tsx
+src/components/admin/admin-scoped-read-page.tsx
+src/components/admin/lecture-hall-manager.tsx
+src/components/admin/person-membership-actions.tsx
+src/components/admin/person-onboard-dialog.tsx
+src/components/admin/placement-panel-error-boundary.tsx
+src/components/admin/super-admin-interview-operations.tsx
+src/components/admin/super-admin-people-csv-control.tsx
+src/components/admin/super-admin-platform-block-action.tsx
+src/components/auth/device-list.tsx
+src/components/courses/admin-learning-structure-actions.tsx
+src/components/courses/super-admin-content-actions.tsx
+src/components/courses/super-admin-content-authoring.tsx
+src/components/placements/college-application-detail-drawer.tsx
+src/components/placements/college-application-pipeline-controls.tsx
+src/components/placements/college-interview-appointments.tsx
+src/components/placements/placement-calendar-workspace.tsx
+src/components/placements/placement-draft-edit-form.tsx
+src/components/placements/placement-drive-controls.tsx
+src/components/placements/placement-drive-workspace.tsx
+src/components/placements/placement-job-create-form.tsx
+src/components/placements/placement-operations-overview.tsx
+src/components/placements/placement-request-queue.tsx
+src/components/placements/tpo-drive-deadline-form.tsx
+```
