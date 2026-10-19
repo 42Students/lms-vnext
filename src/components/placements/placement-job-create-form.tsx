@@ -1095,7 +1095,7 @@ export function PlacementJobCreateForm({
             </label>
             <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). A newly selected date defaults to 11:59 PM; you can change the time.</span>
             <button type="button" aria-controls="tpo-drive-application-deadline"
-              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9"
               onClick={()=>{
                 const form=formRef.current;
                 const field=form?.elements.namedItem("applicationDeadline");
