@@ -70,7 +70,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
         <Button variant="ghost" className="underline text-primary-text" type="button" disabled={busy} onClick={()=>setSelected([])}
          >Clear selection</Button>
       </div>
-      <div role="group" aria-label="Issues on this page" className="grid gap-2 sm:grid-cols-2">
+      <div role="group" aria-label="Issues on this page" className="grid gap-2 md:grid-cols-2">
         {rows.map(row=><label key={row.publicId} className="flex min-h-9 items-center gap-2 text-sm">
           <Checkbox checked={selected.includes(row.publicId)} disabled={busy}
             onChange={()=>toggle(row.publicId)}/>
