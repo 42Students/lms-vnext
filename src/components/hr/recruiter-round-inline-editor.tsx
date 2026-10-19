@@ -88,7 +88,7 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
   {error&&!open?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!readOnly?<div className="flex flex-wrap gap-2">{rows.filter(canEdit).map(row=>
    <button key={row.id} type="button" onClick={()=>edit(row)}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text">
+    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
     Change / Remove: {row.name}
    </button>)}</div>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
@@ -115,7 +115,7 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
       <button type="button" disabled={pending} onClick={requestClose}
        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Cancel</button>
       <button type="submit" disabled={pending}
-       className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">
+       className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
        {pending?"Saving…":active?"Save changes":"Add round"}</button>
      </div>
     </form>
