@@ -7,6 +7,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {DataTable} from "@/components/ui/data-table";
+import {Alert} from "@/components/ui/alert";
 
 export default async function SuperAdminStudentCourseProgressPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>
@@ -14,7 +15,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
  const offeringId=parseSuperAdminStudentProgressParams(await searchParams);
- const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Back to Course Progress</Link>;
+ const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to Course Progress</Link>;
  if(!offeringId)return <div className="space-y-5">
   <PageHeader title="Student Course Progress"/>
   <ErrorState title="Choose a course offering" description="Select a course and class from Course Progress first." action={back}/>
@@ -37,18 +38,18 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     actions={<div className="flex flex-wrap items-center gap-2">
       {back}
       <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Export CSV</a>
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Export CSV</a>
     </div>}
   />
-  <dl className="grid gap-4 border-y border-border py-4 sm:grid-cols-4">
-   <div className="border-b border-border pb-3 sm:border-b-0 sm:border-r sm:pr-4 sm:last:border-r-0"><dt>Average completion</dt><dd className="text-xl font-semibold">{mean===null?"Not measured":mean+"%"}</dd></div>
-   <div className="border-b border-border pb-3 sm:border-b-0 sm:border-r sm:pr-4 sm:last:border-r-0"><dt>Students</dt><dd className="text-xl font-semibold">{report.rows.length}</dd></div>
-   <div className="border-b border-border pb-3 sm:border-b-0 sm:border-r sm:pr-4 sm:last:border-r-0"><dt>Not started</dt><dd className="text-xl font-semibold">{report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length}</dd></div>
-   <div className="border-b border-border pb-3 sm:border-b-0 sm:border-r sm:pr-4 sm:last:border-r-0"><dt>Items measured</dt><dd className="text-xl font-semibold">{lowestMeasured===highestMeasured?
+  <dl className="grid gap-4 border-y border-border py-4 md:grid-cols-4">
+   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt>Average completion</dt><dd className="text-xl font-semibold">{mean===null?"Not measured":mean+"%"}</dd></div>
+   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt>Students</dt><dd className="text-xl font-semibold">{report.rows.length}</dd></div>
+   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt>Not started</dt><dd className="text-xl font-semibold">{report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length}</dd></div>
+   <div className="border-b border-border pb-3 md:border-b-0 md:border-r md:pr-4 md:last:border-r-0"><dt>Items measured</dt><dd className="text-xl font-semibold">{lowestMeasured===highestMeasured?
      highestMeasured:lowestMeasured+"–"+highestMeasured+" per learner"}</dd></div>
   </dl>
   <p className="text-sm text-body">Video completions, submitted assignments and attempted quizzes are counted from persisted learner records. No completion percentage is inferred when there are no measurable items.</p>
-  {report.truncated?<p role="alert" className="text-warning-text">Showing the first 500 students. Narrowing by course offering is required for large cohorts.</p>:null}
+  {report.truncated?<Alert tone="warning" role="alert">Showing the first 500 students. Narrowing by course offering is required for large cohorts.</Alert>:null}
   <DataTable<(typeof report.rows)[number]>
     caption="Student Course Progress"
     rows={report.rows}
