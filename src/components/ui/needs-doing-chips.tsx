@@ -31,14 +31,14 @@ const tones = {
 /** The old LMS's compact "Needs doing:" chips: genuine links or quick filters, never inert buttons. */
 export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs doing:", className }: NeedsDoingChipsProps) {
   if (!items.length) return null;
-  const base = "inline-flex min-h-11 sm:min-h-8 max-w-full items-center gap-[var(--lms-space-2)] rounded-[var(--lms-radius-pill)] border px-[var(--lms-space-4)] py-[var(--lms-space-2)] text-[13px] font-medium leading-[17px] transition-colors duration-[var(--lms-motion-fast)] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+  const base = "inline-flex min-h-8 max-w-full items-center gap-[var(--lms-space-2)] rounded-[var(--lms-radius-pill)] border px-[var(--lms-space-4)] py-[var(--lms-space-2)] text-[13px] font-medium leading-[17px] transition-colors duration-[var(--lms-motion-fast)] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
   return (
     <div data-slot="needs-doing-chips" role="group" aria-label={label.replace(/:$/, "")} className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]", className)}>
       <span className="mr-1 text-[13px] font-semibold text-[var(--lms-neutral-500)]">{label}</span>
       {items.map(item => {
         const count = typeof item.count === "number" && Number.isFinite(item.count) ? Math.max(0, Math.trunc(item.count)) : null;
         const selected = selectedKey === item.key;
-        const classes = cx(base, tones[item.tone ?? "neutral"], selected && "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]");
+        const classes = cx(base, (item.href !== undefined || onSelect) && "min-h-11 sm:min-h-8", tones[item.tone ?? "neutral"], selected && "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]");
         const accessibleLabel = count !== null ? `${item.label} ${count}` : item.label;
         const content = <><span>{item.label}</span>{count !== null ? <span className="tabular-nums">{count}</span> : null}</>;
         if (item.href !== undefined) {
