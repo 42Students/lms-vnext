@@ -28,7 +28,7 @@ export default async function CollegeGroupImportPreviewPage({
       title={"CSV validation · " + group.name}
       description="Preview learner membership import eligibility without creating or changing group members."
       actions={<Link href={"/college/groups/" + encodeURIComponent(group.id)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Back to group
       </Link>} />
     <CollegeGroupImportPreview groupId={group.id} />

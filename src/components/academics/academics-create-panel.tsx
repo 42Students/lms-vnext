@@ -232,7 +232,7 @@ export function AcademicsCreatePanel({
     <section className="grid gap-4 xl:grid-cols-2">
       <form
         onSubmit={createPeriod}
-        className="rounded-xl border border-border bg-surface p-5"
+        className="- border-t border-border pt-5"
       >
         <h2 className="m-0 text-base font-semibold text-foreground">
           New academic period
@@ -314,7 +314,7 @@ export function AcademicsCreatePanel({
 
       <form
         onSubmit={createProgram}
-        className="rounded-xl border border-border bg-surface p-5"
+        className="- border-t border-border pt-5"
       >
         <h2 className="m-0 text-base font-semibold text-foreground">
           New program
@@ -410,7 +410,7 @@ export function AcademicsCreatePanel({
 
       <form
         onSubmit={createCohort}
-        className="rounded-xl border border-border bg-surface p-5"
+        className="- border-t border-border pt-5"
       >
         <h2 className="m-0 text-base font-semibold text-foreground">
           New cohort / batch
@@ -550,7 +550,7 @@ export function AcademicsCreatePanel({
 
       <form
         onSubmit={createSection}
-        className="rounded-xl border border-border bg-surface p-5"
+        className="- border-t border-border pt-5"
       >
         <h2 className="m-0 text-base font-semibold text-foreground">
           New section

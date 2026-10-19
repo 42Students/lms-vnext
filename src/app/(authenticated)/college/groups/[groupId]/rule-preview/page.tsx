@@ -37,7 +37,7 @@ export default async function CollegeGroupRulePreviewPage({
       title={"Rule preview · " + group.name}
       description="Read-only eligibility preview. No membership changes, refresh or rule edits are performed."
       actions={<Link href={"/college/groups/" + encodeURIComponent(group.id)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Back to group
       </Link>}
     />
@@ -58,7 +58,7 @@ export default async function CollegeGroupRulePreviewPage({
         </div>
       ))}
     </section>
-    <section aria-label="Configured criteria" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+    <section aria-label="Configured criteria" className="space-y-3 - border-t border-border pt-5">
       <h2 className="text-lg font-semibold text-foreground">Persisted rule criteria</h2>
       <dl className="grid gap-3 sm:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Programs allowed</dt>

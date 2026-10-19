@@ -48,7 +48,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
     }
   });
  }
- return <section aria-label="College sign-in methods" className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section aria-label="College sign-in methods" className="space-y-4 - border-t border-border pt-5">
   <h2 className="font-semibold">Sign-in method</h2>
   <fieldset disabled={!ready||saving} className="grid gap-3">
    <legend className="sr-only">Sign-in method</legend>

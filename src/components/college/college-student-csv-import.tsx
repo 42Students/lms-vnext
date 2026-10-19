@@ -49,7 +49,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     encodeURIComponent("\uFEFF" + studentImportReportCsv(report.results)) : null;
 
   return <div className="space-y-6">
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="- sm: border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">Upload or paste CSV</h2>
       <p className="mt-2 text-sm text-body">
         Maximum 500 learner rows and 1 MB. Use the exact header order below.
@@ -119,7 +119,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     </section>
 
     {report ? <section aria-label="CSV validation and result report"
-      className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
+      className="space-y-4 - sm: border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">
         {report.preview ? "Dry-run report" : "Import result"}
       </h2>
@@ -130,7 +130,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         {report.structuralErrors.join(", ")}
       </p> : null}
       {csvDownload ? <a href={csvDownload} download="student-import-result.csv"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Export neutralized result CSV
       </a> : null}
       <DataTable<StudentCsvResult> caption="Student CSV validation and import results"

@@ -70,7 +70,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">{label}</a>)}
     </nav>
     <div className="grid gap-5 md:grid-cols-2">
-      <section id="personal" className="scroll-mt-24 space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section id="personal" className="scroll-mt-24 space-y-3 - border-t border-border pt-5">
         <h2 className="font-semibold text-foreground">Personal Details</h2>
         <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} />
         <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} />
@@ -81,7 +81,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         <Field label="Profile photo (HTTPS link)" value={profile.photoUrl}
           onChange={v => top("photoUrl", v)} hint="Paste a secure image link. Direct photo upload requires the storage service." />
       </section>
-      <section id="social" className="scroll-mt-24 space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section id="social" className="scroll-mt-24 space-y-3 - border-t border-border pt-5">
         <h2 className="font-semibold text-foreground">Social Profiles</h2>
         <Field label="LinkedIn" type="url" value={profile.social.linkedIn}
           onChange={v => detail("social", "linkedIn", v)} />
@@ -92,7 +92,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         <Field label="Instagram" type="url" value={profile.social.instagram}
           onChange={v => detail("social", "instagram", v)} />
       </section>
-      <section id="address" className="scroll-mt-24 space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section id="address" className="scroll-mt-24 space-y-3 - border-t border-border pt-5">
         <h2 className="font-semibold text-foreground">Address</h2>
         {([
           ["line1", "Address line 1"], ["line2", "Address line 2"],
@@ -101,7 +101,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
           <Field key={key} label={label} value={profile.address[key]}
             onChange={v => detail("address", key, v)} />)}
       </section>
-      <section id="contacts" className="scroll-mt-24 space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section id="contacts" className="scroll-mt-24 space-y-3 - border-t border-border pt-5">
         <h2 className="font-semibold text-foreground">Contacts</h2>
         <p className="text-xs text-muted-foreground">Primary login contacts remain read-only for account security.</p>
         <p className="text-sm text-body">Email: {email || "Not provided"} · Mobile: {phone || "Not provided"}</p>
@@ -115,7 +115,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
     </div>
     {error && <p role="alert" className="text-sm text-error">{error}</p>}
     {saved && <p role="status" className="text-sm font-semibold text-primary-text">Profile updated successfully.</p>}
-    <button type="submit" disabled={saving} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+    <button type="submit" disabled={saving} className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
       {saving ? "Saving…" : "Save profile"}
     </button>
   </form>;

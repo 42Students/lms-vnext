@@ -30,7 +30,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <CollegeFacultyScheduleReassign membershipId={membershipId} name={data.person.name}/>
         <Link href="/college/faculty" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Back to faculty</Link>
       </div>} />
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="- border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Faculty record</h2>
       <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
         <div><dt className="text-muted-foreground">Title</dt><dd>{data.person.academicTitle ?? "Not recorded"}</dd></div>
@@ -39,14 +39,14 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <div><dt className="text-muted-foreground">Membership</dt><dd>{data.person.status}</dd></div>
       </dl>
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="- border-t border-border pt-5">
       <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
       <form method="get" className="mt-3 flex flex-wrap items-end gap-3"
         action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
         <label className="grid gap-2 text-sm font-semibold text-body">
           Assignment history
           <select name="status" defaultValue={data.filter.status}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All assignments</option>
             <option value="ACTIVE">Active only</option>
             <option value="ENDED">Ended only</option>
@@ -55,14 +55,14 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <label className="grid gap-2 text-sm font-semibold text-body">
           Teaching role
           <select name="role" defaultValue={data.filter.role}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All teaching roles</option>
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
             <option value="TA">Teaching assistant</option>
           </select>
         </label>
-        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
+        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
       </form>
       <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·

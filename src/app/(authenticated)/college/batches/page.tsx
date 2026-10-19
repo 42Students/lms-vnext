@@ -42,7 +42,7 @@ export default async function CollegeBatchesPage({
     <CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
-      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
       Export CSV
     </Link>
     <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching batches; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>

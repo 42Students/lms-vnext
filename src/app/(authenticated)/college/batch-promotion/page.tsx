@@ -53,13 +53,13 @@ export default async function CollegeBatchPromotionPage({
     <PageHeader eyebrow="College Admin · Academic Setup" title="Batch Promotion"
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<Link href="/college/batches"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">Batches</Link>} />
+        className="rounded-[var(--lms-control-radius,9px)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)]">Batches</Link>} />
     <section className="- sm: border-t border-border pt-4">
       <form method="get" action="/college/batch-promotion" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-1 text-sm font-semibold text-body">
           Program
           <select name="programId" defaultValue={parsed.data.programId ?? ""}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="">All programs</option>
             {options.programs.map(program => <option key={program.id} value={program.id}>
               {program.name} ({program.code})
@@ -69,7 +69,7 @@ export default async function CollegeBatchPromotionPage({
         <label className="grid gap-1 text-sm font-semibold text-body">
           Batch
           <select name="cohortId" defaultValue={parsed.data.cohortId ?? ""}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
             <option value="">Select a batch</option>
             {options.cohorts.map(cohort => <option key={cohort.id} value={cohort.id}>
               {cohort.programName} · {cohort.name} ({cohort.status})
@@ -81,10 +81,10 @@ export default async function CollegeBatchPromotionPage({
           <input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
             defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}
             placeholder="e.g., 2099-00"
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+            className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
         </label>
         <div className="flex items-end">
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-foreground">
+          <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-foreground">
             Preview
           </button>
         </div>

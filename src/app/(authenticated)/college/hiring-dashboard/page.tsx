@@ -24,7 +24,7 @@ export default async function CollegeHiringDashboardPage({
     return <div className="min-w-0 overflow-x-clip space-y-4">
       <PageHeader eyebrow="Placements" title="Analytics"
       actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Placement Evidence by Department
       </Link>} />
       <ErrorState title="Invalid report search" description="No placement metrics were loaded."
@@ -41,7 +41,7 @@ export default async function CollegeHiringDashboardPage({
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Placements" title="Analytics"
       actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Placement Evidence by Department
       </Link>} />
     <CollegeReportNavigation/>

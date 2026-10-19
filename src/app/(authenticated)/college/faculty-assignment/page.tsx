@@ -56,29 +56,29 @@ export default async function CollegeFacultyAssignmentPage({
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}
         actions={<Link href="/college/faculty"
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Faculty directory</Link>}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Faculty directory</Link>}
       />
       <Link prefetch={false} download href={facultyAssignmentCsvHref(query)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
         Export filtered faculty assignments CSV
       </Link>
       <CollegeFacultyAssignmentCreate {...options} />
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section className="- sm: border-t border-border pt-4">
         <form action="/college/faculty-assignment" method="get" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 sm:min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Faculty, course or class
             <input name="q" type="search" defaultValue={query.q} maxLength={100}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
           </label>
           <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
             Exact course code
             <input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm" />
           </label>
           <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
             Class
             <select name="sectionCode" defaultValue={query.sectionCode ?? ""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
               <option value="">All classes</option>
               {query.sectionCode&&!classChoices.some(item=>item.code===query.sectionCode)?
                 <option value={query.sectionCode}>Selected class ({query.sectionCode})</option>:null}
@@ -91,7 +91,7 @@ export default async function CollegeFacultyAssignmentPage({
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Assignment lifecycle
             <select name="status" defaultValue={query.status}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
               <option value="ACTIVE">Active</option>
               <option value="ENDED">Ended</option>
               <option value="ALL">All</option>
@@ -100,16 +100,16 @@ export default async function CollegeFacultyAssignmentPage({
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             {FACULTY_ASSIGNMENT_COPY.roleLabel}
             <select name="role" defaultValue={query.role}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground text-base sm:text-sm">
               <option value="ALL">All roles</option>
               <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
               <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS.CO_TEACHER}</option>
               <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
             </select>
           </label>
-          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
+          <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-foreground">Filter</button>
           <Link href="/college/faculty-assignment"
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
         </form>
       </section>
       <section className="min-w-0 rounded-xl border border-border bg-surface" aria-label="Teaching assignment roster">
@@ -169,9 +169,9 @@ export default async function CollegeFacultyAssignmentPage({
       <nav aria-label="Faculty assignment pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span className="text-muted-foreground">Page {query.page} of {totalPages} · 25/page</span>
         <div className="flex gap-2">
-          {query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]"
+          {query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page - 1 })}>Previous</Link> : null}
-          {query.page < totalPages ? <Link className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]"
+          {query.page < totalPages ? <Link className="rounded-[var(--lms-control-radius,9px)] border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page + 1 })}>Next</Link> : null}
         </div>
       </nav>

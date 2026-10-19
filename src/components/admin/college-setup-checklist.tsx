@@ -23,7 +23,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
     </div>
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
       {phases.map(phase => <section key={phase.title}
-        className="rounded-xl border border-border bg-surface p-4">
+        className="- border-t border-border pt-4">
         <h3 className="text-base font-semibold text-foreground">{phase.title}</h3>
         <div className="mt-3 divide-y divide-border">
           {phase.steps.map(step => <div key={step.key}
@@ -37,7 +37,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
               </p>
             </div>
             {step.href ? <Link href={step.href}
-              className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-xs font-semibold text-primary-text hover:underline">
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text hover:underline">
               Open
             </Link> : <span className="text-xs text-muted-foreground">
               Page unavailable
