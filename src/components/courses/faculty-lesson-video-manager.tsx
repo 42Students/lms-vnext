@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
@@ -19,6 +23,7 @@ import { uploadFacultyLessonThumbnail, uploadFacultyLessonVideo } from "./facult
 import { FacultyVideoPreview } from "./faculty-video-preview";
 
 type Action = (signal: AbortSignal) => Promise<void>;
+type VideoConfirmation = {kind: "DELETE"; video: ManagedVideo} | {kind: "REPLACE"; video: ManagedVideo; file: File};
 type LessonContent = { id:string; contentType:string; storageKey:string|null; status:string; lessonId:string; deliveryId:string|null };
 export function FacultyLessonVideoManager({
   lessonId,deliveryId,nextContentSequence,
@@ -38,6 +43,7 @@ export function FacultyLessonVideoManager({
   const [durationDraft,setDurationDraft]=useState<Record<string,string>>({});
   const [titleDraft,setTitleDraft]=useState<Record<string,string>>({});
   const [previewId,setPreviewId]=useState<string|null>(null);
+  const [confirmation,setConfirmation]=useState<VideoConfirmation|null>(null);
   const controllerRef=useRef<AbortController|null>(null);
   const locked=useRef(false);
 
@@ -184,6 +190,19 @@ export function FacultyLessonVideoManager({
       }
     });
   }
+  function confirmVideoAction() {
+    if (!confirmation || busy) return;
+    const action = confirmation;
+    setConfirmation(null);
+    if (action.kind === "REPLACE") {
+      upload(action.video, action.file);
+      return;
+    }
+    run(async signal => {
+      await request(`/api/courses/videos/${encodeURIComponent(action.video.id)}`, "DELETE", undefined, signal);
+      router.refresh();
+    });
+  }
   function saveTitle(video:ManagedVideo){
     const next=(titleDraft[video.id]??video.title).trim();
     if(!next||next.length>255){setError("Enter a video title (1–255 characters).");return;}
@@ -196,41 +215,41 @@ export function FacultyLessonVideoManager({
     change(video,{durationSeconds:value});
   }
 
-  return <section aria-label="Lesson video management" className="mt-4 space-y-3 border-t border-border pt-4">
+  return <section aria-label="Lesson video management" className="mt-4 space-y-3 border-t border-border pt-4 max-[767px]:[&_button]:min-h-11">
     <h3 className="text-base font-semibold text-[var(--lms-heading)]">Video</h3>
     <p className="text-xs text-muted-foreground">{limitsSummary("lesson-video")}</p>
-    <div className="grid gap-3 sm:grid-cols-3">
-      <label className="text-sm font-semibold text-body">Title
+    <div className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">
+      <label className="text-[13px] leading-4 font-semibold text-body">Title
         <Input className="mt-1" value={title} maxLength={255} onChange={event=>setTitle(event.target.value)}/>
       </label>
-      <label className="text-sm font-semibold text-body">Duration (seconds, optional)
+      <label className="text-[13px] leading-4 font-semibold text-body">Duration (seconds, optional)
         <Input className="mt-1" type="number" min={1} max={86400} value={duration} onChange={event=>setDuration(event.target.value)}/>
       </label>
-      <label className="text-sm font-semibold text-body">Points (lesson content)
+      <label className="text-[13px] leading-4 font-semibold text-body">Points (lesson content)
         <Input className="mt-1" type="number" min={0} max={1000}
           value={contentPoints} onChange={event=>setContentPoints(event.target.value)}/>
       </label>
-      <label className="text-sm font-semibold text-body">Upload Video
-        <Input type="file" className="mt-1 block min-h-9 w-full text-xs"
+      <label className="text-[13px] leading-4 font-semibold text-body">Upload Video
+        <Input type="file" className="mt-1 block min-h-11 w-full text-xs md:min-h-[var(--lms-control-height)]"
           accept={acceptAttributeFor("lesson-video")} disabled={busy}
           onChange={event=>{setFile(event.target.files?.[0]??null);event.currentTarget.value="";}}/>
       </label>
     </div>
-    <Button type="button" size="sm" disabled={busy||loading||!title.trim()||!file} onClick={()=>upload()}>
+    <Button type="button" size="md" disabled={busy||loading||!title.trim()||!file} onClick={()=>upload()}>
       Upload video
     </Button>
     {busy&&activeName?<div className="space-y-2" role="status">
       <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
       <MetricBar label="Video upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className="w-full" />
-      <Button size="sm" type="button" variant="secondary" onClick={()=>controllerRef.current?.abort()}>Cancel upload</Button>
+      <Button size="md" type="button" variant="secondary" onClick={()=>controllerRef.current?.abort()}>Cancel upload</Button>
     </div>:null}
-    {loading?<p role="status" className="text-sm text-muted-foreground">Loading videos…</p>:null}
-    {!loading&&videos.length===0?<p role="status" className="text-sm text-muted-foreground">No videos have been added to this lesson.</p>:null}
+    {loading?<LoadingState label="Loading videos…" />:null}
+    {!loading&&videos.length===0?<EmptyState title="No videos have been added to this lesson." />:null}
     <ol className="space-y-3">
       {videos.map((video,index)=>{
         const state=videoProcessingDescriptor(video.processingStatus);
         const canEdit=video.deliveryId===deliveryId;
-        return <li key={video.id} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
+        return <li key={video.id} className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="min-w-0 break-words text-sm font-semibold text-foreground">{video.title} · {formatFileSize(video.sizeBytes)}</p>
             <div className="flex flex-wrap gap-2">
@@ -239,64 +258,61 @@ export function FacultyLessonVideoManager({
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="secondary" type="button" disabled={busy||!facultyVideoMayPreview(video)}
+            <Button size="md" variant="secondary" type="button" disabled={busy||!facultyVideoMayPreview(video)}
               onClick={()=>setPreviewId(previous=>previous===video.id?null:video.id)}>
               Preview
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||(video.publishStatus==="DRAFT"&&(!facultyVideoMayPublish(video)||!video.lessonContentId))}
+            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||(video.publishStatus==="DRAFT"&&(!facultyVideoMayPublish(video)||!video.lessonContentId))}
               onClick={()=>change(video,{publishStatus:facultyVideoPublishAction(video)})}>
               {video.publishStatus==="PUBLISHED"?"Unpublish":video.publishStatus==="ARCHIVED"?"Restore draft":"Publish"}
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||video.publishStatus==="ARCHIVED"||video.processingStatus!=="READY"}
+            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||video.publishStatus==="ARCHIVED"||video.processingStatus!=="READY"}
               onClick={()=>change(video,{visibleToStudents:!video.visibleToStudents})}>
               {video.visibleToStudents?"Hide from learners":"Show to learners"}
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||index===0}
+            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||index===0}
               onClick={()=>reorder(video,-1)}>
               Move up
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||index===videos.length-1}
+            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||index===videos.length-1}
               onClick={()=>reorder(video,1)}>
               Move down
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||video.processingStatus!=="READY"}
+            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit||video.processingStatus!=="READY"}
               onClick={()=>linkContent(video)}>
               {video.lessonContentId?"Publish to students":"Add to lesson & publish"}
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit}
-              onClick={()=>{if(window.confirm("Delete this video?"))run(async signal=>{
-                await request(`/api/courses/videos/${encodeURIComponent(video.id)}`,"DELETE",undefined,signal);
-                router.refresh();
-              });}}>
+            <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit}
+              onClick={()=>setConfirmation({kind:"DELETE",video})}>
               Delete
             </Button>
           </div>
           <div className="flex flex-wrap gap-3">
-            <label className="text-xs font-semibold text-body">Video title
+            <label className="text-[13px] leading-4 font-semibold text-body">Video title
               <Input className="mt-1 min-w-44" maxLength={255}
                 disabled={busy||!canEdit}
                 value={titleDraft[video.id]??video.title}
                 onChange={event=>setTitleDraft(old=>({...old,[video.id]:event.target.value}))}/>
-              <Button size="sm" variant="secondary" type="button"
+              <Button size="md" variant="secondary" type="button"
                 disabled={busy||!canEdit}
                 onClick={()=>saveTitle(video)}>Update Video</Button>
             </label>
-            <label className="text-xs font-semibold text-body">Replace video
-              <Input type="file" className="mt-1 block min-h-9 max-w-full text-xs" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
+            <label className="text-[13px] leading-4 font-semibold text-body">Replace video
+              <Input type="file" className="mt-1 block min-h-11 max-w-full text-xs md:min-h-[var(--lms-control-height)]" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
                 accept={acceptAttributeFor("lesson-video")}
-                onChange={event=>{const next=event.target.files?.[0];if(next&&window.confirm("Replace this video?"))upload(video,next);event.currentTarget.value="";}}/>
+                onChange={event=>{const next=event.target.files?.[0];if(next)setConfirmation({kind:"REPLACE",video,file:next});event.currentTarget.value="";}}/>
             </label>
-            <label className="text-xs font-semibold text-body">Thumbnail
-              <Input type="file" className="mt-1 block min-h-9 max-w-full text-xs" disabled={busy||!canEdit}
+            <label className="text-[13px] leading-4 font-semibold text-body">Thumbnail
+              <Input type="file" className="mt-1 block min-h-11 max-w-full text-xs md:min-h-[var(--lms-control-height)]" disabled={busy||!canEdit}
                 accept={acceptAttributeFor("lesson-video-thumbnail")}
                 onChange={event=>{thumbnail(video,event.target.files?.[0]??null);event.currentTarget.value="";}}/>
               <span className="block text-xs text-muted-foreground">{video.thumbnailStatus==="READY"?"Thumbnail ready":video.thumbnailStatus==="UPLOADING"?"Checking thumbnail":"No thumbnail"}</span>
             </label>
-            <label className="text-xs font-semibold text-body">Duration (seconds)
+            <label className="text-[13px] leading-4 font-semibold text-body">Duration (seconds)
               <Input type="number" className="mt-1 w-28" min={1} max={86400}
                 value={durationDraft[video.id]??String(video.durationSeconds??"")}
                 onChange={event=>setDurationDraft(draft=>({...draft,[video.id]:event.target.value}))}/>
-              <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit} onClick={()=>saveDuration(video)}>Save duration</Button>
+              <Button size="md" variant="secondary" type="button" disabled={busy||!canEdit} onClick={()=>saveDuration(video)}>Save duration</Button>
             </label>
           </div>
           {!canEdit?<p role="status" className="text-xs text-muted-foreground">Shared video · read only in this Section.</p>:null}
@@ -306,7 +322,19 @@ export function FacultyLessonVideoManager({
         </li>;
       })}
     </ol>
-    {info?<p role="status" className="text-sm text-body">{info}</p>:null}
-    {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
+    {info?<Alert tone="success">{info}</Alert>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
+    <ConfirmDialog
+      open={confirmation!==null}
+      onOpenChange={nextOpen=>{if(!nextOpen&&!busy)setConfirmation(null);}}
+      title={confirmation?.kind==="DELETE"?"Delete this video?":"Replace this video?"}
+      description={confirmation?.kind==="DELETE"
+        ?"The video will be deleted from this lesson."
+        :"The selected file will replace the current lesson video."}
+      confirmLabel={confirmation?.kind==="DELETE"?"Delete video":"Replace video"}
+      confirmVariant={confirmation?.kind==="DELETE"?"danger":"primary"}
+      pending={busy}
+      onConfirm={confirmVideoAction}
+    />
   </section>;
 }
