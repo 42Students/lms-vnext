@@ -16,7 +16,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   page:first(raw.page)??undefined,
  });
  if(!parsed.success)return <section role="alert" className="space-y-3">
-  <h1>Invalid live-class filters</h1><Link href="/teacher/live-classes" className="underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+  <PageHeader title="Invalid live-class filters" /><Link href="/teacher/live-classes" className="underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
  </section>;
  const data=await getFacultyLiveClasses(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
