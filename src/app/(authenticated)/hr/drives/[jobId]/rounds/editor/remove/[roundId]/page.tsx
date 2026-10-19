@@ -1,4 +1,4 @@
-import Link from "next/link";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -29,8 +29,7 @@ export default async function HrRoundRemovalConfirm({params}:{
    <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone="warning">{round.status}</StatusBadge> · No recorded candidate results.</p>
   </div>
   <div className="flex flex-wrap gap-3">
-   <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Keep round</Link>
+   <PageBackLink href={"/recruiter/drives/"+jobId+"/rounds/editor"} label="Keep round"/>
    <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"}>
     <Input type="hidden" name="action" value="REMOVE"/>
     <Input type="hidden" name="roundId" value={round.id}/>
