@@ -54,7 +54,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   rows={visible.map(student=>({id:student.membershipId,name:student.name,rollNumber:student.rollNumber}))}
   downloadHref={batchStudentViewExportHref(batchId,result.page,view.data)}
  />
- <section aria-label="Placement journey" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ <section aria-label="Placement journey" className="space-y-3 border-b border-border py-4">
   <h2 className="font-semibold">Placement journey</h2>
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
    {([["Students",journey.total],["Eligible",journey.eligible],
