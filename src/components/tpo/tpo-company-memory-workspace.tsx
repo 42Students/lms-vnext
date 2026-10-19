@@ -330,7 +330,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
                   <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<currentTimeMs()?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
-                  <Link className="text-sm text-link underline lms-inline-link"
+                  <Link className="text-sm text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}
               </ul>}
