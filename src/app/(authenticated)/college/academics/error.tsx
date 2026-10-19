@@ -6,5 +6,5 @@ export default function CollegeAcademicsError({ reset }: {
   return <ErrorState title="Academic structure unavailable"
     description="Academic periods, programs or sections could not be loaded. No empty-result conclusion is assumed."
     action={<button type="button" onClick={reset}
-      className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold">Retry</button>} />;
+      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold">Retry</button>} />;
 }
