@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {createHrBellMutationGate} from "@/modules/placements/hr-recruiter-bell-model";
 import {hrNotificationReadError} from "@/modules/placements/hr-notification-read-feedback-model";
@@ -36,10 +37,10 @@ export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
   finally{gate.current.end();setSaving(false);}
  }
  return <div className="mt-3 flex flex-wrap items-center gap-2">
-  <button type="button" disabled={saving||complete} onClick={()=>void markRead()}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-60">
+  <Button variant="secondary" type="button" disabled={saving||complete} onClick={()=>void markRead()}
+  >
    {complete?"Marked as read":saving?"Saving…":"Mark as read"}
-  </button>
+  </Button>
   {message?<span role="status" className="text-xs text-body">{message}</span>:null}
  </div>;
 }
