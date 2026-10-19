@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 
 type Preferences = {
@@ -16,8 +19,7 @@ type Preferences = {
   notifyApplicationUpdates: boolean;
 };
 
-const inputClass =
-  "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9";
+const inputClass = "min-h-11 sm:min-h-9";
 
 function splitList(value: string) {
   return value
@@ -172,7 +174,7 @@ export function LearnerPlacementPreferences({
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Preferred role titles
           </span>
-          <input
+          <Input
             className={inputClass}
             value={roles}
             onChange={(event) =>
@@ -188,7 +190,7 @@ export function LearnerPlacementPreferences({
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Preferred locations
           </span>
-          <input
+          <Input
             className={inputClass}
             value={locations}
             onChange={(event) =>
@@ -213,8 +215,7 @@ export function LearnerPlacementPreferences({
                 key={value}
                 className="flex items-center gap-2 text-sm text-body"
               >
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={employmentTypes.includes(
                     value,
                   )}
@@ -233,7 +234,7 @@ export function LearnerPlacementPreferences({
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Work mode
           </span>
-          <select
+          <Select
             className={inputClass}
             value={workMode}
             onChange={(event) =>
@@ -254,13 +255,13 @@ export function LearnerPlacementPreferences({
             <option value="REMOTE">
               Remote
             </option>
-          </select>
+          </Select>
         </label>
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Shift preference
           </span>
-          <select
+          <Select
             className={inputClass}
             value={shiftPreference}
             onChange={(event) =>
@@ -281,13 +282,13 @@ export function LearnerPlacementPreferences({
             <option value="FLEXIBLE">
               Flexible
             </option>
-          </select>
+          </Select>
         </label>
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Minimum CTC (LPA)
           </span>
-          <input
+          <Input
             className={inputClass}
             type="number"
             min={0}
@@ -306,7 +307,7 @@ export function LearnerPlacementPreferences({
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Relocation
           </span>
-          <select
+          <Select
             className={inputClass}
             value={relocationPreference}
             onChange={(event) =>
@@ -324,15 +325,14 @@ export function LearnerPlacementPreferences({
             <option value="NO">
               Prefer not to relocate
             </option>
-          </select>
+          </Select>
         </label>
         <div className="grid gap-2">
           <span className="text-xs font-semibold text-body">
             Notifications
           </span>
           <label className="flex items-center gap-2 text-sm text-body">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={notifyMatchingJobs}
               onChange={(event) =>
                 setNotifyMatchingJobs(
@@ -343,8 +343,7 @@ export function LearnerPlacementPreferences({
             Matching opportunities
           </label>
           <label className="flex items-center gap-2 text-sm text-body">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={
                 notifyApplicationUpdates
               }
