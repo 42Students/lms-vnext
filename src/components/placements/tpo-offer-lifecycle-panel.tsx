@@ -111,7 +111,7 @@ export function TpoOfferLifecyclePanel({
             setIds([]);
             setReviewed(false);
           }}
-          className="mt-2 block min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm font-normal"
+          className="mt-2 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal"
         >
           {TPO_OFFER_ACTIONS.map((value) => (
             <option key={value} value={value}>{value.replaceAll("_", " ")}</option>
@@ -123,7 +123,7 @@ export function TpoOfferLifecyclePanel({
           No offers currently match this action. Nothing will be changed.
         </p>
       ) : (
-        <div tabIndex={0} role="group" aria-label="Eligible offers, scroll for more" className="max-h-56 min-h-0 space-y-1 overflow-auto overscroll-contain rounded-lg border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+        <div tabIndex={0} role="group" aria-label="Eligible offers, scroll for more" className="max-h-56 min-h-0 space-y-1 overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
           {eligible.map((offer) => (
             <label key={offer.id} className="flex min-h-11 md:min-h-9 items-center gap-3 px-2 text-sm">
               <input
@@ -147,7 +147,7 @@ export function TpoOfferLifecyclePanel({
             value={expiresAt}
             disabled={busy}
             onChange={(event) => setExpiresAt(event.target.value)}
-            className="mt-2 block min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface p-2"
+            className="mt-2 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
           />
         </label>
       ) : null}
@@ -159,7 +159,7 @@ export function TpoOfferLifecyclePanel({
             value={joiningDate}
             disabled={busy}
             onChange={(event) => setJoiningDate(event.target.value)}
-            className="mt-2 block min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface p-2"
+            className="mt-2 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
           />
         </label>
       ) : null}
@@ -171,7 +171,7 @@ export function TpoOfferLifecyclePanel({
           value={reason}
           disabled={busy}
           onChange={(event) => setReason(event.target.value)}
-          className="mt-2 block w-full rounded-[9px] border border-border bg-surface p-3 text-sm font-normal text-foreground"
+          className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal text-foreground"
         />
       </label>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -186,7 +186,7 @@ export function TpoOfferLifecyclePanel({
           type="button"
           disabled={!valid || busy || !reviewed}
           onClick={() => void submit()}
-          className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-primary-foreground"
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground"
         >
           {busy ? "Recording..." : "Review and confirm action"}
         </button>
