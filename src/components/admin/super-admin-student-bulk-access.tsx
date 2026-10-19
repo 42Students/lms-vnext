@@ -38,7 +38,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
   finally{pendingRef.current=false;setBusy(false);}
  }
  return <section aria-label="Bulk student access" className="space-y-3 border-b border-border pb-5">
-  <div className="flex flex-wrap justify-between gap-3"><h2 className="font-semibold">Bulk module access</h2>
+  <div className="flex flex-wrap justify-between gap-3"><h2 className="text-xl font-semibold text-[var(--lms-heading)]">Bulk module access</h2>
    <p role="status" className="text-sm text-muted-foreground">{selected.length}/25 students selected</p></div>
   <p className="text-xs text-muted-foreground">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm">
@@ -64,7 +64,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
    <Button variant="primary" type="button" disabled={busy||!selected.length} onClick={()=>void submit()}
     className="">{busy?"Saving…":"Apply to selected"}</Button>
   </div>
-  {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {report?<div role="status" className="space-y-1 text-sm">
    <p>{report.applied} of {report.requested} processed · {report.failures.length} failed</p>
    {report.failures.length?<ul className="list-disc pl-5">{report.failures.map(f=><li key={f.id}>{f.id}: {f.error}</li>)}</ul>:null}
