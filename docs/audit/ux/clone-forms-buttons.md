@@ -71,7 +71,7 @@
 - [ ] C2 native/AntD/multi/searchable/tag/creatable selects (missing: AntD-style dropdown/menu parity, keyboard/typeahead listbox and tag removal UX; non-creatable enforcement is not implemented).
 - [ ] C3 date/time/range pickers and popup calendar (missing: native browser popups are not AntD calendar overlays; range popup/month grid and all keyboard states unverified).
 - [ ] C4 checkbox/radio/switch/slider/segmented (missing: complete ant switch geometry/animation, checked/indeterminate/error states, responsive screenshot comparisons).
-- [ ] C5 file/image upload/dropzone/progress/list (missing: image preview/crop, progress and file-list parity, drag-drop/mobile picker state comparison).
+- [ ] C5 file/image upload/dropzone/progress/list (missing: image preview/crop; picker and drag/drop now expose opt-in selected-file lists and caller-owned real progress but need legacy file-list geometry, adoption, drag-drop/mobile picker comparison, and full-source grep).
 - [ ] C6 labels/helper/errors/readonly/disabled/input groups/layout (missing: global form layout grid grep, every helper/required/readonly mismatch and responsive proof).
 - [ ] C7 rich-text/long-form editors (missing: actual rich-text toolbar and format state parity; shared Textarea only covers plain text).
 
@@ -145,3 +145,67 @@ Observed residuals from directly read files include `src/components/tpo/recruite
 - More than 60 `[chat-17]` commits pushed in several batches on `chatgpt/chat-17-b` for shared controls, inherited state CSS, and page migrations.
 - Introduced native wrappers for `DateInput`, `DateRangePicker`, `MultiSelect`, `SearchableSelect`, `OtpInput`, `RangeSlider`, `SearchField`, `PasswordInput`, `SegmentedControl`, `InputGroup`, `FileDropzone`, `ChoiceInput`, while reusing existing `FileUpload`, `FormField`, `selection-controls`.
 - Do **not** force a branch sync over overlapping upstream changes from other lanes. Reconcile the latest upstream versions, run the recorded greps and computed-style browser comparison, and only then tick individual items when the whole strict rule is satisfied.
+
+
+## 2026-10-19 bounded follow-up — 30 source-only commits, all 12 items remain open
+
+The lane branch was **2,351 commits behind** current main and **zero ahead** at intake, so it was fast-forwarded without rewriting any unique work. The following commits were written directly to `chatgpt/chat-17-b`; each successful `update_file` or `create_file` is a remote GitHub commit, so work is already pushed rather than held in a local working tree. No test, typecheck, runtime, CI or browser screenshot was executed. The connected GitHub API cannot produce an authoritative whole-`src` `grep -rl` count or responsive computed-style proof, so **do not tick** any item based on these changes alone.
+
+### Confirmed source comparisons made this turn
+
+| Rule / state | Legacy source/value | vNext source/value | Finding |
+| --- | --- | --- | --- |
+| Link text and hovered underline | `legacy-styles/components___common.scss:68-75` #26bac7, underline on hover | `src/app/globals.css:20` #26bac7; `src/components/ui/button.tsx:13` link variant | Token + shared button now agree; global raw links not verified |
+| Spacing step 7 | `legacy-styles/components___variables.scss:214` effective 48px | `src/app/globals.css:339` 48px | Match |
+| Spacing step 8 | `legacy-styles/components___variables.scss:215` effective 64px | `src/app/globals.css:340` 64px | Match |
+| Standard form field rounding | `legacy-styles/components___form.scss:120` 10px (.ln-in2) | `src/app/globals.css:325` 10px; `input.tsx:7`, `select.tsx:7`, `textarea.tsx:8` | Match the common form field; all other source-specific form shapes still need review |
+| Primary/button shell rounding | `old-lms-shell-spec.md:23-24` 9px | `src/app/globals.css:327`, `button.tsx:27` 9px | Matches measured TPO action |
+| Label line height | `legacy-styles/components___form.scss:110-115` 13px/600/16px | `src/app/globals.css:600` 13px/600/16px; `form-field.tsx:31` | Fixes prior cascade mismatch |
+| Visible scrollbar width | `legacy-styles/components___common.scss:294-300` 8px gray #c4c4c4, thumb radius 1px | `src/app/globals.css:1000-1008` opt-in 8px, 1px radius, gray token | WebKit property match; Firefox/browser output not verified |
+| Legacy selected option | `legacy-styles/components___antddesign.scss:134-137` #26bac7/white | `src/app/globals.css:1151-1154` on native selected option | Declaration matches; native browser popup differs from Ant Design |
+| Button loading lockout | `legacy-styles/components___antddesign.scss:153-185` retains teal, no hover when loading | `button.tsx:26` explicit data-loading and native disabled; `globals.css:1204-1219` brand color while pending | Shared primary/danger pending styles fixed; global caller double submits unverified |
+| Nonprimary disabled opacity | `legacy-styles/components___button.scss:146-150` 50% and no pointer events | `globals.css:1199-1203` 50% and pointer-events none | Matches source declaration, keyboard behavior requires browser check |
+| Search input width | `legacy-styles/components___form.scss:38-61` clamp(180px,20vw,280px), 14px | `search-field.tsx:16-17` clamp + existing 14px Input | Match dimensions in source; page-level overrides and mobile not proven |
+| Responsive form grid breakpoints | `legacy-styles/components___variables.scss:145-157` 767/991px cutoffs | `form-grid.tsx:19`; `globals.css:1184-1194` 768/992px min widths | Equivalent cutoffs for one/two/three columns; no page adoption proof |
+| Required/error message relation | `legacy-styles/components___form.scss:110-115,136-143` required label and error styling | `form-field.tsx:15,24,31-37` field ARIA invalid/errormessage and label | Improved semantics; no full rendered DOM proof |
+| Upload selected file list | Legacy upload affordance: `legacy-styles/components___button.scss:295+` | `file-upload.tsx:99-106`, `file-dropzone.tsx:40-49` optional lists and real percentage | Functional addition, **not** proof of visual parity or of server upload progress |
+| Searchable non-creatable select | Legacy AntD search popup: `legacy-styles/components___form.scss:64-108` | `searchable-select.tsx:25-48` native datalist, validity alert and error relation | Validity improved; popup remains a **mismatch** |
+| Split/group buttons | `legacy-styles/components___button.scss:1-18`, `old-lms-shell-spec.md:23-24` 9px/36px measured | `button-group.tsx:13-20`, `split-button.tsx:20-40`, `globals.css:1123-1177` | New shared compositions; no global callers migrated and no responsive screenshot |
+
+### 12-item STRICT TICK RULE ledger — intentionally not checked
+
+- [ ] A1 typography roles (missing: complete portal text-role matrix, every compiled weight/line-height/letter spacing, body/page responsive measurements).
+- [ ] A2 colour palette (missing: `src` hex/alias scans, visited/disabled/selection/hover states at rendered sites; link token only fixed).
+- [ ] A3 scales, radii, shadows and timing (missing: all component and portal consumer values; conflicting legacy `.ln-btn` and measured TPO button sizes to be distinguished by role).
+- [ ] A4 scrollbars/focus/cursors/selection (missing: scrollbar opt-in coverage, Firefox/mobile/browser focus and native selection measurements).
+- [ ] C1 text/textarea/number/search/password/OTP (missing: full source scan and phone/tablet states, autocomplete and error/empty proof).
+- [ ] C2 all select kinds (missing: AntD menu geometry, option selection, popup keyboard/typeahead, creatable/required validation flow; native datalist is not parity).
+- [ ] C3 date/time/range/calendar (missing: AntD calendar popup and every state; native browser date fields still used).
+- [ ] C4 checkbox/radio/switch/slider/segmented (missing: exact geometry, indeterminate, focus/hover/pressed and responsive proof).
+- [ ] C5 uploads (missing: image preview/crop, upload server progress adoption and full file-list parity).
+- [ ] C6 labels/layout/helpers/groups/readonly (missing: source-wide replacement of native labels/layout grids, complete form spacing proof and real-page adoption).
+- [ ] C7 rich-text editors (missing: a shared rich-text toolbar and editor selection/formatting states).
+- [ ] D buttons (missing: global zero raw-button grep, exact variants/sizes/split menu screenshots, every caller migration and disabled/loading proof).
+
+### Work queue (next bounded turn; do not restart category planning)
+
+1. `src/components/ui/searchable-select.tsx` — replace native datalist popup with a visually matching, keyboard-operable 12px AntD-style search menu **without changing input onChange contracts**.
+2. `src/components/ui/multi-select.tsx` — verify native popup/selection limitations and implement matching selected-chip and removable-tag UX while preserving existing select props.
+3. `src/components/ui/date-range-picker.tsx` and `date-input.tsx` — calendar month/day popup parity, keyboard and focus transitions.
+4. `src/components/ui/file-upload.tsx` and `file-dropzone.tsx` — image preview, upload list/progress adoption and mobile file picker states; preserve server validation.
+5. `src/components/ui/selection-controls.tsx`, `range-slider.tsx`, `segmented-control.tsx` — measured geometry and keyboard-disabled-error matrices.
+6. `src/components/ui/form-grid.tsx`, `form-section.tsx`, `form-field.tsx` — migrate raw form section layouts only in lane-owned source; coordinate pages with portal owners.
+7. `src/components/ui/button.tsx`, `button-group.tsx`, `split-button.tsx` — global caller migration, measured grouped/split/hover/disabled/loading states.
+8. `src/app/globals.css` — responsive token/cascade proof and full hex/font/scrollbar inventory without changing other lanes' components.
+
+**Whole-`src` grep commands still required before any tick:**
+
+```bash
+grep -rlE '<button([[:space:]]|>)' src --include='*.tsx'
+grep -rlE '<input([[:space:]]|>)' src --include='*.tsx'
+grep -rlE '<select([[:space:]]|>)' src --include='*.tsx'
+grep -rlE '<textarea([[:space:]]|>)' src --include='*.tsx'
+grep -rnE '#[0-9A-Fa-f]{3,8}\\b' src --include='*.tsx' --include='*.css'
+```
+
+**Output counts: not run/unknown** (no mounted checkout; GitHub code-search indexing cannot substitute for the mandatory full-tree grep). Required page-wide raw-control migration is assigned to portal lanes, so their unchecked residuals also prevent this category from being ticked.
