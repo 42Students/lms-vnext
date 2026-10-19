@@ -51,7 +51,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   </p>:ready&&!lifecycle?.invitedAt&&invitePreview.invitable>0?<p data-testid="batch.suggest"
    className="rounded border border-border bg-surface p-3 text-sm">
    Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
-    className="ml-2 font-semibold text-link underline" data-testid="batch.suggest-do">Show me</Link>
+    className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
   </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="rounded border border-border bg-surface p-3 text-sm">
    Suggested: remind them to register <Link href="#batch-reminder" className="ml-2 font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" data-testid="batch.suggest-do">Show me</Link>
   </p>:null}
