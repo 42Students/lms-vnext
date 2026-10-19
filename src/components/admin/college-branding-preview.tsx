@@ -1,6 +1,4 @@
 import type { CSSProperties } from "react";
-import Link from "next/link";
-import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { AdminCollegeBrandingPreview } from "@/modules/colleges/admin-branding-preview-model";
 
@@ -131,26 +129,15 @@ export function CollegeBrandingPreview({
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/admin/colleges"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link hover:underline"
-      >
-        ← Colleges
-      </Link>
-
-      <PageHeader
-        title={branding.college.name + " · Branding preview"}
-        description={
-          "Read-only college sign-in appearance for " +
-          branding.college.code +
-          ". No settings are modified."
-        }
-        actions={
-          <StatusBadge tone={branding.brandingStored ? "success" : "neutral"}>
-            {branding.brandingStored ? "Stored branding" : "LMS defaults"}
-          </StatusBadge>
-        }
-      />
+      <section aria-label="Stored branding preview" className="flex min-w-0 flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
+        <div className="min-w-0 flex-1">
+          <h2 className="m-0 text-lg font-semibold leading-6 text-foreground">{branding.college.name} · Branding preview</h2>
+          <p className="mt-1 text-sm text-body">Read-only college sign-in appearance for {branding.college.code}. No settings are modified.</p>
+        </div>
+        <StatusBadge tone={branding.brandingStored ? "success" : "neutral"}>
+          {branding.brandingStored ? "Stored branding" : "LMS defaults"}
+        </StatusBadge>
+      </section>
 
       <section className="border-t border-border pt-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
