@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 "use client";
 
 import {LEARNER_EDUCATION_TYPES,learnerQualifyingExamSuggestions,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
@@ -552,9 +553,11 @@ export function LearnerProfileWorkspace(props: {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
-            <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">Learner profile</p>
-            <h1 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[30px] leading-10">{props.displayName || "Learner"}</h1>
-            <p className="mt-1 break-words text-sm text-body">{document.headline || "Add a headline to introduce yourself."}</p>
+            <PageHeader
+              eyebrow="Learner profile"
+              title={props.displayName || "Learner"}
+              description={document.headline || "Add a headline to introduce yourself."}
+            />
             <div className="mt-3 flex flex-wrap gap-2">
               {props.rollNumber ? <StatusBadge>Roll {props.rollNumber}</StatusBadge> : null}
               {props.registrationNumber ? <StatusBadge>Reg {props.registrationNumber}</StatusBadge> : null}
