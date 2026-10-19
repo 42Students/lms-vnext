@@ -37,7 +37,7 @@ export function TpoTrustToggle({
   }
   return <div className="mt-2">
     <button type="button" disabled={pending} onClick={()=>{setError(null);setReview(true);}}
-      className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
       {pending?"Saving...":isTrusted?"Remove company trust":"Mark company trusted"}
     </button>
     <ConfirmDialog open={review} onOpenChange={value=>{if(!pending)setReview(value);}}
