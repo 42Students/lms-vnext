@@ -74,7 +74,6 @@ export default async function TpoRecruiterAccessPage({
         <TpoSettingsNav active="recruiters" />
 
         <PageHeader
-          eyebrow="TPO · Settings"
           title="Recruiter access"
           description="Read-only recruiter college-grant history."
         />
@@ -130,13 +129,12 @@ export default async function TpoRecruiterAccessPage({
       <TpoSettingsNav active="recruiters" />
 
       <PageHeader
-        eyebrow="TPO · Settings"
         title="Recruiter access"
         description="Review active and revoked recruiter college-access grants for your current college. This is historical grant data, not a live recruiter-session or login-status check."
       />
 
       {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
-       <p role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-4 text-sm">Recruiter access duration settings are not available yet.</p>}
+       <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">Recruiter access duration settings are not available yet.</p>}
       <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
 
       <TpoRecruiterGrantForm companies={linkedCompanies.companies.map((company) => ({

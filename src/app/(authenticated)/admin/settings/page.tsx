@@ -31,7 +31,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
 
   if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
     return <div className="min-w-0 space-y-6">
-      <PageHeader eyebrow="Super Admin · Platform" title="Tenant Settings"/>
+      <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings access denied"
         description="Your account cannot access privileged tenant settings."
         action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
@@ -48,7 +48,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     .catch(()=>({ok:false as const}));
   if(!platform.ok)
     return <div className="min-w-0 space-y-6">
-      <PageHeader eyebrow="Super Admin · Platform" title="Tenant Settings"/>
+      <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings unavailable"
         description="The settings inventory could not be loaded. Your filters have not changed."
         action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="font-semibold text-primary-text underline">Retry loading settings</Link>}/>
@@ -76,7 +76,6 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin · Platform"
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
         actions={<Link href="/admin/settings/auth"

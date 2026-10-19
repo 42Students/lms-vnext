@@ -43,7 +43,6 @@ export default async function TpoPlacementTeamPage() {
     <div className="space-y-6">
       <TpoSettingsNav active="team" />
       <PageHeader
-        eyebrow="TPO · Settings"
         title="Placement Team"
         description="A read-only directory of active TPO memberships, persisted faculty team assignments and dated Drive Day student coordinators in your college."
         actions={
