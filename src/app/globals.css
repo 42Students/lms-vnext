@@ -1037,3 +1037,36 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 @media (min-width: 1024px) {
   [data-slot="page-canvas"][data-authenticated-canvas="true"] { min-height: calc(100dvh - 132px); }
 }
+
+/* chat-16: legacy accessibility.scss focus ring, including plain links and
+   custom interactive triggers that do not use the shared Button primitive. */
+:where(a, button, input, select, textarea, summary, [role="button"], [role="menuitem"], [tabindex]):focus:not(:focus-visible) {
+  outline: none;
+}
+:where(a, button, input, select, textarea, summary, [role="button"], [role="menuitem"], [tabindex]):focus-visible {
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 3px;
+}
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, summary, [role="button"], [role="menuitem"], [tabindex]):focus-visible {
+    outline: 2px solid Highlight;
+  }
+}
+
+/* Legacy overlay lists keep scrolling and mobile momentum without visible chrome.
+   Their content is not clipped by a fixed-height body or nested browser scrollbar. */
+[data-slot="dropdown"],
+[data-slot="toast-stack"],
+[data-slot="drawer"] [data-slot="scroll-cue"] [role="region"],
+[data-slot="dialog"] [data-slot="scroll-cue"] [role="region"] {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+[data-slot="dropdown"]::-webkit-scrollbar,
+[data-slot="toast-stack"]::-webkit-scrollbar,
+[data-slot="drawer"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar,
+[data-slot="dialog"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar {
+  display: none;
+}
