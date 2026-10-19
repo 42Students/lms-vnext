@@ -593,3 +593,91 @@ All `MetricBar` instances are **self-closing JSX**, not unmatched paired tags. `
 **Preserved semantics:** Course video playback progress, aggregate completion status, null/unknown messaging, lesson drilldown, authorized persisted counts, links, badges, teaching content and interactions were not edited. No app execution, typecheck, CI, screenshots, full-repository grep or computed media-query comparison.
 
 **Next exact untouched file:** `src/components/courses/learner-quiz-attempt.tsx` progress indicator, to compare against `lms2-fe@prod-2026/src/styles/components/_learn-assessments.scss` and quiz-specific styles before choosing neutral/semantic track tones. Overall E7 remains **[ ]**.
+
+
+## 2026-10-20 chat-2 source migration — quiz, placements, assessment tiles, and read/upload meters
+
+**File-level E7 migrations made in this batch:**
+- `src/components/courses/learner-quiz-attempt.tsx` + local `learner-quiz-attempt.module.css`
+- `src/components/placements/learner-placements-dashboard.tsx` + `learner-placement-metrics.module.css` (four linked placement snapshot metrics; the separate seven-day event list is a vNext content difference and remains outside source-parity certification)
+- `src/components/courses/learner-assessment-overview.tsx` + `learner-assessment-metrics.module.css` (five assignment counters, rather than the original course-assessment four; five values retained)
+- `src/components/tpo/tpo-notice-read-progress.tsx` (native meter -> shared `MetricBar`)
+- `src/components/projects/project-resource-files-panel.tsx` (native upload progress -> shared `MetricBar`)
+- `src/app/(authenticated)/admin/announcements/page.tsx` (native announcement read meter -> shared `MetricBar`)
+- Reviewed without changing the already matched meters in `src/app/(authenticated)/tpo/batches/page.tsx` and `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx`.
+
+### Exact-value table A — quiz attempt
+
+| Property / state | Original legacy reference, observed literal value | Scoped vNext caller/module | Source result |
+| --- | --- | --- | --- |
+| Progress fraction / data behavior | `lms2-fe@prod-2026/src/components/Quiz/quizpanel.js:867-873`: percentage `min(step+1,questions.length)/questions.length*100`, hidden Ant progress info | `learner-quiz-attempt.tsx` `<MetricBar value={step+1} maximum={questions.length}>` with readable ARIA label and no printed chart percentage | Equivalent model fraction for in-range indices; vNext still owns bounds |
+| Desktop visual track height | `src/styles/pages/_quiz.scss:1531-1536`: 3px, flat square corners, transparent background | `learner-quiz-attempt.module.css:12-17`: 3px, radius0, transparent, applied `styles.track` | Exact paint value |
+| Thin neutral baseline | `_quiz.scss:1538-1548`: `::after` 1px `#e5e9f0` centered vertically across full width | `learner-quiz-attempt.module.css:18-29`: `::before` 1px, same centered geometry and colour | Exact visible baseline; pseudo-element side differs intentionally |
+| Filled percentage | `_quiz.scss:1551-1555`: solid `#26bac7`, 0 radius, foreground z-order | `learner-quiz-attempt.module.css:30-36` styles `MetricBar` child `>div`, z1 and teal | Match |
+| Sticky header default | `_quiz.scss:1558-1564`: sticky top0, z8, 8px 0 12px, white | `learner-quiz-attempt.module.css:6-11` applied to preserved answer/quiz header; existing `pb-4` retained | Match legacy rules, plus vNext's existing bottom spacing |
+| Phone height | `_quiz.scss:2217-2220,2332-2335`: <=767px 4px progress | CSS `@media(max-width:767px)` track 4px | Match |
+| Question status nav touch | `_quiz.scss:2313-2329`: 44px min and active touch treatment | `learner-quiz-attempt.tsx` maps `<Button className="min-h-11 md:min-h-9">` with preserved aria-current and answered-state border | 44px mobile source match; exact icon/buttons not exhaustively browser-proved |
+| Reduced motion | Legacy static progress; no explicit transition for fill | CSS `@media(prefers-reduced-motion:reduce)` turns off fill transition | Accessibility enhancement |
+| Unavailable/error/loading | Original chart inside active attempt only; no data is invented | Existing loading/failure guards, retry and quiz submit state retained, source classes only changed | Model unchanged; no runtime check |
+
+### Exact-value table B — placement linked stat cards
+
+| Property / state | Original `lms2-fe@prod-2026/src/styles/components/_learn-placements.scss` | VNext `learner-placement-metrics.module.css` and caller | Source result |
+| --- | --- | --- | --- |
+| Base card | :298-310, `#fff`, 1px soft-neutral `#fafbfc`, radius12, padding8px 16px, min-height64, inline gaps8/16 | `.tile` white, soft border, radius12, padding8px 16px, min64, grid gap8px/4px | Match painted dimensions, grid chosen to preserve available label/value/detail DOM |
+| Hover | :312-316 lift -1px, border `#e5e9f0`, elevation2 `0 2px 4px rgba(16,24,40,.04),0 4px 12px rgba(16,24,40,.06)`, 150ms ease | `.link:hover .tile` and `.tile` transition | Exact values |
+| Focus | :318-321 outline 2px teal `#26bac7`, offset2 | `.link:focus-visible .tile` | Match |
+| Disabled | :323-326 opacity.4 and not-allowed | VNext only renders valid linked metrics, has no disabled card state; no invented disabled links | Not applicable to rendered variant |
+| Number | :428-435 20px/700/`#1a1d21`/1.2; note Lato bold aliases real 700 | `.tile > p:nth-child(2)` grid-first visually, 20px/700/1.2/tabular | Match type family inherited from shell |
+| Caption | :437-443 12px/`#6b7280`/1.3 | `.tile > p:first-child`, grid-second visually, 12px/1.3 | Match |
+| Detail copy | :445-451 12px, subtle neutral, margin-top4/1.3 | `.tile > span`, `#a9a7ae`, 12px/1.3, margin4, wraps | Match |
+| Desktop column count | Old :281-288 auto-fit 120px, panel max-width50% in different hero layout | Current four linked cards remain 4-up at xl, two-up below, no 50%-width restriction (page differs) | Content/layout exception, **not** exact full-screen match |
+| Mobile <=767px | Old :290-295 2 equal columns, gap16 | Current `grid-cols-2` base and scoped mobile padding8px12, gap8px/12 at breakpoints | Column count match; grid gap and mobile inset differ (documented) |
+| Missing icon | Old :405-417 provides a 32px icon circle | Existing vNext linked `StatTile` intentionally has no icon; no invented icon supplied | Open item, not exact card identity |
+
+### Exact-value table C — course assessment counters
+
+| Property / state | Original `lms2-fe@prod-2026/src/styles/components/_learn-assessments.scss` | `learner-assessment-metrics.module.css` / `learner-assessment-overview.tsx` | Result |
+| --- | --- | --- | --- |
+| Background, border, radius, padding | :11-22,1515-1523 `#fff`, 1px `#e5e9f0`, radius12, padding16, gap16 | `.tile` has exact values, all five `<StatTile>` instances scoped | Match |
+| Count | :1543-1552 dark `#1a1d21`, 22px/700, line-height1 | `.tile > p:nth-child(2)` visually first, tabular | Match |
+| Label | :1554-1558 muted `#6b7280`, 12px/700 | `.tile > p:first-child` visually second, 12px/700 | Match |
+| Four-across original | :1508-1513 repeat(4,1fr) gap16 margin24px 0 | `.metricGrid` 5 equal columns at desktop to preserve vNext fifth metric (`Courses`); gap16 margin24px 0 | Grid-count exception |
+| Tablet <=1100 | :1797-1801 2 columns | `@media(max-width:1100px)` 2 columns | Match |
+| Phone <=767 | :1804-1814 1 column | `@media(max-width:767px)` 1 column | Match |
+| Missing icon treatment | :1530-1541 old 40px icon circles | vNext current data has no matching icon element; not fabricated | Open visual discrepancy |
+
+### Exact-value table D — receipt and upload progress
+
+| Page and meter | Old-LMS grounded bar value | New rendered value | Status |
+| --- | --- | --- | --- |
+| TPO notification-read meter | General original TPO report `_tpo-reports.scss:465-477` track11px, `#e7ecf2`, round999, fill `#26bac7`; notification-specific old meter has no separate SCSS | `tpo-notice-read-progress.tsx` uses `MetricBar` with `report-bar-chart.module.css:35-46` and real delivered/read values | Source-aligned TPO bar palette, **not** directly verified notification-specific legacy UI |
+| TPO read zero-delivery | Original absence of measurable delivered fraction should not synthesize data | `data.delivered>0` guard preserved | Match behavior |
+| Project resource upload | Original project progress family uses teal/cyan `#26bac7/#9ee4e8`, compact 8px in existing project module; no specific original upload-meter selector | `project-resource-files-panel.tsx` uses existing `project-workspace-readiness.module.css:30-37`, `MetricBar` role progressbar, real 0-100 upload fraction | Matches project progress family; upload-specific original visual unverified |
+| Super Admin placement-cell read | General LMS `metric-bar.tsx` compact 8px teal/cyan backed by original `_variables.scss` tokens; no unique legacy Admin read meter | `admin/announcements/page.tsx` replaces native progress with self-closing `MetricBar`, `value={cellRead}`, `maximum={1}`, same accessible label | Token match, native browser meter standardized |
+| In-progress refresh/error/cancel | Preserve existing loading, retry, refresh, and cancel behavior in all pages | All values/conditional branches/API requests unchanged | Source preservation, runtime not checked |
+
+### Source-level coverage and responsive proof
+
+Complete remote files were read after edits. The following are **source-backed counts**, not shell-executed greps; commands provided to reproduce in a checked-out repository:
+
+| Reproduction | Observed complete-file result |
+| --- | --- |
+| `grep -o '<MetricBar' src/components/courses/learner-quiz-attempt.tsx | wc -l` | **1**, `styles.track` **1**, `styles.header` **1** |
+| `grep -o '<Button' src/components/courses/learner-quiz-attempt.tsx` and `grep -o '</Button>'` | **12 / 12** |
+| `grep -o '<StatTile' src/components/courses/learner-assessment-overview.tsx | wc -l` | **5**, `styles.tile` **5** and grid class once |
+| `grep -o '<StatTile' src/components/placements/learner-placements-dashboard.tsx | wc -l` | **1** mapped component called for **4** metric slots, scoped `metricStyles.tile` and `metricStyles.link` |
+| `grep -o '<MetricBar' src/components/tpo/tpo-notice-read-progress.tsx`, project files panel, admin announcements page | **1 + 1 + 1** |
+| `grep -o '<progress' <these three files>` | **0 + 0 + 0** (raw meters replaced) |
+| `grep -o '<input' src/components/projects/project-resource-files-panel.tsx` | **1**, deliberate **type=file native exemption** retaining file chooser semantics |
+| Source `<Link>` open/close (learner dashboard, assessment overview) | **15/15; 7/7** |
+| Source `<Button>` open/close (TPO notice, project files, assessment overview) | **2/2; 8/8; 5/5** |
+| CSS class cross-reference in all six touched TSX files | **All references resolve**; no missing CSS module class |
+| Duplicate quote before `className` in all touched TSX files | **0** |
+| CSS breakpoint validation | Quiz <=767/reduced-motion; learner placements <=767/reduced-motion; assessments <=1100, <=767/reduced-motion; reused TPO bar <=767, project <=767/reduced-motion |
+
+**Unchanged exact TPO stacked-bar recheck:** `src/app/(authenticated)/tpo/batches/page.tsx` and `.../batches/[batchId]/page.tsx` each have **1 self-closing `StackedMetricBar`**, both referencing `legacy-batch-eligibility.module.css .bar`; original `_tpo-batches.scss:39-43` is 6px/round999/TPO line `#e7ecf2`, green `#15803d`, red `#b91c1c`. Existing CSS defines exactly those values. No breakpoint-specific old style for this meter (both call sites keep responsive parent layout).
+
+**Strict status:** No E7/G6 umbrella tick — source checks do not prove exhaustive screen/page coverage, hover and focus within all views, or computed desktop/tablet/mobile parity. Not run: app, code, TypeScript compiler, tests, CI, screenshot, repository-wide grep. The changed UI only paints measured values; no access scope, data or routes were altered.
+
+**Next exact unticked source surface:** `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx` (hand-rolled year-by-year recruitment chart; search current `style={{width:...}}` and original `lms2-fe@prod-2026/_tpo-intelligence-light.scss` first). Also review any other non-shared progress visual only when a direct legacy style source is confirmed.
