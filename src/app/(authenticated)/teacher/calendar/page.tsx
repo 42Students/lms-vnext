@@ -25,8 +25,8 @@ export default async function FacultyCalendarPage({
     deliveryId:raw.deliveryId||undefined,
   }:{invalid:true});
   if(!input.success)return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid month or Section filter" />
-    <Link href="/teacher/calendar" className="font-semibold text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <PageHeader title={"Invalid month or Section filter"} />
+    <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Clear filters
     </Link>
   </section>;
