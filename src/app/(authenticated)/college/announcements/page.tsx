@@ -42,7 +42,7 @@ export default async function AnnouncementsPage({
             <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
             <p className="mt-1 text-sm text-muted-foreground">{collegeNoticeUnreadLabel(ownInbox.unreadCount)}</p>
           </div>
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-link">
+          <Link href={unreadHref} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
         </div>
@@ -52,9 +52,9 @@ export default async function AnnouncementsPage({
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
-            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link">Open related page</Link> : null}
+            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-[var(--lms-link-text)]">Open related page</Link> : null}
           </li>)}</ul>}
-        <Link href="/notifications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+        <Link href="/notifications" className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
         <div role="status" className="rounded-[8px] border border-border bg-surface p-6">
           <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
@@ -129,7 +129,7 @@ export default async function AnnouncementsPage({
         actions={
           <Link
             href={includeDeleted ? "/college/announcements" : "/college/announcements?deleted=1"}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-foreground"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
@@ -138,7 +138,7 @@ export default async function AnnouncementsPage({
       <section aria-label="Personal college notifications" className="space-y-3 border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-link">
+          <Link href={unreadHref} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
         </div>
@@ -148,14 +148,14 @@ export default async function AnnouncementsPage({
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
-            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link">Open related page</Link> : null}
+            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-[var(--lms-link-text)]">Open related page</Link> : null}
           </li>)}</ul>}
-        <Link href="/notifications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+        <Link href="/notifications" className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
       <AnnouncementAdminWorkspace items={items} targets={targets} />
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-foreground">
+          <Link href={next} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-foreground">
             Older announcements
           </Link>
         </div>
