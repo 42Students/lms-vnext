@@ -44,10 +44,10 @@ export default async function CollegeAdminProfilePage({
       email={account?.email ?? null} phone={account?.phoneE164 ?? null}
       college={account?.college?.name ?? null} />
     <div className="flex flex-wrap gap-3">
-      <Link href="/college/domains" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      <Link href="/college/domains" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">
         Tenant domains
       </Link>
-      <Link href="/college/college-profile" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      <Link href="/college/college-profile" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">
         Edit college display and support contacts
       </Link>
     </div>
