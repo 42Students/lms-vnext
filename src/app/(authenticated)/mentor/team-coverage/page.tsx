@@ -37,8 +37,8 @@ export default async function MentorTeamCoveragePage({
     page:first(raw.page) ?? undefined,
   });
   if (duplicated || !parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid team coverage filters</h1>
-    <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid team coverage filters</h1>
+    <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -48,7 +48,7 @@ export default async function MentorTeamCoveragePage({
     <PageHeader eyebrow="Mentor · Projects" title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
       actions={<Link href="/mentor/projects"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Projects
       </Link>} />
     {!data.enabled
@@ -57,15 +57,15 @@ export default async function MentorTeamCoveragePage({
         </section>
       : <>
         <form method="get" action="/mentor/team-coverage"
-          className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+          className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Project search
-            <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
-              className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"
+            <input data-slot="input" type="search" name="search" maxLength={120} defaultValue={data.query.search}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
               placeholder="Project name" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Team coverage
-            <select name="filter" defaultValue={data.query.filter}
-              className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+            <select data-slot="select" name="filter" defaultValue={data.query.filter}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All projects</option>
               <option value="NO_LEARNERS">No active learners</option>
               <option value="NO_PRIMARY_MENTOR">No active primary Mentor</option>
@@ -78,25 +78,25 @@ export default async function MentorTeamCoveragePage({
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Project state
-            <select name="status" defaultValue={data.query.status}
-              className="min-h-11 rounded-md border border-border bg-background px-3">
+            <select data-slot="select" name="status" defaultValue={data.query.status}
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
               <option value="ALL">All current assignments</option>
               <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
               <option value="COMPLETED">Completed</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
-            <select name="assignment" defaultValue={data.query.assignment} className="min-h-11 rounded-md border border-border bg-background px-3">
+            <select data-slot="select" name="assignment" defaultValue={data.query.assignment} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
               <option value="ALL">All assignments</option><option value="PRIMARY">Primary Mentor</option><option value="SUPPORTING">Supporting Mentor</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Team-size order
-            <select name="order" defaultValue={data.query.order} className="min-h-11 rounded-md border border-border bg-background px-3">
+            <select data-slot="select" name="order" defaultValue={data.query.order} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </select>
           </label>
           <Button type="submit" variant="primary">Filter</Button>
-          <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+          <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
         </form>
         <section aria-label="Registered team coverage summary"
           className="grid gap-3 sm:grid-cols-3">
@@ -143,15 +143,15 @@ export default async function MentorTeamCoveragePage({
               </dl>
               <div className="mt-4 flex flex-wrap gap-4">
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=team"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                   Team workspace →
                 </Link>
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-history"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                   Membership history →
                 </Link>
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-meetings"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                   Team meeting log →
                 </Link>
               </div>
@@ -163,9 +163,9 @@ export default async function MentorTeamCoveragePage({
           </span>
           <div className="flex gap-3">
             {data.page > 1 && <Link href={mentorTeamCoverageHref({...data.query,page:data.page-1})}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
             {data.page < data.totalPages && <Link href={mentorTeamCoverageHref({...data.query,page:data.page+1})}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
           </div>
         </nav>
       </>}

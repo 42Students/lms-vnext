@@ -73,8 +73,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   {dialog}
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
-    className="text-sm font-semibold text-primary-text underline">Back to project</Link>
-    <h1 className="mt-2 text-xl font-semibold">Task Allocation</h1>
+    className="text-sm font-semibold text-link underline">Back to project</Link>
+    <h1 className="mt-2 font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Task Allocation</h1>
     <p className="mt-1 text-sm text-body">{unassigned} needs assigning · {filtered.length} matching tasks</p>
     <p className="mt-1 text-xs text-muted-foreground">Auto-assign acts on eligible tasks across the project, not only filtered cards.</p>
     {previousAssignees.length>0?<p role="status" className="mt-1 text-xs text-warning-text">
@@ -83,7 +83,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    </div>
   </div>
   {!readOnly?<button type="button" disabled={busy||projectUnassigned===0||!learners.length}
-     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+     className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50"
      onClick={async()=>{
        if(!await askConfirm("Auto-assign unassigned tasks to learners with the fewest open tasks?"))return;
        setBusy(true);setError("");setNotice("");
@@ -97,46 +97,46 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   <button type="button" aria-expanded={filtersOpen}
     aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}
-    className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link">
     Filters{activeFilterCount?" ("+activeFilterCount+")":""}
   </button>
   {filtersOpen?<div id="mentor-allocation-filters"
     className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
    <label className="text-sm font-semibold">Release
-    <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
+    <select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
       remember("release",e.target.value);remember("sprint","");}}
-      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All releases</option>
      {releases.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Sprint
-    <select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
-      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
+    <select data-slot="select" value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
+      className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All sprints</option>
      {sprints.filter(item=>!release||item.releaseId===release).map(item=>
       <option key={item.id} value={item.id}>{item.title}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Priority
-    <select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
-      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
+    <select data-slot="select" value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
+      className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(value=><option key={value} value={value}>{value}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Status
-    <select value={status} onChange={e=>{setStatus(e.target.value);remember("status",e.target.value);}}
-      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
+    <select data-slot="select" value={status} onChange={e=>{setStatus(e.target.value);remember("status",e.target.value);}}
+      className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All statuses</option>
      {["TODO","IN_PROGRESS","IN_REVIEW","BLOCKED","DONE"].map(value=>
       <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Assignment
-    <select value={assignmentScope}
+    <select data-slot="select" value={assignmentScope}
       onChange={e=>{setAssignmentScope(e.target.value);remember("assignment",e.target.value);}}
-      className="ml-2 min-h-11 rounded-md border border-border bg-background p-2">
+      className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">Everyone</option>
      <option value="UNASSIGNED">Unassigned</option>
      <option value="ASSIGNED">Assigned</option>
@@ -147,7 +147,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    <button type="button" onClick={()=>{
     setRelease("");setSprint("");setPriority("");setStatus("");setAssignmentScope("");
     ["release","sprint","priority","status","assignment"].forEach(key=>remember(key,""));
-   }} className="min-h-11 text-sm font-semibold text-primary-text underline">Clear all</button>
+   }} className="min-h-11 text-sm font-semibold text-link underline">Clear all</button>
   </div>:null}
   {activeFilterCount>0?<p role="status" className="text-xs text-body">
     {activeFilterCount} active {activeFilterCount===1?"filter":"filters"} ·
@@ -183,7 +183,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       empty={<p>No learners to summarize yet.</p>}
     />
   </section>
-  {filtered.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">
+  {filtered.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
     {tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters. Use Clear all to see every task."}
   </p>:null}
   <div role="region" aria-label="Task allocation cards; scroll sideways for more learners" tabIndex={0}
@@ -203,7 +203,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
      <ul className="mt-3 space-y-3">{cards.map(task=><li key={task.id}
        draggable={!readOnly&&!busy&&!["DONE","IN_REVIEW"].includes(task.status)}
        onDragStart={event=>event.dataTransfer.setData("text/plain",task.id)}
-       className="rounded-lg border border-border bg-surface p-3 text-sm">
+       className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
        <p className="break-words font-semibold">{task.title}</p>
        <p className="mt-1 text-xs text-body">{task.priority} · {task.status}</p>
        <p className="mt-1 text-xs text-body">
@@ -220,10 +220,10 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
            Reassign from former member
          </p>:null}
        {!readOnly?<label className="mt-2 block text-xs font-semibold">Assign to
-        <select aria-label={"Reassign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
+        <select data-slot="select" aria-label={"Reassign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
          value={task.assigneeMembershipId??""}
          onChange={event=>void assign(task.id,event.target.value||null)}
-         className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-2 text-sm">
+         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
          <option value="">Unassigned</option>
          {task.assigneeMembershipId&&!activeMemberIds.has(task.assigneeMembershipId)?
            <option value={task.assigneeMembershipId} disabled>Former member (reassign)</option>:null}
