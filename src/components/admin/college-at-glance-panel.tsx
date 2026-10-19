@@ -1,6 +1,8 @@
 "use client";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { StatTile } from "@/components/ui/stat-tile";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
 import {useCallback,useEffect,useState} from "react";
 import {COLLEGE_GLANCE_LOAD_ERROR,COLLEGE_GLANCE_REFRESH_ERROR,displayedGlanceNumber,
  isCollegeAtGlanceCounts,type CollegeAtGlanceCounts} from "@/modules/colleges/admin-college-at-glance-model";
@@ -37,16 +39,14 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
      className="min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)]">
      {refreshing?"Refreshing…":"Retry"}</Button>
   </div>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {!counts&&refreshing?<div role="status" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-   {ITEMS.map(item=><div key={item.key} className="h-28 animate-pulse rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle"/>)}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {!counts&&refreshing?<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+   {ITEMS.map(item=><Skeleton key={item.key} variant="kpi" label={item.label+" loading"}/>)}
   </div>:null}
   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-   {ITEMS.map(item=><Link key={item.key} href={item.href} className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-     <p className="text-xs font-semibold uppercase text-muted-foreground">{item.label}</p>
-     <p className="mt-2 text-3xl font-semibold tabular-nums">{displayedGlanceNumber(counts?.[item.key]??null)}</p>
-     <p className="mt-2 text-xs text-body">Recorded in the selected college</p>
-   </Link>)}
+   {ITEMS.map(item=><StatTile key={item.key} href={item.href} label={item.label}
+    value={displayedGlanceNumber(counts?.[item.key]??null)}
+    detail="Recorded in the selected college"/>)}
   </div>
   {error&&counts?<p role="status" className="text-xs text-muted-foreground">Showing the last available college summary.</p>:null}
  </section>;
