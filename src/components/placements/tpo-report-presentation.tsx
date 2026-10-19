@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { FilterChip } from "@/components/ui/filter-chip";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useEffect,useState} from "react";
 /** Native fullscreen isolates the report main region from shell navigation. */
@@ -22,10 +22,10 @@ export function TpoReportPresentation(){
   }catch(cause){setError(cause instanceof Error?cause.message:"Presentation mode unavailable.");}
  }
  return <div className="inline-flex flex-wrap items-center gap-2">
-  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>void toggle()}
+  <FilterChip type="button" className="min-h-11 md:min-h-8 print:hidden" onClick={()=>void toggle()}
    aria-pressed={active}>
    {active?"Exit presentation view":"Presentation view"}
-  </Button>
+  </FilterChip>
   {error?<InlineNotice tone="error" message={error}/>:null}
   <style>{`
    [data-tpo-presentation-report]:fullscreen { background: var(--surface); color: var(--foreground); min-height: 100vh; overflow-y: auto; padding: 1.25rem; }
