@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import {PopoverPanel} from "@/components/ui/popover";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { AdminScope } from "@/modules/identity/context";
@@ -108,7 +109,7 @@ export function TopbarAccountMenu({
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </Button>
-    {open ? <div id="lms-topbar-account-dialog" role="dialog" aria-modal={false} aria-label="Account menu" className={style.menu}>
+    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={style.menu}>
       <div className="px-2 pb-2 text-left">
         <p className={style.accountHeading}>{roleLabel}</p>
         <p className={style.accountSubheading}>{organizationName}</p>
@@ -122,11 +123,11 @@ export function TopbarAccountMenu({
           <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
       </> : null}
       <hr className={style.menuDivider}/>
-      <Button variant="ghost" type="button" disabled={pending} aria-busy={pending}
+      <Button variant="ghost" type="button" disabled={pending} loading={pending} aria-busy={pending}
         className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
         <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
       </Button>
       {error ? <p role="alert" className="px-2 pt-2 text-xs text-error">{error}</p> : null}
-    </div> : null}
+    </PopoverPanel> : null}
   </div>;
 }
