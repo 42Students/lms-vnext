@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -34,7 +35,7 @@ export default async function FacultyTeachingProfilePage({
         className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Profile overview
       </Link>} />
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
       <h2 className="text-base font-semibold text-foreground">College-managed employment details</h2>
       <dl className="mt-3 grid gap-3 sm:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Academic title</dt>
@@ -49,7 +50,7 @@ export default async function FacultyTeachingProfilePage({
     <form method="get" action="/teacher/profile/teaching"
       className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Search current teaching
-        <input name="search" type="search" defaultValue={data.query.search}
+        <Input name="search" type="search" defaultValue={data.query.search}
           placeholder="Course, Section or academic period" maxLength={120}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
       </label>
@@ -64,7 +65,7 @@ export default async function FacultyTeachingProfilePage({
     {data.items.length===0 ? <EmptyState title="No current teaching assignments"
       description="No persisted active teaching deliveries match this search. Expired, revoked or unassigned teaching roles are not reconstructed." />
       : <div className="grid gap-3">{data.items.map(row=>
-        <article key={row.deliveryId} className="rounded-xl border border-border bg-surface p-4">
+        <article key={row.deliveryId} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold text-foreground">{row.courseName}</h2>
             <span className="text-xs font-semibold text-body">{row.teachingRole}</span>
