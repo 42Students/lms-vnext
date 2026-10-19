@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
 import {Dialog} from "@/components/ui/dialog";
 import {useRef,useState} from "react";
@@ -51,13 +52,13 @@ export function CollegeStudentImportHistory(){
   }
  }
  return <>
-  <button type="button" onClick={()=>{setOpen(true);void load(1);}}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
-   Bulk import history</button>
+  <Button variant="secondary" type="button" onClick={()=>{setOpen(true);void load(1);}}
+   className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
+   Bulk import history</Button>
   <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else close();}} title="Bulk import history">
     <div className="flex justify-between"><h2 className="font-semibold">Bulk import history</h2>
-     <button type="button" onClick={close}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3">Close</button></div>
+     <Button variant="secondary" type="button" onClick={close}
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3">Close</Button></div>
     {error?<p role="alert" className="text-error">{error}</p>:null}
     {busy?<p role="status">Loading import history…</p>:null}
     <DataTable<Receipt> caption="Bulk import history" rows={rows} getRowKey={row=>row.id}
@@ -71,11 +72,11 @@ export function CollegeStudentImportHistory(){
       ]}
       empty={<p className="text-sm">No bulk imports have been recorded yet.</p>}/>
     <nav aria-label="Import history pages" className="flex justify-between gap-3 text-sm">
-     <button type="button" disabled={page<=1||busy} onClick={()=>void load(page-1)}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 disabled:opacity-40">Previous</button>
+     <Button variant="secondary" type="button" disabled={page<=1||busy} onClick={()=>void load(page-1)}
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3 disabled:opacity-40">Previous</Button>
      <span className="py-2">Page {page}</span>
-     <button type="button" disabled={!hasNext||busy} onClick={()=>void load(page+1)}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 disabled:opacity-40">Next</button>
+     <Button variant="secondary" type="button" disabled={!hasNext||busy} onClick={()=>void load(page+1)}
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3 disabled:opacity-40">Next</Button>
     </nav>
   </Dialog>
  </>;
