@@ -240,7 +240,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
       aria-label={"Placement history for "+row.displayName} className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-      aria-label={"Change participation for "+row.displayName} className="underline text-link px-0">Change participation</Link>
+      aria-label={"Change participation for "+row.displayName} className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Change participation</Link>
    </div>}/>
   </GridWorkspace>
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
