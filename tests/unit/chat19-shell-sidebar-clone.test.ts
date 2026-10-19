@@ -38,12 +38,12 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
   it("maps every sidebar destination to a real glyph or existing image", () => {
     const source = model();
     const mapped = new Set(
-      [...source.matchAll(/"(\\/[^"]+)":\\s*"[a-z-]+"/g)].map(match => match[1]),
+      [...source.matchAll(/"([/][^"]+)":[ ]*"[a-z-]+"/g)].map(match => match[1]),
     );
-    const destinations = [...source.matchAll(/\\bhref:\\s*"(\\/[^"]+)"/g)].map(match => match[1]);
+      [...source.matchAll(/"([/][^"]+)":[ ]*"[a-z-]+"/g)].map(match => match[1]),
     expect(destinations.length).toBeGreaterThan(50);
     for (const destination of destinations) expect(mapped.has(destination), destination).toBe(true);
-    const images = [...source.matchAll(/(?:icon|activeIcon):\\s*"(\\/assets\\/images\\/[^"]+)"/g)]
+    const images = [...source.matchAll(/(?:icon|activeIcon):[ ]*"([/]assets[/]images[/][^"]+)"/g)]
       .map(match => match[1]);
     for (const image of images) expect(existsSync("public" + image), image).toBe(true);
     const icon = read("src/components/shell/shell-nav-icons.tsx");
