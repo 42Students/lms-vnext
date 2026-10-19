@@ -455,7 +455,7 @@ export function FacultyCourseWorkspace({
         </div>
       </section>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-5">
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")}
           className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Lessons" value={summary.lessons}
