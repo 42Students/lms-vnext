@@ -195,8 +195,8 @@ export function FacultyLessonVideoManager({
     change(video,{durationSeconds:value});
   }
 
-  return <section aria-label="Lesson video management" className="mt-4 space-y-3 rounded-lg border border-border bg-surface p-4">
-    <h3 className="text-base font-semibold text-foreground">Video</h3>
+  return <section aria-label="Lesson video management" className="mt-4 space-y-3 border-t border-border pt-4">
+    <h3 className="text-base font-semibold text-[var(--lms-heading)]">Video</h3>
     <p className="text-xs text-muted-foreground">{limitsSummary("lesson-video")}</p>
     <div className="grid gap-3 sm:grid-cols-3">
       <label className="text-sm font-semibold text-body">Title
