@@ -251,7 +251,7 @@ export default async function TpoMessagesPage({
         ))}
       </section>
 
-      {isRecruiterInbox ? <nav aria-label="Recruiter inbox filters" className="flex flex-wrap gap-2">
+      {isRecruiterInbox ? <nav aria-label="Recruiter inbox filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
         {([
           ["ALL","All",summary.total],
           ["REPLY","Reply",summary.reply],
@@ -260,9 +260,9 @@ export default async function TpoMessagesPage({
           key={status}
           href={tpoMessagesHref({...commonFilters,status,page:1})}
           aria-current={query.status===status?"page":undefined}
-          className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border px-4 text-sm font-semibold "+
-            (query.status===status?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":
-              "border-border bg-surface text-foreground")}>
+          className={"inline-flex min-h-11 shrink-0 items-center rounded-[8px] border px-4 text-sm font-medium transition-colors duration-150 "+
+            (query.status===status?"border-primary bg-primary text-on-primary hover:bg-primary-hover":
+              "border-border bg-surface text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text")}>
             {label} ({count})
           </Link>)}
       </nav> : null}

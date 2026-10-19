@@ -47,7 +47,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
  return <section className="space-y-3 border-t border-border pt-5">
   <h2 className="font-semibold">Optional emails</h2>
   <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
-  {fields.map(([key,label,help])=><label key={key} className="flex min-h-12 items-center justify-between gap-4 border-b border-border py-2 text-sm">
+  {fields.map(([key,label,help])=><label key={key} className="flex min-h-12 cursor-pointer items-center justify-between gap-4 rounded-[8px] border-b border-border px-3 py-2 text-sm transition-colors duration-150 hover:bg-[var(--lms-neutral-50)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
    <span><span className="font-medium">{label}</span><span className="block text-xs text-muted-foreground">{help}</span></span>
    <Checkbox aria-label={label} checked={value[key]} disabled={busy}
     onChange={e=>setValue(current=>({...current,[key]:e.target.checked}))}/>
