@@ -60,7 +60,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
  }
  if(!waiting.length)return null;
  return <section aria-label="Bulk student profile verification" className="min-w-0 space-y-3 border-b border-border py-4">
-  <h2 className="text-lg font-semibold">Verify profiles / Send back for correction</h2>
+  <h2 className="text-lg font-semibold text-foreground">Verify profiles / Send back for correction</h2>
   <p className="text-sm text-muted-foreground">Select up to 20 submitted Education or Identity sections from this current {scope==="roster"?"student roster":"verification queue"} page. Every decision is rechecked, audited, and sent to the student.</p>
   <p role="status" className="text-sm">{checked.length} selected of {waiting.length} visible waiting sections.</p>
   <label className="flex min-h-10 items-center gap-2 text-sm">
