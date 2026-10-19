@@ -130,3 +130,9 @@ The lane assignment includes tracker pages, which are a separate authenticated `
 | Independent finding controls | `src/components/tracker/independent-finding-actions.tsx`, `audit-finding-status-action.tsx`, `independent-finding-copy-action.tsx` |
 
 The filter-memory and persistence helpers contain no competing visual styling and remain unchanged. Source-only verification; browser screenshots, runtime/typecheck and CI are intentionally not run. Any remaining pixel deviations must be resolved against authenticated desktop/mobile screenshots by the later visual verification owner.
+
+## Final textual cleanup (no runtime execution)
+
+Ten additional `[chat-15]` file edits followed the tracker inventory (nine tracker file edits and one recruiter activity tab fix), bringing this pass to **65 file-edit commits** in total: **31 HR/recruiter edits** and **34 tracker edits**. The follow-up corrected the tracker Logs active environment tab, native report-form control radii, bulk status select typography, live-log input radius, issue screenshots/empty sections, independent finding import status, tracker quick-report control height, similar-issue radius, and recruiter Activity tab sizing. All route delegates and operational behavior were retained.
+
+A source-only pass verified that explicit `min-h-10`/`min-h-11` control classes, `rounded-md` control overrides, and raw deep-teal link colors in the inspected tracker TSX paths were replaced, excluding intentionally independent cards, badges and alerts. `src/components/tracker/audit-finding-filter-memory.tsx` and `audit-finding-filter-persistence.tsx` are nonvisual helpers. The scope still needs authenticated screenshot comparison and independent TypeScript verification; **no tests, typecheck, CI or dev server were run**.
