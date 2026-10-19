@@ -96,7 +96,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
      <option value="ALL">Any submission date</option><option value="LAST_7_DAYS">Last 7 × 24 hours</option>
      <option value="LAST_30_DAYS">Last 30 × 24 hours</option>
     </Select></label>
-   <Button type="submit" className="min-h-11 rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground md:min-h-9">Apply</Button>
+   <Button type="submit" className="min-h-11 rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Apply</Button>
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
