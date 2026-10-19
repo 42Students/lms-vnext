@@ -1,3 +1,4 @@
+import { Dropdown } from "@/components/ui/dropdown";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -328,8 +329,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                   +" IST": "Not recorded"}</p></div>
               <div className="flex flex-wrap items-center gap-2">
                 <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Open drive</Link>
-                <details className="relative">
-                  <summary aria-label={"More actions for "+job.company+" "+job.title} className="flex min-h-11 cursor-pointer list-none items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">More ···</summary>
+                <Dropdown align="end" label={"More actions for "+job.company+" "+job.title} trigger="More ···">
                   <nav aria-label={"Drive links for "+job.title} className="absolute right-0 z-10 mt-1 min-w-48 space-y-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 shadow-[0_14px_16px_rgba(0,0,0,0.04)]">
                     <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
                     <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/rounds"}>Rounds and schedule</Link>
@@ -351,7 +351,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                     {job.status==="PUBLISHED"?<TpoRemindNonApplicants jobId={job.id}/>:null}
                     {["CLOSED","CANCELLED"].includes(job.status)?<TpoDriveCloneAction jobId={job.id}/>:null}
                   </nav>
-                </details>
+                </Dropdown>
               </div>
             </div></article>)}
           <div className="flex flex-wrap items-start gap-3">
