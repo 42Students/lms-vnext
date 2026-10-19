@@ -73,10 +73,10 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
                 <div className="font-medium text-foreground">{grant.collegeName}</div>
                 <div className="mt-1 text-xs text-muted-foreground">Active recruiter access</div>
                 <nav aria-label={"Open "+grant.collegeName+" recruiter pages"}
-                  className="mt-2 flex flex-wrap gap-3 text-xs">
+                  className="mt-2 flex flex-wrap gap-3 text-sm">
                   {hrRecruiterGrantLinks(grant.collegeId).map(link=>(
                     <Link key={link.label} href={link.href}
-                      className="inline-flex min-h-9 items-center font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                      className="inline-flex min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                       {link.label}
                     </Link>
                   ))}
