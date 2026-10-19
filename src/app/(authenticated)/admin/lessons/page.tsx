@@ -26,13 +26,13 @@ export default async function SuperAdminLessonsPage({
   const raw = await searchParams;
   const parsed = parseSuperAdminLearningQuery(raw);
   if (!parsed.success) return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
+    <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
       action={<Link href="/admin/lessons" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
+    <PageHeader title="Lessons" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its lessons." />
   </div>;
   requireSuperAdminSelectedCollege(context,"courses.manage");
@@ -42,7 +42,7 @@ export default async function SuperAdminLessonsPage({
     listSuperAdminLearningPathPicker(context),
   ]);
   if(dataResult.status==="rejected")return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
+    <PageHeader title="Lessons" />
     <ErrorState title="Lessons unavailable"
       description="The lesson directory could not be loaded. Your filters have not changed."
       action={<Link href={adminLearningHref("LESSONS",parsed.data)}
@@ -53,7 +53,7 @@ export default async function SuperAdminLessonsPage({
   const paths=pathsResult.status==="fulfilled"?pathsResult.value:[];
   const summary = adminLessonStats(data.items);
   return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Courses" title="Lessons"
+    <PageHeader title="Lessons"
       description="Authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion." />
     <a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export lessons.csv</a>
