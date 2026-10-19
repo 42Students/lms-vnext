@@ -16,13 +16,13 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const offeringId=parseSuperAdminStudentProgressParams(await searchParams);
  const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Back to Course Progress</Link>;
  if(!offeringId)return <div className="space-y-5">
-  <PageHeader title="Student Course Progress" eyebrow="Super Admin · Courses"/>
+  <PageHeader title="Student Course Progress"/>
   <ErrorState title="Choose a course offering" description="Select a course and class from Course Progress first." action={back}/>
  </div>;
  let report:Awaited<ReturnType<typeof getSuperAdminStudentCourseProgress>>;
  try{report=await getSuperAdminStudentCourseProgress(context,{offeringId});}
  catch{return <div className="space-y-5">
-  <PageHeader title="Student Course Progress" eyebrow="Super Admin · Courses"/>
+  <PageHeader title="Student Course Progress"/>
   <ErrorState title="Unable to read course progress" description="Check your selected college and course offering." action={back}/>
  </div>;}
  const measuredCounts=report.rows.map(row=>row.totalVideos+row.totalAssignments+row.totalQuizzes);
@@ -32,7 +32,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
   .filter((n):n is number=>n!==null);
  const mean=average.length?Math.round(average.reduce((a,n)=>a+n,0)/average.length):null;
  return <div className="min-w-0 space-y-5">
-  <PageHeader title="Student Course Progress" eyebrow="Super Admin · Courses"
+  <PageHeader title="Student Course Progress"
     description="Persisted video completion, assignment submissions and quiz attempts for active enrolled students in the selected course offering."/>
   {back}
   <dl className="grid gap-4 border-y border-border py-4 sm:grid-cols-4">
