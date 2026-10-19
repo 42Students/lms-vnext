@@ -2,6 +2,7 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
 import {TpoDriveSelectionManager} from "@/components/placements/tpo-drive-selection-manager";
 import {TpoSelectionImport} from "@/components/placements/tpo-selection-import";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -24,10 +25,10 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
    <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9" href={root+"/rounds"}>Review completed rounds</Link>
    <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9" href={root+"/offers"}>Open offer register</Link>
   </div>
-  {!data.storageReady?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 text-sm text-body">
+  {!data.storageReady?<Alert tone="warning">
     <strong>Selections are not available yet.</strong> {data.pendingMessage}
     No selections can be recorded or released until the migration is registered.
-  </div>:data.job.status!=="PUBLISHED"?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm">
+  </Alert>:data.job.status!=="PUBLISHED"?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm">
     Selections can be recorded and released only on a published drive.
   </p>:<div className="space-y-6"><TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections} roleOptions={data.roleOptions}/>
     <TpoSelectionImport jobId={jobId} candidates={data.candidates}/></div>}
