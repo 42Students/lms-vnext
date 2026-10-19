@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import { PageHeader } from "@/components/ui/page-header";
 import { redirect } from "next/navigation";
 
@@ -27,7 +28,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
       <TpoSettingsNav active="season" />
 
       <section className="space-y-2">
-        <PageHeader title="Placement Season" />
+        <PageHeader eyebrow="TPO · Settings" title="Placement Season" />
         <p className="text-sm leading-6 text-body">
           College-specific placement seasons and their
           recorded dates and lifecycle status. A season
@@ -55,17 +56,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
             value: summary.closed,
           },
         ].map((metric) => (
-          <section
-            key={metric.label}
-            className="border-t border-border pt-5"
-          >
-            <p className="m-0 text-xs font-semibold text-muted-foreground">
-              {metric.label}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {metric.value}
-            </p>
-          </section>
+          <StatTile key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </div>
 
