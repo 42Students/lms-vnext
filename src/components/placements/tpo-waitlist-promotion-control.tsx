@@ -50,7 +50,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
    <p className="text-sm text-body">Review the ranked queue before release. The offer issuer rechecks held-offer rules, eligibility and response deadline.</p>
    <label className="grid gap-1 text-sm">Reason for promotion
     <textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>setReason(e.target.value)}
-     className="rounded border border-border bg-surface p-3"/></label>
+     className="rounded-[9px] border border-border bg-surface p-3"/></label>
    <button type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 md:min-h-9 rounded bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-50">
     {busy?"Verifying…":"Verify and release next offer"}</button>
@@ -61,7 +61,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     confirmLabel="Verify and release next offer" onConfirm={()=>void promote()}/>
   {success?<p role="status">{success}</p>:null}
   <button type="button" disabled={busy} onClick={()=>router.refresh()}
-    className="min-h-11 md:min-h-9 rounded border border-border px-3 text-sm font-semibold">Refresh waitlist and seats</button>
+    className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold">Refresh waitlist and seats</button>
   {error?<p role="alert" className="text-foreground">{error} Refresh the preview before retrying.</p>:null}
  </section>;
 }
