@@ -5,6 +5,8 @@ import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
 import {broadcastConsentSummary} from "@/modules/announcements/super-admin-college-broadcast-model";
 import {broadcastLocalTiming} from "@/modules/announcements/super-admin-broadcast-timing-model";
 type CollegeTarget={id:string;label:string};
@@ -49,19 +51,19 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   }catch{setFeedback("Connection failure. Publication could not be confirmed.");}
   finally{setPending(false);setReview(false);}
  }
- return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section className="space-y-4 border-t border-border pt-5">
   <h2 className="m-0 text-lg font-semibold text-foreground">New announcement to placement cells</h2>
   <p className="text-sm text-body">Send an in-app announcement from 42 to selected placement cells. Immediate announcements also create a bell for active TPO members; scheduled announcements appear at their planned time. No SMS or email is sent.</p>
   <label className="grid gap-1 text-sm font-semibold text-body">Audience
-   <select value={mode} onChange={e=>{setMode(e.target.value as typeof mode);setSelected([]);}} className="min-h-11 rounded-md border border-border bg-surface px-3">
+   <Select value={mode} onChange={e=>{setMode(e.target.value as typeof mode);setSelected([]);}} className="min-h-11">
     <option value="SELECTED_COLLEGES">Selected placement cells</option>
     <option value="ALL_COLLEGES">Every placement cell in current scope ({colleges.length})</option>
-   </select>
+   </Select>
   </label>
   {mode==="SELECTED_COLLEGES"?<fieldset className="space-y-2 rounded-md border border-border p-3">
    <legend className="text-sm font-semibold">Select placement cells</legend>
    {colleges.map(item=><label key={item.id} className="flex min-h-10 items-center gap-3 text-sm text-body">
-    <input type="checkbox" checked={selected.includes(item.id)} onChange={e=>setSelected(prev=>e.target.checked?[...prev,item.id]:prev.filter(id=>id!==item.id))}/>{item.label}
+    <Checkbox checked={selected.includes(item.id)} onChange={e=>setSelected(prev=>e.target.checked?[...prev,item.id]:prev.filter(id=>id!==item.id))}/>{item.label}
    </label>)}
   </fieldset>:null}
   <p className="text-xs text-muted-foreground">Placement-cell messages use the legacy 200-character title and 8,000-character body limits.</p>
@@ -85,7 +87,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    <label className="grid gap-1 text-sm font-semibold text-body">Show until (local)<Input type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
   </div>
   <label className="flex items-center gap-2 text-sm font-semibold text-body">
-   <input type="checkbox" checked={pinned} onChange={e=>setPinned(e.target.checked)}/> Pin for recipients
+   <Checkbox checked={pinned} onChange={e=>setPinned(e.target.checked)}/> Pin for recipients
   </label>
   {!timing.valid?<p role="alert" className="text-sm text-danger-text">Enter valid local schedule and expiry values; expiry must follow the schedule.</p>:null}
   <p className="text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,Boolean(scheduledAt))}</p>
