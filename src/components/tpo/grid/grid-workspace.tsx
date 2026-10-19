@@ -210,6 +210,13 @@ export function GridWorkspace<Row>({
     Act on all {rows.length}
    </Button>:null}
   </div>
+  {selection&&selectedPage.length?<div role="region" aria-label="Act on these"
+    className="flex flex-wrap items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle px-3 py-2 text-sm">
+    <strong>{selectedPage.length} selected</strong>
+    {act?.(rows,selectedPage,clearPageSelection)}
+    <Button variant="secondary" type="button" onClick={()=>void copyRows()}>Copy selected</Button>
+    <Button variant="ghost" type="button" onClick={clearPageSelection}>Clear page selection</Button>
+   </div>:null}
   {notice?<p role="status" className="text-xs text-muted-foreground">{notice}</p>:null}
   {typeof children==="function"?children(activeKeys):children}
  </section>;
