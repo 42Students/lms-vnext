@@ -113,6 +113,7 @@ export function LearnerNotificationBell(){
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
        <span className="mt-1 block line-clamp-2 leading-[1.5] text-muted-foreground">{row.notification.body}</span>
+       <time dateTime={row.notification.createdAt} className="mt-1 block text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(row.notification.createdAt))}</time>
       </Link>
      </li>;
     })}
