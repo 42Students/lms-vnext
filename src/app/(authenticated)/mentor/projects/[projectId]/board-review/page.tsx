@@ -34,7 +34,7 @@ export default async function MentorBoardReviewPage({
         Full task workspace
       </Link>}/>
     {!data.enabled?
-      <section role="status" className="rounded-xl border border-border bg-surface p-5">
+      <section role="status" className="border-b border-border pb-4">
         Projects access is disabled; no tasks were loaded.
       </section>:<>
       <section aria-label="Registered task counts" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -138,8 +138,8 @@ export default async function MentorBoardReviewPage({
         description={data.count===0?
           "This project has no stored tasks. No workload or assignment is inferred.":
           "The stored tasks do not match your filters. Clear filters to view the whole board."}/>:
-        <ol className="grid gap-3">{data.items.map(row=><li key={row.id}
-          className="rounded-xl border border-border bg-surface p-4">
+        <ol className="divide-y divide-border">{data.items.map(row=><li key={row.id}
+          className="py-4">
           <h2 className="break-words font-semibold">{row.title}</h2>
           <p className="mt-2 text-sm text-body">{row.status.replaceAll("_"," ")} ·
             {row.priority} priority · {row.sprintTitle}</p>

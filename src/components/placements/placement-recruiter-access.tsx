@@ -160,8 +160,8 @@ export function PlacementRecruiterAccess({
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border px-5 py-4">
+    <section className="border-b border-border pb-6">
+      <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Recruiter access
         </h2>
@@ -170,7 +170,7 @@ export function PlacementRecruiterAccess({
         </p>
       </div>
 
-      <div className="grid gap-3 border-b border-border p-5 lg:grid-cols-[minmax(12rem,1fr)_minmax(14rem,1fr)_minmax(10rem,0.7fr)_auto]">
+      <div className="grid gap-3 border-b border-border py-5 lg:grid-cols-[minmax(12rem,1fr)_minmax(14rem,1fr)_minmax(10rem,0.7fr)_auto]">
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
             Employer relationship
