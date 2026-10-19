@@ -263,6 +263,7 @@ export function ReportCsvLink({
   return (
     <a
       href={`/api/placements/reports?${params.toString()}`}
+      aria-label={`Export ${kind.replaceAll("-", " ")} CSV`}
       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9"
     >
       Export CSV
