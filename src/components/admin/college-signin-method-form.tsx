@@ -2,6 +2,7 @@
 import {Button} from "@/components/ui/button";
 import {Radio} from "@/components/ui/radio";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Alert} from "@/components/ui/alert";
 
 import {useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -22,6 +23,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
  const [currentVersion,setCurrentVersion]=useState(version);
  const {pending:saving,run:guardedRun}=useGuardedAction({busyLabel:"Saving..."});
  const [message,setMessage]=useState("");
+ const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [confirmOpen,setConfirmOpen]=useState(false);
  async function save(){
   if(!ready||saving||selection===savedMethod)return;
@@ -41,8 +43,9 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
        throw new Error("INVALID_POLICY_RESPONSE");
       setSavedMethod(committed.method);
       setCurrentVersion(committed.version);
-      setConfirmOpen(false);setMessage("Sign-in settings saved");router.refresh();
+      setConfirmOpen(false);setMessageTone("success");setMessage("Sign-in settings saved");router.refresh();
     }catch(error){
+      setMessageTone("error");
       setMessage(error instanceof FriendlyFetchError && error.status===409
         ?"Settings changed elsewhere. Refresh before retrying."
         :error instanceof FriendlyFetchError?error.message:"Could not save sign-in settings.");
@@ -60,11 +63,11 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
    </label>)}
   </fieldset>
   <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>setConfirmOpen(true)}
-   className="min-h-11 min-[768px]:min-h-9">
+   className="min-h-11 md:min-h-9" loading={saving}>
    {saving?"Saving…":"Save sign-in settings"}
   </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} onConfirm={()=>void save()}/>
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
-  {!ready?<p role="status" className="text-sm text-warning-text">Sign-in method storage is unavailable; changes are disabled.</p>:null}
+  {message?<Alert tone={messageTone}>{message}</Alert>:null}
+  {!ready?<Alert tone="warning">Sign-in method storage is unavailable; changes are disabled.</Alert>:null}
  </section>;
 }
