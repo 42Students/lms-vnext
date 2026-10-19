@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
-import {Button} from "@/components/ui/button";
 export function TpoTeamThreadDetails({threadId,topic,counterpart,createdDate,decisions,openAsks,awayLabel}:{
  threadId:string;topic:string;counterpart:string;createdDate:string;decisions:number;openAsks:number;awayLabel:string|null;
 }){
@@ -25,7 +24,7 @@ export function TpoTeamThreadDetails({threadId,topic,counterpart,createdDate,dec
  return <section className="space-y-2">
   <Button variant="secondary" type="button" onClick={toggle} aria-expanded={open}
    aria-controls={"team-details-"+threadId}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+   className="min-h-11 sm:min-h-[var(--lms-control-height)]">
    {open?"Hide details":"Details"}
   </Button>
   {open?<aside id={"team-details-"+threadId} aria-label="Conversation details"
