@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -69,11 +70,11 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <h2 className="font-semibold text-foreground">Lessons</h2>
-   <button type="button" onClick={()=>{setOpen(value=>!value);setError("");}}
+   <Button variant="primary" type="button" onClick={()=>{setOpen(value=>!value);setError("");}}
     disabled={!options.length||busy}
-    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+    >
     Create New Lesson
-   </button>
+   </Button>
   </div>
   {!options.length?<p className="text-sm text-muted-foreground">
    Create an active Course Offering first. Lessons belong to a Course and Batch.
@@ -103,18 +104,18 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
      className="rounded-md border border-border bg-surface p-3 text-foreground"/>
    </label>
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={busy||!name.trim()} onClick={()=>void create(false)}
-     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+    <Button variant="primary" type="button" disabled={busy||!name.trim()} onClick={()=>void create(false)}
+     >
      {busy?"Saving…":"Create Lesson"}
-    </button>
-    <button type="button" disabled={busy||!name.trim()} onClick={()=>void create(true)}
-     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+    </Button>
+    <Button variant="secondary" type="button" disabled={busy||!name.trim()} onClick={()=>void create(true)}
+     className="text-primary-text">
      Create Lesson & Add Another
-    </button>
-    <button type="button" disabled={busy} onClick={()=>setOpen(false)}
-     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body">
+    </Button>
+    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
+     >
      Cancel
-    </button>
+    </Button>
    </div>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
