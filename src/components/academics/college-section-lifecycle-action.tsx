@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -27,10 +28,10 @@ export function CollegeSectionLifecycleAction({row}:{
     });
   }
   return <div className="space-y-1">
-    <button type="button" disabled={pending} onClick={()=>setConfirming(true)}
+    <Button variant="secondary" type="button" disabled={pending} onClick={()=>setConfirming(true)}
       className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       {pending?"Saving…":action==="ARCHIVE"?"Archive":"Restore"}
-    </button>
+    </Button>
     <ConfirmDialog open={confirming} onOpenChange={setConfirming}
       title={action==="ARCHIVE"?"Archive class":"Restore class"}
       description={classLifecyclePrompt(row.name,action)}
