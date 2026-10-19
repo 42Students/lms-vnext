@@ -630,3 +630,46 @@ Required physical viewport/interaction test: 375, 640, 767, 768, 1024px; outside
 **F1 [ ], F2 [ ] remain unchecked.** Visual avatar diameter, desktop compact bell hit area, some icon/row/divider states, popup exit timing, canonical toast lifetime, and exhaustive greps are **not** proven identical. Do not report pixel parity.
 
 **Next:** `src/components/shell/topbar/command-search.tsx` — embedded command listbox close/keyboard and mobile popup modes; then `src/components/shell/topbar/tpo-quick-create.tsx` menu item/divider/source states.
+
+
+## Chat-16 global command listbox and quick-create — 2026-10-20
+
+### Source comparison and states
+
+| Surface/property | Legacy exact value and path | Current vNext source and value | Match status |
+| --- | --- | --- | --- |
+| Legacy global searchable popup opening offset | `docs/design/legacy-styles/components___form.scss:63-70`: `top:calc(100% + 5px)`, left0, width100% | `src/components/shell/topbar/topbar.module.css:35`: top +8px, width `min(390px,100vw-24px)` | **Known differing top and width** — shell owner CSS left unchanged |
+| Legacy global searchable popup size | `components___form.scss:70-76`: min120px, max200px, 12px radius, shadow `0 14px 16px rgba(0,0,0,.04)` | `topbar.module.css:35`: max `min(65vh,430px)`, radius `var(--lms-canvas-radius)`=12px, different shadow | Radius matches, max-height/shadow unproved exact |
+| Legacy search option hover/touch | `components___form.scss:82-91`: 44px min, `#d1f1f1` hover, 5px 10px padding, 200ms easing | Command menu `topbar.module.css:36-39`: 44px min, rgba black `.035/.06` hover/active, padding12px/16px | Touch min matches; **colors/insets differ** and not ticked as search dropdown parity |
+| Command listbox Escape ownership | Legacy SCSS gives no keyboard algorithm | `src/components/shell/topbar/command-search.tsx:64-96,124-174`: global Escape only from its own open root, inner editable event/default prevention respected, listbox onDismiss restores input | Source behavior validated, no browser claim |
+| Composition-safe typing | Old design SCSS no IME semantics | `command-search.tsx:130-178`: React `event.nativeEvent.isComposing` guards input and nested listbox, editable descendants retain caret/Backspace | Functionality safety check, browser pending |
+| Command menu loading/error/empty | No canonical old state typography in form SCSS | `command-search.tsx:177-216`: role=status during learner loading and empty; result links, TPO live suggestions, error status | State inventory complete, visual equality not proven |
+| Command menu breakpoint | Old dropdown SCSS defines viewport-aware profile overlay at 767px; global-search keyboard popover lacks specific source cutoff | `topbar.module.css:70-80,138-142`: collapsed 36px icon to 767px, expanded input on mobile open, full-width dropdown | Static source branches; no exact old global search equivalence |
+| TPO create primary trigger | Old `components___dropdown.scss:96-105` defines generic head dropdown, not a +New button | `tpo-quick-create.tsx:28-40`, `topbar.module.css:40-41,81-82`: desktop 82x36px, phone icon38px nominal + shared Dropdown 44px mobile hit area | Generic menu semantics retained; no unsupported claim of primary trigger pixel match |
+| TPO action-menu surface | Old `components___dropdown.scss:96-105`: radius6px, white, shadow `9px 11px 28px rgba(0,0,0,.1)`, minwidth100px | Shared `src/components/ui/dropdown.tsx:125-145`, `legacy-overlays.css:161-173`: 6px, white, exact shadow, min100px | Match basic menu geometry, not every nested action state |
+| TPO create long-company bounds | Old profile overlay `components___dropdown.scss:107-128`: viewport minus24px cap, max767 phone | `tpo-quick-create.tsx:28-40`: minwidth min(240px,100vw-80px), wrap long company words; shared popup max width viewport-24px | No horizontal overflow by source arithmetic at 280/375px; old label content not supplied |
+| TPO create menu navigation | Old `components___dropdown.scss` has no single React routing contract | `tpo-quick-create.tsx:28-41`: shared Dropdown, native nav/link targets, divider, inline follow-up modal preserved | Source functionality, runtime open/close not exercised |
+
+### Static responsive proof for these specific files (not browser-rendered)
+
+| Width | Command search | TPO quick-create |
+| --- | --- | --- |
+| 280px phone | search icon 36px; expanded search spans mobile header minus20px, listbox max width viewport-24px | menu inner minwidth min(240px,280-80)=**200px**; with 48px horizontal popup padding + border remains at most250px under viewport-24=256px |
+| 375px phone | icon36px until767; full-width expanded input, Search results within viewport | inner minwidth **240px**, plus 48px padding/2px border gives290px below viewport-24=351px; long unbroken company names wrap |
+| 640px and 767px | mobile collapsed mode remains (max767) | mobile +New icon38px visual, shared trigger min44px; anchored menu is **not** an old-LMS-proven sheet |
+| 768px and 1024px | desktop input 291px by default, bound widths at tablet; dropdown width up to390px | +New text button82x36px; anchored shared 6px dropdown, 240px inner minwidth |
+| Keyboard/error | Ctrl/Meta+K opens; Escape from own root closes; editable/listbox composition and Backspace safeguarded; loading/error/empty statuses present | native summary activation / Arrow entry, link keyboard focus and modal follow-up; no disabled links invented |
+
+### Indexed candidate inventory
+
+GitHub **default-branch index search**, not checkout grep: `<PopoverListbox` yielded **5** `src/` files (TPO find, learner topbar, shared SearchableSelect, learner skill catalogue, global command search); `<Dropdown` yielded **12** source paths (shared split, TPO create, placement table/actions and other clients); `fixed inset-0` yielded the single noninteractive company-share watermark; `role="dialog"` yielded **6** source paths including shared Popover and CSS/observer literals. This does **not** prove branch-wide zero hand-rolled overlays.
+
+File-level source-completed:
+- [x] `src/components/shell/topbar/command-search.tsx`: own-root Escape; no nested editable/IME interception; JSX `PopoverListbox` pair.
+- [x] `src/components/shell/topbar/tpo-quick-create.tsx`: responsive width bounds and long company labels; `Dropdown` opening/closing and existing nav/follow-up subtree preserved.
+- [x] Read-only `src/components/shell/topbar/tpo-find-suggestions.tsx`: keyboard-focusable 44px option buttons, async loading/error/empty, no local overlay.
+- [x] Read-only `src/components/shell/topbar/topbar.module.css`: numerical difference rows preserved for shell owner rather than overriding elsewhere.
+
+**F1 [ ], F2 [ ] still not eligible for ticking.** Legacy search popup offsets/heights/shadow, compact bell desktop hit target, profile visual avatar diameter, full context icon/divider variants and actual device/code-grep proof remain unmatched or unverified.
+
+**Next file:** `src/components/ui/searchable-select.tsx` and `src/components/profile/learner-skill-catalog-input.tsx` — check keyboard selected/disabled states under the shared listbox and find any further missing F2 consumer variants.
