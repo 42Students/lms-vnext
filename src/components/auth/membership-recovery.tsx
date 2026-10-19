@@ -38,8 +38,8 @@ export function MembershipRecovery({
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl items-center px-6 py-16">
-      <section className="w-full rounded-[12px] border border-border bg-surface p-6 sm:p-8">
+    <main className="mx-auto flex min-w-0 max-w-3xl items-start">
+      <section className="w-full border-b border-border pb-6">
         <p className="m-0 text-sm font-semibold text-primary-text">
           College access changed
         </p>
