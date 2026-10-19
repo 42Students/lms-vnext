@@ -102,3 +102,24 @@ Owner reference: `docs/design/old-lms-shell.css` TOP HEADER rules, `old-lms-shel
 - [x] Removed a duplicate `Button` import from `hr-recruiter-bell.tsx`, the existing recruiter notification trigger used by the topbar. No recruiter business or notification behavior was changed.
 - [ ] Further imported component visual comparison and interactive QA are still required.
 
+
+
+## Replacement chat-13 continuation — post-main fast-forward (2026-10-19)
+
+The lane branch was 651 commits behind `main` and had no unique commits (GitHub compare: ahead 0, behind 651). Advanced `chatgpt/chat-13-b` by a fast-forward to `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` before modifying source files. Previous chat-13 work was already integrated upstream; no forced ref update or main-branch write.
+
+### Completed files in this replacement batch
+- [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`: both native drive selection checkboxes use shared `Checkbox`; retry control uses shared `Button` link variant; preview panel radius/skin uses legacy tokens. Kept bulk preview, confirmation, selected IDs, limits, API and error states unchanged.
+- [x] `src/components/admin/super-admin-placement-oversight-nav.tsx`: supplemental tabs use explicit current-route underline, `aria-current="page"`, tokenized focus ring and hover colors; active supplemental report is expanded in the existing `Disclosure` rather than hidden.
+- [x] `src/app/(authenticated)/admin/placements/page.tsx`: overview actions use consistent legacy 36px desktop / 44px touch geometry, semantic teal and visible focus styles.
+- [x] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`: action links and status-heading typography use shared header/control styles without changing stage history.
+- [x] `src/app/(authenticated)/admin/placements/drives/page.tsx`: drive creation and scope actions use legacy action height, typography, hover and focus styles.
+- [x] `src/app/(authenticated)/admin/placements/analytics/page.tsx`: report export link and section headings use the shared legacy visual tokens. Report data, filters, CSV and funnel are unchanged.
+- [x] `src/app/(authenticated)/admin/projects/templates/page.tsx`: template creation and inspection links use legacy control/touch/focus styles, and card headings use the semantic legacy heading color; object cards are deliberately retained.
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`: college selection checkbox uses shared `Checkbox`; rows have matching legacy radius/height/hover/focus and accessible label containment.
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`: back action focus/touch styling and object heading color use the shared tokens; template assignments and college cards remain intact.
+
+### Source-only check
+- [x] Re-read changed JSX source from `chatgpt/chat-13-b`: the edited `Button` and `Select` opening/closing tag counts match, the new `Checkbox` instances are self-closing, no truncated `</Select` remains, and no native checkbox remains in the two edited bulk widgets.
+- [ ] **Not verified**: visual pixel comparison, browser rendering, compile-time types, UI interactions, tests and CI. Deliberately no build/test/runtime execution per owner instruction.
+- [ ] **Next source scrutiny**: `src/components/admin/super-admin-placement-detail-view.tsx`, then `src/components/placements/super-admin-drive-pipeline.tsx`, plus untouched Super Admin placements/projects detail wrappers. Avoid unowned cross-portal shared widgets until assigned.
