@@ -1,8 +1,11 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import { Tabs } from "@/components/ui/tabs";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -20,7 +23,7 @@ export default async function HrJobActivityPage({searchParams}:{
   collegeId:raw.collegeId,kind:raw.kind,page:raw.page,q:raw.q,
  });
  if(!input.success)return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Hiring activity"/>
-  <p role="alert">Invalid activity filters.</p><Link href="/hr/activity">Choose again</Link></div>;
+  <ErrorState title="Invalid activity filters" description="Review the college and event filters." action={<Link href="/hr/activity" className="text-primary-text underline">Choose again</Link>}/></div>;
  const result=await listRecruiterJobActivity(context,input.data);
  const fmt=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
@@ -30,9 +33,10 @@ export default async function HrJobActivityPage({searchParams}:{
    description="Published and closed hiring drives at your authorized college. No private applicant information."/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-5">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
-   {result.choices.map(grant=><Link key={grant.id}
-    href={"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId)}
-    className="block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{grant.collegeName}</Link>)}
+   <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
+    key:grant.collegeId,label:grant.collegeName,
+    href:"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId),
+   }))}/>
   </section>:<>
    {result.choices.length>1?<NeedsDoingChips label="College activity:"
     selectedKey={result.collegeId}
@@ -41,8 +45,8 @@ export default async function HrJobActivityPage({searchParams}:{
      href:"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId),
     }))}/>:null}
    <form action="/hr/activity" method="get" className="flex flex-wrap gap-2">
-     <input type="hidden" name="collegeId" value={result.collegeId}/>
-     <input type="hidden" name="kind" value={input.data.kind}/>
+     <Input type="hidden" name="collegeId" value={result.collegeId}/>
+     <Input type="hidden" name="kind" value={input.data.kind}/>
      <label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</label>
      <Input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
        placeholder="Search hiring drive titles" className="min-w-48 flex-1"/>
@@ -59,8 +63,7 @@ export default async function HrJobActivityPage({searchParams}:{
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
       className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.title}</Link>
      <p className="mt-1 text-sm text-body">{item.status} · {fmt(item.occurredAt)} IST</p>
-    </li>)}</ol>:<p role="status" className="border-y border-border py-5 text-sm text-body">
-     No visible publication or closure activity at this college.</p>}
+    </li>)}</ol>:<EmptyState title="No hiring activity" description="No visible publication or closure activity at this college."/>}
    <div className="flex justify-end">
      <Link href={"/api/placements/recruiter/activity/export?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)}
        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">

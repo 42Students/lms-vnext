@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -101,8 +102,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   <p className="text-xs text-muted-foreground">
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
-  {notice?<p role={notice.startsWith("Could not") || notice.startsWith("Write a") || notice.startsWith("Keep a") ? "alert" : "status"}
-   className={notice.startsWith("Could not") || notice.startsWith("Write a") || notice.startsWith("Keep a") ? "text-sm text-error" : "text-sm text-body"}>{notice}</p>:null}
+  {notice?<Alert tone={notice.startsWith("Could not") || notice.startsWith("Write a") || notice.startsWith("Keep a")?"error":"success"}>{notice}</Alert>:null}
   <div className="flex flex-wrap items-center gap-3">
   <Button type="submit" disabled={sending} loading={sending} className="min-h-11 sm:min-h-9">
    {sending?"Sending…":"Send reply"}

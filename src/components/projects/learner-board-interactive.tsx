@@ -1,9 +1,11 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { BoardColumn } from "@/components/ui/board-column";
+import styles from "./legacy-project-board.module.css";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
@@ -25,6 +27,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
  const [tasks,setTasks]=useState(initialTasks),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [undo,setUndo]=useState<{taskId:string;status:EditableStatus;blockerReason:string|null}|null>(null);
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
+ const [dragging,setDragging]=useState(false);
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
   if(!undo)return;
@@ -93,7 +96,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
     :"Drag your own task into a lane, or use the move control for touch and keyboard."}</p>
   {busy?<p role="status" aria-live="polite" className="text-sm text-body">Saving your change…</p>:null}
   {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
-  {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   {undo&&tasks.some(task=>task.id===undo.taskId&&canLearnerMoveOwnTask(task.status,undo.status))?
    <Button type="button" disabled={busy||readOnly} variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)] underline"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
@@ -101,21 +104,24 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   </Button>:null}
   <p className="text-xs text-muted-foreground sm:hidden">Scroll sideways to see all Board lanes.</p>
   <div role="region" aria-label="Project Board lanes, scroll horizontally to see more"
-    tabIndex={0} className="overflow-x-auto overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-   <div className="flex min-w-max gap-3">{lanes.map(lane=>
+    tabIndex={0} data-dragging={dragging} className={styles.scrollRegion}>
+   <div className={styles.track}>{lanes.map(lane=>
     <BoardColumn key={lane.id} label={lane.label} width="compact"
+       className={[styles.lane, lane.id==="BACKLOG"?styles.backlogLane:"",lanes.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
+       data-can-drop={!readOnly&&!busy&&statuses.includes(lane.id as EditableStatus)}
       onDragOver={event=>{if(statuses.includes(lane.id as EditableStatus))event.preventDefault()}}
       onDrop={event=>drop(event,lane.id)}
       >
-     <h2 className="flex items-center justify-between font-semibold">
+     <h2 className={styles.header}>
       <span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge>
      </h2>
-     <ul className="mt-3 space-y-2">{lane.tasks.map(task=>{
+     <ul className={styles.body}>{lane.tasks.map(task=>{
       const own=membershipId!==null&&task.assigneeMembershipId===membershipId;
       const editable=!readOnly&&own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
       return <li key={task.id} draggable={editable&&!busy}
-       onDragStart={event=>{if(editable)event.dataTransfer.setData("text/plain",task.id)}}
-       className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm">
+       onDragStart={event=>{if(editable){event.dataTransfer.setData("text/plain",task.id);setDragging(true);}}}
+        onDragEnd={()=>setDragging(false)}
+       className={"border p-3 text-sm "+styles.card}>
         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
          className="block break-words font-semibold text-primary-text">{task.title}</Link>
         <p className="mt-2 text-xs text-muted-foreground">{task.priority}</p>

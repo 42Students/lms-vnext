@@ -16,6 +16,7 @@ export function InfoPopover({ content, children, className, label }: TooltipProp
   const hoverRef = useRef(false);
   const pointerTypeRef = useRef("keyboard");
   const openAtPointerDown = useRef(false);
+  const suppressFocusOpen = useRef(false);
   useEffect(() => {
     const onOutsidePointerDown = (event: PointerEvent) => {
       const root = detailsRef.current;
@@ -38,8 +39,8 @@ export function InfoPopover({ content, children, className, label }: TooltipProp
         const trigger = detailsRef.current?.querySelector("summary");
         if (detailsRef.current && !trigger?.matches(":focus-visible")) detailsRef.current.open = false;
       }}
-      onKeyDown={event => { if (event.key === "Escape" && detailsRef.current?.open) { detailsRef.current.open = false; detailsRef.current.querySelector("summary")?.focus(); event.preventDefault(); event.stopPropagation(); } }}
-      onFocus={() => { if (detailsRef.current) detailsRef.current.open = true; }}
+      onKeyDown={event => { if (event.key === "Escape" && detailsRef.current?.open) { detailsRef.current.open = false; const summary = detailsRef.current.querySelector<HTMLElement>("summary"); if (summary && document.activeElement !== summary) { suppressFocusOpen.current = true; summary.focus(); } event.preventDefault(); event.stopPropagation(); } }}
+      onFocus={() => { if (suppressFocusOpen.current) { suppressFocusOpen.current = false; return; } if (detailsRef.current) detailsRef.current.open = true; }}
       onBlur={event => {
         if (!event.currentTarget.contains(event.relatedTarget) && !hoverRef.current && detailsRef.current) detailsRef.current.open = false;
       }}>

@@ -7,6 +7,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {HrRoundResultsGrid} from "@/components/hr/hr-round-results-grid";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
@@ -19,14 +20,14 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
  const raw=await searchParams;
  const query=recruiterResultTableQuerySchema.safeParse({jobId:raw.jobId||undefined,
    roundId:raw.roundId||undefined,outcome:raw.outcome||undefined});
- if(!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Round Results" />
+ if(!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Round Results" />
    <ErrorState title="Invalid round filters" description="Choose a valid hiring drive, round and outcome filter."
     action={<Link href="/hr/round-results" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/></div>;
  if(!query.data.jobId) {
    const jobs=(await listOwnRecruiterPlacementJobs(context)).filter(item=>item.job.archivedAt===null);
-   return <div className="min-w-0 max-w-full space-y-6"><PageHeader eyebrow="Employer Recruiter" title="Round Results"
+   return <div className="min-w-0 max-w-full space-y-6"><PageHeader title="Round Results"
      description="Choose one of your employer's authorized published or closed hiring drives. Private college applications are never listed." />
-    {jobs.length?<section className="grid gap-3 sm:grid-cols-2">{jobs.map(item=>
+    {jobs.length?<section className="grid gap-3 md:grid-cols-2">{jobs.map(item=>
      <Link key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
        className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        <span className="block font-semibold text-foreground">{item.job.title}</span>
@@ -53,20 +54,20 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
   PASS:counts?.pass??0,FAIL:counts?.fail??0,HOLD:counts?.hold??0,ABSENT:counts?.absent??0,
  };
  return <div className="min-w-0 max-w-full space-y-6">
-   <PageHeader eyebrow="Employer Recruiter" title="Round Results"
+   <PageHeader title="Round Results"
     description={workspace.company.name+" · "+workspace.college.name+" · "+workspace.job.title} />
    <nav aria-label="Round review navigation" className="flex flex-wrap gap-4 text-sm">
      <Link href="/hr/round-results" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose another drive</Link>
      <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open hiring rounds & staging</Link>
    </nav>
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
-    <section className="border-b border-border pb-4 sm:pb-5">
+    <section className="border-b border-border pb-4 md:pb-5">
       <h2 className="font-semibold text-foreground">Choose round</h2>
       <Tabs renderPanel={false} ariaLabel="Hiring rounds" value={selectedRound?.id??""}
         items={rounds.map(round=>({value:round.id,label:round.sequence+". "+round.name,
           href:recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id})}))}/>
     </section>
-    {results?<section className="space-y-4 border-b border-border pb-4 sm:pb-5">
+    {results?<section className="space-y-4 border-b border-border pb-4 md:pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h2 className="font-semibold text-foreground">{results.round.name}</h2>
         <p className="mt-1 text-sm text-body">{results.round.kind} · {results.round.status} · {counts?.all??0} eligible, shared candidates</p></div>
@@ -76,14 +77,13 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
        <Tabs renderPanel={false} ariaLabel="Outcome" value={query.data.outcome}
         items={filters.map(filter=>({value:filter,label:filter.replaceAll("_"," "),count:countValues[filter],
           href:recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:filter})}))}/>
-       {results.rows.length?<div className="grid gap-3 md:grid-cols-2">
-         {results.rows.map(row=><article key={row.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
-           <h3 className="break-words font-semibold text-foreground">{row.name}</h3>
-           <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{row.outcome??"NOT RECORDED"}</StatusBadge>
-              {row.outcome?<StatusBadge>{row.status}</StatusBadge>:null}</div>
-           {row.scorePercent!==null?<p className="mt-2 text-sm text-body">Score: {row.scorePercent}%</p>:null}
-           {row.waitlistRank!==null?<p className="mt-1 text-sm text-body">Waitlist rank: {row.waitlistRank}</p>:null}
-         </article>)}</div>:<p className="text-sm text-muted-foreground">No shared candidates match this outcome.</p>}
+       {results.rows.length?<HrRoundResultsGrid
+         scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id,results.round.id].join(":")}
+         rows={results.rows.map(row=>({
+           key:row.key,name:row.name,outcome:row.outcome,status:row.status,
+           scorePercent:row.scorePercent,waitlistRank:row.waitlistRank,
+         }))}
+       />:<EmptyState title="No matching candidates" description="No shared candidates match this outcome."/>}
        <p className="text-xs text-muted-foreground">STAGED results are awaiting placement-cell review; APPLIED results are recorded decisions. This read-only table does not submit or notify applicants.</p>
       </>}
     </section>:null}

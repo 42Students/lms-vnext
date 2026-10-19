@@ -99,3 +99,44 @@ Branch fast-forwarded from b1d0962 to then-current main b275ca0 BEFORE changes. 
 **Outstanding work:** Check underlying responsive cells, sorted/filtered selection interplay, stable column order across saved views, roster/batch/client Team permissions, legacy exact exports and the old AG Grid engine. No application execution, no CI, no screenshot, no repo-wide grep was performed; JSX files were reread from repository content after edits, with manual tag/stray-character checks. Thus no STRICT TICK RULE coverage checkboxes were closed.
 
 **Next source files:** `src/components/tpo/tpo-roster-verification-bulk.tsx`, `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx`, and `src/components/tpo/tpo-spreadsheet-grid.tsx` once native AG Grid imports land.
+
+## 2026-10-19 chat-12 — scoped roster/batch file completion ledger
+
+This pass began by fast-forwarding chatgpt/chat-12-b to origin/main `dba6bbd5456152d9acc1ba31601d9ca32bcab3aa`. No application/CI execution. **Source-level proof is recorded separately from rendered pixel proof** and does not close the global E8 AG Grid engine.
+
+### src/components/tpo/tpo-roster-verification-bulk.tsx
+
+- [x] *Scoped source migration:* responsive selectors, shared controls, single-canvas layout, selection/preflight/receipt preserved. **Global A5–A7/E8 parity remains unchecked.**
+
+| Property | Old LMS source value | vNext source evidence | Source check |
+|---|---|---|---|
+| Page canvas: one white surface; section separators | `docs/design/old-lms-pages.md:5-6`: no internal card for ordinary sections | `tpo-roster-verification-bulk.tsx:62`: `border-b border-border py-4`, no inner root card | Match to page anatomy |
+| Section heading hierarchy | `old-lms-pages.md:6` page title distinct from internal heading | :63 `h2` 18px `font-semibold text-foreground` | Match to section role |
+| Compact / tablet selector | `old-lms-shell.css:68-85` phone breakpoint 767px; `old-lms-pages.md:6-10` compact internal workspace | :71 `grid-cols-1 md:grid-cols-2` (phone single column, 768px+ two); `min-w-0`, `max-h-64`, scroll containment | Source-breakpoint coverage; not screenshot |
+| Selection controls | `old-lms-shell.css:27,31` interactive rail rows `min-height:44px` | :66,72 `min-h-11` (44px at 4px spacing), input via shared Checkbox | Global touch size aligned; section-specific legacy geometry not independently measured |
+| Hover/focus | `old-lms-shell.css:32,47-48` teal hover and 2px focus state | :72 `hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-primary` | Intent/source match; rendered comparison open |
+| Confirmation/results | `old-lms-pages.md:5,11` slim strips inside single canvas | :102-118 border-top strips, confirmation highlighted via `bg-primary-subtle` | No nested cards |
+
+**Scoped grep-equivalent proof:** Full current branch GitHub file content was scanned with equivalent regexes for
+`grep -nE '<(button|select|input|textarea)([[:space:]]|>)'`, `#[[:xdigit:]]{6}`,
+`<svg([[:space:]]|>)` and `rounded-\\[var\\(--lms-canvas-radius\\)\\].*border.*bg-surface`.
+Counts in this file respectively **0, 0, 0, 0**. Shared component tags: Button **4**, Checkbox **3**, Select **1**, Textarea **1**. No raw controls reintroduced. The `collegeBulkReviewPayload` and guarded API mutation remain intact; status/invalid/preview/acknowledge/results paths not removed.
+
+**Responsive source proof:** :71 `grid-cols-1` on narrow viewports and `md:grid-cols-2` on wider layouts; :72 `min-w-0 break-words` for long names and 44px labelled hit areas; :85 flex wrapping for correction-reason presets. Actual viewport screenshots are pending; do not treat this as visually measured parity.
+
+### src/app/(authenticated)/tpo/batches/[batchId]/page.tsx
+
+- [x] *Scoped source migration:* one Tabs strip, compact funnel and plain section canvas, styled links/banners, preserved server state. **Global E8 remains unchecked.**
+
+| Property | Old LMS source value | vNext source evidence | Source check |
+|---|---|---|---|
+| One active tabs strip directly on canvas | `old-lms-pages.md:8` tab strip under header, not repeated | `page.tsx:47` TpoBatchWorkspaceTabs, removed duplicate bottom nav and tabs constant | Match |
+| Internal section borders | `old-lms-pages.md:5,12` canvas without card-in-card; funnel strip | :63,91,117 `border-b border-border py-4`, :100 per-metric left separator | Match to page anatomy |
+| Slim warning banner | `old-lms-pages.md:11` pale yellow strip and action | :48-56 `border-l-2 border-warning bg-warning-subtle px-3 py-3` | Tokenized, browser tone still to compare |
+| Link default and hover | `legacy-styles/components___common.scss:68-75` `.ln-lnk-ul` teal and hover underline | :38,49-56,59,69,113,122-127 `text-link`, `lms-inline-link`, `hover:bg-primary-subtle` for actions | Match source intent |
+| Keyboard focus / tap size | `old-lms-shell.css:31-32` 44px row, 2px teal focus treatment | :38,59,69,113,122-127 `min-h-11`, `focus-visible:outline-2` | Source state present |
+| Phone/tablet metrics | `old-lms-shell.css:68-85` phone under 768px, tablet ≥768px | :96 `grid-cols-2 md:grid-cols-4`, :100 `min-w-0 [overflow-wrap:anywhere]`; :64 and :121 flex-wrap action rows | Source-breakpoint coverage; not screenshot |
+
+**Scoped grep-equivalent proof:** Full fetched file counted raw controls **0**, literal six-digit hex **0**, inline SVG **0**, manual rounded card wrappers with the audited exact root pattern **0**, shared tab strips **1**, duplicate bottom nav **0**; Link opening/closing tags **9/9**; `focus-visible:outline-2` occurs **9** times. Checks use the exact file content returned by GitHub rather than a local shell grep. Browser/phone/tablet rendered evidence remains pending.
+
+**Next E8 file:** `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx` for authorized roster table and local filters. The `TpoGrid` engine remains a shared-table fallback until chat-14 integrates AG Grid and dependencies; keep that global checkbox unticked.

@@ -72,7 +72,12 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
       if (rootRef.current?.open && event.target instanceof Node && !rootRef.current.contains(event.target)) closeDropdown();
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape" || !rootRef.current?.open) return;
+      if (event.defaultPrevented || event.key !== "Escape" || !rootRef.current?.open ||
+          (inlineDesktop && window.innerWidth >= 768)) return;
+      const activeMenu = event.target instanceof Element
+        ? event.target.closest<HTMLDetailsElement>('[data-slot="dropdown-root"][open]')
+        : null;
+      if (activeMenu && activeMenu !== rootRef.current) return;
       closeDropdown(true);
       event.preventDefault();
     };

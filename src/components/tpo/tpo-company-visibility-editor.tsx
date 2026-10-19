@@ -42,7 +42,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
    <Checkbox disabled={busy} checked={values[key as keyof Choice]}
     onChange={e=>setValues(current=>({...current,[key]:e.target.checked}))}/>
   </label>)}
-  <Disclosure title="Additional sharing options" className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
+  <Disclosure title="Additional sharing options" className="border-t border-border pt-3">
     {Object.entries(labels).slice(3).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
       <span>{label}</span>
       <Checkbox disabled={busy} checked={values[key as keyof Choice]}

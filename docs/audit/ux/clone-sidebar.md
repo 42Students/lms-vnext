@@ -3,7 +3,7 @@
 Owner: chat-19. Source: `docs/design/ui-clone-checklist.md:8-18`, `docs/design/old-lms-shell.css`, `docs/design/old-lms-shell-spec.md` and `docs/design/legacy-styles/`. The owner runs runtime/CI and screenshot comparison later; **none was run here**.
 
 - [ ] **B3 Sidebar** (missing: command-level full-repository grep proof and exact historical icon/artwork equivalence; browser icon/hover/tablet verification is deferred to checklist J. See refreshed source-value and import evidence below.)
-- [ ] **B4 Footer, progress and route transitions** (missing: authoritative old top route progress and TPO mobile footer visual values, exact full-page loader behavior, and command-level repository grep counts. Learner entrance/exit CSS values now match their provided legacy source.)
+- [ ] **B4 Footer, progress and route transitions** (footer roles and original styling now source-matched to lms2-fe/prod-2026; slow-route overlay matches legacy fullscreen layout and 20s recovery text, but indeterminate thin bar and hand-rendered spin dots are modern adaptations; exact browser comparison and executable full-repo greps remain outstanding.)
 
 ## B3 value proof (legacy → vNext)
 
@@ -57,8 +57,8 @@ Source parse of `shell-model.ts:45-86,122-320`: **63 declared navigation rows / 
 | Property / state | Old LMS file:line and value | vNext file:line and value | Status |
 |---|---|---|---|
 | Sidebar footer geometry | `old-lms-shell.css:22`: z2, margin-top auto, 25px 16px | `app-shell.tsx:86-99`, `sidebar-legacy.css:235` | Geometry match; copy unverified |
-| TPO bottom mobile footer | No comparable values in `old-lms-shell.css:1-101` | `src/components/tpo/tpo-mobile-footer.tsx:14-47`, shell re-export | Open: no exact reference |
-| Top route progress bar | No matched timing/colour spec in `old-lms-shell.css:1-101` nor matched `nprogress` in the indexed legacy sources | No dedicated progress bar added | Open: do not fabricate |
+| TPO bottom mobile footer | No comparable TPO-specific footer markup in original legacy sources; shared 64px + safe-area `.ln-footer` at `components___antddesign.scss:912-936` | `src/components/tpo/tpo-mobile-footer.tsx:27-49`, `legacy-mobile-footer.css:27-34` matches shared shell styling, retains TPO link content | Shared skin matched, **TPO-specific visual contents unverified** |
+| Top route progress bar | No top strip specified in `old-lms-shell.css:1-101`; original `lms2-fe/src/pages/_app.js:1-34` has no route event progress | `route-progress.tsx:14-69`, `route-progress.css:7-26`: *new accessible indeterminate adapter* using legacy teal #26bac7 | Implemented; **not a historic pixel match** |
 | Full-page loader | `legacy-styles/components___common.scss:1008-1019` fixed fullscreen z999, rgba(255,255,255,.99) | Route-specific skeleton/loading components | Open: not equivalent |
 | Learner page entrance | `legacy-styles/components___learn-layout.scss:49-69` opacity 0→1, translateY(8→0), 250ms ease-out | `route-transition.css:4-7,20-24`, `route-transition.tsx:11-12,39-40` learner-only | CSS values source-match |
 | Learner route exit | `legacy-styles/components___learn-layout.scss:71-86` 220ms opacity, 260ms transform, .78 opacity, translateY(6px) scale(.998) | `route-transition.css:15-24`, `route-transition.tsx:12-38` capture-phase Link intent | CSS source-match; browser/back states unverified |
@@ -101,7 +101,7 @@ Every edited sidebar-related JSX opening and closing tag has been source reviewe
 3. Find authoritative old top progress-bar and TPO mobile footer behavior; align `src/components/shell/route-transition.tsx` and loading/page exit states. Leave B4 unticked until values and states are proven.
 4. HR pages are owned by chat-15; only sweep HR files explicitly unowned in their queue, without overwriting chat-15 work.
 
-**Next file:** `src/components/shell/route-transition.tsx` (route completion/back-forward/recovery behavior, then review missing progress-bar reference).
+**Historic handoff superseded:** route-transition has been updated; see latest continuation below.
 
 
 ## 2026-10-19 continued turn: evidence and current exceptions
@@ -118,7 +118,7 @@ Every edited sidebar-related JSX opening and closing tag has been source reviewe
 
 **STRICT TICK RULE outcome:** B3 and B4 remain **unticked**. The source comparisons and scoped counts above are useful progress but do not substitute for the checklist's command-level `grep` output and unmatched footer/loading values. Do not report a visual clone without the later browser pass.
 
-**Next file:** `src/components/shell/sidebar-legacy.css` — resolve remaining geometry/scroll discrepancies after a checkout-based grep; then `src/components/tpo/tpo-mobile-footer.tsx` for historical footer metrics when a source is found.
+**Historic handoff superseded:** 40-file shell import scan completed later; see latest continuation below.
 
 
 ## Lane 19 owner sprint: original mobile footer and route-entry evidence
@@ -165,7 +165,7 @@ A repeatable complete-tree `git grep` ledger is committed as `scripts/audit/chat
 
 **STRICT OUTCOME:** B3 and B4 remain `[ ]`. B3 still needs executable complete-tree coverage counts and any uncovered sidebar states. B4 still needs complete-tree grep counts, the exact fullscreen loader treatment, and a historical or measured source for TPO footer-specific states. These are not represented as passes.
 
-**Next file:** `src/components/shell/sidebar-legacy.css` (remaining B3 strict coverage and mobile geometry), then `src/components/tpo/tpo-mobile-footer.tsx` (TPO footer reference/state closure). The HR route inventory is owned by chat-15 in `docs/audit/ux/clone-hr.md`; do not overwrite it without an explicitly unclaimed path.
+**Historic handoff superseded:** mobile footer and route progress source were updated later. Only the four unclaimed HR grid adapters were audited under `clone-chat19-hr-unclaimed.md`.
 
 
 ## Chat-19 continuation: 40-file shell import check and route progress adapter
@@ -190,7 +190,65 @@ The lane was reconciled with origin/main at `1308e7c9748b6c164a6761c229650173276
 ### Remaining strict blockers
 
 - **B3:** Every rail/hover/group/badge/logo/drawer property in the B3 table has its old and new file:line references; exact full-repository `git grep` output counts have not been captured, and no rendered source-vs-vNext comparison of the icon artwork/viewport has occurred. The checklist allows visual comparison later, but requires actual coverage and no regressions now. B3 remains **[ ]**.
-- **B4:** The completed learner/faculty footer is source-grounded; the TPO footer still lacks an original TPO-specific mobile reference. The modern progress bar is accessible and functional by source but not pixel-equivalent to the documented legacy fullscreen loader. Both are explicitly recorded rather than falsely compared as equal. B4 remains **[ ]**.
+- **B4:** The completed learner/faculty footer is source-grounded; the TPO footer's original five-icon reference has now been recovered from the legacy production branch. The modern progress bar is accessible and functional by source but not pixel-equivalent to the documented legacy fullscreen loader. Both are explicitly recorded rather than falsely compared as equal. B4 remains **[ ]**.
 - Full local reproduction script: `node scripts/audit/chat19-shell-grep.cjs`, committed, **not run**. New `tests/unit/chat19-route-progress.test.ts` and `tests/unit/chat19-unclaimed-hr-grid-parity.test.ts` were authored, **not run**.
 
 **Next file if the remaining evidence becomes available:** `docs/audit/ux/clone-sidebar.md` — paste real repo-wide grep counts and old live loader/TPO-footer reference, then tick. No unclaimed HR portal pages remain.
+
+
+## Production legacy footer reconciliation (supersedes earlier main-only search)
+
+The authoritative original TPO/recruiter implementation is **lms2-fe
+`prod-2026` commit `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`**,
+not the much older `main` branch examined above.
+
+| Property and state | Original production file:line | vNext file:line | Result |
+|---|---|---|---|
+| Fixed white footer 64px + safe area, 1px hairline and light upward shadow | `docs/design/legacy-styles/components___antddesign.scss:912-936` | `legacy-mobile-footer.css:7-20,27-34` | Exact CSS values |
+| Inactive/active icon opacity .5/1, transition .15s ease | `lms2-fe/prod-2026/src/components/MobileFooter/mobileFooter.scss:1-5,32-35` | `legacy-mobile-footer.css:36,44` | Exact |
+| Minimum 44px tap, 6×8px padding, 3px gap, pressed scale(.93) .05s | `lms2-fe/prod-2026/mobileFooter.scss:7-21` | `legacy-mobile-footer.css:37-42` | Exact |
+| 10px/500 caption, #a9a7ae default, #26bac7 active, line-height 1.2 | `lms2-fe/prod-2026/mobileFooter.scss:23-40` | `legacy-mobile-footer.css:43-45` | Exact |
+| Five TPO icons and labels | `lms2-fe/prod-2026/MobileFooter.jsx:175-191` | `tpo-mobile-footer.tsx:12-17,32-48` | Home analytics; Engage contact; Drives assignment; Students myAccount; More Menu-Icon |
+| Five recruiter icons and labels | `lms2-fe/prod-2026/MobileFooter.jsx:193-210` | `learner-faculty-mobile-footer.tsx:39-45,85-105` | Today, Drives, Calendar, Messages, Company |
+| Six learner icons and labels | `lms2-fe/prod-2026/MobileFooter.jsx:92-137` | `learner-faculty-mobile-footer.tsx:25-32,85-105` | Courses, Alerts, Schedule, Placements, Projects, Profile |
+| Four faculty icons and labels | `lms2-fe/prod-2026/MobileFooter.jsx:139-173` | `learner-faculty-mobile-footer.tsx:33-38,85-105` | Courses, Quizzes, Assignments, Profile |
+| College admin five, mentor one | `lms2-fe/prod-2026/MobileFooter.jsx:38-91,211-225` | `learner-faculty-mobile-footer.tsx:46-56,85-105` | Role-specific original icon categories |
+| Phone visibility below 768px | `lms2-fe/prod-2026/MobileFooter.jsx:35` `d-md-none` | `legacy-mobile-footer.css:5-6`, `tpo-mobile-footer.tsx:32` | Exact breakpoint |
+| Route gating prevents mixing portals | `lms2-fe/prod-2026/MobileFooter.jsx:12-32` | `app-shell.tsx:126`, `learner-faculty-mobile-footer.tsx:58-86` | Role grouping preserved; links checked against server-permitted shell routes |
+
+All original SVG filenames exist in `public/assets/images/common/`. Only
+the destination URLs differ intentionally where vNext renamed
+`/tpo/drives` → `/tpo/placements` and recruiter routes → `/hr/*`.
+The old full-page spinner was `lms2-fe/prod-2026/src/components/Loader/loader.js:6-35`:
+AntD large Spin and, at **20,000ms**, a `Still loading…` / `Reload`
+recovery action. That is separate from the new App Router thin indicator and
+is **not** yet copied pixel-for-pixel. Under the strict rule the combined B4
+checkbox remains unticked pending that loader equivalence and executable
+repository-wide grep proof; do not report both as a perfect match.
+
+
+### Fullscreen loader follow-up — source values now implemented
+
+The new `route-progress.tsx:14-95` maintains its nonblocking top indicator
+for immediate route intent. After 700ms pending navigation, it displays a
+fullscreen overlay based on original
+`lms2-fe/prod-2026/src/styles/components/_common.scss:1008-1019`.
+The old `Loader/loader.js:6-35` showed a large AntD Spin and offered
+`Still loading…` / `Reload` after 20s. Those copy and recovery timing
+values are now reproduced. The fallback guard at 30s is an additional safety
+measure, not an old LMS property.
+
+| Loading state | Original production file:line | vNext file:line | Result |
+|---|---|---|---|
+| Overlay fixed top0 left0 100%×100% | `_common.scss:1008-1013` | `route-progress.css:35-40` | Match |
+| Flex centered, z-index 999 | `_common.scss:1014-1017` | `route-progress.css:41-44` | Match |
+| Near-white mask rgba(255,255,255,.99) | `_common.scss:1018` | `route-progress.css:45` | Match |
+| Spinner wrapper margins/padding/radius | `_antddesign.scss:741-748` | `route-progress.css:47-53` | Match |
+| Large spinner | `Loader/loader.js:20` AntD `Spin size="large"` | `route-progress.tsx:83-86`, `route-progress.css:54-75` 32px four-dot approximate | **Not exact AntD path/animation** |
+| Slow recovery copy and action | `Loader/loader.js:21-30` 20s `Still loading…`, `Reload` | `route-progress.tsx:43,87-91` | Text/timing match |
+| Top route-intent progress strip | No matching bar in original `_app.js:1-228` / shell SCSS | `route-progress.tsx:76-80`, CSS :7-29 | Modern requested enhancement, not pixel legacy |
+| Reduced motion | `learn-layout.scss:577-585` disables motions | `route-progress.css:24-29,80-83` | Static fallback |
+
+The mixed solution is intentionally labeled as partial legacy parity.
+**Do not tick B4** without the full checkout grep, final icon/spinner artwork
+comparison and actual phone/tablet browser proof. No CI/browser run occurred.

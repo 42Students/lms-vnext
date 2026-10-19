@@ -5,6 +5,7 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { HrDriveDraftForm } from "@/components/hr/hr-drive-draft-form";
 import { PageHeader } from "@/components/ui/page-header";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { hasActiveRecruiter } from "@/modules/identity/context";
@@ -65,20 +66,16 @@ export default async function RecruiterRequestDrivePage({
 
   if (!collegeId) {
     return <div className="min-w-0 max-w-full space-y-6">
-      <PageHeader eyebrow="Recruiter" title="Request a drive"
+      <PageHeader title="Request a drive"
         description="Choose an authorized college before drafting a hiring request." />
       {grants.length === 0 ? (
         <EmptyState title="No active college access"
           description="Ask the placement cell to grant recruiter access before preparing a drive." />
       ) : (
-        <section className="grid gap-3 sm:grid-cols-2">
-          {grants.map((grant) => (
-            <Link key={grant.id} href={"/hr/drives/new?collegeId=" + encodeURIComponent(grant.collegeId)}
-              className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-              {grant.collegeName}
-            </Link>
-          ))}
-        </section>
+        <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant=>({
+          key:grant.collegeId,label:grant.collegeName,
+          href:"/hr/drives/new?collegeId="+encodeURIComponent(grant.collegeId),
+        }))}/>
       )}
     </div>;
   }
@@ -99,7 +96,7 @@ export default async function RecruiterRequestDrivePage({
     : emptyHrDriveDraft();
 
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader eyebrow="Recruiter" title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
+    <PageHeader title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
     <Link href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)}
       className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">

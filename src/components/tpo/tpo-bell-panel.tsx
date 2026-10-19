@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {Drawer} from "@/components/ui/drawer";
-import {PopoverPanel} from "@/components/ui/popover";
+import { PopoverPanel } from "@/components/ui/popover";
 import style from "@/components/shell/topbar/topbar.module.css";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -13,10 +13,33 @@ import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-mo
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
 export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{initialUnread:number;items:readonly BellItem[];revision?:number;compact?:boolean}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
+ const [mobile,setMobile]=useState(false);
+ const root=useRef<HTMLDivElement>(null);
+ const trigger=useRef<HTMLButtonElement>(null);
  const [allReadRevision,setAllReadRevision]=useState<number|null>(null);
  const [readIds,setReadIds]=useState<string[]>([]);
  const [latest,setLatest]=useState<{items:BellItem[];unread:number}|null>(null);
  const [refreshing,setRefreshing]=useState(false);
+ useEffect(()=>{
+  const media=window.matchMedia("(max-width: 767px)");
+  const update=()=>setMobile(media.matches);
+  update();
+  media.addEventListener("change",update);
+  return ()=>media.removeEventListener("change",update);
+ },[]);
+ useEffect(()=>{
+  if(!open||mobile)return;
+  const onPointer=(event:PointerEvent)=>{
+   if(root.current&&event.target instanceof Node&&!root.current.contains(event.target))setOpen(false);
+  };
+  const onKey=(event:globalThis.KeyboardEvent)=>{
+   if(event.defaultPrevented||event.key!=="Escape")return;
+   event.preventDefault();setOpen(false);trigger.current?.focus();
+  };
+  document.addEventListener("pointerdown",onPointer);
+  document.addEventListener("keydown",onKey);
+  return ()=>{document.removeEventListener("pointerdown",onPointer);document.removeEventListener("keydown",onKey);};
+ },[open,mobile]);
  const refreshInFlight=useRef(false);
  const root=useRef<HTMLDivElement>(null);
  const trigger=useRef<HTMLButtonElement>(null);
@@ -111,11 +134,10 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));}
   finally{setPending(false);}
  }
- const panelFooter=<div role="group" aria-label="Notification inbox actions" className="flex flex-wrap gap-3"><Button variant="secondary" type="button" disabled={refreshing||pending} loading={refreshing} onClick={()=>void refresh()} className="min-h-11">Refresh</Button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
-    {unread>0?<Button variant="secondary" type="button" className="min-h-11" onClick={()=>void markAll()} disabled={pending} loading={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}</div>;
- const panelBody=<>
 
-   {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
+ const panelFooter = <div role="group" aria-label="Notification inbox actions" className="flex flex-wrap gap-3"><Button variant="secondary" type="button" disabled={refreshing||pending} loading={refreshing} onClick={()=>void refresh()} className="min-h-11">Refresh</Button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
+    {unread>0?<Button variant="secondary" type="button" className="min-h-11" onClick={()=>void markAll()} disabled={pending} loading={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}</div>;
+ const panelBody = <>   {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
    {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style.topbarNotificationState}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="space-y-0">
     {groupedItems.map((group,index)=><li key={group.day+"-"+index} className="list-none">
     <p className="px-3 pb-2 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.day}</p>
@@ -123,7 +145,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
     {group.items.map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[8px] text-sm">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
       className="w-full min-h-11 flex-col items-start justify-start gap-1 rounded-[8px] border border-border bg-surface px-4 py-3 text-left hover:bg-[var(--lms-neutral-50)]">
-     <span className="block text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-notification-unread,#ff7576)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
+     <span className="block text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-topbar-unread)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
      {item.body?<span className="mt-1 block line-clamp-2 break-words text-sm leading-[1.5] text-muted-foreground">{item.body}</span>:null}
      <time dateTime={item.createdAt} className="mt-1 block text-xs text-[var(--lms-muted-text)]">
       {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))}
@@ -133,8 +155,8 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
     </li>)}</ul></li>)}</ul>:null}
    {error?<p role="alert" className={style.topbarNotificationError}>{error}</p>:null}
 </>;
- return <div ref={root} className="relative min-w-0">
-  <Button ref={trigger} variant="secondary" size="sm" type="button" aria-controls={open?(compact&&!mobile?"tpo-desktop-notifications":"tpo-mobile-notifications"):undefined} aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending} disabled={pending} onClick={()=>changeOpen(!open)}
+ return <div className="relative min-w-0" ref={root}>
+  <Button ref={trigger} variant="secondary" size="sm" type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending} disabled={pending} onClick={()=>changeOpen(!open)}
    className={compact
     ? "relative inline-flex h-9 w-9 min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"}>
@@ -149,17 +171,20 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
     </span>:null}
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
   </Button>
-  {compact&&!mobile ? open?<PopoverPanel id="tpo-desktop-notifications" label="Notifications" className={style.topbarNotificationPopover}>
-   <div className={style.topbarNotificationHeader}>
-    <h2>Notifications</h2>
-    <Button variant="ghost" size="sm" type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}>Close</Button>
-   </div>
-   <div className={style.topbarNotificationBody}>{panelBody}</div>
-   <footer className={style.topbarNotificationFooter}>{panelFooter}</footer>
-  </PopoverPanel>:null : <Drawer id={compact?"tpo-mobile-notifications":undefined} open={open} onOpenChange={changeOpen}
-   className={compact?style.topbarNotificationDrawer:undefined}
-   bodyClassName={compact?style.topbarNotificationBody:undefined}
-   title="Notifications" description="Most recent notifications from your own college."
-   footer={panelFooter}>{panelBody}</Drawer>}
+  {mobile
+   ? <Drawer open={open} onOpenChange={changeOpen} className={compact ? style.topbarNotificationDrawer : undefined}
+       bodyClassName={compact ? style.topbarNotificationBody : undefined} title="Notifications"
+       description="Most recent notifications from your own college." footer={panelFooter}>
+       {panelBody}
+     </Drawer>
+   : open ? <PopoverPanel data-slot="notification-popover" label="Notifications"
+       className="absolute right-0 top-[calc(100%_+_8px)] z-[70] w-[min(420px,calc(100vw_-_24px))] max-h-[min(520px,calc(100dvh_-_120px))] overflow-y-auto p-4">
+       <div className="mb-3 border-b border-border pb-3">
+        <h2 className="text-lg font-semibold text-foreground">Notifications</h2>
+        <p className="text-xs text-muted-foreground">Most recent notifications from your own college.</p>
+       </div>
+       {panelBody}
+       <div className="mt-3 border-t border-border pt-3">{panelFooter}</div>
+     </PopoverPanel> : null}
  </div>;
 }

@@ -12,6 +12,8 @@ describe("chat-19 route progress and shell ownership", () => {
     expect(legacy()).toContain("rgb(38, 186, 199)");
     expect(css()).toContain("background:#26bac7");
     expect(css()).toContain("pointer-events:none");
+    expect(css()).toContain("background:rgba(255,255,255,.99)");
+    expect(css()).toContain("z-index:999");
     expect(css()).toContain("z-index:998");
   });
   it("has reduced-motion treatment for an indeterminate indicator", () => {
@@ -29,11 +31,13 @@ describe("chat-19 route progress and shell ownership", () => {
     }
   });
   it("recovers after uncommitted navigation and unregisters its listeners", () => {
-    expect(progress()).toContain("window.setTimeout(clearPending, 8000)");
+    expect(progress()).toContain("window.setTimeout(clearPending, 30_000)");
+    expect(progress()).toContain("window.setTimeout(() => setStalled(true), 20_000)");
+    expect(progress()).toContain("window.setTimeout(() => setSlow(true), 700)");
     expect(progress()).toContain('document.addEventListener("click", onClick, true)');
     expect(progress()).toContain('document.removeEventListener("click", onClick, true)');
     expect(progress()).toContain('window.removeEventListener("popstate", onPopState)');
-    expect(progress()).toContain("window.clearTimeout(timer.current)");
+    expect(progress()).toContain("window.clearTimeout(value.current)");
   });
   it("mounts exactly once after topbar and outside main", () => {
     const x = shell();

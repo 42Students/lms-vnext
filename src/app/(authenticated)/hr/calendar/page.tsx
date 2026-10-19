@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
 import { Tabs } from "@/components/ui/tabs";
@@ -371,7 +372,7 @@ export default async function HrCalendarPage({
                   <span className="mt-2 block text-xs text-muted-foreground">Due {eventDateTime(item.dueAt)} IST · {item.status}</span>
                 </Link>
               ))}
-            </div> : <p className="mt-3 text-sm text-muted-foreground">No results deadlines are recorded in this calendar period.</p>}
+            </div> : <EmptyState title="No results due" description="No results deadlines are recorded in this calendar period."/>}
           </section>
 
           <section className="border-b border-border pb-4 sm:pb-5">
@@ -486,18 +487,7 @@ export default async function HrCalendarPage({
           ) : null}
 
           {eventCount === 0 ? (
-            <section
-              role="status"
-              className="border-b border-border py-8 text-center"
-            >
-              <h2 className="text-lg font-semibold text-foreground">
-                {view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
-              </h2>
-
-              <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-                Rounds, slots and deadlines appear here as soon as they are dated.
-              </p>
-            </section>
+            <EmptyState title={view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"} description="Rounds, slots and deadlines appear here as soon as they are dated."/>
           ) : null}
 
           {view !== "agenda" ? (

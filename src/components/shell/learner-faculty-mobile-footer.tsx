@@ -5,67 +5,101 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
+import type { ShellNavItem } from "./shell-model";
 import "./legacy-mobile-footer.css";
-
-type NotificationInboxRow = { notification: { readAt: string | null } };
 
 type FooterLink = {
   href: string;
   label: string;
   icon: string;
   activeIcon?: string;
+  visibleLabel?: string;
 };
+type NotificationInboxRow = { notification: { readAt: string | null } };
 
-const learnerLinks: readonly FooterLink[] = [
-  { href: "/learn/courses", label: "Courses", icon: "/assets/images/common/courses.svg", activeIcon: "/assets/images/common/course.svg" },
-  { href: "/learn/notifications", label: "Notifications", icon: "/assets/images/common/bell.svg" },
-  { href: "/learn/profile", label: "Profile", icon: "/assets/images/common/myAccount.svg" },
-];
-
-const facultyLinks: readonly FooterLink[] = [
-  { href: "/teacher/courses", label: "Courses", icon: "/assets/images/common/courses.svg", activeIcon: "/assets/images/common/course.svg" },
-  { href: "/teacher/allQuizzes", label: "All quizzes", icon: "/assets/images/common/bell.svg" },
-  { href: "/teacher/allAssignments", label: "All assignments", icon: "/assets/images/common/assignment.svg", activeIcon: "/assets/images/common/assignment-active.svg" },
-  { href: "/teacher/profile", label: "Profile", icon: "/assets/images/common/myAccount.svg" },
-];
-
-/** The original LMS mobile footer: MobileFooter.jsx:21-149 (learner/faculty).
- * Modern source CSS: legacy-styles/components___antddesign.scss:912-936.
- * No TPO footer is mounted here; the TPO layout owns its own footer.
+/** Exact newer legacy footer inventory:
+ * lms2-fe/prod-2026/src/components/MobileFooter/MobileFooter.jsx:38-232.
+ * The vNext destinations replace the legacy paths but preserve labels, icons,
+ * groups and the learner/faculty/recruiter/college/mentor role isolation.
  */
-export function LearnerFacultyMobileFooter() {
+const learnerLinks: readonly FooterLink[] = [
+  {href:"/learn/courses",label:"Courses",icon:"/assets/images/common/courses.svg",activeIcon:"/assets/images/common/course.svg"},
+  {href:"/learn/notifications",label:"Notifications",visibleLabel:"Alerts",icon:"/assets/images/common/bell.svg"},
+  {href:"/learn/calendar",label:"Class Schedule",visibleLabel:"Schedule",icon:"/assets/images/common/calender.svg"},
+  {href:"/learn/my-placements",label:"My Placements",visibleLabel:"Placements",icon:"/assets/images/common/assignment.svg"},
+  {href:"/learn/projects",label:"Projects",icon:"/assets/images/common/folder.svg"},
+  {href:"/learn/profile",label:"Profile",icon:"/assets/images/common/myAccount.svg"},
+];
+const facultyLinks: readonly FooterLink[] = [
+  {href:"/teacher/courses",label:"Courses",icon:"/assets/images/common/courses.svg",activeIcon:"/assets/images/common/course.svg"},
+  {href:"/teacher/allQuizzes",label:"Quizzes",icon:"/assets/images/common/quiz.svg"},
+  {href:"/teacher/allAssignments",label:"Assignments",icon:"/assets/images/common/assignment.svg",activeIcon:"/assets/images/common/assignment-active.svg"},
+  {href:"/teacher/profile",label:"Profile",icon:"/assets/images/common/myAccount.svg"},
+];
+const recruiterLinks: readonly FooterLink[] = [
+  {href:"/hr/home",label:"Today",icon:"/assets/images/common/analytics.svg"},
+  {href:"/hr/drives",label:"Drives",icon:"/assets/images/common/assignment.svg"},
+  {href:"/hr/calendar",label:"Calendar",icon:"/assets/images/common/calender.svg"},
+  {href:"/hr/conversations",label:"Messages",icon:"/assets/images/common/message-square.svg"},
+  {href:"/hr/company",label:"Company",icon:"/assets/images/common/contact.svg"},
+];
+const collegeLinks: readonly FooterLink[] = [
+  {href:"/college",label:"Dashboard",icon:"/assets/images/common/analytics.svg"},
+  {href:"/college/departments",label:"Departments",icon:"/assets/images/common/folder.svg"},
+  {href:"/college/courses",label:"Courses",icon:"/assets/images/common/course.svg"},
+  {href:"/college/placements",label:"Jobs",icon:"/assets/images/common/assignment.svg"},
+  {href:"/college/profile",label:"Profile",icon:"/assets/images/common/myAccount.svg"},
+];
+const mentorLinks: readonly FooterLink[] = [
+  {href:"/mentor/projects",label:"Projects",icon:"/assets/images/common/folder.svg"},
+];
+
+/** Name retained for existing shell imports; now covers all legacy mobile roles. */
+export function LearnerFacultyMobileFooter({items}:{items:readonly ShellNavItem[]}) {
   const pathname = usePathname();
   const learner = pathname === "/learn" || pathname.startsWith("/learn/");
   const faculty = pathname === "/teacher" || pathname.startsWith("/teacher/");
+  const recruiter = pathname === "/hr" || pathname.startsWith("/hr/") ||
+    pathname === "/recruiter" || pathname.startsWith("/recruiter/");
+  const college = pathname === "/college" || pathname.startsWith("/college/");
+  const mentor = pathname === "/mentor" || pathname.startsWith("/mentor/");
   const [unread, setUnread] = useState<number | null>(null);
 
   useEffect(() => {
     if (!learner) return;
     let active = true;
-    void apiFetch<{ notifications?: NotificationInboxRow[] }>(
-      "/api/notifications?limit=40", { cache: "no-store" },
-    ).then(response => {
+    void apiFetch<{notifications?: NotificationInboxRow[]}>(
+      "/api/notifications?limit=40", {cache:"no-store"},
+    ).then(response=>{
       if (!active || !Array.isArray(response.notifications)) return;
-      setUnread(response.notifications.filter(row => row.notification.readAt === null).length);
-    }).catch(() => { /* A failed count must not prevent mobile navigation. */ });
-    return () => { active = false; };
+      setUnread(response.notifications.filter(row=>row.notification.readAt===null).length);
+    }).catch(()=>{ /* Count failure must not block navigation. */ });
+    return ()=>{active=false;};
   }, [learner]);
 
-  if (!learner && !faculty) return null;
-  const links = learner ? learnerLinks : facultyLinks;
+  if (!learner && !faculty && !recruiter && !college && !mentor) return null;
+  const all = learner ? learnerLinks : faculty ? facultyLinks :
+    recruiter ? recruiterLinks : college ? collegeLinks : mentorLinks;
+  // Match shell feature permissions: disabled learner modules cannot leak
+  // into a separate bottom bar that bypasses the canonical sidebar.
+  const links = all.filter(link=>items.some(item=>item.href===link.href));
+  if (!links.length) return null;
   return <footer data-slot="legacy-mobile-footer" className="lms-legacy-mobile-footer">
-    <nav aria-label={learner ? "Learner mobile navigation" : "Faculty mobile navigation"} className="lms-legacy-mobile-footer-nav">
+    <nav aria-label="Mobile navigation" className="lms-legacy-mobile-footer-nav">
       <ul className="lms-legacy-mobile-footer-items">
-        {links.map(item => {
-          const current = pathname === item.href || pathname.startsWith(item.href + "/");
-          return <li key={item.href} className={current ? "active" : undefined}>
-            <Link href={item.href} aria-label={item.href === "/learn/notifications" && unread !== null ? `${item.label}, ${unread} unread` : item.label} aria-current={current ? "page" : undefined} className="lms-legacy-mobile-footer-link">
-              <Image src={current ? item.activeIcon ?? item.icon : item.icon} alt="" width={30} height={30}
-                draggable={false} className="lms-legacy-mobile-footer-icon" />
-              {item.href === "/learn/notifications" && unread !== null && unread > 0 ?
-                <span className="lms-legacy-mobile-footer-badge" aria-hidden="true">
-                  {unread > 99 ? "99+" : unread}
-                </span> : null}
+        {links.map(item=>{
+          const current=pathname===item.href||pathname.startsWith(item.href+"/");
+          const alerts=item.href==="/learn/notifications"&&unread!==null;
+          return <li key={item.href} className={current?"active":undefined}>
+            <Link href={item.href} aria-current={current?"page":undefined}
+              aria-label={alerts?item.label+", "+unread+" unread":item.label}
+              className="lms-legacy-mobile-footer-link">
+              <Image src={current?item.activeIcon??item.icon:item.icon} alt=""
+                width={24} height={24} draggable={false} className="lms-legacy-mobile-footer-icon"/>
+              {alerts&&unread!==null&&unread>0?<span aria-hidden="true" className="lms-legacy-mobile-footer-badge">
+                {unread>99?"99+":unread}
+              </span>:null}
+              <span className="lms-legacy-mobile-footer-label">{item.visibleLabel??item.label}</span>
             </Link>
           </li>;
         })}
