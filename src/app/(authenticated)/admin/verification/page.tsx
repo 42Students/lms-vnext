@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import {can} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
@@ -17,7 +18,7 @@ export default async function AdminVerificationEntry() {
       <PageHeader title="Profile verification"/>
       <ErrorState title="Verification access denied"
         description="Your account cannot access Super Admin verification."
-        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+        action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
     </div>;
 
   const collegeId = context.adminScope?.collegeId;
@@ -30,7 +31,7 @@ export default async function AdminVerificationEntry() {
       <PageHeader
         title="Profile verification"
         description="Students' education and identity, checked against their documents."
-        actions={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Browse colleges</Link>}
+        actions={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Browse colleges</Link>}
       />
       <section role="status" className="border-b border-border py-5">
         <h2 className="text-base font-semibold text-foreground">Choose a college first</h2>
