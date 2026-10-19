@@ -18,7 +18,7 @@ export default async function CollegeClassProjectWorkspacePage() {
       <PageHeader eyebrow="College Admin · Projects" title="Create workspaces from a class" description="Split active learners into balanced teams, review assignments, or add the whole class to a single Project workspace." />
       {templates.length === 0 ? <div role="status" className="space-y-3 border-l-2 border-border py-2 pl-4">
         <p className="text-sm text-body">No published Project template is assigned to this college.</p>
-        <Link href="/college/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-link underline">Project templates</Link>
+        <Link href="/college/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Project templates</Link>
       </div> :
         <ClassTeamWorkspaceCreator collegeId={collegeId} basePath="/college/projects" templates={templates.map(t => ({ templateId:t.templateId, title:t.title, version:t.version, summary:t.summary }))} />}
     </div>
