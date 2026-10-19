@@ -1,3 +1,12 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
-export default function Error({reset}:{reset:()=>void}){return <section role="alert"><p>Unable to load the student eligibility grid.</p><Button variant="secondary" onClick={reset}>Retry</Button></section>;}
+import { ErrorState } from "@/components/ui/error-state";
+
+export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState
+    title="Could not load this page"
+    description="Unable to load the student eligibility grid."
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+  />;
+}

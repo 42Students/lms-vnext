@@ -3,6 +3,7 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/page-header";
+import { CalendarGrid } from "@/components/ui/calendar-grid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -960,7 +961,7 @@ export async function PlacementCalendarWorkspace({
           aria-label={`${state.view} placement calendar`} tabIndex={0}
           className="hidden overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]"
         >
-          <div className="grid min-w-[56rem] grid-cols-7 gap-1">
+          <CalendarGrid className="min-w-[56rem]">
             {[
               "Mon",
               "Tue",
@@ -1062,9 +1063,9 @@ export async function PlacementCalendarWorkspace({
                 </div>
               );
             })}
-          </div>
+          </CalendarGrid>
         </section>
-      ) : null}
+      ) : null)
 
       {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
         {bookings?.failed ? <section role="alert" className="border-l-2 border-error bg-error-subtle p-4">

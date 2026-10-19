@@ -1,1 +1,5 @@
-export default function Loading(){return <div aria-busy="true" aria-label="Loading discussion participation" className="space-y-3"><div className="h-14 animate-pulse rounded bg-muted"/><div className="h-56 animate-pulse rounded bg-muted"/></div>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading() {
+  return <GracefulPageLoading label={"Loading discussion participation"} shape="directory" />;
+}

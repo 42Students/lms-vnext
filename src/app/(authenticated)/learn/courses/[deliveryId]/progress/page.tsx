@@ -1,3 +1,4 @@
+import { MetricBar } from "@/components/ui/metric-bar";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -77,12 +78,8 @@ export default async function LearnerCourseProgressPage({
                 </StatusBadge>
               </div>
               {lesson.percentage !== null ? (
-                <div role="progressbar" aria-label={lesson.name + " completion"}
-                  aria-valuemin={0} aria-valuemax={100} aria-valuenow={lesson.percentage}
-                  className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary"
-                    style={{ width: lesson.percentage + "%" }} />
-                </div>
+                <MetricBar className="mt-3" role="progressbar"
+                  label={lesson.name + " completion"} value={lesson.percentage} maximum={100} unit="percent" />
               ) : null}
               {lesson.items.length ? (
                 <ul className="mt-4 grid gap-2 sm:grid-cols-2">
