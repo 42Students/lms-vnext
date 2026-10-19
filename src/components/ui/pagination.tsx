@@ -68,8 +68,11 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
           className={cx(buttonClass, item === current ? "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]" : "hidden md:inline-flex hover:bg-[var(--lms-primary-subtle)]")}>
           {item}
         </Link> :
-        <span key={item} aria-disabled="true" aria-label={`Page ${item} unavailable`}
-          className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>{item}</span>
+        <span key={item} aria-disabled="true" aria-current={item === current ? "page" : undefined}
+          aria-label={`Page ${item} unavailable`}
+          className={cx(buttonClass, item === current ?
+            "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]" :
+            "hidden opacity-50 md:inline-flex")}>{item}</span>
       )}
       {showBoundaryLinks && lastShown < total ? <>
         {lastShown < total - 1 ? <span aria-hidden="true" className="hidden px-1 text-[var(--lms-neutral-500)] md:inline-flex">…</span> : null}
