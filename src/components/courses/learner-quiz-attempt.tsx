@@ -1,7 +1,5 @@
-import { PageHeader } from "@/components/ui/page-header";
 "use client";
-
-import { MetricBar } from "@/components/ui/metric-bar";
+import { PageHeader } from "@/components/ui/page-header";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Radio } from "@/components/ui/radio";
 
