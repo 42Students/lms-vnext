@@ -11,10 +11,20 @@ import {gridSelectionClick, gridSelectionCheckbox, selectedGridIdsWithin} from "
 import {sortTpoGridRows,type TpoGridSort} from "./grid/grid-sort";
 import {gridClipboardTsv} from "./grid/grid-export";
 
-export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection,showColumnChooser=true}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;mobilePrimaryKeys?:readonly string[];storageKey?:string;showColumnChooser?:boolean;
+export type TpoSpreadsheetGridProps<Row> = {
+ rows:readonly Row[];
+ columns:readonly TpoGridColumn<Row>[];
+ rowKey:(row:Row)=>string;
+ rowActions?:(row:Row)=>ReactNode;
+ mobileActionsCollapsible?:boolean;
+ mobilePrimaryKeys?:readonly string[];
+ storageKey?:string;
  selection?:{selected:readonly string[];onChange:(ids:string[])=>void;allIds?:readonly string[]};
- openPrimary?:{columnKey:string;onOpen:(row:Row)=>void;ariaLabel:(row:Row)=>string}
-}){
+ openPrimary?:{columnKey:string;onOpen:(row:Row)=>void;ariaLabel:(row:Row)=>string};
+};
+export function TpoSpreadsheetGrid<Row>({
+ rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection,
+}:TpoSpreadsheetGridProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const permitted=columns.filter(column=>!column.exportOnly).map(column=>column.key);
  const selected=parseTpoGridColumns(params.get("columns")??undefined,permitted);
