@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Disclosure } from "@/components/ui/disclosure";
 import type {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 import {CollegeDriveDeadlineAction} from "./college-drive-deadline-action";
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
@@ -25,15 +26,13 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
        <Link href={row.href} className="min-h-11 rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
         Review applications</Link>
       </li>)}</ul>
-      {rows.length>3?<details className="text-sm">
-       <summary className="min-h-11 cursor-pointer font-semibold text-primary-text">
-        +{rows.length-3} more · Show more</summary>
+      {rows.length>3?<Disclosure title={`+${rows.length-3} more · Show more`} className="text-sm">
        <ul className="mt-2 space-y-2">{rows.slice(3).map(row=><li key={row.jobId}
         className="rounded border border-border p-3">
         <Link href={row.href} className="font-semibold text-primary-text underline">{row.title}</Link>
         <p>{row.count} candidate(s)</p></li>)}</ul>
        <p className="mt-2 text-xs text-muted-foreground">Showing {rows.length} of {rows.length}</p>
-      </details>:null}
+      </Disclosure>:null}
     </div>;
    })}
    {!data.hasOfferLetterEvidence?<p className="mt-4 text-xs text-muted-foreground">
