@@ -70,7 +70,7 @@ export default async function HrMessagesPage({searchParams}:{
        aria-label={"Notifications for "+group.title}
        className="border-b border-border pb-4">
        <div className="flex flex-wrap items-center justify-between gap-2">
-         <h2 className="font-semibold text-foreground">
+         <h2 className="text-[18px] font-semibold leading-[1.35] text-[var(--lms-heading)]">
            <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
              className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{group.title}</Link>
          </h2>
