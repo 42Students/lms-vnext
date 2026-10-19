@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Pagination } from "@/components/ui/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyContactRoleLabel } from "@/modules/courses/faculty-contact-detail-model";
 
@@ -14,7 +15,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
 }) {
   if(items.length===0) return <EmptyState title="No public directory members found"
     description="Try another name, department or contact tab. Private contact information is not displayed." />;
-  return <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+  return <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
     {items.map(item=>{
       const name=item.displayName?.trim()||"Name not recorded";
       return <article key={item.membershipId}
@@ -22,7 +23,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
         <h2 className="text-sm font-semibold text-foreground">
           {detailBaseHref?<Link
             href={detailBaseHref+"/"+encodeURIComponent(item.membershipId)+detailQuery}
-            className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{name}</Link>:name}
+            className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] hover:underline md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{name}</Link>:name}
         </h2>
         <p className="mt-2 text-sm text-body">Department: {item.departmentName??"Not recorded"}</p>
         {showRoles||item.roles.length>0?<ul
@@ -59,34 +60,6 @@ export function FacultyContactsPagination({
     return `${baseHref}?${params.toString()}`;
   };
 
-  return (
-    <nav
-      aria-label="Contacts pages"
-      className="flex items-center justify-between gap-3"
-    >
-      {page > 1 ? (
-        <Link
-          href={href(page - 1)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
-        >
-          Previous
-        </Link>
-      ) : (
-        <span className="min-h-11 px-3 sm:min-h-9" />
-      )}
-      <span className="text-sm text-muted-foreground">
-        Page {page} of {totalPages}
-      </span>
-      {page < totalPages ? (
-        <Link
-          href={href(page + 1)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
-        >
-          Next
-        </Link>
-      ) : (
-        <span className="min-h-11 px-3 sm:min-h-9" />
-      )}
-    </nav>
-  );
+  return <Pagination page={page} pageCount={totalPages}
+    hrefForPage={href} label="Contacts pages" showBoundaryLinks={false} />;
 }
