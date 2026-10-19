@@ -19,14 +19,14 @@ export default async function SuperAdminAssignmentsPage({
   if (!query.success) return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
     <ErrorState title="Invalid assignment filters" description="Check search, status and page."
-      action={<Link href="/admin/assignments" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
+      action={<Link href="/admin/assignments" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
     <ErrorState title="Assignment access denied"
       description="Your account cannot access Super Admin assignments."
-      action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)]">Back to dashboard</Link>} />
+      action={<Link href="/dashboard" className="font-semibold text-primary-text">Back to dashboard</Link>} />
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
@@ -43,16 +43,16 @@ export default async function SuperAdminAssignmentsPage({
     <ErrorState title="Assignments unavailable"
       description="The assignment directory could not be loaded. Your filters have not changed."
       action={<Link href="/admin/assignments"
-        className="font-semibold text-[var(--lms-teal-deep)]">Retry loading assignments</Link>} />
+        className="font-semibold text-primary-text">Retry loading assignments</Link>} />
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
     <a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
-     className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export assignments.csv</a>
+     className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export assignments.csv</a>
     {lessonsResult.status==="fulfilled"
       ?<CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>
-      :<p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+      :<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
         Assignment creation options are temporarily unavailable. Existing assignments remain visible.
       </p>}
     <AdminAssessmentDirectory data={data} />

@@ -175,9 +175,9 @@ export function TpoBulkRoundResultRecorder({
                   setError(null);setSelected(resolved.ids);
                 }}>Select matching learners</button>
             </details>
-            <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+            <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-52 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
               {visible.map((row) => (
-                <label key={row.applicationId} className="flex min-h-11 md:min-h-9 items-center gap-3 px-2 text-sm text-body">
+                <label key={row.applicationId} className="flex min-h-11 items-center gap-3 px-2 text-sm text-body hover:bg-muted md:min-h-9">
                   <Checkbox
                     checked={selected.includes(row.applicationId)}
                     onChange={(event) => toggle(row.applicationId, event.target.checked)}

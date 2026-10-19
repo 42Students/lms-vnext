@@ -42,7 +42,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    role="combobox" aria-autocomplete="list" aria-expanded={status==="ready"&&items.length>0}
    aria-controls={id+"-choices"}
    aria-activedescendant={activeIndex>=0?`${id}-choice-${activeIndex}`:undefined}
-   className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+   className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/>
   {status==="loading"?<p role="status" className="mt-1 text-xs text-muted-foreground">Searching skills…</p>:null}
   {status==="ready"&&items.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">
     No catalog suggestions found. You can still save your own skill name.
@@ -51,9 +51,9 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    Skill catalog temporarily unavailable. You can save the entered skill name.
   </p>:null}
   {status==="ready"&&items.length>0?<ul id={id+"-choices"} role="listbox"
-    className="mt-2 max-h-48 space-y-1 overflow-y-auto rounded-md border border-border bg-surface p-1">
+    className="mt-2 max-h-48 space-y-1 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border bg-surface p-1">
     {items.map((item,index)=><li id={id+"-choice-"+index} key={item.id} role="option" aria-selected={activeIndex===index||item.displayName===value}>
-      <button type="button" className="w-full rounded px-3 py-2 text-left text-sm hover:bg-surface-secondary"
+      <button type="button" className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary"
        onClick={()=>{selectedSkill.current=item.displayName;onChange(item.displayName);setItems([]);setActiveIndex(-1);}}>
        {item.displayName}{item.category?<span className="ml-2 text-xs text-muted-foreground">{item.category}</span>:null}
       </button>

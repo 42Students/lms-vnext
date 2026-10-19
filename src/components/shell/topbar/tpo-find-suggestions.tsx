@@ -44,8 +44,8 @@ export function TpoFindSuggestions({
   if (needle.length < 2) return null;
   const ready = state.forQuery === needle && !state.loading;
   return <section aria-label="Matching TPO records">
-    <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">Matching records</p>
-    {!ready ? <p role="status" className="p-2 text-xs text-[#64748b]">Searching…</p> : null}
+    <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Matching records</p>
+    {!ready ? <p role="status" className="p-2 text-xs text-muted-foreground">Searching…</p> : null}
     {ready && state.error ? <p role="alert" className="p-2 text-xs text-error">{state.error}</p> : null}
     {ready && !state.error && state.results.map((result, index) =>
       <button type="button" role="option" aria-selected={false}
@@ -62,10 +62,10 @@ export function TpoFindSuggestions({
         onClick={() => onOpen(result.href)}>
         <SearchIcon/>
         <span className="min-w-0 flex-1 truncate">{result.label}</span>
-        <span className="shrink-0 text-[11px] text-[#64748b]">{result.group}</span>
+        <span className="shrink-0 text-[11px] text-muted-foreground">{result.group}</span>
       </button>
     )}
     {ready && !state.error && state.results.length === 0
-      ? <p role="status" className="p-2 text-xs text-[#64748b]">No matching records.</p> : null}
+      ? <p role="status" className="p-2 text-xs text-muted-foreground">No matching records.</p> : null}
   </section>;
 }

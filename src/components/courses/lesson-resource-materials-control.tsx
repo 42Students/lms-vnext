@@ -71,14 +71,14 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
    if(currentUriRef.current===uri)setBusy(false);
   }
  }
- return <section aria-label="Resource materials" className="mt-4 space-y-3 rounded-lg border border-border bg-surface-subtle p-3">
+ return <section aria-label="Resource materials" className="mt-4 space-y-3 rounded-xl border border-border bg-surface-subtle p-3">
   <div className="flex items-center justify-between gap-2">
    <h4 className="text-sm font-semibold">Materials ({materials.length}/20)</h4>
    {loading?<span role="status" className="text-xs">Loading…</span>:null}
   </div>
   {!loading&&!materials.length?<p className="text-xs text-muted-foreground">No additional materials.</p>:null}
   <ul className="space-y-2">
-   {materials.map(material=><li key={material.id} className="flex flex-wrap items-start gap-2 rounded border border-border bg-surface p-2">
+   {materials.map(material=><li key={material.id} className="flex flex-wrap items-start gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
     <div className="min-w-0 flex-1">
      <p className="break-words text-sm font-semibold">{material.title}</p>
      {material.notes?<p className="whitespace-pre-wrap text-xs text-body">{material.notes}</p>:null}
@@ -99,19 +99,19 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
     </div>:null}
    </li>)}
   </ul>
-  {editable&&(materials.length<20||editing)?<div className="grid gap-2 rounded border border-border bg-surface p-3">
+  {editable&&(materials.length<20||editing)?<div className="grid gap-2 rounded-xl border border-border bg-surface p-3">
    <p className="text-sm font-semibold">{editing?"Edit link material":"Add link material"}</p>
    <label className="grid gap-1 text-xs font-semibold">Title
     <input value={draft.title} maxLength={255} onChange={e=>setDraft(v=>({...v,title:e.target.value}))}
-     className="min-h-11 rounded border border-border p-2" disabled={busy}/>
+     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]" disabled={busy}/>
    </label>
    <label className="grid gap-1 text-xs font-semibold">HTTPS link
     <input type="url" value={draft.externalUrl} maxLength={2048} onChange={e=>setDraft(v=>({...v,externalUrl:e.target.value}))}
-     className="min-h-11 rounded border border-border p-2" disabled={busy}/>
+     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]" disabled={busy}/>
    </label>
    <label className="grid gap-1 text-xs font-semibold">Notes (optional)
     <textarea value={draft.notes} maxLength={2000} onChange={e=>setDraft(v=>({...v,notes:e.target.value}))}
-     rows={2} className="rounded border border-border p-2" disabled={busy}/>
+     rows={2} className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]" disabled={busy}/>
    </label>
    <div className="flex gap-2">
     <Button size="sm" type="button" className="min-h-11" disabled={busy} onClick={()=>void submit(editing?"EDIT_LINK":"ADD_LINK",editing??undefined)}>

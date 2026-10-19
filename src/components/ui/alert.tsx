@@ -14,9 +14,9 @@ const tones = {
 } as const;
 
 export function Alert({ tone = "info", title, className, children, role, ...props }: AlertProps) {
-  return <div {...props} data-slot="alert" role={role ?? (tone === "error" ? "alert" : "status")}
-    className={cx("flex min-w-0 flex-col gap-1 rounded-[var(--lms-control-radius)] border px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[var(--lms-font-sm)] leading-5 shadow-none", tones[tone], className)}>
-    {title ? <strong className="font-semibold">{title}</strong> : null}
+  return <div {...props} data-slot="alert" data-tone={tone} role={role ?? (tone === "error" ? "alert" : "status")}
+    className={cx("flex min-w-0 flex-col gap-[var(--lms-space-1)] rounded-[var(--lms-control-radius)] border px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[var(--lms-font-sm)] leading-5 break-words [overflow-wrap:anywhere] shadow-none", tones[tone], className)}>
+    {title ? <strong className="min-w-0 break-words font-semibold">{title}</strong> : null}
     {children}
   </div>;
 }

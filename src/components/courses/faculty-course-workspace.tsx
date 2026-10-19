@@ -110,7 +110,7 @@ function ContentItem({
   ];
 
   return (
-    <article className="rounded-lg border border-border bg-surface p-4">
+    <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -191,7 +191,7 @@ function AssignmentItem({
 }) {
 
   return (
-    <article className="rounded-lg border border-border bg-surface p-4">
+    <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -279,7 +279,7 @@ function QuizItem({
 }) {
 
   return (
-    <article className="rounded-lg border border-border bg-surface p-4">
+    <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -416,7 +416,7 @@ export function FacultyCourseWorkspace({
         deliveryId={course.deliveryId}
       />
 
-      <section aria-label="In this Course" className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3">
+      <section aria-label="In this Course" className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
         <span className="rounded-full bg-muted px-3 py-1 text-sm font-semibold text-body">
           {course.credits===null?"Credits not configured":course.credits+" Credits"}
         </span>
@@ -594,11 +594,11 @@ export function FacultyCourseWorkspace({
                     <details
                       key={lesson.id}
                       open={selectedLessonId?true:lessonIndex===0?true:undefined}
-                      className="group rounded-xl border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
+                      className="group rounded-[var(--lms-canvas-radius)] border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
                     >
                       <summary aria-label={"Lesson "+(lessonIndex+1)+": "+lesson.name+
                         ", "+itemCount+" items. Expand or collapse lesson"}
-                        className="mb-4 flex min-h-11 cursor-pointer list-none flex-wrap items-start justify-between gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-primary">
+                        className="mb-4 flex min-h-11 cursor-pointer list-none flex-wrap items-start justify-between gap-3 rounded-[var(--lms-control-radius)] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-primary">
                         <div>
                           <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                             Lesson{" "}

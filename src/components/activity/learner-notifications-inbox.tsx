@@ -134,7 +134,7 @@ export function LearnerNotificationsInbox({
           ))}
         </div>
       </nav>
-      <div className="grid min-w-0 grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+      <div className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
         <label className="text-xs font-semibold text-body">
           Search notifications
           <input type="search" value={search} maxLength={100}
@@ -158,7 +158,7 @@ export function LearnerNotificationsInbox({
         </button>
       </div>
       {unreadPersonalCount>0 ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-3 sm:p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3">
           <p className="text-sm text-body">{unreadPersonalCount} unread personal notifications</p>
           <Button variant="secondary" size="sm" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
             Mark all personal as read

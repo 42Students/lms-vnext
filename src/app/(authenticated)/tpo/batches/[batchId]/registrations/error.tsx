@@ -1,1 +1,3 @@
-"use client";export default function Error({reset}:{reset:()=>void}){return <section role="alert"><p>Cannot load registration choices.</p><button onClick={reset} className="rounded border px-3 py-2">Retry</button></section>;}
+"use client";
+import { Button } from "@/components/ui/button";
+export default function Error({reset}:{reset:()=>void}){return <section role="alert"><p>Cannot load registration choices.</p><Button variant="secondary" onClick={reset}>Retry</Button></section>;}

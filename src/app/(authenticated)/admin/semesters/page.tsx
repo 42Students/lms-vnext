@@ -105,7 +105,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           </Select>
         </label>
         <Button type="submit">Filter</Button>
-        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
+        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
       </form>
     </section>
     <form method="get" action="/admin/semesters" aria-label="Refresh semester directory">

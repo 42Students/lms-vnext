@@ -594,7 +594,7 @@ export function FacultyLessonAuthoring({
   }
 
   return (
-    <div className="mt-4 rounded-lg border border-dashed border-border bg-surface p-4">
+    <div className="mt-4 rounded-[var(--lms-control-radius)] border border-dashed border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="m-0 text-sm font-semibold text-foreground">
@@ -866,7 +866,7 @@ export function FacultyLessonAuthoring({
                   ) => (
                     <section
                       key={question.id}
-                      className="rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4"
+                      className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-neutral-50)] p-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <p className="m-0 text-sm font-semibold text-foreground">

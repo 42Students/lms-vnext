@@ -2,6 +2,7 @@ import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
+import { Checkbox } from "@/components/ui/checkbox";
 import {tpoNoticeTextParts} from "@/modules/announcements/tpo-notice-safe-links";
 import {TpoPlacementCellReadAction} from "@/components/tpo/tpo-placement-cell-read-action";
 import {TpoNoticeDeleteConfirm} from "@/components/tpo/tpo-notice-delete-confirm";
@@ -92,7 +93,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       initialAudience={query.success?query.data.audience:"COLLEGE"}
       initialTarget={first(raw.targetId)??""}
       initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
-     <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Preview audience</Button>
+     <Button variant="secondary" type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Preview audience</Button>
    </form>
    {!query.success?<p role="alert" className="mt-2 text-sm">Choose a valid audience and target ID.</p>:null}
    {preview.failed?<p role="alert" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
@@ -135,7 +136,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <label className="grid gap-1 text-sm">Show until (IST, optional)
       <Input type="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
     </label>
-    <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="pinned" /> Pin this notice</label>
+    <label className="flex items-center gap-2 text-sm"><Checkbox name="pinned" /> Pin this notice</label>
     <TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}
       enabled={Boolean(query.success&&audience&&audience.potentiallyVisibleMemberships>0&&
        canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady))}/>
@@ -144,7 +145,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   <nav aria-label="Announcement tabs" className="flex flex-wrap gap-2">
    {([["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]] as const).map(([value,label])=><Link
     key={value} href={"/tpo/announcements?tab="+value} aria-current={value===tab.data?"page":undefined}
-    className={value===tab.data?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm text-foreground":
+    className={value===tab.data?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm text-on-primary":
     "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-body"}>{label}{value==="from-42"&&from42Unread!==null?` (${from42Unread})`:""}</Link>)}
   </nav>
   {tab.data!=="from-42"?<nav aria-label="Announcement author scope" className="flex flex-wrap items-center gap-3 text-sm">
@@ -157,7 +158,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
   </section>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
-   {result.items.map(row=><li key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   {result.items.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
     <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}
      {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs text-[var(--lms-teal-deep)]">New</span>:null}
     </h2>
@@ -220,10 +221,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
        </label>
        <label className="flex items-center gap-2 text-sm text-body">
-        <input name="pinned" type="checkbox" defaultChecked={row.isPinned}/> Pinned
+        <Checkbox name="pinned" defaultChecked={row.isPinned}/> Pinned
        </label>
        <label className="flex items-start gap-2 text-sm text-body">
-        <input name="notifyChanged" type="checkbox" className="mt-1"/>
+        <Checkbox name="notifyChanged" className="mt-1"/>
         <span>Tell them it changed
          <span className="block text-xs text-muted-foreground">Notify only people who received the original announcement. Leave unchecked to edit without another notification.</span>
         </span>
@@ -233,7 +234,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
          className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
          <legend className="text-sm font-semibold">Change audience (before sending)</legend>
          <label className="flex items-center gap-2 text-sm">
-          <input name="changeAudience" type="checkbox"/> Change audience for this scheduled notice
+          <Checkbox name="changeAudience"/> Change audience for this scheduled notice
          </label>
          <p className="text-xs text-muted-foreground">
           Select the box only to replace the saved audience. Choose the new audience below;
@@ -253,7 +254,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-4 flex flex-wrap gap-2">
       <input type="hidden" name="expectedVersion" value={row.version}/>
       <input type="hidden" name="action" value={tab.data==="deleted"?"RESTORE":"DELETE"}/>
-      <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
+      <Button variant="secondary" type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
        {tab.data==="deleted"?"Undo removal":"Remove notice"}
       </Button>
      </form>:null}
@@ -263,7 +264,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       className="mt-2">
       <input type="hidden" name="expectedVersion" value={row.version}/>
       <input type="hidden" name="action" value="UNDO_SEND"/>
-      <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
+      <Button variant="secondary" type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
        Undo send (30 seconds)
       </Button>
      </form>:null}

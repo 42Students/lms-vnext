@@ -21,7 +21,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
  const data=query&&ctx.adminScope?.collegeId?await lookupCollegeStudentPlacement(ctx,query):null;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Student placement lookup"
-   actions={<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Analytics</Link>}/>
+   actions={<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Analytics</Link>}/>
   <form action="/admin/placements/student-lookup" role="search" className="min-w-0 border-b border-border pb-4">
    <label className="grid max-w-xl gap-2 text-sm font-semibold">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
@@ -32,8 +32,8 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
   </form>
   {invalid?<ErrorState title="Invalid student search"
    description="Enter 3 to 150 characters in a single search to find students in the selected college."
-   action={<Link href="/admin/placements/student-lookup" className="font-semibold text-[var(--lms-teal-deep)]">Clear search</Link>}/>:null}
-  {!ctx.adminScope?.collegeId?<p id="placement-student-scope-hint" role="status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">Select a college to continue. Choose a college in the header above to look up student placements.</p>:null}
+   action={<Link href="/admin/placements/student-lookup" className="font-semibold text-primary-text">Clear search</Link>}/>:null}
+  {!ctx.adminScope?.collegeId?<p id="placement-student-scope-hint" role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:p-6">Select a college to continue. Choose a college in the header above to look up student placements.</p>:null}
   {data&&!data.students.length?<EmptyState title="No matching college students." description="Name, roll number or email" />:null}
   {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-b border-border py-5 last:border-0">
    <div className="flex flex-wrap items-center justify-between gap-2">
