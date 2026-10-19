@@ -50,7 +50,13 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    onFocus={()=>setPopupOpen(true)}
    onChange={event=>{selectedSkill.current=null;setPopupOpen(true);setStatus("loading");setItems([]);setActiveIndex(-1);onChange(event.target.value);}}
    onKeyDown={event=>{
-     if(status!=="ready"||!popupOpen||items.length===0)return;
+     if(status!=="ready"||items.length===0)return;
+     if(!popupOpen){
+       if(event.key==="ArrowDown"||event.key==="ArrowUp"){
+         event.preventDefault();setPopupOpen(true);setActiveIndex(event.key==="ArrowDown"?0:items.length-1);
+       }
+       return;
+     }
      if(event.key==="ArrowDown"){event.preventDefault();setActiveIndex(index=>(index+1)%items.length);}
      else if(event.key==="ArrowUp"){event.preventDefault();setActiveIndex(index=>index<=0?items.length-1:index-1);}
      else if(event.key==="Enter"&&activeIndex>=0&&items[activeIndex]){
