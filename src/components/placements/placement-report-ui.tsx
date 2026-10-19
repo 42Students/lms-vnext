@@ -215,7 +215,7 @@ export function ReportNavigation({
 
   const m=workspace.report.metrics;
   return (<>
-    <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm font-semibold">
+    <p role="status" className="border-y border-border py-3 text-sm font-semibold text-body">
      For the filters below: {reportNumber(m.studentsPlaced)} students placed · {reportNumber(m.offers)} offers ·
      {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
     </p>
