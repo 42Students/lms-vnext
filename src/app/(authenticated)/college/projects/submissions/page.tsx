@@ -25,7 +25,6 @@ export default async function CollegeProjectSubmissionsRoute({
     <ProjectAdminSubmissionsPage
       collegeId={collegeId}
       basePath="/college/projects"
-      eyebrow="College Admin Projects"
       searchParams={await searchParams}
     />
   );

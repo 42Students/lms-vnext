@@ -575,3 +575,27 @@ Source head at turn start: `b275ca07455d8eafa3650ce6eb3f352a481edafb`. The compa
 - [ ] Full responsive verification (missing: actual desktop/tablet/mobile page render and focus/hover behavior, not just source-level breakpoint comparison).
 
 **Next file:** `src/app/(authenticated)/college/courses/page.tsx` — continue eyebrow removal and component/state/hex value matching; then adjacent College Admin pages and tenant workflows. **No Section H items ticked** before completing the STRICT TICK RULE.
+
+### 2026-10-19 continuing 15-minute sprint: College academic/people/placements/projects route heads
+
+Source base: current `main` was `3a77aebd651756d5a16b9fea375ffc276fa4404b` on initial sync; the lane branch had **0 ahead, 610 behind** and was fast-forwarded without losing edits. This turn made **37 source commits before this audit commit**, each with `[chat-4]` prefix, only to `chatgpt/chat-4-b`, no CI, TypeScript compile, lint, runtime, or visual browser testing. Commits remain directly on the remote lane branch.
+
+**Coverage / class audit (not an exhaustive repository grep):**
+- College courses and course-progress, departments, domains, electives, faculty import and assignment, hiring dashboard, live classes, group detail, lecture halls, people management, programs, placement drives/detail/interview/shortlist/setup/retention/readiness/student lookup, projects templates/readiness/submissions/creation, quizzes, semesters, profile, and student accounts/import had their redundant `PageHeader.eyebrow` removed where found. Other page heading texts, descriptions, actions, filters, and server results were preserved. A few pages such as College Profile already had no eyebrow and were left unchanged.
+- College placement drive overview was updated to use the same shared `StatTile` for the Hired count as for the other four metrics; the Hired status value, explanatory text and click-through to `?stage=HIRED` remain present. Source: `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`.
+- Re-read the first 35 changed TSX files from GitHub in three batches with simple checks for `className` quote artifacts, excess known JSX closing tags, remaining `eyebrow=` and six-digit hex literals. **One** missed header variant was found in `src/app/(authenticated)/college/lecture-halls/page.tsx`, corrected and re-read. No remaining `eyebrow=` or six-digit hex literals were observed in these 35 edited TSX files. The late-edited placement overview was separately read back and checked for closing `</StatTile>`, old article removal and stray quotes. This **is not** a compiler or full 416-file scan.
+
+| Property | Legacy value with source | Current route / shared value with source | Result |
+| --- | --- | --- | --- |
+| Page head structure | `docs/design/old-lms-pages.md:7`: one title plus adjacent grey subtitle; no separate eyebrow | `src/components/ui/page-header.tsx:22-50`: single heading plus inline description; this sprint removes the extra `eyebrow` prop from touched College Admin routes | **MATCH** source shape for touched pages; whole-area coverage open |
+| Mobile title | `docs/design/legacy-styles/components___listing-page-header.scss:128-138`: 20px at <= mobile breakpoint | `src/components/ui/page-header.tsx:28-34`: 20px default, 30px at `md` | **MATCH** mobile font size, live responsive proof pending |
+| Desktop title | `components___listing-page-header.scss:52-58`: 28px, 600, line-height 1.3, letter-spacing -0.02em | `src/components/ui/page-header.tsx:33-34`: 30px, 600, line-height 1.35, letter-spacing -0.02em | **OPEN** 28 vs 30px and 1.3 vs 1.35; shared UI owner |
+| Heading border | `components___listing-page-header.scss:33-35`: 1px neutral-200 and 16px bottom padding | `page-header.tsx:28` border `--lms-canvas-border`, `pb-4`; `src/app/globals.css:322`: #e5e9f0 | **MATCH** source-level |
+| Hired metric card | `docs/design/old-lms-pages.md:6,11`: consistent canvas tiles and status/metric layout | College drive overview now uses five `StatTile` instances (last Hired tile with existing `href`, `detail` and child action); `src/components/ui/stat-tile.tsx:10-38` standard token radius and padding | **CONSISTENT WITH SHARED TILE**, old metric-specific rendered dimensions still open |
+| User editable hex values | `src/components/admin/college-branding-form.tsx:154,162`: primary fallback `#26BAC7` and text placeholder `#1A95A1` | Intentionally not replaced by CSS var, since `type="color"` must receive valid colour literal and text is customer-facing sample | **EXEMPT**, not a decorative hard-coded UI colour |
+
+- [ ] Entire College Admin and Super Admin colleges/tenants/readiness/branding parity (missing: full audit coverage across Work queue, all legacy states, shared UI owner 28/30px mismatch, keyboard and responsive proof, actual rendered comparisons).
+- [ ] Hard-coded colours across full scope (missing: exhaustive file/line scan; changed-file text scan is **not** whole-source grep).
+- [ ] JSX verification (missing: TypeScript parser/typecheck under no-CI/no-running-code instruction; source tag/stray quote scans passed for edited files only).
+
+**Exact next file:** `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` — readiness list/card tokens, filter states, return-navigation, audit cross-check; then branding/sign-in and remaining College Admin pages. No Section H checkbox ticked.
