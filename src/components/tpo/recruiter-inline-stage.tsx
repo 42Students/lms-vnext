@@ -1,7 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:string;manualStage:string;stage:string};onUpdated:()=>void}){
