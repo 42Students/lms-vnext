@@ -99,4 +99,10 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(primary).toContain("</Button>");
  expect(alias).toContain('export {TpoMobileFooter} from "@/components/tpo/tpo-mobile-footer";');
 });
+ it("announces query-only route changes without stealing input focus",()=>{
+ const announcer=read("src/components/shell/route-announcer.tsx");
+ expect(announcer).toContain('prior.path===pathname');
+ expect(announcer).toContain('role="status" aria-live="polite"');
+ expect(announcer).toContain("main?.focus({preventScroll:true})");
+});
 });
