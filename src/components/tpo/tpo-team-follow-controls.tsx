@@ -1,5 +1,5 @@
 "use client";
-import {FilterChip} from "@/components/ui/filter-chip";
+import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -26,14 +26,14 @@ export function TpoTeamFollowControls({threadId,following,muted,ready}:{
   finally{pending.current=false;setBusy(false);}
  }
  return <section className="flex flex-wrap items-center gap-2" aria-label="Conversation preferences">
-  <FilterChip type="button" aria-pressed={state.following} disabled={busy||!ready} onClick={()=>void change(state.following?"UNFOLLOW":"FOLLOW")}
-   className="min-h-11 md:min-h-8">
+  <Button type="button" variant={state.following?"primary":"secondary"} aria-pressed={state.following} disabled={busy||!ready} onClick={()=>void change(state.following?"UNFOLLOW":"FOLLOW")}
+   className="min-h-11 md:min-h-9">
    {state.following?"Stop following":"Follow"}
-  </FilterChip>
-  <FilterChip type="button" aria-pressed={state.muted} disabled={busy||!ready} onClick={()=>void change(state.muted?"UNMUTE":"MUTE")}
-   className="min-h-11 md:min-h-8">
+  </Button>
+  <Button type="button" variant={state.muted?"primary":"secondary"} aria-pressed={state.muted} disabled={busy||!ready} onClick={()=>void change(state.muted?"UNMUTE":"MUTE")}
+   className="min-h-11 md:min-h-9">
    {state.muted?"Unmute":"Mute"}
-  </FilterChip>
+  </Button>
   {!ready?<p role="status" className="text-xs text-muted-foreground">
    Follow and mute controls are unavailable until team preferences are ready.
   </p>:null}
