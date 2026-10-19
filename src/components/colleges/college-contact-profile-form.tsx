@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export type CollegeContactProfileView = {
   collegeName: string;
@@ -13,7 +15,7 @@ export type CollegeContactProfileView = {
   version: number;
 };
 
-const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground";
+const inputClass = "min-h-11 sm:min-h-9 w-full";
 
 export function CollegeContactProfileForm({ initial }: {
   initial: CollegeContactProfileView;
@@ -61,7 +63,7 @@ export function CollegeContactProfileForm({ initial }: {
   }
 
   return <form onSubmit={submit}
-    className="grid max-w-3xl gap-4 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-5 sm:grid-cols-2">
+    className="grid max-w-3xl gap-4 border-t border-border pt-5 sm:grid-cols-2">
     <label className="grid gap-2 text-sm font-semibold text-body sm:col-span-2">
       Public college display name
       <Input required maxLength={160} className={inputClass} value={name}
@@ -91,25 +93,25 @@ export function CollegeContactProfileForm({ initial }: {
         value={privacy} onChange={event => setPrivacy(event.target.value)}
         placeholder="https://college.example.edu/privacy" />
     </label>
-    {error ? <p role="alert" className="text-sm text-red-700 sm:col-span-2">
+    {error ? <p role="alert" className="text-sm text-error sm:col-span-2">
       {error}. If this profile changed elsewhere, refresh before retrying.
     </p> : null}
-    {success ? <p role="status" className="text-sm text-green-700 sm:col-span-2">
+    {success ? <p role="status" className="text-sm text-success sm:col-span-2">
       {success}
     </p> : null}
     <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
-      <Button variant="primary" disabled={pending} type="submit"
-        >
+      <Button disabled={pending} type="submit"
+        className="min-h-11 sm:min-h-9">
         {pending ? "Saving…" : "Confirm and save changes"}
       </Button>
-      <Button variant="secondary" disabled={pending} type="button" onClick={() => {
+      <Button disabled={pending} type="button" onClick={() => {
         setName(initial.collegeName);
         setEmail(initial.supportEmail ?? "");
         setPhone(initial.supportPhone ?? "");
         setTerms(initial.termsUrl ?? "");
         setPrivacy(initial.privacyUrl ?? "");
         setError(null);
-      }} >
+      }} variant="secondary" className="min-h-11 sm:min-h-9">
         Reset
       </Button>
     </div>
