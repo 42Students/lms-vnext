@@ -34,11 +34,11 @@ function formatTokens(body:string,members:TeamPayload["members"]){
       const name=members.find(m=>m.membershipId.toLowerCase()===chunk.slice(8).toLowerCase())?.name;
       return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">@{name??"team member"}</span>;
     }
-    if(chunk.startsWith("#drive:"))return <Link key={i} className="underline text-link px-0"
+    if(chunk.startsWith("#drive:"))return <Link key={i} className="underline text-link px-0 lms-inline-link"
       href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</Link>;
-    if(chunk.startsWith("#company:"))return <Link key={i} className="underline text-link px-0"
+    if(chunk.startsWith("#company:"))return <Link key={i} className="underline text-link px-0 lms-inline-link"
       href={"/tpo/companies/"+encodeURIComponent(chunk.slice(9))}>{chunk}</Link>;
-    if(chunk.startsWith("#student:"))return <Link key={i} className="underline text-link px-0"
+    if(chunk.startsWith("#student:"))return <Link key={i} className="underline text-link px-0 lms-inline-link"
       href={"/tpo/students/"+encodeURIComponent(chunk.slice(9))+"/participation"}>{chunk}</Link>;
     if(chunk.startsWith("@")||chunk.startsWith("#"))
       return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">{chunk}</span>;
