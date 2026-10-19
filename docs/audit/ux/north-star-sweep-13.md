@@ -6,7 +6,9 @@ Scope is the **shell and global visual skin only**. Keep all pages' own sections
 
 ## Top bar — swept
 - [x] `src/components/shell/topbar/topbar.module.css`: 68px shell, command search, white/teal action, 36px icons, account menu, focused controls, adaptive notification dropdowns with legacy overlay shadows/radii.
-- [x] `src/components/shell/topbar/command-search.tsx`: make ArrowDown reach all actual search options, not just TPO results.
+- [x] `src/components/shell/topbar/command-search.tsx`: make ArrowDown reach all actual search options, not just TPO results; use semantic text colors.
+- [x] `src/components/shell/topbar/tpo-find-suggestions.tsx`: semantic suggestion palette.
+- [x] `src/components/shell/topbar/tpo-notification-cluster.tsx`: accessible action grouping.
 - [x] `src/components/shell/topbar/account-menu.tsx`: apply shared menu typography, preserve account actions and authorized membership/scope switchers.
 - [x] `src/components/shell/topbar/tpo-quick-create.tsx`: close on outside pointer/Escape, preserve authorized create links.
 - [x] `src/components/shell/topbar/legacy-topbar.tsx`: reviewed; existing header-slot in `app-shell.tsx` already uses this component, so no second header or duplicate menu was added.
@@ -17,13 +19,15 @@ Scope is the **shell and global visual skin only**. Keep all pages' own sections
 - [x] `batch-promotion`, `batches`, `batches/[batchId]/students`, `classes`
 - [x] `colleges`, `colleges/[collegeId]`, `colleges/[collegeId]/admins`, `colleges/[collegeId]/admins/[userId]/history`
 - [x] `colleges/[collegeId]/branding`, `colleges/[collegeId]/readiness`, `colleges/[collegeId]/verification`
-- [x] `companies`, `course-progress`, `departments`, `electives`, `faculty`, `faculty-assignment`
+- [x] `companies`, `companies/[companyId]/drives`, `course-progress`, `departments`, `electives`, `faculty`, `faculty-assignment`
+- [x] `features`, `features/[collegeId]`, `features/[collegeId]/history`, `features/[collegeId]/trace`, `features/[collegeId]/students/[membershipId]`, `features/[collegeId]/students/[membershipId]/history`
 - [ ] Remaining nested first-third routes and source components require additional surface review; a checked route means *this visual source pass*, not functional QA.
 
 ## Super Admin placements / projects — changed
 - [x] `placements`, `placements/analytics`, `placements/drives`, `placements/retention`, `placements/student-lookup`
 - [x] `placements/jobs/[jobId]/applications`, `placements/jobs/[jobId]/schedule`, `placements/jobs/[jobId]/settings`
-- [x] `projects`, `projects/submissions`
+- [x] `placements/applications/[applicationId]`, `placements/shortlisted/[applicationId]`
+- [x] `projects`, `projects/submissions`, `projects/templates`, `projects/templates/[templateId]/colleges`
 - [ ] Remaining detail routes and shared placement/project widgets need more source scrutiny where they own page-level hardcoded styling.
 
 Changes are limited to semantic tokens, 9px control radius and 12px canvas radius, controls, subtle panels, and flatter page flow. Fixed malformed doubled `rounded-[...]-[...]` classes in college directory and course progress.
