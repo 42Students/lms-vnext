@@ -58,7 +58,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           <Link
             href={"/tpo/students/" +
               encodeURIComponent(history.learner.membershipId) + "/participation"}
-            className="inline-flex min-h-11 items-center rounded-[9px]-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
+            className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground"
           >
             Participation decision
           </Link>
