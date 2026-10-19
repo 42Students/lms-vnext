@@ -98,20 +98,20 @@ export function MentorSprintDetailsEdit({
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit sprint details"
       description="Edit sprint goals and dates. Dates are locked once a sprint is active.">
       <form onSubmit={review} className="grid gap-4">
-        <label className="grid gap-1 text-xs font-semibold text-body">
+        <label className="grid gap-1 text-sm font-semibold text-body">
           Sprint title
           <Input required maxLength={200} value={title}
             onChange={event=>setTitle(event.target.value)} />
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">
+        <label className="grid gap-1 text-sm font-semibold text-body">
           Sprint description (optional)
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </label>
         {estimationUnit?<p className="m-0 text-xs text-muted-foreground">Project estimation unit: {estimationUnit==="HOURS"?"Hours":estimationUnit==="POINTS"?"Points":estimationUnit}</p>:null}
-        <label className="grid gap-1 text-xs font-semibold text-body">Sprint goal
+        <label className="grid gap-1 text-sm font-semibold text-body">Sprint goal
           <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
-        <label className="grid gap-1 text-xs font-semibold text-body">What does done look like?
+        <label className="grid gap-1 text-sm font-semibold text-body">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
         {estimationUnit ? <p className="m-0 text-xs text-body">
           Project estimation unit: {estimationUnit==="HOURS"?"Hours":estimationUnit==="POINTS"?"Points":estimationUnit}
@@ -120,7 +120,7 @@ export function MentorSprintDetailsEdit({
           {([{label:"Start date",value:start,set:setStart},
              {label:"End date",value:end,set:setEnd},
              {label:"Due date",value:due,set:setDue}]).map(row=>
-              <label key={row.label} className="text-xs font-semibold text-body">{row.label}
+              <label key={row.label} className="grid gap-1 text-sm font-semibold text-body">{row.label}
                 <Input type="date" value={row.value} disabled={status==="ACTIVE"}
                   onChange={e=>row.set(e.target.value)}/></label>)}
         </div>

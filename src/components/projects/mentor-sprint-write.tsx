@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -68,13 +69,13 @@ export function MentorSprintCreate({
       </>}>
       <div className="grid gap-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Ships in release
-          <select data-slot="select" value={chosenReleaseId} disabled={busy}
+          <Select value={chosenReleaseId} disabled={busy}
             onChange={event=>setChosenReleaseId(event.target.value)}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             {releases.length?releases.filter(release=>release.status!=="SHIPPED").map(release=>
               <option key={release.id} value={release.id}>{release.title}</option>):
               <option value={releaseId}>Current release</option>}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint title
           <Input maxLength={200} value={title}
@@ -90,11 +91,11 @@ export function MentorSprintCreate({
         <label className="grid gap-1 text-sm font-semibold text-body">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
         <div className="grid gap-2 sm:grid-cols-3">
-          <label className="text-xs font-semibold">Start date
+          <label className="grid gap-1 text-sm font-semibold text-body">Start date
             <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
-          <label className="text-xs font-semibold">End date
+          <label className="grid gap-1 text-sm font-semibold text-body">End date
             <Input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label>
-          <label className="text-xs font-semibold">Due date
+          <label className="grid gap-1 text-sm font-semibold text-body">Due date
             <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></label>
         </div>
         {!datesValid?<p role="alert" className="text-sm font-semibold text-error">

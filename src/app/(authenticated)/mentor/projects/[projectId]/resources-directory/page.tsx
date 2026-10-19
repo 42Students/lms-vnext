@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -39,35 +41,35 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    <form method="get" action={base+"/resources-directory"}
     className={mentorResourceDirectoryFilterLayout}>
     <label className="grid gap-1 text-sm font-semibold text-body">Resource title or description
-     <input data-slot="input" type="search" name="search" maxLength={100} defaultValue={data.query.search}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+     <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
+      className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Requirement
-     <select data-slot="select" name="required" defaultValue={data.query.required}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+     <Select name="required" defaultValue={data.query.required}
+      className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
       <option value="ALL">All</option><option value="REQUIRED">Required</option>
       <option value="OPTIONAL">Optional</option>
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">HTTPS link availability
-     <select data-slot="select" name="link" defaultValue={data.query.link}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+     <Select name="link" defaultValue={data.query.link}
+      className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
       <option value="ALL">All</option><option value="HTTPS">Safe HTTPS link</option>
       <option value="UNAVAILABLE">No safe HTTPS link</option>
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Description recorded
-     <select data-slot="select" name="description" defaultValue={data.query.description}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+     <Select name="description" defaultValue={data.query.description}
+      className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
       <option value="ALL">Any</option><option value="RECORDED">Has a description</option>
       <option value="MISSING">No written description</option>
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Resource order
-     <select data-slot="select" name="order" defaultValue={data.query.order}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+     <Select name="order" defaultValue={data.query.order}
+      className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
-     </select>
+     </Select>
     </label>
     <Button type="submit" variant="primary">
      Filter

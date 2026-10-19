@@ -34,7 +34,7 @@ export function MentorProjectCloseoutControl({
   }
   return <div className="space-y-3">
     {labels.map((label,i)=><label key={label}
-      className="flex items-start gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+      className="flex items-start gap-3 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body last:border-b-0">
       <input type="checkbox" checked={checks[i]??false}
         onChange={event=>setChecks(old=>old.map((v,j)=>i===j?event.target.checked:v))}
         className="mt-1 size-4 accent-[var(--lms-button-primary)]" />{label}

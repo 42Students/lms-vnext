@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -46,44 +48,44 @@ export default async function MentorReviewsPage({
     </div> : <>
       <form action="/mentor/reviews" method="get" className={mentorDeliveryReviewMobileForm}>
         <label className="grid gap-1 text-sm font-semibold text-body">Search
-          <input data-slot="input" type="search" name="search" maxLength={120} defaultValue={data.query.search}
-            placeholder="Project title" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
+            placeholder="Project title" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select data-slot="select" name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 sm:min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
-          <select data-slot="select" name="assignment" defaultValue={data.query.assignment} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">All assigned projects</option><option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
-          <select data-slot="select" name="order" defaultValue={data.query.order}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="order" defaultValue={data.query.order}
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="NEWEST">Newest submitted first</option>
             <option value="OLDEST">Oldest submitted first</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Submitted within
-          <select data-slot="select" name="age" defaultValue={data.query.age} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="age" defaultValue={data.query.age} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">Any age</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_7_DAYS">Waiting over 7 days</option><option value="OLDER_THAN_30_DAYS">Waiting over 30 days</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned Project lifecycle
-          <select data-slot="select" name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">All current assignments</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size
-          <select data-slot="select" name="pageSize" defaultValue={String(data.pageSize)}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="pageSize" defaultValue={String(data.pageSize)}
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="20">20</option><option value="50">50</option>
-          </select>
+          </Select>
         </label>
         <Button type="submit" variant="primary">Filter</Button>
         <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>

@@ -13,7 +13,6 @@ const tones = {
 } as const;
 
 export function Badge({ tone = "neutral", className, children, ...props }: BadgeProps) {
-  return <span data-slot="badge" data-tone={tone}
-    className={cx("inline-flex min-h-[22px] min-w-0 max-w-full items-center justify-center gap-[var(--lms-space-1)] rounded-[var(--lms-radius-pill)] px-[var(--lms-space-2)] py-0.5 align-middle whitespace-normal text-center text-[var(--lms-font-xs)] font-semibold leading-[18px] break-words shadow-none", tones[tone], className)}
-    {...props}>{children}</span>;
+  return <span {...props} data-slot="badge" data-tone={tone}
+    className={cx("inline-flex min-h-[22px] min-w-0 max-w-full items-center justify-center gap-[var(--lms-space-1)] rounded-[var(--lms-radius-pill)] border border-current/10 px-[var(--lms-space-2)] py-0.5 align-middle whitespace-normal text-center text-[var(--lms-font-xs)] font-semibold leading-[18px] [overflow-wrap:anywhere] shadow-none", tones[tone], className)}>{children}</span>;
 }
