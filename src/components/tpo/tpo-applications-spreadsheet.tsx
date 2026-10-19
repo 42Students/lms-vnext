@@ -4,7 +4,13 @@ import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {applicantStage} from "@/modules/placements/tpo-applicant-pipeline-model";
 import {tpoGridTimeLabel} from "@/modules/placements/tpo-grid-time-label";
 import {TpoApplicantReviewDrawer} from "@/components/placements/tpo-applicant-review-drawer";
-import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
+import dynamic from "next/dynamic";
+import type { TpoGrid } from "./grid/tpo-grid";
+
+const TpoGridClient = dynamic(
+  () => import("./grid/tpo-grid").then(module => module.TpoGrid),
+  { ssr: false },
+) as unknown as typeof TpoGrid;
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 
 type Row={
@@ -48,7 +54,7 @@ const filters:TpoFilterField[]=[
 ];
 export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly Row[];jobId:string;jobStatus:string}){
  return <div className="space-y-3"><TpoGridFilterPanel fields={filters} mobileSheet/>
-  <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.id}
+  <TpoGridClient rows={rows} columns={columns} rowKey={row=>row.id}
    mobileActionsCollapsible storageKey={"tpo-drive-applicant-grid:"+jobId}
    rowActions={row=><div className="space-y-1">
     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
