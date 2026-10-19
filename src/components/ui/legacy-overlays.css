@@ -45,6 +45,13 @@
     min-height: 44px;
   }
 }
+[data-slot="drawer"][data-side="left"] {
+  left: 0;
+  right: auto;
+  width: min(82vw, 300px);
+  max-width: 300px;
+  border-right: 0;
+}
 [data-slot="drawer-header"] {
   background: var(--lms-neutral-50);
   border-bottom: 1px solid var(--lms-canvas-border);
