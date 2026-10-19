@@ -21,6 +21,8 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
   const titleId = useId();
   const descriptionId = useId();
   const { availableHeight, viewportTop } = useOverlayWebview({ open, dismissible, onDismiss: () => onOpenChange(false) });
+  const visualCenter = availableHeight && viewportTop
+    ? `${Number.parseFloat(viewportTop) + Number.parseFloat(availableHeight) / 2}px` : "50dvh";
 
   useEffect(() => {
     const modal = ref.current;
@@ -38,18 +40,18 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
     onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
     onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
-    style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px" } as CSSProperties}
-    className="fixed inset-x-0 top-[var(--lms-visual-top)] m-0 h-[var(--lms-visual-height)] max-h-none w-full max-w-none border-0 bg-surface p-0 text-foreground backdrop:bg-foreground/30 sm:m-auto sm:h-auto sm:max-h-[var(--lms-visual-height)] sm:w-[min(36rem,calc(100%_-_2rem))] sm:rounded-[var(--lms-canvas-radius)] sm:border sm:border-[var(--lms-canvas-border)] sm:shadow-[var(--lms-elevation-4)]">
-    <div className="flex h-full max-h-[var(--lms-visual-height)] min-h-0 flex-col overflow-hidden sm:max-h-[var(--lms-visual-height)]">
-      <div className="flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] p-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-[var(--lms-canvas-padding)]">
+    style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px", "--lms-visual-center": visualCenter } as CSSProperties}
+    className="fixed left-1/2 top-[var(--lms-visual-center)] m-0 h-auto max-h-[calc(var(--lms-visual-height)_-_3rem)] w-[calc(100%_-_2rem)] max-w-[36rem] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-0 text-foreground shadow-[var(--lms-elevation-4)] backdrop:bg-[#1e363f]/10">
+    <div className="flex max-h-[calc(var(--lms-visual-height)_-_3rem)] min-h-0 flex-col overflow-hidden">
+      <div className="flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] bg-surface px-4 py-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-[var(--lms-canvas-padding)]">
         <div className="min-w-0">
           <h2 id={titleId} className="m-0 break-words text-[var(--lms-font-lg)] font-semibold leading-[1.35] text-[var(--lms-heading)]">{title}</h2>
           {description ? <p id={descriptionId} className="mt-[var(--lms-space-1)] text-[13px] leading-5 text-[var(--lms-body-text)]">{description}</p> : null}
         </div>
-        {dismissible ? <Button className="min-h-10 min-w-10 rounded-full bg-white text-[var(--lms-muted-text)] hover:bg-[var(--lms-neutral-100)]" variant="ghost" aria-label="Close dialog" onClick={() => onOpenChange(false)}>×</Button> : null}
+        {dismissible ? <Button className="min-h-11 min-w-11 rounded-full bg-white text-[var(--lms-muted-text)] hover:bg-[var(--lms-neutral-100)]" variant="ghost" aria-label="Close dialog" onClick={() => onOpenChange(false)}><span aria-hidden="true">×</span></Button> : null}
       </div>
-      <ScrollCue axis="y" label={`${title} dialog content`} className="min-h-0 flex-1" viewportClassName="h-full min-h-0 p-4 sm:p-[var(--lms-canvas-padding)]">{children}</ScrollCue>
-      {footer ? <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-[var(--lms-canvas-border)] bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</div> : null}
+      <ScrollCue axis="y" label={`${title} dialog content`} className="min-h-0 flex-1" viewportClassName="h-full min-h-0 overscroll-contain p-4 sm:p-[var(--lms-canvas-padding)]">{children}</ScrollCue>
+      {footer ? <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-[var(--lms-canvas-border)] bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</div> : null}
     </div>
   </dialog>;
 }

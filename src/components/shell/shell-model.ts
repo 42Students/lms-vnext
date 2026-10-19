@@ -119,6 +119,11 @@ export function scopedShellNavigation(items: readonly ShellNavItem[], pathname: 
   return !portal || portal === selected ||
    (selected === "college" && item.label === "Placement cell" && item.href === "/tpo/home") ||
    (portal === "college" && counts.get("college") === 1);
+ }).map(item => {
+  // Role disambiguators are only needed in a mixed list. Once scoped to one
+  // legacy portal, restore its exact unsuffixed labels and accessible names.
+  const label = item.label.replace(/ · (?:Learning|Teaching|Mentoring|College|Admin|Placements|Recruiting)$/, "");
+  return label === item.label ? item : {...item, label};
  });
 }
 

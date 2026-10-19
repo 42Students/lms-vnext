@@ -1,4 +1,7 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
@@ -72,10 +75,10 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    </label>;})}
   </div>
   <label className="grid gap-1 text-sm">Action
-   <select className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" disabled={busy} value={action}
+   <Select  disabled={busy} value={action}
     onChange={event=>{setAction(event.target.value as Action);invalidate();}}>
     <option value="VERIFY">Verify selected</option><option value="SEND_BACK">Send back for correction</option>
-   </select>
+   </Select>
   </label>
   {action==="SEND_BACK"?<div className="space-y-2">
    <div className="flex flex-wrap gap-2">
@@ -84,28 +87,28 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
       :checked.every(row=>row.section==="EDUCATION")
       ?["Marksheet is missing or unreadable","Submitted details do not match the document"]
       :["Submitted details do not match the document"]).map(item=>
-      <button type="button" key={item} disabled={busy} onClick={()=>{setReason(item);invalidate();}}
-       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs">{item}</button>)}
+      <Button variant="secondary" type="button" key={item} disabled={busy} onClick={()=>{setReason(item);invalidate();}}
+       >{item}</Button>)}
    </div>
    <label className="grid gap-1 text-sm">Correction reason (shown to students)
-    <textarea className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" rows={3} minLength={3} maxLength={500}
+    <Textarea  rows={3} minLength={3} maxLength={500}
      value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);invalidate();}}/>
    </label>
   </div>:null}
-  <button type="button" disabled={busy||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
+  <Button variant="secondary" type="button" disabled={busy||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
    onClick={()=>{setPreview(true);setError("");setOutcomes([]);}}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Preview selected</button>
+   >Preview selected</Button>
   {preview?<div className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
    <h3 className="font-semibold">Review {eligible.length} eligible, {skipped.length} left out</h3>
    {skipped.length?<p className="text-sm text-warning-text">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
    {action==="VERIFY"?<label className="flex gap-2 text-sm"><input type="checkbox" checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
     I have checked their documents another way (for example the college&apos;s own records).
    </label>:null}
-   <button type="button" disabled={busy||guardedPending||eligible.length===0||action==="VERIFY"&&!ack}
-    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50" onClick={()=>void runGuarded(save)}>
+   <Button variant="primary" type="button" disabled={busy||guardedPending||eligible.length===0||action==="VERIFY"&&!ack}
+     onClick={()=>void runGuarded(save)}>
     {busy?"Saving…":action==="VERIFY"?"Confirm verify selected":"Confirm send back selected"}
-   </button>
-   <button type="button" disabled={busy} className="ml-2 min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3" onClick={()=>setPreview(false)}>Cancel preview</button>
+   </Button>
+   <Button variant="secondary" type="button" disabled={busy}  onClick={()=>setPreview(false)}>Cancel preview</Button>
   </div>:null}
   {outcomes.length>0?<div role="status" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
    <h3 className="font-semibold">Bulk review results</h3>

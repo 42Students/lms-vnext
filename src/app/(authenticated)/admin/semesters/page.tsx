@@ -56,7 +56,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <PageHeader  title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description="Check the selected program, term, status or page."
-        action={<Link href="/admin/semesters" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
+        action={<Link href="/admin/semesters" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>;
   }
 
@@ -105,7 +105,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           </Select>
         </label>
         <Button type="submit">Filter</Button>
-        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
       </form>
     </section>
     <form method="get" action="/admin/semesters" aria-label="Refresh semester directory">
@@ -143,6 +143,6 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     </section>
     <Pagination label="Semester pages" page={data.query.page} pageCount={data.totalPages}
       hrefForPage={page=>pageHref({...data.query,page})} />
-    <Link href="/admin/semester-courses" className="font-semibold text-[var(--lms-teal-deep)]">Semester–Course Mapping</Link>
+    <Link href="/admin/semester-courses" className="font-semibold text-primary-text">Semester–Course Mapping</Link>
   </div>;
 }

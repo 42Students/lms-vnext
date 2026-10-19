@@ -1,9 +1,15 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {Dialog} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {isVerifiedHrRoundMutation,hrRoundEditorHasUnsavedChanges} from "@/modules/placements/hr-round-editor-model";
 
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
@@ -13,7 +19,6 @@ const kinds:readonly [Kind,string][]=[
  ["TALK","Company talk"],["TEST","Online test"],["VENDOR_TEST","Vendor test"],
  ["GD","Group discussion"],["INTERVIEW","Interview"],
 ];
-const field="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground";
 
 /** REC-home-drives-46: accessible inline authoring. Server still enforces
  * author-only, pending and no existing results/slots. Never trust client flags. */
@@ -81,42 +86,42 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
  }
  const canEdit=(row:Row)=>row.createdByYou&&row.status==="PENDING";
  return <div className="space-y-3">
-  {!readOnly?<button type="button" onClick={()=>edit(null)}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
-   Add a round</button>:null}
+  {!readOnly?<Button type="button" onClick={()=>edit(null)}
+   variant="secondary">
+   Add a round</Button>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
   {error&&!open?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!readOnly?<div className="flex flex-wrap gap-2">{rows.filter(canEdit).map(row=>
-   <button key={row.id} type="button" onClick={()=>edit(row)}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+   <Button key={row.id} type="button" onClick={()=>edit(row)}
+    variant="secondary">
     Change / Remove: {row.name}
-   </button>)}</div>:null}
+   </Button>)}</div>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
     dismissible={!pending} title={active?"Change round":"Add a round"}>
     <form onSubmit={(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();void submit(active?"UPDATE":"CREATE");}}
      className="space-y-3">
      <label className="grid gap-1 text-sm text-body">Type
-      <select value={kind} onChange={e=>setKind(e.target.value as Kind)} className={field}>
+      <Select value={kind} onChange={e=>setKind(e.target.value as Kind)} className="w-full">
        {kinds.map(([id,label])=><option value={id} key={id}>{label}</option>)}
-      </select></label>
+      </Select></label>
      <label className="grid gap-1 text-sm text-body">Name
-      <input required maxLength={100} value={name} onChange={e=>setName(e.target.value)} className={field}/>
+      <Input required maxLength={100} value={name} onChange={e=>setName(e.target.value)} className="w-full"/>
      </label>
      <label className="grid gap-1 text-sm text-body">Where
-      <select value={mode} onChange={e=>setMode(e.target.value)} className={field}>
+      <Select value={mode} onChange={e=>setMode(e.target.value)} className="w-full">
        <option value="">Date to be decided</option>
        <option value="ON_CAMPUS">On campus</option>
        <option value="VIRTUAL">Online</option>
-      </select></label>
+      </Select></label>
      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
      <div className="flex flex-wrap justify-end gap-2">
-      {active?<button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
-       className="min-h-9 rounded-[var(--lms-control-radius)] border border-error px-3 text-sm text-error">Remove</button>:null}
-      <button type="button" disabled={pending} onClick={requestClose}
-       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Cancel</button>
-      <button type="submit" disabled={pending}
-       className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
-       {pending?"Saving…":active?"Save changes":"Add round"}</button>
+      {active?<Button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
+       variant="secondary" className="border-error text-error">Remove</Button>:null}
+      <Button type="button" disabled={pending} onClick={requestClose}
+       variant="secondary">Cancel</Button>
+      <Button type="submit" disabled={pending}
+       >
+       {pending?"Saving…":active?"Save changes":"Add round"}</Button>
      </div>
     </form>
     <ConfirmActionDialog open={confirmDiscard} title="Discard unsaved round changes?"

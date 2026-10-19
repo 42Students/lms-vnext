@@ -1,3 +1,6 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { ProjectParticipantListQuery } from "./project-participant-list-controls";
 import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
@@ -26,59 +29,59 @@ export function LearnerProjectMobileFilters({
         <form method="get" action="/learn/projects" className="grid gap-3 border-t border-border px-4 py-4">
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Search Projects
-            <input type="search" name="search" maxLength={100}
+            <Input type="search" name="search" maxLength={100}
               defaultValue={query.search ?? ""}
               placeholder="Search project title, course or slug"
-              className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-normal text-foreground" />
+              className="min-h-11" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Project status
-            <select name="status" defaultValue={query.status ?? ""}
-              className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-normal text-foreground">
+            <Select name="status" defaultValue={query.status ?? ""}
+              className="min-h-11">
               <option value="">All statuses</option>
               {statuses.map(([value,label])=>(
                 <option key={value} value={value}>{label}</option>
               ))}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Attention
-            <select name="attention" defaultValue={query.attention ?? ""}
-              className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-normal text-foreground">
+            <Select name="attention" defaultValue={query.attention ?? ""}
+              className="min-h-11">
               <option value="">All projects</option>
               <option value="LEARNER_ACTION">Needs my action</option>
               <option value="BLOCKED">Blocked</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Work attention
-            <select name="work" defaultValue={query.work ?? ""}
-              className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-normal text-foreground">
+            <Select name="work" defaultValue={query.work ?? ""}
+              className="min-h-11">
               <option value="">All work</option>
               <option value="BLOCKED">Has blocked tasks</option>
               <option value="NO_TASKS">No tracked tasks yet</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Sort projects
-            <select name="sort" defaultValue={query.sort ?? "RECENT"}
-              className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-normal text-foreground">
+            <Select name="sort" defaultValue={query.sort ?? "RECENT"}
+              className="min-h-11">
               <option value="RECENT">Recently updated</option>
               <option value="TITLE">Title A–Z</option>
               <option value="PROGRESS">Least progress first</option>
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Results per page
-            <select name="pageSize" defaultValue={String(query.pageSize ?? 25)}
-              className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-normal text-foreground">
+            <Select name="pageSize" defaultValue={String(query.pageSize ?? 25)}
+              className="min-h-11">
               {[10,25,50].map(value=>(
                 <option key={value} value={value}>{value}</option>
               ))}
-            </select>
+            </Select>
           </label>
           <div className="grid grid-cols-2 gap-3">
-            <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground">Apply</button>
+            <Button type="submit" className="min-h-11">Apply</Button>
             <Link href="/learn/projects"
               className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-body">
               Clear

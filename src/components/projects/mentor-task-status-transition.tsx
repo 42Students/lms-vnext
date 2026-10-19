@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
@@ -47,19 +49,19 @@ export function MentorTaskStatusTransition(props:{
   return <>
     <div className="flex flex-wrap items-end gap-2">
       <label className="grid gap-1 text-xs font-semibold text-body">Task state
-        <select data-slot="select" aria-label={"Next task state for task "+props.taskId} value={selected}
+        <Select aria-label={"Next task state for task "+props.taskId} value={selected}
           onChange={event=>{setSelected(event.target.value);setError(null);}}
-          disabled={pending} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          disabled={pending} className="min-h-11 sm:min-h-9">
           {options.map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
-        </select>
+        </Select>
       </label>
       {selected==="BLOCKED"&&!props.blockerReason?.trim()?
         <label className="grid min-w-48 gap-1 text-xs font-semibold text-body">
           What's blocking this task?
-          <input data-slot="input" type="text" value={newBlockerReason} maxLength={2000}
+          <Input type="text" value={newBlockerReason} maxLength={2000}
             onChange={event=>setNewBlockerReason(event.target.value)}
             aria-label={"Blocker note for task "+props.taskId} disabled={pending}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+            className="min-h-11 sm:min-h-9"/>
         </label>:null}
       <Button variant="secondary" size="sm" aria-label={"Review status change: "+mentorTaskQuickActionLabel(selected)} disabled={!valid||pending||
         (selected==="BLOCKED"&&!props.blockerReason?.trim()&&!newBlockerReason.trim())}

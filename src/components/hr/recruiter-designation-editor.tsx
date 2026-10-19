@@ -1,6 +1,10 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitle:string|null;updatedAt:string}) {
  const router=useRouter();
  const [title,setTitle]=useState(initialTitle??"");
@@ -30,10 +34,10 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
   <form onSubmit={event=>void save(event)} className="space-y-2">
    <label htmlFor="hr-recruiter-designation" className="block text-xs font-medium uppercase tracking-wide text-muted-foreground">Designation</label>
    <div className="flex flex-wrap gap-2">
-    <input id="hr-recruiter-designation" value={title} onChange={event=>setTitle(event.target.value)}
-       maxLength={160} className="min-h-9 min-w-48 flex-1 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
-    <button type="submit" disabled={saving||title.length>160} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60">
-      {saving?"Saving…":"Save designation"}</button>
+    <Input id="hr-recruiter-designation" value={title} onChange={event=>setTitle(event.target.value)}
+       maxLength={160} className="min-w-48 flex-1"/>
+    <Button type="submit" disabled={saving||title.length>160}>
+      {saving?"Saving…":"Save designation"}</Button>
    </div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    {success?<p role="status" className="text-sm text-muted-foreground">{success}</p>:null}

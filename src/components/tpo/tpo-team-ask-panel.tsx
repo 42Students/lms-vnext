@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 type Ask={
  id:string;title:string;status:string;dueAt:string|null;doneNote:string|null;
  askerMembershipId:string;assigneeMembershipId:string;
@@ -30,25 +31,25 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
   finally{pending.current=false;setBusy(false);}
  }
  return <div className="mt-2 flex flex-wrap gap-2">
-  {canDone?<Button type="button" variant="secondary" disabled={busy}
-   className="min-h-11 sm:min-h-9 text-xs"
+  {canDone?<Button variant="secondary" type="button" disabled={busy}
+   
    onClick={()=>setConfirmation("DONE")}>Mark done</Button>:null}
-  {canCancel?<Button type="button" variant="secondary" disabled={busy}
-   className="min-h-11 sm:min-h-9 text-xs"
+  {canCancel?<Button variant="secondary" type="button" disabled={busy}
+   
    onClick={()=>setConfirmation("CANCEL")}>Cancel ask</Button>:null}
   {confirmation?<div role="alertdialog" aria-label={confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}
-   className="w-full space-y-2 rounded-[var(--lms-canvas-radius,12px)] border border-border p-3 text-sm">
+   className="w-full space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
    <p>{confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"}</p>
    {confirmation==="DONE"?<label className="grid gap-1 text-xs">A note goes into the conversation as your reply (optional)
     <Textarea rows={2} maxLength={2000} disabled={busy} value={note}
      onChange={event=>setNote(event.target.value)} className="w-full"/>
    </label>:null}
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-   <Button type="button" disabled={busy} onClick={()=>void submit()}
-    className="min-h-11 sm:min-h-9 text-xs">
+   <Button variant="primary" type="button" disabled={busy} onClick={()=>void submit()}
+    >
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</Button>
-   <Button type="button" variant="ghost" disabled={busy} onClick={()=>setConfirmation(null)}
-    className="ml-2 min-h-11 sm:min-h-9 text-xs underline">{confirmation==="CANCEL"?"Keep it":"Not now"}</Button>
+   <Button variant="ghost" className="underline" type="button" disabled={busy} onClick={()=>setConfirmation(null)}
+    >{confirmation==="CANCEL"?"Keep it":"Not now"}</Button>
   </div>:null}
  </div>;
 }
@@ -90,16 +91,16 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
    <label className="grid gap-1 text-sm">What needs doing?
     <Input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;}}
-     className="min-h-11 sm:min-h-9 w-full"/>
+     className="min-h-9 w-full"/>
    </label>
    <label className="grid gap-1 text-sm">By (optional, IST)
     <Input type="datetime-local" disabled={busy} value={due}
      onChange={event=>{setDue(event.target.value);key.current=null;}}
-     className="min-h-11 sm:min-h-9 w-full"/>
+     className="min-h-9 w-full"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
    <Button type="submit" disabled={busy||!title.trim()||!recipientId}
-    className="min-h-11 sm:min-h-9">
+    >
     {busy?"Sending…":"Ask someone"}</Button>
   </form>
   <ul className="space-y-2">{items.map(ask=>{

@@ -1,4 +1,6 @@
 "use client";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -114,20 +116,20 @@ export function TpoBatchInvitationControl(props: Props) {
     return <section aria-label="Registration deadline" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <h2 className="font-semibold">{deadlinePassed ? "Registration closed" : "Registration is open"}</h2>
       <label htmlFor="batch-move-date" className="block text-sm">Register by</label>
-      <input id="batch-move-date" aria-label="Registration deadline" type="date"
+      <Input className="max-w-xs" id="batch-move-date" aria-label="Registration deadline" type="date"
         value={date} min={props.minDate} onChange={event => setDate(event.target.value)}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+        />
       <div className="flex flex-wrap gap-2">
-        <button type="button" disabled={busy || !date || date < props.minDate || sameDeadline}
+        <Button variant="primary" type="button" disabled={busy || !date || date < props.minDate || sameDeadline}
           onClick={() => void saveDeadline(false)}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 disabled:opacity-50">
+          >
           {busy ? "Saving…" : deadlinePassed ? TPO_INVITATION_COPY.reopenAndTell : TPO_INVITATION_COPY.move}
-        </button>
-        <button type="button" disabled={busy || !props.deadline}
+        </Button>
+        <Button variant="secondary" type="button" disabled={busy || !props.deadline}
           onClick={() => setConfirmClear(true)}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 disabled:opacity-50">
+          >
           {TPO_INVITATION_COPY.clear}
-        </button>
+        </Button>
       </div>
       {!deadlinePassed&&props.invitable>0?<fieldset id="batch-reminder" className="space-y-2 border-t border-border pt-3">
         <legend className="text-sm font-semibold">Remind eligible students</legend>
@@ -137,11 +139,11 @@ export function TpoBatchInvitationControl(props: Props) {
             onChange={event=>setRemindReview(event.target.checked)}/>
           I reviewed the recipients. Send a reminder in the app; no SMS or email is claimed.
         </label>
-        <button type="button" disabled={busy||!remindReview}
+        <Button variant="secondary" type="button" disabled={busy||!remindReview}
           onClick={()=>void remind()}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm disabled:opacity-50">
+          >
           {busy?"Sending…":"Send reminder"}
-        </button>
+        </Button>
       </fieldset>:null}
       {deadlinePassed ? <p className="text-sm text-muted-foreground">
         Move the deadline to reopen registration and tell eligible students in the app.
@@ -156,13 +158,13 @@ export function TpoBatchInvitationControl(props: Props) {
   return <section className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4" aria-label="Invite batch">
     <h2 className="font-semibold">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</h2>
     <label className="block text-sm" htmlFor="batch-register-by">{TPO_INVITATION_COPY.dateLabel}</label>
-    <input id="batch-register-by" aria-label="Registration deadline" type="date" value={date} min={props.minDate}
+    <Input className="max-w-xs" id="batch-register-by" aria-label="Registration deadline" type="date" value={date} min={props.minDate}
       onChange={event => setDate(event.target.value)}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
-    <button type="button" onClick={() => void invite()}
-      disabled={busy || !ready} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 disabled:opacity-50">
+       />
+    <Button variant="primary" type="button" onClick={() => void invite()}
+      disabled={busy || !ready} >
       {busy ? "Inviting…" : TPO_INVITATION_COPY.invitation + " " + props.invitable}
-    </button>
+    </Button>
     {props.eligible === 0 ? <p className="text-sm">Nobody in this batch is eligible yet. Decide who is in placements first.</p> : null}
     {message ? <p role="status" className="text-sm">{message}</p> : null}
     {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}

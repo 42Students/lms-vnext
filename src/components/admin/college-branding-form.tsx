@@ -148,13 +148,13 @@ export function CollegeBrandingForm({
                 {key === "primaryColor" ? "Primary colour" : "Secondary colour"}
               </span>
               <div className="flex items-center gap-2">
-                <input
+                <Input
                   type="color"
                   aria-label={`${key} picker`}
                   value={validColor(values[key]) ?? "#26BAC7"}
                   onChange={(event) => set(key, event.target.value.toUpperCase())}
                   disabled={!canEdit}
-                  className="h-11 w-12 cursor-pointer rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-1"
+                  className="h-11 !w-12 !min-w-12 shrink-0 cursor-pointer p-1"
                 />
                 <Input
                   value={values[key] ?? ""}
@@ -218,12 +218,12 @@ export function CollegeBrandingForm({
       <aside
         aria-label="Sign-in preview"
         style={previewStyle}
-        className="h-fit rounded-[var(--lms-canvas-radius,12px)] border border-border bg-muted p-4"
+        className="h-fit rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
       >
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Sign-in preview
         </p>
-        <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5 shadow-none">
+        <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 shadow-none">
           {previewLogoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -240,14 +240,14 @@ export function CollegeBrandingForm({
           <p className="mb-0 mt-2 text-xl font-semibold text-foreground">
             {collegeName}
           </p>
-          <div className="mt-4 grid grid-cols-2 gap-1 rounded-[var(--lms-control-radius,9px)] bg-muted p-1 text-xs">
-            <span className="rounded-[var(--lms-control-radius,9px)] bg-surface py-2 text-center font-semibold text-link shadow-none">
+          <div className="mt-4 grid grid-cols-2 gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1 text-xs">
+            <span className="rounded-[var(--lms-control-radius)] bg-surface py-2 text-center font-semibold text-link shadow-none">
               Phone
             </span>
             <span className="py-2 text-center text-body">Email</span>
           </div>
-          <div className="mt-3 h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface" />
-          <div className="mt-3 flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius,9px)] bg-primary text-sm font-semibold text-on-primary">
+          <div className="mt-3 h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface" />
+          <div className="mt-3 flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary text-sm font-semibold text-on-primary">
             Send code
           </div>
           <p className="mb-0 mt-3 text-xs text-link">Resend code</p>

@@ -1,4 +1,6 @@
 "use client";
+import { Radio } from "@/components/ui/radio";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -51,13 +53,13 @@ export function LearnerPlacementRegistration({registration}:Props) {
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
       {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
-        <input type="radio" name="sp-choice" checked={choice===item.value}
+        <Radio name="sp-choice" checked={choice===item.value}
           onChange={()=>{setChoice(item.value);setConsent(false);}} className="mt-1" />
         <span><span className="block font-semibold">{item.label}</span>
           <span className="block text-sm text-muted-foreground">{item.hint}</span></span>
       </label>)}
       {choice==="PLACEMENTS"?<label className="flex gap-2 text-sm">
-        <input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>
+        <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
         <span>{LEARNER_REGISTRATION_COPY.consent}</span>
       </label>:null}
     </fieldset>
