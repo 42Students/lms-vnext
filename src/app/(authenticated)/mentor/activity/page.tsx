@@ -32,11 +32,11 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
     <PageHeader eyebrow="Mentor · Projects" title="Project activity"
       description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
-      actions={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 md:min-h-9 md:py-0 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Projects</Link>} />
+      actions={<Link data-unskin="" href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-safe:transition-colors motion-safe:duration-150 motion-reduce:transition-none">Projects</Link>} />
     {!data.enabled ? <div role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
-      <form action="/mentor/activity" method="get" className={mentorActivityFormLayout+" !rounded-none !border-0 !bg-transparent !p-0 sm:!grid-cols-1 md:!grid-cols-2"}>
+      <form action="/mentor/activity" method="get" className={mentorActivityFormLayout+" !rounded-none !border-0 !bg-transparent !p-0 sm:!grid-cols-1 md:!grid-cols-2 xl:!grid-cols-4"}>
         <label className="grid gap-1 text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Assigned project title
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             placeholder="Search your project names" className="min-h-11 md:min-h-9 w-full min-w-0" />
@@ -91,13 +91,13 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             <option value="20">20</option><option value="50">50</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">Apply</Button>
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply</Button>
         <Link href="/mentor/activity" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
-        <Link href={mentorPortfolioActivityExportHref(data.query)} download
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 md:min-h-9 md:py-0 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <Link data-unskin="" href={mentorPortfolioActivityExportHref(data.query)} download
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-3 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-safe:transition-colors motion-safe:duration-150 motion-reduce:transition-none">
           Export filtered activity CSV (max 200)
         </Link>
         {data.total>200?<span role="status" className="text-xs text-body">
@@ -106,8 +106,8 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
       </div>
       {data.items.length === 0 ? <EmptyState title="No recorded activity"
         description="No persisted events match your assigned projects. Missing events do not imply no work occurred." />
-        : <ol className="divide-y divide-[var(--lms-canvas-border)]">{data.items.map(event =>
-          <li key={event.id} className="py-4">
+        : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(event =>
+          <li key={event.id} className="py-[var(--lms-space-3)]">
             <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
               <p className="min-w-0 break-words text-sm font-semibold text-foreground">{event.label}</p>
               <span className="text-xs text-muted-foreground">{mentorActivityImportanceLabel(event.importance)}</span>
