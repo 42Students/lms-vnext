@@ -1,10 +1,10 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Dialog} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
-import {Textarea} from "@/components/ui/textarea";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -87,8 +87,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h2 className="text-lg font-semibold">Candidate interviews</h2>
     <p className="mt-1 text-sm text-body">Schedule, edit, cancel, mark Completed or No Show. Actions are audited and notify the learner.</p></div>
-   <button type="button" disabled={!available.length||!candidates.length} onClick={()=>open()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Schedule interview</button>
+   <Button variant="primary" type="button" disabled={!available.length||!candidates.length} onClick={()=>open()}
+    className="min-h-9">Schedule interview</Button>
   </div>
   {!available.length||!candidates.length?<p role="status" className="text-sm text-body">Schedule an interview when a pending or scheduled round and a candidate are available.</p>:null}
   <DataTable<(typeof appointments)[number]>
@@ -113,17 +113,17 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
-      }))} className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      }))} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Download .ics</a>:null}
      {row.status==="SCHEDULED"?<>
-      <button type="button" disabled={busy} onClick={()=>open(row)}
-       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Edit</button>
-      <button type="button" disabled={busy} onClick={()=>void decide(row,"COMPLETED")}
-       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Completed</button>
-      <button type="button" disabled={busy} onClick={()=>void decide(row,"NO_SHOW")}
-       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">No Show</button>
-      <button type="button" disabled={busy} onClick={()=>void decide(row,"CANCEL")}
-       className="min-h-9 rounded-[9px] border border-border px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
+      <Button variant="secondary" type="button" disabled={busy} onClick={()=>open(row)}
+       className="min-h-9">Edit</Button>
+      <Button variant="secondary" type="button" disabled={busy} onClick={()=>void decide(row,"COMPLETED")}
+       className="min-h-9">Completed</Button>
+      <Button variant="secondary" type="button" disabled={busy} onClick={()=>void decide(row,"NO_SHOW")}
+       className="min-h-9">No Show</Button>
+      <Button variant="secondary" type="button" disabled={busy} onClick={()=>void decide(row,"CANCEL")}
+       className="min-h-9">Cancel</Button>
      </>:<span className="text-body">Recorded</span>}
     </div>},
     ]}
@@ -156,14 +156,14 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <label className="grid gap-1 text-sm">Interviewer (optional)<Input value={interviewer}
      onChange={e=>setInterviewer(e.target.value)} className="w-full"/></label>
     {editing?<label className="grid gap-1 text-sm">Reason for change<Textarea rows={2} value={reason}
-     onChange={e=>setReason(e.target.value)} className="w-full"/></label>:null}
+     onChange={e=>setReason(e.target.value)} className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/></label>:null}
     {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
     <div className="flex flex-wrap gap-3">
-     <button type="button" disabled={busy||!start||(Boolean(editing)&&reason.trim().length<3)}
-      onClick={()=>void save()} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-      {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</button>
-     <button type="button" disabled={busy} onClick={()=>setShow(false)}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Cancel</button>
+     <Button variant="primary" type="button" disabled={busy||!start||(Boolean(editing)&&reason.trim().length<3)}
+      onClick={()=>void save()} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</Button>
+     <Button variant="secondary" type="button" disabled={busy} onClick={()=>setShow(false)}
+      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</Button>
     </div>
   </Dialog>
   <ConfirmDialog open={decision!==null} onOpenChange={open=>{if(!open&&!busy)setDecision(null);}}
@@ -173,7 +173,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    onConfirm={()=>void confirmDecision()}>
    <label className="grid gap-1 text-sm font-semibold">Reason or outcome note
     <Textarea rows={3} value={decisionReason} onChange={e=>setDecisionReason(e.target.value)}
-     className="w-full" /></label>
+     className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" /></label>
   </ConfirmDialog>
  </section>;
 }
