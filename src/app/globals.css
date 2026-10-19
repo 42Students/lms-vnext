@@ -763,6 +763,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   background: var(--lms-surface);
   border-color: var(--lms-error);
 }
+:root[data-tracker-theme="dark"] { --lms-tooltip-background: #131c2e; }
 :root[data-tracker-theme="dark"] [data-slot="info-popover"] > div {
   color: var(--lms-body-text);
   background: var(--lms-surface);
@@ -835,6 +836,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   --lms-dropdown-shadow: 9px 11px 28px rgba(0,0,0,.1);
   --lms-search-dropdown-shadow: 0 14px 16px rgba(0,0,0,.04);
   --lms-tooltip-shadow: 0 2px 8px rgba(0,0,0,.2);
+  --lms-tooltip-background: #1a1d21;
   --lms-toast-shadow: var(--lms-elevation-3);
   --lms-drawer-shadow: -4px 0 24px rgba(0,0,0,.12);
   --lms-scrollbar-thumb: #c4c4c4;
