@@ -19,7 +19,7 @@ export function SuperAdminCompanyRestore({id,name}:{id:string;name:string}){
  }
  return <div className="space-y-1">
   <Button type="button" variant="secondary" disabled={busy} onClick={()=>void restore()}
-   className="min-h-9">
+   className="min-h-11 sm:min-h-9">
    {busy?"Restoring…":"Restore company"}
   </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
