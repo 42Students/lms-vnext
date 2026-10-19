@@ -18,15 +18,15 @@ export function MentorMeetingHistory({meetings}:{meetings:readonly MentorMeeting
  return <section className="mt-3 space-y-2 text-sm" aria-label="Meeting history">
   <h4 className="font-semibold">Past meetings / Meeting history ({meetings.length})</h4>
   {meetings.length===0?<p className="text-muted-foreground">No past meetings yet.</p>:
-    <ul className="space-y-2">
-      {visible.map(item=><li key={item.id} className="rounded-[var(--lms-control-radius)] border border-border p-2">
+    <ul className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+      {visible.map(item=><li key={item.id} className="py-[var(--lms-space-3)]">
         <span className="font-medium">{item.title}</span>
         <span className="block text-xs text-muted-foreground">{when(item.startsAt)} · {item.status}</span>
       </li>)}
     </ul>}
   {meetings.length>PREVIEW?<button type="button"
     aria-expanded={expanded} onClick={()=>setExpanded(value=>!value)}
-    className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
+    className="min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     {expanded?"Show fewer":"View all "+meetings.length}
   </button>:null}
  </section>;
