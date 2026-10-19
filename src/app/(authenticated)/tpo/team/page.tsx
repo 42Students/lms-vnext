@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import {Avatar} from "@/components/ui/avatar";
 import { Tabs } from "@/components/ui/tabs";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
