@@ -1,6 +1,5 @@
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Tabs } from "@/components/ui/tabs";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { MetricBar } from "@/components/ui/metric-bar";
 import funnelStyles from "@/components/hr/recruiter-report-funnel.module.css";
 import { HrCompanyReportsGrid } from "@/components/hr/hr-company-reports-grid";
