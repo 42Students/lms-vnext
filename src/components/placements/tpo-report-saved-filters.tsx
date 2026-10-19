@@ -75,6 +75,6 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
    <Button variant="secondary" type="button" disabled={!picked} onClick={apply} >Apply</Button>
    <Button variant="secondary" type="button" disabled={!picked} onClick={remove} >Delete</Button>
   </div>
-  {message?<p role="status" className="mt-2 text-xs text-body">{message}</p>:null}
+  {message?<p role="status" aria-live="polite" className="mt-2 text-xs text-body">{message}</p>:null}
  </Disclosure>;
 }
