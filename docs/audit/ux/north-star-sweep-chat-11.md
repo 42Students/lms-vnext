@@ -107,4 +107,4 @@ Check at 320/360/390/768/1280px: page-canvas border/padding, TPO settings left n
 
 ## Follow-on sweep (2026-10-19)
 
-The continuation after this initial source inventory is recorded in [`north-star-sweep-11.md`](./north-star-sweep-11.md). It contains the additional **96 cumulative source commits** on `chatgpt/chat-11-b`, the exact 57 edited source paths, legacy token fixes, standalone card-wrapper corrections, malformed utility cleanup, primary-button contrast fixes, and deferred browser/CI checks. This historical ledger remains intact as the first-pass baseline.
+The continuation after this initial source inventory is recorded in [`north-star-sweep-11.md`](./north-star-sweep-11.md). It contains the additional **124 cumulative source commits** on `chatgpt/chat-11-b`, the exact 72 edited source paths, legacy token fixes, standalone card-wrapper corrections, malformed utility cleanup, primary-button contrast fixes, and deferred browser/CI checks. This historical ledger remains intact as the first-pass baseline.
