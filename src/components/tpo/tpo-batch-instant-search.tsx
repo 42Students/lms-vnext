@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 "use client";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -19,7 +20,7 @@ export function TpoBatchInstantSearch({value}:{value:string}){
  },[draft,router,value]);
  return <label className="min-w-0 flex-1 text-sm">Search batches
   <span className="mt-1 flex min-w-0 items-center gap-2">
-   <input type="search" name="q" value={draft} maxLength={100}
+   <Input type="search" name="q" value={draft} maxLength={100}
     onChange={event=>setDraft(event.target.value)} autoComplete="off"
     className="min-h-9 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
     aria-label="Search batches"/>
