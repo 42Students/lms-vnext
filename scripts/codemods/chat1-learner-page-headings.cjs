@@ -13,6 +13,7 @@ const plans=[
   ["applications/page.tsx","Applications","/learn/my-placements/offers","min-w-0 space-y-6"],
   ["jobs/page.tsx","Drives","/learn/my-placements/rules?from=drives","min-w-0 space-y-6"],
   ["placement/page.tsx","Placement cell",null,"space-y-7"],
+  ["schedule/page.tsx","Schedule",null,"min-w-0 space-y-6"],
 ];
 const results=[];
 let failed=false;
@@ -26,12 +27,15 @@ for(const [relative,title,href,css] of plans){
     let after=before;
     let header='      <PageHeader title="'+title+'"';
     if(href){
-      const quote=href.replace(/[.*+?^$()|[\]{}\\]/g,"\\$&");
-      const rx=new RegExp('^[ \\t]*<Link href="'+quote+'"[\\s\\S]*?<\\/Link>[ \\t]*\\r?\\n',"gm");
-      const matches=[...after.matchAll(rx)];
-      if(matches.length!==1)throw Error("expected one link action");
-      const action=matches[0][0].trim();
-      after=after.replace(matches[0][0],"");
+      const marker='<Link href="'+href+'"';
+      const matchAt=after.indexOf(marker);
+      if(matchAt<0||after.indexOf(marker,matchAt+1)>=0)throw Error("expected one link action");
+      const start=after.lastIndexOf("\n",matchAt)+1;
+      const close=after.indexOf("</Link>",matchAt);
+      if(close<0)throw Error("link closing tag missing");
+      const end=close+"</Link>".length;
+      const action=after.slice(start,end).trim();
+      after=after.slice(0,start)+after.slice(end).replace(/^[ \t]*\r?\n/,"");
       header+=" actions={(\n        "+action+"\n      )}";
     }
     header+=" />";
