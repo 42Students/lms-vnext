@@ -7,6 +7,7 @@ import {
 import { Input } from "./input";
 import { Button } from "./button";
 import { PopoverPanel } from "./popover";
+import { CalendarGrid } from "./calendar-grid";
 import { cx } from "@/lib/class-names";
 
 export type DateInputProps = Omit<ComponentPropsWithRef<"input">, "type"> & {
@@ -140,7 +141,7 @@ export function DateInput({
               <Button type="button" variant="ghost" size="icon-sm"
                 aria-label="Next month" onClick={() => monthDelta(1)}>›</Button>
             </div>
-            <div role="group" aria-label={monthYear} className="grid grid-cols-7 gap-1 text-center">
+            <CalendarGrid variant="spaced" role="group" aria-label={monthYear} className="text-center">
               {weekdays.map(day => <span key={day} aria-hidden="true" className="py-1 text-[12px] font-semibold text-[var(--lms-muted-text)]">{day}</span>)}
               {days.map(day => {
                 const iso = localISO(day);
@@ -159,7 +160,7 @@ export function DateInput({
                   {day.getDate()}
                 </Button>;
               })}
-            </div>
+            </CalendarGrid>
           </PopoverPanel> : null}
     </div>
   );
