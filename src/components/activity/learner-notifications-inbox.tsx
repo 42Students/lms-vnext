@@ -16,6 +16,7 @@ import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import type { AnnouncementFeedItem } from "@/components/announcements/announcement-feed";
 import { filterLearnerInbox,learnerNotificationInboxQuerySchema,
   type LearnerInboxQuery,learnerNotificationInboxHref } from "@/modules/activity/learner-notification-inbox-model";
@@ -121,16 +122,15 @@ export function LearnerNotificationsInbox({
       <nav aria-label="Filter notifications by type" className="min-w-0">
         <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
           {learnerNotificationCategories.map(({ key, label }) => (
-            <Button
+            <FilterChip
               key={key}
-              variant={active === key ? "primary" : "secondary"}
               type="button"
               aria-pressed={active === key}
               onClick={() => selectCategory(key)}
               className="min-h-11 shrink-0 rounded-[8px] px-4 text-center text-sm font-medium whitespace-nowrap"
             >
               {label}
-            </Button>
+            </FilterChip>
           ))}
         </div>
       </nav>
@@ -143,11 +143,10 @@ export function LearnerNotificationsInbox({
             placeholder="Search title or message"
             className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
         </label>
-        <Button type="button" aria-pressed={unread==="unread"}
-          onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
-          variant={unread==="unread" ? "primary" : "secondary"} className="min-h-11 min-[768px]:min-h-9">
+        <FilterChip type="button" aria-pressed={unread==="unread"}
+          onClick={()=>selectUnread(unread==="unread"?"all":"unread")} className="min-h-11 min-[768px]:min-h-9">
           {unread==="unread"?"Unread only ✓":"Unread only"}
-        </Button>
+        </FilterChip>
         <Button type="button" onClick={applySearch}
           variant="secondary" className="min-h-11 min-[768px]:min-h-9">
           Apply search
