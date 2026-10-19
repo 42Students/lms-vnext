@@ -316,3 +316,18 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 
 - [ ] Browser screenshots, computed properties, typed build, tests and CI remain explicitly unverified.
 - [ ] **Next file**: `src/components/admin/college-create-form.tsx` (Super Admin first-third tenant setup), followed by `src/components/admin/college-edit-dialog.tsx`.
+
+
+### Super Admin college tenant forms / domain ownership source parity
+
+| Completed file | Exact legacy label and surface value | Grep, control tags, responsive proof |
+| --- | --- | --- |
+| [x] `src/components/admin/college-create-form.tsx` | `:100,121,138` college name/code and other labels use 13px/600 from `components___form.scss:110-112`; optional address group keeps a separate white disclosure (not page wrapper); shared Input/Select/Button. | Raw visible controls 0, hex 0, inline styles 0, Button 1/1, Select 1/1. Create button 44px ≤767px/36px ≥768px (`md`); single column phone / existing responsive grid on desktop. |
+| [x] `src/components/admin/college-edit-dialog.tsx` | `:139,146,164,182,200` all college edit form labels use 13px/600 while shared Dialog/Input and field chrome inherit 10px radius/teal focus from `components___form.scss:120-142`. | Native controls 0, hex 0, inline styles 0, Button 3/3. Action controls 44px phone /36px ≥768px; 1/2 column dialog responsive. |
+| [x] `src/components/admin/college-admin-lifecycle-action.tsx` | Suspension reason label `:37` now 13px/600 (formerly 12px/500), preserving other lifecycle confirmation and audit states. | Raw controls 0, hex 0, inline styles 0, Button 1/1. Two explicit mobile 44px / desktop 36px controls. |
+| [x] `src/components/admin/tenant-domain-manager.tsx` | Domain entry label `:188` 13px/600 as legacy form; separate DNS ownership record card deliberately retained as an object/policy evidence panel, not page wrapping. | Raw controls 0, hex 0, inline styles 0, Button 4/4. Four explicit 44px phone /36px ≥768px actions; domain creation form grid collapses to one column below md. |
+
+**Equivalent greps on connected repository source (no app execution):** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l`, `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l`, and `rg -o 'style=\\{' <file> | wc -l` each return `0` across all four files. Shared JSX `Button` and `Select` opening/closing counts match. Values: `components___form.scss:110-142` labels/radius/hover, `components___variables.scss:139` 44px phone, `globals.css:341` 36px desktop, `old-lms-shell.css:73` 767px maximum phone breakpoint. All API effects and tenant-scoped permissions unchanged.
+
+- [ ] Browser screenshots, computed-style parity, TypeScript build, tests and CI remain open.
+- [ ] **Next file:** `src/components/admin/college-branding-form.tsx`, then `src/components/admin/college-logo-uploader.tsx`.
