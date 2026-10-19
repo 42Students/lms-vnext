@@ -56,7 +56,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
    }finally{setPending(null);}
  }
  return <div className="flex flex-wrap items-center gap-2" aria-label={kind+" lifecycle actions"}>
-   {actions.map(action=><Button key={action} type="button" size="sm"
+   {actions.map(action=><Button key={action} type="button" size="sm" className="min-h-11 sm:min-h-[var(--lms-control-height)]"
      variant={action==="ARCHIVE"?"ghost":"secondary"}
      disabled={pending!==null||saved}
      onClick={()=>void run(action)}>
