@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Disclosure } from "@/components/ui/disclosure";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 
@@ -195,10 +196,7 @@ export function FacultyCourseHomeSignals({
                 <span className="text-sm font-semibold text-foreground">
                   {learner.name}
                 </span>
-                <details className="min-w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs">
-                  <summary className="cursor-pointer font-semibold text-body">
-                    {learner.severity>=3?"Critical":"Moderate"} · View snapshot
-                  </summary>
+                <Disclosure title={`${learner.severity>=3?"Critical":"Moderate"} · View snapshot`} className="min-w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs">
                   <div className="mt-2 space-y-2 text-xs text-muted-foreground">
                     <p>Attendance: {learner.attendancePercent===null?"Not enough marked sessions":learner.attendancePercent+"%"}</p>
                     {learner.attendancePercent!==null?<div role="img" aria-label={"Attendance "+learner.attendancePercent+" percent"} className="h-2 overflow-hidden rounded-full bg-muted">
@@ -209,7 +207,7 @@ export function FacultyCourseHomeSignals({
                   </div>
                   <Link href={`/teacher/courses/${encodeURIComponent(deliveryId)}/students`}
                     className="mt-2 inline-block text-primary-text underline">View students</Link>
-                </details>
+                </Disclosure>
               </li>
             ))}
           </ul>
