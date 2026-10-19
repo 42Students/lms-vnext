@@ -391,3 +391,29 @@
     label .ln-required-asterisk):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-error) !important;
 }
+
+/* DIALOG SURFACES
+ * Legacy: components___antddesign.scss:1033-1061 (12px rounded modal
+ * on phones), components___variables.scss:30,32,224-232 (border, surface
+ * and cool layered elevation), old-lms-pages.md:6 (white surfaces).
+ * The owner of dialog placement, sizing, close controls and animation remains
+ * chat-16; this rule never touches those concerns.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(dialog, [role="dialog"], [role="alertdialog"])
+  :not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-white) !important;
+  color: var(--lms-neutral-700) !important;
+  border-color: var(--lms-neutral-200) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--lms-elevation-4) !important;
+  font-family: inherit !important;
+}
+/* Legacy: components___common.scss:1093-1102 (modal header division),
+ * components___variables.scss:30 (#e5e9f0 borders).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(dialog, [role="dialog"], [role="alertdialog"])
+  :where(header, footer):not(:where([data-unskin], [data-unskin] *)) {
+  border-color: var(--lms-neutral-200) !important;
+}
