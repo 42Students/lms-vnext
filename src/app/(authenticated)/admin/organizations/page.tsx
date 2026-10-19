@@ -29,7 +29,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
   requirePermission(context, "admin-scope.select");
   const filters=parseAdminDirectorySearchParams(await searchParams);
   if (!filters) return <div className="min-w-0 space-y-6">
-    <PageHeader eyebrow="Super Admin" title="Organizations"/>
+    <PageHeader title="Organizations"/>
     <ErrorState title="Invalid organization directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
       action={<Link href="/admin/organizations" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold underline">Clear filters</Link>}/>
@@ -87,7 +87,6 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
         title="Organizations"
         description="Platform organizations are constrained by the selected Super Admin safety scope."
       />
@@ -122,8 +121,9 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
        <Link href={href(page)} className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm text-primary-text underline">Refresh</Link>
       </form>
       <p role="status" className="text-sm text-body">{q?matching.length+" of "+organizations.length:organizations.length} organizations · Page {page} of {totalPages}</p>
-      {organizations.length===0 ? <EmptyState title="No organizations in this scope" description="There are no active organizations visible under the current Super Admin safety scope. Create one only when your role and scope permit it."/> : null}
-      <DataTable caption="Existing Organizations" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+      <DataTable caption="Existing Organizations" empty={<EmptyState
+        title={q?"No organizations match your search":"No organizations in this scope"}
+        description={q?"No active organizations match this search in the selected Super Admin safety scope. Clear the search or select another authorized scope.":"There are no active organizations visible under the current Super Admin safety scope. Create one only when your role and scope permit it."}/>}
         columns={columns} rows={visible} getRowKey={organization=>organization.id}/>
       <Pagination label="Organization pages" page={page} pageCount={totalPages} hrefForPage={href}/>
     </div>
