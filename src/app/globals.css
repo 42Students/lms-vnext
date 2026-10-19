@@ -42,6 +42,9 @@
   --lms-warning-subtle: rgba(217, 119, 6, 0.1);
   --lms-error: #ef4444;
   --lms-error-subtle: rgba(239, 68, 68, 0.1);
+  --lms-success-text: #065f46;
+  --lms-warning-text: #92400e;
+  --lms-error-text: #b91c1c;
   --lms-info: #26bac7;
   --lms-info-subtle: #eff8fa;
 
