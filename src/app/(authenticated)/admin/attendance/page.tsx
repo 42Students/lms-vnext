@@ -61,7 +61,7 @@ export default async function SuperAdminAttendancePage({
       <PageHeader title="Attendance" description="Attendance oversight for the selected college."/>
       <ErrorState title="Invalid attendance month"
         description="Choose a month in YYYY-MM format and retry."
-        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center font-semibold underline">Reset month filter</Link>}/>
+        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Reset month filter</Link>}/>
     </div>;
   }
   const options =
