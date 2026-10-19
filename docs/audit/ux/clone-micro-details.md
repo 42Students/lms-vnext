@@ -137,6 +137,30 @@ The current pass also inspected the **original legacy repository** `42Students/l
 - Responsive: baseline hidden scrollbars and focus rules apply on mobile and desktop; the thin scrollbar exceptions are for horizontally overflowing table/tab viewport only. Touch press is guarded by `@media (hover:none)`; reduced motion is guarded by the OS setting; print rules are in `@media print`. No widths, paddings, grid/flex, positioning or modal dimensions changed.
 - No CI, TypeScript checks or app execution were performed, as requested. GitHub code search is not a substitute for a whole-repo grep; **do not claim zero hand-rolled instances**. Full paired-screen verification is a separate future orchestrator step.
 
+## Remaining acceptance queue — ownership and exact unblock condition
+
+This is a deliberately finite list of the **unticked requirements**. The source-matched micro stylesheet is feature-complete within the allowed CSS-only surface, but the whole checklist is not closed until these external acceptance artifacts exist. Record verified values here; do not infer them from nearby menu/sidebar styles.
+
+| Open requirement | Missing proof or required non-CSS change | Next action / owner |
+| --- | --- | --- |
+| A4 text selection | Legacy browser-computed `::selection` foreground/background and selected-range screenshot; SCSS did not define it | Orchestrator old-LMS browser comparison; update `micro-details.css` only if measured paint differs |
+| Table selected row | AntD legacy selected-cell background, focus-within and hover-over-selected computed properties; source `_common.scss:849-855` specifies only ordinary hover | chat-14 table owner or orchestrator browser; never substitute the sidebar tint for a selected table value |
+| Checkbox/radio/switch glyph | Checkmark/dot/thumb motion and disabled/indeterminate state recordings on same browser/device | chat-17 shared controls owner + orchestrator; native glyph is not CSS-interpolable |
+| Browser autofill | Chrome/Safari/Firefox user-agent paint and inherited ink measured against the old portal | Orchestrator; avoid forced background overrides until verified |
+| Tooltip delay | Mouse-enter and mouse-leave timers from legacy AntD tooltip rendered behavior, then JS `InfoPopover` trigger semantics | chat-16/17 tooltip owner; CSS animation is not a mouse delay |
+| Toast duration | Legacy success/info/error lifetime, pause-on-hover/focus and cap/queue behavior | chat-16/17 toast owner; currently 4,500–15,000ms/errors persistent from `toast.tsx:135-143` |
+| Toast placement | Legacy viewport edge offsets and responsive bottom/side placement | chat-16/17; current `toast.tsx:54-73` uses bottom safe area; changing it may affect layout and is forbidden in this lane |
+| Toast enter/exit motion | Legacy toast keyframes, easing and lifetime/unmount state in browser | chat-16/17; current `globals.css:269-287` is 250ms |
+| Dropdown close | Exit animation needs a mounted closing state; native `details` closes immediately | chat-16 dropdown owner; cannot be solved by a style-only override |
+| Modal/drawer animation | Browser-measured old AntD open/close vs `legacy-overlays.css` enter/exit, including focus restoration | chat-16 overlays; micro stylesheet does not change it |
+| Responsive scrollbar/focus screenshots | Captures at phone 375px, tablet 768px/1024px, desktop 1280px, keyboard and mouse/touch with same elements | Orchestrator; CSS source breakpoint proof above is not a screenshot |
+| Favicon | Legacy `lms2-fe/public/favicon.svg` has **two** fills `#266891/#ADE2E7`; vNext `icon.svg` has **three** fills with different cyan | chat-12/logo ownership; requires editing icon asset/Next icon metadata, disallowed for chat-20 |
+| Browser tab title | Legacy `getBrowserTitle` gives `42 LMS - Title`; vNext title template is `Title · 42LMS` | chat-12/metadata owner; requires `layout.tsx`, not CSS |
+| Print output | Actual legacy printable reports, page size, breakpoints and blank/overflow behavior | chat-6 print owner and orchestrator; existing micro `@media print` touches interaction paint only |
+| A3/A4/I category closure | Above acceptance data + exhaustive local greps and responsive side-by-side evidence | Orchestrator after each owning lane finishes |
+
+**Handoff protocol:** The comparison owner should send the exact screenshot/computed-style value, legacy page URL, viewport, browser and interaction state for each gap. Chat-20 can then amend only `micro-details.css` and this audit where the fix is CSS paint. Do not ask chat-20 to change tooltips, timers, metadata, favicon, shared components, grid code, or report geometry. No pass/fail CI or browser claims have been made in this source-only turn.
+
 ## Strict checklist closure
 
 - [x] Import once below legacy skin (source read: `globals.css:6-9`; one micro import).
