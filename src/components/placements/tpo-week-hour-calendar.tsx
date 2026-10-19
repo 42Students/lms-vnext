@@ -162,8 +162,9 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       {inHours.map(event=>{
        const top=Math.max(0,(event.startMinute-FIRST*60)/60*HEIGHT);
        const blockHeight=Math.max(22,(event.endMinute-event.startMinute)/60*HEIGHT);
-       const position={top,height:blockHeight,left:(event.column/event.columns*100)+"%",
-        width:(100/event.columns)+"%"};
+       const position={top,height:blockHeight,
+        left:"calc("+(event.column/event.columns*100)+"% + 2px)",
+        width:"calc("+(100/event.columns)+"% - 4px)"};
        const inner=<><strong className="block truncate">{event.title}</strong>
         <span className="block truncate">{event.companyName}</span>
         <span className="block text-xs">{kinds[event.kind]??event.kind}</span></>;
