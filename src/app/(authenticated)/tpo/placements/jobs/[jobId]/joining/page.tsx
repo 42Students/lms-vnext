@@ -57,7 +57,7 @@ export default async function TpoDriveJoiningPage({
         ))}
       </section>
       {tracker.items.length === 0 ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
+        <p role="status" className="text-sm text-body rounded-[9px] border border-border bg-muted p-3">
           No currently accepted offers are recorded for this drive. Issued,
           declined and withdrawn offers cannot be assigned a joining outcome.
         </p>

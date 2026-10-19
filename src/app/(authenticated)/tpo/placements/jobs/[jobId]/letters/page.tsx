@@ -41,7 +41,7 @@ export default async function TpoOfferLettersPage({
         that an offer letter was generated, sent, received or acknowledged.
       </p>
     </header>
-    <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+    <p role="status" className="text-sm text-body rounded-[9px] border border-border bg-muted p-3">
       Letter-issued and letter-acknowledged states are unavailable: the registered
       placement offer schema has no letter document, delivery or acknowledgement
       record. Bulk letter-status changes are disabled until their owner-approved
