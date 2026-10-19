@@ -85,13 +85,13 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
     <input type="number" min={min} max={max} step={1} disabled={busy||readOnly}
      aria-label={label} value={draft[key]??college[key]}
      onChange={event=>setRule(key,Number(event.target.value))}
-     className="min-h-9 w-24 rounded-[var(--radius)] border border-border bg-surface p-2"/>
+     className="min-h-9 w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
     {draft[key]!==undefined?<button type="button" disabled={busy||readOnly}
      onClick={()=>setRule(key,college[key])}
      className="min-h-9 text-sm text-link underline">Use the college&apos;s</button>:null}
    </div>
   </div>;
- return <section aria-label="Batch placement rules" className="space-y-3 rounded-[12px] border border-border bg-surface p-4">
+ return <section aria-label="Batch placement rules" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <h2 className="font-semibold">Batch placement rules</h2>
   <p className="text-sm text-body">{Object.keys(draft).length?batchName+" has its own rules":batchName+" follows the college rules"}</p>
   <p className="text-sm text-body">Change a rule only for this batch; everything you leave alone stays the college&apos;s. An internship offer never counts as placed.</p>
@@ -103,7 +103,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
     <select aria-label="Counts as placed when" disabled={busy||readOnly}
      value={draft.countsAsPlacedAt??college.countsAsPlacedAt}
      onChange={event=>setRule("countsAsPlacedAt",event.target.value as TpoBatchRuleFields["countsAsPlacedAt"])}
-     className="min-h-9 rounded-[var(--radius)] border border-border bg-surface p-2">
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="OFFER_RELEASED">the offer is released</option>
      <option value="OFFER_ACCEPTED">the offer is accepted</option>
     </select>
@@ -118,10 +118,10 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
   {readOnly?<p role="status" className="text-sm">Finished batches cannot change placement rules.</p>:null}
   <div className="flex flex-wrap gap-3">
    <button type="button" disabled={readOnly||busy||!changed}
-    onClick={()=>void save(draft)} className="min-h-9 rounded-[var(--radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+    onClick={()=>void save(draft)} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save"}</button>
    {Object.keys(draft).length>0?<button type="button" disabled={busy||readOnly}
-    onClick={()=>void save({})} className="min-h-9 rounded-[var(--radius)] border border-border px-3 text-sm text-link">
+    onClick={()=>void save({})} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link">
     Follow the college rules</button>:null}
   </div>
   {changed?<p role="status" className="text-xs text-warning">Unsaved batch-rule changes. Review before leaving.</p>:null}
