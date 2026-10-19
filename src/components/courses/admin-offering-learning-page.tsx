@@ -4,6 +4,7 @@ import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
+import {AdminOfferingSectionTabs} from "./admin-offering-section-tabs";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
 import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
 import {AdminOfferingSectionPreview} from "./admin-offering-section-preview";
@@ -81,12 +82,7 @@ export async function AdminOfferingLearningPage({
           </Link>
         }
       />
-      <nav aria-label="Course detail tabs" className="flex flex-wrap gap-2 border-b border-border text-sm">
-       <a href="#course-home" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:min-h-9">Home</a>
-       <a href="#course-syllabus" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:min-h-9">Syllabus</a>
-       <a href="#who-teaches-it" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:min-h-9">Who teaches it</a>
-       <a href="#section-content" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:min-h-9">Section content</a>
-      </nav>
+      <AdminOfferingSectionTabs/>
       <section id="course-home" aria-label="Course Home" className="space-y-2">
       <h2 className="text-lg font-semibold">Home</h2>
       <AdminCourseDisplayEditor
