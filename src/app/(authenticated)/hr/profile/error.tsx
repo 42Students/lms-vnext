@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 
 import { Button } from "@/components/ui/button";
 
@@ -9,8 +10,7 @@ export default function RecruiterProfileError({
   reset: () => void;
 }) {
   return (
-    <section
-      role="alert"
+    <Alert tone="error"
       className="space-y-4"
     >
       <h1 className="text-[30px] font-semibold text-[var(--lms-heading)]">
@@ -24,6 +24,6 @@ export default function RecruiterProfileError({
       <Button className="mt-5" onClick={reset}>
         Retry
       </Button>
-    </section>
+    </Alert>
   );
 }
