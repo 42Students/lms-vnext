@@ -98,7 +98,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    description="Most recent notifications from your own college.">
 
    {refreshing?<p role="status" className="text-xs text-muted-foreground">Refreshing notifications…</p>:null}
-   {!refreshing&&displayedItems.length===0?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul className="space-y-2">
+   {!refreshing&&displayedItems.length===0&&!error?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul className="space-y-2">
     {displayedItems.slice(0,20).map(item=><li key={item.id} className="border-b border-border text-sm">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
       className="w-full min-h-11">
