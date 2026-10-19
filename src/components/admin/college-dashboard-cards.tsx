@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { getCollegeDashboardCards } from "@/modules/admin-ui/college-dashboard-cards-service";
 import {
   COLLEGE_AT_A_GLANCE_HEADING,
@@ -13,9 +14,9 @@ export function CollegeDashboardCards({ cards }: { cards: Cards }) {
     .filter((card): card is Cards[number] => Boolean(card));
   return <section className="space-y-4" aria-label={COLLEGE_AT_A_GLANCE_HEADING}>
     <h2 className="text-xl font-semibold text-foreground">{COLLEGE_AT_A_GLANCE_HEADING}</h2>
-    <div className="grid min-w-0 grid-cols-1 gap-3 min-[375px]:grid-cols-2 lg:grid-cols-4">
+    {visible.length ? <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
       {visible.map(card => <StatTile key={card.key} variant="college" href={card.href}
         label={card.label} value={card.count === null ? "—" : card.count} />)}
-    </div>
+    </div> : <EmptyState title="No college summary available" description="College summary metrics are not available in the selected scope."/>}
   </section>;
 }
