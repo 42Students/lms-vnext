@@ -92,7 +92,7 @@ export function LearnerPlacementsDashboard({
           </div>
           <Link
             href={next.href}
-            className="inline-flex min-h-11 sm:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-[14px] font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9"
           >
             {display.firstRun ? "Browse drives" : "View next step"} →
           </Link>
