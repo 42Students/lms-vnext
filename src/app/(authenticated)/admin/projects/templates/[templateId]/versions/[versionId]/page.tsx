@@ -19,7 +19,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
   if (!ids.success) notFound();
   if (!can(context,"project-template.read")) {
     return <div className="min-w-0 space-y-5">
-      <PageHeader eyebrow="Super Admin · Projects" title="Template version comparison"/>
+      <PageHeader title="Template version comparison"/>
       <ErrorState title="Template history access denied"
         description="Only an authorized administrator can read global template version snapshots."
         action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>}/>
@@ -31,7 +31,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
     if (error instanceof ProjectsServiceError &&
       (error.code === "PROJECT_TEMPLATE_NOT_FOUND" || error.code === "PROJECT_TEMPLATE_VERSION_NOT_FOUND")) notFound();
     return <div className="min-w-0 space-y-5">
-      <PageHeader eyebrow="Super Admin · Projects" title="Template version comparison"/>
+      <PageHeader title="Template version comparison"/>
       <ErrorState title="Template history unavailable"
         description="The version comparison could not be loaded. No private version content is shown."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"}
@@ -39,7 +39,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
     </div>;
   }
   return <div className="min-w-0 space-y-6">
-    <PageHeader eyebrow="Super Admin · Read-only version comparison" title={detail.template.title}
+    <PageHeader title={detail.template.title}
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`}
       actions={<PageBackLink href={`/admin/projects/templates/${encodeURIComponent(detail.template.id)}/versions`} label="Version history" />} />
     <p className="text-sm text-muted-foreground">This snapshot is read-only. Publication state and college assignments are managed separately.</p>
