@@ -1,9 +1,11 @@
 export default function HrMessagesLoading(){
- return <div aria-busy="true" aria-label="Loading recruiter notifications" className="space-y-4">
-  <div className="h-20 animate-pulse rounded-[var(--lms-radius-card)] bg-muted"/>
-  <div className="h-11 animate-pulse rounded-[var(--lms-radius-card)] bg-muted"/>
-  <div className="h-12 animate-pulse rounded-[var(--lms-radius-card)] bg-muted"/>
-  {Array.from({length:3},(_,index)=><div key={index}
-   className="h-24 animate-pulse rounded-[var(--lms-radius-card)] bg-muted"/>)}
+ return <div aria-busy="true" aria-label="Loading recruiter messages" className="space-y-4">
+  <div className="h-9 w-48 animate-pulse rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-100)]"/>
+  <div className="divide-y divide-[#e5e9f0] border-y border-[#e5e9f0]">
+   {Array.from({length:4},(_,index)=><div key={index} className="flex items-center gap-4 py-4">
+    <div className="h-5 min-w-0 flex-1 animate-pulse rounded-[6px] bg-[var(--lms-neutral-100)]"/>
+    <div className="h-4 w-20 shrink-0 animate-pulse rounded-[6px] bg-[var(--lms-neutral-100)]"/>
+   </div>)}
+  </div>
  </div>;
 }
