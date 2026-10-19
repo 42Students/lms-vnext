@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -74,7 +75,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
     <DataTable columns={refusedColumns} rows={sync.refusedFiles}
      getRowKey={item=>item.path+" · "+item.reason} caption="Files the importer refused or flagged"
-     empty={<p role="status" className="text-sm text-body">Review importer logs for the remaining details.</p>}/>
+     empty={<EmptyState title="No displayed refusal details" description="Review importer logs for the remaining details." />}/>
     {sync.refusedCount>sync.refusedFiles.length?<p role="status" className="text-xs text-muted-foreground">
      Showing the first {sync.refusedFiles.length} of {sync.refusedCount} refused files. Review importer logs for the remaining details.
     </p>:null}
@@ -121,7 +122,7 @@ export default async function IndependentFindingsPage({searchParams}:{
   </p>
   <DataTable columns={findingColumns} rows={data.items} getRowKey={item=>item.id}
    caption="Independent audit findings"
-   empty={<p role="status" className="text-sm text-body">No independent audit findings match these filters.</p>}/>
+   empty={<EmptyState title="No matching findings" description="No independent audit findings match these filters." />}/>
   <nav aria-label="Audit findings pages" className="flex justify-between gap-4">
    {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:<span/>}
    {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
