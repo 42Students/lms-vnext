@@ -246,3 +246,60 @@ rg -l '<(Banner|Alert|EmptyState|ErrorState|Skeleton|GracefulPageLoading)\b' src
 - [ ] **F5 Empty/error and exceptional states** (missing: all 512 error/18 not-found routes recounted after moving main, 403/404/500/maintenance/session/offline matrix, full project status-panel and empty-state grep proof, visual breakpoint proof).
 
 **Next unticked from GitHub source-search for bespoke TPO placement feedback:** `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx` (invalid filter `<p role="alert">` and a Suspense grid `<p role="status">`; preserve the `PageHeader`, the Clear applicant filters link, and all grid/data semantics). Other known candidates after that: `jobs/[jobId]/share-audit/page.tsx`, `jobs/[jobId]/rounds/[roundId]/slots/page.tsx`, `jobs/[jobId]/about/page.tsx` activity fallback, and all public maintenance/offline/session pages. Github code search on main showed `animate-pulse` in ten migrated TPO loading files plus the non-loader `tpo/batches/[batchId]/page.tsx` `target:animate-pulse` (the latter is an interaction style, not a loading placeholder; exempt pending separate animation audit). The complete `src` count is **unknown**, never zero by assumption.
+
+## Replacement lane follow-up — 16 TPO placements pages (19 October 2026)
+
+All 16 source files below were independently re-fetched from chatgpt/chat-5-b after their write. These are source-byte regex counts, NOT locally executed grep output, TypeScript parsing, rendered screenshots or responsive browser observations. No code execution, tests, lint or CI.
+
+| Source file (relative to src/app/(authenticated)/tpo/placements/) | Alert opens/closes | Banner opens/closes | EmptyState | Skeleton | Bespoke styled notice | All raw role=status/alert | First shared component line | Responsive source tokens |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| jobs/[jobId]/applicants-pipeline/page.tsx | 1/1 | 0/0 | 1 | 1 | 0 | 1 | 29 | md:min-h-9, sm:grid-cols-4, flex-wrap |
+| jobs/[jobId]/share-audit/page.tsx | 2/2 | 0/0 | 1 | 0 | 0 | 0 | 29 | min-w-0, md:min-h-9, flex-wrap |
+| jobs/[jobId]/rounds/[roundId]/slots/page.tsx | 2/2 | 0/0 | 0 | 0 | 0 | 0 | 23 | min-w-0, md:min-h-9 |
+| jobs/[jobId]/cancel-preview/page.tsx | 1/1 | 0/0 | 0 | 0 | 0 | 0 | 39 | min-w-0, md:min-h-9 |
+| jobs/[jobId]/close-preview/page.tsx | 1/1 | 0/0 | 0 | 0 | 0 | 0 | 24 | min-w-0, md:min-h-9 |
+| jobs/[jobId]/closeout/page.tsx | 1/1 | 0/0 | 0 | 0 | 0 | 0 | 52 | min-w-0, md:min-h-9, sm:grid-cols-2, xl:grid-cols-4 |
+| jobs/[jobId]/edit/page.tsx | 1/1 | 0/0 | 0 | 0 | 0 | 0 | 22 | min-w-0, md:min-h-9 |
+| jobs/[jobId]/share-preview/page.tsx | 1/1 | 0/0 | 1 | 0 | 0 | 0 | 89 | min-w-0, md:min-h-9, flex-wrap |
+| jobs/[jobId]/about/page.tsx | 0/0 | 0/0 | 3 | 0 | 0 | 0 | 51 | flex-wrap, sm:grid-cols-2, lg:grid-cols-3, md:min-h-9 |
+| jobs/[jobId]/candidate-schedule/page.tsx | 1/1 | 1/1 | 4 | 0 | 0 | 0 | 47 | min-w-0, md:min-h-9, flex-wrap |
+| jobs/[jobId]/joining/page.tsx | 1/1 | 0/0 | 0 | 0 | 0 | 0 | 61 | min-w-0, md:min-h-9, sm:grid-cols-2, xl:grid-cols-5 |
+| jobs/[jobId]/offers/page.tsx | 0/0 | 1/1 | 1 | 0 | 0 | 1 | 48 | min-w-0, md:min-h-9, flex-wrap, sm:grid-cols-3 |
+| recorded-outside/page.tsx | 0/0 | 1/1 | 1 | 0 | 0 | 0 | 28 | min-w-0, md:min-h-9, flex-wrap |
+| jobs/[jobId]/selections/page.tsx | 2/2 | 0/0 | 0 | 0 | 0 | 0 | 28 | min-w-0, flex-wrap, md:min-h-9 |
+| jobs/[jobId]/applications-export/page.tsx | 0/0 | 1/1 | 1 | 0 | 0 | 0 | 67 | min-w-0, md:min-h-9, flex-wrap, sm:grid-cols-4 |
+| jobs/[jobId]/discussion/page.tsx | 1/1 | 0/0 | 1 | 0 | 0 | 1 | 22 | min-w-0, md:min-h-9 |
+
+Scoped proof: Alert openings/closings = 15/15; Banner openings/closings = 4/4; EmptyState = 14; Skeleton = 1; bespoke styled notices = 0; raw status/alert elements = 3 (all unstyled live counters); raw button tags = 0; animate-pulse instances = 0. Counts are over these 16 files only. Every edited component opening and closing pair matches. No claim is made of a zero whole-repository grep.
+
+Reproducible checkout commands (NOT executed here):
+```sh
+rg -n '<(Alert|Banner|EmptyState|Skeleton)([ >])|</(Alert|Banner)>' 'src/app/(authenticated)/tpo/placements' -g page.tsx
+rg -n '<(p|div|section|aside)[^>]*role="(status|alert)"[^>]*(rounded|border|bg-|px-|py-)' 'src/app/(authenticated)/tpo/placements' -g page.tsx
+rg -n '<button([ >])|animate-pulse' 'src/app/(authenticated)/tpo/placements' -g page.tsx
+```
+
+### Legacy value table (reference location on both sides)
+
+| State/property | Old LMS source and exact value | vNext source and exact value | Proof status |
+| --- | --- | --- | --- |
+| Error background | docs/design/legacy-styles/components___variables.scss:71-72 — #ef4444 and rgba(239,68,68,.10) | src/app/globals.css:51-52 — same tokens; src/components/ui/alert.tsx:13 uses error-subtle | Palette token MATCH, border alpha and text color OPEN |
+| Warning background | legacy-styles/components___variables.scss:69-70 — #d97706 and rgba(217,119,6,.10) | globals.css:49-50 same tokens; alert.tsx:12 and banner.tsx:12 use separate warning surface | Warning token MATCH; exact notice surface OPEN |
+| Info background | legacy-styles/components___variables.scss:73-74 — #26bac7 and #eff8fa | globals.css:56-57 and alert.tsx:10 / banner.tsx:10 — same info/subtle tokens | Palette token MATCH, border OPEN |
+| Success background | legacy-styles/components___variables.scss:67-68 — #059669 and rgba(5,150,105,.10) | globals.css:47-48 and banner.tsx:11 — same tokens | Palette token MATCH, border OPEN |
+| Body text | legacy-styles/components___variables.scss:25 — #54505d | globals.css:35,73 — #54505d; alert and banner have semantic tone text instead of body | Generic body MATCH; tone text OPEN |
+| Spacing scale | legacy-styles/components___variables.scss:116-123 — 4, 8, 12, 16, 24, 32, 40, 48px | globals.css:349-355 — 4, 8, 12, 16, 24, 32px; Alert:18 px-4, py-3 | Shared tokens MATCH where compared; complete component geometry OPEN |
+| Legacy notice anatomy | docs/design/old-lms-pages.md:12 — pale yellow slim strip, info dot, outlined action | src/components/ui/banner.tsx:17-22 — 6px dot, vertical 10px padding, flexible action | General structure present; exact border, radius, dot, hover values OPEN |
+| Empty and error layout | docs/design/old-lms-pages.md:6 — white canvas radius 12px, border #e5e9f0, 24px padding | EmptyState.tsx:6-10 — inner transparent no-card section; Alert.tsx:17-21 — border, 16px/12px padding; global canvas remains | No nested canvas; exact empty/notice geometry OPEN |
+| Responsive behavior | legacy-styles/components___variables.scss:148-150 — breakpoints 767/991/1024px; components___antddesign.scss:21-23 — <=767px | Alert.tsx:18 flex min-w-0 max-w-full; Banner.tsx:19 flex-wrap; EmptyState.tsx:6-9 word-wrap, Tailwind sm: begins 640px; DataTable.tsx:36 mobile priorities | Source fluidity verified; 640-767px breakpoint discrepancy and 320px/tablet screenshot OPEN |
+| Focus/disabled | legacy-styles/components___accessibility.scss:19-23 — outline 2px, offset 3px, teal #1a95a1 | src/components/ui/button.tsx:28-29 — focus offset 2px, lms-primary and disabled states; route Link style preserved | Known focus-offset discrepancy; strict tick OPEN |
+| Empty status semantics | 16 legacy-style bespoke elements included role=status notices | src/components/ui/empty-state.tsx:6 — role=status aria-live=polite; changed routes carry title/recovery actions | Source semantics restored, live-region runtime behavior unverified |
+
+All 16 changed pages retain original copy, conditionals, permissions, links, filter reset, paging, and data counts. Applicant-grid Suspense preserves the deferred table with a labeled shared Skeleton fallback. Unstyled status counters on applicants-pipeline, offers and discussion are deliberate exemptions from decorative notice migration.
+
+### Strict tick rule
+- [ ] F3 alerts/banners/inline notices (missing: effective exact geometry/tone/focus/hover value table; whole-repo grep; browser phone 320px, 767px, tablet).
+- [ ] F4 loading/skeleton/spinner (missing: complete route inventory and animation equivalence; full grep; browser proof).
+- [ ] F5 empty/error/system states (missing: entire 403/404/500/offline/session/maintenance inventory, full grep, responsive browser proof).
+
+Next exact file: src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx — two capped-result notices. Then src/app/(authenticated)/tpo/placements/lifecycle/page.tsx — recruiter-access-ended notice.

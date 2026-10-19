@@ -1204,3 +1204,31 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tracker/issues/loading.tsx`
 - [ ] `src/app/(authenticated)/tracker/loading.tsx`
 - [ ] `src/app/(authenticated)/tracker/logs/loading.tsx`
+
+## Source-derived placement page state queue — 2026-10-19 chat-5 replacement continuation
+
+**16 TPO placement page sources migrated and individually re-read.** Listed here as source-completed (not Strict Ticks), since complete pixel parity, entire-repository greps and viewport/browser comparison remain outstanding. The original 1,041 route-state inventory stays unticked by design. Per-page remote-byte regex counts, shared-component opening/closing proof, token source value table and responsive source notes appear in clone-states.md.
+
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx` — source migration completed and remote JSX tag pairs verified; **strict 320px/767px/tablet and computed-style proof pending**
+
+Next discovered grep candidates:
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx` — two raw capped-result role=status notices
+- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx` — access-ended raw role=alert
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx` — inspect result/offer feedback
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx` — inspect inline notice and loading states
+
