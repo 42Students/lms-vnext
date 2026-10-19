@@ -22,11 +22,11 @@ export function TpoTeamSearch({value}:{value:string}){
    if(timer.current)clearTimeout(timer.current);
   };
  },[]);
- return <label className="block text-sm font-semibold text-body">
+ return <label className="block min-w-0 text-sm font-semibold text-body">
   Search conversations
   <Input ref={ref} type="search" name="q" maxLength={120} defaultValue={value}
    placeholder="Search (press /)"
-   className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"
+   className="mt-1 min-h-11 w-full min-w-0 md:min-h-9"
    onChange={event=>{
     const query=event.currentTarget.value.trim();
     if(timer.current)clearTimeout(timer.current);
