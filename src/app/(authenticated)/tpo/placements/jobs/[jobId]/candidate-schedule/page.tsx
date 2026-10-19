@@ -38,10 +38,10 @@ export default async function TpoCandidateSchedulePage({
   const selectedRound = roundId ? drive.rounds.find(round => round.id === roundId) : null;
   const displayed = roundId ? readiness.displayed.filter(row => row.roundId === roundId) : readiness.displayed;
   return <div className="min-w-0 space-y-5">
+    <Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
+      className="text-sm font-semibold text-link">← Back to drive</Link>
     <PageHeader title={drive.job.title+" · Candidate round schedule"}
-      description="Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes."
-      actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">← Back to drive</Link>} />
+      description="Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes." />
     <section role="status" className="text-sm text-body border-b border-border pb-6">
       {slotsReady ? "Candidate-specific slot booking is available from each interview round. Room-time conflicts are checked at assignment." :
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
