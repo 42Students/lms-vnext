@@ -142,10 +142,11 @@ export function DateInput({
             </div>
             <div role="group" aria-label={monthYear} className="grid grid-cols-7 gap-1 text-center">
               {weekdays.map(day => <span key={day} aria-hidden="true" className="py-1 text-[12px] font-semibold text-[var(--lms-muted-text)]">{day}</span>)}
-              {days.map((day, index) => {
+              {days.map(day => {
                 const iso = localISO(day);
                 const outsideMonth = day.getMonth() !== viewMonth.getMonth();
-                const limited = (props.min && iso < props.min) || (props.max && iso > props.max);
+                const limited = (props.min != null && iso < String(props.min)) ||
+                  (props.max != null && iso > String(props.max));
                 return <Button key={iso} type="button" variant="ghost" size="icon-sm"
                   data-calendar-day={iso} aria-label={day.toLocaleDateString(undefined, { dateStyle: "full" })}
                   aria-current={iso === today ? "date" : undefined} aria-pressed={selected === iso}
@@ -154,8 +155,7 @@ export function DateInput({
                   className={cx("!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px]",
                     outsideMonth ? "!text-[var(--lms-neutral-400)]" : "",
                     selected === iso ? "!bg-[var(--lms-primary)] !text-white" :
-                    iso === today ? "!text-[var(--lms-primary-text)] !underline" : "hover:!bg-[var(--lms-primary-subtle)]",
-                    index === 0 ? "" : "")}>
+                    iso === today ? "!text-[var(--lms-primary-text)] !underline" : "hover:!bg-[var(--lms-primary-subtle)]")}>
                   {day.getDate()}
                 </Button>;
               })}
