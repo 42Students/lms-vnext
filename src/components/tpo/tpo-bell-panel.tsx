@@ -107,7 +107,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   <Drawer open={open} onOpenChange={changeOpen} className={compact ? style.topbarNotificationDrawer : undefined}
    bodyClassName={compact ? style.topbarNotificationBody : undefined} title="Notifications"
    description="Most recent notifications from your own college."
-   footer={<div className="flex flex-wrap gap-3"><Button variant="secondary" type="button" disabled={refreshing||pending} onClick={()=>void refresh()} className="min-h-11">Refresh</Button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
+   footer={<div className="flex flex-wrap gap-3"><Button variant="secondary" type="button" disabled={refreshing||pending} onClick={()=>void refresh()} className="min-h-11">Refresh</Button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
     {unread>0?<Button variant="secondary" type="button" className="min-h-11" onClick={()=>void markAll()} disabled={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}</div>}>
 
    {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
