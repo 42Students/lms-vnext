@@ -54,13 +54,13 @@ export default async function SuperAdminLectureHallAvailability({
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold">From (IST)
         <input name="from" type="date" required defaultValue={typeof raw.from === "string" ? raw.from : ""}
-          className="min-h-11 rounded border border-border bg-surface px-3" />
+          className="min-h-9 rounded-[9px] border border-border bg-surface px-3" />
       </label>
       <label className="grid gap-1 text-sm font-semibold">To (IST)
         <input name="to" type="date" required defaultValue={typeof raw.to === "string" ? raw.to : ""}
-          className="min-h-11 rounded border border-border bg-surface px-3" />
+          className="min-h-9 rounded-[9px] border border-border bg-surface px-3" />
       </label>
-      <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View schedule</button>
+      <button type="submit" className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-[var(--lms-on-primary)]">View schedule</button>
     </form>
     {!parsed.success
       ? raw.from !== undefined || raw.to !== undefined

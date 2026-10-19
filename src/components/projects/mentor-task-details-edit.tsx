@@ -113,8 +113,8 @@ export function MentorTaskDetailsEdit(props:Props) {
             onChange={event=>setCriteria(event.target.value)} />
         </label>
         <label className="grid gap-1 text-xs font-semibold text-body">Priority
-          <select value={priority} onChange={event=>setPriority(event.target.value)}
-            className="min-h-10 rounded-md border border-border bg-surface px-3 text-foreground">
+          <select data-slot="select" value={priority} onChange={event=>setPriority(event.target.value)}
+            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </select>
@@ -127,7 +127,7 @@ export function MentorTaskDetailsEdit(props:Props) {
           Estimate must be a whole number from 0 to 1000.
         </p>:null}
         <label className="grid gap-1 text-xs font-semibold text-body">Type
-          <select className="rounded border border-border p-2" value={taskType}
+          <select data-slot="select" className="rounded border border-border p-2" value={taskType}
             onChange={e=>setTaskType(e.target.value)}>
             <option value="">Not specified</option><option value="STORY">Story</option>
             <option value="BUG">Bug</option><option value="CHORE">Chore</option>

@@ -29,8 +29,8 @@ export default async function MentorReviewHistoryPage({
     page:first(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid review history filters</h1>
-    <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid review history filters</h1>
+    <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
@@ -39,7 +39,7 @@ export default async function MentorReviewHistoryPage({
     <PageHeader eyebrow="Mentor · Delivery" title="Delivery review history"
       description="Recorded final-delivery review decisions for projects currently assigned to you."
       actions={<Link href="/mentor/reviews"
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Pending reviews
       </Link>} />
     {!data.enabled ?
@@ -48,40 +48,40 @@ export default async function MentorReviewHistoryPage({
       </section>
     : <>
       <form method="get" action="/mentor/review-history"
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
-        <input type="hidden" name="decision" value={data.query.decision}/>
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+        <input data-slot="input" type="hidden" name="decision" value={data.query.decision}/>
         <label className="grid gap-1 text-sm font-semibold text-body">Project title
-          <input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-11 rounded-md border border-border bg-background px-3"/>
+          <input data-slot="input" name="search" type="search" maxLength={120} defaultValue={data.query.search}
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Project lifecycle
-          <select name="projectState" defaultValue={data.query.projectState} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="projectState" defaultValue={data.query.projectState} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">Any project state</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
             <option value="ARCHIVED">Archived</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Delivery submission version
-          <input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 w-36 rounded-md border border-border bg-background px-3"/>
+          <input data-slot="input" name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 w-36 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
-          <select name="order" defaultValue={data.query.order} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="order" defaultValue={data.query.order} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="NEWEST">Latest decision first</option><option value="OLDEST">Earliest decision first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded decision within
-          <select name="window" defaultValue={data.query.window} className="min-h-11 rounded-md border border-border bg-background px-3">
+          <select data-slot="select" name="window" defaultValue={data.query.window} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
           </select>
         </label>
         <Button type="submit" variant="primary">Search</Button>
-        <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
       <nav aria-label="Review decision filter" className="flex flex-wrap gap-2">
         {([
@@ -118,7 +118,7 @@ export default async function MentorReviewHistoryPage({
               }).format(item.reviewedAt)} IST
             </p>
             <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=delivery"}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Open authorized delivery history →
             </Link>
           </li>)}</ol>}
@@ -126,9 +126,9 @@ export default async function MentorReviewHistoryPage({
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page>1 && <Link href={mentorReviewHistoryHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
           {data.page<data.totalPages && <Link href={mentorReviewHistoryHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
         </div>
       </nav>
     </>}

@@ -52,12 +52,12 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Drive overview</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-4 rounded-xl border border-border p-4">
       <label className="grid gap-1 text-sm">Round kind
-        <Select name="kind" defaultValue={query.kind} className="min-h-11 rounded-md border border-border px-2">
+        <Select name="kind" defaultValue={query.kind} className="min-h-9 rounded-[9px] border border-border px-2">
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Status
-        <Select name="status" defaultValue={query.status} className="min-h-11 rounded-md border border-border px-2">
+        <Select name="status" defaultValue={query.status} className="min-h-9 rounded-[9px] border border-border px-2">
           {["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"].map(status=>
             <option key={status} value={status}>{status}</option>)}
         </Select>

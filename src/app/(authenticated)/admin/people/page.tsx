@@ -144,20 +144,20 @@ export default async function SuperAdminPeoplePage({
       <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
       <form method="get" className="grid gap-3 sm:grid-cols-4">
        <label className="grid gap-1 text-sm font-semibold">Search contacts
-        <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-11 rounded border border-border bg-background px-3"/>
+        <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-surface)] px-3"/>
        </label>
        <label className="grid gap-1 text-sm font-semibold">Role
-        <Select name="role" defaultValue={role} className="min-h-11 rounded border border-border bg-background px-2">
+        <Select name="role" defaultValue={role} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-surface)] px-2">
           {["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
        </label>
        <label className="grid gap-1 text-sm font-semibold">Status
-        <Select name="status" defaultValue={status} className="min-h-11 rounded border border-border bg-background px-2">
+        <Select name="status" defaultValue={status} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-surface)] px-2">
           {["ALL","ACTIVE","SUSPENDED","ENDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
        </label>
        <label className="grid gap-1 text-sm font-semibold">Rows per page
-        <Select name="pageSize" defaultValue={pageSize} className="min-h-11 rounded border border-border bg-background px-2">
+        <Select name="pageSize" defaultValue={pageSize} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-surface)] px-2">
           {[10,20,50].map(n=><option key={n} value={n}>{n}</option>)}
         </Select>
        </label>
