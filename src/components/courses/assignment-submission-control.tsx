@@ -1,4 +1,5 @@
 "use client";
+import { Select } from "@/components/ui/select";
 
 import {
   type FormEvent,
@@ -277,12 +278,12 @@ export function AssignmentSubmissionControl({
         </p> : null}
         {submissionType==="LINK"&&methodsEnabled&&mayLink?
           <label className="mt-3 grid gap-1 text-sm">Link type
-            <select value={linkKind} disabled={submitting}
-              className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
+            <Select value={linkKind} disabled={submitting}
+              className="min-h-11"
               onChange={event=>setLinkKind(event.target.value as typeof linkKind)}>
               {allowedMethods.includes("REPOSITORY_LINK")?<option value="REPOSITORY_LINK">Repository Link</option>:null}
               {allowedMethods.includes("EXTERNAL_LINK")?<option value="EXTERNAL_LINK">Website / External Link</option>:null}
-            </select>
+            </Select>
           </label>:null}
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
