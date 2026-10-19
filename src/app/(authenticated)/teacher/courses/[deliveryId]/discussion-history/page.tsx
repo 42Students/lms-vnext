@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -29,13 +30,13 @@ export default async function FacultyDiscussionHistoryPage({
       </Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Recorded action
-        <select name="action" defaultValue={data.query.action}
+        <Select name="action" defaultValue={data.query.action}
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All moderation and reply actions</option>
           <option value="PIN">Pin/unpin</option>
           <option value="DELETE">Deletions</option>
           <option value="REPLY">Faculty replies</option>
-        </select>
+        </Select>
       </label>
       <Button type="submit" variant="primary">Filter</Button>
       <Link href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
@@ -45,7 +46,7 @@ export default async function FacultyDiscussionHistoryPage({
     {data.items.length===0?<EmptyState title="No registered moderation history"
       description="No persisted moderation or Faculty reply events match this Section and filter. Records before event tracking are unavailable, not reconstructed."/>:
       <ol className="grid gap-3">{data.items.map(item=>
-        <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+        <li key={item.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <p className="font-semibold text-foreground">{item.action}</p>
           <p className="mt-2 text-xs text-muted-foreground">
             {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.occurredAt)} IST
