@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -221,16 +222,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         </div>
         : null}
     {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio now={now} jobs={pageResult.rows} counts={visibleCounts} unansweredRequests={unansweredRequests} returnTo={recruiterDrivesHref({...query.data,collegeId:selectedCollege})} />:null}
-    {query.data.view !== "WAITING" ? <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
-      <p className="text-sm text-body">{pageResult.total===0?"No matching drives":
+    {query.data.view !== "WAITING" ? <div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><p className="text-sm text-body">{pageResult.total===0?"No matching drives":
         "Showing "+(Math.min(pageResult.total,(pageResult.page-1)*pageResult.pageSize+1))+"–"+
-        Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+pageResult.total}</p>
-      <div className="flex gap-2">
-        {pageResult.page>1?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:pageResult.page-1})}
-          className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
-        {pageResult.page<pageResult.pages?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:pageResult.page+1})}
-          className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
-      </div></nav>:null}
+        Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+pageResult.total}</p><Pagination label="Drive pages" page={pageResult.page} pageCount={pageResult.pages} hrefForPage={page=>recruiterDrivesHref({...query.data,collegeId:selectedCollege,page})}/></div>:null}
     <Link href="/hr/round-results" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review round results →</Link>
     <p className="text-xs text-muted-foreground">Request history is saved. Placement-cell approval and external sending remain unavailable until the registered employer-request workflow is ready.</p>
   </div>;
