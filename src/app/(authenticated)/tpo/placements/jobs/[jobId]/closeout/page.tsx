@@ -32,14 +32,14 @@ export default async function TpoDriveCloseoutPage({
     ["Confirmed joined learners", counts.joined],
   ] as const;
   return <div className="min-w-0 space-y-5">
+    <Link className="text-sm font-semibold text-[var(--lms-teal-deep)]"
+      href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}>← Back to drive</Link>
     <PageHeader title={data.job.title+" · Close-out summary"}
-      description={"Current persisted facts for a "+data.job.status.toLowerCase()+" drive. These numbers are not a finalized, immutable historical snapshot."}
-      actions={<div className="flex flex-wrap items-center justify-end gap-2">
-        <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">← Back to drive</Link>
-        <a href={"/api/placements/tpo/drives/" + encodeURIComponent(data.job.id) + "/closeout/export"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9">Export CSV</a>
-      </div>} />
+      description={"Current persisted facts for a "+data.job.status.toLowerCase()+" drive. These numbers are not a finalized, immutable historical snapshot."} />
+    <a href={"/api/placements/tpo/drives/" + encodeURIComponent(data.job.id) + "/closeout/export"}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+      Export CSV
+    </a>
     <section aria-label="Close-out metrics" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
       {cells.map(([label, value]) => <div key={label}
         className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0">
