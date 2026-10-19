@@ -23,6 +23,7 @@ type GridWorkspaceProps<Row>={
  rollOf?:(row:Row)=>string|null|undefined;
  savedViews?:ReactNode;
  extraActions?:ReactNode;
+ act?:(shown:readonly Row[],selected:readonly Row[],clear:()=>void)=>ReactNode;
  exportName?:string;
  xlsxHref?:string|null;
  searchPlaceholder?:string;
@@ -39,7 +40,7 @@ const safeTsv=(value:unknown)=>{
 /** Legacy TPO list chrome. Accepts only the authorized rows supplied by the page:
  * search persists in its URL, and copy/paste/export never fetch broader datasets. */
 export function GridWorkspace<Row>({
- rows,columns,rowKey,children,filters=[],selection,rollOf,savedViews,extraActions,
+ rows,columns,rowKey,children,filters=[],selection,rollOf,savedViews,extraActions,act,
  exportName="tpo-grid",xlsxHref,searchPlaceholder="Search name, roll no., anything",
  searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
  searchMaxLength=120,
