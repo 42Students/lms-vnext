@@ -2,6 +2,9 @@
 import {Dialog} from "@/components/ui/dialog";
 import {DataTable} from "@/components/ui/data-table";
 import {ScrollCue} from "@/components/ui/scroll-cue";
+import {Button} from "@/components/ui/button";
+import {FileUpload} from "@/components/ui/file-upload";
+import {Checkbox} from "@/components/ui/checkbox";
 
 import Link from "next/link";
 import {recruiterXlsxToCsv} from "@/modules/placements/tpo-lead-xlsx-import-model";
@@ -12,10 +15,6 @@ import {
   TPO_LEAD_CSV_MAX_ROWS,
   type TpoLeadImportRowResult,
 } from "@/modules/placements/tpo-lead-csv-import-model";
-
-const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
-const buttonClass = "inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground disabled:opacity-50";
-const primaryClass = "inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50";
 
 const template = "name,email,phone,companyName,designation,source\r\n" +
   "Example Recruiter,recruiter@example.org,,Example Company,HR,REFERRAL\r\n";
@@ -154,9 +153,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   })??[];
   return (
     <>
-      <button ref={launchRef} type="button" className={buttonClass} onClick={() => setOpen(true)}>
+      <Button ref={launchRef} type="button" variant="secondary" onClick={() => setOpen(true)}>
         Import leads CSV
-      </button>
+      </Button>
       <Dialog open={open} onOpenChange={next=>{if(!next)close();}}
          title="Import recruiter leads" dismissible={!busy}
          description="Review every imported row before creating any recruiter leads.">
@@ -169,9 +168,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
                 </p>
               </div>
-              <button className={buttonClass} type="button" onClick={close} disabled={busy}>
+              <Button variant="secondary" type="button" onClick={close} disabled={busy}>
                 Close
-              </button>
+              </Button>
             </div>
             <a
               download="recruiter-leads-template.csv"
@@ -180,16 +179,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             >
               Download CSV template
             </a>
-            <label className="block text-sm font-semibold text-foreground">
-              Choose CSV or Excel file
-              <input ref={fileRef}
-                className={inputClass + " mt-2"}
-                type="file"
-                accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                disabled={busy}
-                onChange={event => void chooseFile(event.target.files?.[0])}
-              />
-            </label>
+            <FileUpload ref={fileRef} label="Choose CSV or Excel file" maxBytes={10_000_000}
+              accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              disabled={busy} onFiles={files => void chooseFile(files?.[0])}/>
             {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
             {preview ? (
               <div className="space-y-3">
@@ -200,22 +192,22 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                 </p>
                 <p className="text-sm text-body">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
                 <div className="flex flex-wrap gap-2">
-                  <button type="button" className={buttonClass} disabled={busy||Boolean(result)}
+                  <Button type="button" variant="secondary" disabled={busy||Boolean(result)}
                     onClick={()=>{setReviewReady(false);
                       setSkipRows(preview.rows.filter(row=>row.lead&&!existingNumbers.has(row.row)).map(row=>row.row));}}>
                     Skip all new rows
-                  </button>
-                  <button type="button" className={buttonClass} disabled={busy||Boolean(result)}
+                  </Button>
+                  <Button type="button" variant="secondary" disabled={busy||Boolean(result)}
                     onClick={()=>{setReviewReady(false);setSkipRows([]);}}>
                     Include all new rows
-                  </button>
+                  </Button>
                 </div>
                 <nav aria-label="Import preview groups" className="flex flex-wrap gap-2">
                   {([["ALL","All"],["NEW","New"],["EXISTING","Already recruiters"],
                     ["INVALID","To fix"],["SKIPPED","Skipped"]] as const).map(([value,label])=>
-                    <button key={value} type="button" aria-pressed={rowGroup===value}
-                      className={rowGroup===value?primaryClass:buttonClass}
-                      onClick={()=>setRowGroup(value)}>{label}</button>)}
+                    <Button key={value} type="button" aria-pressed={rowGroup===value}
+                      variant={rowGroup===value?"primary":"secondary"}
+                      onClick={()=>setRowGroup(value)}>{label}</Button>)}
                 </nav>
                 <ScrollCue axis="y" label="Recruiter import preview rows" viewportClassName="max-h-56">
                   <DataTable rows={previewRows} getRowKey={item=>String(item.row)} caption="Recruiter import preview"
@@ -228,7 +220,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                         {existing.find(entry=>entry.row===item.row)?
                           <Link className="ml-2 inline-flex min-h-11 items-center text-primary-text underline" href={"/tpo/recruiters/"+existing.find(entry=>entry.row===item.row)!.leadId}>Open</Link>:null}
                       </span>},
-                      {key:"include",header:"Include",mobilePriority:"action",cell:item=><input type="checkbox" aria-label={"Include row "+item.row}
+                      {key:"include",header:"Include",mobilePriority:"action",cell:item=><Checkbox aria-label={"Include row "+item.row}
                         disabled={!item.lead||existingNumbers.has(item.row)||busy||Boolean(result)}
                         checked={Boolean(item.lead)&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)}
                         onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/>},
@@ -238,20 +230,20 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   Import {newRows} recruiter lead row(s) from {fileName}. {preview.invalid} invalid row(s) will be skipped. Existing contacts will be reported as duplicates. Each created lead receives an audit entry.
                 </p>:null}
                 {!result ? (
-                  <button
+                  <Button
                     type="button"
-                    className={primaryClass}
+                    variant="primary"
                     disabled={busy || previewStatus!=="ready" || newRows <= 0}
                     onClick={() => void commit()}
                   >
                     {busy ? "Importing…" : reviewReady ? "Confirm import" : "Review and confirm import"}
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             ) : null}
             {result ? (
               <div className="space-y-3" aria-live="polite">
-                <button type="button" className={buttonClass} onClick={()=>{
+                <Button type="button" variant="secondary" onClick={()=>{
                   const header="Row,Status,Reason";
                   const cell=(value:string)=>'"'+(/^[\t\r\n]*[=+@-]/.test(value)?"'"+value:value).replaceAll('"','""')+'"';
                   const lines=result.results.map(item=>[String(item.row),item.status,item.reason??""].map(cell).join(","));
@@ -259,13 +251,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   const url=URL.createObjectURL(blob);const link=document.createElement("a");
                   link.href=url;link.download="recruiter-import-results.csv";
                   document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
-                }}>Download row results CSV</button>
-                <button type="button" className={buttonClass} onClick={()=>void navigator.clipboard.writeText(
+                }}>Download row results CSV</Button>
+                <Button type="button" variant="secondary" onClick={()=>void navigator.clipboard.writeText(
                   result.results.filter(item=>item.status!=="created").map(item=>
                     "Row "+item.row+": "+item.status+(item.reason?" — "+item.reason:"")).join("\n")
                 ).then(()=>setCopyNotice("Non-created rows copied."),()=>setCopyNotice("Could not copy these results."))}>
                   Copy rows not imported
-                </button>
+                </Button>
                 {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
                 <h3 className="font-semibold text-foreground">Import results</h3>
                 <p className="text-sm text-body">
