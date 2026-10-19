@@ -30,8 +30,8 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline md:min-h-9">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}/>
-  <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Result counts">
-   {Object.entries(data.counts).map(([label,n])=><div key={label} className="border-b border-border px-1 py-3">
+  <section className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-4" aria-label="Result counts">
+   {Object.entries(data.counts).map(([label,n])=><div key={label} className="border-b border-border p-3 sm:border-r sm:border-b-0 sm:last:border-r-0">
     <p className="text-xs capitalize text-body">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
@@ -54,7 +54,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
     </Select>
    </label>
-   <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary md:min-h-9">Filter</Button>
+   <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-primary-foreground md:min-h-9">Filter</Button>
   </form>
   <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
   {visibleRows.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:
