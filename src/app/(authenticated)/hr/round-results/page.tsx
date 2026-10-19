@@ -77,7 +77,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
        <nav aria-label="Outcome" className="flex flex-wrap gap-2">{filters.map(filter=>
         <Link key={filter} href={recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:filter})}
           aria-current={query.data.outcome===filter?"page":undefined}
-          className={query.data.outcome===filter?"inline-flex min-h-9 items-center rounded-full bg-primary px-3 py-2 text-xs text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]":"inline-flex min-h-9 items-center rounded-full border border-border px-3 py-2 text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"}>
+          className={query.data.outcome===filter?"inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-xs font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]":"inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-xs text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"}>
           {filter.replaceAll("_"," ")} ({countValues[filter]})</Link>)}</nav>
        {results.rows.length?<div className="grid gap-3 md:grid-cols-2">
          {results.rows.map(row=><article key={row.key} className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4">
