@@ -60,6 +60,6 @@ describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
     expect(text).not.toContain('aria-hidden="true">×');
     expect((text.match(/<svg\b/g) ?? []).length).toBe(2);
     expect((text.match(/<\/svg>/g) ?? []).length).toBe(2);
-    expect(text).toContain("min-h-0 flex-1 overflow-x-hidden overflow-y-auto pt-2 pb-4");
+    expect(text).toContain("min-h-0 flex-1 overflow-x-hidden overflow-y-auto pt-2 pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
   });
 });
