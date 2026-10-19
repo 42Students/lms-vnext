@@ -1,4 +1,5 @@
 "use client";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -70,11 +71,10 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     description={unmatched.length+" unmatched rows will not be recorded. No offers will be released yet."}
     confirmLabel={"Confirm and record "+entries.length+" selections"}
     onConfirm={()=>void confirm()}/>
-  {unmatched.length?<details className="rounded-[var(--lms-control-radius)] border border-border p-3" open>
-   <summary className="cursor-pointer text-sm font-semibold">{unmatched.length} unmatched or unusable rows</summary>
+  {unmatched.length?<Disclosure title={`${unmatched.length} unmatched or unusable rows`} className="rounded-[var(--lms-control-radius)] border border-border p-3" defaultOpen>
    <ul tabIndex={0} aria-label="Unmatched selection import rows, scroll for more" className="mt-2 max-h-40 min-h-0 list-disc overflow-y-auto overscroll-contain pl-6 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">{unmatched.map(x=>
     <li key={x.line}>Row {x.line}: {x.value||"Empty identifier"} — {x.reason}</li>)}</ul>
-  </details>:null}
+  </Disclosure>:null}
   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
   {done?<p role="status" className="text-sm text-body">{done}</p>:null}
  </section>;
