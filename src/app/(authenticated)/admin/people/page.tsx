@@ -149,7 +149,7 @@ export default async function SuperAdminPeoplePage({
           <PersonOnboardDialog collegeId={collegeId} />
         </div>}
       />
-      <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-4">
+      <form method="get" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 xl:grid-cols-4">
        <label className="grid gap-1 text-sm font-semibold">Search contacts
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-9 w-full"/>
        </label>
