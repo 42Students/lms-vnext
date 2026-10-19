@@ -8,4 +8,9 @@ const legacy=()=>source("docs/design/legacy-styles/components___learn-layout.scs
 
 /** Source-only guardrails; no runtime/CI checks requested by the owner. */
 describe("chat-19 old-LMS route transition parity",()=>{
+ it("matches legacy pageSlideIn initial and final offsets",()=>{
+ expect(legacy()).toContain("transform: translateY(8px)");
+ expect(css()).toContain("transform:translateY(8px)");
+ expect(css()).toContain("transform:translateY(0)");
+});
 });
