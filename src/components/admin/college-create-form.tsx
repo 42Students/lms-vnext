@@ -101,6 +101,7 @@ export function CollegeCreateForm({
         </label>
         <Select
           id="college-organization"
+          disabled={pending}
           value={organizationId}
           onChange={(event) => setOrganizationId(event.target.value)}
           required
