@@ -56,7 +56,7 @@ export default async function AnnouncementsPage({
           </li>)}</ul>}
         <Link href="/notifications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline lms-inline-link">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
-        <div role="status" className="rounded-[8px] border border-border bg-surface p-6">
+        <div role="status" className="border-b border-border py-5">
           <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
           <p className="mt-2 text-sm text-body">The college-wide announcements table is not registered; no broadcast announcement reads or writes are attempted. Personal notifications above are stored separately in the registered inbox.</p>
         </div>
