@@ -110,7 +110,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     ["Explicit no-shows", round.counts.noShow], ["Pending", round.counts.pending],
                     ["Unknown", round.counts.unknown],
                   ] as const).map(([label, count]) => (
-                    <div key={label} className="rounded-lg bg-surface-subtle p-3">
+                    <div key={label} className="rounded-lg bg-muted p-3">
                       <dt className="text-xs text-body">{label}</dt>
                       <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{count}</dd>
                     </div>
