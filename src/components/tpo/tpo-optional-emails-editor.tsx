@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
+import {Button} from "@/components/ui/button";
 type Preferences={notifyDriveOpenEmail:boolean;notifyResultApplied:boolean;notifyNudges:boolean;notifyPrepAssigned:boolean};
 const fields=[
  ["notifyDriveOpenEmail","A drive opens or changes","Email to eligible students."],
@@ -51,8 +52,8 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
     onChange={e=>setValue(current=>({...current,[key]:e.target.checked}))}/>
   </label>)}
   <p className="text-xs text-muted-foreground">These are college preferences; sending requires verified mail templates and an enabled delivery provider.</p>
-  <button type="button" disabled={busy||!dirty} onClick={()=>void save()}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save changes</button>
+  <Button type="button" disabled={busy||!dirty} onClick={()=>void save()}
+   className="min-h-11 sm:min-h-9">Save changes</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {status?<p role="status" className="text-sm">{status}</p>:null}
  </section>;
