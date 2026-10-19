@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { CollegeSectionLifecycleAction } from "@/components/academics/college-section-lifecycle-action";
@@ -69,8 +70,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
               <option value="ALL">All</option>
             </Select>
           </label>
-          <details className="col-span-full rounded-[var(--lms-control-radius)] border border-border p-3">
-            <summary className="cursor-pointer text-sm font-semibold text-body">More filters</summary>
+          <Disclosure title={"More filters"} className="col-span-full rounded-[var(--lms-control-radius)] border border-border p-3">
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
@@ -341,7 +341,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
             </div>
-          </details>
+          </Disclosure>
           <div className="flex items-end gap-2">
             <Button variant="primary" type="submit"
               >
