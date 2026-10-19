@@ -34,7 +34,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </Link>
         }
       />
-      <section aria-label={title + " filters"} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label={title + " filters"} className="border-b border-border pb-5">
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Title, lesson or course
