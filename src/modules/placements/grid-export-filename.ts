@@ -24,3 +24,19 @@ export function gridExportFilename(
     parts.find((part) => part.type === kind)?.value ?? "";
   return `${safeName} - ${read("day")} ${read("month")} ${read("year")}.${extension}`;
 }
+
+/**
+ * The original TPO grid's download name (no automatic date stamp).
+ * Source: lms2-fe@prod-2026/src/components/tpo/grid/gridExport.js:37-58.
+ * Other report APIs may intentionally use the IST-dated convention above.
+ */
+export function legacyGridExportFilename(
+  name: string,
+  extension: "csv" | "xlsx",
+): string {
+  const clean = String(name || "export")
+    .replace(/[\\/:*?"<>|]+/g, "-")
+    .replace(/\.(xlsx|csv)$/i, "")
+    .slice(0, 80) || "export";
+  return `${clean}.${extension}`;
+}

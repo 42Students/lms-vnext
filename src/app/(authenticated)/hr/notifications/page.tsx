@@ -1,7 +1,5 @@
-import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
-import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -55,11 +53,12 @@ export default async function HrMessagesPage({searchParams}:{
       key:grant.collegeId,label:grant.collegeName,
       href:"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId),
      }))}/>:null}
-    <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
-      (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
-     className={"inline-flex min-h-11 items-center border-b-[3px] px-3 py-2 text-sm font-semibold transition-colors duration-150 sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+(query.data.unreadOnly==="true"?"border-primary text-primary-text":"border-transparent text-body hover:border-primary hover:bg-primary-subtle")}>
-     {query.data.unreadOnly==="true"?"Show all":"Unread only"}
-    </Link>
+    <Tabs renderPanel={false} ariaLabel="Unread notification filter"
+     value={query.data.unreadOnly}
+     items={[
+      {value:"false",label:"All",href:"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly=false&q="+encodeURIComponent(query.data.q)},
+      {value:"true",label:"Unread",href:"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly=true&q="+encodeURIComponent(query.data.q)},
+     ]}/>
    </nav>
    <form action="/hr/notifications" method="get" className="flex flex-wrap gap-2">
      <input type="hidden" name="collegeId" value={result.collegeId} />

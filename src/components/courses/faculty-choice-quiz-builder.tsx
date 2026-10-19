@@ -206,11 +206,11 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Choice-question quiz builder</h2>
   <label className="grid min-w-0 gap-1 text-sm">Find a quiz
    <Input type="search" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}
-    placeholder="Title or state" className="min-h-11 sm:min-h-9 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base sm:text-sm"/>
+    placeholder="Title or state" className="min-h-11 min-w-0 max-w-full sm:min-h-9"/>
   </label>
   <label className="grid min-w-0 gap-1 text-sm">Quiz
    <Select value={selected} disabled={pending} onChange={e=>chooseWithDraftProtection(e.target.value)}
-    className="min-h-11 sm:min-h-9 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base sm:text-sm">
+    className="min-h-11 min-w-0 max-w-full sm:min-h-9">
     <option value="">Create new draft</option>
     {visibleQuizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
    </Select></label>
@@ -220,23 +220,23 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <Button variant="secondary" type="button" onClick={()=>copyToNewDraft()} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</Button>:null}
   {!chosen?<label className="grid min-w-0 gap-1 text-sm">Lesson
    <Select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}
-    className="min-h-11 sm:min-h-9 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base sm:text-sm">
+    className="min-h-11 min-w-0 max-w-full sm:min-h-9">
     {lessons.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
    </Select></label>:null}
   <label className="grid min-w-0 gap-1 text-sm">Quiz title
    <Input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,title,e.target.value));setDirtyDraft(true);setTitle(e.target.value);}}
-    className="min-h-11 sm:min-h-9 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base sm:text-sm"/></label>
+    className="min-h-11 min-w-0 max-w-full sm:min-h-9"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Instructions
    <Textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,description,e.target.value));setDirtyDraft(true);setDescription(e.target.value);}}
-    className="min-w-0 max-w-full rounded border border-border p-2 text-base"/></label>
+    className="min-w-0 max-w-full"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Due date (IST, required before publishing)
    <Input type="datetime-local" disabled={!metadataEditable} value={dueAt} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,dueAt,e.target.value));setDirtyDraft(true);setDueAt(e.target.value);}}
-    className="min-h-11 sm:min-h-9 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base sm:text-sm"/></label>
+    className="min-h-11 min-w-0 max-w-full sm:min-h-9"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Maximum attempts
    <Input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,maxAttempts,Number(e.target.value)));setDirtyDraft(true);setMaxAttempts(Number(e.target.value));}}
-    className="min-h-11 sm:min-h-9 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base sm:text-sm"/></label>
+    className="min-h-11 min-w-0 max-w-full sm:min-h-9"/></label>
   <fieldset disabled={!editable} className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
     <legend className="text-sm font-semibold">Quiz order</legend>
     <Checkbox label="Shuffle question order per learner" checked={shuffleQuestions}
@@ -277,7 +277,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   </section>
   <label className="grid min-w-0 gap-1 text-sm">Find a question
    <Input type="search" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}
-    placeholder="Question number, prompt, or option" className="min-h-11 sm:min-h-9 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base sm:text-sm"/>
+    placeholder="Question number, prompt, or option" className="min-h-11 min-w-0 max-w-full sm:min-h-9"/>
   </label>
   <Checkbox label="Show only questions needing correction" checked={invalidOnly}
      onChange={e=>setInvalidOnly(e.target.checked)}/>
@@ -290,12 +290,12 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <label className="grid min-w-0 gap-1 text-sm">Prompt
     <Textarea value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>updateQuestion(i,old=>({...old,prompt:e.target.value}))}
-     className="min-w-0 max-w-full rounded border border-border p-2 text-base"/></label>
+     className="min-w-0 max-w-full"/></label>
    <div className="flex flex-wrap gap-3">
     <label className="grid min-w-0 gap-1 text-sm">Type
      <Select value={q.type}
       onChange={e=>updateQuestion(i,old=>({...old,...facultyChangeQuizChoiceType(old,e.target.value as Question["type"])}))}
-      className="min-h-11 sm:min-h-9 min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base sm:text-sm">
+      className="min-h-11 min-w-0 max-w-full sm:min-h-9">
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
      </Select></label>

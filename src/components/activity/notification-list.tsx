@@ -159,6 +159,7 @@ export function NotificationList({
                       <Button
                         size="sm"
                         variant="secondary"
+                        className="min-h-11 min-[768px]:min-h-9"
                         disabled={pendingId !== null}
                         onClick={() => markRead(item.id, item.actionHref ?? undefined)}
                       >
@@ -170,6 +171,7 @@ export function NotificationList({
                     <Button
                       size="sm"
                       variant="secondary"
+                      className="min-h-11 min-[768px]:min-h-9"
                       disabled={pendingId !== null}
                       onClick={() => markRead(item.id)}
                     >

@@ -37,7 +37,6 @@ export default async function CollegeProjectTemplateDetailPage({
         ← Template catalogue
       </Link>
       <PageHeader
-        eyebrow="Assigned Project Template"
         title={detail.version.title}
         description={
           detail.version.summary ??

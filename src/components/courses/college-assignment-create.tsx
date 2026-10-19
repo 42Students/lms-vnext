@@ -4,6 +4,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
@@ -91,7 +92,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <p className="text-xs text-muted-foreground">Create a shared or Section-specific assignment draft.</p>
    </div>
    <Button type="button" variant="secondary" disabled={!lessons.length||pending}
-    className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
+    variant="secondary" className="min-h-11"
     onClick={()=>{setError("");setMessage("");setOpened(true);}}>Create New Assignment</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">
@@ -147,12 +148,12 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}
    title="Create assignment as a draft?" description="Learners cannot submit until published."
    confirmLabel="Create draft" pending={pending} confirmDisabled={!chosen||!title.trim()} onConfirm={()=>void create()}>
-   {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+   {error?<Alert tone="error">{error}</Alert>:null}
   </ConfirmDialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title="Discard unsaved assignment changes?"
    description="Unsaved assignment details will be discarded." confirmLabel="Discard draft"
    confirmVariant="danger" pending={pending} onConfirm={discardDraft}/>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {message?<p role="status" className="text-sm text-success">{message}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {message?<Alert tone="success">{message}</Alert>:null}
  </section>;
 }

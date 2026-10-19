@@ -30,9 +30,9 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
  const keys=useMemo(()=>columns.map(column=>column.key),[]);
  return <GridWorkspace rows={rows} columns={columns}
   rowKey={company=>company.companyId??"unlinked:"+company.name}
-  searchParam="search" searchMaxLength={150} searchPlaceholder="Company name or website"
+  searchMode="hidden" searchParam="search" searchMaxLength={150} searchPlaceholder="Company name or website"
   columnScope="local" columnStorageKey="tpo-company-directory-columns-v1"
-  exportName="tpo-companies-page">
+  exportName="companies">
   {visible=>{
    const active=new Set(visible.length?visible:keys);
    return <DataTable caption="Companies on this page" rows={rows}
@@ -42,7 +42,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
      {key:"company",header:"Company",mobileLabel:"Company",mobilePriority:"primary" as const,
       cell:(company:TpoCompanyRow)=><div className="min-w-0">
        <Link href={companyHref(company)}
-        className="inline-flex min-h-9 items-center break-words font-semibold text-link underline lms-inline-link">
+        className="inline-flex min-h-9 items-center break-words font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {company.name}</Link>
        {company.unlinkedLeadGroup
         ?<div className="mt-2"><StatusBadge tone="warning">CRM name only · not linked</StatusBadge></div>
@@ -70,7 +70,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
      {key:"actions",header:"Actions",mobileLabel:"Actions",mobilePriority:"action" as const,
       cell:(company:TpoCompanyRow)=>company.companyId
        ?<Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-         className="inline-flex min-h-9 items-center font-semibold text-link underline lms-inline-link">Create drive</Link>
+         className="inline-flex min-h-9 items-center font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Create drive</Link>
        :<span className="text-xs text-muted-foreground">Link company first</span>},
     ].filter(column=>active.has(column.key))}/>
   }}

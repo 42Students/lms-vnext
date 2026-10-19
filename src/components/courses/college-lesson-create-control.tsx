@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -70,7 +71,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
    setError(cause instanceof Error?cause.message:"Unable to create Lesson.");
   }finally{setBusy(false);}
  }
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section className="space-y-3 border-b border-border pb-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <h2 className="font-semibold text-foreground">Lessons</h2>
    <Button type="button" onClick={()=>{setOpen(value=>!value);setError("");}}
@@ -104,7 +105,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
    <label className="grid gap-1 text-sm font-semibold text-body">Description (optional)
     <Textarea value={description} onChange={event=>setDescription(event.target.value)}
      maxLength={5000} rows={3}
-     className="rounded-md border border-border bg-surface p-3 text-foreground"/>
+     className="min-h-11"/>
    </label>
    <div className="flex flex-wrap gap-2">
     <Button type="button" disabled={busy||!name.trim()} onClick={()=>void create(false)}
@@ -121,7 +122,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
     </Button>
    </div>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {notice?<Alert tone="info">{notice}</Alert>:null}
  </section>;
 }

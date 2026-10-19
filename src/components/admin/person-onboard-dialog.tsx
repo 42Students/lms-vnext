@@ -141,15 +141,15 @@ export function PersonOnboardDialog({
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-2">
-          {forcedRole?<div className="grid gap-3 sm:col-span-2 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+          {forcedRole?<div className="grid min-w-0 gap-[var(--lms-space-3)] md:col-span-2 md:grid-cols-2">
             <label className="grid gap-1 text-xs font-semibold text-body">First Name
               <Input value={firstName} maxLength={120} required onChange={e=>setFirstName(e.target.value)} placeholder="First name"/>
             </label>
             <label className="grid gap-1 text-xs font-semibold text-body">Last Name
               <Input value={lastName} maxLength={120} required onChange={e=>setLastName(e.target.value)} placeholder="Last name"/>
             </label>
-          </div>:<div className="sm:col-span-2">
+          </div>:<div className="md:col-span-2">
             <label
               htmlFor={`onboard-name-${collegeId}`}
               className="mb-1.5 block text-xs font-semibold text-body"
@@ -203,7 +203,7 @@ export function PersonOnboardDialog({
               placeholder="name@example.com"
             />
           </div>
-          {forcedRole==="FACULTY" ? <fieldset className="sm:col-span-2 space-y-2 border-b border-border py-3">
+          {forcedRole==="FACULTY" ? <fieldset className="md:col-span-2 space-y-2 border-b border-border py-3">
             <legend className="text-xs font-semibold text-body">Faculty Type</legend>
             <label className="flex min-h-[var(--lms-control-height)] items-center gap-2 text-sm font-semibold text-body">
               <Checkbox checked={registerAsMentor} disabled={pending}
@@ -212,9 +212,9 @@ export function PersonOnboardDialog({
             </label>
             <p className="text-xs text-muted-foreground">A mentor receives the Mentor membership role in addition to Faculty.</p>
           </fieldset> : null}
-          {forcedRole && forcedRole!=="FACULTY" ? <p className="sm:col-span-2 text-sm text-body">
+          {forcedRole && forcedRole!=="FACULTY" ? <p className="md:col-span-2 text-sm text-body">
             Membership role: <strong>{roleLabel(forcedRole)}</strong>.
-          </p> : !forcedRole ? <fieldset className="sm:col-span-2">
+          </p> : !forcedRole ? <fieldset className="md:col-span-2">
             <legend className="mb-2 text-xs font-semibold text-body">
               Membership roles
             </legend>
@@ -222,7 +222,7 @@ export function PersonOnboardDialog({
               {MEMBERSHIP_ROLES.map((role) => (
                 <label
                   key={role}
-                  className="flex min-h-[var(--lms-control-height)] cursor-pointer items-center justify-between gap-3 px-3 py-2 hover:bg-primary-subtle"
+                  className="flex min-h-11 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)]"
                 >
                   <span className="text-sm font-semibold text-body">
                     {roleLabel(role)}
