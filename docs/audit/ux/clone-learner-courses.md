@@ -492,3 +492,76 @@ Following the previous six-file source audit, the next two queue files were read
 **STRICT TICK RULE:** No H-category tick claimed. The old LMS source does not provide element-by-element discussion/quiz card geometry, and actual tablet/phone computed values and interaction regression checks remain unperformed under the owner's no-app/no-tests rule. Outstanding shared Tabs active/hover shade also prevents a full exact-value match. Section J remains the orchestrator's visual comparison. Do not mark H1–H6 or all 247 pages complete.
 
 **Next exact unticked source:** `src/components/courses/learner-course-list.tsx` (course filter pills, semester/program chips, list card states); then `src/components/courses/learner-course-attendance.tsx`.
+
+## 2026-10-19 chat-7 continuation — next 18-file source sweep (batch 5)
+
+**Scope:** learner course cards and attendance, assessment summary, quiz and media helpers, Super Admin course/content screens and shared college course-directory surfaces. Live GitHub tree/contents used for inspection. Changes are pushed to `chatgpt/chat-7-b` with `[chat-7]` commit prefixes; no local application, TypeScript compiler, build, tests, CI, browser or screenshot was run. **Source-audited means the file's changes and source checks are complete, not pixel-perfect sign-off.**
+
+### File-level work queue and completed source edits
+
+| Reviewed file under `src/components/courses/` | Changes to close in this batch | Legacy-responsive source proof |
+| --- | --- | --- |
+| `learner-course-list.tsx` | Course-type `SegmentedControl`, filter grid and pill hit targets align with desktop transition; warning uses shared `Alert` with responsive Retry; overdue and continue links gain phone 44px targets, keyboard outlines; `Badge` JSX normalized | `md:grid-cols-2`, `md:[&>label>span]:min-h-9`, default `min-h-11`; `old-lms-pages.md:7-10`, `listing-page-header.scss:130-154` |
+| `learner-course-attendance.tsx` | Month-arrow controls, This month, month input and three-column stats use 44px phone actions, wrap and mobile gap; Attendance History heading tokenized | `min-h-11 md:min-h-9`, `w-full md:w-auto`, `md:py-5`; `learn-layout.scss:34,361-383` |
+| `learner-assessment-overview.tsx` | All 24 previous `sm:` form/filter/list/action/state-layout occurrences replaced by 768px `md:` rules; corrected contradictory duplicate mobile height utilities; quiz/assignment route semantics preserved | `md:grid-cols-2`, `md:hidden`, `min-h-11 md:min-h-9`; `listing-page-header.scss:130-154` |
+| `learner-rich-response-editor.tsx` | Three formatting controls now meet phone 44px target; removed unsupported ref prop on shared `Textarea` while preserving toolbar text selection/focus using a unique `useId` DOM target | `min-h-11 md:min-h-9`, shared `Textarea` focus outline; `form.scss:23-28,102-138` |
+| `learner-roadmap-item-dialog.tsx` | Long item names wrap instead of hiding; shared `Dialog` close control reaches 44px on phone; native shared Dialog keyboard/focus remains | `min-h-11 md:min-h-9` on Close, opener `min-h-14`; `learn-layout.scss:361-383` |
+| `learner-video-player.tsx` | Shared speed selector and failed-grant Retry are 44px on phone, 36px at desktop; secure playback grant/position/save logic left untouched | `min-h-11 md:min-h-9`; `learn-layout.scss:34,361-383` |
+| `learner-youtube-player.tsx` | Two recovery/open links' 44px phone targets now persist through 767px; video player playback code untouched | `min-h-11 md:min-h-9`; `learn-layout.scss:34,361-383` |
+| `quiz-attempt-control.tsx` | Missed-review close and question progress links use 44px phone target; answer-option label gets focus-within teal ring and motion-reduced hover transition; quiz logic untouched | `md:min-h-9`, `focus-within:ring-2` `--lms-focus-ring`; `form.scss:23-28` |
+| `super-admin-content-actions.tsx` | Removed primary-button `text-primary-text` overrides that could clash with white foreground; all edit, publish, archive, save actions retain handlers; field controls switched to 768px breakpoint; editing fieldset uses control radius token | `min-h-11 md:min-h-9`; `master-queue.md` owner buttons #0a7c88/white/9px, `form.scss:102-138` |
+| `super-admin-lesson-create.tsx` | Shared offering picker, name/description and submit controls keep phone 44px; submission/validation/error retained | `min-h-11 md:min-h-9`; `learn-layout.scss:34` |
+| `super-admin-content-authoring.tsx` | Adds explicit shared heading foreground; shared lesson picker minimum touch size 44px on phone; authoring service and selection unchanged | `min-h-11 md:min-h-9`; `variables.scss:25-32` |
+| `admin-course-create-panel.tsx` | Four setup anchor links gain 44px phone target, hover/focus styles; course/offering/delivery/faculty grids move from 640px to legacy 768px breakpoint | `md:grid-cols-2`, `md:col-span-2`; `learn-layout.scss:34` |
+| `super-admin-content-directory-page.tsx` | Filter grid, every shared input/select, edit and back link switch to legacy <=767px phone versus >=768px tablet | `md:grid-cols-2`, `min-h-11 md:min-h-9`; `listing-page-header.scss:130-154` |
+| `admin-assessment-read-directory.tsx` | Assessment-directory filter grid now switches at 768px while retaining result columns and shared Pagination from previous batches | `md:grid-cols-2`; `listing-page-header.scss:130-154` |
+| `college-content-aggregate.tsx` | Resource/video controls and phone-only layout switch at 768px; removed extra rounded card-like catalogue wrapper so hairline records sit in one canvas; no query or export changes | `md:hidden` /`md:block`, `border-y border-border`; `old-lms-pages.md:7,12` |
+| `college-learning-directory.tsx` | Filter buttons/pagination change at legacy 768px; removed outer catalogue card shell, preserving all filters, entries, and Jump to page | `md:min-h-9`, `border-y border-border`; `old-lms-pages.md:7,12` |
+| `admin-course-overview.tsx` | Four summary tiles on one column phone, two on tablet, four on XL; filter/search/export/reset/link touch heights now preserve phone 44px through 767px; existing DataTable/Pagination retained | `md:grid-cols-2`, `min-h-11 md:min-h-9`; `listing-page-header.scss:130-154` |
+| `super-admin-lesson-bulk-visibility.tsx` | Replaces unlabelled `overflow-y-auto` bulk lesson selection with shared accessible `ScrollCue`; checkbox row labels and bulk buttons get 44px phone targets; preserved confirm and mutation guards | `ScrollCue axis=y viewportClassName=max-h-48`, `min-h-11 md:min-h-10`, `min-h-11 md:min-h-9`; `learn-layout.scss:34,361-383` |
+
+### Legacy CSS value + interaction-state matrix
+
+| Element and state | Old LMS value, source | vNext source rule (actual token value) | Verdict |
+| --- | --- | --- | --- |
+| Interactive brand colour | `legacy-styles/components___variables.scss:10-14` primary `#26bac7`, hover `#1e9aa8`, readable text `#1a95a1`, tinted `#eff8fa` | `src/app/globals.css:20-30` same four resolved token literals; all touched links/FilterChip/MetricBar use tokens | Source **MATCH** |
+| Primary action default, hover | `master-queue.md:4-9` owner #0a7c88/white; hover #086873, 9px radius, 36px height, 14px weight650 | `src/app/globals.css:23-28,341-343` + `src/components/ui/button.tsx` shared primary variant; removed local text-primary-text overrides in `super-admin-content-actions.tsx:120-126` | Source **MATCH** for inherited shared-skin; browser unverified |
+| Secondary action default, hover, disabled | `legacy-styles/components___button.scss:39-66` outlined primary; hover fills teal/white; disabled half opacity | Shared `Button variant=secondary` in learner actions and Super Admin; disabled props/pending guards unchanged; local `min-h-11 md:min-h-9` only alters phone height | Source token path; exact disabled opacity differs by button implementation, **OPEN** |
+| Form basic role | `legacy-styles/components___form.scss:102-138` 14px normal, 20px line, 0.2px tracking, `#fbfcfd` bg, error `rgba(239,68,68,0.06)` | `src/components/ui/input.tsx`, `select.tsx`, `textarea.tsx` tokenized; source `globals.css:843-866` `--lms-font-base=14px`, `--lms-form-bg=#fbfcfd` | Shared component / base token source match; full computed states **OPEN** |
+| Focus-visible versus pointer | `legacy-styles/components___form.scss:23-28` pointer-only focus suppresses outline, keyboard remains visible | Shared `Button`/Select/Input/Checkbox/Textarea focus-visible classes; `quiz-attempt-control.tsx` uses focus-within teal ring, modified anchors with keyboard outline | Source intent **MATCH**, browser focus sequence **OPEN** |
+| Phone/tablet width cut | `legacy-styles/components___learn-layout.scss:34,379,419,450` and `listing-page-header.scss:130-154` <=767 phone, >=768 desktop | All 18 audited files report **zero `sm:` occurrences**, 120 `md:` occurrences; responsive grid/form/link selectors now start at 768 | Breakpoint **MATCH** at source level; no viewport render |
+| Phone tap height | `learn-layout.scss:361-383`, `old-lms-shell.css:21-28`: 44px minimum | Link/command/copy/retry/selector controls use `min-h-11` = 44px through 767px; `md:min-h-9` =36px on tablet; shared primitives | Source height **MATCH** for specifically edited controls, remaining uncontrolled UI instances **OPEN** |
+| Pill states | `old-lms-pages.md:10-12` compact status pills and counts on one canvas; legacy teal + semantic state fills | `Badge`/ `StatusBadge` used for course, read-only, elective, quiz, attendance; `FilterChip aria-pressed` for Continue learning | Shared primitive, dynamic state retained; per-pill calculated sizes **OPEN** |
+| Progress bar colour | `legacy-styles/components___variables.scss:10,14` `#26bac7` fill / `#9ee4e8` track | `src/components/ui/metric-bar.tsx:22-38` via `--lms-primary` / `--lms-primary-light`; course card uses progressbar | Source **MATCH** |
+| Page canvas/list containment | `old-lms-pages.md:7-12` one white canvas; table hairline; no ordinary section card-in-card | Resource/video and learning directory catalogue wrappers now `border-y border-border` without own rounded card/bg, course objects deliberately remain separate cards | Source layout **MATCH** for modified wrappers; other portal parts **OPEN** |
+| Truncated/empty/error/loading | `old-lms-pages.md:7-10` empty text and inline slim notices; `legacy-styles/components___variables.scss:63-78` status colours | Learner course list uses `EmptyState`/warning `Alert`; assessments keep table empty/retry; Admin actions and lessons use `Alert`; pending/disabled remain from service | Semantics retained, full pixel/state parity **OPEN** |
+
+### Scoped coverage, grep and source-responsive evidence
+
+The 18 paths in the table above were read **again from the branch after their last writes**. Programmatic source regex scans were run on their returned text; this is not a local shell `rg` execution. The zeroes apply **only** to those 18 files:
+
+| Probe | Regex used on source | Hits |
+| --- | --- | ---: |
+| Raw button | `/<button(?=[\\s>])/g` | 0 |
+| Raw input | `/<input(?=[\\s>])/g` | 0 |
+| Raw select | `/<select(?=[\\s>])/g` | 0 |
+| Raw textarea | `/<textarea(?=[\\s>])/g` | 0 |
+| Raw table | `/<table(?=[\\s>])/g` | 0 |
+| Hand-made dialog/overlay | `/role=["']dialog["']\\|fixed inset-0/g` | 0 |
+| Six-digit hardcoded hex | `/#[0-9A-Fa-f]{6}\\b/g` | 0 |
+| Local h1 outside PageHeader | `/<h1(?=[\\s>])/g` | 0 |
+| Old 640px `sm:` utility | `/\\bsm:/g` | 0 |
+| Current `md:` responsive utility | `/\\bmd:/g` | 120 |
+
+Reproduce locally if authorized (not executed by this lane):
+
+```bash
+rg -n '<(button|input|select|textarea|table)([[:space:]>])' src/components/courses/{learner-course-list,learner-course-attendance,learner-assessment-overview,learner-rich-response-editor,learner-roadmap-item-dialog,learner-video-player,learner-youtube-player,quiz-attempt-control,super-admin-content-actions,super-admin-lesson-create,super-admin-content-authoring,admin-course-create-panel,super-admin-content-directory-page,admin-assessment-read-directory,college-content-aggregate,college-learning-directory,admin-course-overview,super-admin-lesson-bulk-visibility}.tsx
+rg -n '#[0-9A-Fa-f]{6}|fixed inset-0|role="dialog"|<h1([[:space:]>])' src/components/courses/{learner-course-list,learner-course-attendance,learner-assessment-overview,learner-rich-response-editor,learner-roadmap-item-dialog,learner-video-player,learner-youtube-player,quiz-attempt-control,super-admin-content-actions,super-admin-lesson-create,super-admin-content-authoring,admin-course-create-panel,super-admin-content-directory-page,admin-assessment-read-directory,college-content-aggregate,college-learning-directory,admin-course-overview,super-admin-lesson-bulk-visibility}.tsx
+```
+
+Paired tag checks from complete source text: `learner-course-list.tsx` Button 3/3, Alert 1/1, Badge 8/8, Disclosure 3/3; `learner-course-attendance.tsx` Button 3/3; `learner-assessment-overview.tsx` Button 5/5, nav 1/1; `learner-rich-response-editor.tsx` Button 3/3 (Textarea self-closing); `learner-roadmap-item-dialog.tsx` Button 2/2, Dialog 1/1; `learner-video-player.tsx` Alert 2/2, Button 1/1; `quiz-attempt-control.tsx` Button 6/6, nav 1/1; `super-admin-lesson-create.tsx` form 1/1; `admin-course-create-panel.tsx` form 4/4 and nav 1/1; `college-learning-directory.tsx` form 2/2; `super-admin-lesson-bulk-visibility.tsx` Alert 1/1 and Button 2/2, `ScrollCue` opening/closing verified in updated block. All other scanned HTML form/nav counts balanced. This is a source check, **not** TypeScript parse or UI interaction proof.
+
+**Outstanding STRICT TICK:** H1–H6 remain `[ ]`. Even with the scoped zero-grep and legacy breakpoint proof, no live phone/tablet computed styles or screenshot comparisons were possible; disabled/focus states and UI-owned Tabs/Badge/Table skin mismatches need authoritative verification, and the 247-file area inventory is not globally zero. Do not mark any whole-area H category complete. The source-level edits above are delivered, with full parity pending orchestrator section J.
+
+**Next exact source file:** `src/components/courses/learner-course-card-image.tsx` (thumbnail ratio, opacity and fallback against legacy cards), then `src/components/courses/learner-live-class-link.tsx` (external action semantics and responsive target), then scan remaining Super Admin authored lessons/content files.
