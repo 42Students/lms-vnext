@@ -111,8 +111,8 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
  return <section aria-label="Bulk request decisions" className="space-y-3 border-b border-border pb-6">
   <h2 className="font-semibold">Act on selected requests</h2>
   <p className="text-xs text-muted-foreground">Choose up to {MAX_BULK_REQUESTS} waiting requests of one kind on this page. Each decision is rechecked and saved separately; a failure never approves the next request.</p>
-  <div tabIndex={0} role="group" aria-label="Waiting requests, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-   {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 border-b border-border p-2 text-sm">
+  <div tabIndex={0} role="group" aria-label="Waiting requests, scroll for more" className="max-h-64 min-h-0 divide-y divide-border overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+   {rows.map(row=><label key={row.id} className="flex min-h-11 items-center gap-2 px-2 py-3 text-sm hover:bg-muted">
     <input type="checkbox" checked={selected.includes(row.id)}
      disabled={pending||auditRetry!==null||(!selected.includes(row.id)&&(selected.length>=MAX_BULK_REQUESTS||
       chosenKind!==null&&chosenKind!==row.requestType))}
