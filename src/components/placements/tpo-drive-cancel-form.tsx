@@ -75,7 +75,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
       </p>
       <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {rows.map(([label, n]) => (
-          <div key={label} className="rounded-lg border border-border bg-surface-subtle p-3">
+          <div key={label} className="rounded-lg border border-border bg-muted p-3">
             <dt className="text-xs text-body">{label}</dt>
             <dd className="text-2xl font-semibold tabular-nums">{n}</dd>
           </div>
