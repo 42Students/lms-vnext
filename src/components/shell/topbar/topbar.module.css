@@ -516,3 +516,7 @@
 .hrNotificationBody ul > li { margin-bottom:6px; overflow:hidden; border-radius:8px; }
 
 .hrNotificationBody li a { display:flex; min-height:44px; padding:12px 16px; border:1px solid #e5e9f0; border-radius:8px; background:#fff; transition:background .2s ease,border-color .2s ease,box-shadow .2s ease; }
+
+.hrNotificationBody li a:hover { background:#fafbfc; border-color:#e5e9f0; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+.hrNotificationBody li a:active { background:rgba(0,0,0,.06); box-shadow:none; }
+.hrNotificationBody li a:focus-visible { outline:1px solid #6b7280; outline-offset:1px; }
