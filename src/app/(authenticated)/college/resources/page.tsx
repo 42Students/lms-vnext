@@ -26,7 +26,7 @@ export default async function CollegeResourcesPage({
         <PageHeader eyebrow="College Admin · Courses & Content" title="Resources" />
         <ErrorState title="Invalid resource filters"
           description="The title, status or page filter is invalid. No content was loaded."
-          action={<Link href="/college/resources" className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>} />
+          action={<Link href="/college/resources" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>} />
       </div>
     );
   }
