@@ -2,6 +2,7 @@
 import { useEffect, useId, useRef, useState, type DragEvent, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 import { FileUpload, fileMatchesAccept, fileSizeIsValid } from "./file-upload";
+import { Button } from "./button";
 export type FileDropzoneProps = {
   label:string;
   onFiles:(files:FileList|null)=>void;
@@ -49,6 +50,15 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     if(Array.from(files).some(file=>!fileMatchesAccept(file,accept))){droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError("This file type is not allowed.");onFiles(null);return;}
     setDropError(null);setDroppedNames(Array.from(files,file=>file.name));setDropPreviewFile(files[0]??null);droppedRef.current=true;onFiles(files);
   }
+  function clearDropped() {
+    if (unavailable) return;
+    droppedRef.current = false;
+    setDroppedNames([]);
+    setDropPreviewFile(null);
+    setDropPreviewUrl(null);
+    setDropError(null);
+    onFiles(null);
+  }
   return <div data-slot="file-dropzone" role="group" aria-label={label}
     aria-invalid={dropError ? true : undefined} aria-describedby={dropError ? errorId : undefined}
     onDragOver={event=>{if(!unavailable && Array.from(event.dataTransfer.types).includes("Files")){event.preventDefault();setDragging(true);}}}
@@ -61,6 +71,11 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
       ? <ul aria-label="Dropped files" className="mt-2 space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
           {droppedNames.map((name,index)=><li key={`${index}-${name}`} className="break-all">{name}</li>)}
         </ul> : null}
+    {showSelectedFiles && droppedNames.length > 0 && !unavailable
+      ? <Button type="button" variant="ghost" size="sm" onClick={clearDropped}
+          aria-label="Remove dropped files" className="mt-1 !min-h-9 !px-2 max-[767px]:!min-h-11">
+          Remove dropped files
+        </Button> : null}
     {showImagePreview&&dropPreviewFile&&dropPreviewUrl&&!unavailable
       ? <div data-slot="image-drop-preview" className="mt-2 rounded-[10px] border border-[var(--lms-neutral-200)] bg-white p-2">
           <img src={dropPreviewUrl} alt={`${label} preview`} className="max-h-40 max-w-full rounded-[6px] object-contain" />
