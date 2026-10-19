@@ -1,3 +1,5 @@
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 "use client";
 import {Dialog} from "@/components/ui/dialog";
@@ -86,13 +88,13 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
           </p>
           <label className="grid gap-1 text-sm">Name
-            <input value={person.name} readOnly className={field+" opacity-70"}/>
+            <Input value={person.name} readOnly className={field+" opacity-70"}/>
           </label>
           <label className="grid gap-1 text-sm">Login Mobile
-            <input value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
+            <Input value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
           </label>
           <label className="grid gap-1 text-sm">Login Email
-            <input value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
+            <Input value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
           </label>
           {kind==="FACULTY"?<>
             <label className="grid gap-1 text-sm">Department
@@ -114,16 +116,16 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               </Select>
             </label>
             <label className="grid gap-1 text-sm">Academic title
-              <input className={field} maxLength={128} value={person.academicTitle??""}
+              <Input className={field} maxLength={128} value={person.academicTitle??""}
                 onChange={e=>patch("academicTitle",e.target.value)}/>
             </label>
           </>:<>
             <label className="grid gap-1 text-sm">Roll Number
-              <input className={field} maxLength={128} value={person.rollNumber??""}
+              <Input className={field} maxLength={128} value={person.rollNumber??""}
                 onChange={e=>patch("rollNumber",e.target.value)}/>
             </label>
             <label className="grid gap-1 text-sm">Registration Number
-              <input className={field} maxLength={128} value={person.registrationNumber??""}
+              <Input className={field} maxLength={128} value={person.registrationNumber??""}
                 onChange={e=>patch("registrationNumber",e.target.value)}/>
             </label>
           </>}
@@ -134,23 +136,23 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             </Select>
           </label>
           <label className="grid gap-1 text-sm">Date of Birth
-            <input className={field} type="date" value={person.dateOfBirth}
+            <Input className={field} type="date" value={person.dateOfBirth}
               onChange={e=>patch("dateOfBirth",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm">Contact mobile
-            <input className={field} maxLength={32} value={person.contactPhone}
+            <Input className={field} maxLength={32} value={person.contactPhone}
               onChange={e=>patch("contactPhone",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm">Contact email
-            <input className={field} type="email" value={person.contactEmail}
+            <Input className={field} type="email" value={person.contactEmail}
               onChange={e=>patch("contactEmail",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm sm:col-span-2">Address
-            <textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={2} maxLength={1000}
+            <Textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={2} maxLength={1000}
               value={person.address} onChange={e=>patch("address",e.target.value)}/>
           </label>
           <label className="grid gap-1 text-sm sm:col-span-2">Bio
-            <textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={3} maxLength={3000}
+            <Textarea className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-base sm:text-sm" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>
           <div className="flex gap-2 sm:col-span-2">
