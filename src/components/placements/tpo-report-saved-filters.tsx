@@ -3,6 +3,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useEffect,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 type SavedView={name:string;seasonId:string;jobId:string;batchId?:string;branchId?:string;sort?:string;outcome?:string;q?:string;group?:string;state?:string;days?:string;companyId?:string;workMode?:string;payCategory?:string};
@@ -75,6 +76,6 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={!picked} onClick={apply} >Apply</Button>
    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={!picked} onClick={remove} >Delete</Button>
   </div>
-  {message?<p role="status" aria-live="polite" className="mt-2 text-xs text-body">{message}</p>:null}
+  {message?<InlineNotice tone={["Saved filters for this report.","Saved filters applied.","Saved filter removed."].includes(message)?"success":"error"} message={message}/>:null}
  </Disclosure>;
 }
