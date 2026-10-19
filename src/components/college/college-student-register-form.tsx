@@ -1,5 +1,9 @@
 import { Select } from "@/components/ui/select";
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
 import { useState, type FormEvent } from "react";
@@ -64,21 +68,21 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   }
   return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid gap-4 rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 sm:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold">First Name
-      <input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
+      <Input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Last Name
-      <input required maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field}/>
+      <Input required maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Mobile Number
       <span className="text-xs font-normal text-muted-foreground">Used for OTP login</span>
-      <input required type="tel" placeholder="9876543210" value={phoneE164}
+      <Input required type="tel" placeholder="9876543210" value={phoneE164}
         onChange={e=>setPhone(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Email
-      <input type="email" maxLength={320} value={email} onChange={e=>setEmail(e.target.value)} className={field}/>
+      <Input type="email" maxLength={320} value={email} onChange={e=>setEmail(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Roll Number
-      <input maxLength={128} value={rollNumber} onChange={e=>setRoll(e.target.value)} className={field}/>
+      <Input maxLength={128} value={rollNumber} onChange={e=>setRoll(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Program
       <Select required value={programId} onChange={e=>{setProgramId(e.target.value);setCohortId("");setSectionId("");}} className={field}>
@@ -105,16 +109,16 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Date of Birth
-      <input type="date" value={dateOfBirth} onChange={e=>setDob(e.target.value)} className={field}/>
+      <Input type="date" value={dateOfBirth} onChange={e=>setDob(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Address
-      <textarea maxLength={1000} rows={3} value={address} onChange={e=>setAddress(e.target.value)}
+      <Textarea maxLength={1000} rows={3} value={address} onChange={e=>setAddress(e.target.value)}
         className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground text-base sm:text-sm"/>
     </label>
     <div className="space-y-2 sm:col-span-2">
-      <button disabled={pending} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+      <Button variant="primary" type="submit" disabled={pending} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
         {pending?"Registering…":"Register student"}
-      </button>
+      </Button>
       {result&&<p role="status" className="text-sm text-body">{result}</p>}
       {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Open registered student profile →</Link>:null}
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}

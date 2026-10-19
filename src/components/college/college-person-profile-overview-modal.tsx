@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 type Overview={person:{name:string;kind:"FACULTY"|"LEARNER";gender:string;bio:string;
@@ -24,13 +25,13 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
   finally{setLoading(false);}
  }
  return <>
-  <button type="button" onClick={()=>void show()}
-   className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">Profile</button>
+  <Button variant="secondary" type="button" onClick={()=>void show()}
+   className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">Profile</Button>
   <Dialog open={open} onOpenChange={setOpen} title={"Profile for "+name}>
     <div className="flex items-center justify-between gap-2">
      <h2 className="text-lg font-semibold">Profile · {name}</h2>
-     <button type="button" onClick={()=>setOpen(false)}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3">Close</button>
+     <Button variant="secondary" type="button" onClick={()=>setOpen(false)}
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3">Close</Button>
     </div>
     {loading?<p role="status">Loading profile…</p>:null}
     {error?<p role="alert" className="text-error">{error}</p>:null}

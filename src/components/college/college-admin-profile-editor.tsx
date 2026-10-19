@@ -1,5 +1,8 @@
 "use client";
 
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import type { CollegeOwnProfileInput } from "@/modules/people/college-admin-profile-edit-service";
@@ -13,7 +16,7 @@ function Field({ label, value, onChange, type = "text", hint }: {
 }) {
   return <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
     {label}
-    <input className={fieldStyle} type={type} value={value} maxLength={500}
+    <Input className={fieldStyle} type={type} value={value} maxLength={500}
       onChange={event => onChange(event.target.value)} />
     {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
   </label>;
@@ -75,7 +78,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} />
         <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} />
         <label className="grid gap-1 text-sm font-semibold text-body">About
-          <textarea rows={3} maxLength={1000} className={fieldStyle}
+          <Textarea rows={3} maxLength={1000} className={fieldStyle}
             value={profile.about} onChange={e => top("about", e.target.value)} />
         </label>
         <Field label="Profile photo (HTTPS link)" value={profile.photoUrl}
@@ -115,8 +118,8 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
     </div>
     {error && <p role="alert" className="text-sm text-error">{error}</p>}
     {saved && <p role="status" className="text-sm font-semibold text-link">Profile updated successfully.</p>}
-    <button type="submit" disabled={saving} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+    <Button variant="primary" type="submit" disabled={saving} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
       {saving ? "Saving…" : "Save profile"}
-    </button>
+    </Button>
   </form>;
 }
