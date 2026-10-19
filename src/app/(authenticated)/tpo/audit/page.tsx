@@ -1,6 +1,7 @@
 import { Tabs } from "@/components/ui/tabs";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
+import { PageSizeSelect } from "@/components/ui/page-size-select";
 import {Input} from "@/components/ui/input";
 import {TpoAuditSavedViews} from "@/components/tpo/tpo-audit-saved-views";
 import {tpoIndiaCalendarDay} from "@/modules/placements/tpo-local-date-model";
@@ -301,18 +302,7 @@ export default async function TpoAuditPage({
             <Input type="search" name="who" maxLength={100} defaultValue={query.who}
               placeholder="Actor name contains…" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">
-            Rows per page
-            <Select
-              name="pageSize"
-              defaultValue={String(pageSize)}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-            >
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </Select>
-          </label>
+          <PageSizeSelect name="pageSize" defaultValue={String(pageSize)} options={[25,50,100]} />
 
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2 xl:col-span-5">
             <Button
