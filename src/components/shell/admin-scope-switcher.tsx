@@ -113,6 +113,7 @@ export function AdminScopeSwitcher({
           </optgroup>
         ) : null}
       </Select>
+      {pending ? <p role="status" className="mt-1 text-xs text-muted-foreground">Switching workspace…</p> : null}
       {!scope?.collegeId && !scope?.organizationId ? <p className="mt-1 text-xs text-muted-foreground">Showing all colleges — data may be large.</p> : null}
       {search.trim() && visibleColleges.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">No matching colleges.</p>:null}
       {error ? (
