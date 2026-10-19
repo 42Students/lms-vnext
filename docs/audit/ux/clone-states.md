@@ -454,3 +454,57 @@ rg -n '<Alert|</Alert>|<EmptyState|<InlineNotice|role="(alert|status)"' src/comp
 **Next exact source:** `src/components/placements/tpo-report-saved-filters.tsx` (one remaining raw status announcement on the latest source read), then remaining placement component alerts and finally cross-portal 403/404/500/offline/maintenance/session paths.
 
 - [ ] F3 codemod batch — pattern: simple leaf `<p>`/`<span role="alert">` with string literal or `{error}`/`{message}` and no nested JSX; planned candidate inventory: GitHub index currently returns up to 63 placement component files and 61 TPO app files (stale search, **not** a confirmed match count). Script: `scripts/codemods/chat-5-alerts.cjs`; dry run `node scripts/codemods/chat-5-alerts.cjs --scope=src/components/placements`; apply `node scripts/codemods/chat-5-alerts.cjs --apply`; strict tick blocked until script is actually run locally, parser/typecheck and responsive proofs complete. The codemod deliberately skips result counters, complex JSX, non-string expressions and shared `src/components/ui` elements. No code execution performed by chat-5.
+
+
+## Chat-5 next feedback batch — source proof after main fast-forward (2026-10-19)
+
+**Sync:** At batch start, `chatgpt/chat-5-b` was 640 commits behind and zero ahead; lane ref was fast-forwarded non-forcibly from `1d44995fdec3b1214063a97f451e9e8a73f758a2` to `36460671b6456b21e3bc67e0944c15053dce4d9c` (`main` at that instant). All writes are branch-only, `[chat-5]` tagged, never direct-to-main. Current main can advance concurrently.
+
+**Shared F3 token parity corrected at source:**
+- `src/components/ui/alert.tsx:10,12`: info uses `--lms-info-subtle` (`#eff8fa`), warning uses `--lms-warning-subtle` (`rgba(217,119,6,.1)`). Matching legacy `docs/design/legacy-styles/components___variables.scss:69-70,73-74`, vNext `src/app/globals.css:49-50,56-57`.
+- `src/components/ui/banner.tsx:10,12`: identical info/warning fill tokens. Alert/Banner API, content roles, action slots, min-w-0, flex-wrap and child elements unchanged. Rendered warning `#fef6e7` differed from the old status-token background in earlier audits and was changed to the matching legacy status-token alpha fill.
+- `src/components/ui/inline-notice.tsx:11`: info surface now `--lms-info-subtle` matching legacy status-info background `#eff8fa`; success/error backgrounds remain the exact legacy token values.
+- **Still OPEN:** border opacities `0.25` vs old border source unverified; `--lms-control-radius` 9px vNext vs 6px old control variable (`globals.css:343` vs legacy `components___variables.scss:133`); focus outline offset 2px vs 3px (`inline-notice.tsx:36` vs `components___accessibility.scss:19-23`); banner action hover/focus and 320/767/tablet rendered pixel comparison. Do not mark F3 strictly done.
+
+### Source re-read: next twelve TPO page/component files
+
+The following are actual re-fetched branch TSX texts following each write, scanned for `<Alert` and `</Alert>` pairs, `<InlineNotice`, `<EmptyState`, and `<p|div|span|section role="status|alert"`. File position is the first converted JSX shared-state markup. This is **not** a checked-out `rg` command, TypeScript parser, browser or screenshot measurement.
+
+| Updated file | Alert opens/closes | InlineNotice | EmptyState | Remaining raw status count | First shared JSX line | Mobile/tablet source condition |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| `src/components/placements/tpo-report-saved-filters.tsx` | 0/0 | 1 | 0 | 0 | 79 | min-w-0, flex-wrap, md:min-h-9 |
+| `src/components/placements/tpo-interview-reschedule-form.tsx` | 0/0 | 1 | 0 | 0 | 54 | sm:col-span-2, md:min-h-9 |
+| `src/components/placements/tpo-delete-draft-action.tsx` | 0/0 | 1 | 0 | 0 | 42 | shared InlineNotice min-w-0 / wrapping |
+| `src/components/placements/tpo-mark-own-notification-read.tsx` | 0/0 | 1 | 0 | 0 | 30 | shared notice min-w-0, button target preserved |
+| `src/components/placements/tpo-drive-refresh-control.tsx` | 0/0 | 1 | 0 | 0 | 20 | flex-wrap row; pending announcement |
+| `src/components/placements/tpo-offer-lifecycle-panel.tsx` | 0/0 | 0 | 1 | 0 | 130 | existing scroll list and empty state wrapping |
+| `src/components/placements/tpo-week-hour-calendar.tsx` | 2/2 | 2 | 0 | 0 | 200–219 | flex-wrap toolbar; calendar fixed column styles unchanged |
+| `src/components/placements/tpo-drive-lifecycle-controls.tsx` | 1/1 | 2 | 0 | 0 | 127,166–167 | shared alert min-w-0; action row untouched |
+| `src/components/placements/tpo-round-drive-day-read-only.tsx` | 0/0 | 0 | 1 | 1 | 258 | DataTable empty; mobilePriority columns retained |
+| `src/components/placements/tpo-bulk-round-result-recorder.tsx` | 1/1 | 1 | 1 | 1 | 149,238,263 | multi-column result form; role-status result list retained |
+| `src/components/placements/tpo-calendar-followup-actions.tsx` | 0/0 | 2 | 0 | 1 | 141,226 | flex-wrap form; lead-search suggestion status exempt |
+| `src/app/(authenticated)/tpo/calendar/error.tsx` | 0/0 | 0 | 0 | 0 | 7 | ErrorState shared retry Button, source literal escapes removed |
+
+**Scoped totals for these 12**: 4 Alert openings and 4 closings; 12 InlineNotice; 3 EmptyState; 3 raw status announcement elements, **zero** styled raw status/alert wrappers. Raw exemptions: `tpo-round-drive-day-read-only.tsx` unknown attendance tally, `tpo-bulk-round-result-recorder.tsx` itemized result log with export, `tpo-calendar-followup-actions.tsx` in-label lead-search no-results status. They are data/live announcements, not decorated banners. Do not conflate these with whole-repository zero.
+
+`src/app/(authenticated)/tpo/calendar/error.tsx:7-9` now has human-readable `title` and `description` string attribute copy rather than literal `\\n` escape text from an earlier route migration. Shared `ErrorState` and functional `Retry` callback retained.
+
+### Reproduction / responsive proof boundary
+
+Commands to run on a checkout (**not executed** by this lane):
+```sh
+rg -n '<(Alert|InlineNotice|EmptyState)\\b|</Alert>|role="(alert|status)"' src/components/placements/tpo-*.tsx
+rg -n 'rounded|border|bg-|px-|py-' src/components/placements/tpo-*.tsx
+rg -n 'animate-pulse|bg-muted' src/app -g 'loading.tsx'
+```
+Shared primitives bound the notice width with `min-w-0`, `max-w-full` and break-word wrapping (`alert.tsx:18`, `inline-notice.tsx:33-34`, `empty-state.tsx:6-9`), with existing page `flex-wrap`, `sm:` and `md:` grid/action classes retained. Old mobile max-width is 767px in `docs/design/legacy-styles/components___antddesign.scss:21-23`; modern `sm:` activates at 640px. The source-level overflow path is documented; actual phone/tablet viewport proof is **not** available without running both apps.
+
+- [ ] F3: global remaining instances, all default/hover/active/focus/disabled values and pixel parity open.
+- [ ] F4: full loader, dotted spinner (old dev-only), Skeleton height/timing and motion-reduction comparison open.
+- [ ] F5: full 403/404/500, maintenance/offline/session-expired/no-data route inventory and browser comparison open.
+
+### Automated batch supplied for next orchestrated execution
+
+`scripts/codemods/chat-5-alerts.cjs` uses TypeScript TSX AST to convert only simple leaf `<p role="alert">` and `<span role="alert">` notices with literal/error-string content (opening and closing tags atomically), inserts the existing shared InlineNotice import, and **skips** nested JSX, counters, spread props and risky source. Preview `node scripts/codemods/chat-5-alerts.cjs`; apply `node scripts/codemods/chat-5-alerts.cjs --apply`. This script is committed but **not executed** here (no compile/tests/CI), so no script-produced files are reported as completed.
+
+**Next exact hand-audit source:** `src/components/placements/tpo-calendar-followup-actions.tsx` already source migrated; next untouched unique state file `src/components/placements/tpo-calendar-followup-actions.tsx` search-suggestion empty wording remains an intentional plain status span. Resume instead at `src/app/(authenticated)/tpo/calendar/rounds/page.tsx` to inspect duplicated bespoke schedule/error notices.
