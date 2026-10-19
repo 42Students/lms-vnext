@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Pagination } from "@/components/ui/pagination";
 import {CollegeArchivedLessonRestore} from "./college-archived-lesson-restore";
 import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./college-lesson-visibility-controls";
 import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
@@ -647,7 +648,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
           </div>
         </>)}
       </section>
-      <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span className="text-muted-foreground">{data.total===0?0:Math.min(data.total,(data.query.page-1)*data.query.pageSize+1)}–{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total} · Page {data.query.page} of {data.totalPages}</span>
         <div className="flex flex-wrap items-center gap-2">
           {lessons&&data.totalPages>1?<form method="get" action={href} className="flex items-center gap-2">
@@ -656,18 +657,15 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                 <Input key={key} type="hidden" name={key} value={value}/>)}
             <label className="text-xs font-semibold">Jump to page
               <Input type="number" name="page" min={1} max={data.totalPages} defaultValue={data.query.page}
-                className="ml-2 w-20 rounded border border-border bg-surface p-2 text-foreground"/>
+                className="ml-2 w-20"/>
             </label>
-            <Button type="submit" className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Go</Button>
+            <Button type="submit" className="min-h-11 sm:min-h-9">Go</Button>
           </form>:null}
-          {data.query.page > 1 ? <Link
-            href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page - 1 })}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Previous</Link> : null}
-          {data.query.page < data.totalPages ? <Link
-            href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page + 1 })}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Next</Link> : null}
+          <Pagination page={data.query.page} pageCount={data.totalPages}
+            hrefForPage={page=>collegeLearningHref(data.kind,{...data.query,page})}
+            label={title+" pagination"} showBoundaryLinks={false}/>
         </div>
-      </nav>
+      </div>
       <p className="text-xs leading-5 text-muted-foreground">
         {lessons
           ? "This catalogue is based on registered lesson and content rows. Content counts include historical draft/archived records; no file URLs or signed media are queried. Creation, editing, ordering and storage remain offering-scoped."
