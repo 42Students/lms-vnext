@@ -3,6 +3,8 @@ import {DataTable} from "@/components/ui/data-table";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listCollegeAdminSessions} from "@/modules/colleges/admin-session-service";
 import {PageHeader} from "@/components/ui/page-header";
+import {PageBackLink} from "@/components/ui/page-back-link";
+import {EmptyState} from "@/components/ui/empty-state";
 import {AdminRevokeSessions} from "@/components/admin/admin-revoke-sessions";
 
 type DeviceRow={id:string;device_name:string|null;user_agent:string|null;ip_address:string|null;
@@ -18,14 +20,16 @@ export default async function AdminDeviceSessionsPage({params}:{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
  }).format(new Date(value));
  return <div className="space-y-5">
-  <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">← Admins</Link>
   <PageHeader title={data.target.name+" · Active sessions"}
-   description="Current device sessions for the selected administrator. Times are in IST. An unknown or out-of-scope person cannot be inspected."/>
-  <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Administrator activity history →</Link>
+   description="Current device sessions for the selected administrator. Times are in IST. An unknown or out-of-scope person cannot be inspected."
+   actions={<div className="flex flex-wrap items-center gap-2">
+    <PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="Admins"/>
+    <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 sm:min-h-9">Administrator activity history →</Link>
+   </div>}/>
   <p className="text-sm text-body">{data.devices.length} active session(s), up to 100 shown.</p>
   <DataTable<DeviceRow> caption="Active administrator device sessions" rows={data.devices} getRowKey={row=>row.id}
-    empty={<p role="status">No active sessions for this account.</p>}
+    empty={<EmptyState title="No active sessions" description="No active sessions for this account."/>}
     columns={[
       {key:"device",header:"Device",mobilePriority:"primary",cell:row=><div className="min-w-0 break-words"><strong>{row.device_name??"Unknown device"}</strong><p className="text-xs text-muted-foreground">{row.user_agent??"Unknown browser"}</p></div>},
       {key:"ip",header:"IP",mobilePriority:"secondary",cell:row=>row.ip_address??"Unknown"},
