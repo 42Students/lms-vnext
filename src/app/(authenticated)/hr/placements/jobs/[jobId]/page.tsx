@@ -114,7 +114,7 @@ export default async function HrPlacementJobPage({
       // Malformed tab, page, stage or applicant selectors are recoverable URL
       // mistakes. Never let an invalid deep link crash the recruiter job page.
       return <div className="min-w-0 max-w-full space-y-5">
-        <PageHeader eyebrow="Recruiter" title="Hiring drive" />
+        <PageHeader title="Hiring drive" />
         <ErrorState title="Invalid hiring filters"
           description="Check the selected tab, applicant and page filters, or clear them to continue."
           action={<Link href={"/hr/placements/jobs/"+encodeURIComponent(jobId)}
