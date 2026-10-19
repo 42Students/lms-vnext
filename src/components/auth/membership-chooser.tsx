@@ -158,7 +158,7 @@ export function MembershipChooser({
           </section>
         ))}
       </div>
-      <Button disabled={pending||!selectedId} onClick={()=>{if(selectedId)choose(selectedId);}}>
+      <Button type="button" className="min-h-11 md:min-h-9" disabled={pending||!selectedId} onClick={()=>{if(selectedId)choose(selectedId);}}>
         {pendingId?"Opening…":"Continue with this college"}
       </Button>
     </div>
