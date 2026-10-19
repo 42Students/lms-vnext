@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 
 const tabs = [
   { slug: "", label: "Overview" }, { slug: "students", label: "Students" },
@@ -11,12 +11,11 @@ const tabs = [
 export function TpoBatchWorkspaceTabs({ batchId, active, students }: {
   batchId: string; active: typeof tabs[number]["slug"]; students?: number;
 }) {
-  return <nav aria-label="Batch workspace tabs" className="flex flex-wrap gap-2 border-b border-border">
-    {tabs.map(tab => <Link key={tab.slug} aria-current={tab.slug === active ? "page" : undefined}
-      href={`/tpo/batches/${encodeURIComponent(batchId)}${tab.slug ? "/"+tab.slug : ""}`}
-      className={`inline-flex min-h-9 items-center border-b-[3px] px-3 text-sm font-semibold transition-colors ${tab.slug === active
-        ? "border-primary text-link" : "border-transparent text-body hover:border-primary hover:text-link"}`}>
-      {tab.label}{tab.slug === "students" && students !== undefined ? ` (${students})` : ""}
-    </Link>)}
-  </nav>;
+  return <Tabs ariaLabel="Batch workspace tabs" value={active} renderPanel={false}
+    items={tabs.map(tab => ({
+      value: tab.slug,
+      label: tab.label,
+      count: tab.slug === "students" ? students : undefined,
+      href: `/tpo/batches/${encodeURIComponent(batchId)}${tab.slug ? "/" + tab.slug : ""}`,
+    }))} />;
 }
