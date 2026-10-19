@@ -92,4 +92,11 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(mobile).toContain("env(safe-area-inset-bottom,0px)");
  expect(sidebar()).toContain("padding-inline:12px;");
 });
+ it("has one TPO footer implementation rather than two diverging copies",()=>{
+ const primary=read("src/components/tpo/tpo-mobile-footer.tsx");
+ const alias=read("src/components/shell/tpo-mobile-footer.tsx");
+ expect(primary).toContain("<Button key=");
+ expect(primary).toContain("</Button>");
+ expect(alias).toContain('export {TpoMobileFooter} from "@/components/tpo/tpo-mobile-footer";');
+});
 });
