@@ -410,20 +410,20 @@
 - [ ] `src/components/verification/VerificationWorkspace.tsx`
 
 ### Tenant-related admin components (23 TSX files)
-- [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
-- [ ] `src/components/admin/college-archive-button.tsx`
+- [ ] `src/components/admin/college-admin-lifecycle-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/admin/college-archive-button.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-at-glance-panel.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
-- [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Embedded branding preview)
-- [ ] `src/components/admin/college-bulk-import.tsx`
+- [ ] `src/components/admin/college-branding-form.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/admin/college-branding-preview.tsx` — **SOURCE PASS (replacement chat-4), strict parity open** — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Embedded branding preview)
+- [ ] `src/components/admin/college-bulk-import.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-closing-quizzes-card.tsx`
 - [ ] `src/components/admin/college-create-form.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/organization-create-form.tsx` — **SOURCE PASS, strict parity open (replacement chat-4)**
 - [ ] `src/components/admin/college-dashboard-cards.tsx`
-- [ ] `src/components/admin/college-dashboard-section-failure.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
+- [ ] `src/components/admin/college-dashboard-section-failure.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/admin/college-edit-dialog.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-feature-rule-editor.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/components/admin/college-logo-uploader.tsx`
+- [ ] `src/components/admin/college-logo-uploader.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-setup-checklist.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-signin-method-form.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Sign-in method controls)
 - [ ] `src/components/admin/managed-college-subdomain.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
@@ -812,3 +812,128 @@ Complete fetched-file expressions: `/<(button|input|select|textarea|table)\b/g`;
 **Strict completion:** 0 checkboxes ticked for these two; previous seven also remain unticked. Shared PageHeader mobile/desktop typography conflicts and missing old-LMS exact value sources, whole-portal grep and responsive interaction/render evidence prevent all-match strict proof. The current Work queue is a source-migration ledger, not a claim of pixel completion.
 
 **Exact next file:** `src/components/admin/college-logo-uploader.tsx` (then `src/components/admin/college-branding-form.tsx` and other remaining College Admin/Super Admin controls).
+
+
+### Replacement chat-4 branding and college actions — source and responsive audit (2026-10-19)
+
+Six queued files refactored to shared components; original image crop, brand values, permission gates, tenant URLs, modal actions, server validations, toasts and status semantics retained. **No CI, application runtime, TypeScript compiler, browser screenshots, or interaction execution.** The evidence below is source-based and must not be mistaken for complete Section H pixel certification.
+
+#### Grep proof — complete fetched text of each named file
+
+For each GitHub blob, checked `/<(button|input|select|textarea|table)\b/g` (lowercase native form/table tags), `/#[a-f0-9]{3,8}\b/gi` (hex literals), `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`; compared unmatched closing tag families `Card,Alert,Button,Input,Dialog,ConfirmDialog,StatusBadge,div,section,aside,form,label,span,p,article,h2,h3`. This is a per-file source grep, not the global shell grep required for a strict tick.
+
+| Full file | Raw controls | Hex | Hand overlay | Native h1 | Orphan closing tag families | Responsive tokens md/sm/lg |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| `src/components/admin/college-logo-uploader.tsx` | 0 | 0 | 0 | 0 | 0 | 3 / 1 / 0 |
+| `src/components/admin/college-branding-form.tsx` | 0 | 0 | 0 | 0 | 0 | 2 / 0 / 5 |
+| `src/components/admin/college-branding-preview.tsx` | 0 | 0 | 0 | 0 | 0 | 2 / 2 / 1 |
+| `src/components/admin/college-edit-dialog.tsx` | 0 | 0 | 0 | 0 | 0 | 6 / 0 / 0 |
+| `src/components/admin/college-admin-lifecycle-action.tsx` | 0 | 0 | 0 | 0 | 0 | 2 / 0 / 0 |
+| `src/components/admin/college-archive-button.tsx` | 0 | 0 | 0 | 0 | 0 | 3 / 0 / 0 |
+
+#### `src/components/admin/college-logo-uploader.tsx`
+
+| Property/state | Legacy value and source | VNext value and source | Result |
+| --- | --- | --- | --- |
+| Single canvas, preview geometry | docs/design/old-lms-pages.md:6: one white canvas, separate objects alone may have border | college-logo-uploader.tsx:77: current logo is a separate shared Card inside inherited PageCanvas | **Source structure matches; legacy uploader-specific 24x24 logo size not documented** |
+| File/crop inputs | legacy-styles/components___form.scss:117-143: 10px radius, 14px/20px tracking .2px and teal focus shadow | college-logo-uploader.tsx:81 and 91: 1 shared file input, 3 shared range inputs; ui/input.tsx:13-44 | **Shared input chrome; browser range thumb styling not source-matched** |
+| Upload, remove, loading, disabled | old-lms-shell-spec.md:4: 36px primary/secondary button, 9px radius; components___button.scss:49-51 disabled behaviour | college-logo-uploader.tsx:99: Buttons honor busy with 44px mobile, 36px md+; text updates while pending | **Token targets align; button hover/loading exactness depends on shared owner** |
+| Outcome and permission states | old-lms-pages.md:11: slim inline notice strip and no nested page canvas | college-logo-uploader.tsx:103/109: shared read-only info and success/error status | **Shared states; legacy error/warning colours not measured** |
+| Delete confirm | old-lms-pages.md:6: dialogs not per-page overlay, page stays one canvas | college-logo-uploader.tsx:108 delegates to ui/confirm-dialog.tsx:15-19 and ui/dialog.tsx:39-56 | **No hand-rolled overlay; native rendered focus trap unverified** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px vertical mobile, 44px targets | college-logo-uploader.tsx:83,99,106: w-full upload field, 44px action targets <768px and 36px >=768; crop preview width 208px | **Source target breakpoint matches; exact viewport crop layout unverified** |
+
+#### `src/components/admin/college-branding-form.tsx`
+
+| Property/state | Legacy value and source | VNext value and source | Result |
+| --- | --- | --- | --- |
+| Form inputs and validation | legacy-styles/components___form.scss:117-143: 10px radius, 14px font/20px line, error red 6% bg, focus 20% halo | college-branding-form.tsx:154; shared ui/input.tsx:21-40 and aria-invalid per field | **Source error-control rules match; no live form error comparison** |
+| Color values | old-lms-pages.md:6: tenant-owned visual branding must not hard-code decorative app colors | college-branding-form.tsx: imports ui/branding-color-tokens; native colour picker reads validated hex or shared default, text sample via shared token | **Intentional editable brand colors, no decorative literals** |
+| Error, read-only, save/loading | old-lms-pages.md:11: slim notice strips; old-lms-shell-spec.md:4 primary CTA is 36px teal-white, radius 9px | college-branding-form.tsx:172 and 207: per-field shared errors, read-only info, loading Button | **States moved to shared UI; save events not replayed** |
+| Mock sign-in distinct visual | old-lms-pages.md:6,9: only distinct objects may be cards | college-branding-form.tsx:223: sign-in preview illustration in a shared Card, outside form, not an extra page canvas | **Matches independent-illustration shape; legacy sign-in interior not source-matched** |
+| Responsive layout | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, >=768 horizontal actions | college-branding-form.tsx:147 two color columns at 768+; aside at lg with border-left, below with border-top; 44px save touch target below 768 | **Source mobile/tablet stack proof; actual cropping/spacing unverified** |
+| Disabled/error/hover/focus | legacy-styles/components___form.scss:22-36,136-143: mouse focus ring suppressed, keyboard ring, invalid red halo | college-branding-form.tsx uses disabled={!canEdit}, aria-invalid and shared Input focus-visible/disabled/hover variants, ui/input.tsx:26-40 | **Source rules supplied; computed CSS in tenant skin not observed** |
+
+#### `src/components/admin/college-branding-preview.tsx`
+
+| Property/state | Legacy value and source | VNext value and source | Result |
+| --- | --- | --- | --- |
+| Single heading and status | old-lms-pages.md:6-7: page has one overall heading; embedded sections use subordinate heads | college-branding-preview.tsx:133-141: section h2 and shared StatusBadge; no PageHeader or h1 | **Source hierarchy matches** |
+| Brand colors and image safety | old-lms-pages.md:6: visual values sourced from tenant where supplied | college-branding-preview.tsx:20-38: dynamic tokens/background; protected HTTPS safe fields retained | **Data-driven; legacy exact branding palette tenant-dependent** |
+| Independent illustrations | old-lms-pages.md:9: cards only for separate report/illustration objects | college-branding-preview.tsx:255: 2 shared Card wrappers for desktop and mobile sign-in previews | **Shared card geometry; mock interior deliberately illustrative** |
+| Responsive color details | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, >=768 inline | college-branding-preview.tsx:153: swatches and metadata one column on phones, two at 768+ | **Matching breakpoint source, legacy preview-specific layout unknown** |
+| Phone/desktop illustrations | old-lms-pages.md:6,9: separate visual objects | college-branding-preview.tsx:33-36: 235px max-w-full mobile mock, desktop max-w 320px, illustrations two columns at lg >=1024px | **Resizes by source; no viewport rendering** |
+| Hover/focus/empty | legacy-styles/components___form.scss:22-36: focus-visible on interactive fields | college-branding-preview.tsx:188-246: readonly HTTPS links and suppressed unsafe URLs, no form fields or faux interactive buttons | **Read-only; actual link hover/keyboard styling not measured** |
+
+#### `src/components/admin/college-edit-dialog.tsx`
+
+| Property/state | Legacy value and source | VNext value and source | Result |
+| --- | --- | --- | --- |
+| Native overlay | old-lms-pages.md:6: no route-level handmade overlays | college-edit-dialog.tsx:106 shared Dialog with ui/dialog.tsx:39-56, native <dialog> and central overlay owner | **Zero handrolled overlay; legacy animation/geometry unverified** |
+| Modal form fields | legacy-styles/components___form.scss:117-143: 14px, radius 10px, focus-visible teal | college-edit-dialog.tsx:140 shared Input values, readonly college code and original maxLength | **Shared field chrome; exact modal form label sizing unknown** |
+| Save, cancel, pending | old-lms-shell-spec.md:4: 36px buttons desktop; components___button.scss:49-51 disabled | college-edit-dialog.tsx:89-128: 3 shared Buttons, save loading, disabled pending | **Source states match shared contract; pending interaction not replayed** |
+| Responsive form and actions | legacy-styles/components___listing-page-header.scss:130-153: 767px phone boundary | college-edit-dialog.tsx:132: fields single-col <=767, two-col >=768; action 44px phone, 36px >=768 | **Breakpoint source aligned; dialog overflow and close not rendered** |
+| Error/success notification | old-lms-pages.md:11: status indications inline, no extra canvas | college-edit-dialog.tsx:57-80: shared toast reports failures and success; modal closes only success | **Existing flow kept; legacy toast geometry unknown** |
+| Keyboard and a11y | legacy-styles/components___form.scss:22-36: focus-visible | ui/dialog.tsx:39-56 supplies aria title/description and native dialog close; ui/input.tsx:30-31 keyboard ring | **Source accessibility treatment present, no keyboard replay** |
+
+#### `src/components/admin/college-admin-lifecycle-action.tsx`
+
+| Property/state | Legacy value and source | VNext value and source | Result |
+| --- | --- | --- | --- |
+| Role guard and warning | old-lms-pages.md:11: compact warning strip | college-admin-lifecycle-action.tsx:35 shared Alert when Mentor assignment blocks suspend | **Shared status; exact legacy warning spacing unknown** |
+| Reason input | legacy-styles/components___form.scss:117-143: input 10px radius, 14px, .2px tracking, teal focus | college-admin-lifecycle-action.tsx:38 shared Input, maxLength 1000; disabled during request | **Source shared treatment; form-specific row height unverified** |
+| Action button and dialog | old-lms-shell-spec.md:4: button 36px desktop/9px radius; old-lms-pages.md:6 centralized overlay | college-admin-lifecycle-action.tsx:41 Button loading and shared ConfirmDialog | **Matches inherited controls; no live action test** |
+| Success/error/empty | old-lms-pages.md:11: statuses without nested cards | college-admin-lifecycle-action.tsx:45 error Alert; success closes confirmation, refreshes route; unrelated status returns null | **State flow preserved; legacy success notice not required** |
+| Mobile/tablet | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px, 44px controls | college-admin-lifecycle-action.tsx:39-42 Input/Button min-h-11 md:min-h-9; reason/content wraps within min-w-44 | **Source target matches; narrow table cell resizing not browser-tested** |
+| Disabled/focus | legacy-styles/components___form.scss:22-36: keyboard focus; components___button.scss:49-51 disabled | college-admin-lifecycle-action.tsx:38-41: controlled pending/input guards; shared UI focus variants | **Source contract matches; exact hover/pressed visuals pending** |
+
+#### `src/components/admin/college-archive-button.tsx`
+
+| Property/state | Legacy value and source | VNext value and source | Result |
+| --- | --- | --- | --- |
+| Central destructive overlay | old-lms-pages.md:6: no hand-rolled modal | college-archive-button.tsx:124: shared Dialog with title/description/footer and no nested canvas | **Shared overlay; legacy destructive modal-specific measurements unknown** |
+| Trigger and footer CTAs | old-lms-shell-spec.md:4: 36px desktop, white button label, radius 9px | college-archive-button.tsx:116-145: 3 shared Button controls, danger/secondary variants, 44px phone/36px >=768 | **Shared tokens used; hover exactness depends on shared UI** |
+| Pending/disabled | docs/design/legacy-styles/components___button.scss:49-51: disabled special state | college-archive-button.tsx:135-149: disabled buttons, loading spinner on destructive confirmation | **Source state implemented, no interaction playback** |
+| Error success | old-lms-pages.md:11: status feedback on same page surface | college-archive-button.tsx:79-110: shared toast error/success, with dependency failure details retained | **Existing user feedback preserved; toast legacy geometry unverified** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: mobile actions 44px | college-archive-button.tsx:119,134,143: 44px action targets below md, 36px at md+; Dialog default width calc(100%-2rem) | **Source geometry and breakpoints, actual viewport not captured** |
+| Focus/close | legacy-styles/components___form.scss:22-36 keyboard-visible focus | ui/dialog.tsx:39-56: accessible native dialog and focus restoration; Button focus-visible variant | **Shared keyboard source; keyboard replay outstanding** |
+
+#### Why strict boxes are still open
+
+All six local grep scans report zero raw controls, literal hex and hand-rolled overlays; however, **six scoped route/component source migrations are not the same as six strictly completed legacy clones**. Outstanding: legacy logo-crop and domain-specific branding visual source is not available; full property/state matrices cannot be certified without UI execution; touch sizes and breakpoint rules were compared as CSS source only. Shared UI is unchanged, and `src/styles/college-admin-north-star.css:10-15,38-42` still overrides responsive page headings differently from `legacy-styles/components___listing-page-header.scss:52-58,130-153`. Global zero-grep and live responsive/keyboard validation remain open. Consequently **0 work queue checkboxes ticked**.
+
+**Exact next file:** `src/components/admin/college-branding-preview.tsx` has now been source-refactored in this batch; proceed to `src/components/admin/college-bulk-import.tsx`, then `src/components/admin/college-dashboard-section-failure.tsx` and the remaining Work queue items.
+
+
+### Replacement chat-4 bulk import and dashboard error component sweep — 2026-10-19
+
+Both components were fetched and re-read after their pushes. Native controls, hard-coded colour literals, hand-built overlays and native page h1 are absent in both. Scoped regexes: `/<(button|input|select|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`. This is a source-only scan, not a global repository grep or viewport rendering.
+
+| File | Native controls | Hex | Hand overlay | Native h1 | Orphan close families | md/sm tokens |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| `src/components/admin/college-bulk-import.tsx` | 0 | 0 | 0 | 0 | 0 | 3/0 |
+| `src/components/admin/college-dashboard-section-failure.tsx` | 0 | 0 | 0 | 0 | 0 | 1/0 |
+
+#### `src/components/admin/college-bulk-import.tsx`
+
+| Property/state | Legacy source/value | Current source/value | Proof status |
+| --- | --- | --- | --- |
+| Trigger controls | old-lms-shell-spec.md:4: primary/secondary controls 36px desktop, radius 9, teal/white primary | college-bulk-import.tsx:49 shared Button; 44px below 768px, 36px md+ | **Source mobile control dimensions match; hover not rendered** |
+| CSV form select and textarea | legacy-styles/components___form.scss:117-143: rounded 10px, 14px/20px text, .2px tracking, teal focus | college-bulk-import.tsx:54,59 use shared Select/Textarea, preserve maxLength and aria-invalid | **Shared controls; exact textarea-specific legacy state not measured** |
+| Success/count and failures | old-lms-pages.md:11: slim status strips, not nested cards | college-bulk-import.tsx:65 info and 66 error use shared Alert | **Shared pattern; warning colour and spacing not matched visually** |
+| Results table | old-lms-pages.md:6,11: hairline row-separated table and status pills | college-bulk-import.tsx:75 shared DataTable, StatusBadge with CREATED/FAILED/SKIPPED tones; shared EmptyState | **Same component family, tablet table/card breakpoint mismatch open** |
+| Confirmation and pending state | old-lms-pages.md:6: centralized modal; components___button.scss:49-51 disabled | college-bulk-import.tsx:85 uses shared ConfirmDialog with version-bound confirmation and loading | **No local modal; server action not replayed** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: <=767px stack, 44px targets | college-bulk-import.tsx:49 Buttons 44px mobile; CSV form occupies whole width, flex wrap actions; shared DataTable mobile cards <=639px | **Source mobile button proof; shared table 640-767 breakpoint is open** |
+
+#### `src/components/admin/college-dashboard-section-failure.tsx`
+
+| Property/state | Legacy source/value | Current source/value | Proof status |
+| --- | --- | --- | --- |
+| Canvas status | old-lms-pages.md:6: one white canvas, no nested ordinary-content card | college-dashboard-section-failure.tsx:7 delegates title/description/action to shared ErrorState within one border-t row | **Source anatomy matches; exact typography unresolved** |
+| Error fallback | old-lms-pages.md:11: in-canvas compact notice instead of fake empty content | college-dashboard-section-failure.tsx:7 role alert and original 'Could not load' message retained | **Shared error state; tone/spacing not rendered** |
+| Retry action | old-lms-shell-spec.md:4: secondary control 36px desktop | college-dashboard-section-failure.tsx:9 link to /college, 44px phone target and 36px md+ | **Source breakpoint matches; link styling not exact legacy CTA** |
+| Keyboard and accessibility | legacy-styles/components___form.scss:22-36: focus-visible keyboard outline | college-dashboard-section-failure.tsx:9 CSS focus-visible outline and ErrorState role alert | **Source keyboard affordance, no replay** |
+| Responsive page | listing-page-header.scss:130-153: <=767px stacked, >=768px row | college-dashboard-section-failure.tsx shared single-column ErrorState; action wraps on mobile, link 44px below 768 | **Responsive source only, no browser comparison** |
+
+**Strict status:** 0 newly checked. Shared DataTable's sm=640px switch vs legacy mobile 767px and typography discrepancy remain blocking; exact state-by-state visual and interaction comparisons and global zero grep are missing. The work queue boxes remain unchecked under Section H strict rule.
+
+**Exact next file:** `src/components/admin/college-closing-quizzes-card.tsx`, then remaining unreviewed `src/components/admin/college-dashboard-cards.tsx` and College Admin work queue entries.
