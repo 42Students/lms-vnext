@@ -119,7 +119,7 @@ export function LearnerNotificationsInbox({
     <section className="space-y-5" aria-label="Learner notifications inbox">
       <p role="status" className="text-sm text-body sm:hidden">{mobileSummary}</p>
       <nav aria-label="Filter notifications by type" className="min-w-0">
-        <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
+        <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible">
           {learnerNotificationCategories.map(({ key, label }) => (
             <Button
               key={key}
@@ -141,19 +141,19 @@ export function LearnerNotificationsInbox({
             onChange={event=>setSearch(event.target.value)}
             onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applySearch();}}}
             placeholder="Search title or message"
-            className="mt-1 min-h-11 sm:min-h-9 w-full"/>
+            className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
         </label>
         <Button type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
-          variant={unread==="unread" ? "primary" : "secondary"} className="min-h-11 sm:min-h-9">
+          variant={unread==="unread" ? "primary" : "secondary"} className="min-h-11 min-[768px]:min-h-9">
           {unread==="unread"?"Unread only ✓":"Unread only"}
         </Button>
         <Button type="button" onClick={applySearch}
-          variant="secondary" className="min-h-11 sm:min-h-9">
+          variant="secondary" className="min-h-11 min-[768px]:min-h-9">
           Apply search
         </Button>
         <Button type="button" disabled={!filtered} onClick={resetFilters}
-          variant="secondary" className="min-h-11 sm:min-h-9">
+          variant="secondary" className="min-h-11 min-[768px]:min-h-9">
           Clear filters
         </Button>
       </div>
@@ -197,7 +197,7 @@ export function LearnerNotificationsInbox({
           } />
           {filtered ? (
             <Button type="button" onClick={resetFilters}
-              variant="ghost" className="min-h-11 sm:min-h-9 underline">
+              variant="ghost" className="min-h-11 min-[768px]:min-h-9 underline">
               View all
             </Button>
           ) : null}
@@ -233,14 +233,14 @@ export function LearnerNotificationsInbox({
               <Link
                 href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
-                className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
+                className="inline-flex min-h-11 min-[768px]:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >
                 {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
               </Link>
             ) : null}
             {selected?.source==="ANNOUNCEMENT"&&selected.externalCta?
               <a href={selected.externalCta.href} target="_blank" rel="noopener noreferrer"
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
                 {selected.externalCta.label} ↗
               </a>:null}
             <Button onClick={() => setSelected(null)}>Got it</Button>

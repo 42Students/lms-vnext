@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { useToast } from "@/components/ui/toast";
 import {
   adminProgramsCsv,
@@ -39,7 +40,7 @@ function rememberSize(size: number) {
 
 const columns = (departments: readonly {id:string;name:string}[]): DataTableColumn<AdminProgramRow>[] => [
   {
-    key: "name", header: "Program",
+    key: "name", header: "Program", mobilePriority: "primary",
     cell: (item) => (
       <div>
         <p className="m-0 font-semibold text-foreground">{item.name}</p>
@@ -47,8 +48,8 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
       </div>
     ),
   },
-  { key: "department", header: "Department", cell: (item) => item.departmentName },
-  { key: "duration", header: "Duration", cell: (item) => programDurationYearsLabel(item.durationTerms) },
+  { key: "department", header: "Department", mobilePriority: "secondary", cell: (item) => item.departmentName },
+  { key: "duration", header: "Duration", mobilePriority: "secondary", cell: (item) => programDurationYearsLabel(item.durationTerms) },
   {
     key: "contents",
     header: "Contents",
@@ -60,6 +61,7 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
   },
   {
     key: "actions",
+    mobilePriority: "action",
     header: <span className="sr-only">Actions</span>,
     className: "text-right",
     cell: (item) => <ProgramActions displayDurationYears program={{
@@ -175,35 +177,31 @@ export function AdminProgramDirectory({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" disabled={pending || departments.length === 0}>
+          <Button type="submit" className="min-h-11 sm:min-h-[var(--lms-control-height)]" disabled={pending || departments.length === 0}>
             {pending ? "Creating…" : "Create Program"}
           </Button>
         </div>
       </form>
       <section className="space-y-3" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="min-w-56 flex-1">
+          <div className="w-full min-w-0 flex-1 sm:min-w-56">
             <label htmlFor="admin-program-search" className="mb-1 block text-xs font-semibold text-body">Search programs or departments</label>
             <Input id="admin-program-search" value={search}
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
               placeholder="Search program, code or department" />
           </div>
-          <div className="flex flex-wrap items-end gap-2">
-            <label htmlFor="admin-program-page-size" className="grid gap-1 text-xs font-semibold text-body">
-              Rows per page
-              <Select id="admin-program-page-size" value={pageSize}
-                onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
-                className="w-full">
-                {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
-              </Select>
-            </label>
+          <div className="flex w-full flex-wrap items-end gap-2 sm:w-auto">
+            <PageSizeSelect id="admin-program-page-size" label="Rows per page"
+              options={[10, 25, 50, 100]} value={pageSize}
+              onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
+              wrapperClassName="w-full sm:w-auto" />
             {filtered.length ? (
               <a
                 href={csvHref} download="programs.csv"
                 className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-[650] text-foreground hover:border-primary hover:bg-primary-subtle"
               >Export CSV</a>
             ) : <Button variant="secondary" disabled>Export CSV</Button>}
-            <Button variant="secondary" onClick={() => router.refresh()}>Refresh</Button>
+            <Button variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]" onClick={() => router.refresh()}>Refresh</Button>
           </div>
         </div>
         <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
@@ -222,10 +220,10 @@ export function AdminProgramDirectory({
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
             <span>Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}</span>
             <div className="flex items-center gap-3">
-              <Button size="sm" variant="secondary" disabled={result.page === 1}
+              <Button size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]" disabled={result.page === 1}
                 onClick={() => setPage(result.page - 1)}>Previous</Button>
               <span aria-live="polite">Page {result.page} of {result.pages}</span>
-              <Button size="sm" variant="secondary" disabled={result.page === result.pages}
+              <Button size="sm" variant="secondary" className="min-h-11 sm:min-h-[var(--lms-control-height)]" disabled={result.page === result.pages}
                 onClick={() => setPage(result.page + 1)}>Next</Button>
             </div>
           </div>
