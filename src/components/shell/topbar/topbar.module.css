@@ -356,3 +356,11 @@
   line-height:1.3;
   letter-spacing:-.02em;
 }
+
+.topbarNotificationBody {
+  min-height:0;
+  overscroll-behavior:contain;
+  padding:12px 0;
+  scrollbar-width:none;
+}
+.topbarNotificationBody::-webkit-scrollbar { display:none; }
