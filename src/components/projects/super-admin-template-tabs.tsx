@@ -14,7 +14,7 @@ export function SuperAdminTemplateTabs({
 }) {
   return (
     <nav
-      aria-label="Project template sections" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] border-b border-border pb-3 focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"
+      aria-label="Project template sections" tabIndex={0} className="overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_90%,transparent_100%)] border-b border-border focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"
     >
       <div className="flex min-w-max gap-2">
         {TEMPLATE_SUBVIEW_TABS.map((tab) => (
@@ -31,8 +31,8 @@ export function SuperAdminTemplateTabs({
             }
             className={
               active === tab.id
-                ? "inline-flex min-h-11 items-center border-b-[3px] border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-                : "inline-flex min-h-11 items-center border-b-[3px] border-transparent px-4 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                ? "inline-flex min-h-9 items-center border-b-[3px] border-primary bg-primary-subtle px-4 text-[14px] font-[650] text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-4 text-[14px] font-[650] text-body hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             }
           >
             {tab.label}
