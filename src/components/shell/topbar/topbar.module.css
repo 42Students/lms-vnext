@@ -485,3 +485,8 @@
 
 .learnerNotificationPopover ul[aria-label="Recent learner notifications"] { list-style:none; padding:0 12px; margin:0; }
 .learnerNotificationPopover ul[aria-label="Recent learner notifications"] li { margin-bottom:6px; border-radius:8px; overflow:hidden; }
+
+.learnerNotificationPopover ul[aria-label="Recent learner notifications"] a { transition:background .2s ease,border-color .2s ease,box-shadow .2s ease; }
+.learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:hover { background:#fafbfc; border-color:#e5e9f0; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+.learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:active { background:rgba(0,0,0,.06); box-shadow:none; }
+.learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:focus-visible { outline:1px solid #6b7280; outline-offset:1px; }
