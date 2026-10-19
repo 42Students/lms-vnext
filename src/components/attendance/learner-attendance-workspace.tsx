@@ -1,6 +1,7 @@
 import { StatTile } from "@/components/ui/stat-tile";
 "use client";
 
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import {learnerAttendanceDateLabel as dateLabel, learnerAttendanceTimeLabel as timeLabel} from "@/modules/attendance/learner-attendance-display-date-model";
 import {learnerAttendanceUrlRecoveryNotice} from "@/modules/attendance/learner-attendance-url-recovery-model";
@@ -140,14 +141,22 @@ function Metric({
   history?:readonly {at:string;label:string}[];
 }) {
   return (
-    <StatTile label={label} value={value} detail={detail}>
-      {history?.length?<details className="mt-2">
-        <summary className="cursor-pointer text-xs font-semibold text-primary-text">Recent dates ({history.length})</summary>
+    <section className="rounded-xl border border-border bg-surface p-4">
+      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-2 text-2xl font-semibold text-foreground">
+        {value}
+      </p>
+      <p className="mt-1 text-xs leading-5 text-body">
+        {detail}
+      </p>
+      {history?.length?<Disclosure title={`Recent dates (${history.length})`} className="mt-2">
         <ol className="mt-2 max-h-40 space-y-1 overflow-y-auto text-xs text-body">
           {history.map(item=><li key={item.at+":"+item.label}><time dateTime={item.at}>{item.label}</time></li>)}
         </ol>
-      </details>:null}
-    </StatTile>
+      </Disclosure>:null}
+    </section>
   );
 }
 
