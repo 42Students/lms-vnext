@@ -353,3 +353,9 @@ src/components/admin/college-signin-method-form.tsx
 src/app/(authenticated)/admin/inbound-mail/loading.tsx
 src/app/(authenticated)/admin/people/unassigned/loading.tsx
 ```
+
+### Module-access checkbox follow-on
+
+- Three additional `[chat-6]` source commits brought college module lock, learner module lock, and descendant academic scope lock controls onto shared `Checkbox` without changing acknowledgement requirements, inherited policy behavior, confirmation or authorization.
+- Files: `src/components/admin/college-feature-rule-editor.tsx`, `src/components/admin/student-rule-editor.tsx`, `src/components/admin/descendant-feature-rule-editor.tsx`.
+- Static re-fetch found paired `Button`/`Select` tags in all three, no remaining native checkbox tags, and no tests/TypeScript/CI/runtime invoked. This continuation totals **20 source file commits plus two ledger updates**, on the lane branch only.
