@@ -34,14 +34,14 @@
 [data-slot="dialog-header"] > button[aria-label="Close dialog"]:hover {
   color: #1a1d21;
 }
-[data-slot="dialog"] > div > div:last-child:not(:first-child) {
+[data-slot="dialog-footer"] {
   background: #fff;
 }
 @media (max-width: 767px) {
-  [data-slot="dialog"] > div > div:last-child:not(:first-child):has(button) {
+  [data-slot="dialog-footer"] {
     gap: 8px;
   }
-  [data-slot="dialog"] > div > div:last-child:not(:first-child) button {
+  [data-slot="dialog-footer"] button {
     min-height: 44px;
   }
 }
