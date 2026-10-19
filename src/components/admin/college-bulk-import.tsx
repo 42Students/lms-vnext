@@ -55,10 +55,10 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    <label className="grid gap-1 text-sm">CSV (name, code, city, state, country)
     <Textarea rows={5} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
-     className="font-mono" aria-invalid={Boolean(validation)}
+     className="font-mono" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
      placeholder="name,code,city,state,country"/>
    </label>
-   <p className="text-sm text-muted-foreground">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
+   <p id="admin-college-bulk-format" className="text-sm text-muted-foreground">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
    {valid>0?<p role="status" className="text-sm">{valid} colleges ready</p>:null}
    {(error||validation)?<p role="alert" className="text-sm text-error">{error||validation}</p>:null}
    <div className="flex flex-wrap gap-2">
