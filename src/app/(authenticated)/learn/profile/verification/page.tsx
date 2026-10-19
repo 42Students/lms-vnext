@@ -29,7 +29,7 @@ export default async function LearnerVerificationPage() {
       <h2 id="own-private-receipts" className="text-base font-semibold text-foreground">Your saved private evidence receipts</h2>
       <p className="mt-2 text-sm text-body">These counts describe private upload receipts and scan status, not verified documents or proof that a reviewer has accepted them. Rejected, revoked and expired receipts cannot be used for approval.</p>
       <ul className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
-        {status.evidence.map(item=><li key={item.purpose} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3">
+        {status.evidence.map(item=><li key={item.purpose} className="min-w-0 rounded-[var(--lms-control-radius,9px)] border border-border p-3">
           <p className="text-sm font-semibold text-foreground">{item.purpose === "AADHAAR"?"Identity (Aadhaar)":item.purpose === "PAN"?"Identity (PAN)":item.purpose === "MARKSHEET"?"Education marksheets":"Resume"}</p>
           <p className="mt-1 text-sm text-body">{item.cleanScanCount} clean scans · {item.pendingScanCount} scans pending · {item.recorded} active receipts</p>
         </li>)}
@@ -37,7 +37,7 @@ export default async function LearnerVerificationPage() {
     </section>
     <div className="grid min-w-0 gap-4 sm:grid-cols-2">{details.map(item => {
       const row = status[item.key];
-      return <section key={item.key} className="min-w-0 rounded-xl border border-border bg-surface p-5">
+      return <section key={item.key} className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">{item.heading}</h2>
         <p className="mt-2 text-sm font-semibold text-body">{row.status==="NOT_SUBMITTED"&&row.missing.length===0?
           "Ready to send":label[row.status]}</p>
@@ -59,7 +59,7 @@ export default async function LearnerVerificationPage() {
         {row.status === "SENT_BACK" ? <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
-        {row.missing.length>0?<section className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3"
+        {row.missing.length>0?<section className="mt-4 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle p-3"
           aria-label={"What is still missing for "+item.heading}>
           <h3 className="text-sm font-semibold text-foreground">What is still missing</h3>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-body">
