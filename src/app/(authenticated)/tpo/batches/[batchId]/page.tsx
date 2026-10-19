@@ -114,7 +114,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  </section>
 
  <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
-  className="scroll-mt-24 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 target:animate-pulse">
+  className="scroll-mt-24 space-y-3 border-b border-border py-4 target:animate-pulse">
   <h2 className="font-semibold">Next step</h2>
   <h3 className="text-lg font-semibold">{next.title}</h3>
   <p className="text-sm text-body">{next.detail}</p>
