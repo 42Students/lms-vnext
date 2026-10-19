@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {PopoverPanel} from "@/components/ui/popover";
+import { Drawer } from "@/components/ui/drawer";
 import style from "./topbar/topbar.module.css";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
@@ -16,6 +17,7 @@ export function LearnerNotificationBell(){
  const [items,setItems]=useState<Row[]>([]);
  const [due,setDue]=useState<Due[]>([]);
  const [open,setOpen]=useState(false);
+ const [mobile,setMobile]=useState(false);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
  const [everLoaded,setEverLoaded]=useState(false);
@@ -23,6 +25,13 @@ export function LearnerNotificationBell(){
  const refreshInFlight=useRef(false);
  const trigger=useRef<HTMLButtonElement|null>(null);
  const [count,setCount]=useState(0);
+ useEffect(()=>{
+  const media=window.matchMedia("(max-width: 767px)");
+  const update=()=>setMobile(media.matches);
+  update();
+  media.addEventListener("change",update);
+  return ()=>media.removeEventListener("change",update);
+ },[]);
  const refreshDue=useCallback(async()=>{
   try{
    const payload=await apiFetch<{notices?:Due[]}>("/api/courses/learner/due-notices",{cache:"no-store"});
@@ -69,17 +78,8 @@ export function LearnerNotificationBell(){
   document.addEventListener("keydown",escape);
   return ()=>document.removeEventListener("keydown",escape);
  },[open]);
- return <div className="relative shrink-0" ref={root}>
-  <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" unread":"Notifications, no unread items"}
-    aria-haspopup="dialog" aria-expanded={open} aria-controls={open?"lms-learner-notifications":undefined}
-    onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
-    className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
-    <span aria-hidden="true">🔔</span>
-    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-topbar-unread)] px-1 text-[10px] font-bold leading-none text-white">
-     {count>99?"99+":count}</span>:null}
-  </Button>
-  {open?<PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}>
-   <div className="flex items-center justify-between">
+ const panelContent = <>
+   <div className="flex items-center justify-between max-[767px]:hidden">
     <h2 id="learner-notification-title" className="m-0 text-lg font-semibold leading-[1.3] text-foreground">Notifications</h2>
     <Button variant="ghost" type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
       className="min-h-11 px-2 text-sm text-primary-text">Close</Button>
@@ -122,6 +122,22 @@ export function LearnerNotificationBell(){
      className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
      See all notifications
    </Link>
-  </PopoverPanel>:null}
+  </>;
+ return <div className="relative shrink-0" ref={root}>
+  <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" unread":"Notifications, no unread items"}
+    aria-haspopup="dialog" aria-expanded={open} aria-controls={open?"lms-learner-notifications":undefined}
+    onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
+    className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
+    <span aria-hidden="true">🔔</span>
+    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-notification-unread,#ff7576)] px-1 text-[10px] font-bold leading-none text-white">
+     {count>99?"99+":count}</span>:null}
+  </Button>
+  {open ? (mobile
+   ? <Drawer id="lms-learner-notifications" open={open} onOpenChange={setOpen} title="Notifications">
+       {panelContent}
+     </Drawer>
+   : <PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}>
+       {panelContent}
+     </PopoverPanel>) : null}
  </div>;
 }
