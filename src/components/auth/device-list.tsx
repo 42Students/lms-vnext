@@ -80,7 +80,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
               <Button
                 variant="secondary"
                 size="sm"
-                className="min-h-11 min-[768px]:min-h-9"
+                className="min-h-11 md:min-h-9"
                 disabled={pending || busy!==null}
                 onClick={() =>
                   ask(
@@ -103,7 +103,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
           <Button
             variant="danger"
             size="sm"
-            className="min-h-11 min-[768px]:min-h-9"
+            className="min-h-11 md:min-h-9"
             disabled={pending || busy!==null}
             onClick={() =>
               ask(
