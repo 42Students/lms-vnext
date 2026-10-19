@@ -1,4 +1,5 @@
 import {Button} from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
@@ -241,13 +242,10 @@ export default async function SuperAdminFeaturesPage({
                 const decision=college.modules.find(item=>item.module===module);
                 return decision?<div className="min-w-0">
                   <ModuleState decision={decision}/>
-                  <details className="mt-2">
-                    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline">
-                      Change {decision.label} →
-                    </summary>
+                  <Disclosure title={"Change "+decision.label+" →"} className="mt-2 [&>summary]:min-h-11 [&>summary]:text-primary-text">
                     <CollegeFeatureRuleEditor collegeId={college.id} module={decision.module}
                       stored={decision.stored} ancestorLocked={decision.ancestorLocked}/>
-                  </details>
+                  </Disclosure>
                 </div>:<span className="text-muted-foreground">—</span>;
               },
             })),
