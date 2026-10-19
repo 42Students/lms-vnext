@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {tpoAuditCsv} from "@/modules/placements/tpo-audit-csv-model";
@@ -21,7 +22,7 @@ export async function GET(request:Request){
   }
   return new Response("\uFEFF"+tpoAuditCsv(items),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="audit-log.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("audit-log", "csv") + '"',
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":items.length<total?"true":"false",
