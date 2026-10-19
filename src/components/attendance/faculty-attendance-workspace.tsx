@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import { Textarea } from "@/components/ui/textarea";
 import {
   type FormEvent,
@@ -488,26 +489,15 @@ export function FacultyAttendanceWorkspace({
     <div className="space-y-5">
       {savedNotice?<p role="status" className="rounded border border-border bg-surface p-3 text-sm text-success">{savedNotice}</p>:null}
       <section className="border-b border-border pb-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-              {workspace.course.courseCode} ·{" "}
-              {workspace.course.sectionName}
-            </p>
-            <h1 className="sr-only text-[30px] font-semibold text-[var(--lms-heading)]">Attendance</h1>
-            <p className="mt-2 text-sm text-body">See attendance history and monthly trends in one place.</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {workspace.course.courseName} ·{" "}
-              {workspace.course.academicPeriodName}
-            </p>
-          </div>
-          <Button
-            variant="secondary"
-            onClick={() => setScheduleOpen(true)}
-          >
-            Schedule Class
-          </Button>
-        </div>
+        <PageHeader
+          title="Attendance"
+          eyebrow={workspace.course.courseCode + " · " + workspace.course.sectionName}
+          description="See attendance history and monthly trends in one place."
+          actions={<Button variant="secondary" onClick={() => setScheduleOpen(true)}>Schedule Class</Button>}
+        />
+        <p className="text-xs text-muted-foreground">
+          {workspace.course.courseName} · {workspace.course.academicPeriodName}
+        </p>
 
         <div className="mt-4 inline-flex rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-1">
           <Button
