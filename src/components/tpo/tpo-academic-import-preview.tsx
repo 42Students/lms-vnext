@@ -1,6 +1,8 @@
 "use client";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import {DataTable} from "@/components/ui/data-table";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {useState} from "react";
 import {parseTpoAcademicPreviewCsv,previewTpoAcademicPageMatches} from "@/modules/placements/tpo-academic-preview-import-model";
 export function TpoAcademicImportPreview({activeIds}:{activeIds:readonly string[]}){
@@ -22,7 +24,7 @@ export function TpoAcademicImportPreview({activeIds}:{activeIds:readonly string[
   <Button variant="secondary" type="button" onClick={preview} >Validate this-page preview</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {rows?<div role="status" className="space-y-2 text-sm"><p>{rows.filter(row=>row.matchedOnCurrentPage).length} matched this page; {rows.filter(row=>!row.matchedOnCurrentPage).length} outside this page or not in the cohort.</p>
-   <ul className="max-h-64 space-y-1 overflow-auto">{rows.map(row=><li key={row.studentCode} className="break-all">{row.studentCode} — {row.matchedOnCurrentPage?"Matched current page":"Unverified outside current page"} · CGPA {row.cgpa} · Active backlogs {row.activeBacklogs}</li>)}</ul>
+   <div className="max-h-64 min-w-0 overflow-auto"><DataTable caption="Academic CSV preview for current page" rows={rows} getRowKey={row=>row.studentCode} empty={<p>No academic records to preview.</p>} columns={[{key:"student",header:"Student ID",mobilePriority:"primary",cell:row=><span className="break-all font-mono">{row.studentCode}</span>},{key:"match",header:"Match",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.matchedOnCurrentPage?"success":"warning"}>{row.matchedOnCurrentPage?"Matched current page":"Unverified outside current page"}</StatusBadge>},{key:"cgpa",header:"CGPA",mobilePriority:"secondary",cell:row=>row.cgpa},{key:"backlogs",header:"Active backlogs",mobilePriority:"secondary",cell:row=>row.activeBacklogs}]}/></div>
    <p className="text-xs text-muted-foreground">No import/commit action exists here. Review against the authorized records before correcting academic evidence through approved workflows.</p>
   </div>:null}
  </section>;

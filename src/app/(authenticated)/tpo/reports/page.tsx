@@ -235,17 +235,17 @@ export default async function TpoReportsPage({
           Find a report
           <Input type="search" name="q" maxLength={80} defaultValue={parsedSearch.data}
             placeholder="Report name or purpose"
-            className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+            className="min-h-11 sm:min-h-9 w-full"/>
         </label>
         <label className="grid gap-2 text-sm font-semibold text-body">Report category
           <Select name="group" defaultValue={parsedGroup.data}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="min-h-11 sm:min-h-9">
             {TPO_REPORT_GALLERY_GROUPS.map(group=><option key={group} value={group}>
               {group==="ALL"?"All report categories":group}
             </option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-white">Search</Button>
+        <Button type="submit" className="min-h-11 sm:min-h-9">Search</Button>
         <Link href={reportHref("/tpo/reports",workspace)}
           className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link underline">
           Clear
