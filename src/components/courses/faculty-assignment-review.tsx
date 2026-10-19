@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { Drawer } from "@/components/ui/drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -88,6 +89,7 @@ function SubmissionGradeCard({
     useState<string | null>(null);
   const [success, setSuccess] = useState<string|null>(null);
   const [needsRefresh,setNeedsRefresh]=useState(false);
+  const [confirmAction,setConfirmAction]=useState<"REGRADING"|"SAVE_PUBLISH"|"PUBLISH"|null>(null);
   const operationInFlight = useRef(false);
 
   async function saveGrade(
@@ -109,15 +111,14 @@ function SubmissionGradeCard({
       setError("Explain the regrade to the learner in at least 8 characters.");
       return;
     }
-    if (
-      submission.gradePublished &&
-      !window.confirm(
-        "Regrading will hide the currently published grade until you publish the new grade. Continue?",
-      )
-    ) {
+    if (submission.gradePublished) {
+      setConfirmAction("REGRADING");
       return;
     }
+    void saveGradeConfirmed(parsed);
+  }
 
+  async function saveGradeConfirmed(parsed: number) {
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
     setSaving(true);
     try {
@@ -164,6 +165,7 @@ function SubmissionGradeCard({
     } finally {
       operationInFlight.current=false;
       setSaving(false);
+      setConfirmAction(null);
     }
   }
 
@@ -179,7 +181,10 @@ function SubmissionGradeCard({
       setError("Explain the regrade to the learner in at least 8 characters.");
       return;
     }
-    if(!window.confirm("Save and publish this grade to the learner?"))return;
+    setConfirmAction("SAVE_PUBLISH");
+  }
+
+  async function saveAndPublishConfirmed(parsed: number) {
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
     setSaving(true);
     try{
@@ -218,7 +223,7 @@ function SubmissionGradeCard({
       setNeedsRefresh(true);
       setError("The grade or publication outcome is uncertain. Reload before retrying.");
     }finally{
-      operationInFlight.current=false;setSaving(false);
+      operationInFlight.current=false;setSaving(false);setConfirmAction(null);
     }
   }
 
@@ -229,11 +234,10 @@ function SubmissionGradeCard({
       setError("Save the score and feedback before publishing the grade.");
       return;
     }
-    if (!window.confirm(
-      facultyManualGradePublishPrompt(submission.pointsAwarded,maxPoints,submission.feedback),
-    )) {
-      return;
-    }
+    setConfirmAction("PUBLISH");
+  }
+
+  async function publishGradeConfirmed() {
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
     setPublishing(true);
 
@@ -278,11 +282,12 @@ function SubmissionGradeCard({
     } finally {
       operationInFlight.current=false;
       setPublishing(false);
+      setConfirmAction(null);
     }
   }
 
   return (
-    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-[var(--lms-space-4)]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h4 className="m-0 text-sm font-semibold text-foreground">
@@ -379,7 +384,7 @@ function SubmissionGradeCard({
           />
         </label>
 
-        <div className="lg:col-span-2 flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] md:col-span-2">
           {actions.canGrade&&draftState.hasChanges?(
             <Button size="sm" type="button"
               disabled={saving||publishing||draftState.points===null}
@@ -437,6 +442,25 @@ function SubmissionGradeCard({
         Reload current submission revision
        </Button>:null}
       {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
+      <ConfirmDialog
+        open={confirmAction !== null}
+        onOpenChange={nextOpen => { if (!nextOpen && !saving && !publishing) setConfirmAction(null); }}
+        title={confirmAction === "REGRADING" ? "Regrade learner submission" : confirmAction === "SAVE_PUBLISH" ? "Save and publish grade" : "Publish grade"}
+        description={confirmAction === "REGRADING"
+          ? "Regrading will hide the currently published grade until you publish the new grade. Continue?"
+          : confirmAction === "SAVE_PUBLISH"
+            ? "Save and publish this grade to the learner?"
+            : facultyManualGradePublishPrompt(submission.pointsAwarded,maxPoints,submission.feedback)}
+        confirmLabel={confirmAction === "REGRADING" ? "Continue regrading" : confirmAction === "SAVE_PUBLISH" ? "Save and publish" : "Publish grade"}
+        confirmVariant="primary"
+        pending={saving || publishing}
+        confirmDisabled={confirmAction === "REGRADING" || confirmAction === "SAVE_PUBLISH" ? draftState.points === null : !draftState.canPublish}
+        onConfirm={() => {
+          if (confirmAction === "REGRADING" && draftState.points !== null) void saveGradeConfirmed(draftState.points);
+          else if (confirmAction === "SAVE_PUBLISH" && draftState.points !== null) void saveAndPublishConfirmed(draftState.points);
+          else if (confirmAction === "PUBLISH" && draftState.canPublish) void publishGradeConfirmed();
+        }}
+      />
     </section>
   );
 }
