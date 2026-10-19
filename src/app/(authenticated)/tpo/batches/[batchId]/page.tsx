@@ -124,7 +124,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
     {next.button} →
    </Link>
    {registrations.available&&(registrations.registered??0)>0?<Link href={"/tpo/batches/"+batchId+"/students"}
-    className="inline-flex min-h-9 items-center text-sm font-semibold text-link">
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     {registrations.registered} students registered: continue on Students →
    </Link>:null}
   </div>
