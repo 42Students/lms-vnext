@@ -59,7 +59,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
      <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Open hiring rounds & staging</Link>
    </nav>
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <section className="border-b border-border pb-4 sm:pb-5">
       <h2 className="font-semibold text-foreground">Choose round</h2>
       <nav aria-label="Hiring rounds" className="mt-3 flex flex-wrap gap-2">{rounds.map(round=>
        <Link key={round.id} href={recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id})}
@@ -67,7 +67,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
          className={round.id===selectedRound?.id?"inline-flex min-h-9 items-center rounded-[9px] bg-primary px-3 py-2 text-sm text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]":"inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 py-2 text-sm text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"}>
         {round.sequence}. {round.name}</Link>)}</nav>
     </section>
-    {results?<section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+    {results?<section className="space-y-4 border-b border-border pb-4 sm:pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h2 className="font-semibold text-foreground">{results.round.name}</h2>
         <p className="mt-1 text-sm text-body">{results.round.kind} · {results.round.status} · {counts?.all??0} eligible, shared candidates</p></div>

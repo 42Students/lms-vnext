@@ -66,7 +66,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           title="Company & Team"
           description="Choose the college whose recruiter relationship you want to view. We never guess a college when more than one access grant is active."
         />
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className="border-b border-border pb-5">
           <h2 className="text-base font-semibold text-foreground">
             {result.status === "NO_ACCESS" ? "No active college access" : "Choose a college"}
           </h2>
@@ -157,7 +157,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       </nav>
 
       {tab === "company" ? (
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className="border-b border-border pb-5">
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
@@ -208,7 +208,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           </section>
         </section>
       ) : (
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className="border-b border-border pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-base font-semibold text-foreground">Recruiter team</h2>
             <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}

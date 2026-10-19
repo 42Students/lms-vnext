@@ -325,7 +325,7 @@ export default async function HrCalendarPage({
         </Link>
       </div>:null}
       {noCollegeAccess ? (
-        <section className="rounded-xl border border-border bg-surface p-6">
+        <section className="border-b border-border pb-6">
           <h2 className="text-lg font-semibold text-foreground">
             Open this on your college&apos;s placement address
           </h2>
@@ -386,7 +386,7 @@ export default async function HrCalendarPage({
             ))}
           </section>
 
-          <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <section className="border-b border-border pb-4 sm:pb-5">
             <h2 className="text-base font-semibold text-foreground">Results due in this period</h2>
             <p className="mt-1 text-sm text-body">Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.</p>
             {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -401,7 +401,7 @@ export default async function HrCalendarPage({
             </div> : <p className="mt-3 text-sm text-muted-foreground">No results deadlines are recorded in this calendar period.</p>}
           </section>
 
-          <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+          <section className="border-b border-border pb-4 sm:pb-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="text-base font-semibold text-foreground">

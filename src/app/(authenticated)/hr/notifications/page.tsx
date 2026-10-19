@@ -31,7 +31,7 @@ export default async function HrMessagesPage({searchParams}:{
   <Link href="/hr/conversations" className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Open recruiter conversations
   </Link>
-  {result.status!=="READY"?<section className="space-y-3 rounded-lg border border-border bg-surface p-4">
+  {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    {result.choices.map(grant=><Link key={grant.id}
     href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
