@@ -527,7 +527,7 @@ export function FacultyCourseWorkspace({
               href: facultyCourseTabHref(course.deliveryId, "blueprint") +
                 (value === "ALL" ? "" : "?filter=" + value),
             }))} />
-          {selectedLessonId?<nav aria-label="Lesson navigation" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+          {selectedLessonId?<nav aria-label="Lesson navigation" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
             <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline">
               Back to Blueprint
             </Link>
