@@ -4,12 +4,13 @@ import {useEffect,useId,useMemo,useState,type ReactNode} from "react";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
 import {TpoGridFilterPanel,type TpoFilterField} from "@/components/tpo/tpo-grid-filter-panel";
 import {chosenTpoGridColumns,exportTpoGridCsv,tpoGridExportColumns,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
-import {gridExportFilename} from "@/modules/placements/grid-export-filename";
+import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
 type GridWorkspaceProps<Row>={
@@ -51,7 +52,7 @@ const safeTsv=(value:unknown)=>{
  * search persists in its URL, and copy/paste/export never fetch broader datasets. */
 export function GridWorkspace<Row>({
  rows,columns,rowKey,children,filters=[],externalFilters,selection,rollOf,savedViews,extraActions,act,
- exportName="tpo-grid",xlsxHref,searchPlaceholder="Search name, roll no., anything",
+ exportName="export",xlsxHref,searchPlaceholder="Search name, roll no., anything",
  searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
  searchMaxLength=120,searchMode="url",searchValue,onSearchChange,
  columnKeys,onColumnKeysChange,onExportCsv,onExportXlsx,onCopyRows,
@@ -134,7 +135,7 @@ export function GridWorkspace<Row>({
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const link=document.createElement("a");
-    link.href=url;link.download=gridExportFilename(exportName,"csv");
+    link.href=url;link.download=legacyGridExportFilename(exportName,"csv");
     document.body.appendChild(link);link.click();link.remove();
    }finally{URL.revokeObjectURL(url);}
    setNotice("Exported "+exportedRows.length+" authorized row(s) from this page.");
@@ -176,7 +177,7 @@ export function GridWorkspace<Row>({
  return <section className="min-w-0 space-y-3" aria-label="TPO grid workspace" data-tpo-grid-workspace>
   <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label="TPO table tools">
    {searchMode!=="hidden"?<div className="flex min-w-[190px] max-w-lg flex-1 items-center gap-2">
-    <Input aria-label="Search table" value={searchMode==="controlled"?querySearch:typed} maxLength={searchMaxLength}
+    <Input aria-label={searchPlaceholder} value={searchMode==="controlled"?querySearch:typed} maxLength={searchMaxLength}
      placeholder={searchPlaceholder} onChange={event=>{
      if(searchMode==="controlled")onSearchChange?.(event.target.value);
      else setTyped(event.target.value);
@@ -206,8 +207,7 @@ export function GridWorkspace<Row>({
    {extraActions}
   </div>
   {activeFilters.length?<div className="flex flex-wrap gap-2" aria-label="Active grid filters">
-   {activeFilters.map(field=><Button variant="secondary" size="sm" key={field.key}
-    className="rounded-full" type="button"
+   {activeFilters.map(field=><FilterChip key={field.key} type="button"
     aria-label={"Remove "+field.label+" filter"}
     onClick={()=>{
      const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{
@@ -215,7 +215,7 @@ export function GridWorkspace<Row>({
      });router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
     }}>
     {field.label}: {field.options.find(opt=>opt.value===params.get(field.urlKey??"filter."+field.key))?.label??"Unknown"} ×
-   </Button>)}
+   </FilterChip>)}
   </div>:null}
   {filterOpen&&filters.length?<div id={id+"-filters"}>
    <TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet/>
@@ -233,7 +233,7 @@ export function GridWorkspace<Row>({
     onClick={()=>onExportXlsx(selectedPage.length>0)}>
     Export {selectedPage.length?"selected":"visible"} Excel
    </Button>:null}
-   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link lms-inline-link">Export selected XLSX</a>:null}
+   {xlsxHref?<a href={xlsxHref} aria-label={"Export "+(selectedPage.length?"selected":"visible")+" rows to Excel"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link lms-inline-link">Export selected XLSX</a>:null}
    <span className="text-xs text-muted-foreground">Exports contain only rows on this page{selectedPage.length?" that are selected":""}; server-side Excel uses existing permissions.</span>
   </div>:null}
   {pasteOpen&&selection&&rollOf?<div id={id+"-paste"} className="space-y-2">

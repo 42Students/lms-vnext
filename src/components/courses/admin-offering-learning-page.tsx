@@ -4,7 +4,7 @@ import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
-import {AdminOfferingSectionTabs} from "./admin-offering-section-tabs";
+import { CourseDetailAnchorTabs } from "./course-detail-anchor-tabs";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
 import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
 import {AdminOfferingSectionPreview} from "./admin-offering-section-preview";
@@ -82,8 +82,13 @@ export async function AdminOfferingLearningPage({
           </Link>
         }
       />
-      <AdminOfferingSectionTabs/>
-      <section id="course-home" aria-label="Course Home" className="space-y-2">
+      <CourseDetailAnchorTabs
+        href={(backHref.startsWith("/admin/")
+          ? "/admin/courses/offerings/"
+          : "/college/courses/offerings/") + encodeURIComponent(offeringId)
+          + (deliveryId ? "?deliveryId=" + encodeURIComponent(deliveryId) : "")}
+      />
+      <section id="course-home" aria-label="Course Home" className="scroll-mt-24 space-y-2">
       <h2 className="text-lg font-semibold">Home</h2>
       <AdminCourseDisplayEditor
         courseId={workspace.offering.courseId}
@@ -107,7 +112,7 @@ export async function AdminOfferingLearningPage({
       </section>
       <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
       <AdminOfferingSectionPreview data={sectionPreview}/>
-      <section id="course-syllabus" aria-label="Course Syllabus" className="space-y-2">
+      <section id="course-syllabus" aria-label="Course Syllabus" className="scroll-mt-24 space-y-2">
        <h2 className="text-lg font-semibold">Syllabus</h2>
        <AdminOfferingLearningOverview workspace={workspace}/>
       </section>

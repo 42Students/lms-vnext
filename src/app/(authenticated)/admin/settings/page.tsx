@@ -5,6 +5,7 @@ import {TenantSettingsEditor} from "@/components/admin/tenant-settings-editor";
 import {listAdminTenantSettings} from "@/modules/platform-settings/admin-editor-service";
 import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platform-settings/admin-inventory-filter";
 import {ErrorState} from "@/components/ui/error-state";
+import {EmptyState} from "@/components/ui/empty-state";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
@@ -126,7 +127,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <Link href="/admin/settings/auth"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">
         Authentication and privileged access checklist →
       </Link>
 
@@ -140,9 +141,9 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           </Select>
         </label>
         <Button type="submit">Filter</Button>
-        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
+        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
       </form>
-      {sections.length===0 ? <p role="status" className="border-l-2 border-border bg-muted px-3 py-2 text-sm text-body">No visible settings match the selected filters.</p> : null}
+      {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."/> : null}
       <nav
         aria-label="Settings sections"
         className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-1"
@@ -190,7 +191,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
               {key:"source",header:"Source file or table",mobilePriority:"secondary",cell:setting=>
                 <span className="break-all font-mono text-xs">{setting.source}</span>},
             ]}
-            empty={<p role="status" className="text-sm text-body">No visible settings match the selected filters.</p>}
+            empty={<EmptyState title="No visible settings" description="No visible settings match the selected filters."/>}
           />
 
           {section.smsTemplates ? (
@@ -209,13 +210,13 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
                 {key:"source",header:"Source file",mobilePriority:"secondary",cell:template=>
                   <span className="break-all font-mono text-xs">{template.source}</span>},
               ]}
-              empty={<p role="status" className="text-sm text-body">No source templates match the selected filters.</p>}
+              empty={<EmptyState title="No matching source templates" description="No source templates match the selected filters."/>}
             />
             </>
           ) : null}
 
           {section.note ? (
-            <p className="rounded-[var(--lms-control-radius,9px)] bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
+            <p className="rounded-[var(--lms-control-radius)] bg-surface-subtle px-4 py-3 text-xs leading-6 text-body">
               {section.note}
             </p>
           ) : null}

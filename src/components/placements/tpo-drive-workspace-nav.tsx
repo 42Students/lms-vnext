@@ -1,6 +1,7 @@
 "use client";
 import { Dropdown } from "@/components/ui/dropdown";
 import { Select } from "@/components/ui/select";
+import { Tabs } from "@/components/ui/tabs";
 
 import Link from "next/link";
 import { usePathname,useRouter } from "next/navigation";
@@ -25,23 +26,11 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
         </Select>
       </label>
       <div className="hidden min-w-0 flex-wrap items-center gap-1 sm:flex">
-      {tpoDriveTabs(jobId).map((tab) => {
-        const active = tab.href === root
-          ? pathname === root
-          : pathname === tab.href || (
-            tab.href !== root + "/applicants" &&
-            pathname.startsWith(tab.href + "/")
-          );
-        return (
-          <Link key={tab.href} href={tab.href}
-            aria-current={active ? "page" : undefined}
-            className={`inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold transition-colors md:min-h-9 ${active
-              ? "border-primary text-primary-text"
-              : "border-transparent text-body hover:border-border hover:text-primary-text"}`}>
-            {tab.label}
-          </Link>
-        );
-      })}
+      <Tabs ariaLabel="Drive workspace primary sections" value={selected}
+        renderPanel={false}
+        items={tpoDriveTabs(jobId).map(tab=>({
+         value:tab.href,label:tab.label,href:tab.href,
+        }))}/>
       <Dropdown align="end" label="More drive sections" trigger="More sections ▾">
         <div className="grid min-w-52 gap-1">
           {tpoDriveMoreTabs(jobId).map(tab=>(

@@ -4,9 +4,10 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import {Avatar} from "@/components/ui/avatar";
-import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
+import {DataTable} from "@/components/ui/data-table";
+import {MetricBar} from "@/components/ui/metric-bar";
+import chartStyles from "./legacy-company-bar.module.css";
 
 import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
@@ -209,7 +210,7 @@ export function TpoCompanyMemoryWorkspace({
            <nav aria-label={"New work for "+company.name}
             className="w-60 space-y-1">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
+             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
              className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New drive for {company.name}</Link>
             <MenuSeparator />
@@ -269,7 +270,7 @@ export function TpoCompanyMemoryWorkspace({
             {company.hiredPerYear.map(item=>(
               <li key={item.year} className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
                 <span>{item.year}</span>
-                <MetricBar size="default" role="img" label={item.hired+" joined learners in "+item.year}
+                <MetricBar size="default" role="img" className={chartStyles.branchBar} label={item.hired+" joined learners in "+item.year}
                   value={item.hired} maximum={Math.max(1,...company.hiredPerYear.map(row=>row.hired))} />
                 <strong className="text-right tabular-nums">{item.hired}</strong>
               </li>

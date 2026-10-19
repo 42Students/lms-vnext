@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {collegeBulkImportToast} from "@/modules/colleges/bulk-import-feedback-model";
@@ -68,19 +69,19 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
     <Button type="button" variant="secondary" disabled={busy}
      onClick={()=>csv?setConfirmDiscard(true):discard()}>Discard draft</Button>
    </div>
-   {results.length>0?<div role="region" aria-label="College import results" className="max-h-80 overflow-auto"><h3 className="font-semibold">Import results</h3>
+   {results.length>0?<div role="region" aria-label="College import results" className="min-w-0 space-y-2"><h3 className="font-semibold">Import results</h3>
     <DataTable caption="College bulk import results" rows={results} getRowKey={row=>String(row.line)}
      empty={<p role="status" className="text-sm text-body">No import results have been recorded.</p>}
      columns={[
       {key:"row",header:"Row",mobileLabel:"Row",mobilePriority:"primary",cell:row=>row.line},
       {key:"code",header:"Code",mobileLabel:"Code",mobilePriority:"secondary",cell:row=>row.code},
-      {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",cell:row=>row.status},
+      {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="CREATED"?"success":row.status==="FAILED"?"error":"neutral"}>{row.status}</StatusBadge>},
       {key:"details",header:"Details",mobileLabel:"Details",mobilePriority:"secondary",cell:row=>row.message},
      ]}/>
    </div>:null}
   </div>:null}
   <ConfirmDialog open={confirmImport} onOpenChange={setConfirmImport} title={"Create "+valid+" colleges?"} description="Existing codes will be skipped." confirmLabel="Import colleges" pending={busy} confirmDisabled={!valid||!organizationId||Boolean(validation)||confirmedVersionRef.current!==versionRef.current} onConfirm={()=>void submit()}>
-   {(error||validation)?<p role="alert" className="text-sm text-foreground">{error||validation}</p>:null}
+   {(error||validation)?<p role="alert" className="text-sm text-error">{error||validation}</p>:null}
   </ConfirmDialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard} title="Discard Bulk Import draft?" description="Unsaved CSV content will be discarded." confirmLabel="Discard draft" confirmVariant="danger" pending={busy} onConfirm={discard}/>
  </section>;

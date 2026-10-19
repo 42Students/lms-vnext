@@ -2,6 +2,7 @@
 import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
@@ -149,7 +150,7 @@ export function TpoAcademicImportWorkspace() {
             {key:"name",header:"Student",mobilePriority:"secondary",cell:row=>row.name??"—"},
             {key:"cgpa",header:"CGPA",mobilePriority:"secondary",cell:row=><span>{row.oldCgpa??"—"} → {row.cgpa}</span>},
             {key:"backlogs",header:"Backlogs",mobilePriority:"secondary",cell:row=><span>{row.oldBacklogs??"—"} → {row.activeBacklogs}</span>},
-            {key:"result",header:"Result",mobilePriority:"secondary",cell:row=>row.match==="WILL_UPDATE"?"Will update":"Can't match"},
+            {key:"result",header:"Result",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.match==="WILL_UPDATE"?"success":"warning"}>{row.match==="WILL_UPDATE"?"Will update":"Can't match"}</StatusBadge>},
           ]}/>
         <label className="flex items-center gap-2 text-sm">
           <Checkbox checked={preview.filter(row => row.match === "WILL_UPDATE")
