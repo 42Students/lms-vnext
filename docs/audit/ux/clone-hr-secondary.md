@@ -124,6 +124,28 @@ Source inventory taken from the recursively enumerated Git trees recorded in `do
 
 Work queue closure here means these files introduce no presentation of their own; the destination/shared parent screens retain their **separate, open** value-parity checkboxes.
 
+## Exhaustive secondary source sweep — 87 files examined
+
+The entire **87-file Work queue** was checked from the GitHub branch source, in nine batches of up to ten files. This is equivalent to reading the listed TSX files and applying the stated static regex patterns; it was **not** an executed shell grep, compiler, browser, CI, or a screenshot comparison.
+
+| Source pattern | Result across 87 Work queue files | Disposition |
+| --- | ---: | --- |
+| Own raw `<h1>` title blocks | 0 | All rendered page headings use shared `PageHeader` (aliases/redirects have no heading) |
+| Literal 6-digit hex colour outside tokens | 0 | Tokenised, including red bell count fallback |
+| Visible raw `<button>`, `<select>`, `<textarea>`, `<table>` | 0 | Shared controls/data-grid already used |
+| Raw `<input>` | 14 | All **14 are type="hidden"** form fields across six files; no class strings or visually styled control — written exemptions |
+| Custom `border-b-2` pill/tab and unshared custom tab panels | 0 in scanned pattern | Notifications now use shared Tabs; calendar/conversations/tracker retain shared Tabs |
+| Raw `rounded-full` instances | 5 | Circle avatar (`hr/company/page.tsx`:1) and bell notification count/unread dot; intentionally circular, not selectable status filters |
+| `aria-pressed` | 1 | `src/components/tracker/tracker-theme-toggle.tsx:50`, on shared Button with real pressed state — not a standalone raw toggle |
+| Error/loading route without a shared fallback | 0 of 41 | All route fallbacks delegate to Graceful*/ErrorState/Alert; shared visual fidelity remains a separate check |
+| Direct hand-rolled overlay with `fixed inset-0` | 0 in checked page/component snippets | Shared Dialog/Drawer/Popover used on reviewed portals |
+
+Hidden-field exemptions: `hr/activity/page.tsx` (2), `hr/company/page.tsx` (2), `hr/company/reports/page.tsx` (1), `hr/conversations/page.tsx` (6), `hr/notifications/page.tsx` (2), `tracker/audit-findings/page.tsx` (1). All exactly `type="hidden"`, carrying POST/GET scope and filters that must not be lost.
+
+Further user-requested shared empty states are now installed in HR activity, calendar (two states), conversations inbox/detail, tracker audit DataTable (two states), Known Errors and Live Logs. The deterministic `scripts/codemods/chat18-secondary-empties.cjs` records this family of transformations.
+
+**Source inspection completed: 87/87. STRICT VISUAL TICKS: 10/87.** The other 77 file checkboxes remain open only because exact computed legacy default/hover/focus/disabled/mobile measurements and visual regression comparisons have not been produced. Never interpret a zero static-pattern count as proof of pixel-level parity.
+
 ## Additional file-level changes on synced `main`
 
 - **12 route-state files examined/standardized**: `scripts/codemods/chat18-route-states.cjs` describes the original 5 loading / 7 error replacements. On rebase, current main's already-shared `Alert` fallbacks for HR calendar and conversation history and `GracefulPageLoading` for their loading routes were preserved; the remaining files use `PageHeader`, `ErrorState`, `Button` and `GracefulPageLoading`. Props and retry behavior retained. Not ticked: full shared-component legacy default/hover/focus/mobile value proof remains outstanding.
@@ -189,7 +211,7 @@ Count: **unverified**. This lane cannot run repository code, grep, CI, visual co
 
 Rebased with GitHub tree-level three-way comparison onto `origin/main` `dba6bbd5456152d9acc1ba31601d9ca32bcab3aa`, commit `2e9083ea773731ae0f233189c2874685e8e37ac7`. GitHub comparison showed branch ahead by one and behind by zero at that reference. Preserved main's new legacy calendar CSS-module styling rather than overwriting it. Conflict handling kept main's existing calendar/conversation shared route fallback and applied only our local calendar PageHeader/one-canvas, notification Tabs, and icon bell changes on top of latest main.
 
-Queue status: **10 ticked non-rendering files; 77 visual files still open** under the STRICT TICK RULE. Source changes on those visual files are not equivalent to pixel-perfect parity proof. The branch has not been typechecked or rendered, as requested.
+Queue status: **10 ticked non-rendering files; 77 visual files still open** under the STRICT TICK RULE. All 87 received the source-level sweep, including cases with no changes required. Source changes on those visual files are not equivalent to pixel-perfect parity proof. The branch has not been typechecked or rendered, as requested.
 
 ## STRICT TICK RULE closure
 
