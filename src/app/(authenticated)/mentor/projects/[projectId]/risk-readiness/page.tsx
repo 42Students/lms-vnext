@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -23,7 +24,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     },
   );
   if(!parsed.success)return <section role="alert">
-    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid risk/readiness filters</h1>
+    <PageHeader title="Invalid risk/readiness filters" />
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
@@ -98,15 +99,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
             Open exact project workspace →
           </Link>
         </li>)}</ol>}
-      <nav aria-label="Risk and readiness pages" className="flex items-center justify-between gap-3">
-        <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
-        <div className="flex gap-3">
-          {data.page>1?<Link href={mentorRiskReadinessHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
-          {data.page<data.totalPages?<Link href={mentorRiskReadinessHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
-        </div>
-      </nav>
+      <Pagination label="Risk and readiness pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorRiskReadinessHref({...data.query,page})}/>
     </>}
     <p className="text-xs leading-5 text-muted-foreground">
       No speculative task assignments, effort, velocity, risk forecasts or pre-migration

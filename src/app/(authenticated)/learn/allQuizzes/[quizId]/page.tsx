@@ -23,7 +23,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   const resolution=resolveLearnerOfferingDelivery(overview.quizzes,path.quizId,query.deliveryId);
   if(resolution.kind==="none") notFound();
   if(resolution.kind==="choose") return <div className="min-w-0 space-y-6">
-    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
+    <Link href="/learn/allQuizzes" className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
     <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." />
     <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
       {resolution.options.map(option=><li key={option.deliveryId} className="p-4">
@@ -44,9 +44,9 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   if(attemptId && !selected) notFound();
   const historyUrl="/learn/allQuizzes/"+encodeURIComponent(quiz.id)+"?deliveryId="+encodeURIComponent(quiz.deliveryId);
   return <div className="space-y-6">
-    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
+    <Link href="/learn/allQuizzes" className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
     <PageHeader title={quiz.title} />
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border py-4 sm:py-6">
       <h2 className="text-base font-semibold text-foreground">Attempt history</h2>
       <p className="mt-2 text-sm text-body">
         Attempts are recorded against your current college membership. Results appear only after Faculty publishes them.
@@ -59,13 +59,13 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
           <p className="mt-1 text-xs text-muted-foreground">{date(attempt.submittedAt)}</p>
           <p className="mt-2 text-sm text-body">{learnerAttemptResultLabel(attempt)}</p>
           <Link href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
-            className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+            className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             {attempt.resultsVisible ? "View result" : "View attempt"}
           </Link>
         </li>)}
       </ol>}
     </section>
-    {selected ? <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    {selected ? <section className="border-b border-border py-4 sm:py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-semibold text-foreground">Attempt {selected.attemptNumber} result</h2>
         <Link href={historyUrl} className="text-sm text-primary-text underline">Close detail</Link>

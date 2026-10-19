@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -26,7 +27,7 @@ export default async function MentorTeamMeetingsPage({
     normalized ? {projectId,...normalized} : null,
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid meeting history filters</h1>
+    <PageHeader title="Invalid meeting history filters" />
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
   </section>;
   const context=await getCurrentRequestContext();
@@ -137,15 +138,7 @@ export default async function MentorTeamMeetingsPage({
               View outcome notes
             </Link>
           </li>)}</ol>}
-      <nav aria-label="Meeting history pages" className="flex items-center justify-between gap-3">
-        <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
-        <div className="flex gap-3">
-          {data.page>1?<Link href={mentorTeamMeetingsHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
-          {data.page<data.totalPages?<Link href={mentorTeamMeetingsHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
-        </div>
-      </nav>
+      <Pagination label="Meeting history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamMeetingsHref({...data.query,page})}/>
     </>}
     <p className="text-xs text-muted-foreground">
       This list is a registered meeting log, not a recording or attendance register.

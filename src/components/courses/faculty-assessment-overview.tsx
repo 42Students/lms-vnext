@@ -300,8 +300,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-50 "
-          >
+            className="min-h-11 text-body hover:bg-primary-subtle sm:min-h-9" >
             Previous
           </Button>
           <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
@@ -309,8 +308,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-50 "
-          >
+            className="min-h-11 text-body hover:bg-primary-subtle sm:min-h-9" >
             Next
           </Button>
         </nav>

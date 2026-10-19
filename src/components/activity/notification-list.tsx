@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -81,7 +82,7 @@ export function NotificationList({
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-surface p-8 text-center">
+      <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-8 text-center">
         <p className="m-0 font-semibold text-foreground">{emptyText}</p>
         <p className="mt-2 text-sm text-muted-foreground">
           Workflow notifications and announcements appear when their producers publish them.
@@ -96,19 +97,19 @@ export function NotificationList({
         <section key={group.label} aria-label={group.label} className="grid gap-3">
           <h2 className="text-sm font-semibold text-muted-foreground">{group.label}</h2>
           {group.items.map((item) => (
-            variant==="tpo"?<Button variant="secondary" type="button" key={item.id} disabled={pendingId!==null}
+            variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
               onClick={()=>{
                if(item.readAt){if(item.actionHref)router.push(item.actionHref);return;}
                void markRead(item.id,item.actionHref??undefined);
               }}
               aria-label={"Open notification: "+item.title}
-              className="w-full min-h-12 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-left hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50">
+              className="w-full min-h-12 justify-start rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 text-left whitespace-normal hover:bg-[var(--lms-primary-subtle)]">
               <div className="flex items-start gap-3">
                {!item.readAt?<span aria-hidden="true" className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full bg-primary"/>:null}
                <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                  <strong className="break-words">{item.title}</strong>
-                 {!item.readAt?<span className="rounded border border-border px-2 py-0.5 text-xs font-semibold">New</span>:null}
+                 {!item.readAt?<Badge tone="info">New</Badge>:null}
                 </div>
                 <p className="mt-1 break-words text-sm text-body">{item.body}</p>
                 <time className="mt-2 block text-xs text-muted-foreground" dateTime={item.createdAt}>{formatWhen(item.createdAt)}</time>
@@ -116,7 +117,7 @@ export function NotificationList({
               </div>
              </Button>:<article
               key={item.id}
-              className="rounded-xl border border-border bg-surface p-5"
+              className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -129,10 +130,10 @@ export function NotificationList({
                   </div>
                   <h3 className="mt-3 text-base font-semibold text-foreground">
                     {onSelect ? (
-                      <Button variant="secondary"
+                      <Button
                         type="button"
                         onClick={() => onSelect(item)}
-                        className="inline-flex min-h-[var(--lms-control-height)] items-center text-left underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-[var(--lms-control-radius)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                        variant="ghost" className="min-h-11 sm:min-h-9 text-left underline-offset-2 hover:underline"
                         aria-label={`View notification: ${item.title}`}
                       >
                         {item.title}
@@ -150,7 +151,7 @@ export function NotificationList({
                     item.readAt ? (
                       <Link
                         href={item.actionHref}
-                        className="inline-flex min-h-9 items-center justify-center rounded-md border border-border px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+                        className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
                       >
                         {item.actionLabel??"Open"}
                       </Link>

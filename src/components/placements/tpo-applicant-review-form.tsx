@@ -1,4 +1,7 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -57,13 +60,13 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
     className="space-y-4 border-b border-border pb-5">
     <h2 className="font-semibold text-foreground">Review application</h2>
     <label className="block text-sm text-body">Decision
-      <select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+      <Select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
         <option value="SHORTLISTED">Shortlist</option>
         <option value="REJECTED">Reject</option>
-      </select>
+      </Select>
     </label>
     <label className="block text-sm text-body">Decision note (rejections are candidate-visible)
-      <textarea required name="note" value={note} disabled={pending||saved} onChange={event=>{setNote(event.target.value);setReviewed(false);}} minLength={10} maxLength={1000} rows={3}
+      <Textarea required name="note" value={note} disabled={pending||saved} onChange={event=>{setNote(event.target.value);setReviewed(false);}} minLength={10} maxLength={1000} rows={3}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
     </label>
     {decision==="REJECTED"?<fieldset className="space-y-2 text-sm">
@@ -75,14 +78,14 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
             className="min-h-11 md:min-h-9 px-3">{preset}</Button>)}
       </div>
       <label className="block text-sm">Internal not-selected reason (not shown to the learner)
-        <textarea value={internalReason} maxLength={500} rows={2}
+        <Textarea value={internalReason} maxLength={500} rows={2}
           onChange={event=>{setInternalReason(event.target.value);setReviewed(false);}}
           disabled={pending||saved} className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
       </label>
       <p className="text-xs text-body">The decision note above is learner-visible. Internal reason presets stay private; do not copy confidential employer notes into the learner message.</p>
     </fieldset>:null}
     <label className="flex items-start gap-2 text-sm text-body">
-      <input type="checkbox" checked={reviewed} disabled={pending||saved}
+      <Checkbox checked={reviewed} disabled={pending||saved}
         onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
       I reviewed the applicant and the learner-visible reason. This screening decision is audited.
     </label>

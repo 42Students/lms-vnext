@@ -1,9 +1,8 @@
 "use client";
-import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
 import { useState, type FormEvent } from "react";
@@ -37,7 +36,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [gender,setGender]=useState<""|"Male"|"Female"|"Other"|"Prefer not to say">("");
   const [dateOfBirth,setDob]=useState("");
   const [address,setAddress]=useState("");
-  const field="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const field="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
   async function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();setError("");setResult(null);setSavedMemberId(null);
     if(!indianMobileToE164(phoneE164)){setError("Mobile number must be 10 digits");return;}

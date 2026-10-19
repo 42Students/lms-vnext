@@ -1,5 +1,14 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 
+import { DateInput } from "@/components/ui/date-input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -90,44 +99,44 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    <div><h2 className="font-semibold">Quizzes</h2>
     <p className="text-xs text-muted-foreground">Author questions for all eligible Sections or a specific Section.</p></div>
    <Button variant="secondary" type="button" disabled={!lessons.length||busy} onClick={()=>{setError("");setNotice("");setOpened(true);}}
-    className="min-h-10 px-3">
+    className="text-primary-text">
     Create New Quiz</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">Create an active course lesson before adding quizzes.</p>:null}
   {opened?<div className="space-y-3">
    <div className="grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold">Course / Lesson
-     <select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
+     <Select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
       className="min-h-10 rounded border border-border p-2">
       {lessons.map(x=><option key={x.id} value={x.id}>{x.courseCode} · {x.course} · {x.name}</option>)}
-     </select></label>
+     </Select></label>
     <label className="grid gap-1 text-sm font-semibold">Audience
-     <select value={deliveryId} disabled={busy} onChange={e=>setDeliveryId(e.target.value)}
+     <Select value={deliveryId} disabled={busy} onChange={e=>setDeliveryId(e.target.value)}
       className="min-h-10 rounded border border-border p-2">
       <option value="">All currently eligible sections</option>
       {sections.map(x=><option key={x.deliveryId} value={x.deliveryId}>
        {x.sectionName} ({x.sectionCode})</option>)}
-     </select></label>
+     </Select></label>
     <label className="grid gap-1 text-sm font-semibold">Title
-     <input maxLength={255} required value={title} disabled={busy}
+     <Input maxLength={255} required value={title} disabled={busy}
       onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold">Deadline (IST, required before publishing)
-     <input type="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
+     <DateInput mode="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
       className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold">Maximum attempts
-     <input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
+     <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
       onChange={e=>setMaxAttempts(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Description
-     <textarea rows={2} maxLength={10000} value={description} disabled={busy}
+     <Textarea rows={2} maxLength={10000} value={description} disabled={busy}
       onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/></label>
    </div>
    <p role="status" className="text-xs text-muted-foreground">Audience: {deliveryId?
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
     "All currently eligible Sections in the Course Offering"} · Draft quiz is hidden until published.</p>
    <div className="flex flex-wrap gap-4 text-sm">
-    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleQuestions}
+    <label className="flex items-center gap-2"><Checkbox checked={shuffleQuestions}
       onChange={e=>setShuffleQuestions(e.target.checked)}/>Shuffle question order per learner</label>
-    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleOptions}
+    <label className="flex items-center gap-2"><Checkbox checked={shuffleOptions}
       onChange={e=>setShuffleOptions(e.target.checked)}/>Shuffle answer options per learner</label>
    </div>
    <p role="status" className="text-sm text-muted-foreground">{questions.length} question(s) ·
@@ -135,57 +144,57 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    {questions.map((question,i)=><fieldset key={i} className="space-y-2 rounded border border-border p-3">
     <legend className="text-sm font-semibold">Question {i+1}</legend>
     <div className="flex flex-wrap gap-2">
-     <select value={question.type} disabled={busy} onChange={e=>{
+     <Select value={question.type} disabled={busy} onChange={e=>{
       const type=e.target.value as Question["type"];
       replaceQuestion(i,{...question,type,options:question.options.map((o,j)=>({...o,correct:j===0}))});
      }} className="min-h-10 rounded border border-border px-2">
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
-     </select>
-     <input type="number" min={1} max={1000} aria-label="Question points" disabled={busy}
+     </Select>
+     <Input type="number" min={1} max={1000} aria-label="Question points" disabled={busy}
       value={question.points} onChange={e=>replaceQuestion(i,{...question,points:Number(e.target.value)})}
       className="w-28 rounded border border-border px-2"/>
     </div>
-    <textarea value={question.prompt} maxLength={5000} disabled={busy} placeholder="Question prompt"
+    <Textarea value={question.prompt} maxLength={5000} disabled={busy} placeholder="Question prompt"
      aria-label={"Question "+(i+1)+" prompt"} onChange={e=>replaceQuestion(i,{...question,prompt:e.target.value})}
      className="w-full rounded border border-border p-2"/>
     {question.options.map((option,j)=><label key={j} className="flex items-center gap-2 text-sm">
-     <input type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
+     <Input type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
       name={"quiz-correct-"+i} checked={option.correct} disabled={busy}
       aria-label={"Correct answer "+(j+1)} onChange={e=>replaceQuestion(i,{...question,
        options:question.options.map((o,k)=>({...o,correct:question.type==="SINGLE_CHOICE"?
         k===j:k===j?e.target.checked:o.correct}))})}/>
-     <input maxLength={2000} disabled={busy} value={option.text} placeholder={"Option "+(j+1)}
+     <Input maxLength={2000} disabled={busy} value={option.text} placeholder={"Option "+(j+1)}
       onChange={e=>replaceQuestion(i,{...question,options:question.options.map((o,k)=>k===j?{...o,text:e.target.value}:o)})}
       className="min-h-10 min-w-0 flex-1 rounded border border-border px-2"/>
-     {question.options.length>2?<Button variant="ghost" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
+     {question.options.length>2?<Button variant="secondary" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
       ...question,options:question.options.filter((_,k)=>k!==j)})}
-      >Remove</Button>:null}
+      className="text-xs font-semibold text-error">Remove</Button>:null}
     </label>)}
     <div className="flex flex-wrap gap-3">
      <Button variant="ghost" type="button" disabled={busy||i===0} onClick={()=>moveQuestion(i,-1)}
-      >Move question up</Button>
+      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question up</Button>
      <Button variant="ghost" type="button" disabled={busy||i===questions.length-1} onClick={()=>moveQuestion(i,1)}
-      >Move question down</Button>
+      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question down</Button>
      <Button variant="ghost" type="button" disabled={busy||question.options.length>=20}
       onClick={()=>replaceQuestion(i,{...question,options:[...question.options,{text:"",correct:false}]})}
-      >+ Add option</Button>
-     {questions.length>1?<Button variant="ghost" type="button" disabled={busy}
+      className="text-sm font-semibold text-primary-text">+ Add option</Button>
+     {questions.length>1?<Button variant="secondary" type="button" disabled={busy}
       onClick={()=>setQuestions(rows=>rows.filter((_,k)=>k!==i))}
-      >Remove question</Button>:null}
+      className="text-sm font-semibold text-error">Remove question</Button>:null}
     </div>
    </fieldset>)}
    <Button variant="secondary" type="button" disabled={busy||questions.length>=100}
     onClick={()=>setQuestions(rows=>[...rows,empty()])}
-    className="min-h-10 px-3">
+    className="text-primary-text">
     + Add question</Button>
    <label className="flex items-center gap-2 text-sm">
-    <input type="checkbox" disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
+    <Checkbox disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
     Create another quiz after saving
    </label>
    <div className="flex flex-wrap gap-2">
     <Button variant="primary" type="button" disabled={busy} onClick={()=>void create()}
-     className="min-h-10 px-4">
+     >
      {busy?"Saving…":"Create quiz draft"}</Button>
     <Button variant="secondary" type="button" disabled={busy} onClick={()=>{
       const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||
@@ -196,7 +205,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       setOpened(false);setTitle("");setDescription("");setDueAt("");setDeliveryId("");
       setMaxAttempts("1");setShuffleQuestions(false);setShuffleOptions(false);
       setQuestions([empty()]);setError("");
-    }} className="min-h-10 px-4">Cancel</Button>
+    }} >Cancel</Button>
    </div>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

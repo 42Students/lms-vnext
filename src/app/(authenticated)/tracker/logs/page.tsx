@@ -42,12 +42,12 @@ export default async function TrackerLogsPage({
       {!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
         <TrackerLiveLogsExplorer initialQuery={liveQuery}/>:null}
       {!cloudLogPollConfigured() ? (
-        <p role="status" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           Cloud Logging backup is not configured. In-app errors can still be reported to Telegram.
         </p>
       ) : null}
       {!telegramAlertsConfigured() ? (
-        <p role="status" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           Telegram alerts are not configured
         </p>
       ) : null}
@@ -58,7 +58,7 @@ export default async function TrackerLogsPage({
     return (
       <div className="space-y-6">
         {header}
-        <p role="alert" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-6 text-sm text-body">
+        <p role="alert" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
           Clear the Super Admin organization/college safety scope to view platform-wide log signatures.
         </p>
       </div>
@@ -69,7 +69,7 @@ export default async function TrackerLogsPage({
     return (
       <div className="space-y-6">
         {header}
-        <p role="status" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-6 text-sm text-body">
+        <p role="status" className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
           Known Errors persistence is staged but not enabled. W01 must register
           and replay the DB10 log-alert tables before this page can read data.
           This message is not a healthy-log status.

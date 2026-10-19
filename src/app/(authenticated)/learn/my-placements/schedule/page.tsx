@@ -90,7 +90,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         <p className="rounded-lg border border-warning bg-surface-subtle p-3 text-sm text-body">
           Marked absent. If this is wrong, tell the placement cell.
           <Link href="/learn/my-placements/placement#requests"
-            className="ml-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">
+            className="ml-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">
             Wrong? Tell the placement cell
           </Link>
         </p>
@@ -108,7 +108,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           ["coming","Coming up"],["past","Past"],["calendar","Calendar"],
         ] as const).map(([key,label])=><Link key={key}
           href={"/learn/my-placements/schedule?view="+key} aria-current={view===key?"page":undefined}
-          className={"inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold "+
+          className={"inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold "+
             (view===key?"border-primary bg-primary-subtle text-primary-text":"border-border text-foreground")}>
           {label}
         </Link>)}

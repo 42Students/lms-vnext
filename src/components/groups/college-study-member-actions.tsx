@@ -59,11 +59,11 @@ export function CollegeStudyMemberActions({
       }
       setError(null);
       setAction({ action: "ADD", membershipId });
-    }} className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
+    }} className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
       <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
         Add learner
         <Select value={selection} onChange={(event) => setSelection(event.target.value)}
-          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
           <option value="">Choose from first 100 members</option>
           {available.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
@@ -71,7 +71,7 @@ export function CollegeStudyMemberActions({
       <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
         Or learner membership ID
         <Input value={manualId} onChange={(event) => setManualId(event.target.value)}
-          placeholder="UUID" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          placeholder="UUID" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
       </label>
       <Button type="submit" disabled={pending}>Review add</Button>
     </form>
@@ -81,7 +81,7 @@ export function CollegeStudyMemberActions({
     <div className="space-y-2">
       {members.filter((member) => member.state !== "REMOVED").map((member) =>
         <div key={member.membershipId}
-          className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+          className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3">
           <span className="text-sm text-body">
             {member.displayName ?? "Unnamed member"} · {member.state}
             {member.isLocked ? " · Locked" : ""}

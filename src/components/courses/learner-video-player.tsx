@@ -212,7 +212,7 @@ export function LearnerVideoPlayer({
     <label className="flex flex-wrap items-center gap-2 text-xs font-medium text-body">
       Playback speed
       <Select aria-label="Playback speed" defaultValue="1"
-        className="min-h-11 w-auto"
+        className="min-h-9 w-auto"
         onChange={event=>{
           const rate=Number(event.target.value);
           playbackRateRef.current=rate;
@@ -230,7 +230,7 @@ export function LearnerVideoPlayer({
     {mediaError ? <div className="space-y-2">
       <p role="alert" className="text-sm font-semibold text-error">{mediaError}</p>
       <Button type="button" variant="secondary" onClick={() => { failureRefreshRef.current = 0; void start(); }}
-        className="min-h-11">
+        className="min-h-9">
         Retry video
       </Button>
     </div> : null}

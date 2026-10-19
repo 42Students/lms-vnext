@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import { TpoBellPanel } from "@/components/tpo/tpo-bell-panel";
 import { tpoHeaderSnapshotSchema, type TpoHeaderSnapshot } from
@@ -11,9 +11,11 @@ import style from "./topbar.module.css";
 
 export function TpoNotificationCluster() {
   const [state, setState] = useState<{ value: TpoHeaderSnapshot; revision: number } | null>(null);
+  const refreshInFlight = useRef(false);
 
   const refresh = useCallback(async () => {
-    if (document.visibilityState === "hidden") return;
+    if (document.visibilityState === "hidden" || refreshInFlight.current) return;
+    refreshInFlight.current = true;
     try {
       const raw = await apiFetch<unknown>("/api/tpo/header-snapshot", {
         cache: "no-store", credentials: "same-origin", timeoutMs: 12000,
@@ -26,21 +28,23 @@ export function TpoNotificationCluster() {
       }));
     } catch {
       // Keep the previous confirmed unread count. Never invent a zero.
-    }
+    } finally { refreshInFlight.current = false; }
   }, []);
 
   useEffect(() => {
     void refresh();
     const interval = window.setInterval(() => void refresh(), 30000);
     document.addEventListener("visibilitychange", refresh);
+    window.addEventListener("focus", refresh);
     return () => {
       window.clearInterval(interval);
       document.removeEventListener("visibilitychange", refresh);
+      window.removeEventListener("focus", refresh);
     };
   }, [refresh]);
 
   const count = state?.value.messages ?? null;
-  return <div className={style.actions} aria-label="Messages and notifications">
+  return <div role="group" className={style.actions} aria-label="Messages and notifications">
     <Link href="/tpo/messages" className={style.iconButton}
       aria-label={"Messages" + (count !== null ? ", " + count + " unread" : "")}
       title="Messages">
@@ -52,7 +56,7 @@ export function TpoNotificationCluster() {
     {state ? <TpoBellPanel compact initialUnread={state.value.unread}
       items={state.value.items} revision={state.revision}/> :
       <Link href="/tpo/notifications" className={style.iconButton}
-        aria-label="Notifications" title="Notifications">
+        aria-label="Notifications — open inbox" title="Open notifications inbox">
         <BellIcon/>
       </Link>}
   </div>;

@@ -25,7 +25,7 @@ export default async function FacultyCalendarPage({
     deliveryId:raw.deliveryId||undefined,
   }:{invalid:true});
   if(!input.success)return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid month or Section filter</h1>
+    <PageHeader title={"Invalid month or Section filter"} />
     <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Clear filters
     </Link>
@@ -50,7 +50,7 @@ export default async function FacultyCalendarPage({
         View live classes
       </Link>
     </div>
-    <section className="space-y-4 border-b border-border pb-6">
+    <section className="border-b border-border pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-foreground">
           {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",month:"long",year:"numeric"})
@@ -69,11 +69,10 @@ export default async function FacultyCalendarPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Month (IST)
           <Input type="month" name="month" required defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
-            className="w-full" />
+             />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
-          <Select name="deliveryId" defaultValue={selected??""}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          <Select name="deliveryId" defaultValue={selected??""} >
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}

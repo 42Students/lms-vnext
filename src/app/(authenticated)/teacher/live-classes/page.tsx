@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -16,7 +16,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   page:first(raw.page)??undefined,
  });
  if(!parsed.success)return <section role="alert" className="space-y-3">
-  <h1>Invalid live-class filters</h1><Link href="/teacher/live-classes" className="underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+  <PageHeader title="Invalid live-class filters" /><Link href="/teacher/live-classes" className="underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
  </section>;
  const data=await getFacultyLiveClasses(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
@@ -36,20 +36,20 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
    className="flex flex-wrap items-end gap-3">
    <label className="grid gap-1 text-sm">When
     <Select name="view" defaultValue={data.query.view}
-     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      <option value="UPCOMING">Upcoming and in progress</option>
      <option value="PAST">Past</option>
      <option value="ALL">All</option>
     </Select></label>
    <label className="grid gap-1 text-sm">Section
     <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
-     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     className="min-h-9 rounded border border-border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
      <option value="">All assigned Sections</option>
      {data.courses.map(c=><option key={c.deliveryId} value={c.deliveryId}>
       {c.courseName} · {c.sectionName}
      </option>)}
     </Select></label>
-   <Button variant="primary" type="submit" className="min-h-9 px-4 py-2">Filter</Button>
+   <button type="submit" className="min-h-9 rounded bg-primary px-4 py-2 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-on-primary">Filter</button>
    <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
   </form>
   <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>
@@ -70,13 +70,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
     <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
      className="inline-flex min-h-9 items-center text-sm text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open course</Link>
    </li>)}</ul>}
-  <nav aria-label="Live-class pages" className="flex items-center justify-between gap-3">
-   <p className="text-sm">Page {data.page} of {data.totalPages}</p>
-   <div className="flex gap-3">
-    {data.page>1?<Link href={facultyLiveClassesHref({...data.query,page:data.page-1})} className="inline-flex min-h-9 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
-    {data.page<data.totalPages?<Link href={facultyLiveClassesHref({...data.query,page:data.page+1})} className="inline-flex min-h-9 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
-   </div>
-  </nav>
+  <Pagination label="Live-class pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyLiveClassesHref({...data.query,page})}/>
   <p className="text-xs text-muted-foreground">
    Times use IST for display; links are HTTPS-only and are not written to logs.
    Scheduled Section calendar events without LIVE_CLASS content are not presented as online sessions.

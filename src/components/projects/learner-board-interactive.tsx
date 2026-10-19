@@ -93,7 +93,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
   {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
   {undo&&tasks.some(task=>task.id===undo.taskId&&canLearnerMoveOwnTask(task.status,undo.status))?
-   <Button type="button" disabled={busy||readOnly} variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline"
+   <Button type="button" disabled={busy||readOnly} variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)] underline"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
     Undo last task move
   </Button>:null}
@@ -125,7 +125,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
             Pull into sprint
             <Select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}
               onChange={event=>{if(event.target.value)void pull(task,event.target.value);}}
-              className="mt-1 min-h-11">
+              className="mt-1 min-h-9">
               <option value="">Choose active sprint</option>
               {sprints.filter(s=>s.status==="ACTIVE").map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
             </Select>
@@ -136,7 +136,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
           Move {task.title}
           <Select aria-label={"Move "+task.title} value={task.status} disabled={busy}
            onChange={event=>void move(task.id,event.target.value as EditableStatus)}
-           className="mt-1 min-h-11">
+           className="mt-1 min-h-9">
             {statuses.filter(status=>status===task.status||canLearnerMoveOwnTask(task.status,status))
               .map(status=><option key={status} value={status} disabled={status===task.status}>
                {status==="TODO"?"To Do":status==="IN_PROGRESS"?"In Progress":"Blocked"}</option>)}

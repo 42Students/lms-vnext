@@ -9,7 +9,7 @@ import type { CollegeOwnProfileInput } from "@/modules/people/college-admin-prof
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 
-const fieldStyle = "min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground";
+const fieldStyle = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground";
 function Field({ label, value, onChange, type = "text", hint }: {
   label: string; value: string; onChange: (value: string) => void;
   type?: string; hint?: string;
@@ -62,7 +62,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         <img src={profile.photoUrl} alt={profile.displayName+" profile photo"} referrerPolicy="no-referrer"
           className="h-16 w-16 rounded-full border border-border bg-muted object-cover"/>
         <a href={profile.photoUrl} rel="noreferrer"
-          className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline">View profile photo</a>
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">View profile photo</a>
       </div>:null}
     </div>
     <nav aria-label="Profile sections" className="flex flex-wrap gap-2">
@@ -70,7 +70,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         ["personal", "Personal Details"], ["social", "Social Profiles"],
         ["address", "Address"], ["contacts", "Contacts"],
       ].map(([key, label]) => <a key={key} href={"#" + key}
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">{label}</a>)}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">{label}</a>)}
     </nav>
     <div className="grid gap-5 md:grid-cols-2">
       <section id="personal" className="scroll-mt-24 space-y-3 border-t border-border pt-5">
@@ -118,7 +118,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
     </div>
     {error && <p role="alert" className="text-sm text-error">{error}</p>}
     {saved && <p role="status" className="text-sm font-semibold text-link">Profile updated successfully.</p>}
-    <Button variant="primary" type="submit" disabled={saving} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+    <Button variant="primary" type="submit" disabled={saving} className="min-h-11 sm:min-h-9">
       {saving ? "Saving…" : "Save profile"}
     </Button>
   </form>;

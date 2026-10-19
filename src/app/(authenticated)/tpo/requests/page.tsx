@@ -1,4 +1,4 @@
-import {Select} from "@/components/ui/select";
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {TpoGeneralRequestsPanel} from "@/components/placements/tpo-general-requests-panel";
 import {placementTableExists} from "@/modules/placements/staged-tables";

@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {SuperAdminTemplatePageExport} from "@/components/projects/super-admin-template-page-export";
 import {SuperAdminTemplateArchiveControl} from "@/components/projects/super-admin-template-archive-control";
@@ -68,7 +70,8 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    </label>
    <Button type="submit" className="self-end">Filter</Button>
   </form>
-  <SuperAdminTemplatePageExport items={data.items}/>
+  <ListToolbar label="Global project templates" viewCount={data.total}
+    exportAction={<SuperAdminTemplatePageExport items={data.items}/>} />
   <p className="text-xs text-muted-foreground">{data.total} templates · page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
   {data.items.length?<div className="grid gap-4 md:grid-cols-2">
    {data.items.map(item=><article key={item.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
@@ -79,10 +82,10 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     <p className="mt-1 text-xs text-muted-foreground">{item.slug}</p>
     {item.summary?<p className="mt-2 text-sm text-body">{item.summary}</p>:null}
     {item.sectionCounts?<div className="mt-3 flex flex-wrap gap-2 text-xs text-body">
-      <Badge  tone="info">Overview</Badge>
-      <Badge  tone="info">Sprints {item.sectionCounts.sprints}</Badge>
-      <Badge  tone="info">Tasks {item.sectionCounts.tasks}</Badge>
-      <Badge  tone="info">Resources {item.sectionCounts.resources}</Badge>
+      <Badge tone="info">Overview</Badge>
+      <Badge tone="info">Sprints {item.sectionCounts.sprints}</Badge>
+      <Badge tone="info">Tasks {item.sectionCounts.tasks}</Badge>
+      <Badge tone="info">Resources {item.sectionCounts.resources}</Badge>
     </div>:null}
     <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
     <div className="mt-3 flex flex-wrap items-center gap-3">

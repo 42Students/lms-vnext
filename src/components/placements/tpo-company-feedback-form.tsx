@@ -1,5 +1,7 @@
 "use client";
 
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -58,16 +60,16 @@ export function TpoCompanyFeedbackForm({
       </p>
       <label className="block text-sm font-medium text-foreground">
         Linked contact
-        <select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
+        <Select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
           className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
           {contacts.map((item) => (
             <option key={item.id} value={item.id}>{item.name}</option>
           ))}
-        </select>
+        </Select>
       </label>
       <label className="block text-sm font-medium text-foreground">
         Feedback / meeting note
-        <textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
+        <Textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           rows={4} maxLength={2000}
           className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
       </label>

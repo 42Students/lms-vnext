@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
@@ -27,7 +28,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
   if (resolution.kind === "none") notFound();
   if (resolution.kind === "choose") return <div className="min-w-0 space-y-6">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>
     <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
     <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
       {resolution.options.map(option => <li key={option.deliveryId} className="p-4">
@@ -44,19 +45,19 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   if (!item) notFound();
   const materials=await listOwnLearnerAssignmentMaterialLinks(await getCurrentRequestContext(),item.id,item.deliveryId);
   return <div className="space-y-6">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text">← All Assignments</Link>
     <PageHeader title={item.title} />
     <div className="grid gap-4 sm:grid-cols-2">
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="border-b border-border py-4">
         <h2 className="text-xs font-semibold text-muted-foreground">Due</h2>
         <p className="mt-2 text-foreground">{formatDate(item.dueAt)}</p>
       </section>
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="border-b border-border py-4">
         <h2 className="text-xs font-semibold text-muted-foreground">Points</h2>
         <p className="mt-2 text-foreground">{item.maxPoints}</p>
       </section>
     </div>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border py-4 sm:py-6">
       <h2 className="font-semibold text-foreground">Instructions & resources</h2>
       <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">
         {item.description || "Your faculty hasn't added any resources to this assignment yet."}
@@ -67,13 +68,13 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       {materials.links.length>0 ? <ul className="mt-3 space-y-2" aria-label="Instructor resources">
         {materials.links.map(link=><li key={link.id} className="text-sm">
           <a href={link.href} rel="noopener noreferrer"
-            className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">
+            className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">
             Open link: {link.title}
           </a>
         </li>)}
       </ul> : null}
     </section>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border py-4 sm:py-6">
       <h2 className="font-semibold text-foreground">Your submission</h2>
       {item.submissionId ? <div className="mt-3 space-y-3 text-sm text-body">
         <p role="status">Submitted {formatDate(item.submittedAt)}</p>
@@ -102,10 +103,10 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
           <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} deliveryId={item.deliveryId} />
         ) : <div className="mt-2 space-y-2">
           <p className="text-sm text-body">{item.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}</p>
-          <button type="button" disabled aria-disabled="true"
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-muted-foreground">
+          <Button variant="secondary" type="button" disabled aria-disabled="true"
+            className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-muted-foreground">
             {item.dueAt?"Submission closed":"Unavailable"}
-          </button>
+          </Button>
         </div>}
       </div>}
     </section>

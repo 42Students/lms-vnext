@@ -87,7 +87,7 @@ export function DepartmentDirectory({
             Rows per page
             <Select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground">
+              className="min-h-10 px-2">
               {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
             </Select>
           </label>
@@ -96,7 +96,7 @@ export function DepartmentDirectory({
             <a
               href={exportHref}
               download="departments.csv"
-              className="inline-flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-link"
+              className="inline-flex min-h-10 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-link"
             >
               Export CSV
             </a>
@@ -120,9 +120,9 @@ export function DepartmentDirectory({
       <DataTable
         columns={columns.map(column => column.key === "name" ? {
           ...column,
-          header: <Button variant="ghost" type="button" aria-label="Sort Department Name"
+          header: <Button type="button" aria-label="Sort Department Name"
             onClick={() => { setNameOrder(nameOrder === "ASC" ? "DESC" : "ASC"); setPage(1); }}
-            className="gap-2">
+            className="inline-flex items-center gap-2">
             Department Name {nameOrder === "ASC" ? "↑" : "↓"}
           </Button>,
         } : column)}

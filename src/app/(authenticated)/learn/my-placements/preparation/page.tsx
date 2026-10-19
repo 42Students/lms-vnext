@@ -22,7 +22,7 @@ export default async function LearnerPlacementPreparationPage({
   const raw=await searchParams;
   const parsed=learnerPreparationQuerySchema.safeParse({view:first(raw.view)??undefined});
   if(!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Invalid preparation filter</h1>
+    <PageHeader title="Invalid preparation filter" />
     <Link href="/learn/my-placements/preparation"
       className="text-primary-text underline">Clear filters</Link>
   </section>;

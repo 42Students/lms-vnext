@@ -117,12 +117,12 @@ export function SuperAdminContentActions({item}:{item:Content}){
  if(item.status==="ARCHIVED")return <p className="text-xs text-muted-foreground">Archived content is read-only.</p>;
  return <div className="space-y-2">
   <div className="flex flex-wrap gap-2">
-   <Button type="button" disabled={busy} onClick={toggleEditor}
-    variant="secondary" className="min-h-11 text-xs">Edit</Button>
-   {item.status==="DRAFT"?<Button type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
-    variant="secondary" className="min-h-11 text-xs">Publish</Button>:null}
-   <Button type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
-    variant="danger" className="min-h-11 text-xs">Delete</Button>
+   <Button variant="primary" type="button" disabled={busy} onClick={toggleEditor}
+    className="text-primary-text">Edit</Button>
+   {item.status==="DRAFT"?<Button variant="primary" type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
+    className="text-primary-text">Publish</Button>:null}
+   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
+    className="text-error">Delete</Button>
   </div>
   {editing?<fieldset disabled={busy} className="grid gap-2 rounded-xl border border-border bg-surface p-3">
    <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.

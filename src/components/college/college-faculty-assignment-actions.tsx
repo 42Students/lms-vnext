@@ -1,6 +1,6 @@
 "use client";
 import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
 import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS } from "@/modules/courses/college-courses-copy";
@@ -88,7 +88,7 @@ export function CollegeFacultyAssignmentCreate({
       setError(academicSetupErrorMessage(cause, FACULTY_ASSIGNMENT_COPY.createFailed));
     } finally { setSaving(false); }
   }
-  const fieldClass = "min-h-[var(--lms-control-height)] min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
+  const fieldClass = "min-h-11 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
   return <>{confirmation}<section aria-label="Assign Faculty to multiple courses"
     className="border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>

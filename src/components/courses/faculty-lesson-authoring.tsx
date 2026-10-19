@@ -1,4 +1,7 @@
 "use client";
+import {CourseChoiceControl} from "./course-choice-control";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Radio} from "@/components/ui/radio";
 
 import {
   type FormEvent,
@@ -796,7 +799,7 @@ export function FacultyLessonAuthoring({
 
             {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
               <label className="mt-4 flex min-h-10 items-center gap-2 text-sm text-body">
-                <input type="checkbox" checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
+                <Checkbox checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
                 Publish now — make this learning item visible to eligible students
               </label>:null}
             {mode === "LIVE_CLASS" ? (
@@ -1014,14 +1017,8 @@ export function FacultyLessonAuthoring({
                               }
                               className="grid gap-2 sm:grid-cols-[auto_1fr_auto] sm:items-center"
                             >
-                              <input
-                                aria-label={`Correct answer for option ${optionIndex + 1}`}
-                                type={
-                                  question.type ===
-                                  "SINGLE_CHOICE"
-                                    ? "radio"
-                                    : "checkbox"
-                                }
+                              <CourseChoiceControl
+                                aria-label={`Correct answer for option ${optionIndex + 1}`} single={question.type === "SINGLE_CHOICE"}
                                 name={`correct-${question.id}`}
                                 checked={
                                   option.correct
@@ -1039,7 +1036,7 @@ export function FacultyLessonAuthoring({
                                     },
                                   )
                                 }
-                                className="h-4 w-4 accent-[var(--lms-primary)]"
+                                className="shrink-0"
                               />
                               <Input
                                 aria-label={`Option ${optionIndex + 1}`}

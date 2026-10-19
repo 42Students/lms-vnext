@@ -10,7 +10,7 @@ export default async function LearnerPlacementNotificationPreferencesPage(){
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Learner · My Placements" title="Placement notifications"
       description="Manage the two registered placement notification preferences for your active Learner membership." />
-    <Link href="/learn/my-placements" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+    <Link href="/learn/my-placements" className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
       ← Back to My Placements
     </Link>
     <LearnerPlacementNotificationSettings key={preferences.updatedAt?.toISOString()??"defaults"}

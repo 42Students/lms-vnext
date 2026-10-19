@@ -431,8 +431,8 @@ function SubmissionGradeCard({
           {error}
         </p>
       ) : null}
-      {needsRefresh?<Button type="button" onClick={()=>onUpdated(submission)}
-       className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">
+      {needsRefresh?<Button variant="secondary" type="button" onClick={()=>onUpdated(submission)}
+       className="mt-2 inline-flex min-h-11 items-center text-primary-text sm:min-h-9">
         Reload current submission revision
        </Button>:null}
       {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
@@ -595,7 +595,7 @@ export function FacultyAssignmentReview({
         <nav aria-label="Submission student navigation" className="grid min-w-0 grid-cols-2 items-end gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 sm:flex sm:flex-wrap">
           <label className="col-span-2 grid min-w-0 flex-1 gap-1 text-sm font-semibold sm:min-w-48">
             Students ({submissions.filter(item=>item.gradingStatus==="GRADED").length}/{submissions.length} graded on this page)
-            <Select className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:min-h-9 sm:text-sm"
+            <Select className="min-h-11 text-base sm:min-h-9 sm:text-sm"
               value={selectedSubmissionId??submissions[0].id}
               onChange={event=>setSelectedSubmissionId(event.target.value)}>
               {submissions.map(item=><option key={item.id} value={item.id}>

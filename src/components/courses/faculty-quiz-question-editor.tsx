@@ -1,4 +1,5 @@
 "use client";
+import {CourseChoiceControl} from "./course-choice-control";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -546,13 +547,7 @@ export function FacultyQuizQuestionEditor({
                           key={option.key}
                           className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
                         >
-                          <input
-                            type={
-                              question.type ===
-                              "SINGLE_CHOICE"
-                                ? "radio"
-                                : "checkbox"
-                            }
+                          <CourseChoiceControl single={question.type === "SINGLE_CHOICE"}
                             name={`correct-${question.key}`}
                             checked={
                               option.correct

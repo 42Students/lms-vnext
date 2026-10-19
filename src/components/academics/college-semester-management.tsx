@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -98,7 +99,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
           </p>
           <div className="flex items-end">
             <Button variant="primary" type="submit" disabled={pending}
-              className="min-h-[var(--lms-control-height)] px-4">
+              >
               {pending ? "Saving…" : SEMESTER_COPY.createButton}
             </Button>
           </div>
@@ -172,11 +173,11 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
       {!editing && !confirming ? (
         <div className="flex gap-2">
           <Button variant="secondary" type="button" disabled={pending} onClick={() => { setNotice(""); setName(row.name);setIsActive(row.isActive);setEditing(true); }}
-            className="min-h-10 px-3">
+            >
             Edit
           </Button>
           <Button variant="secondary" type="button" disabled={pending} onClick={() => { setNotice(""); setConfirming(true); }}
-            className="min-h-10 px-3">
+            >
             Delete
           </Button>
         </div>
@@ -200,11 +201,11 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
             {isActive ? SEMESTER_COPY.statusActive : SEMESTER_COPY.statusInactive}
           </label>
           <div className="flex flex-wrap gap-2">
-            <Button variant="primary" type="submit" disabled={pending} className="min-h-10 px-3">
+            <Button variant="primary" type="submit" disabled={pending} >
               {pending ? "Saving…" : SEMESTER_COPY.saveButton}
             </Button>
             <Button variant="secondary" type="button" disabled={pending} onClick={closeEditor}
-              className="min-h-10 px-3">
+              >
               Cancel
             </Button>
           </div>

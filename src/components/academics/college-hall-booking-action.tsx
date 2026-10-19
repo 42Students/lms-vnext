@@ -1,6 +1,6 @@
 "use client";
+import { DateInput } from "@/components/ui/date-input";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
@@ -52,15 +52,15 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
         <label className="grid gap-1 text-sm font-semibold">Title
           <Input className={field} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Date (IST)
-          <Input className={field} required type="date" min={selected?.periodStart} max={selected?.periodEnd}
+          <DateInput className={field} required mode="date" min={selected?.periodStart} max={selected?.periodEnd}
             value={date} onChange={e=>setDate(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Starts (IST)
-          <Input className={field} required type="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
+          <DateInput className={field} required mode="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Ends (IST)
-          <Input className={field} required type="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
+          <DateInput className={field} required mode="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
         <div className="sm:col-span-2 lg:col-span-3">
           <Button variant="primary" type="submit" disabled={pending||!sectionId||!title.trim()}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] disabled:opacity-50">
+            >
             {pending?"Booking…":"Confirm booking"}</Button>
         </div>
       </form>}

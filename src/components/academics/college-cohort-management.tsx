@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -112,11 +113,11 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Expected end period (optional)
           <Select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
@@ -127,15 +128,15 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Academic Year
           <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)}
-            placeholder="2026–2027" className="min-h-[var(--lms-control-height)] "/>
+            placeholder="2026–2027" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Start Date
           <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}
-            className="min-h-[var(--lms-control-height)] "/>
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">End Date
           <Input type="date" value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)}
-            className="min-h-[var(--lms-control-height)] "/>
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
         </label>
         <div className="sm:col-span-2 lg:col-span-5 text-sm text-body">
           <p>Start Date: {start?.startDate??"Choose start period"} · End Date: {end?.endDate??"Not specified"}</p>
@@ -144,7 +145,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         </div>
         <div className="sm:col-span-2 lg:col-span-5">
           <Button variant="primary" disabled={pending||dateInvalid} type="submit"
-            className="min-h-[var(--lms-control-height)] ">
+            >
             {pending ? "Creating…" : "Create batch"}
           </Button>
         </div>
@@ -240,13 +241,13 @@ export function CollegeCohortRowActions({ row, periods }: {
     <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={pending || blocked}
       onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+      >
       Edit
     </Button>
     {row.status === "ACTIVE" && <Button variant="secondary" type="button"
       disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
       onClick={graduate}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+      >
       Mark graduated
     </Button>}
     <Button variant="secondary" type="button" disabled={pending || row.status!=="PLANNED" ||
@@ -254,7 +255,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       title={row.activeSections>0 || row.activeEnrolledLearners>0
         ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
         : row.status!=="PLANNED" ? "Only planned batches can be removed." : "Remove this unlinked planned batch"}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+      >
       Remove
     </Button>
     </div>
@@ -276,11 +277,11 @@ export function CollegeCohortRowActions({ row, periods }: {
         <p className="text-sm text-muted-foreground">Program and starting period cannot change after creation.</p>
         <label className="grid gap-1 text-sm font-medium text-body">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
-            className="min-h-[var(--lms-control-height)] " />
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Expected end period
           <Select value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
@@ -292,13 +293,13 @@ export function CollegeCohortRowActions({ row, periods }: {
           </Select>
         </label>
         <label className="grid gap-1 text-sm">Academic Year
-          <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-[var(--lms-control-height)] "/>
+          <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">Start Date
-          <Input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-[var(--lms-control-height)] "/>
+          <Input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm">End Date
-          <Input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-[var(--lms-control-height)] "/>
+          <Input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         {endDateLocked && <p className="text-xs text-muted-foreground">
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
@@ -306,11 +307,11 @@ export function CollegeCohortRowActions({ row, periods }: {
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex flex-wrap justify-end gap-3">
           <Button variant="secondary" disabled={pending} type="button" onClick={close}
-            className="min-h-[var(--lms-control-height)] ">
+            >
             Cancel
           </Button>
           <Button variant="primary" disabled={pending || !hasUnsavedCollegeCohortEdit(original, draft)} type="submit"
-            className="min-h-[var(--lms-control-height)] ">
+            >
             {pending ? "Saving…" : "Save changes"}
           </Button>
         </div>

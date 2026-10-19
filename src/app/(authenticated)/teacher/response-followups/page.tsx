@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -20,8 +19,8 @@ export default async function FacultyResponseFollowUpsPage({
   const raw = await searchParams;
   const parsed = parseFacultyFollowUpSearchParams(raw);
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid follow-up filters</h1>
-    <Link href="/teacher/response-followups" className="text-primary-text underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+    <PageHeader title="Invalid follow-up filters" />
+    <Link href="/teacher/response-followups" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -43,7 +42,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
@@ -51,7 +50,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
         <Select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="">All current Sections</option>
           {data.sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
             {section.courseCode} · {section.courseName} · {section.sectionName}
@@ -60,7 +59,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sort
         <Select name="sort" defaultValue={data.query.sort}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="RECENT_DUE">Most recently due</option>
           <option value="OLDEST_DUE">Oldest overdue first</option>
           <option value="TITLE">Assessment title</option>
@@ -68,7 +67,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assessments per page
         <Select name="pageSize" defaultValue={data.query.pageSize}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="5">5</option><option value="10">10</option>
         </Select>
       </label>

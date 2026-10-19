@@ -62,7 +62,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <label className="grid gap-2 text-sm font-semibold text-body">Select CSV file
         <input type="file" accept=".csv,text/csv" onChange={(event) =>
           void load(event.target.files?.[0] ?? null)}
-          className="block min-h-[var(--lms-control-height)] max-w-full text-sm text-body" />
+          className="block min-h-11 max-w-full text-sm text-body" />
       </label>
       <label className="grid gap-2 text-sm font-semibold text-body">CSV contents
         <Textarea rows={8} maxLength={131072} value={csv}
@@ -81,7 +81,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <p className="text-sm text-body">{result.warning}</p>
       <a href={"data:text/csv;charset=utf-8," + encodeURIComponent(result.errorCsv)}
         download="group-import-validation-errors.csv"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+        className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
         Download safe error CSV
       </a>
       {result.rows.length === 0 ? <p className="text-sm text-body">No learner rows were supplied.</p> : (

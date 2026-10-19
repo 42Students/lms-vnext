@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 
 const PROJECT_ADMIN_LINKS = [
   ["", "Workspaces"],
@@ -31,32 +31,10 @@ export function ProjectAdminNav({
       ? ""
       : "/" + active;
 
-  return (
-    <nav
-      aria-label="Projects"
-      className="mb-6 flex gap-2 overflow-x-auto border-b border-border"
-    >
-      {PROJECT_ADMIN_LINKS.map(
-        ([suffix, label]) => (
-          <Link
-            key={suffix || "workspaces"}
-            href={basePath + suffix}
-            aria-current={
-              suffix === activePath
-                ? "page"
-                : undefined
-            }
-            className={
-              "whitespace-nowrap border-b-[3px] px-3 py-2 text-[14px] font-semibold transition " +
-              (suffix === activePath
-                ? "border-primary text-primary-text"
-                 : "border-transparent text-body hover:bg-primary-subtle hover:text-primary-text")
-            }
-          >
-            {label}
-          </Link>
-        ),
-      )}
-    </nav>
-  );
+  return <Tabs ariaLabel="Projects" renderPanel={false} value={activePath}
+    items={PROJECT_ADMIN_LINKS.map(([suffix,label])=>({
+      value:suffix,
+      label,
+      href:basePath+suffix,
+    }))}/>;
 }

@@ -34,14 +34,16 @@ export function AdminScopeSwitcher({
   const [pending, startTransition] = useTransition();
 
   function switchScope(value: string) {
+    if (pending || value === selectedValue(scope)) return;
     setError(null);
 
     startTransition(async () => {
+      try {
       let response: Response;
 
       if (!value) {
         response = await fetch("/api/auth/admin-scope", {
-          method: "DELETE",
+          method: "DELETE", credentials: "same-origin",
         });
       } else {
         const [kind, id] = value.split(":");
@@ -51,7 +53,7 @@ export function AdminScopeSwitcher({
             : { kind: "college", collegeId: id };
 
         response = await fetch("/api/auth/admin-scope", {
-          method: "POST",
+          method: "POST", credentials: "same-origin",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(body),
         });
@@ -63,6 +65,9 @@ export function AdminScopeSwitcher({
       }
 
       router.refresh();
+      } catch {
+        setError("Could not change admin scope. Check your connection and retry.");
+      }
     });
   }
 
@@ -78,6 +83,7 @@ export function AdminScopeSwitcher({
         id="admin-scope-switcher"
         value={selectedValue(scope)}
         disabled={pending}
+        aria-busy={pending}
         onChange={(event) => switchScope(event.target.value)}
         className="min-h-10 py-0"
       >
@@ -107,6 +113,7 @@ export function AdminScopeSwitcher({
           </optgroup>
         ) : null}
       </Select>
+      {pending ? <p role="status" className="mt-1 text-xs text-muted-foreground">Switching workspace…</p> : null}
       {!scope?.collegeId && !scope?.organizationId ? <p className="mt-1 text-xs text-muted-foreground">Showing all colleges — data may be large.</p> : null}
       {search.trim() && visibleColleges.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">No matching colleges.</p>:null}
       {error ? (

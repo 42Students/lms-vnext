@@ -216,26 +216,26 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 </label>
                 <div className="flex gap-2">
                   <Button variant="secondary" type="submit" disabled={pending}
-                    className="min-h-[var(--lms-control-height)] px-2">Save</Button>
+                    >Save</Button>
                   <Button variant="secondary" type="button" disabled={pending} onClick={()=>setEditing(null)}
-                    className="min-h-[var(--lms-control-height)] px-2">Cancel</Button>
+                    >Cancel</Button>
                 </div>
               </form>
             ) : (
               <div className="flex flex-wrap gap-2">
                 <Button variant="secondary" type="button" disabled={pending}
-                  className="min-h-[var(--lms-control-height)] px-2"
+                  
                   onClick={()=>setEditing({
                     id:row.id,credits:row.credits===null?"3":String(row.credits),
                     position:String(orderedPeers(row).findIndex(item=>item.id===row.id)+1),
                   })}>Edit</Button>
                 <Button variant="secondary" type="button" disabled={pending||orderedPeers(row)[0]?.id===row.id}
-                  className="min-h-[var(--lms-control-height)] px-2"
+                  
                   aria-label={"Move "+row.courseName+" up"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"3":String(row.credits),
                     orderedPeers(row).findIndex(item=>item.id===row.id))}>↑</Button>
                 <Button variant="secondary" type="button" disabled={pending||orderedPeers(row).at(-1)?.id===row.id}
-                  className="min-h-[var(--lms-control-height)] px-2"
+                  
                   aria-label={"Move "+row.courseName+" down"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"":String(row.credits),
                     orderedPeers(row).findIndex(item=>item.id===row.id)+2)}>↓</Button>

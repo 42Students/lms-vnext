@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {createRecruiterBellRequestGate} from "@/modules/placements/recruiter-bell-model";
@@ -17,7 +18,6 @@ export function HrRecruiterBell(){
  const markAllGate=useRef(createHrBellMutationGate());
  const loadGate=useRef(createRecruiterBellRequestGate());
  const triggerRef=useRef<HTMLButtonElement>(null);
- const panelRef=useRef<HTMLElement>(null);
  const load=useCallback(async()=>{
   const request=loadGate.current.begin();
   try{
@@ -56,23 +56,7 @@ export function HrRecruiterBell(){
   }catch{setState(null);setSaveError("Read status could not be confirmed. Reload notifications before retrying.");}
   finally{markAllGate.current.end();setLoading(false);}
  }
- useEffect(()=>{
-  if(!open)return;
-  const onKey=(event:KeyboardEvent)=>{
-   if(event.key!=="Escape")return;
-   event.preventDefault();setOpen(false);triggerRef.current?.focus();
-  };
-  const onPointer=(event:PointerEvent)=>{
-   const target=event.target;
-   if(!(target instanceof Node)||panelRef.current?.contains(target)||
-      triggerRef.current?.contains(target))return;
-   setOpen(false);
-  };
-  document.addEventListener("keydown",onKey);
-  document.addEventListener("pointerdown",onPointer);
-  return ()=>{document.removeEventListener("keydown",onKey);
-   document.removeEventListener("pointerdown",onPointer);};
- },[open]);
+
  const unread=state?.unread??0;
  return <div className="relative">
   <Button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
@@ -81,12 +65,7 @@ export function HrRecruiterBell(){
    variant="secondary" className="relative">
    Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
   </Button>
-  {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[400px] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
-   <div className="flex items-center justify-between gap-2">
-    <h2 className="font-semibold">Notifications</h2>
-    <Button type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
-     variant="ghost">Close</Button>
-   </div>
+  <Drawer open={open} onOpenChange={setOpen} title="Recruiter notifications">
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
@@ -103,6 +82,6 @@ export function HrRecruiterBell(){
       variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
    {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
-  </section>:null}
+  </Drawer>
  </div>;
 }

@@ -1,3 +1,6 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {CollegeArchivedLessonRestore} from "./college-archived-lesson-restore";
 import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./college-lesson-visibility-controls";
@@ -35,499 +38,499 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
         <form method="get" action={href} className="flex flex-wrap items-end gap-3">
           {lessons?<label className="grid min-w-32 gap-1 text-sm font-semibold text-body">
             Rows per page
-            <select name="pageSize" defaultValue={data.query.pageSize}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="pageSize" defaultValue={data.query.pageSize}
+              className="min-h-11">
               {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
-            </select>
+            </Select>
           </label>:null}
           <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Course or {lessons ? "lesson" : "cohort"}
-            <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
+            <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
               placeholder="Search registered records"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11" />
           </label>
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent program lifecycle
-              <select name="programStatus" defaultValue={data.query.programStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="programStatus" defaultValue={data.query.programStatus}
+                className="min-h-11">
                 <option value="ALL">All</option>
                 <option value="ACTIVE">Active</option>
                 <option value="ARCHIVED">Archived</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent batch lifecycle
-              <select name="cohortStatus" defaultValue={data.query.cohortStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="cohortStatus" defaultValue={data.query.cohortStatus}
+                className="min-h-11">
                 <option value="ALL">All</option>
                 <option value="PLANNED">Planned</option>
                 <option value="ACTIVE">Active</option>
                 <option value="COMPLETED">Completed</option>
                 <option value="ARCHIVED">Archived</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period lifecycle
-              <select name="periodStatus" defaultValue={data.query.periodStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="periodStatus" defaultValue={data.query.periodStatus}
+                className="min-h-11">
                 <option value="ALL">All</option>
                 <option value="PLANNED">PLANNED</option>
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="CLOSED">CLOSED</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent course lifecycle
-              <select name="courseStatus" defaultValue={data.query.courseStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="courseStatus" defaultValue={data.query.courseStatus}
+                className="min-h-11">
                 <option value="ALL">All</option>
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="ARCHIVED">ARCHIVED</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Department code (exact)
-              <input type="search" name="departmentCode" maxLength={64} defaultValue={data.query.departmentCode ?? ""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input type="search" name="departmentCode" maxLength={64} defaultValue={data.query.departmentCode ?? ""}
+                className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent program lifecycle
-              <select name="programStatus" defaultValue={data.query.programStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="programStatus" defaultValue={data.query.programStatus}
+                className="min-h-11">
                 <option value="ALL">All</option>
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="ARCHIVED">ARCHIVED</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent batch lifecycle
-              <select name="cohortStatus" defaultValue={data.query.cohortStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="cohortStatus" defaultValue={data.query.cohortStatus}
+                className="min-h-11">
                 <option value="ALL">All</option>
                 <option value="PLANNED">PLANNED</option>
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="COMPLETED">COMPLETED</option>
                 <option value="ARCHIVED">ARCHIVED</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period lifecycle
-              <select name="periodStatus" defaultValue={data.query.periodStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="periodStatus" defaultValue={data.query.periodStatus}
+                className="min-h-11">
                 <option value="ALL">All</option>
                 <option value="PLANNED">PLANNED</option>
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="CLOSED">CLOSED</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent course lifecycle
-              <select name="courseStatus" defaultValue={data.query.courseStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="courseStatus" defaultValue={data.query.courseStatus}
+                className="min-h-11">
                 <option value="ALL">All</option>
                 <option value="ACTIVE">ACTIVE</option>
                 <option value="ARCHIVED">ARCHIVED</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Department code (exact)
-              <input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""}
+                className="min-h-11" />
             </label>
           ) : null}
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             {lessons ? "Lesson status" : "Offering status"}
-            <select name="status" defaultValue={data.query.status}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="status" defaultValue={data.query.status}
+              className="min-h-11">
               <option value="ACTIVE">Active</option>
               <option value="ARCHIVED">Archived</option>
               <option value="ALL">All</option>
-            </select>
+            </Select>
           </label>
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period code (exact)
-              <input name="periodCode" type="search" maxLength={64}
+              <Input name="periodCode" type="search" maxLength={64}
                 defaultValue={data.query.periodCode??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-11"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Batch code (exact)
-              <input name="cohortCode" type="search" maxLength={64}
+              <Input name="cohortCode" type="search" maxLength={64}
                 defaultValue={data.query.cohortCode??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-11"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Program code (exact)
-              <input name="programCode" type="search" maxLength={64}
+              <Input name="programCode" type="search" maxLength={64}
                 defaultValue={data.query.programCode??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-11"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course
-              <select name="courseCode" defaultValue={data.query.courseCode??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="courseCode" defaultValue={data.query.courseCode??""}
+                className="min-h-11">
                 <option value="">All courses</option>
                 {courseChoices.map(option=><option key={option.code} value={option.code}>
                   {option.name} ({option.code})
                 </option>)}
                 {data.query.courseCode&&!courseChoices.some(option=>option.code===data.query.courseCode)?
                   <option value={data.query.courseCode}>{data.query.courseCode} (not in current authoring list)</option>:null}
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Course offering type
-              <select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
+                className="min-h-11">
                 <option value="ALL">Any offering type</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Course department name (exact)
-              <input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+              <Input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""}
+                className="min-h-11"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Published and visibility-flagged content
-              <select name="flaggedVisibility" defaultValue={data.query.flaggedVisibility} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="flaggedVisibility" defaultValue={data.query.flaggedVisibility} className="min-h-11">
                 <option value="ALL">All lessons</option><option value="HAS_FLAGGED">Has flagged content</option><option value="NONE_FLAGGED">No flagged content</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Authored assignments
-              <select name="assignmentPresence" defaultValue={data.query.assignmentPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="assignmentPresence" defaultValue={data.query.assignmentPresence} className="min-h-11">
                 <option value="ALL">All lessons</option><option value="HAS_ASSIGNMENTS">Has assignments</option><option value="NO_ASSIGNMENTS">No assignments</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Authored quizzes
-              <select name="quizPresence" defaultValue={data.query.quizPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="quizPresence" defaultValue={data.query.quizPresence} className="min-h-11">
                 <option value="ALL">All lessons</option><option value="HAS_QUIZZES">Has quizzes</option><option value="NO_QUIZZES">No quizzes</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Published lesson content
-              <select name="publishedContent" defaultValue={data.query.publishedContent} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="publishedContent" defaultValue={data.query.publishedContent} className="min-h-11">
                 <option value="ALL">Any publication</option><option value="HAS_PUBLISHED">Has published content</option><option value="NONE_PUBLISHED">No published content</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Authored lesson items
-              <select name="contentPresence" defaultValue={data.query.contentPresence??"ALL"}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="contentPresence" defaultValue={data.query.contentPresence??"ALL"}
+                className="min-h-11">
                 <option value="ALL">All lessons</option><option value="HAS_CONTENT">Contains authored content</option>
                 <option value="EMPTY">No content authored</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Learning path lifecycle
-              <select name="pathStatus" defaultValue={data.query.pathStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="pathStatus" defaultValue={data.query.pathStatus}
+                className="min-h-11">
                 <option value="ALL">All paths</option>
                 <option value="DRAFT">Draft paths</option><option value="PUBLISHED">Published paths</option>
                 <option value="ARCHIVED">Archived paths</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Offering lifecycle
-              <select name="offeringStatus" defaultValue={data.query.offeringStatus}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="offeringStatus" defaultValue={data.query.offeringStatus}
+                className="min-h-11">
                 <option value="ALL">All offerings</option>
                 <option value="ACTIVE">Active offerings</option>
                 <option value="ARCHIVED">Archived offerings</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course offering type
-              <select name="offeringType" defaultValue={data.query.offeringType??"ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="offeringType" defaultValue={data.query.offeringType??"ALL"} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course department (exact name)
-              <input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+              <Input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""} className="min-h-11"/>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Recorded learner activity
-              <select name="activityState" defaultValue={data.query.activityState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="activityState" defaultValue={data.query.activityState} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="RECORDED">Has activity rows</option><option value="UNRECORDED">No recorded activity</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Content completion evidence
-              <select name="completionEvidence" defaultValue={data.query.completionEvidence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="completionEvidence" defaultValue={data.query.completionEvidence} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="COMPLETED_CONTENT">Has completed content records</option><option value="NO_COMPLETED_CONTENT">No completed content records</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Shared learning path
-              <select name="learningPathPresence" defaultValue={data.query.learningPathPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="learningPathPresence" defaultValue={data.query.learningPathPresence} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_PATH">Has a path</option><option value="NO_PATH">No learning path</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Published learning path
-              <select name="publishedPathPresence" defaultValue={data.query.publishedPathPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="publishedPathPresence" defaultValue={data.query.publishedPathPresence} className="min-h-11">
                 <option value="ALL">Any publication</option><option value="HAS_PUBLISHED_PATH">Published path exists</option><option value="NO_PUBLISHED_PATH">No published path</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Batch / cohort code (exact)
-              <input name="cohortCode" type="search" maxLength={64}
+              <Input name="cohortCode" type="search" maxLength={64}
                 defaultValue={data.query.cohortCode??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-11"/>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period code (exact)
-              <input name="periodCode" type="search" maxLength={64}
+              <Input name="periodCode" type="search" maxLength={64}
                 defaultValue={data.query.periodCode??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-11"/>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Program code (exact)
-              <input name="programCode" type="search" maxLength={64}
+              <Input name="programCode" type="search" maxLength={64}
                 defaultValue={data.query.programCode??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-11"/>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course code (exact)
-              <input name="courseCode" type="search" maxLength={64}
+              <Input name="courseCode" type="search" maxLength={64}
                 defaultValue={data.query.courseCode??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+                className="min-h-11"/>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved content kind
-              <select name="contentType" defaultValue={data.query.contentType} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="contentType" defaultValue={data.query.contentType} className="min-h-11">
                 <option value="ALL">All kinds</option>
                 <option value="RESOURCE">Resource</option>
                 <option value="VIDEO">Uploaded video</option>
                 <option value="YOUTUBE">YouTube</option>
                 <option value="LIVE_CLASS">Live class</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved content lifecycle
-              <select name="contentLifecycle" defaultValue={data.query.contentLifecycle} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="contentLifecycle" defaultValue={data.query.contentLifecycle} className="min-h-11">
                 <option value="ALL">Any content state</option>
                 <option value="DRAFT">Draft exists</option>
                 <option value="PUBLISHED">Published exists</option>
                 <option value="ARCHIVED">Archived exists</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Starting lesson order (1-based)
-              <input name="sequenceFrom" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceFrom ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input name="sequenceFrom" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceFrom ?? ""} className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Last lesson order (1-based)
-              <input name="sequenceThrough" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceThrough ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input name="sequenceThrough" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceThrough ?? ""} className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Exact saved lesson title
-              <input name="lessonName" type="search" maxLength={255} defaultValue={data.query.lessonName ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input name="lessonName" type="search" maxLength={255} defaultValue={data.query.lessonName ?? ""} className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved lessons
-              <select name="lessonPresence" defaultValue={data.query.lessonPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="lessonPresence" defaultValue={data.query.lessonPresence} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_LESSONS">Has authored lessons</option><option value="NO_LESSONS">No authored lessons</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Authored course assignments
-              <select name="assignmentPresence" defaultValue={data.query.assignmentPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="assignmentPresence" defaultValue={data.query.assignmentPresence} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_ASSIGNMENTS">Assignments authored</option><option value="NO_ASSIGNMENTS">No assignments authored</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Authored course quizzes
-              <select name="quizPresence" defaultValue={data.query.quizPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="quizPresence" defaultValue={data.query.quizPresence} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_QUIZZES">Quizzes authored</option><option value="NO_QUIZZES">No quizzes authored</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved resources
-              <select name="resourcePresence" defaultValue={data.query.resourcePresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="resourcePresence" defaultValue={data.query.resourcePresence} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_RESOURCES">Has resources</option><option value="NO_RESOURCES">No resources</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Scheduled live-class content
-              <select name="liveClassPresence" defaultValue={data.query.liveClassPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="liveClassPresence" defaultValue={data.query.liveClassPresence} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_LIVE">Has saved live classes</option><option value="NO_LIVE">No saved live classes</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Authored content audience
-              <select name="contentAudience" defaultValue={data.query.contentAudience} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="contentAudience" defaultValue={data.query.contentAudience} className="min-h-11">
                 <option value="ALL">All lessons</option><option value="SHARED">Has shared content</option><option value="SECTION">Has section-bound content</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Published items hidden from students
-              <select name="hiddenPublished" defaultValue={data.query.hiddenPublished} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="hiddenPublished" defaultValue={data.query.hiddenPublished} className="min-h-11">
                 <option value="ALL">All lessons</option><option value="HAS_HIDDEN">Has hidden published item</option><option value="NO_HIDDEN">No hidden published items</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Authored video or YouTube
-              <select name="videoEvidence" defaultValue={data.query.videoEvidence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="videoEvidence" defaultValue={data.query.videoEvidence} className="min-h-11">
                 <option value="ALL">All lessons</option><option value="HAS_VIDEO">With videos</option><option value="NO_VIDEO">Without videos</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved resource items
-              <select name="resourceEvidence" defaultValue={data.query.resourceEvidence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="resourceEvidence" defaultValue={data.query.resourceEvidence} className="min-h-11">
                 <option value="ALL">All lessons</option><option value="HAS_RESOURCE">Has resources</option><option value="NO_RESOURCE">No resources</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved live-class items
-              <select name="liveEvidence" defaultValue={data.query.liveEvidence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="liveEvidence" defaultValue={data.query.liveEvidence} className="min-h-11">
                 <option value="ALL">All lessons</option><option value="HAS_LIVE">Has live-class items</option><option value="NO_LIVE">No live-class items</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Offering video material
-              <select name="videoContentState" defaultValue={data.query.videoContentState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="videoContentState" defaultValue={data.query.videoContentState} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_VIDEO">Contains video content</option><option value="NO_VIDEO">No video content</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Published authored content
-              <select name="publishedContentState" defaultValue={data.query.publishedContentState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="publishedContentState" defaultValue={data.query.publishedContentState} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_PUBLISHED">Contains published content</option><option value="NO_PUBLISHED">No published content</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Hidden published content
-              <select name="hiddenContentState" defaultValue={data.query.hiddenContentState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="hiddenContentState" defaultValue={data.query.hiddenContentState} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_HIDDEN">Contains hidden published item</option><option value="NO_HIDDEN">No hidden published items</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Shared learning content
-              <select name="sharedContentState" defaultValue={data.query.sharedContentState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="sharedContentState" defaultValue={data.query.sharedContentState} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_SHARED">Has shared content</option><option value="NO_SHARED">No shared content</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section-bound authored content
-              <select name="sectionContentState" defaultValue={data.query.sectionContentState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="sectionContentState" defaultValue={data.query.sectionContentState} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_SECTION">Has section-bound items</option><option value="NO_SECTION">No section-bound items</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact lesson ID
-              <input name="lessonId" defaultValue={data.query.lessonId??""} placeholder="Lesson UUID"
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input name="lessonId" defaultValue={data.query.lessonId??""} placeholder="Lesson UUID"
+                className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Offering ID
-              <input name="offeringId" defaultValue={data.query.offeringId??""} placeholder="Course offering UUID"
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input name="offeringId" defaultValue={data.query.offeringId??""} placeholder="Course offering UUID"
+                className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact offering ID
-              <input name="offeringId" defaultValue={data.query.offeringId??""} placeholder="Course offering UUID"
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input name="offeringId" defaultValue={data.query.offeringId??""} placeholder="Course offering UUID"
+                className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact learning path ID
-              <input name="pathId" defaultValue={data.query.pathId??""} placeholder="Path UUID"
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input name="pathId" defaultValue={data.query.pathId??""} placeholder="Path UUID"
+                className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Minimum authored items
-              <input type="number" name="minContentCount" min={1} max={1000} defaultValue={data.query.minContentCount??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input type="number" name="minContentCount" min={1} max={1000} defaultValue={data.query.minContentCount??""}
+                className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Maximum authored items
-              <input type="number" name="maxContentCount" min={0} max={1000} defaultValue={data.query.maxContentCount??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              <Input type="number" name="maxContentCount" min={0} max={1000} defaultValue={data.query.maxContentCount??""}
+                className="min-h-11" />
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Draft lesson content
-              <select name="draftContentState" defaultValue={data.query.draftContentState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="draftContentState" defaultValue={data.query.draftContentState} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_DRAFT">Contains drafts</option><option value="NO_DRAFT">No saved drafts</option>
-              </select>
+              </Select>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Archived lesson content
-              <select name="archivedContentState" defaultValue={data.query.archivedContentState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <Select name="archivedContentState" defaultValue={data.query.archivedContentState} className="min-h-11">
                 <option value="ALL">All offerings</option><option value="HAS_ARCHIVED">Contains archived items</option><option value="NO_ARCHIVED">No archived items</option>
-              </select>
+              </Select>
             </label>
           ) : null}
-          <button type="submit"
-            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
+          <Button type="submit"
+            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</Button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Clear
           </Link>
@@ -650,12 +653,12 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
           {lessons&&data.totalPages>1?<form method="get" action={href} className="flex items-center gap-2">
             {Array.from(new URL(collegeLearningHref(data.kind,{...data.query,page:1}),"https://local.invalid").searchParams.entries())
               .filter(([key])=>key!=="page").map(([key,value])=>
-                <input key={key} type="hidden" name={key} value={value}/>)}
+                <Input key={key} type="hidden" name={key} value={value}/>)}
             <label className="text-xs font-semibold">Jump to page
-              <input type="number" name="page" min={1} max={data.totalPages} defaultValue={data.query.page}
+              <Input type="number" name="page" min={1} max={data.totalPages} defaultValue={data.query.page}
                 className="ml-2 w-20 rounded border border-border bg-surface p-2 text-foreground"/>
             </label>
-            <button type="submit" className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Go</button>
+            <Button type="submit" className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Go</Button>
           </form>:null}
           {data.query.page > 1 ? <Link
             href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page - 1 })}

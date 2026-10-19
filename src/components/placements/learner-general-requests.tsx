@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -75,7 +76,7 @@ export function LearnerGeneralRequests({
     kind==="ABSENCE_DISPUTE"?"Round ID":kind==="CORRECTION_WITH_PROOF"?"Corrected value":"Justification"}
    <Input className={box} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
   </label>:target==="PLACEMENTS"?<label className="flex items-start gap-2 text-sm">
-   <input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>
+   <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
    I request placement registration and consent to the placement rules.
   </label>:null}
   {["OFF_CAMPUS_OFFER","ABSENCE_DISPUTE","CORRECTION_WITH_PROOF"].includes(kind)?<label className="grid gap-1 text-sm font-semibold text-body">Proof link (HTTPS)

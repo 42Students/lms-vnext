@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -25,7 +26,7 @@ export default async function MentorReportsPage({searchParams}:{
   });
   if(duplicated||!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid Mentor report filters</h1>
-    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
   </section>;
   const data=await getMentorReports(await getCurrentRequestContext(),parsed.data);
   const statusMetrics=[
@@ -125,7 +126,7 @@ export default async function MentorReportsPage({searchParams}:{
         <Button type="submit" variant="primary">
           Filter
         </Button>
-        <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+        <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/mentor/reports/export?"+
@@ -169,15 +170,7 @@ export default async function MentorReportsPage({searchParams}:{
                 className="min-h-11 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Risk / readiness</Link>
             </div>
           </li>)}</ol>}
-      <nav aria-label="Mentor report pages" className="flex items-center justify-between gap-3">
-        <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
-        <div className="flex gap-3">
-          {data.page>1?<Link href={mentorReportsHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
-          {data.page<data.totalPages?<Link href={mentorReportsHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
-        </div>
-      </nav>
+      <Pagination label="Mentor report pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReportsHref({...data.query,page})}/>
     </>}
     <p className="text-xs text-muted-foreground">
       Report counts use registered current assignments and project-attention producers only.

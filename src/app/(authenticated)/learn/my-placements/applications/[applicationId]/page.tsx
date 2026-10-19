@@ -26,11 +26,11 @@ export default async function LearnerApplicationDetailPage({params}:{
   );
   return <div className="min-w-0 space-y-6">
     <Link href="/learn/my-placements/applications"
-      className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Applications</Link>
+      className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Applications</Link>
     <PageHeader eyebrow="My Placements" title={record.roleTitle}
       description={record.companyName+" · Own application status and timeline"}
       actions={<StatusBadge>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border py-4 sm:py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-semibold text-foreground">Application actions</h2>
         {record.currentStatus==="SUBMITTED"
@@ -41,11 +41,11 @@ export default async function LearnerApplicationDetailPage({params}:{
         {requiresRequest?"A booked round requires the placement cell to review your withdrawal request. Your application stays active until approved.":"Withdrawing requires a reason and confirmation. Only a successful response updates your status."}
       </p>
       <Link href={"/learn/my-placements/applications/"+encodeURIComponent(record.applicationId)+"/company"}
-        className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
+        className="mt-4 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
         View recorded company details →
       </Link>
     </section>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6" aria-label="Recorded application timeline">
+    <section className="border-b border-border py-4 sm:py-6" aria-label="Recorded application timeline">
       <h2 className="text-base font-semibold text-foreground">Status timeline</h2>
       <p className="mt-2 text-sm text-body">
         Only persisted application status changes are listed. Internal notes and actor IDs are withheld.

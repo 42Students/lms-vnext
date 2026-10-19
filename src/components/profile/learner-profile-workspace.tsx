@@ -21,6 +21,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -529,13 +530,13 @@ export function LearnerProfileWorkspace(props: {
 
   return (
     <div className="min-w-0 space-y-5">
-      <nav aria-label="Quick access to unfinished profile sections" className="rounded-xl border border-border bg-surface p-4 sm:hidden">
+      <nav aria-label="Quick access to unfinished profile sections" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 sm:hidden">
         <h2 className="text-sm font-semibold text-foreground">Quick profile steps</h2>
         <p className="mt-1 text-xs text-body">Jump to an unfinished saved-profile section. These are suggestions, not verification requirements.</p>
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
           {mobileQuickLinks.map(item=><Link key={item.section}
             href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 sm:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
+            className="flex min-h-11 sm:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
             {item.label}
           </Link>)}
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
@@ -563,18 +564,18 @@ export function LearnerProfileWorkspace(props: {
           <Button variant="secondary" onClick={openDetails}>Edit profile</Button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
             <p className="m-0 text-sm font-semibold text-foreground">Profile image</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/replace remains blocked until the shared Cloud Storage profile-asset workflow is live.</p>
           </div>
-          <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
             <p className="m-0 text-sm font-semibold text-foreground">Resume</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/import/remove remains explicitly blocked until Cloud Storage signing and cleanup are live.</p>
           </div>
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-labelledby="learner-profile-checklist-title">
+      <section className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 sm:p-5" aria-labelledby="learner-profile-checklist-title">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
@@ -622,7 +623,7 @@ export function LearnerProfileWorkspace(props: {
             <li key={item.section}>
               <Link
                 href={"/learn/profile?section=" + encodeURIComponent(item.section)}
-                className="flex min-h-11 sm:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                className="flex min-h-11 sm:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 onClick={() => {
                   if (props.initialSection === item.section) {
                     window.document.getElementById(item.section)?.scrollIntoView({
@@ -715,7 +716,7 @@ export function LearnerProfileWorkspace(props: {
             </p>
             {entries.length?<ul className="space-y-2">
               {entries.map(entry=><li key={entry.id}
-                className="rounded-lg border border-border bg-surface-subtle p-3">
+                className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-3">
                 <p className="break-words text-sm font-semibold text-foreground">{entry.title}</p>
                 {entry.organization?<p className="mt-1 text-xs text-body">{entry.organization}</p>:null}
                 {entry.date?<p className="mt-1 text-xs text-body">{entry.date}</p>:null}
@@ -747,7 +748,7 @@ export function LearnerProfileWorkspace(props: {
                 {items.map((item) => {
                   const summary = itemTitle(section, item);
                   return (
-                    <div key={String(item.id)} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface-subtle p-4">
+                    <div key={String(item.id)} className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
                       <div className="min-w-0 flex-1">
                         <p className="m-0 break-words text-sm font-semibold text-foreground">{summary.primary}</p>
                         {summary.secondary ? <p className="mt-1 text-xs text-muted-foreground">{summary.secondary}</p> : null}
@@ -926,11 +927,11 @@ export function LearnerProfileWorkspace(props: {
         </>}>
         <div className="grid gap-4">
           <label className="text-sm font-semibold text-body">Role Preference (multiple)
-            <input value={jobPrefsDraft.rolePreferences.join(", ")} maxLength={800}
+            <Input value={jobPrefsDraft.rolePreferences.join(", ")} maxLength={800}
               placeholder="e.g. Software Engineer, Data Analyst"
               onChange={event=>setJobPrefsDraft(current=>({...current,
                 rolePreferences:event.target.value.split(",").map(x=>x.trim()).filter(Boolean)}))}
-              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
+              className="mt-1 min-h-11 sm:min-h-9 w-full"/>
           </label>
           <label className="text-sm font-semibold text-body">Specific Role Preference
             <Input className="mt-1" value={jobPrefsDraft.specificRolePreference} maxLength={200}
@@ -980,7 +981,7 @@ export function LearnerProfileWorkspace(props: {
                 </label>;
               if(collection==="education"&&field.key==="qualifyingExam")
                 return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
-                  <input className="mt-1.5 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+                  <Input className="mt-1.5 min-h-11 sm:min-h-9 w-full"
                     list="learner-qualifying-exams" value={value} maxLength={120}
                     onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
                   <datalist id="learner-qualifying-exams">
@@ -992,7 +993,7 @@ export function LearnerProfileWorkspace(props: {
               return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Input className="mt-1.5" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
             {collection==="education"?<label className="flex items-center gap-2 text-sm text-body sm:col-span-2">
-              <input type="checkbox" checked={Boolean(itemDraft.isCurrentlyPursuing)}
+              <Checkbox checked={Boolean(itemDraft.isCurrentlyPursuing)}
                 onChange={event=>setItemDraft(current=>({
                   ...current,isCurrentlyPursuing:event.target.checked,
                   ...(event.target.checked?{endYear:""}:{}),
@@ -1000,7 +1001,7 @@ export function LearnerProfileWorkspace(props: {
               Currently Pursuing
             </label>:null}
             {collection==="education"&&String(itemDraft.qualifyingExam??"").trim()?
-              <fieldset className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:col-span-2 sm:grid-cols-2">
+              <fieldset className="grid gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3 sm:col-span-2 sm:grid-cols-2">
                 <legend className="text-sm font-semibold text-foreground">Qualifying exam details (optional)</legend>
                 <p className="text-xs text-body sm:col-span-2">
                   Record details from your exam result. These fields are learner-entered and are not an official verification.
@@ -1027,7 +1028,7 @@ export function LearnerProfileWorkspace(props: {
                 })}
               </fieldset>:null}
             {collection==="education"&&educationError?<p role="alert" className="sm:col-span-2 text-sm text-error">{educationError}</p>:null}
-            {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body sm:col-span-2"><input type="checkbox" checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
+            {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body sm:col-span-2"><Checkbox checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
           </div>
         ) : null}
       </Dialog>

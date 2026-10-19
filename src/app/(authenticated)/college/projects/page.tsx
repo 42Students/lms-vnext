@@ -11,6 +11,8 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
 import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-admin-workspace-page-export";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
+import { ListToolbar } from "@/components/ui/list-toolbar";
 import { ErrorState } from "@/components/ui/error-state";
 import {parseCollegeProjectsQuery,canonicalCollegeProjectsPageHref} from "@/modules/projects/college-projects-query-model";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
@@ -35,7 +37,7 @@ export default async function CollegeProjectsPage({
      <p role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
       Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page.
      </p>
-     <Link href="/dashboard" className="inline-flex min-h-[var(--lms-control-height)] items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to dashboard</Link>
+     <Link href="/dashboard" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Back to dashboard</Link>
     </div>;
   }
 
@@ -45,7 +47,7 @@ export default async function CollegeProjectsPage({
       <PageHeader title="Workspaces" description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/college/projects" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline">Clear filters</Link>}
+        action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>}
       />
     </div>;
   }
@@ -79,7 +81,7 @@ export default async function CollegeProjectsPage({
       <ErrorState title="Project workspaces unavailable"
         description="The workspace list could not be loaded. Your search and filters were not changed."
         action={<Link href={"/college/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline">Retry loading workspaces</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading workspaces</Link>}/>
     </div>;
   }
   const result=snapshotsResult.value;
@@ -107,23 +109,25 @@ export default async function CollegeProjectsPage({
         title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
-          className="inline-flex min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Create workspace
         </Link>}
       />
 
       <nav aria-label="Project workspace tools" className="flex min-w-0 flex-wrap gap-2">
-      <Link className="inline-flex min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
+      <Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
+      <Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
 
       <nav aria-label="Workspace display and archive" className="flex min-w-0 flex-wrap items-center gap-3 border-b border-border">
        <ProjectAdminWorkspacePageExport items={items}/>
-       <Link href={viewHref("cards")} aria-current={query.view==="cards"?"page":undefined} className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-link aria-[current=page]:border-primary aria-[current=page]:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Cards</Link>
-       <Link href={viewHref("table")} aria-current={query.view==="table"?"page":undefined} className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-link aria-[current=page]:border-primary aria-[current=page]:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">List</Link>
-       <Link href="/college/projects?status=ARCHIVED" aria-current={query.status==="ARCHIVED"?"page":undefined} className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-link aria-[current=page]:border-primary aria-[current=page]:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Archived workspaces</Link>
+       <Link href={viewHref("cards")} aria-current={query.view==="cards"?"page":undefined} className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-link aria-[current=page]:border-primary aria-[current=page]:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Cards</Link>
+       <Link href={viewHref("table")} aria-current={query.view==="table"?"page":undefined} className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-link aria-[current=page]:border-primary aria-[current=page]:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">List</Link>
+       <Link href="/college/projects?status=ARCHIVED" aria-current={query.status==="ARCHIVED"?"page":undefined} className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-link aria-[current=page]:border-primary aria-[current=page]:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Archived workspaces</Link>
       </nav>
       {!templatesResult.ok && <p role="status" className="border-b border-border pb-3 text-sm text-body">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</p>}
       <ProjectAdminFilters query={query} />
+      <ListToolbar label="College project workspaces" viewCount={result.total}
+        exportAction={<ProjectAdminWorkspacePageExport items={items}/>} />
 
       <ProjectAdminWorkspaceList
         items={items}

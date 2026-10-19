@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 export default function LearnerProjectUnavailable() {
   return (
-    <section className="rounded-xl border border-border bg-surface px-5 py-10 text-center">
-      <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Project unavailable</h1>
+    <section className="min-w-0 space-y-4 border-b border-border py-5">
+      <PageHeader title="Project unavailable" />
       <p className="mx-auto mt-2 max-w-lg text-sm text-body">
         This Project isn&apos;t available to your current learner account.
       </p>

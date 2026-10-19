@@ -35,7 +35,7 @@ export function FacultyProfileTextSection({ section, title, description, fields,
     if(!pending && changed) void onSave(section,draft);
   }
   return <form id={facultyProfileAnchor(section)} onSubmit={submit}
-    className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6" aria-label={title} aria-busy={pending}>
+    className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:p-6" aria-label={title} aria-busy={pending}>
     <div>
       <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       <p className="mt-1 text-sm text-body">{description}</p>

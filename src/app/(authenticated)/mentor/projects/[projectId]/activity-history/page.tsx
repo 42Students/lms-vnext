@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -24,7 +25,7 @@ export default async function MentorProjectActivityHistoryPage({
     filters ? {projectId,...filters} : null,
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid activity filters</h1>
+    <PageHeader title="Invalid activity filters" />
     <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Return to projects
     </Link>
@@ -122,15 +123,7 @@ export default async function MentorProjectActivityHistoryPage({
               }).format(event.occurredAt)} IST
             </time>
           </li>)}</ol>}
-      <nav aria-label="Project activity history pages" className="flex items-center justify-between gap-3">
-        <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
-        <div className="flex gap-3">
-          {data.page>1 && <Link href={mentorProjectActivityHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
-          {data.page<data.totalPages && <Link href={mentorProjectActivityHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
-        </div>
-      </nav>
+      <Pagination label="Project activity history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorProjectActivityHref({...data.query,page})}/>
     </>}
     <p className="text-xs leading-5 text-muted-foreground">
       This safe timeline shows only registered event types and timestamps;
