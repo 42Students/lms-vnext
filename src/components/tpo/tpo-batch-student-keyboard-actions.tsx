@@ -5,7 +5,7 @@ import {useState,type KeyboardEvent} from "react";
 import {tpoBatchShortcut,tpoBatchVisibleSelection,tpoBatchSelectedClipboard}
  from "@/modules/placements/tpo-batch-keyboard-actions-model";
 type Row={id:string;name:string;rollNumber?:string|null};
-export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonly Row[];downloadHref:string}){
+export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonly Row[];downloadHref?:string}){
  const [selected,setSelected]=useState<string[]>([]);
  const [expanded,setExpanded]=useState(false);
  const [message,setMessage]=useState("");
