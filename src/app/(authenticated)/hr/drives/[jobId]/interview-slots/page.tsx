@@ -35,8 +35,8 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     Time blocks proposed here are visible to the placement cell. They are not confirmed interview appointments until the placement cell coordinates the schedule.
   </p>
   <nav className="flex flex-wrap gap-3">
-   <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Drive rounds</Link>
-   <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Recruiter calendar</Link>
+   <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Drive rounds</Link>
+   <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Recruiter calendar</Link>
   </nav>
   <>
    <section className="space-y-3 border-b border-border pb-4">
@@ -44,7 +44,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     {rounds.length===0?<p role="status" className="text-sm text-body">
      No pending or scheduled interview round is available for this drive.{" "}
      <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
-      className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Review hiring rounds</Link>
+      className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Review hiring rounds</Link>
      {" "}before proposing a slot.
     </p>:null}
     <RecruiterInterviewSlotForm action={action} rounds={rounds.map(row=>({
