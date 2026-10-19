@@ -213,30 +213,30 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                     className="block min-h-11 w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
                 </label>
                 <div className="flex gap-2">
-                  <button type="submit" disabled={pending}
-                    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold">Save</button>
-                  <button type="button" disabled={pending} onClick={()=>setEditing(null)}
-                    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs">Cancel</button>
+                  <Button variant="secondary" type="submit" disabled={pending}
+                    >Save</Button>
+                  <Button variant="secondary" type="button" disabled={pending} onClick={()=>setEditing(null)}
+                    >Cancel</Button>
                 </div>
               </form>
             ) : (
               <div className="flex flex-wrap gap-2">
-                <button type="button" disabled={pending}
-                  className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs"
+                <Button variant="secondary" type="button" disabled={pending}
+                  
                   onClick={()=>setEditing({
                     id:row.id,credits:row.credits===null?"3":String(row.credits),
                     position:String(orderedPeers(row).findIndex(item=>item.id===row.id)+1),
-                  })}>Edit</button>
-                <button type="button" disabled={pending||orderedPeers(row)[0]?.id===row.id}
-                  className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs"
+                  })}>Edit</Button>
+                <Button variant="secondary" type="button" disabled={pending||orderedPeers(row)[0]?.id===row.id}
+                  
                   aria-label={"Move "+row.courseName+" up"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"3":String(row.credits),
-                    orderedPeers(row).findIndex(item=>item.id===row.id))}>↑</button>
-                <button type="button" disabled={pending||orderedPeers(row).at(-1)?.id===row.id}
-                  className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs"
+                    orderedPeers(row).findIndex(item=>item.id===row.id))}>↑</Button>
+                <Button variant="secondary" type="button" disabled={pending||orderedPeers(row).at(-1)?.id===row.id}
+                  
                   aria-label={"Move "+row.courseName+" down"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"":String(row.credits),
-                    orderedPeers(row).findIndex(item=>item.id===row.id)+2)}>↓</button>
+                    orderedPeers(row).findIndex(item=>item.id===row.id)+2)}>↓</Button>
                 <Button size="sm" variant="danger" disabled={pending}
                   onClick={()=>{setError(null);setNotice(null);setConfirm({type:"REMOVE",id:row.id});}}>
                   {TERM_MAPPING_COPY.removeButton}
