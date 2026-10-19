@@ -25,7 +25,7 @@ export default async function CollegeElectivesPage({
     <h1 className="text-xl font-semibold">Electives is turned off for this college</h1>
     <p className="text-sm text-body">Your college administrator can ask 42Students to switch Electives back on.
       Existing elective records are kept; this page cannot create or change electives while the module is off.</p>
-    <Link href="/college" className="text-sm font-semibold text-link underline">Return to college dashboard</Link>
+    <Link href="/college" className="text-sm font-semibold text-link underline lms-inline-link">Return to college dashboard</Link>
   </main>;
 
   const raw = readCollegeStructureParams(await searchParams);
@@ -34,7 +34,7 @@ export default async function CollegeElectivesPage({
     <PageHeader eyebrow="College Admin · Academic Setup" title="Electives" />
     <ErrorState title="Invalid elective filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
-      action={<Link href="/college/electives" className="font-semibold text-link">Clear filters</Link>} />
+      action={<Link href="/college/electives" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />
   </div>;
   const [data, options] = await Promise.all([
     listCollegeElectives(context, parsed.data),
