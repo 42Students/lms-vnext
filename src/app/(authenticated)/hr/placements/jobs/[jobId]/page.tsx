@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { HrJobSelectionGrid } from "@/components/hr/hr-job-selection-grid";
 import { HrJobOffersGrid } from "@/components/hr/hr-job-offers-grid";
+import { HrRoundResultsGrid } from "@/components/hr/hr-round-results-grid";
 import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
 import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -817,21 +818,14 @@ export default async function HrPlacementJobPage({
                 items={outcomeOptions.map(option=>({value:option.value,label:option.label,count:option.count,
                   href:hrInlineRoundResultsHref(workspace.job.id,inlineResults.round.id,option.value)}))}/>
                 {inlineResults.rows.length
-                  ? <div className="grid gap-3 md:grid-cols-2">
-                      {inlineResults.rows.map(candidate => (
-                        <article key={candidate.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
-                          <p className="break-words font-semibold text-foreground">{candidate.name}</p>
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            <StatusBadge tone={candidate.outcome==="PASS"?"success":candidate.outcome==="FAIL"?"error":candidate.outcome==="HOLD"?"warning":"neutral"}>{candidate.outcome ?? "UNRECORDED"}</StatusBadge>
-                            <StatusBadge tone={candidate.status==="APPLIED"?"success":candidate.status==="STAGED"?"warning":"neutral"}>{candidate.status}</StatusBadge>
-                          </div>
-                          {candidate.scorePercent != null
-                            ? <p className="mt-2 text-sm text-body">Score: {candidate.scorePercent}%</p> : null}
-                          {candidate.waitlistRank != null
-                            ? <p className="mt-1 text-sm text-body">Waitlist rank: {candidate.waitlistRank}</p> : null}
-                        </article>
-                      ))}
-                    </div>
+                  ? <HrRoundResultsGrid
+                      scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id,inlineResults.round.id].join(":")}
+                      rows={inlineResults.rows.map(candidate=>({
+                        key:candidate.key,name:candidate.name,outcome:candidate.outcome,
+                        status:candidate.status,scorePercent:candidate.scorePercent,
+                        waitlistRank:candidate.waitlistRank,
+                      }))}
+                    />
                   : <p className="text-sm text-muted-foreground">No shared candidates match this result filter.</p>}
               </> : null}
           </> : <p className="text-sm text-muted-foreground">No active hiring rounds are configured for this drive.</p>}
