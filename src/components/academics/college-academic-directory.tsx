@@ -35,7 +35,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
         }
       />
       {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
-      <section aria-label={title + " filters"} className="sm: border-t border-border pt-4">
+      <section aria-label={title + " filters"} className="border-t border-border pt-4">
         <form action={path} method="get" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">
             {semesters ? "Semester or program" : "Batch or program"}
@@ -226,7 +226,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
         </form>
       </section>
 
-      <section aria-label={title + " results"} role="region" tabIndex={0} className="max-w-full overflow-x-auto rounded-xl border border-border bg-surface">
+      <section aria-label={title + " results"} role="region" tabIndex={0} className="max-w-full overflow-x-auto rounded-[var(--lms-control-radius,9px)] border border-border bg-surface">
         <p className="px-4 pt-3 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all semester or batch columns.</p>
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching {semesters ? "program terms" : "cohorts"}
@@ -298,7 +298,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                 {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
                   <div className="flex flex-wrap gap-2">
                     <Link href={"/college/batches/"+encodeURIComponent(item.id)+"/students"}
-                      className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text">
                       Students
                     </Link>
                     <CollegeCohortRowActions row={item} periods={batchPeriods}/>
