@@ -97,11 +97,11 @@ export function TpoAcademicImportWorkspace() {
   return <div className="min-w-0">
     <button type="button" onClick={() => setOpen(value => !value)}
       aria-expanded={open} aria-controls={id}
-      className="inline-flex min-h-10 items-center rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
       Import academic details
     </button>
     {open && <section id={id} aria-label="Import academic details"
-      className="mt-3 max-w-4xl space-y-3 rounded-[12px] border border-border bg-surface p-5">
+      className="mt-3 max-w-4xl space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
       <h2 className="text-lg font-semibold">Import academic details</h2>
       <p className="text-sm text-muted-foreground">
         Upload a CSV with student membership IDs, CGPA (0–10), and active backlogs.
@@ -109,21 +109,21 @@ export function TpoAcademicImportWorkspace() {
       </p>
       <a download="academic-import-template.csv"
         href="data:text/csv;charset=utf-8,studentCode%2Ccgpa%2CactiveBacklogs%0A"
-        className="inline-flex min-h-10 items-center rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
         Download template
       </a>
       <label className="block text-sm font-semibold">Choose CSV file
         <input type="file" accept=".csv,text/csv" onChange={event => void upload(event.target.files?.[0] ?? null)}
-          className="mt-1 block w-full rounded-[var(--radius)] border border-border bg-surface p-2 text-sm" />
+          className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm" />
       </label>
       <label className="block text-sm font-semibold">Or paste CSV rows
         <textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");
         }} rows={5} maxLength={200000}
-          className="mt-1 block w-full rounded-[var(--radius)] border border-border bg-surface p-2 font-mono text-xs" />
+          className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 font-mono text-xs" />
       </label>
       <button disabled={busy} type="button" onClick={() => void validate()}
-        className="min-h-10 rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
         {busy ? "Checking…" : "Preview matches"}
       </button>
       {preview && <div className="space-y-3">
@@ -157,7 +157,7 @@ export function TpoAcademicImportWorkspace() {
         </label>
         <button type="button" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
           onClick={() => setConfirmOpen(true)}
-          className="min-h-9 rounded-[var(--radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+          className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
           Confirm import
         </button>
       </div>}

@@ -33,7 +33,7 @@ export default async function TpoHome(){
  const ctx=await getCurrentRequestContext();
  if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Placement cell" title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
-  <ul className="divide-y divide-border rounded-[12px] border border-border bg-surface">
+  <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
    {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="min-h-9 inline-flex items-center text-sm text-link underline">{label}</Link></li>)}
   </ul>
  </div>;
@@ -190,21 +190,21 @@ export default async function TpoHome(){
  </div>
  <p aria-live="polite" className="text-sm font-semibold text-body">{tpoHomeNeedsLine(rows)}</p>
  <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
- <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[12px] border border-border bg-surface p-5">
+ <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
   <h2 className="text-sm font-medium text-muted-foreground">Next up</h2>
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
    <p className="text-sm text-muted-foreground">{next.text}</p>
-   <Link href={next.href} className="inline-flex min-h-9 items-center rounded-[var(--radius)] bg-primary px-4 text-sm text-on-primary">{next.action}</Link>
+   <Link href={next.href} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm text-on-primary">{next.action}</Link>
   </div>:rows.find(row=>row.needsAttention)?<div className="mt-2 space-y-2"><p className="text-sm">{rows.find(row=>row.needsAttention)?.status}</p>
-   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-9 items-center rounded-[var(--radius)] bg-primary px-4 text-sm text-on-primary">Open</Link>
+   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm text-on-primary">Open</Link>
   </div>:<div className="mt-2 space-y-1"><p className="font-semibold">Nothing is waiting on you.</p><p className="text-sm text-muted-foreground">New requests, results and replies show up here first.</p></div>}
  </section>
  <section className="min-w-0 space-y-2" aria-label="Your placement work">
-  <ul className="divide-y divide-border rounded-[12px] border border-border bg-surface">{rows.map(row=><li key={row.key}>
+  <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">{rows.map(row=><li key={row.key}>
     <Link href={row.href} data-testid={"home.row."+row.key}
      className="flex min-h-16 min-w-0 items-center gap-3 p-4 text-body hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
-     <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius)] bg-primary-subtle text-sm font-semibold">{row.title.slice(0,1)}</span>
+     <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary-subtle text-sm font-semibold">{row.title.slice(0,1)}</span>
      <span className="min-w-0 flex-1"><strong className="block text-sm text-foreground">{row.title}</strong>
       <span className="block break-words text-xs text-muted-foreground">{row.status}</span></span>
      {row.needsAttention?<span aria-label="Needs you" className="shrink-0 rounded-full bg-warning-subtle px-2 py-1 text-xs font-semibold text-foreground">Needs you</span>:null}

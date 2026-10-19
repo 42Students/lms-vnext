@@ -30,7 +30,7 @@ export default async function HrRecordedOutsidePage({searchParams}:{
  return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Recruiter · Drive creation" title="Record an outside-platform drive"
    description="Historical employer-college record only. This cannot publish a student-visible job."/>
-  <Link href={"/hr/drives/new?collegeId="+collegeId} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive request</Link>
+  <Link href={"/hr/drives/new?collegeId="+collegeId} className="inline-flex min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive request</Link>
   {saved?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-3 text-sm text-body">External drive record saved. It was not published as a job.</p>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
  </div>;

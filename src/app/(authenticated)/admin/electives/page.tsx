@@ -24,7 +24,7 @@ export default async function SuperAdminElectivesPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader  title="Electives" />
     <ErrorState title="Invalid elective filters" description="Search and status must use supported values."
-      action={<Link href="/admin/electives" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
+      action={<Link href="/admin/electives" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   const [data, options] = await Promise.all([
@@ -70,11 +70,11 @@ export default async function SuperAdminElectivesPage({
         <input type="hidden" name="status" value={data.query.status} />
         {data.query.programId?<input type="hidden" name="programId" value={data.query.programId}/>:null}
         {data.query.semesterNumber?<input type="hidden" name="semesterNumber" value={data.query.semesterNumber}/>:null}
-        <Button variant="secondary" type="submit" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
+        <Button variant="secondary" type="submit" className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Refresh</Button>
       </form>
       <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
       {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-        {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+        {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.name}</h2>
             <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge>
@@ -102,6 +102,6 @@ export default async function SuperAdminElectivesPage({
       </div> : <EmptyState title="No elective slots" description="No persisted elective slots match the current college and filters." />}
       {data.truncated ? <p className="text-sm text-muted-foreground">Showing only 200 matching elective slots. Narrow the search for older entries.</p> : null}
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Academic overview</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← Academic overview</Link>
   </div>;
 }

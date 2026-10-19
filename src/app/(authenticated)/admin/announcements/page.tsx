@@ -41,7 +41,7 @@ export default async function AnnouncementsPage({
   if (!params) {
     return <div className="min-w-0 space-y-5">
       <PageHeader eyebrow="Super Admin" title="Announcements" description="Review and publish college notices." />
-      <p role="alert" className="rounded-xl border border-border bg-surface p-5">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-[var(--lms-teal-deep)] underline">Reset filters</Link></p>
+      <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-4 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline">Reset filters</Link></p>
     </div>;
   }
 
@@ -53,7 +53,7 @@ export default async function AnnouncementsPage({
           title="Announcements"
           description="Migration 0076 registers the announcement tables; this environment has not enabled the verified DB10 runtime flag."
         />
-        <div role="status" className="rounded-xl border border-border bg-surface p-6">
+        <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-4">
           <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
           <p className="mt-2 text-sm text-body">Apply and verify migration 0076, then explicitly set DB10_ANNOUNCEMENTS_READY=DB10_VERIFIED. No announcement DB reads or writes are attempted while disabled.</p>
         </div>
@@ -168,7 +168,7 @@ export default async function AnnouncementsPage({
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
         </label>
         <Button type="submit">Search</Button>
-        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm sm:min-h-9">Clear</Link>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm text-primary-text hover:bg-primary-subtle sm:min-h-9">Clear</Link>
       </form>
       <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
         ...(includeDeleted ? {deleted:"1"} : {}),

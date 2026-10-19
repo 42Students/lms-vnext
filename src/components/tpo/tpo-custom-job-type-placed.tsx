@@ -1,4 +1,5 @@
 "use client";
+import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label:string;version:string;value:boolean|null}){
@@ -23,10 +24,10 @@ export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label
  return <div className="space-y-1 text-sm">
   <p className="text-xs text-muted-foreground">Counts as placed</p>
   <div className="flex gap-2">
-   <button type="button" disabled={busy} aria-pressed={value===true} onClick={()=>void update(true)}
-    className={"min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border px-3 "+(value===true?"border-primary bg-primary-subtle":"border-border")}>Yes</button>
-   <button type="button" disabled={busy} aria-pressed={value===false} onClick={()=>void update(false)}
-    className={"min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border px-3 "+(value===false?"border-primary bg-primary-subtle":"border-border")}>No</button>
+   <Button variant="secondary" type="button" disabled={busy} aria-pressed={value===true} onClick={()=>void update(true)}
+    className={"min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-3 "+(value===true?"border-primary bg-primary-subtle":"border-border")}>Yes</Button>
+   <Button variant="secondary" type="button" disabled={busy} aria-pressed={value===false} onClick={()=>void update(false)}
+    className={"min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-3 "+(value===false?"border-primary bg-primary-subtle":"border-border")}>No</Button>
   </div>
   {value===null?<p className="text-xs text-muted-foreground">Not decided</p>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}

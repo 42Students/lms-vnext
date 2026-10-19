@@ -30,20 +30,20 @@ export function TpoGridFilterPanel({fields,mobileSheet=false}:{fields:readonly T
   <h2 className={mobileSheet?"hidden font-semibold md:block":"font-semibold"}>Filter students</h2>
   <p role="status" className="text-xs text-muted-foreground">{activeCount} active {activeCount===1?"filter":"filters"}</p>
   {fields.map(field=><label key={field.key} className="block text-sm">{field.label}
-   <select className="mt-1 min-h-9 w-full rounded-[var(--radius)] border border-border bg-surface px-2 text-base sm:text-sm" value={resolvedTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)} onChange={event=>update(field,event.target.value)}>
+   <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base sm:text-sm" value={resolvedTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)} onChange={event=>update(field,event.target.value)}>
     <option value={field.allValue??""}>All</option>{field.options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
    </select>
    {invalidTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)&&<span role="alert" className="mt-1 block text-xs text-warning">Unknown saved filter value. Clear grid filters to recover.</span>}
   </label>)}
   {fields.some(field=>query.has(field.urlKey??"filter."+field.key))&&<button type="button"
    onClick={()=>{const next=clearTpoGridFilters(new URLSearchParams(query.toString()),fields);router.replace(pathname+(next.size?"?"+next.toString():""));}}
-   className="min-h-9 rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-link">Clear all</button>}
+   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Clear all</button>}
  </>;
- const wrapper="w-full min-w-0 space-y-3 rounded-[var(--radius)] border border-border bg-surface p-3";
+ const wrapper="w-full min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3";
  return mobileSheet?<div className="w-full min-w-0">
   <button type="button" aria-expanded={sheetOpen} aria-controls="tpo-grid-student-filters"
    onClick={()=>setSheetOpen(true)}
-   className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border bg-surface px-4 font-semibold text-link md:hidden">
+   className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-link md:hidden">
    Filter students ({activeCount})
   </button>
   <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title="Filter students">

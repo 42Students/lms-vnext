@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState,type MouseEvent} from "react";
 
 /** TPO-drives-13/14: only acts on currently selected, visible drives. */
@@ -34,19 +35,19 @@ export function TpoBulkDriveReminder(){
  }
  return <div className="flex flex-col gap-1">
   <div className="flex flex-wrap gap-3 text-xs">
-   <button type="button" disabled={busy} className="font-semibold text-primary-text"
+   <Button variant="secondary" type="button" disabled={busy} className="font-semibold text-primary-text"
     onClick={event=>{event.currentTarget.form?.querySelectorAll<HTMLInputElement>('input[name="ids"]').forEach(input=>{input.checked=true;});}}>
     Select all visible drives
-   </button>
-   <button type="button" disabled={busy} className="font-semibold text-primary-text"
+   </Button>
+   <Button variant="secondary" type="button" disabled={busy} className="font-semibold text-primary-text"
     onClick={event=>{event.currentTarget.form?.querySelectorAll<HTMLInputElement>('input[name="ids"]').forEach(input=>{input.checked=false;});}}>
     Clear selection
-   </button>
+   </Button>
   </div>
-  <button type="button" disabled={busy} onClick={e=>void remind(e)}
+  <Button variant="secondary" type="button" disabled={busy} onClick={e=>void remind(e)}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    {busy?"Checking selected drives…":"Remind non-applicants in selected drives"}
-  </button>
+  </Button>
   {message?<span role="status" className="text-xs text-body">{message}</span>:null}
   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
  </div>;

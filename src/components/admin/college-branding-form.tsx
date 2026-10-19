@@ -218,12 +218,12 @@ export function CollegeBrandingForm({
       <aside
         aria-label="Sign-in preview"
         style={previewStyle}
-        className="h-fit rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
+        className="h-fit rounded-[var(--college-card-radius,8px)] border border-border bg-muted p-4"
       >
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Sign-in preview
         </p>
-        <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 shadow-none">
+        <div className="rounded-[var(--college-card-radius,8px)] border border-border bg-surface p-5 shadow-none">
           {previewLogoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

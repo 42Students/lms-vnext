@@ -7,7 +7,7 @@ export function ReportBarChart({title,rows,units="items",limit=20}:{
   .sort((a,b)=>b.value-a.value||a.label.localeCompare(b.label));
  const shown=normalized.slice(0,limit);
  const maximum=Math.max(1,...shown.map(row=>row.value));
- return <figure className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <figure className="space-y-3 border-b border-border pb-5">
   <figcaption className="text-base font-semibold text-foreground">{title}</figcaption>
   {shown.length?<ol className="space-y-3">{shown.map((row,index)=><li key={row.label+index}>
    <div className="mb-1 flex items-baseline justify-between gap-3 text-xs">

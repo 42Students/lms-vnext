@@ -19,7 +19,7 @@ export function Avatar({ name, src, size = "md", className }: AvatarProps) {
   return <span data-slot="avatar" className={classes} aria-label={name}>
     {showImage ? (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={src ?? undefined} onError={() => setFailedUrl(src ?? null)} alt="" loading="lazy" referrerPolicy="no-referrer" width={size === "sm" ? 32 : 44} height={size === "sm" ? 32 : 44} className="h-full w-full object-cover" />
+      <img src={src ?? undefined} onError={() => setFailedUrl(src ?? null)} alt="" loading="lazy" referrerPolicy="no-referrer" width={size === "sm" ? 32 : 44} height={size === "sm" ? 32 : 44} className="block h-full w-full object-cover object-center" />
     ) : <span aria-hidden="true">{avatarInitials(name)}</span>}
   </span>;
 }

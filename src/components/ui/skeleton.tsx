@@ -22,7 +22,7 @@ export function Skeleton({ variant = "line", count = 1, label = "Loading…", cl
       <span className="sr-only">{label}</span>
       <div aria-hidden="true" className="space-y-[var(--lms-space-3)]">
         {Array.from({ length: safeCount }, (_, index) => (
-          <div key={index} className={cx("lms-skeleton-shimmer rounded-[var(--lms-radius-sm)] bg-[var(--lms-neutral-100)] motion-reduce:animate-none", shape[variant])} />
+          <div key={index} className={cx("lms-skeleton-shimmer rounded-[var(--lms-skeleton-radius)] bg-[var(--lms-neutral-100)] motion-reduce:animate-none", shape[variant])} />
         ))}
       </div>
     </div>

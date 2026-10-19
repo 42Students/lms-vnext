@@ -65,40 +65,40 @@ export function TpoStudentSavedViews(){
  return <section className="space-y-3">
   <button type="button" aria-expanded={open} onClick={()=>{
    setOpen(v=>!v);if(!open)void load();
-  }} className="min-h-10 rounded-[var(--radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+  }} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
    Saved student views</button>
-  {open?<div className="w-full max-w-4xl space-y-4 rounded-[12px] border border-border bg-surface p-4">
+  {open?<div className="w-full max-w-4xl space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
    <h2 className="font-semibold">Saved views</h2>
    {pins.length?<div className="flex flex-wrap gap-2"><strong className="w-full text-sm">Pinned</strong>
     {pins.map(view=><button key={view.id} type="button" disabled={busy} onClick={()=>void use(view)}
-     className="min-h-10 rounded-[var(--radius)] border border-border px-3 text-sm">{view.name}</button>)}
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">{view.name}</button>)}
    </div>:null}
    {recent.length?<div className="flex flex-wrap gap-2"><strong className="w-full text-sm">Recent</strong>
     {recent.map(view=><button type="button" key={view.id} disabled={busy} onClick={()=>void use(view)}
-     className="min-h-10 rounded-[var(--radius)] border border-border px-3 text-sm">{view.name}</button>)}</div>:null}
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">{view.name}</button>)}</div>:null}
    <label className="grid gap-1 text-sm">View name
     <input value={name} maxLength={100} onChange={e=>setName(e.target.value)}
-     className="min-h-10 rounded-[var(--radius)] border border-border bg-surface px-3"/>
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
    </label>
    <label className="flex gap-2 text-sm"><input type="checkbox" checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view (up to 5)</label>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={busy||!name.trim()} onClick={()=>void send({
      action:"CREATE",name:name.trim(),filters:filterQuery(new URLSearchParams(params.toString())),pinned,
-    })} className="min-h-10 rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save current filters</button>
+    })} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save current filters</button>
     {selected?<button type="button" disabled={busy||!name.trim()} onClick={()=>void send({
      action:"UPDATE",id:selected,name:name.trim(),filters:filterQuery(new URLSearchParams(params.toString())),pinned,
-    })} className="min-h-10 rounded-[var(--radius)] border border-border px-4 text-sm">Update selected view</button>:null}
+    })} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Update selected view</button>:null}
    </div>
    <div className="max-h-64 space-y-2 overflow-auto">
-    {rows.map(view=><div key={view.id} className="flex flex-wrap items-center gap-2 rounded-[var(--radius)] border border-border p-3">
+    {rows.map(view=><div key={view.id} className="flex flex-wrap items-center gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
      <input type="radio" aria-label={"Select "+view.name} name="selected-view" checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      <strong className="min-w-28 text-sm">{view.name}</strong>
      {view.pinned?<span className="text-xs">Pinned</span>:null}
 
      <button type="button" disabled={busy} onClick={()=>void use(view)}
-      className="min-h-9 rounded-[var(--radius)] border border-border px-3 text-xs">Open</button>
-     <button type="button" disabled={busy} onClick={()=>setDeleteTarget(view)} className="min-h-9 rounded-[var(--radius)] border border-border px-3 text-xs">Delete</button>
+      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs">Open</button>
+     <button type="button" disabled={busy} onClick={()=>setDeleteTarget(view)} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs">Delete</button>
     </div>)}
     {!rows.length?<p className="text-sm text-muted-foreground">No saved student views.</p>:null}
    </div>

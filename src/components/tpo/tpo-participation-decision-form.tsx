@@ -74,7 +74,7 @@ export function TpoParticipationDecisionForm({
           value={status}
           onChange={(event) => setStatus(event.target.value as Status)}
           disabled={pending}
-          className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-foreground"
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
         >
           <option value="NOT_DECIDED">Inherit class/batch decision</option>
           <option value="ELIGIBLE">Eligible for placements</option>
@@ -88,9 +88,9 @@ export function TpoParticipationDecisionForm({
           <div role="group" aria-label="Ineligibility reason presets" className="flex flex-wrap gap-2">
             {TPO_INELIGIBLE_REASONS.map(preset=><button type="button" key={preset}
               disabled={pending} onClick={()=>setReason(preset)}
-              className="min-h-10 rounded-[var(--radius)] border border-border px-2 text-xs">{preset}</button>)}
+              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs">{preset}</button>)}
             <button type="button" disabled={pending} onClick={()=>setReason("")}
-              className="min-h-10 rounded-[var(--radius)] border border-border px-2 text-xs">Other</button>
+              className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs">Other</button>
           </div>
           <input
             id="tpo-participation-reason"
@@ -101,7 +101,7 @@ export function TpoParticipationDecisionForm({
             onChange={(event) => setReason(event.target.value)}
             disabled={pending}
             placeholder="Reason for restricting placement participation"
-            className="min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3 text-foreground"
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"
           />
         </div>
       ) : null}
@@ -115,12 +115,12 @@ export function TpoParticipationDecisionForm({
             value={note}
             onChange={(event) => setNote(event.target.value)}
             disabled={pending}
-            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-foreground"
+            className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-foreground"
           />
         </label>
       ) : null}
 
-      <div className="rounded-[var(--radius)] border border-border bg-surface-secondary p-4 text-sm leading-6 text-body">
+      <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-secondary p-4 text-sm leading-6 text-body">
         <p className="font-semibold text-foreground">
           This is not a registration-choice editor.
         </p>
@@ -148,7 +148,7 @@ export function TpoParticipationDecisionForm({
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-9 items-center rounded-[var(--radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-60"
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-60"
       >
         {pending ? "Saving…" : "Save learner eligibility"}
       </button>

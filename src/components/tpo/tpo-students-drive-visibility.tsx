@@ -84,7 +84,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
    });
   }catch{setError("Undo could not finish. Review the current override before trying again.");}
  }
- return <section aria-label="Show or hide a drive for selected students" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Show or hide a drive for selected students" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <h2 className="font-semibold">Show or hide a drive for selected students</h2>
   <p className="text-sm text-body">Apply an individual include or exclude decision with a reason. The eligibility rules still protect college and cohort targeting. Existing applications are preserved. Each selected override is version-checked so another officer’s newer decision is not overwritten.</p>
   <p role="status">{picked.length} selected from the current filtered roster (up to 200 per review).</p>
@@ -92,14 +92,14 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   <div className="flex flex-wrap gap-3">
    <label className="grid gap-1 text-sm">Drive
     <select value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
-     className="min-h-11 max-w-full rounded border border-border bg-surface p-2">
+     className="min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">Choose a drive</option>
      {drives.map(job=><option key={job.id} value={job.id}>{job.name} · {job.status}</option>)}
     </select>
    </label>
    <label className="grid gap-1 text-sm">Action
     <select value={decision} disabled={pending} onChange={e=>{setDecision(e.target.value as typeof decision);setResults([]);}}
-     className="min-h-11 rounded border border-border bg-surface p-2">
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="INCLUDE">Show / Include</option>
      <option value="EXCLUDE">Hide / Exclude</option>
      <option value="CLEAR">Clear active override</option>
@@ -108,11 +108,11 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   </div>
   <label className="grid gap-1 text-sm">Reason
    <textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
-    className="min-h-20 rounded border border-border bg-surface p-2"/>
+    className="min-h-20 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
   </label>
   {decision==="CLEAR"?<p className="text-sm text-warning-text">Clearing an override returns to ordinary eligibility rules. It does not restore an older override or undo an application.</p>:null}
   <button type="button" disabled={!valid||pending} onClick={()=>setConfirm(true)}
-   className="min-h-11 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
    Review drive visibility for {picked.length} student(s)
   </button>
   <Dialog open={confirm} onOpenChange={open=>{if(!pending)setConfirm(open);}}
@@ -127,7 +127,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
    <p>{results.filter(row=>row.status==="saved").length} saved · {results.filter(row=>row.status==="failed").length} not saved.</p>
    {results.some(row=>row.status==="saved"&&row.action!=="CLEAR"&&row.overrideId)
      ?<button type="button" disabled={pending} onClick={()=>void undoLast()}
-       className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">
+       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text">
        Undo saved changes (only if still current)
       </button>:null}
    <ul className="max-h-48 space-y-1 overflow-y-auto">{results.map(item=><li key={item.id}>
