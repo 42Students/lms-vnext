@@ -354,7 +354,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      </li>)}</ul>
     </div>:null}
     {safeSelected.length>0?<button type="button" disabled={busy} onClick={()=>void startPreview(plan?.action??action)}
-     className="min-h-11 rounded-md bg-primary px-3 font-[650] text-on-primary">
+     className="min-h-11 rounded-[9px] bg-primary px-3 font-[650] text-on-primary">
      Preview next batch ({Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)} of {safeSelected.length} remaining)
     </button>:null}
    {outcomes.some(item=>item.status!=="updated")?<div className="flex flex-wrap gap-2">
