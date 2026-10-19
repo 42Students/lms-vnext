@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import {useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 
 type Material={id:string;kind:string;title:string;notes:string|null;externalUrl:string|null;
@@ -75,7 +76,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
  }
  return <section aria-label="Resource materials" className="mt-4 space-y-3 rounded-xl border border-border bg-surface-subtle p-3">
   <div className="flex items-center justify-between gap-2">
-   <h4 className="text-sm font-semibold">Materials ({materials.length}/20)</h4>
+   <h4 className="text-sm font-semibold text-foreground">Materials ({materials.length}/20)</h4>
    {loading?<span role="status" className="text-xs">Loading…</span>:null}
   </div>
   {!loading&&!materials.length?<p className="text-xs text-muted-foreground">No additional materials.</p>:null}
@@ -86,44 +87,44 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      {material.notes?<p className="whitespace-pre-wrap text-xs text-body">{material.notes}</p>:null}
      {material.kind==="LINK"&&facultyContentExternalHref("RESOURCE",material.externalUrl)?
       <a href={facultyContentExternalHref("RESOURCE",material.externalUrl)!} target="_blank" rel="noopener noreferrer"
-       className="inline-flex min-h-11 sm:min-h-9 items-center text-xs font-semibold text-primary-text underline">Open link</a>:
+       className="inline-flex min-h-11 md:min-h-9 items-center text-xs font-semibold text-primary-text underline">Open link</a>:
       material.kind==="FILE"?<span className="text-xs text-muted-foreground">
        {material.uploadStatus==="READY"?"File ready; secure download requires a grant":"Checking file"}
       </span>:null}
     </div>
     {editable&&material.kind==="LINK"?<div className="flex gap-2">
-     <Button size="sm" type="button" variant="secondary" className="min-h-11" disabled={busy}
+     <Button size="sm" type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
       onClick={()=>{setEditing(material.id);setDraft({title:material.title,notes:material.notes??"",externalUrl:material.externalUrl??""});}}>
       Edit
      </Button>
-     <Button size="sm" type="button" variant="secondary" className="min-h-11" disabled={busy}
+     <Button size="sm" type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
       onClick={()=>void submit("REMOVE",material.id)}>Remove</Button>
     </div>:null}
    </li>)}
   </ul>
   {editable&&(materials.length<20||editing)?<div className="grid gap-2 rounded-xl border border-border bg-surface p-3">
-   <p className="text-sm font-semibold">{editing?"Edit link material":"Add link material"}</p>
+   <p className="text-sm font-semibold text-foreground">{editing?"Edit link material":"Add link material"}</p>
    <label className="grid gap-1 text-xs font-semibold">Title
     <Input value={draft.title} maxLength={255} onChange={e=>setDraft(v=>({...v,title:e.target.value}))}
-     className="min-h-11" disabled={busy}/>
+     className="min-h-11 md:min-h-9" disabled={busy}/>
    </label>
    <label className="grid gap-1 text-xs font-semibold">HTTPS link
     <Input type="url" value={draft.externalUrl} maxLength={2048} onChange={e=>setDraft(v=>({...v,externalUrl:e.target.value}))}
-     className="min-h-11" disabled={busy}/>
+     className="min-h-11 md:min-h-9" disabled={busy}/>
    </label>
    <label className="grid gap-1 text-xs font-semibold">Notes (optional)
     <Textarea value={draft.notes} maxLength={2000} onChange={e=>setDraft(v=>({...v,notes:e.target.value}))}
      rows={2} className="min-h-28" disabled={busy}/>
    </label>
    <div className="flex gap-2">
-    <Button size="sm" type="button" className="min-h-11" disabled={busy} onClick={()=>void submit(editing?"EDIT_LINK":"ADD_LINK",editing??undefined)}>
+    <Button size="sm" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>void submit(editing?"EDIT_LINK":"ADD_LINK",editing??undefined)}>
      {busy?"Saving…":editing?"Save material":"Add material"}
     </Button>
-    {editing?<Button size="sm" type="button" variant="secondary" className="min-h-11" disabled={busy}
+    {editing?<Button size="sm" type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
      onClick={()=>{setEditing(null);setDraft(blank);}}>Cancel edit</Button>:null}
    </div>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {notice?<Alert tone="success">{notice}</Alert>:null}
  </section>;
 }
