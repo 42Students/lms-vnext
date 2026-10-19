@@ -37,7 +37,7 @@ export default async function LearnerVerificationPage() {
     </section>
     <div className="grid min-w-0 gap-4 sm:grid-cols-2">{details.map(item => {
       const row = status[item.key];
-      return <section key={item.key} className="min-w-0 rounded-xl border border-border bg-surface p-5">
+      return <section key={item.key} className="min-w-0 border-b border-border py-5">
         <h2 className="text-lg font-semibold text-foreground">{item.heading}</h2>
         <p className="mt-2 text-sm font-semibold text-body">{row.status==="NOT_SUBMITTED"&&row.missing.length===0?
           "Ready to send":label[row.status]}</p>
