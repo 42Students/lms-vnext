@@ -494,3 +494,34 @@ Native hidden inputs, file uploads, checkbox/radio controls and externally provi
 - `src/components/placements/college-drive-bulk-actions.tsx`
 - `src/components/verification/CollegeVerificationPanel.tsx`
 
+
+### 2026-10-19 tab/pill/toggle value comparison (baseline after main sync)
+
+Source head at turn start: `b275ca07455d8eafa3650ce6eb3f352a481edafb`. The comparison below is **source-level evidence**, not a rendered responsive or interaction test. Values are copied from the indicated files and lines. Shared component definitions are owned by other lanes and are not modified here.
+
+| Property/state | Legacy source and value | vNext source and value | Result |
+| --- | --- | --- | --- |
+| Default tab font size | `legacy-styles/components___common.scss:365-375`: 13px | `src/components/ui/tabs.tsx:78`: `text-[13px]` | MATCH |
+| Default tab font weight | `legacy-styles/components___common.scss:371`: 600 | `src/components/ui/tabs.tsx:78`: `font-semibold` (600) | MATCH |
+| Default tab line-height | `legacy-styles/components___common.scss:373`: 16px | `src/components/ui/tabs.tsx:78`: `leading-4` (16px) | MATCH |
+| Default tab muted text | `legacy-styles/components___common.scss:374` -> `variables.scss:28`: `#a9a7ae` | `src/components/ui/tabs.tsx:79` -> `globals.css:30`: `#a9a7ae` | MATCH |
+| Tab gap at desktop | `legacy-styles/components___common.scss:471`: 20px | `src/components/ui/tabs.tsx:70` -> `globals.css:325`: 20px | MATCH |
+| Tab gap at >=1600px | `legacy-styles/components___common.scss:481`: 40px | `src/components/ui/tabs.tsx:70`: 40px | MATCH |
+| Tab active underline height | `legacy-styles/components___common.scss:386`: 3px | `src/components/ui/tabs.tsx:78`: 3px border | MATCH dimension, underline animation differs |
+| Tab active colour | `legacy-styles/components___common.scss:400-414` -> `variables.scss:10`: `#26bac7` | `src/components/ui/tabs.tsx:79` -> `globals.css:22`: `#1a95a1` text | **MISMATCH**; shared UI owner to resolve |
+| Tab default padding | `legacy-styles/components___common.scss:369`: top 0/bottom 13px | `src/components/ui/tabs.tsx:78`: top 13px/bottom 13px | **MISMATCH**; shared UI owner to resolve |
+| Tab active underline animation | `legacy-styles/components___common.scss:385-391`: width/opacity 200ms ease-in-out | `src/components/ui/tabs.tsx:78`: border + colour transition | **MISMATCH**; shared UI owner to resolve |
+| Tab viewport overflow | `legacy-styles/components___common.scss:444-450`: horizontal scroll, hidden scrollbar, momentum | `src/components/ui/tabs.tsx:70`: ScrollCue x, overflow implementation in `ui/scroll-cue.tsx` | PARTIAL; full mobile proof pending |
+| Tab disabled/keyboard states | `legacy-styles/components___common.scss:365-414`: no explicit tab keyboard override | `src/components/ui/tabs.tsx:50-81`: disabled opacity, arrow/Home/End navigation, focus outline | NOT COMPARABLE FROM THIS SCSS; audit interaction separately |
+| Generic status pill background tone | `legacy-styles/components___variables.scss:67-74`: success #059669/10%, warning #d97706/10%, error #ef4444/10%, info #eff8fa | `src/components/ui/status-badge.tsx:8-12`: token-based success/warning/error/info | PARTIAL; verify tone token values and default states |
+| Generic pill radius | `legacy-styles/components___metric-pill-popover.scss:6`: metric pill 8px radius | `src/components/ui/status-badge.tsx:17` -> `globals.css:816`: 999px | DIFFERENT ELEMENT FAMILIES; do not claim exact match |
+| Toggle checked fill | `legacy-styles/components___common.scss:226-228`: `$clrThird` = `#26bac7` | `src/components/ui/selection-controls.tsx:24`: `--lms-button-primary` = `#0a7c88` | **MISMATCH** where `Switch` used; shared UI owner to resolve |
+| Toggle focus visible | `legacy-styles/components___form.scss:23-36`: preserve keyboard focus-visible | `src/components/ui/selection-controls.tsx:24`: `peer-focus-visible:outline-2` | MATCH intent; device focus proof pending |
+| Page canvas fill | `docs/design/old-lms-pages.md:6`: white | `src/components/ui/page-canvas.tsx:17`: white | MATCH |
+| Page canvas radius | `docs/design/old-lms-pages.md:6`: 12px | `src/components/ui/page-canvas.tsx:17` -> `globals.css:327`: 12px | MATCH |
+| Page canvas border | `docs/design/old-lms-pages.md:6`: 1px #e5e9f0 | `src/components/ui/page-canvas.tsx:17` -> `globals.css:322`: #e5e9f0 | MATCH |
+| Page canvas padding | `docs/design/old-lms-pages.md:6`: 24px | `src/components/ui/page-canvas.tsx:17,22` -> `globals.css:328`: 24px | MATCH desktop; mobile override proof pending |
+
+- [ ] Verification shared Tabs (missing: upstream tab active colour, top padding, transition/underline mismatch and phone/tablet scroll evidence; College Verification nested PageHeader audit).
+- [ ] College Admin pill/toggle skins (missing: all dynamically computed class cases, shared Switch colour mismatch, full status/tone value mapping and responsive states).
+- [ ] Portal wide static class override check (missing: exhaustively reconcile `className=` overrides on shared Button/Select/Input and app-created pill/tab UI; no source-wide certified count yet).
