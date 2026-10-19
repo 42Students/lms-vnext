@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {useState} from "react";
@@ -108,10 +109,10 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
      </label>
     </div>:null}
    </fieldset>
-   <button type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
+   <Button variant="primary" type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
     (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
-    {busy?"Staging…":"Confirm and stage results"}</button>
+    {busy?"Staging…":"Confirm and stage results"}</Button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
     title="Stage this reviewed result import?"
