@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -37,20 +39,20 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
   <form action="/tpo/reports/joining-followups" method="get"
    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
-     <select name="seasonId" defaultValue={report.season?.id??""}
+     <Select name="seasonId" defaultValue={report.season?.id??""}
       className="mt-2 block min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
       {report.seasons.length===0?<option value="">No season</option>:null}
       {report.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-     </select></label>
+     </Select></label>
     <label className="min-w-36 flex-1 text-sm font-semibold text-body">Follow-up
-     <select name="state" defaultValue={report.state}
+     <Select name="state" defaultValue={report.state}
       className="mt-2 block min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
       <option value="ALL">All open</option><option value="PENDING">Pending</option>
       <option value="DEFERRED">Deferred</option><option value="DATE_DUE">Dated and due</option>
       <option value="DATE_MISSING">Missing joining date</option>
       <option value="UPCOMING_7_DAYS">Joining next 7 days</option>
-     </select></label>
-    <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary">Apply</button>
+     </Select></label>
+    <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary">Apply</Button>
   </form>
   {!report.season?<EmptyState title="No placement season" description="Joining follow-ups require a persisted placement season."/>:<>
    <section className="grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Joining evidence">

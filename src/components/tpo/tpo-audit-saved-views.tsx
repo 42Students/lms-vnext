@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -128,8 +129,8 @@ export function TpoAuditSavedViews({filters}:{filters:{
      onChange={event=>setName(event.target.value)}
      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-sm"/>
    </label>
-   <button type="button" onClick={()=>void save()} disabled={!ready||busy||!name.trim()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50">Save current</button>
+   <Button variant="secondary" type="button" onClick={()=>void save()} disabled={!ready||busy||!name.trim()}
+    className="min-h-9">Save current</Button>
   </div>
   {views.length?<div className="mt-3 flex flex-wrap gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs">Saved view
@@ -141,16 +142,16 @@ export function TpoAuditSavedViews({filters}:{filters:{
      </option>)}
     </select>
    </label>
-   <button type="button" disabled={!selectedView||busy} onClick={()=>void open()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border px-3 text-xs disabled:opacity-50">Open</button>
-   <button type="button" disabled={!selectedView||busy} onClick={()=>void pin()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border px-3 text-xs disabled:opacity-50">
+   <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void open()}
+    className="min-h-9">Open</Button>
+   <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void pin()}
+    className="min-h-9">
     {selectedView?.pinned?"Unpin":"Pin"}
-   </button>
-   <button type="button" disabled={!selectedView||busy||!name.trim()} onClick={()=>void rename()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border px-3 text-xs disabled:opacity-50">Rename</button>
-   <button type="button" disabled={!selectedView||busy} onClick={()=>void remove()}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border px-3 text-xs disabled:opacity-50">Delete</button>
+   </Button>
+   <Button variant="secondary" type="button" disabled={!selectedView||busy||!name.trim()} onClick={()=>void rename()}
+    className="min-h-9">Rename</Button>
+   <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void remove()}
+    className="min-h-9">Delete</Button>
   </div>:null}
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}

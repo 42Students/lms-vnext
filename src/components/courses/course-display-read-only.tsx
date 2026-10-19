@@ -19,7 +19,7 @@ export function CourseDisplayReadOnly({
 
   return (
     <section
-      className="rounded-xl border border-border bg-surface p-5"
+      className="border-b border-border pb-5"
       aria-label="Course overview"
     >
       <h2 className="m-0 text-lg font-semibold text-foreground">

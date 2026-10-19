@@ -13,7 +13,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 ## Follow-on execution
 
 - Fast-forwarded `chatgpt/chat-11-b` to `main` (`7e3ab610`) before edits; the historical chat-11 sweep was already merged.
-- **201 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 93 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
+- **222 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 93 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
 - Eliminated duplicate filters/form shell cards in TPO blocked dates and Super Admin module filters, plus redundant section padding in settings and public placements. Preserved distinct metric/tenant/setup cards and status notices.
 - Replaced residual literal 9px, generic `rounded-md`, and legacy `--radius` control overrides with the canonical `--lms-control-radius`, without changing inputs' values, forms, labels or handlers. Fixed inconsistent tap targets on tenant setup tabs.
 - Removed invalid standalone `-`/`-subtle` utility tokens in tenant domains, college sign-in, logo upload, college setup checklist, and tenant settings scope.
@@ -347,6 +347,41 @@ Pushed **29 source commits** to `chatgpt/chat-11-b` with the `[chat-11]` prefix,
 - `src/components/tpo/tpo-public-join-link-card.tsx`
 - `src/components/tpo/tpo-team-ask-panel.tsx`
 - `src/components/tpo/tpo-team-message-actions.tsx`
+
+## Ninth pass — TPO team controls and Super Admin tenant settings (2026-10-19)
+
+Merged `origin/main` at `0a542bfcf587` into `chatgpt/chat-11-b` using a two-parent commit `afd04d166e39` before editing. Five files overlapped. The newer main differed only in TPO control-skin styling; the merge retained shared UI controls and mobile touch targets, along with main's semantic readiness warning border and existing business behavior. No force push or main-branch push.
+
+**21 additional `[chat-11]` source commits** touched 20 distinct TSX files and were pushed incrementally. The cumulative continuation total is **222 source commits across 93 distinct scoped files**.
+
+- TPO notifications, recruiter access, placement rules, college overview/readiness, and tenant-create/setup/directory pages: normalized shared old-LMS control-radius fallbacks and the 44px/36px responsive link target height while keeping their existing content and form logic.
+- Converted remaining native buttons in the announcement delete confirmation into shared `Button` variants, preserving the trigger/confirm focus refs, actual POST form and hidden request fields. College sign-in uses shared `Radio`, retaining its current checked/disabled handlers.
+- TPO away dates, handover, unowned assignments, conversation search/details, notice composer, follow/mute, decision and ask actions: stripped redundant bespoke control classes so shared Input/Select/Button skins own color, border, focus and size.
+- Reconciled duplicated UI-kit imports found in the merged away, handover, thread-details, notice-composer, message-actions, ask-panel, follow controls and recruiter settings page. These duplicate imports could otherwise break TypeScript parsing or bundling.
+- Fetched all 20 modified TSX files back from the branch, reviewed JSX open/close tag names for `Button`, `Select`, `Textarea`, `Link`, form and panel elements, and searched for duplicate named imports and truncated closing tags. **No TypeScript compiler, tests, application execution, CI or screenshot visual comparison run.**
+
+### Ninth-pass changed source paths
+
+- `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- `src/app/(authenticated)/admin/tenants/page.tsx`
+- `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- `src/app/(authenticated)/tpo/settings/rules/page.tsx`
+- `src/components/admin/college-signin-method-form.tsx`
+- `src/components/tpo/tpo-notice-composer-dialog.tsx`
+- `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- `src/components/tpo/tpo-team-ask-panel.tsx`
+- `src/components/tpo/tpo-team-assign-unowned.tsx`
+- `src/components/tpo/tpo-team-away-form.tsx`
+- `src/components/tpo/tpo-team-decision-toggle.tsx`
+- `src/components/tpo/tpo-team-follow-controls.tsx`
+- `src/components/tpo/tpo-team-handover.tsx`
+- `src/components/tpo/tpo-team-message-actions.tsx`
+- `src/components/tpo/tpo-team-search.tsx`
+- `src/components/tpo/tpo-team-thread-details.tsx`
 
 ## Remaining verification and ownership boundaries
 

@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -31,8 +35,8 @@ type Queue = {
   window:"DUE"|"NEXT_7_DAYS";
 };
 
-const field = "min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-base text-foreground sm:text-sm";
-const action = "min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50";
+const field = "min-h-11 w-full sm:min-h-9";
+const action = "min-h-11 sm:min-h-9";
 function displayDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
@@ -141,29 +145,29 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-foreground">
               Recruiter
-              <select className={"mt-1 " + field} value={leadId} disabled={pending}
+              <Select className={"mt-1 " + field} value={leadId} disabled={pending}
                 onChange={(event) => setLeadId(event.target.value)}>
                 {data.leads.map((lead) => (
                   <option key={lead.id} value={lead.id}>
                     {lead.name + (lead.companyName ? " · " + lead.companyName : "")}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
             <label className="block text-sm font-semibold text-foreground">
               Follow-up time (local)
-              <input type="datetime-local" className={"mt-1 " + field}
+              <Input type="datetime-local" className={"mt-1 " + field}
                 value={dueLocal} disabled={pending} onChange={(event) => setDueLocal(event.target.value)} />
             </label>
             <label className="block text-sm font-semibold text-foreground sm:col-span-2">
               Preparation note (optional)
-              <textarea rows={2} maxLength={500} className={"mt-1 " + field}
+              <Textarea rows={2} maxLength={500} className={"mt-1 " + field}
                 value={createNote} disabled={pending} onChange={(event) => setCreateNote(event.target.value)} />
             </label>
-            <button type="button" disabled={pending || !leadId || !dueLocal}
+            <Button variant="primary" type="button" disabled={pending || !leadId || !dueLocal}
               onClick={() => setConfirmCreate(true)} className={action}>
               {pending ? "Saving..." : "Review and confirm follow-up"}
-            </button>
+            </Button>
           </div>
         )}
       </section>
@@ -198,7 +202,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       {tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp!} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] hover:underline">Open WhatsApp ↗</a>:null}
                     </div>:null}
                   </div>
-                  <button type="button" disabled={pending}
+                  <Button variant="secondary" type="button" disabled={pending}
                     onClick={() => {
                       setError("");
                       setActiveId(activeId === row.id ? null : row.id);
@@ -206,32 +210,32 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                     }}
                     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground">
                     {activeId === row.id ? "Cancel" : "Record outcome and Done"}
-                  </button>
+                  </Button>
                 </div>
                 {row.note ? <p className="whitespace-pre-wrap text-sm text-body">{row.note}</p> : null}
                 {activeId === row.id ? (
                   <div className="grid gap-3 rounded-[var(--lms-control-radius)] bg-surface-secondary p-4 sm:grid-cols-2">
                     <label className="block text-sm font-semibold text-foreground">
                       Outcome
-                      <select value={outcome} disabled={pending}
+                      <Select value={outcome} disabled={pending}
                         onChange={(event) => setOutcome(event.target.value as Outcome)}
                         className={"mt-1 " + field}>
                         <option value="CONTACTED">Contacted</option>
                         <option value="NO_RESPONSE">No response</option>
                         <option value="DECLINED">Declined</option>
                         <option value="OTHER">Other</option>
-                      </select>
+                      </Select>
                     </label>
                     <label className="block text-sm font-semibold text-foreground sm:col-span-2">
                       Outcome note (required)
-                      <textarea maxLength={500} value={doneNote} disabled={pending}
+                      <Textarea maxLength={500} value={doneNote} disabled={pending}
                         onChange={(event) => setDoneNote(event.target.value)}
                         className={"mt-1 " + field} rows={2} />
                     </label>
-                    <button type="button" onClick={() => setConfirmComplete(row)}
+                    <Button variant="primary" type="button" onClick={() => setConfirmComplete(row)}
                       disabled={pending || !doneNote.trim()} className={action}>
                       {pending ? "Recording..." : "Review and confirm Done"}
-                    </button>
+                    </Button>
                   </div>
                 ) : null}
               </article>
