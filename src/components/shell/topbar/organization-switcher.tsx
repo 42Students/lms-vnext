@@ -49,7 +49,7 @@ export function TopbarOrganizationSwitcher({
       const next=event.relatedTarget;
       if(open && next instanceof Node && !event.currentTarget.contains(next))setOpen(false);
     }}>
-    <button ref={trigger} type="button" className={style.orgTrigger}
+    <Button variant="secondary" size="sm" ref={trigger} type="button" className={style.orgTrigger}
       title={organizationName} aria-label={"Switch workspace, current "+organizationName}
       aria-haspopup="dialog" aria-expanded={open} aria-keyshortcuts="ArrowDown"
       aria-controls={open?"lms-topbar-org-switcher":undefined}
@@ -57,7 +57,7 @@ export function TopbarOrganizationSwitcher({
       onKeyDown={event=>{if(event.key==="ArrowDown"){event.preventDefault();setOpen(true);}}}>
       <span className={style.orgName}>{organizationName}</span>
       <ChevronIcon/>
-    </button>
+    </Button>
     {open?<div id="lms-topbar-org-switcher" role="dialog" aria-label={"Switch workspace from "+organizationName}
       aria-modal={false} className={style.orgPopover}>
       <p className={style.accountSectionHeading}>Switch workspace</p>
