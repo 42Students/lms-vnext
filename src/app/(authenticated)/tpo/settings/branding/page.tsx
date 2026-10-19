@@ -45,7 +45,7 @@ function BrandColor({
         <span
           aria-hidden="true"
           className={
-            "h-12 w-12 shrink-0 rounded-[var(--lms-control-radius)] border border-border " +
+            "h-12 w-12 shrink-0 rounded-[var(--lms-control-radius,9px)] border border-border " +
             (field.value ? "" : "bg-primary")
           }
           style={
