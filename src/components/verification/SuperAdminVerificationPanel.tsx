@@ -1,5 +1,8 @@
 "use client";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {useRef,useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
@@ -65,33 +68,33 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  return <div className="min-w-0 space-y-4">
   <div className="flex flex-wrap justify-end gap-2">
    <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
-   <button type="button" onClick={()=>router.refresh()} className="min-h-11 rounded-md border px-3 text-sm">Refresh</button>
+   <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11">Refresh</Button>
   </div>
   {activeTab==="WAITING"&&candidates.length>0?<div className="flex flex-wrap gap-3">
-   <button type="button" onClick={()=>{
+   <Button variant="secondary" type="button" onClick={()=>{
     const picks=candidates.slice(0,20);setSequence(picks);setSequenceIndex(0);setSelected(picks[0]??null);
-   }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">
+   }} className="min-h-11">
     Review one by one ({Math.min(20,candidates.length)})
-   </button>
+   </Button>
    <p className="self-center text-xs text-muted-foreground">Review up to 20 waiting requests on this page. Each decision keeps its own audit history.</p>
   </div>:null}
-  {activeTab==="WAITING"&&candidates.length>0?<section aria-label="Super Admin bulk verification" className="space-y-3 rounded-xl border border-border p-4">
+  {activeTab==="WAITING"&&candidates.length>0?<section aria-label="Super Admin bulk verification" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
    <h2 className="font-semibold">Act on selected verification requests</h2>
    <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
-     className="min-h-11 rounded border px-3 text-sm">Select first 20 waiting</button>
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
-     className="min-h-11 rounded border px-3 text-sm">Clear selection</button>
-    <button type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setBulkAction("VERIFY");setAcknowledged(false);}}
-     className="min-h-11 rounded border px-3 text-sm">Verify without opening</button>
-    <button type="button" disabled={bulkBusy||!chosen.length} onClick={()=>setBulkAction("SEND_BACK")}
-     className="min-h-11 rounded border px-3 text-sm">Send back</button>
+    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
+     className="min-h-11">Select first 20 waiting</Button>
+    <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
+     className="min-h-11">Clear selection</Button>
+    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setBulkAction("VERIFY");setAcknowledged(false);}}
+     className="min-h-11">Verify without opening</Button>
+    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>setBulkAction("SEND_BACK")}
+     className="min-h-11">Send back</Button>
    </div>
    <ul className="max-h-44 space-y-2 overflow-y-auto">
     {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)}>
       <label className="flex items-center gap-2 text-sm">
-       <input type="checkbox" disabled={bulkBusy||(!selectedKeys.includes(verificationSelectionKey(row))&&selectedKeys.length>=20)}
+       <Checkbox disabled={bulkBusy||(!selectedKeys.includes(verificationSelectionKey(row))&&selectedKeys.length>=20)}
         checked={selectedKeys.includes(verificationSelectionKey(row))}
         onChange={e=>{const key=verificationSelectionKey(row);setSelectedKeys(current=>e.target.checked?[...current,key]:current.filter(k=>k!==key));setBulkAction(null);}}/>
        {row.learnerName} · {row.section} {row.missingMarksheet?"(missing document)":""}
@@ -102,16 +105,16 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
     <p className="text-sm">{applicable.length} ready, {skipped.length} left out because proof is missing. Decisions are individually rechecked by the server.</p>
     {skipped.length?<p className="text-xs text-warning-text">Skipped: {skipped.map(r=>r.learnerName).join(", ")}</p>:null}
     {bulkAction==="SEND_BACK"?<label className="block text-sm">Reason for sending back
-     <textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
-      className="mt-2 w-full rounded border bg-background p-2"/></label>:
+     <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
+      className="mt-2 w-full"/></label>:
      <label className="flex items-start gap-2 text-sm">
-      <input type="checkbox" checked={acknowledged} onChange={e=>setAcknowledged(e.target.checked)}/>
+      <Checkbox checked={acknowledged} onChange={e=>setAcknowledged(e.target.checked)}/>
       I have checked their documents by another method. Each verification will be recorded with my name.
      </label>}
-    <button type="button" disabled={bulkBusy||!applicable.length||bulkAction==="VERIFY"&&!acknowledged||bulkAction==="SEND_BACK"&&reason.trim().length<3}
-     onClick={()=>void submitBulk()} className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+    <Button variant="secondary" type="button" disabled={bulkBusy||!applicable.length||bulkAction==="VERIFY"&&!acknowledged||bulkAction==="SEND_BACK"&&reason.trim().length<3}
+     onClick={()=>void submitBulk()} variant="primary" className="min-h-11">
      {bulkBusy?"Processing…":"Confirm "+applicable.length+" selected"}
-    </button>
+    </Button>
    </div>:null}
    {bulkMessage?<p role="status" className="text-sm">{bulkMessage}</p>:null}
   </section>:null}
@@ -123,8 +126,8 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    onReview={row=>{setSequence([]);setSequenceIndex(0);setSelected(row);}}/>
   <nav aria-label="Verification pages" className="flex flex-wrap gap-3 text-sm">
    <span>Showing {rows.length} of {total} in this status</span>
-   {page>1?<button type="button" onClick={()=>navigate({page:String(page-1)})} className="underline">Previous</button>:null}
-   {hasMore?<button type="button" onClick={()=>navigate({page:String(page+1)})} className="underline">Next</button>:null}
+   {page>1?<Button variant="secondary" type="button" onClick={()=>navigate({page:String(page-1)})} variant="ghost" className="min-h-11 underline">Previous</Button>:null}
+   {hasMore?<Button variant="secondary" type="button" onClick={()=>navigate({page:String(page+1)})} variant="ghost" className="min-h-11 underline">Next</Button>:null}
   </nav>
   {selected?<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
    row={selected} apiBase="/api/admin/verification"
