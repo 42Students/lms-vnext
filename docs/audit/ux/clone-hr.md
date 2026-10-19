@@ -164,7 +164,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 
 ### 4. `src/components/hr` — 19 TSX files
 
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
+- [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
 - [ ] `src/components/hr/hr-notification-read-button.tsx`
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
 - [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
@@ -221,10 +221,11 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] H recruiter-specific placements (missing: all recruiter usages and legacy comparison).
 - [ ] E8 AG Grid parity (missing: `src/components/tpo/grid/tpo-grid.tsx`, `grid-workspace.tsx` and `docs/design/legacy-grid/` on this main revision; do not substitute an invented grid API). See `clone-sheets.md`.
 
-### Initial evidence (scoped, not full coverage)
+### Initial evidence and migrated source scan
 
-- `src/app/(authenticated)/hr/drives/page.tsx:149-151`: three native `input type="hidden"` fields with no styling classes (form query persistence, documented exemption).
-- `src/app/(authenticated)/hr/company/reports/page.tsx:245`: native hidden college scope input with no styling classes (documented exemption).
+- Before this turn, the HR route scan found 28 native hidden inputs across 11 pages, and no raw visible buttons/selects/textareas/tables or hex literals. These 28 are now shared `<Input type="hidden" />` elements, with college scopes, actions and values unchanged. Re-reading the 11 changed files confirmed zero raw control tags and exactly one shared `Input` import per changed file.
+- The 19 `src/components/hr/*.tsx` files had no raw control/table/hex instances in the source-level scan after the shared-control imports and button states were updated. One `[role="dialog"]` literal in `recruiter-conversation-live-refresh.tsx:15` is a `querySelector` guard, **not** custom dialog JSX.
+- Sample audit expression for the TSX search: `/<(button|input|select|textarea|table)\\b|#[0-9a-fA-F]{3,8}\\b|fixed inset-0|role=["\x27](?:dialog|alertdialog)["\x27]/g`. Route files searched: 71/71; HR component files: 19/19. The post-edit raw-control count for those 90 files is **0**. This is source coverage only, not a legacy value or viewport proof.
 - `src/components/hr/recruiter-designation-editor.tsx`, `recruiter-display-name-editor.tsx`, `recruiter-private-rating-editor.tsx`, `recruiter-profile-details-editor.tsx`, `recruiter-round-inline-editor.tsx` and `hr-drive-draft-form.tsx`: duplicated imports of shared UI controls discovered in current source; fix before other JSX transformations.
 
 ### Strict tick proof template (still open)
@@ -233,7 +234,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 | --- | --- | --- | --- |
 | Default, hover, active, focus, disabled, pending/error and responsive properties | *Pending inspection* | *Pending inspection* | No claim |
 
-Coverage proof: pending repo-wide `grep -rlE '<(button|select|input|textarea)([ >])' src/app/'(authenticated)'/{hr,recruiter,tracker} src/components/hr src/components/tracker src/components/placements --include='*.tsx'` and exact match counts. Responsive proof: pending side-by-side legacy SCSS breakpoint and viewport rule comparison. NO REGRESSION: open/close tag parity reviewed per changed file, without claiming unrun TS/CI or visual check.
+Coverage proof: HR route/component scan is recorded above; recruiter alias, tracker and recruiter-specific placements scans remain pending. Full repo-wide `grep -rlE '<(button|select|input|textarea)([ >])' src/app/'(authenticated)'/{hr,recruiter,tracker} src/components/hr src/components/tracker src/components/placements --include='*.tsx'` and exact match counts. Responsive proof: pending side-by-side legacy SCSS breakpoint and viewport rule comparison. NO REGRESSION: open/close tag parity reviewed per changed file, without claiming unrun TS/CI or visual check.
 
 ## Next file
 
