@@ -19,7 +19,7 @@
 - [ ] `src/app/(authenticated)/college-admin/programs/page.tsx`
 - [ ] `src/app/(authenticated)/college/academics/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/academics/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/app/(authenticated)/college/academics/page.tsx`
+- [ ] `src/app/(authenticated)/college/academics/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx`
@@ -67,10 +67,10 @@
 - [ ] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
 - [ ] `src/app/(authenticated)/college/college-profile/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/college-profile/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/app/(authenticated)/college/college-profile/page.tsx`
+- [ ] `src/app/(authenticated)/college/college-profile/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/companies/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/companies/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/app/(authenticated)/college/companies/page.tsx`
+- [ ] `src/app/(authenticated)/college/companies/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
@@ -1796,3 +1796,53 @@ Both routes were updated and fetched again. Existing College Admin/tenant access
 **Strict tick: 0.** Runtime keyboard/phone/tablet, exact legacy hover/focus/disabled/loading geometry and full-scope grep all remain open. The two native hidden fields are explicitly exempted as invisible transport controls; every other source control delegates to shared UI. This confirms source migration, not a pixel clone.
 
 **Exact next file:** `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx` is source-migrated; continue with `src/app/(authenticated)/college/college-profile/page.tsx`, then remaining Academic and Super Admin queue pages.
+
+
+### Replacement chat-4 College profile, academics and companies screens — 2026-10-20
+
+Three route screens source-migrated. Service calls, tenant/role scope and existing content intact. `college/companies/page.tsx` explicitly migrated the lone native **checkbox** to the existing shared Checkbox component with `name="showDeleted"`, `value="1"`, and uncontrolled checked state unchanged. No native raw controls remain in these three files. No app execution, CI, compiler, browser resize or keyboard replay.
+
+**Scoped grep:** `/<(button|input|select|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`. Full-file text from GitHub after updates. JSX shared/native opening vs closing tag names compared; source scan only, not whole-repo proof.
+
+| File | Native controls | Hex literals | Hand overlays | Native h1 | md/sm source tokens |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/college/college-profile/page.tsx` | 0 | 0 | 0 | 0 | 1/0 |
+| `src/app/(authenticated)/college/academics/page.tsx` | 0 | 0 | 0 | 0 | 1/0 |
+| `src/app/(authenticated)/college/companies/page.tsx` | 0 | 0 | 0 | 0 | 5/0 |
+
+#### `src/app/(authenticated)/college/college-profile/page.tsx`
+
+| State/property | Legacy file/value | Current source/value | Strict status |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white canvas, 1px #e5e9f0 border, 12px radius, 24px padding | PageHeader and section inside authenticated page canvas, no additional nested PageCanvas | **Shared source structure, precise coordinates unmeasured** |
+| Header and heading | legacy-styles/components___listing-page-header.scss:33-58: bottom hairline and h1 28px/600/1.3 desktop, 20px phone | Single PageHeader and scoped description; no native h1 | **Shared PageHeader desktop 30px vs legacy 28px unresolved** |
+| Buttons and links | old-lms-shell-spec.md:22-24: 36px / radius 9 / 14px / 650, primary teal #0a7c88 with white text | Shared Button/Link styling and tokenized focus, 44px phone min-height, 36px md+ | **Source values largely delegated; all hover/active focus visuals not live measured** |
+| Forms and disabled | legacy-styles/components___form.scss:117-143: field radius 10px, 14px/20px, teal focus shadow | Embedded workspace delegates forms to existing shared components | **Source-only; full disabled/focus data not captured** |
+| Errors/empty | old-lms-pages.md:6,11: in-canvas errors and no fake empty results | Informational support policy uses Alert(info) | **Shared source contract; legacy exact state palette unknown** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked and touch 44px; desktop >=768 | Branding workspace action min-h-11/md:min-h-9 | **CSS source breakpoint aligned, actual phone/tablet rendering unverified** |
+
+#### `src/app/(authenticated)/college/academics/page.tsx`
+
+| State/property | Legacy file/value | Current source/value | Strict status |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white canvas, 1px #e5e9f0 border, 12px radius, 24px padding | PageHeader and section inside authenticated page canvas, no additional nested PageCanvas | **Shared source structure, precise coordinates unmeasured** |
+| Header and heading | legacy-styles/components___listing-page-header.scss:33-58: bottom hairline and h1 28px/600/1.3 desktop, 20px phone | Single PageHeader and scoped description; no native h1 | **Shared PageHeader desktop 30px vs legacy 28px unresolved** |
+| Buttons and links | old-lms-shell-spec.md:22-24: 36px / radius 9 / 14px / 650, primary teal #0a7c88 with white text | Shared Button/Link styling and tokenized focus, 44px phone min-height, 36px md+ | **Source values largely delegated; all hover/active focus visuals not live measured** |
+| Forms and disabled | legacy-styles/components___form.scss:117-143: field radius 10px, 14px/20px, teal focus shadow | Embedded workspace delegates forms to existing shared components | **Source-only; full disabled/focus data not captured** |
+| Errors/empty | old-lms-pages.md:6,11: in-canvas errors and no fake empty results | Academics workspace delegates loading/empty/error behavior to module | **Shared source contract; legacy exact state palette unknown** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked and touch 44px; desktop >=768 | Program directory link min-h-11/md:min-h-9 | **CSS source breakpoint aligned, actual phone/tablet rendering unverified** |
+
+#### `src/app/(authenticated)/college/companies/page.tsx`
+
+| State/property | Legacy file/value | Current source/value | Strict status |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white canvas, 1px #e5e9f0 border, 12px radius, 24px padding | PageHeader and section inside authenticated page canvas, no additional nested PageCanvas | **Shared source structure, precise coordinates unmeasured** |
+| Header and heading | legacy-styles/components___listing-page-header.scss:33-58: bottom hairline and h1 28px/600/1.3 desktop, 20px phone | Single PageHeader and scoped description; no native h1 | **Shared PageHeader desktop 30px vs legacy 28px unresolved** |
+| Buttons and links | old-lms-shell-spec.md:22-24: 36px / radius 9 / 14px / 650, primary teal #0a7c88 with white text | Shared Button/Link styling and tokenized focus, 44px phone min-height, 36px md+ | **Source values largely delegated; all hover/active focus visuals not live measured** |
+| Forms and disabled | legacy-styles/components___form.scss:117-143: field radius 10px, 14px/20px, teal focus shadow | Companies uses shared Input, Select and Checkbox; GET name/value transport and query untouched | **Source-only; full disabled/focus data not captured** |
+| Errors/empty | old-lms-pages.md:6,11: in-canvas errors and no fake empty results | Invalid filters show ErrorState with clear-filter Link; company list delegated to employer relationships | **Shared source contract; legacy exact state palette unknown** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked and touch 44px; desktop >=768 | Company filter flex-wrap, action links min-h-11/md:min-h-9 | **CSS source breakpoint aligned, actual phone/tablet rendering unverified** |
+
+**Strict tick remains 0.** Complete every-state legacy comparison, global grep, responsive screenshots and typechecking absent under lane rules. Checkbox substitution in company filters retains native GET semantics through shared wrapper; not user-tested. No additional page content was added.
+
+**Next exact file:** `src/app/(authenticated)/college/companies/loading.tsx` has shared source proof; continue `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx` and other College Admin workspace pages.
