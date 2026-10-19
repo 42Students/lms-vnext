@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -89,14 +90,14 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
   {(action==="COMMENT"||action==="STATUS")?<label className="grid gap-1 text-sm">Note or reason
     <Textarea rows={3} maxLength={1000} value={note} disabled={pending} onChange={e=>setNote(e.target.value)} className="text-sm"/>
    </label>:null}
-  <Button variant="primary" type="button" onClick={()=>void submit()} disabled={pending}
+  <Button variant="primary" type="button" onClick={()=>void submit()} disabled={pending} loading={pending}
    >{pending?"Saving…":"Save details"}</Button>
-  {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
     title="Save this finding update? An immutable audit event will be recorded."
     confirmLabel="Save details" confirmVariant="primary" pending={pending}
     onConfirm={()=>void submit(true)}>
-    {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+    {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>
  </section>;
 }
