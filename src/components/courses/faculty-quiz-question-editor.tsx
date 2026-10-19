@@ -7,6 +7,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -73,6 +76,7 @@ export function FacultyQuizQuestionEditor({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [confirmOpen,setConfirmOpen] = useState(false);
 
   async function load() {
     setOpen(true);
@@ -337,7 +341,13 @@ export function FacultyQuizQuestionEditor({
       setError(validation);
       return;
     }
-    if (!window.confirm("Confirm replacement of this draft quiz question bank?")) return;
+    setConfirmOpen(true);
+  }
+
+  async function saveConfirmed() {
+    if (saving || loading || !expectedUpdatedAt) return;
+    const validation = validate();
+    if (validation) { setError(validation); setConfirmOpen(false); return; }
     setError(null);
     setSaving(true);
     try {
@@ -400,6 +410,7 @@ export function FacultyQuizQuestionEditor({
       );
     } finally {
       setSaving(false);
+      setConfirmOpen(false);
     }
   }
 
@@ -408,6 +419,7 @@ export function FacultyQuizQuestionEditor({
       <Button
         size="sm"
         variant="secondary"
+        className="min-h-11 md:min-h-[var(--lms-control-height)]"
         onClick={() => void load()}
       >
         Edit questions
@@ -415,7 +427,8 @@ export function FacultyQuizQuestionEditor({
 
       <Drawer
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next => { if (!saving) setOpen(next); }}
+        dismissible={!saving}
         title="Edit Quiz questions"
         description="Question changes are accepted only while this Quiz remains Draft and has no learner attempts."
         footer={
@@ -423,6 +436,8 @@ export function FacultyQuizQuestionEditor({
             disabled={
               saving || loading
             }
+            loading={saving}
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             onClick={() => void save()}
           >
             {saving
@@ -432,11 +447,9 @@ export function FacultyQuizQuestionEditor({
         }
       >
         {loading ? (
-          <p className="text-sm text-muted-foreground">
-            Loading questions…
-          </p>
+          <LoadingState label="Loading questions…" />
         ) : (
-          <div className="space-y-4">
+          <div className="min-w-0 space-y-[var(--lms-space-4)]">
             {questions.map(
               (
                 question,
@@ -444,7 +457,7 @@ export function FacultyQuizQuestionEditor({
               ) => (
                 <section
                   key={question.key}
-                  className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
+                  className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-[var(--lms-space-4)]"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="m-0 text-sm font-semibold text-foreground">
@@ -491,7 +504,7 @@ export function FacultyQuizQuestionEditor({
                     />
                   </label>
 
-                  <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_8rem]">
+                  <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_8rem]">
                     <label className="text-xs font-semibold text-body">
                       Question type
                       <Select
@@ -547,7 +560,7 @@ export function FacultyQuizQuestionEditor({
                       ) => (
                         <div
                           key={option.key}
-                          className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
+                          className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-[var(--lms-space-2)] md:grid-cols-[auto_minmax(0,1fr)_auto]"
                         >
                           {question.type === "SINGLE_CHOICE" ? <Radio
                             
@@ -665,16 +678,21 @@ export function FacultyQuizQuestionEditor({
             </Button>
 
             {error ? (
-              <p
-                role="alert"
-                className="text-sm font-semibold text-error"
-              >
-                {error}
-              </p>
+              <Alert tone="error">{error}</Alert>
             ) : null}
           </div>
         )}
       </Drawer>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={next => { if (!next && !saving) setConfirmOpen(false); }}
+        title="Replace draft Quiz questions"
+        description="Confirm replacement of this draft quiz question bank?"
+        confirmLabel="Replace questions"
+        confirmVariant="primary"
+        pending={saving}
+        onConfirm={() => void saveConfirmed()}
+      />
     </>
   );
 }
