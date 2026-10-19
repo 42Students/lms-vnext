@@ -24,7 +24,7 @@ export function CollegeArchivedLessonRestore({id,name}:{id:string;name:string}){
  }
  return <span className="inline-flex flex-col gap-1">
   <Button variant="ghost" type="button" disabled={pending} onClick={()=>setConfirming(true)}
-   className="min-h-11 !text-[var(--lms-primary-text)] underline">Restore</Button>
+   className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9">Restore</Button>
   <ConfirmDialog open={confirming} onOpenChange={setConfirming}
    title={"Restore "+name+"?"}
    description="Restoring makes the Lesson available in its active Learning Path. Historical progress and submissions are kept."

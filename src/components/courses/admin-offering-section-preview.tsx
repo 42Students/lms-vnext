@@ -28,7 +28,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
   </div>
   <form method="get" className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Section
-    <Select className="min-h-11"
+    <Select className="min-h-11 md:min-h-9"
      name="deliveryId" defaultValue={data.selected?.deliveryId??""}>
      <option value="">Showing every section&apos;s content together</option>
      {data.options.map(item=><option value={item.deliveryId} key={item.deliveryId}>
@@ -36,7 +36,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
      </option>)}
     </Select>
    </label>
-   <Button variant="primary" type="submit" className="justify-center">View Section</Button>
+   <Button variant="primary" type="submit" className="min-h-11 justify-center md:min-h-9">View Section</Button>
   </form>
   {data.invalid?<Alert tone="error">The selected Section is unavailable for this Course Offering.</Alert>:null}
   {data.truncated?<Alert tone="info">Only the first 200 active Sections are listed. Use the Section management page for the full directory.</Alert>:null}
@@ -44,16 +44,16 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
    <p className="text-sm font-semibold">Viewing {data.selected.sectionName} ({data.selected.sectionCode})</p>
    <p className="text-xs text-muted-foreground">This is a metadata-only view of shared and Section-specific content. It does not reveal private video, file or meeting links. Visibility indicators reflect publication and lesson flags, not an individual learner&apos;s enrolment or progress.</p>
    {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 rounded-xl border border-border p-3">
-    <h3 className="font-semibold">{lesson.name}
+    <h3 className="font-semibold text-foreground">{lesson.name}
      <span className="ml-2 text-xs font-normal text-muted-foreground">
       {lesson.visibleToStudents?"Lesson visible":"Lesson hidden"}
      </span>
     </h3>
-    <div className="space-y-1"><h4 className="text-sm font-semibold">Videos, Resources and Live Classes ({lesson.contents.length})</h4>
+    <div className="space-y-1"><h4 className="text-sm font-semibold text-foreground">Videos, Resources and Live Classes ({lesson.contents.length})</h4>
      <ItemList items={lesson.contents}/></div>
-    <div className="space-y-1"><h4 className="text-sm font-semibold">Assignments ({lesson.assignments.length})</h4>
+    <div className="space-y-1"><h4 className="text-sm font-semibold text-foreground">Assignments ({lesson.assignments.length})</h4>
      <ItemList items={lesson.assignments}/></div>
-    <div className="space-y-1"><h4 className="text-sm font-semibold">Quizzes ({lesson.quizzes.length})</h4>
+    <div className="space-y-1"><h4 className="text-sm font-semibold text-foreground">Quizzes ({lesson.quizzes.length})</h4>
      <ItemList items={lesson.quizzes}/></div>
    </div>)}
    {!data.lessons.length?<p className="text-sm text-muted-foreground">No Lessons have been created for this offering.</p>:null}
