@@ -1181,3 +1181,86 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 ```
 
 **Responsive source proof:** `min-h-11` is 44px mobile 0–767px, `md:min-h-9` is 36px from 768px. Login method selection keeps keyboard arrow/Home/End handlers, resend and cooldown/disabled states. Explicit sign-out confirmation dialogs stay shared. Native browser screenshots, actual 640px/768px computed CSS, runtime typecheck, CLI lint, tests and CI **not run**. G4/G5 historical PDF/email output and category tick remain open.
+
+## chat-6 Super Admin mutation controls print-safe source batch
+
+- [x] Scoped source file: `src/components/admin/college-archive-button.tsx` — Archive button and ConfirmDialog retain guards/loading; interactive destructive actions excluded on paper.
+- [x] Scoped source file: `src/components/admin/tenant-restore-action.tsx` — Tenant Restore confirmation and permission-scoped API retained; print omits mutation trigger.
+- [x] Scoped source file: `src/components/admin/college-admin-lifecycle-action.tsx` — Administrator suspend/reactivate reason and confirm form entirely excluded from print.
+- [x] Scoped source file: `src/components/admin/tenant-settings-other-keys.tsx` — Tenant stored-key values and editing actions intentionally excluded from printing to avoid exposing reference configuration; 3px focus and responsive controls aligned.
+- [x] Scoped source file: `src/components/admin/college-feature-rule-editor.tsx` — College module-feature override Select and mutation controls source-aligned, entire mutation editor hidden on paper.
+- [ ] **Next exact file**: `src/components/admin/college-signin-method-form.tsx`, followed by other admin settings / people mutations. G4/G5 remain unverified at category level.
+
+Source-of-truth numeric properties: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` 44px touch minimum at ≤767px; `docs/design/ui-clone-checklist.md:46-47` 36px button / 9px radius / 14px-650; `docs/design/legacy-styles/components___accessibility.scss:18-21` teal 2px outline with 3px offset. Print original still absent. **No shared ui components edited.**
+
+#### `src/components/admin/college-archive-button.tsx`
+| Property/state | Old LMS source / value | Current vNext file:line / value | Result |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` **44px ≤767px** | `src/components/admin/college-archive-button.tsx:119, 133, 141` `min-h-11`, when present | Source match; no measured device |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` **36px/9px radius** | `src/components/admin/college-archive-button.tsx:119, 133, 141` `md:min-h-9` | Source token; computed style unverified |
+| Focus | `components___accessibility.scss:18-21` **2px teal, offset 3px** | `src/components/admin/college-archive-button.tsx:none` explicit 3px focus when present | Else inherited Button focus, full parity open |
+| Busy/error/empty | Old per-action screenshots/status absent | Guard/disabled/ConfirmDialog retained, `src/components/admin/college-archive-button.tsx:none` alert if present | No app or compiler check |
+| Paper | Legacy paper template missing | `src/components/admin/college-archive-button.tsx:119, 133, 141` print exclusions | Prevents action exposure; no actual PDF validation |
+| Semantics | Legacy full action flow unavailable | Archive button and ConfirmDialog retain guards/loading; interactive destructive actions excluded on paper | Source reviewed, interactions not executed |
+
+#### `src/components/admin/tenant-restore-action.tsx`
+| Property/state | Old LMS source / value | Current vNext file:line / value | Result |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` **44px ≤767px** | `src/components/admin/tenant-restore-action.tsx:37` `min-h-11`, when present | Source match; no measured device |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` **36px/9px radius** | `src/components/admin/tenant-restore-action.tsx:37` `md:min-h-9` | Source token; computed style unverified |
+| Focus | `components___accessibility.scss:18-21` **2px teal, offset 3px** | `src/components/admin/tenant-restore-action.tsx:none` explicit 3px focus when present | Else inherited Button focus, full parity open |
+| Busy/error/empty | Old per-action screenshots/status absent | Guard/disabled/ConfirmDialog retained, `src/components/admin/tenant-restore-action.tsx:none` alert if present | No app or compiler check |
+| Paper | Legacy paper template missing | `src/components/admin/tenant-restore-action.tsx:37` print exclusions | Prevents action exposure; no actual PDF validation |
+| Semantics | Legacy full action flow unavailable | Tenant Restore confirmation and permission-scoped API retained; print omits mutation trigger | Source reviewed, interactions not executed |
+
+#### `src/components/admin/college-admin-lifecycle-action.tsx`
+| Property/state | Old LMS source / value | Current vNext file:line / value | Result |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` **44px ≤767px** | `src/components/admin/college-admin-lifecycle-action.tsx:39, 42` `min-h-11`, when present | Source match; no measured device |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` **36px/9px radius** | `src/components/admin/college-admin-lifecycle-action.tsx:39, 42` `md:min-h-9` | Source token; computed style unverified |
+| Focus | `components___accessibility.scss:18-21` **2px teal, offset 3px** | `src/components/admin/college-admin-lifecycle-action.tsx:none` explicit 3px focus when present | Else inherited Button focus, full parity open |
+| Busy/error/empty | Old per-action screenshots/status absent | Guard/disabled/ConfirmDialog retained, `src/components/admin/college-admin-lifecycle-action.tsx:none` alert if present | No app or compiler check |
+| Paper | Legacy paper template missing | `src/components/admin/college-admin-lifecycle-action.tsx:36` print exclusions | Prevents action exposure; no actual PDF validation |
+| Semantics | Legacy full action flow unavailable | Administrator suspend/reactivate reason and confirm form entirely excluded from print | Source reviewed, interactions not executed |
+
+#### `src/components/admin/tenant-settings-other-keys.tsx`
+| Property/state | Old LMS source / value | Current vNext file:line / value | Result |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` **44px ≤767px** | `src/components/admin/tenant-settings-other-keys.tsx:59, 69, 73, 77` `min-h-11`, when present | Source match; no measured device |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` **36px/9px radius** | `src/components/admin/tenant-settings-other-keys.tsx:59, 69, 73, 77` `md:min-h-9` | Source token; computed style unverified |
+| Focus | `components___accessibility.scss:18-21` **2px teal, offset 3px** | `src/components/admin/tenant-settings-other-keys.tsx:52` explicit 3px focus when present | Else inherited Button focus, full parity open |
+| Busy/error/empty | Old per-action screenshots/status absent | Guard/disabled/ConfirmDialog retained, `src/components/admin/tenant-settings-other-keys.tsx:none` alert if present | No app or compiler check |
+| Paper | Legacy paper template missing | `src/components/admin/tenant-settings-other-keys.tsx:45` print exclusions | Prevents action exposure; no actual PDF validation |
+| Semantics | Legacy full action flow unavailable | Tenant stored-key values and editing actions intentionally excluded from printing to avoid exposing reference configuration; 3px focus and responsive controls aligned | Source reviewed, interactions not executed |
+
+#### `src/components/admin/college-feature-rule-editor.tsx`
+| Property/state | Old LMS source / value | Current vNext file:line / value | Result |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` **44px ≤767px** | `src/components/admin/college-feature-rule-editor.tsx:75, 80` `min-h-11`, when present | Source match; no measured device |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` **36px/9px radius** | `src/components/admin/college-feature-rule-editor.tsx:75, 80` `md:min-h-9` | Source token; computed style unverified |
+| Focus | `components___accessibility.scss:18-21` **2px teal, offset 3px** | `src/components/admin/college-feature-rule-editor.tsx:none` explicit 3px focus when present | Else inherited Button focus, full parity open |
+| Busy/error/empty | Old per-action screenshots/status absent | Guard/disabled/ConfirmDialog retained, `src/components/admin/college-feature-rule-editor.tsx:none` alert if present | No app or compiler check |
+| Paper | Legacy paper template missing | `src/components/admin/college-feature-rule-editor.tsx:72` print exclusions | Prevents action exposure; no actual PDF validation |
+| Semantics | Legacy full action flow unavailable | College module-feature override Select and mutation controls source-aligned, entire mutation editor hidden on paper | Source reviewed, interactions not executed |
+
+### Scoped literal grep counts
+
+| File | Raw button/input/select/textarea/table | Hex | Shared Button tags |
+|---|---|---:|---:|
+| `src/components/admin/college-archive-button.tsx` | 0/0/0/0/0 | 0 | 3/3 |
+| `src/components/admin/tenant-restore-action.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/college-admin-lifecycle-action.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/tenant-settings-other-keys.tsx` | 0/0/0/0/0 | 0 | 2/2 |
+| `src/components/admin/college-feature-rule-editor.tsx` | 0/0/0/0/0 | 0 | 2/2 |
+
+Checkout grep (documented, **not run**):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+ 'src/components/admin/college-archive-button.tsx' \\
+ 'src/components/admin/tenant-restore-action.tsx' \\
+ 'src/components/admin/college-admin-lifecycle-action.tsx' \\
+ 'src/components/admin/tenant-settings-other-keys.tsx' \\
+ 'src/components/admin/college-feature-rule-editor.tsx'
+```
+
+Responsive proof is limited to the 44px mobile/36px 768px+ source classes and inherited shared form control contracts. No React/TypeScript validation, screen recording, printer PDF render or provider-hosted email template comparison. **G4/G5 remain unticked.**
