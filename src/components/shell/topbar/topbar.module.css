@@ -453,3 +453,11 @@
   .orgSwitcher { display:none; }
   .orgPopover { right:12px; width:calc(100vw - 24px); border-radius:14px; }
 }
+
+.orgPopover :global(#admin-scope-switcher),
+.orgPopover :global(#membership-switcher) {
+  min-height:38px;
+  border-radius:9px;
+  border-color:#e7ecf2;
+  box-shadow:none;
+}
