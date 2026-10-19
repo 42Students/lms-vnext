@@ -39,7 +39,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
    <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Recruiter calendar</Link>
   </nav>
   <>
-   <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+   <section className="space-y-3 border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Propose an interviewer time block</h2>
     {rounds.length===0?<p role="status" className="text-sm text-body">
      No pending or scheduled interview round is available for this drive.{" "}
