@@ -49,4 +49,15 @@ Changes are limited to semantic tokens, 9px control radius and 12px canvas radiu
 - [x] Re-read every changed JSX closing tag by source-only inspection; incomplete `</Select`, cut-off closing tags, doubled radius utility classes, newline-before-`as` and unmatched curly counts were not found in changed files.
 - [ ] Runtime responsive visual comparison against legacy screenshots and full TypeScript/test validation remain intentionally deferred per owner (no CI).
 
+## 2026-10-19 shared-control continuation (chat-13)
+
+- [x] Checked `origin/main` before edits; `chatgpt/chat-13-b` was already current with the main commit `8049636671c9`, so no merge conflict or overwrite was required.
+- [x] Topbar search: removed an unused desktop grid track, gave the command trigger its own focus ring, unified arrow/Home/End result traversal and Escape focus restoration, and removed TPO-local keyboard handling that previously competed with the shared listbox.
+- [x] First-third Super Admin page controls: `batch-promotion` uses shared `Checkbox`; `announcements`, `companies`, `electives` and the shared `admin-scoped-read-page` now use `Input` for preserved hidden filter state. Hidden controls remain hidden and preserve existing GET/query contracts.
+- [x] College sign-in and branding: shared `Radio` for sign-in choices and shared `Input` for the specialized colour picker; shared design radii applied without changing branding preview behavior.
+- [x] Faculty assignments: native checkbox and five native buttons changed to shared `Checkbox` and `Button` while retaining loading/disabled, confirmation, and submission semantics.
+- [x] Super Admin verification UI: bulk actions, export, filters, tabs, queue search, selection and review drawer now use shared `Button`, `Input`, `Select`, `Checkbox` and `Textarea`. Preserved persisted review/authorization workflow, route links and notifications.
+- [x] Source-only re-read: checked every changed `Button` and `Select` opening/closing tag pair, incomplete `</Select>` tags, duplicated radius utilities, CSS braces, and native-control leftovers in newly swept admin components.
+- [ ] UI screenshot comparison, TypeScript builds, tests, application execution and CI intentionally not run per owner.
+
 **Verification policy:** dev-only; no TypeScript builds, tests, app execution or CI were run. Review and integration still required after mainline merges.
