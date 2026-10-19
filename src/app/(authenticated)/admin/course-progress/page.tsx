@@ -39,7 +39,7 @@ export default async function SuperAdminCourseProgressPage({
     </p>
     <a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export course-progress.csv</a>
-    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
+    <form className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground" />
