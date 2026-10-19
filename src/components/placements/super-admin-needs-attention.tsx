@@ -13,18 +13,18 @@ export function SuperAdminNeedsAttention({items,basePath}:{items:readonly Attent
  const active=categories.map(category=>({...category,
   rows:items.filter(item=>item.code===category.code)}));
  const total=active.reduce((sum,category)=>sum+category.rows.length,0);
- return <section aria-label="Needs attention" className="rounded-xl border border-border bg-surface">
-  <h2 className="border-b border-border px-5 py-4 text-base font-semibold">Needs attention ({total})</h2>
-  {total===0?<p role="status" className="p-5 text-sm">No drives currently flagged in this view.</p>:null}
+ return <section aria-label="Needs attention" className="border-b border-border pb-5">
+  <h2 className="border-b border-border pb-3 text-base font-semibold">Needs attention ({total})</h2>
+  {total===0?<p role="status" className="py-4 text-sm">No drives currently flagged in this view.</p>:null}
   <div className="divide-y divide-border">
    {active.map(category=>{
     const showAll=expanded.includes(category.code);
     const visible=showAll?category.rows:category.rows.slice(0,3);
-    return <div key={category.code} className="space-y-2 p-5">
+    return <div key={category.code} className="space-y-2 py-4">
      <h3 className="text-sm font-semibold">{category.label} ({category.rows.length})</h3>
      {visible.map(item=><Link key={item.jobId} href={basePath+"/jobs/"+
       encodeURIComponent(item.jobId)+"/applications?stage="+category.tab}
-      className="block min-h-10 rounded border border-border p-3 text-sm text-primary-text hover:bg-primary-subtle">
+      className="block min-h-10 border-l-2 border-transparent px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle">
        {item.companyName} · {item.jobTitle}
        <span className="ml-2 text-xs text-muted-foreground">{item.count} affected</span>
      </Link>)}

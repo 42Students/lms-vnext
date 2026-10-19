@@ -150,22 +150,22 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1"/></label>
     <Button type="submit" variant="secondary" className="self-end">Search</Button>
    </form>
-   <nav aria-label="Conversation kind" className="flex flex-wrap gap-3 border-b border-border">
+   <nav aria-label="Conversation kind" className="flex flex-wrap gap-2 border-b border-border">
     {HR_CONVERSATION_KINDS.map(item=><Link key={item.value}
      href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,
       unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:item.value,page:1})}
      aria-current={parsed.data.scope===item.value?"page":undefined}
-     className={parsed.data.scope===item.value ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
+     className={parsed.data.scope===item.value ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
       {item.label}
     </Link>)}
    </nav>
-   <nav aria-label="Conversation status" className="flex flex-wrap gap-3 border-b border-border">
+   <nav aria-label="Conversation status" className="flex flex-wrap gap-2 border-b border-border">
     <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"false",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
      aria-current={parsed.data.unreadOnly==="false"?"page":undefined}
-     className={parsed.data.unreadOnly==="false" ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>All</Link>
+     className={parsed.data.unreadOnly==="false" ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>All</Link>
     <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"true",sort:parsed.data.sort,scope:parsed.data.scope,page:1})}
      aria-current={parsed.data.unreadOnly==="true"?"page":undefined}
-     className={parsed.data.unreadOnly==="true" ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>Unread</Link>
+     className={parsed.data.unreadOnly==="true" ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>Unread</Link>
    </nav>
    <p role="status" className="text-sm text-body">
     {result.unreadInView} unread placement cell messages in these conversations

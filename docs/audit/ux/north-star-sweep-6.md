@@ -179,3 +179,121 @@ After fast-forwarding `main` at `ee98b58c86df02c0513136baab6d35ef633fef59`, cont
 - `src/components/projects/learner-project-goals.tsx`
 - `src/components/projects/learner-project-mobile-filters.tsx`
 - `src/components/projects/learner-task-status-actions.tsx`
+
+## 2026-10-19 continuation — second-third Super Admin visual parity
+
+- Refreshed the lane branch to the latest observed `main` commit `8175bfbde69c2ffbec45f33ac08453dfe68a31e4` by safe fast-forward before edits. All subsequent commits targeted only `chatgpt/chat-6-b` and used `[chat-6]` prefixes.
+- **27 additional file-level commits across 27 source files** in three batches (10 + 10 + 7). The source pass covered placement overview, drive directory, job applications, interviews/schedule/settings, analytics and reports, module access, inbound mail, organizations, person audit, content directories, lesson visibility and authored lessons; it also addressed the directly rendered page controls in these workspaces.
+- Corrected the malformed `hover:bg-[var(--lms-button-primary)]-hover` and `hover:bg-[var(--lms-button-primary)]-subtle` utilities and removed a conflicting white-on-white `text-[var(--lms-on-primary)]` override from read-only secondary navigation.
+- Converted imperative page-level buttons, selects, inputs and textareas to shared visual controls where compatible; preserved action handlers, form names, validation, confirmed-danger states, audit semantics, and authorisation. Aligned primary actions to solid #0a7c88 with white text via the shared token, and secondary actions to bordered neutral buttons.
+- Removed redundant rounded white sub-canvases on existing white canvas pages; replaced archived records, reports, directory cards, pipeline counters and review trails with border-separated rows/strips. Retained genuinely separate confirmation dialogs, semantic alert regions, status badges, candidate selection controls and responsive grids.
+- Revisited handoff/session inventory: the handoff redirects, loading/error boundaries and response guard have no independent authenticated page chrome. The revoke-sessions action already inherits the shared Button and ConfirmDialog; no authentication, OTP, session, or permission functionality was changed in this pass.
+- **Static-only checks:** inspected updated JSX controls for open/close pairs and scanned selected changed files for malformed CSS variable utility suffixes. No app execution, TypeScript compiler, tests, CI, screenshots or runtime pixel-diff was performed as directed. Exact visual parity and strict compilation remain unverified.
+
+### Additional changed files in this continuation
+
+```text
+src/components/admin/super-admin-placement-detail-view.tsx
+src/app/(authenticated)/admin/placements/page.tsx
+src/components/placements/super-admin-drive-tabs.tsx
+src/components/placements/super-admin-drive-deadline.tsx
+src/components/admin/inbound-mail-list.tsx
+src/app/(authenticated)/admin/placements/drives/page.tsx
+src/app/(authenticated)/admin/placements/analytics/page.tsx
+src/app/(authenticated)/admin/organizations/page.tsx
+src/app/(authenticated)/admin/inbound-mail/page.tsx
+src/app/(authenticated)/admin/module-access/page.tsx
+src/components/placements/super-admin-platform-placement-policy.tsx
+src/components/placements/super-admin-drive-archive.tsx
+src/components/placements/super-admin-drive-duplicate.tsx
+src/components/placements/super-admin-bulk-drive-actions.tsx
+src/components/placements/super-admin-drive-pipeline.tsx
+src/components/placements/super-admin-published-drive-edit.tsx
+src/components/courses/super-admin-lesson-bulk-visibility.tsx
+src/components/courses/super-admin-lesson-create.tsx
+src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx
+src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx
+src/components/admin/super-admin-placement-oversight-nav.tsx
+src/components/courses/super-admin-content-directory-page.tsx
+src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx
+src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx
+src/components/placements/college-interview-appointments.tsx
+src/components/placements/college-application-pipeline-controls.tsx
+src/components/courses/college-lesson-visibility-controls.tsx
+```
+
+### Final direct-route follow-up (same continuation)
+
+- Three further source commits reconciled remaining direct-route white-card stacks found by a source scan of **all 37 assigned admin page files**: `admin/lecture-halls/[hallId]`, `admin/lessons`, and `admin/placements/applications/[applicationId]`. Converted schedule-date native controls to shared UI and changed lesson, hall and stage-history cards to hairline lists.
+- Total for this continuation: **30 source commits on 30 source files**, plus ledger updates; branch-only writes. The only direct-route rounded-xl remaining in this sweep is an intentional invalid-filter alert in `admin/inbound-mail`; status/warning banners and genuinely independent calendar panels remain deliberately separate.
+- No compile, test, CI, browser run, deployment or pixel comparison was performed.
+
+## Continued visual parity — follow-up source batches (2026-10-19)
+
+- Started from lane commit `78913ba68079218abfdcb32b6d7ff7f9b969b98f`; `main` was initially an ancestor and required no additional fast-forward at that moment. **40 new [chat-6] source commits**, touching **36 distinct source files**, were then pushed to `chatgpt/chat-6-b` (four ~10-commit batches).
+- Expanded the **Super Admin second-third route sweep** into the directly delegated placement-calendar, interview operations, drive workspace, job-create/draft-edit, requests, application pipeline and detail drawer, content authoring, membership-role pickers and report components. No page copy, permission check, tenant policy, API payload or business workflow was deliberately changed.
+- Replaced broken CSS utility suffixes in the calendar (including white-on-white event labels), normalized link/button contrast, dialog and confirm-danger styling, control radii and spacing; moved more outer page-level cards and nested white panels to simple hairline rows while retaining independent alerts, forms, modals, calendar cells and actionable panels.
+- Reviewed the **auth/session UI** through `account/security/page.tsx`, `auth/device-list.tsx`, `admin/colleges/[collegeId]/admins/[userId]/page.tsx` and `admin-revoke-sessions.tsx`: shared controls, compact session rows, safe focus outlines, destructive confirmation treatment; no session-token, expiry, authentication or revocation logic changed.
+- Final direct-route source sweep rechecked all 37 assigned pages for hard-coded hex colours, malformed CSS variable suffixes, hard-coded shadows and old 9px control radii. Replaced remaining direct-route `rounded-[9px]` occurrences with `rounded-[var(--lms-control-radius)]` in seven files. Retained intentionally independent semantic warning and error banners.
+- **No app run, TypeScript compiler, unit tests, CI, screenshots or pixel-diff** per directive. Selected source files were inspected for JSX control open/close consistency and invalid utility suffixes; this is not runtime or strict compilation certification.
+- **Concurrent upstream movement:** after these writes, `main` advanced hundreds of commits and diverged from this lane. The last inspected common ancestor was `a748025f00f3f580a414e9185115a16660318c4a`. Six placement files had upstream edits overlapping this continuation. Do **not** force-reset the lane or invent a conflict-free merge: reconcile those files with the latest `main` in a subsequent integration pass. All current source changes remain preserved on `chatgpt/chat-6-b`; no writes to `main`.
+
+### Files changed in this follow-up
+
+```text
+src/app/(authenticated)/account/security/page.tsx
+src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx
+src/app/(authenticated)/admin/inbound-mail/page.tsx
+src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx
+src/app/(authenticated)/admin/people/unassigned/page.tsx
+src/app/(authenticated)/admin/placements/analytics/page.tsx
+src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx
+src/app/(authenticated)/admin/placements/drives/page.tsx
+src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx
+src/app/(authenticated)/admin/placements/page.tsx
+src/app/(authenticated)/admin/placements/retention/page.tsx
+src/components/admin/admin-revoke-sessions.tsx
+src/components/admin/admin-scoped-csv-control.tsx
+src/components/admin/admin-scoped-read-page.tsx
+src/components/admin/lecture-hall-manager.tsx
+src/components/admin/person-membership-actions.tsx
+src/components/admin/person-onboard-dialog.tsx
+src/components/admin/placement-panel-error-boundary.tsx
+src/components/admin/super-admin-interview-operations.tsx
+src/components/admin/super-admin-people-csv-control.tsx
+src/components/admin/super-admin-platform-block-action.tsx
+src/components/auth/device-list.tsx
+src/components/courses/admin-learning-structure-actions.tsx
+src/components/courses/super-admin-content-actions.tsx
+src/components/courses/super-admin-content-authoring.tsx
+src/components/placements/college-application-detail-drawer.tsx
+src/components/placements/college-application-pipeline-controls.tsx
+src/components/placements/college-interview-appointments.tsx
+src/components/placements/placement-calendar-workspace.tsx
+src/components/placements/placement-draft-edit-form.tsx
+src/components/placements/placement-drive-controls.tsx
+src/components/placements/placement-drive-workspace.tsx
+src/components/placements/placement-job-create-form.tsx
+src/components/placements/placement-operations-overview.tsx
+src/components/placements/placement-request-queue.tsx
+src/components/placements/tpo-drive-deadline-form.tsx
+```
+
+## Upstream merge and continued component pass (2026-10-19)
+
+- Merged immutable upstream `main` commit `a5d88d7cdfce161100ec7233f1d009e8e5b199d4` into `chatgpt/chat-6-b` through merge commit `400ebdfe7f5b99f4af556267c0fc2afe5ccbd2b1` (two parents). The merge included all 506 upstream commits observed at reconciliation and retained the lane's previous 45 commits; no branch ref was force-pushed.
+- Resolved all six overlapping placement files from the newer `main` source, reapplying *only* visual shell-level changes: `placement-draft-edit-form.tsx`, `placement-drive-controls.tsx`, `placement-drive-workspace.tsx`, `placement-job-create-form.tsx`, `placement-operations-overview.tsx`, `tpo-drive-deadline-form.tsx`. Upstream logic and markup are authoritative, with retained layout tokens/white canvas controls, shared Input/Select/Button/textarea styling and dropdown shadow tokens.
+- Pushed **10 further [chat-6] file commits** after the merge. Restyled `super-admin-drive-quick-search`, `super-admin-needs-attention`, `placement-drive-day-overview`, `tpo-round-reorder`, `placement-bulk-add-applicants`, `super-admin-hr-accounts`, `super-admin-hr-detail-drawer`, `super-admin-hr-account-dialog`, `super-admin-today-board`, and `super-admin-student-bulk-access` to the old LMS 9px token/teal control skin and border-separated white-page strips.
+- Kept scope visual-only: no alteration of application creation, round mutation, eligibility, applicant transition, authentication, authorization, API requests, or tenant scope. Static JSX tag balance and expected-source checks only; no TypeScript compilation, tests, CI, browser, or app run.
+
+### Second follow-up batch after upstream merge
+
+- Pushed 10 further `[chat-6]` commits, all on `chatgpt/chat-6-b`, covering globally scoped company editing, identities, merge, restore, verification, college relationship/create forms, batch roster, faculty assignment and timetable reassignment, and placement role-option controls.
+- Converted raw input/select/textarea/button markup to the shared controls where compatible, kept exact async action handlers, FormData names, validation constraints, scope and confirmation gates; replaced redundant nested white cards with border-separated rows. Existing semantic dialogs, data tables, and branded global shell remained untouched.
+- Source-level re-read of all 10 modified files checked matched shared `</Button>`/`</Select>` pairs and did not find truncated JSX closing tags or malformed CSS-variable suffix utilities. Self-closing fields retained their input attributes. No TypeScript check, tests, CI, app run, pixel-diff or deployment.
+
+### Third follow-up batch after upstream merge
+
+- A further **10 source commits** on `chatgpt/chat-6-b` extended the Super Admin old-LMS skin through faculty CSV bulk import, batch graduation action, course setup wizard, course directory/canvas, offering teacher lists, offering lesson overview/section preview, assessment directory, duplicate-course link and placement offer summaries.
+- Reused the shared Button/Input/Select controls for form actions and filters; preserved the page's underlying data, labels, permission checks, validation, warning/disclosure semantics, and destructive offer-withdrawal modal. Converted only redundant secondary panels to border-divided rows, with the existing white authenticated page canvas.
+- Static source review checked shared Button/Select opening and closing tags across all 10 files and saw no incomplete closing tags. No tests, compiler, CI, app run, screenshots or deployment.

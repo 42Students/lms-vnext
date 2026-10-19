@@ -93,7 +93,7 @@ export function PlacementBulkOfferWithdraw({
 
   if (choices.length === 0) return null;
   return (
-    <section className="space-y-4 border-b border-border p-5" aria-label="Bulk offer withdrawal">
+    <section className="space-y-4 border-b border-border pb-6" aria-label="Bulk offer withdrawal">
       <div>
         <h3 className="text-base font-semibold text-foreground">
           Bulk withdraw offers
@@ -109,7 +109,7 @@ export function PlacementBulkOfferWithdraw({
         </p>
       ) : (
         <>
-          <div tabIndex={0} role="group" aria-label="Offers eligible for withdrawal, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-auto overscroll-contain rounded-md border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+          <div tabIndex={0} role="group" aria-label="Offers eligible for withdrawal, scroll for more" className="max-h-64 min-h-0 space-y-1 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
             {available.map((item) => (
               <label key={item.id} className="flex min-h-11 cursor-pointer items-center gap-3 px-2 py-1 text-sm">
                 <input
@@ -132,7 +132,7 @@ export function PlacementBulkOfferWithdraw({
               maxLength={1000}
               rows={2}
               disabled={busy}
-              className="mt-2 block w-full rounded-[9px] border border-border bg-surface p-3 text-sm font-normal text-foreground"
+              className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal text-foreground"
             />
           </label>
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
@@ -141,7 +141,7 @@ export function PlacementBulkOfferWithdraw({
               type="button"
               onClick={() => void submit()}
               disabled={busy || selected.length === 0 || reason.trim().length < 8}
-              className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
+              className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-50 md:min-h-9"
             >
               {busy ? "Applying withdrawal..." : "Review and confirm withdrawals"}
             </button>
@@ -152,7 +152,7 @@ export function PlacementBulkOfferWithdraw({
       {results.length ? (
         <div aria-live="polite" className="space-y-2">
           <h4 className="font-semibold text-foreground">Per-offer results</h4>
-          <ul className="divide-y divide-border rounded-md border border-border text-sm">
+          <ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border text-sm">
             {results.map((item) => (
               <li key={item.offerId} className="flex flex-wrap gap-2 p-2">
                 <span className="font-medium text-foreground">

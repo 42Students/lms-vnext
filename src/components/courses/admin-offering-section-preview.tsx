@@ -1,4 +1,6 @@
 import type {listOfferingSectionPreview} from "@/modules/courses/college-offering-section-preview-service";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
 type Preview=Awaited<ReturnType<typeof listOfferingSectionPreview>>;
 function ItemList({items}:{items:readonly {
@@ -17,7 +19,7 @@ function ItemList({items}:{items:readonly {
  </li>)}</ul>;
 }
 export function AdminOfferingSectionPreview({data}:{data:Preview}){
- return <section id="section-content" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5"
+ return <section id="section-content" className="space-y-4 border-b border-border pb-5"
   aria-label="Section course content">
   <div className="space-y-1">
    <h2 className="text-lg font-semibold text-foreground">Section content</h2>
@@ -25,22 +27,22 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
   </div>
   <form method="get" className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Section
-    <select className="min-h-10 rounded border border-border bg-background p-2"
+    <Select className="min-h-9 w-full"
      name="deliveryId" defaultValue={data.selected?.deliveryId??""}>
      <option value="">Showing every section&apos;s content together</option>
      {data.options.map(item=><option value={item.deliveryId} key={item.deliveryId}>
       {item.sectionName} ({item.sectionCode})
      </option>)}
-    </select>
+    </Select>
    </label>
-   <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">View Section</button>
+   <Button type="submit">View Section</Button>
   </form>
   {data.invalid?<p role="alert" className="text-sm text-error">The selected Section is unavailable for this Course Offering.</p>:null}
   {data.truncated?<p role="status" className="text-xs text-muted-foreground">Only the first 200 active Sections are listed. Use the Section management page for the full directory.</p>:null}
   {data.selected?<div className="space-y-3">
    <p className="text-sm font-semibold">Viewing {data.selected.sectionName} ({data.selected.sectionCode})</p>
    <p className="text-xs text-muted-foreground">This is a metadata-only view of shared and Section-specific content. It does not reveal private video, file or meeting links. Visibility indicators reflect publication and lesson flags, not an individual learner&apos;s enrolment or progress.</p>
-   {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 rounded-lg border border-border p-3">
+   {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 border-b border-border py-3">
     <h3 className="font-semibold">{lesson.name}
      <span className="ml-2 text-xs font-normal text-muted-foreground">
       {lesson.visibleToStudents?"Lesson visible":"Lesson hidden"}

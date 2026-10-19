@@ -44,7 +44,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">
     Export access history CSV
   </a>:null}
-  {!result.ready?<p role="status" className="rounded border border-border p-5">
+  {!result.ready?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5">
    Access history is unavailable until the share-audit migration is registered.
   </p>:<DataTable caption="Company-share access history"
     rows={result.entries.map((entry,index)=>({...entry,rowKey:String(index)}))}

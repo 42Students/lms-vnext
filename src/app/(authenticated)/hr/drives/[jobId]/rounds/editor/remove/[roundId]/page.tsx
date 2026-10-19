@@ -21,7 +21,7 @@ export default async function HrRoundRemovalConfirm({params}:{
  return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Recruiter · Hiring rounds" title="Confirm unused round removal"
    description="Only an unused, pending recruiter-created round can be cancelled. The record remains in audit history."/>
-  <div className="rounded-xl border border-border bg-surface p-5">
+  <div className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
    <p className="font-semibold text-foreground">{round.sequence}. {round.name}</p>
    <p className="mt-2 text-sm text-body">{round.kind} · {round.status} · No recorded candidate results.</p>
   </div>

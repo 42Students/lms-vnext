@@ -6,13 +6,13 @@ export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
  roster:Roster;academicPeriodName:string;
 }){
  return <section id="who-teaches-it" aria-label="Who teaches it"
-  className="space-y-3 rounded-xl border border-border bg-surface p-4">
+  className="space-y-3 border-b border-border pb-5">
   <h2 className="text-lg font-semibold text-foreground">Who teaches it</h2>
   {!roster.faculty.length?<p className="text-sm text-muted-foreground">
    No active Faculty assignment was found for this Course Offering.
-  </p>:<ul className="grid gap-3 md:grid-cols-2">
+  </p>:<ul className="divide-y divide-border border-y border-border">
    {roster.faculty.map(item=><li key={item.assignmentId}
-    className="min-w-0 rounded-md border border-border p-3">
+    className="min-w-0 py-3">
     <p className="break-words font-semibold text-foreground">
      {item.facultyName?.trim()||item.facultyEmail||"Unnamed Faculty"}</p>
     <p className="mt-1 text-sm text-body">

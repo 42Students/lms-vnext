@@ -117,7 +117,7 @@ export default async function RecruiterCompanyReportsPage({
                   href={recruiterCompanyReportsHref({
                     collegeId: grant.collegeId,
                   })}
-                  className="rounded-lg border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                 >
                   <span className="font-semibold text-link">
                     {grant.collegeName}
@@ -194,8 +194,8 @@ export default async function RecruiterCompanyReportsPage({
               }
               className={
                 grant.collegeId === collegeId
-                  ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-                  : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary hover:text-primary-text"
+                  ? "rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
+                  : "rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary"
               }
             >
               {grant.collegeName}
@@ -235,7 +235,7 @@ export default async function RecruiterCompanyReportsPage({
 
       <section
         aria-label="Hiring portfolio summary"
-        className="grid gap-3 sm:grid-cols-3"
+        className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-3"
       >
         {[
           {
@@ -253,7 +253,7 @@ export default async function RecruiterCompanyReportsPage({
         ].map((metric) => (
           <article
             key={metric.label}
-            className="rounded-xl border border-border bg-surface p-5"
+            className="border-b border-border p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {metric.label}

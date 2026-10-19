@@ -73,29 +73,29 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    description="Review and open every persisted non-archived drive in the selected college." />
   <div className="flex flex-wrap gap-3">
    <Link href="/admin/placements" className="text-sm font-semibold text-[var(--lms-teal-deep)]">← Placement overview</Link>
-   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Look up a student&apos;s placement status →</Link>
+   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Look up a student&apos;s placement status →</Link>
     <Link href="/admin/placements/new" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Create drive →</Link>
   </div>
   <form action="/admin/placements/drives" method="get"
-   className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search by drive or company
     <input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
-     className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground"/>
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Status
     <select name="status" defaultValue={parsed.data.status}
-     className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      <option value="ALL">All</option><option value="DRAFT">Draft</option>
      <option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
     </select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
     <select name="pageSize" defaultValue={parsed.data.pageSize}
-     className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
     </select>
    </label>
-   <button type="submit" className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-[var(--lms-on-primary)]">Filter</button>
+   <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover">Filter</button>
    <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-[var(--lms-teal-deep)]">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />

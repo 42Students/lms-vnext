@@ -221,12 +221,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm md:min-h-9"
        href="/tpo/placements/lifecycle?view=REQUESTS">Waiting for your review</Link>
     </nav>
-    <nav aria-label="Drive status tabs" className="flex flex-wrap gap-2">
+    <nav aria-label="Drive status tabs" className="flex flex-wrap gap-1 border-b border-border">
       {([["REQUESTS","Requests",data.needsReviewCount],["LIVE","Live",data.statusCounts.live],["DRAFT","Drafts",data.statusCounts.drafts],["CLOSED","Closed",data.statusCounts.closed],["ALL","All jobs",data.statusCounts.all]] as const).map(([view,label,total])=>
         <Link key={view} href={{pathname:"/tpo/placements/lifecycle",query:{view,search:"",page:1}}}
           aria-current={data.view===view?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary "+(data.view===view?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border")}>
-          {label}<span className={"rounded-full px-2 py-0.5 tabular-nums "+(view==="REQUESTS"&&total>0?"bg-amber-100 text-amber-900":"bg-muted text-body")}>{total}</span>
+          className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary "+(data.view===view?"border-primary text-[var(--lms-teal-deep)]":"border-transparent text-body hover:border-border hover:text-foreground")}>
+          {label}<span className={"rounded-full px-2 py-0.5 tabular-nums "+(view==="REQUESTS"&&total>0?"bg-warning-subtle text-[var(--lms-gold-accent)]":"bg-muted text-body")}>{total}</span>
         </Link>)}
     </nav>
     {data.view==="REQUESTS" ? (!data.requestsAvailable ?
@@ -238,7 +238,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <h2 className="font-semibold">{item.company} · {item.title}</h2>
             <StatusBadge tone={driveRequestStatusTone(item.status)}>{driveRequestStatusLabel(item.status)}</StatusBadge>
             <p className="text-xs text-muted-foreground">Request ID: {item.id}</p>
-            <section aria-label="Recruiter contact" className="mt-2 space-y-1 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+            <section aria-label="Recruiter contact" className="mt-2 space-y-1 text-sm">
              <h3 className="font-semibold">Recruiter</h3>
              <p>Email: {item.recruiterEmail??"Not recorded"} · Phone: {item.recruiterPhone??"Not recorded"}</p>
              {item.verificationStatus!=="VERIFIED"?<p className="text-[var(--lms-gold-accent)]">Unverified</p>:null}
@@ -246,10 +246,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
              <Link href={"/tpo/recruiters?search="+encodeURIComponent(item.recruiterEmail??"")}
               className="text-[var(--lms-teal-deep)] underline">Open recruiter</Link>
             </section>
-            {item.changes?<section aria-label="What changed since the last request" className="mt-3 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+            {item.changes?<section aria-label="What changed since the last request" className="mt-3 space-y-2 border-t border-border pt-3 text-sm">
               <h3 className="font-semibold">What changed since the last request</h3>
               {!item.changes.some(change=>change.changed)?<p>Nothing that we compare changed.</p>:
-               <dl className="grid gap-2">{item.changes.filter(change=>change.changed).map(change=><div key={change.label} className="rounded border p-2">
+               <dl className="grid gap-2">{item.changes.filter(change=>change.changed).map(change=><div key={change.label} className="border-b border-border py-2">
                 <dt className="font-semibold">{change.label}</dt>
                 <dd>Before: {change.before||"Not provided"}</dd>
                 <dd>Now: {change.after||"Not provided"}</dd>

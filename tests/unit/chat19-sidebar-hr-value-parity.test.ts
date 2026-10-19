@@ -49,6 +49,23 @@ describe("NORTH-STAR-CHAT19-POLISH: measured legacy sidebar and HR control token
    expect(text,route).not.toMatch(/(?:bg|text|border)-\[#[0-9a-fA-F]{3,8}\]/);
   }
  });
+ it("keeps HR cards and controls on semantic legacy radii, not Tailwind defaults",()=>{
+  const unmeasured=/\brounded-(?:md|lg|xl|2xl)\b/;
+  for(const route of routes){
+   expect(read(route),route).not.toMatch(unmeasured);
+  }
+  const hrWidgets=readdirSync("src/components/hr").filter(name=>name.endsWith(".tsx"));
+  for(const name of hrWidgets){
+   expect(read(join("src/components/hr",name)),name).not.toMatch(unmeasured);
+  }
+  for(const name of [
+   "applicant-notes-panel.tsx",
+   "recruiter-placement-portfolio.tsx",
+   "recruiter-result-controls.tsx",
+  ]){
+   expect(read(join("src/components/placements",name)),name).not.toMatch(unmeasured);
+  }
+ });
  it("prevents reintroducing numeric-radius and stale focus classes in HR client widgets",()=>{
   const dir="src/components/hr";
   const files=readdirSync(dir).filter(name=>name.endsWith(".tsx"));

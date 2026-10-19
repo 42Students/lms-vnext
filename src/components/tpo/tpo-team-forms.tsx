@@ -1,9 +1,18 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {tpoTeamFormErrorMessage} from "@/modules/placements/tpo-team-form-feedback-model";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 
 type Member={membershipId:string;displayName:string};
 async function postForm(url:string,values:Record<string,string>){
@@ -67,30 +76,30 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   }catch{setError(tpoTeamFormErrorMessage("UNKNOWN","CREATE"));}
   finally{pending.current=false;setBusy(false);}
  }
- return <form onSubmit={event=>void create(event)} className="mt-4 grid gap-3 rounded-[var(--radius)] border border-border p-4">
+ return <form onSubmit={event=>void create(event)} className="mt-4 grid gap-3 border-t border-border pt-4">
   <h3 className="font-semibold text-foreground">Start a private placement team conversation</h3>
   <label className="grid gap-1 text-sm text-body">Team member
-   <select required value={recipient} onChange={event=>updateDraft(event.target.value,topic)} disabled={busy}
-    className="min-h-9 sm:min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3">
+   <Select required value={recipient} onChange={event=>updateDraft(event.target.value,topic)} disabled={busy}
+    className="min-h-11 sm:min-h-9">
     <option value="">Choose an active placement team colleague</option>
     {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
-   </select>
+   </Select>
   </label>
   <label className="grid gap-1 text-sm text-body">Topic
-   <input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
-    className="min-h-9 sm:min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3" placeholder="Drive coordination"/>
+   <Input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
+    className="min-h-11 sm:min-h-9" placeholder="Drive coordination"/>
   </label>
   <label className="grid gap-1 text-sm text-body">First message (optional)
-   <textarea value={firstMessage} maxLength={4000} rows={3} disabled={busy}
+   <Textarea value={firstMessage} maxLength={4000} rows={3} disabled={busy}
     onChange={event=>updateDraft(recipient,topic,event.target.value)}
-    className="rounded-[var(--radius)] border border-border bg-surface p-3" placeholder="Tell the team what this is about"/>
+    className="w-full" placeholder="Tell the team what this is about"/>
   </label>
   <p className="text-xs text-muted-foreground">Only named active placement team members can take part.</p>
-  {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
-  <button type="submit" disabled={busy||!recipient||!topic.trim()}
-   className="min-h-9 rounded-[var(--radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  <Button type="submit" disabled={busy||!recipient||!topic.trim()}
+   className="min-h-11 sm:min-h-9">
    {busy?"Starting…":"Start conversation"}
-  </button>
+  </Button>
  </form>;
 }
 export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;actorUserId:string}){
@@ -138,27 +147,27 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
    className="space-y-3 border-b border-border py-4">
   <h2 className="font-semibold text-foreground">Reply privately</h2>
   <label className="grid gap-1 text-sm text-body">Message
-   <textarea required value={body} maxLength={4000} rows={4} disabled={busy}
+   <Textarea required value={body} maxLength={4000} rows={4} disabled={busy}
     onChange={event=>changeBody(event.target.value)}
     onKeyDown={event=>{
      if(event.key==="Enter"&&!event.shiftKey&&!event.nativeEvent.isComposing){
       event.preventDefault();void send();
      }
     }}
-    className="rounded-[var(--radius)] border border-border bg-surface p-3" placeholder="Share a private team update"/>
+    className="w-full" placeholder="Share a private team update"/>
   </label>
   <label className="flex items-center gap-2 text-sm">
-   <input type="checkbox" checked={markDecision} disabled={busy}
+   <Checkbox checked={markDecision} disabled={busy}
     onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>
    Mark as decision
   </label>
   {markDecision?<p role="status" className="text-xs text-muted-foreground">Will be pinned as a decision</p>:null}
   <p className="text-xs text-muted-foreground" aria-live="polite">Enter to send · Shift+Enter for a new line · {body.length}/4000</p>
-  {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
-  <button type="submit" disabled={busy||!body.trim()}
-   className="min-h-9 rounded-[var(--radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+  <Button type="submit" disabled={busy||!body.trim()}
+   className="min-h-11 sm:min-h-9">
    {busy?"Sending…":"Send"}
-  </button>
+  </Button>
  </form>;
 }

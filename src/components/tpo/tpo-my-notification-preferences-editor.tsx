@@ -1,5 +1,7 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useRef,useState} from "react";
+import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {TPO_NOTIFICATION_PREFERENCE_FIELDS,type TpoNotificationPreferences} from "@/modules/placements/tpo-my-notifications-model";
 export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:TpoNotificationPreferences;version:string|null}){
@@ -42,12 +44,12 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
   <div className="divide-y divide-border">
    {TPO_NOTIFICATION_PREFERENCE_FIELDS.map(field=><label key={field.key} className="flex min-h-14 items-center justify-between gap-4 py-3">
     <span><strong className="block text-sm">{field.label}</strong><span className="text-xs text-body">{field.description}</span></span>
-    <input type="checkbox" aria-label={field.label} checked={value[field.key]} disabled={busy}
+    <Checkbox aria-label={field.label} checked={value[field.key]} disabled={busy}
      onChange={e=>setValue(previous=>({...previous,[field.key]:e.target.checked}))}/>
    </label>)}
   </div>
-  <button type="button" disabled={busy||(!dirty&&currentVersion!==null)} onClick={()=>void save()}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</button>
+  <Button type="button" disabled={busy||(!dirty&&currentVersion!==null)} onClick={()=>void save()}
+   className="min-h-11 sm:min-h-9">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;

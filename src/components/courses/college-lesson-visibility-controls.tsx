@@ -2,6 +2,7 @@
 
 import {useRouter} from "next/navigation";
 import {ScrollCue} from "@/components/ui/scroll-cue";
+import {Button} from "@/components/ui/button";
 import {useState,useTransition} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -34,10 +35,10 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
   });
  }
  return <div className="space-y-1">
-  <button type="button" disabled={pending} onClick={change}
-   aria-pressed={visible} className="min-h-9 rounded-[9px] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-50">
+  <Button type="button" size="sm" variant="secondary" disabled={pending} onClick={change}
+   aria-pressed={visible}>
    {pending?"Saving…":label}
-  </button>
+  </Button>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
  </div>;
 }
@@ -97,7 +98,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    }catch(error){setMessage(error instanceof Error?error.message:friendlyApiError({}));}
   });
  }
- return <details className="rounded-lg border border-border p-3 text-sm text-body">
+ return <details className="border-y border-border py-3 text-sm text-body">
   <summary className="cursor-pointer font-semibold">Show to students / Hide from students</summary>
   <p className="mt-2 text-xs text-muted-foreground">
    Select Lessons on this page. Saved visibility does not delete student progress.
@@ -118,19 +119,19 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    </label>)}
   </div></ScrollCue>
   <div className="mt-3 flex flex-wrap gap-2">
-   <button type="button" disabled={pending||!selected.length}
-    onClick={()=>apply(true)} className="min-h-9 rounded-[9px] border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+   <Button type="button" variant="secondary" disabled={pending||!selected.length}
+    onClick={()=>apply(true)}>
     Show to students
-   </button>
-   <button type="button" disabled={pending||!selected.length}
-    onClick={()=>apply(false)} className="min-h-9 rounded-[9px] border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+   </Button>
+   <Button type="button" variant="secondary" disabled={pending||!selected.length}
+    onClick={()=>apply(false)}>
     Hide from students
-   </button>
-   {failed.length?<button type="button" disabled={pending} onClick={()=>{
+   </Button>
+   {failed.length?<Button type="button" variant="secondary" disabled={pending} onClick={()=>{
     if(retryTarget!==null)apply(retryTarget,failed);
-   }} className="min-h-9 rounded-[9px] border border-border px-3 font-semibold text-primary-text">
+   }}>
     Retry failed
-   </button>:null}
+   </Button>:null}
   </div>
   {message?<p role="status" className="mt-2 text-xs">{message}</p>:null}
  </details>;

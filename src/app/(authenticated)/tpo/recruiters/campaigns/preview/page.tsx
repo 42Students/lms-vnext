@@ -29,7 +29,7 @@ export default async function PreviewCampaign({searchParams}:PageProps){
       ["No email",preview.withoutEmail],["Opted out",preview.unsubscribed],
       ["Previously bounced",preview.bounced],["Not now",preview.notNow],
       ["Outside selected segment",preview.outsideSegment]] as const).map(([label,value])=>
-    <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <div key={label} className="border-b border-border px-1 py-4">
      <dt className="text-sm text-body">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value}</dd>
     </div>)}
   </dl>

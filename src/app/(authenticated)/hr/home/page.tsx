@@ -56,7 +56,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     {visible.length === 0 ? <EmptyState title="Open this on your college&apos;s placement address" description="Your recruiter account works inside one college&apos;s placement site. Ask the placement cell that invited you to restore access." /> :
     <section className="grid gap-3 sm:grid-cols-2">{visible.map(grant => {
       const detail=byId.get(grant.id)!;
-      return <article key={grant.id} className="space-y-3 rounded-lg border border-border bg-surface p-5">
+      return <article key={grant.id} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-5">
         <h2 className="font-semibold text-foreground">{detail.collegeName}</h2>
         {detail.collegeCode?<p className="text-xs text-muted-foreground">College code: {detail.collegeCode}</p>:null}
         <p className="text-xs text-muted-foreground">Access granted: {detail.grantedAtLabel} (IST)</p>
@@ -136,27 +136,27 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     {grants.length > 1 ? <nav aria-label="Choose college" className="flex flex-wrap gap-2">{grants.map(item=>
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
         aria-current={item.collegeId === selectedId ? "page" : undefined}
-        className={item.collegeId === selectedId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-body hover:border-primary hover:text-primary-text"}>{item.collegeName}</Link>)}</nav> : null}
-    {recentJobCapReached?<aside role="status" className="rounded-lg border border-warning bg-surface p-3 text-sm text-body">
+        className={item.collegeId === selectedId ? "rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-body"}>{item.collegeName}</Link>)}</nav> : null}
+    {recentJobCapReached?<aside role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-surface p-3 text-sm text-body">
       Today is displaying the 500 most recently created employer drives for this college.
       Older drives may not appear in these quick summaries. Open Drives for full history.
     </aside>:null}
-    {summaryPartiallyUnavailable?<div role="alert" className="rounded-lg border border-warning bg-surface p-4 text-sm text-body">
+    {summaryPartiallyUnavailable?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-surface p-4 text-sm text-body">
       <p className="font-semibold">Drive summary is partially unavailable.</p>
       <p className="mt-1">Your available drive information is shown below. Some notifications or calendar events may be missing.</p>
       <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
         className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</Link>
     </div>:null}
-    <section aria-label="Recruiter tasks" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{actions.map(action=>
-      <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    <section aria-label="Recruiter tasks" className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-2 xl:grid-cols-5">{actions.map(action=>
+      <Link key={action.label} href={action.url} className="border-b border-border p-5 last:border-b-0 hover:bg-primary-subtle sm:border-b-0 sm:border-r sm:last:border-r-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
       </Link>)}</section>
-    <section aria-label="Next recruiter actions" className="space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <section aria-label="Next recruiter actions" className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 sm:p-5">
       <h2 className="text-lg font-semibold text-foreground">Next up</h2>
       <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
       {actionQueue.length ? <ul className="grid gap-3 sm:grid-cols-2">
         {actionQueue.map(task => <li key={task.key}>
-          <Link href={task.href} className="block min-w-0 rounded-lg border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
+          <Link href={task.href} className="block min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
             <span className="inline-flex items-center gap-2 text-xs font-semibold text-body">
               <span aria-hidden="true" className={task.tone==="URGENT"?"size-2 rounded-full bg-error":task.tone==="SOON"?"size-2 rounded-full bg-warning":"size-2 rounded-full bg-primary"}/>
               {task.tone==="URGENT"?"Urgent":task.tone==="SOON"?"Soon":"When you can"}
@@ -172,7 +172,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           </Link>
         </li>)}
       </ul> : collegeJobs.length===0 && requestCount===0 ? (
-        <div className="rounded-lg border border-border bg-surface-secondary p-4">
+        <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
           <h3 className="font-semibold text-foreground">Start with your first drive</h3>
           <ol className="mt-3 list-inside list-decimal space-y-2 text-sm text-body">
             <li>Describe the role, pay and how you select. It takes a few minutes, and your draft is kept as you type.</li>
@@ -185,7 +185,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           </Link>
         </div>
       ) : (
-        <div role="status" className="rounded-lg border border-border bg-surface-secondary p-4">
+        <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
           <h3 className="font-semibold text-foreground">You are all caught up</h3>
           <p className="mt-2 text-sm text-body">New applicants, replies and decisions from the placement cell will show up here.</p>
         </div>
@@ -198,7 +198,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </div>
       {weekEvents.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {weekEvents.map(item=><li key={item.id}>
-          <Link href={item.href} className="block rounded-lg border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
+          <Link href={item.href} className="block rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
             <span className="block text-xs font-semibold text-muted-foreground">{item.kind.replaceAll("_"," ")}</span>
             <span className="mt-1 block font-semibold text-foreground">{item.title}</span>
             <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>

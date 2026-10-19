@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -55,17 +57,17 @@ export default async function TpoScheduleConflictsPage({
       <form method="get" className="flex flex-wrap items-end gap-3">
         <label className="text-sm font-semibold text-foreground">
           Upcoming window
-          <select name="days" defaultValue={String(data.days)}
+          <Select name="days" defaultValue={String(data.days)}
             className="mt-1 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal">
             {[7, 14, 30, 60, 90].map((days) => (
               <option key={days} value={days}>{days} days</option>
             ))}
-          </select>
+          </Select>
         </label>
-        <button type="submit"
+        <Button variant="primary" type="submit"
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground">
           Apply
-        </button>
+        </Button>
       </form>
       <section aria-label="Schedule assessment" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
@@ -74,7 +76,7 @@ export default async function TpoScheduleConflictsPage({
           ["Assessable rounds", data.assessedCount],
           ["Incomplete scheduling", data.unassessable.length],
         ].map(([name, value]) => (
-          <div key={name} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+          <div key={name} className="border-b border-border px-1 py-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>

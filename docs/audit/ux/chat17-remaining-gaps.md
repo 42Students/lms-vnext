@@ -77,3 +77,49 @@ Do not wrap `PageCanvas` per page: it is already present in the authenticated la
 - File/menu/selection: `file-upload`, `menu`, `selection-controls` keep legacy form labels and the teal checkbox/switch treatment, with existing pointer/keyboard and disabled handling intact.
 - **Authenticated canvas:** `src/app/(authenticated)/layout.tsx` continues to own exactly one `<PageCanvas className="lms-authenticated-canvas" data-authenticated-canvas="true">` wrapping the portal notices and authenticated route children. `PageCanvas` applies 24px desktop padding from the shared `--lms-canvas-padding` token; outer surface remains `#fff`, border `#e5e9f0`, radius 12px on `#f1f4f9` shell. Topbar/sidebar remain dedicated lane ownership.
 - **Verification gate still open:** source-level code edits only. Per owner direction, no local app run, typecheck, unit/E2E, screenshot diff or CI was performed.
+
+
+## Continued shared primitive sweep — third pass, 2026-10-19
+
+**Baseline synchronized:** `main@6222f78a4a19084be6529aa802810ee98193c1d2` fast-forwarded into `chatgpt/chat-17-b`. The prior batch was already merged to main, so this was a clean fast-forward, not a force push or replayed patch. All writes below targeted `chatgpt/chat-17-b` with independent `[chat-17]` component commits.
+
+- **Under-styled shared primitives:** `disabled-reason`, `long-text`, `graceful-page-loading`, `loading-state`, `page-loading`, `permission-action`, `form-field`, `confirm-action-dialog`, `confirm-dialog`, `inline-notice`, `selection-controls`, `third-party-link` and `filter-bar`. Replaced remaining raw neutral/teal text values, gaps, radii, borders and focus colors with the documented old-LMS token system without touching business logic, loading/permission semantics, external URL guards, focus management or caller props.
+- **Next shared controls:** `checkbox`, `radio`, `disclosure`, `menu`, `table`, `alert`, `banner`, `card`, `page-header`, `empty-state` and `error-state`. Adopted the canonical `--lms-*` spacing/radius/typography and hairline colors; kept teal native input selection, 44px keyboard/touch targets, signed-off notification tones and 30px desktop page headings.
+- **Authenticated canvas integration:** Confirmed one and only one `PageCanvas` wraps `PortalAccessNotice`, `ConnectionFailureNotice` and `children` inside `AppShell` in `src/app/(authenticated)/layout.tsx`. Added `data-lms-page-surface="legacy-single-canvas"` to make that exact shell surface auditable; `src/app/globals.css` now keys full-height canvas styling to `[data-slot="page-canvas"][data-authenticated-canvas="true"]`, instead of a generic class that could accidentally match nested page sections. The canvas still has a white `#fff` surface, `1px #e5e9f0` border, 12px radius, 24px desktop / 16px phone padding, no shadow, over `#f1f4f9` shell.
+- **Validation outstanding:** No code execution, typecheck, lint, tests, CI or screenshot comparisons were performed at owner request. Browser visual verification and work by the separate shell/portal lanes remain coordination items; no claim of pixel-perfect runtime output is made.
+
+
+## Continued shared global skin sweep — main merge and follow-up primitives
+
+**Source coordination:** On 2026-10-19, this lane was three commits ahead of `main` and 193 behind. Preserved the three unmerged authenticated canvas and audit commits by creating a genuine two-parent merge onto then-current `main@8175bfbde69c2ffbec45f33ac08453dfe68a31e4`. No reset or forced ref update; the resulting lane merge commit was `c74c4b9e26401eb22c909f5961f7d346d30d1476`.
+
+**Component commits, one file at a time:**
+- `data-table`: old-LMS compact neutral table headers, border/radius tokens, legacy link color and keyboard focus. Existing per-row authorization, hidden columns, safe URLs, mobile disclosure, and one-cell-render rules untouched.
+- `tabs`: measured 20px spacing and underline behavior with neutral border and teal selected text in both interactive and link navigation modes; no keyboard/ARIA changes.
+- `file-upload`: 9px control radius, compact label/helper/error text, teal file action and focus ring; picker constraints and disabled/error announcements unchanged.
+- `toast`: 12px white notification cards, correct elevation, compact text and 44px dismiss controls; persistence and viewport/timer behavior untouched.
+- `dropdown` / `menu`: desktop 6px legacy menus and mobile 14px rounded drop-down surface, matching old-LMS `components___dropdown.scss` (mobile panel with 16px padding; desktop 16px vertical/24px horizontal), legacy typography, keyboard/hover accents.
+- `tooltip`, `pagination`, `dialog`, `drawer`, `bottom-sheet`, `filter-bar`: consolidated radius/border/spacing/heading/elevation tokens, preserving safe-area/backdrop, focus trapping, history handling and reduced-motion behavior.
+- `selection-controls`, `breadcrumbs`, `confirm-action-dialog`: minor final neutral/focus/spacing parity. Added `--lms-avatar-placeholder: #c4c4c4` to `globals.css` and applied it to `avatar`, matching the exact legacy profile placeholder.
+
+**Canvas:** `src/app/(authenticated)/layout.tsx` still renders exactly one `<PageCanvas>` enclosing the portal access notice, connection failure notice and authenticated route children. The marked full-height surface uses `#fff`, `#e5e9f0`, radius 12px, 24px desktop and 16px small-screen padding over the `#f1f4f9` shell. Authentication guard remains outside the surface; shell ownership stays in its separate lane.
+
+**Not certified by this pass:** UI parity on actual browser/phone resolutions, overlay stacking and precise font metrics remain live visual review gates. As instructed, no application execution, typecheck, unit test, Playwright, lint or CI was run.
+
+
+## Fourth shared skin follow-up — semantic focus and tokens
+
+**Main synchronization:** `main@284472433ab9399db9afd36fee633958d0866d7b` was 53 commits ahead of the lane with zero lane-only commits at synchronization. Fast-forwarded `chatgpt/chat-17-b` before changing any source. Commits were pushed individually to that branch.
+
+**Fresh visual parity work:**
+- `Input`, `Select`, `Textarea`: keyboard focus teal `#26bac7`, 9px shell-era controls, disabled neutral surface, and invalid red background, border and ring. A later `globals.css` generic teal-focus rule could previously override the red invalid-focus ring; an explicit later selector now restores the intended `rgba(239,68,68,.2)` red shadow and error outline without weakening keyboard focus.
+- `Button`: shared body/teal text tokens for secondary/ghost variants; primary 36px solid `#0a7c88` white CTA remains unchanged; busy/disabled native attributes remain.
+- `Badge`, `StatusBadge`: semantic background pills retain the old-LMS 12px/18px scale, with stronger readable semantic text `#065f46`/`#92400e`/`#b91c1c` via new `--lms-*-text` variables rather than unrelated raw text colors.
+- `StatTile`: standardized neutral small copy and subtle card border/radius/padding with existing safe internal navigation and numeric formatting.
+- `ScrollCue`: legacy teal focus and consistent reduced-motion fade treatment. Actual overflow measurement/ARIA and visible keyboard scroll affordances remain unchanged.
+- `InlineNotice`, `Alert`, `Banner`: reuse matching semantic text variables so shared notices and badges cannot drift.
+- `Skeleton`: rounded placeholder token from the old LMS 6px/8px-compatible scale, with shimmer and reduced-motion handling unchanged.
+
+**Single PageCanvas integration:** Already wired once inside `src/app/(authenticated)/layout.tsx`; the existing `data-authenticated-canvas="true"` selector and `data-lms-page-surface="legacy-single-canvas"` marker were verified. The canvas encloses portal access/connectivity notices and the authenticated children and remains white with 12px radius, 1px `#e5e9f0` border, 24px desktop and 16px phone inset, full-height shell behavior. No second wrapper was introduced and no unrelated shell file was edited.
+
+**Execution:** Source-only GitHub updates; no TS compilation, lint, unit/E2E, visual snapshots, browser run or CI per orchestrator directive. Pixel-exact and keyboard screen-reader behavior still need a later controlled integrated verification.

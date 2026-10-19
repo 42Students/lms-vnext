@@ -3,6 +3,9 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -635,7 +638,7 @@ export async function PlacementCalendarWorkspace({
       </section>:null}
       <section
         aria-label="Calendar summary"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+        className="grid gap-3 border-y border-border sm:grid-cols-2 xl:grid-cols-4"
       >
         {(
           isTpo
@@ -652,7 +655,7 @@ export async function PlacementCalendarWorkspace({
         ).map(([label, count]) => (
           <div
             key={String(label)}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="border-b border-border py-3"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {label}
@@ -770,25 +773,25 @@ export async function PlacementCalendarWorkspace({
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Date
-            <input
+            <Input
               type="date"
               name="date"
               defaultValue={state.anchor}
               required
-              className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="w-full"
             />
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Company
-            <input
+            <Input
               type="search"
               list="tpo-calendar-company-choices"
               name="company"
               maxLength={150}
               defaultValue={state.company}
               placeholder="Search company name"
-              className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+              className="w-full"
             />
           </label>
 
@@ -810,10 +813,10 @@ export async function PlacementCalendarWorkspace({
           {isTpo ? (
             <label className="flex flex-col gap-1 text-sm font-semibold text-body">
               Event type
-              <select
+              <Select
                 name="kind"
                 defaultValue={state.kind ?? ""}
-                className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                className="w-full"
               >
                 {EVENT_FILTERS.map((filter) => (
                   <option
@@ -823,16 +826,16 @@ export async function PlacementCalendarWorkspace({
                     {filter.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
           ) : (
             <>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Round type
-                <select
+                <Select
                   name="roundKind"
                   defaultValue={state.roundKind ?? ""}
-                  className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                  className="w-full"
                 >
                   {ROUND_FILTERS.map((filter) => (
                     <option
@@ -842,30 +845,28 @@ export async function PlacementCalendarWorkspace({
                       {filter.label}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
 
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Job
-                <input
+                <Input
                   type="search"
                   name="job"
                   maxLength={150}
                   defaultValue={state.job}
                   placeholder="Search job title"
-                  className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                  className="w-full"
                 />
               </label>
             </>
           )}
 
           <div className="flex items-end">
-            <button
-              type="submit"
-              className="min-h-9 w-full rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] transition hover:bg-[var(--lms-button-primary)]-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            <Button type="submit" className="w-full"
             >
               Apply filters
-            </button>
+            </Button>
           </div>
         </form>
         {isTpo && (state.company || state.kind || state.kinds.length) ? (
@@ -1025,7 +1026,7 @@ export async function PlacementCalendarWorkspace({
                           key={event.id}
                           href={href}
                           title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                          className="block min-h-9 rounded-[9px] bg-[var(--lms-button-primary)]-subtle px-2 py-1 text-xs font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] text-[var(--lms-on-primary)]"
+                          className="block min-h-9 rounded-[9px] bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                         >
                           <span className="block truncate">
                             {eventTime(

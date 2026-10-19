@@ -1,7 +1,11 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTopic:string}){
  const router=useRouter();
  const busyRef=useRef(false);
@@ -23,20 +27,20 @@ export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTo
   }finally{busyRef.current=false;setBusy(false);}
  }
  return <div className="space-y-2">
-  <button type="button" className="min-h-9 rounded-[var(--radius)] border border-border px-4 text-sm font-semibold"
-   onClick={()=>setOpen(value=>!value)} aria-expanded={open}>Rename conversation</button>
-  {open?<form onSubmit={event=>void save(event)} className="space-y-3 rounded-[var(--radius)] border border-border p-3">
+  <Button type="button" variant="secondary" className="min-h-11 sm:min-h-9"
+   onClick={()=>setOpen(value=>!value)} aria-expanded={open}>Rename conversation</Button>
+  {open?<form onSubmit={event=>void save(event)} className="space-y-3 border-t border-border pt-3">
    <label className="grid gap-2 text-sm font-semibold">Conversation name
-    <input required maxLength={200} value={topic} onChange={event=>setTopic(event.target.value)}
-     disabled={busy} className="min-h-9 sm:min-h-9 rounded-[var(--radius)] border border-border bg-surface px-3"/>
+    <Input required maxLength={200} value={topic} onChange={event=>setTopic(event.target.value)}
+     disabled={busy} className="min-h-11 sm:min-h-9"/>
    </label>
-   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
+   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    <div className="flex gap-2">
-    <button type="submit" disabled={busy||!topic.trim()}
-     className="min-h-9 rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
-     {busy?"Saving…":"Save"}</button>
-    <button type="button" disabled={busy} className="min-h-9 rounded-[var(--radius)] border border-border px-4"
-     onClick={()=>{setOpen(false);setTopic(currentTopic);setError("");}}>Cancel</button>
+    <Button type="submit" disabled={busy||!topic.trim()}
+     className="min-h-11 sm:min-h-9">
+     {busy?"Saving…":"Save"}</Button>
+    <Button type="button" variant="secondary" disabled={busy} className="min-h-11 sm:min-h-9"
+     onClick={()=>{setOpen(false);setTopic(currentTopic);setError("");}}>Cancel</Button>
    </div>
   </form>:null}
  </div>;
