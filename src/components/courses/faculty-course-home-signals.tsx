@@ -1,3 +1,4 @@
+import { MetricBar } from "@/components/ui/metric-bar";
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
@@ -201,9 +202,9 @@ export function FacultyCourseHomeSignals({
                   </summary>
                   <div className="mt-2 space-y-2 text-xs text-muted-foreground">
                     <p>Attendance: {learner.attendancePercent===null?"Not enough marked sessions":learner.attendancePercent+"%"}</p>
-                    {learner.attendancePercent!==null?<div role="img" aria-label={"Attendance "+learner.attendancePercent+" percent"} className="h-2 overflow-hidden rounded-full bg-muted">
-                      <span className="block h-full bg-primary" style={{width:learner.attendancePercent+"%"}}/>
-                    </div>:null}
+                    {learner.attendancePercent!==null?<MetricBar role="img"
+                      label={"Attendance "+learner.attendancePercent+" percent"}
+                      value={learner.attendancePercent} maximum={100} unit="percent" />:null}
                     <p>Submissions missing: {learner.missingSubmissionCount}</p>
                     <p>Average grade: {learner.averageGradePercent===null?"No graded work":learner.averageGradePercent+"%"}</p>
                   </div>
