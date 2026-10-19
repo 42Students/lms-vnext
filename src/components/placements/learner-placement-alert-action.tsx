@@ -43,8 +43,7 @@ export function LearnerPlacementAlertAction({id,href,unread}:{
        event.preventDefault();void open();}}
      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
      {pending?"Marking as read…":"Open related page →"}
-   </Link>:isUnread?<Button variant="link" className="max-md:min-h-11" type="button" onClick={()=>void markRead()} disabled={pending}
-      >
+   </Link>:isUnread?<Button variant="link" className="max-md:min-h-11" type="button" onClick={()=>void markRead()} disabled={pending}>
       {pending?"Marking as read…":"Mark as read"}
    </Button>:null}
   {error?<p role="alert" className="w-full text-xs font-semibold text-error">{error}</p>:null}
