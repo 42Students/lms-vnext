@@ -1,6 +1,6 @@
 # E8 — TPO / HR spreadsheet clone audit (chat-14)
 
-**Status: BLOCKED for AG Grid parity.** This report is written against the available `42Students/lms-vnext` refs (2026-10-19). The strict E8 box does **not** exist in the current `docs/design/ui-clone-checklist.md`, which stops at E7; it was assigned in a new owner message. The mandatory `docs/design/legacy-grid/*.txt` references and AG Grid dependencies have not been found on either current `main` or `chatgpt/chat-14-b`. Do not mark E8 as passed, do not infer legacy theme parameters, and do not import packages that the repository does not declare.
+**Status: BLOCKED for AG Grid parity.** This report is written against the available `42Students/lms-vnext` refs (2026-10-19). At first read, the shared `docs/design/ui-clone-checklist.md` stopped at E7; this lane subsequently added a numbered E8 line on its branch to record the new owner assignment. It is **not** a completed checkbox. The mandatory `docs/design/legacy-grid/*.txt` references and AG Grid dependencies have not been found on either current `main` or `chatgpt/chat-14-b`. Do not mark E8 as passed, do not infer legacy theme parameters, and do not import packages that the repository does not declare.
 
 - [ ] **E8 AG Grid legacy sheet clone** (missing: legacy source and exact `tpoGridTheme` values; `ag-grid-community` and `ag-grid-react` ^36.2; `ModuleRegistry.registerModules([AllCommunityModule])`; native `AgGridReact`; full selection, keyboard, column-state and responsive parity; true branch grep counts; runtime visual comparison).
 
@@ -8,7 +8,7 @@
 
 | Required source / dependency | What was actually available | Result |
 |---|---|---|
-| `docs/design/ui-clone-checklist.md`, section E8 | `E. Data display` has items E1–E7, then F; E8 not present on either ref | New owner direction noted, checklist cannot be ticked |
+| `docs/design/ui-clone-checklist.md`, section E8 | Initially E1–E7 only; E8 was added to the lane branch in commit `842116d6` | Item registered; no completion claim |
 | `docs/design/legacy-grid/TpoGrid.jsx.txt` | GitHub contents API returned 404 on `main`; recursive main and chat-14 trees do not contain `legacy-grid` | Cannot claim a source-faithful port |
 | `docs/design/legacy-grid/gridExport.js.txt` | 404 | Exact CSV / TSV behavior unavailable |
 | `docs/design/legacy-grid/viewMemory.js.txt` | 404 | Exact browser layout contract unavailable |
@@ -54,7 +54,7 @@
 
 ## Coverage proof
 
-**No authentic repository-wide grep was run.** GitHub indexed search for `ag-grid-react`, `themeQuartz`, `TpoGrid.jsx.txt`, `gridExport.js.txt`, `viewMemory.js.txt` and `legacy-grid` returned zero hits; current main and lane tree listings showed zero paths under `docs/design/legacy-grid/`. Direct source reads confirmed the two named spreadsheet consumers are migrated; this does not certify that all source patterns have zero exceptions.
+**No authentic repository-wide grep was run.** Two direct source reads showed the requested consumer names; the two dynamic client imports have since replaced both. The original checklist lacked E8, so the category entry was added to the lane branch. GitHub indexed search for `ag-grid-react`, `themeQuartz`, `TpoGrid.jsx.txt`, `gridExport.js.txt`, `viewMemory.js.txt` and `legacy-grid` returned zero hits; current main and lane tree listings showed zero paths under `docs/design/legacy-grid/`. Direct source reads confirmed the two named spreadsheet consumers are migrated; this does not certify that all source patterns have zero exceptions.
 
 Required future shell commands (not executed):
 
