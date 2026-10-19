@@ -174,7 +174,7 @@
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])
     :not([type="file"]):not([type="range"]):not([type="color"])
     :not([type="button"]):not([type="submit"]):not([type="reset"])
-    :not([type="image"]), select, textarea]):not(:where([data-unskin], [data-unskin] *)):disabled {
+    :not([type="image"]), select, textarea):not(:where([data-unskin], [data-unskin] *)):disabled {
   color: var(--lms-neutral-400) !important;
   background-color: var(--lms-neutral-50) !important;
   border-color: var(--lms-neutral-200) !important;
