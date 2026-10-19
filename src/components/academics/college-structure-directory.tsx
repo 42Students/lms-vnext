@@ -1,5 +1,3 @@
-import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
@@ -346,7 +344,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           </details>
           <div className="flex items-end gap-2">
             <Button variant="primary" type="submit"
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+              >
               Filter
             </Button>
             <Link href={path}
