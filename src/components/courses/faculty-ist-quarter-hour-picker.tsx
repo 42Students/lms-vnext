@@ -1,5 +1,6 @@
-import { Select } from "@/components/ui/select";
 "use client";
+import { Select } from "@/components/ui/select";
+
 
 import {facultyIstTimeParts,facultyIstWallTime,FACULTY_IST_QUARTER_MINUTES}
  from "@/modules/courses/faculty-ist-quarter-hour-model";
