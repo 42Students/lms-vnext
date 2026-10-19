@@ -30,6 +30,10 @@ export function DateRangePicker({
   const generatedId = useId();
   const startId = startInputProps?.id ?? `${generatedId}-start`;
   const endId = endInputProps?.id ?? `${generatedId}-end`;
+  const startRequired = required ?? startInputProps?.required;
+  const endRequired = required ?? endInputProps?.required;
+  const startMax = [end || undefined, max, startInputProps?.max].filter((date): date is string => Boolean(date)).sort()[0];
+  const endMin = [start || undefined, min, endInputProps?.min].filter((date): date is string => Boolean(date)).sort().at(-1);
   const invalidOrder = Boolean(start && end && start > end);
   const errorId = `${generatedId}-error`;
   const startDescribedBy = [startInputProps?.["aria-describedby"], invalidOrder ? errorId : null]
@@ -42,20 +46,20 @@ export function DateRangePicker({
       className={cx("grid min-w-0 gap-3 min-[768px]:grid-cols-2", className)}>
       <div className="grid min-w-0 gap-1.5">
         <label htmlFor={startId} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          {startLabel}
+          {startLabel}{startRequired ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}
         </label>
-        <DateInput {...startInputProps} id={startId} mode="date" value={start} min={min}
-          max={end && (!max || end < max) ? end : max} disabled={disabled} required={required}
+        <DateInput {...startInputProps} id={startId} mode="date" value={start} min={min ?? startInputProps?.min}
+          max={startMax} disabled={disabled ?? startInputProps?.disabled} required={startRequired}
           error={error || invalidOrder} aria-describedby={startDescribedBy}
           aria-errormessage={invalidOrder ? errorId : startInputProps?.["aria-errormessage"]}
           onChange={event => onStartChange(event.currentTarget.value)} />
       </div>
       <div className="grid min-w-0 gap-1.5">
         <label htmlFor={endId} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          {endLabel}
+          {endLabel}{endRequired ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}
         </label>
         <DateInput {...endInputProps} id={endId} mode="date" value={end}
-          min={start && (!min || start > min) ? start : min} max={max} disabled={disabled} required={required}
+          min={endMin} max={max ?? endInputProps?.max} disabled={disabled ?? endInputProps?.disabled} required={endRequired}
           error={error || invalidOrder} aria-describedby={endDescribedBy}
           aria-errormessage={invalidOrder ? errorId : endInputProps?.["aria-errormessage"]}
           onChange={event => onEndChange(event.currentTarget.value)} />
