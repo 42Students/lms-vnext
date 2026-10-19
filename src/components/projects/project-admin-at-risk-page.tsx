@@ -64,7 +64,7 @@ export async function ProjectAdminAtRiskPage({
         description="Workspaces with no recent activity, an active blocker, or a pending review."
       />
       {!result.blockerSignalSupported ? (
-        <section className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
+        <section className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm leading-5 text-body">
           Workspace blocker data is unavailable. Task blockers are still counted.
         </section>
       ) : null}
@@ -75,7 +75,7 @@ export async function ProjectAdminAtRiskPage({
           ["Pending review", result.buckets.review, "REVIEW"],
         ] as const).map(([title, value, key]) =>
           <Link key={key} href={basePath + "/at-risk?riskBucket=" + key}
-            className={"block min-h-11 min-w-0 rounded-xl border bg-surface p-4 hover:border-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] " +
+            className={"block min-h-11 min-w-0 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] " +
               (query.riskBucket === key ? "border-primary" : "border-border")}>
             <p className="text-sm font-semibold text-body">{title}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
@@ -138,7 +138,7 @@ export async function ProjectAdminAtRiskPage({
                   </StatusBadge>
                 </div>
               </div>
-              {project.blockerReason ? <div className="mt-3 rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+              {project.blockerReason ? <div className="mt-3 border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
                 <p className="font-semibold">Active blocker</p>
                 <p className="mt-1 whitespace-pre-wrap break-words">{project.blockerReason}</p>
               </div> : null}
