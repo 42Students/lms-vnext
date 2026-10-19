@@ -560,7 +560,7 @@ export default async function HrCalendarPage({
           {view !== "agenda" ? (
             <section
               aria-label={`${view} recruiter calendar`}
-              className="rounded-xl border border-border bg-surface p-3 md:overflow-x-auto"
+              className="border-y border-border py-3 md:overflow-x-auto"
             >
               <div className="space-y-4 md:hidden">
                 {mobileDays.map((day) => (
