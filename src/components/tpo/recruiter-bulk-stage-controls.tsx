@@ -231,7 +231,7 @@ export function RecruiterBulkStageControls({
               type="button"
               disabled={!isValid || busy}
               onClick={() => void apply()}
-              className="min-h-10 rounded-md bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
+              className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
             >
               {busy ? "Applying…" : reviewOpen&&reviewSignature===currentSignature ? "Confirm stage changes" : "Review and confirm"}
             </button>
