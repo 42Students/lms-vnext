@@ -516,7 +516,7 @@ export function SectionOperations({
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <section className="grid gap-4 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
