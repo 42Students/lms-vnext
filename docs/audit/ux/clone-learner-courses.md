@@ -777,3 +777,18 @@ Source JSX pair examples: learner course error pages `Alert` opens/closes 1/1 ea
 **STRICT TICK STATUS:** H1–H6 remain `[ ]` pending complete 247-path inventory/strict shared hover/disabled/focus computed-value comparison and orchestrator side-by-side phone/tablet screenshots per checklist J; source probes and legacy file tables alone are not a pixel-perfect runtime certificate. No local `rg`, JS/TS execution, browser session, tests or CI were performed.
 
 **Next exact unticked file:** `src/app/(authenticated)/learn/calendar/page.tsx` (class schedule links, calendar visual state/layout and service-driven states), followed by `src/app/(authenticated)/learn/attendance/page.tsx`.
+
+### Batch 8 continuation — learner calendar and attendance header links
+
+After the previous five-route change, two more source pages were inspected end-to-end and pushed:
+
+| File | Screen states and pixel-value source proof | Responsive proof |
+| --- | --- | --- |
+| `src/app/(authenticated)/learn/calendar/page.tsx` | Existing one `PageHeader`, authenticated `LearnerClassSchedule` (IST), empty and filter states untouched. Header secondary Attendance calendar link uses existing shared 9px `--lms-control-radius`, 1px border, white base with 150ms `--lms-motion-fast`; hover teal border/`--lms-primary-subtle`, focused teal 2px outline with 2px offset; reduced motion disabled transition. | `min-h-11 md:min-h-9`, 44px under768 and 36px desktop; zero `sm:` declarations. |
+| `src/app/(authenticated)/learn/attendance/page.tsx` | Existing one `PageHeader` and scoped attendance service/IST summaries untouched; matching link hover/focus/reduced-motion as above. | `min-h-11 md:min-h-9`, 44/36px with breakpoint 768. |
+
+Legacy sources: `legacy-styles/components___variables.scss:10-14` interactive `#26bac7` default/hover and `#eff8fa` subtle fill; `components___form.scss:23-28,120-127` keyboard-visible teal focus; `components___learn-layout.scss:34,361-383` phone cutoff 767px and 44px mobile button. The native link states follow shared tokens, not hard-coded CSS. Source-only validation for BOTH pages (fetched after edit): raw `button/input/select/textarea/table` count **0**, six-digit hex count **0**, hand-rolled dialogs count **0**, `sm:` count **0**, one `md:` breakpoint each, exactly one `PageHeader` each, exactly one `focus-visible:outline-2` and `motion-reduce:transition-none` each. No direct JSX button mismatch.
+
+**Coverage inventory caveat:** The original 247-TSX inventory at the top of this audit is the 2026-10-19 baseline and is explicitly *not* a fresh exhaustive count. Later GitHub listing of `src/components/courses` returned 114 entries, including TypeScript and CSS modules. Refresh the full recursive inventory with exact TSX filtering and run the area-wide `rg` commands before any H1–H6 ticks. Source-edited ≠ full visual proof.
+
+**Next exact unticked file:** `src/app/(authenticated)/learn/attendance/calendar/loading.tsx`, then `src/app/(authenticated)/learn/calendar/loading.tsx` — check spinner/loading skeleton value/state parity against shared `GracefulPageLoading` and old dotted-spinner contract. H1–H6 remain open pending global/source-state proof and computed phone/tablet comparisons. No application code, CI, tests or browser was run.
