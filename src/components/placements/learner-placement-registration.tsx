@@ -49,7 +49,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
     <h2 className="font-semibold">{LEARNER_REGISTRATION_COPY.title}</h2>
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
-      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 gap-3 rounded border border-border p-3">
+      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
         <input type="radio" name="sp-choice" checked={choice===item.value}
           onChange={()=>{setChoice(item.value);setConsent(false);}} className="mt-1" />
         <span><span className="block font-semibold">{item.label}</span>
@@ -65,7 +65,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
       <button type="button" disabled={busy} onClick={()=>void submit()}
         className="min-h-11 rounded border border-primary bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
         {busy?"Saving…":registration.choice?LEARNER_REGISTRATION_COPY.update:LEARNER_REGISTRATION_COPY.register}
-      </button>
+      </Button>
     </>:<p className="text-sm" role="status">{registration.stage==="NOT_INVITED"?
       LEARNER_REGISTRATION_COPY.notInvited:LEARNER_REGISTRATION_COPY.closed}</p>}
     {registration.choice?<p className="text-sm">Your choice: {learnerPlacementChoices.find(item=>item.value===registration.choice)?.label}</p>:null}
