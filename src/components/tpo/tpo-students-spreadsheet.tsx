@@ -12,6 +12,7 @@ import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
 import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard-model";
 import {exportTpoStudentsCsv} from "@/modules/placements/tpo-students-csv";
+import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -34,9 +35,9 @@ const TpoGrid = dynamic<TpoSpreadsheetGridProps<TpoStudentRow>>(
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
    row.displayName+" · From "+row.cohortName:row.displayName},
- {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
- {key:"branch",label:"Branch",exportAlways:true,read:row=>row.branchName},
+ {key:"number",label:"Roll no.",read:row=>row.rollNumber??row.registrationNumber},
  {key:"batch",label:"Batch",exportAlways:true,read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
+ {key:"branch",label:"Branch",exportAlways:true,read:row=>row.branchName},
  {key:"stage",label:"Stage",filter:{urlKey:"journeyState",
   options:TPO_STUDENT_JOURNEY_STATES.map(value=>({value,label:tpoStudentDisplayLabel(value)}))},
   read:row=>tpoStudentDisplayLabel(row.journeyState)},
@@ -133,7 +134,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const anchor=document.createElement("a");
-    anchor.href=url;anchor.download="selected-tpo-students.csv";document.body.appendChild(anchor);
+    anchor.href=url;anchor.download=legacyGridExportFilename("students","csv");document.body.appendChild(anchor);
     anchor.click();anchor.remove();
    }finally{URL.revokeObjectURL(url);}
   }catch{setDownloadError("Could not prepare the selected CSV. Please try again.");}
@@ -221,7 +222,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    selection={{selected:noteSelection,onChange:setNoteSelection}}
    filters={filters} rollOf={row=>[row.rollNumber??"",row.registrationNumber??""]}
-   filterTitle="Filter students" exportName="tpo-students" xlsxHref={xlsxHref}
+   filterTitle="Filter students" exportName="students" xlsxHref={xlsxHref}
    savedViews={canManageViews?<TpoStudentSavedViews embedded/>:undefined}>
   <TpoGrid integratedWorkspace mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),

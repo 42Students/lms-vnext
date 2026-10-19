@@ -3,7 +3,7 @@ import type {TpoStudentRow} from "./tpo-students-model";
 /** SpreadsheetML workbook with native inline strings and a minimal RFC 1951 ZIP container.
  * No dynamic formula elements, external links, macros or untrusted ZIP entry names. */
 export const TPO_STUDENT_EXCEL_COLUMNS={
- student:["Student",(row:TpoStudentRow)=>row.displayName],number:["Student number",(row:TpoStudentRow)=>row.rollNumber??row.registrationNumber],
+ student:["Student",(row:TpoStudentRow)=>row.displayName],number:["Roll no.",(row:TpoStudentRow)=>row.rollNumber??row.registrationNumber],
  batch:["Batch",(row:TpoStudentRow)=>row.cohortName],branch:["Branch",(row:TpoStudentRow)=>row.branchName],
  stage:["Stage",(row:TpoStudentRow)=>row.journeyState],profile:["Profile",(row:TpoStudentRow)=>row.verification.status],
  cgpa:["CGPA",(row:TpoStudentRow)=>row.cgpa],tenth:["10th %",(row:TpoStudentRow)=>row.tenthPct],
@@ -25,9 +25,19 @@ export const TPO_STUDENT_EXCEL_COLUMNS={
  eligibilityReason:["Eligibility reason (staff only)",(row:TpoStudentRow)=>row.participationReason],
 } satisfies Record<string,readonly [string,(row:TpoStudentRow)=>string|number|boolean|null|undefined]>;
 export type TpoExcelColumn=keyof typeof TPO_STUDENT_EXCEL_COLUMNS;
+const LEGACY_STUDENT_EXCEL_ORDER=[
+ "student","number","batch","branch","stage","afterCollege","profile",
+ "cgpa","tenth","twelfth","diploma","ug","pg","backlogs",
+ "best","applications","offers","gender","skills","projects","certification",
+ "experience","resume","marksVerified","passingYear","email","eligibilityReason",
+] as const satisfies readonly TpoExcelColumn[];
 export function selectTpoExcelColumns(selected:readonly string[]):TpoExcelColumn[]{
  const safe=selected.filter((value):value is TpoExcelColumn=>Object.hasOwn(TPO_STUDENT_EXCEL_COLUMNS,value));
- return [...new Set(["batch","branch",...(safe.length?safe:["student","number","stage","cgpa","best","offers"]),"email","eligibilityReason"] as TpoExcelColumn[])];
+ const requested=new Set<TpoExcelColumn>(safe.length?safe:
+  ["student","number","stage","cgpa","best","offers"]);
+ // Batch and Branch remain in exports even if hidden in a single-batch grid.
+ for(const required of ["batch","branch","email","eligibilityReason"] as const)requested.add(required);
+ return LEGACY_STUDENT_EXCEL_ORDER.filter(column=>requested.has(column));
 }
 function xml(value:unknown){
  const text=String(value??"").slice(0,1500).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g,"");
