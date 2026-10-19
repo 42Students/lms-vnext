@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import type {LearnerVerificationState} from "@/modules/placements/learner-verification-status-model";
@@ -34,12 +35,12 @@ export function LearnerVerificationSubmit({
   }finally{setPending(false);}
  }
  return <div className="mt-4 min-w-0">
-  <button type="button" disabled={pending||refreshRequired} onClick={submit}
-   className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover disabled:opacity-60 sm:min-h-9">
+  <Button variant="primary" type="button" disabled={pending||refreshRequired} onClick={submit}
+   className="max-w-full">
    {pending?"Submitting…":learnerVerificationSubmitLabel(status)}
-  </button>
+  </Button>
   {message?<p role="status" aria-live="polite" className="mt-2 break-words text-sm text-body">{message}</p>:null}
-  {refreshRequired?<button type="button" onClick={()=>router.refresh()}
-    className="mt-3 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Refresh verification status</button>:null}
+  {refreshRequired?<Button variant="primary" type="button" onClick={()=>router.refresh()}
+    className="mt-3 text-primary-text">Refresh verification status</Button>:null}
  </div>;
 }
