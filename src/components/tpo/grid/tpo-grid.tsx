@@ -8,6 +8,11 @@ import { TpoSpreadsheetGrid, type TpoSpreadsheetGridProps } from "../tpo-spreads
  * authorized, functional table until those assets are available, then replace
  * only this implementation. Never move server authorization into this layer.
  */
+/** Exposed for source audits: native AG Grid is NOT available in this dependency set. */
+export const TPO_GRID_ENGINE = "shared-table-fallback" as const;
+
 export function TpoGrid<Row>(props: TpoSpreadsheetGridProps<Row>) {
-  return <TpoSpreadsheetGrid {...props} />;
+  return <div data-slot="tpo-grid" data-grid-engine={TPO_GRID_ENGINE} className="min-w-0">
+    <TpoSpreadsheetGrid<Row> {...props} />
+  </div>;
 }
