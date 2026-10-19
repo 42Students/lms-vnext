@@ -1,4 +1,5 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ export default function LearnerProfileError({
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="px-3 py-10 text-center">
+    <Alert tone="error" className="px-3 py-10 text-center">
       <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         Unable to load your profile
       </h1>
@@ -21,6 +22,6 @@ export default function LearnerProfileError({
         <Button className="min-h-11" onClick={reset}>Retry</Button>
         <Link href="/learn/courses" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Courses</Link>
       </div>
-    </section>
+    </Alert>
   );
 }
