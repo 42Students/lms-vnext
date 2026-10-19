@@ -154,3 +154,25 @@ A subsequent **17 individually pushed `[chat-15]` file commits** tightened visua
 The updates touch visual classes and focus/hover states; existing data queries, visibility constraints, submit logic, redirects, and content remain intact. Shared shell/global CSS continues to be owned by the designated shell lanes. Status badges and meaningful contained interview/portfolio cards remain enclosed, avoiding flattening objects that have a genuine card role.
 
 **Source verification:** examined the touched markup and closing tags after edits; none of the inspected files contained a dangling standalone `</Select`/`</Button` or other truncated closing tag. **Not run:** application, TypeScript compiler, lint, tests, CI or browser screenshots. Full old-versus-vNext pixel verification remains pending.
+
+
+## 2026-10-19 further source-only HR/recruiter sweep: remaining controls and states
+
+The requested `docs/audit/ux/north-star-sweep-15.md` is not present in the repository; this `north-star-sweep-chat-15.md` remains the actual lane checklist and file disposition record.
+
+Read all substantive authenticated HR page implementations, the independent recruiter change-request route and recruiter-owned UI components. The other recruiter routes delegate to HR source implementations, and their error/loading/not-found pages use shared fallback primitives owned by other lanes. Do not add duplicate skins or change those shared files.
+
+**20 new `[chat-15]` file-edit commits** in this pass, pushed to `chatgpt/chat-15-b` only. The changes address source residuals rather than previously completed shell work:
+
+| Group | Residual styling corrected |
+|---|---|
+| Drive request receipt, stale-drive warning and round editing | White hairline secondary action surfaces, 36px height, 14px text, visible focus, hover-fill; round list empty state no longer creates a redundant inner card |
+| Recruiter profile editors | Designation save, name cancel, profile status text and private review save match semantic legacy typography, focus and primary hover |
+| Recruiter bell and activity | Notification retry and preview hover/focus, active company picker compact control and Today data-limit pale warning strip |
+| Round results and hiring portfolio | Result bulk action focus/hover and white-on-teal submit; hiring portfolio requests show slim amber strip and focused secondary actions |
+| Sent proposals and recruiter inbox | 36px legacy college picker, export and pagination controls, pale interview-slot alert, compact notification pager |
+| Recruiter pages | Round-removal confirmation, round review drive tile hover, Company/Reports underline tab vertical spacing, Calendar underline tabs keyboard-focus rings |
+
+Upstream main changed several of the same files while this lane was working. Merged upstream with a true two-parent commit; the upstream `<Button>` migration in the round-removal confirmation was deliberately retained instead of resurrecting this lane's native `<button>`. Distinct lane changes were reapplied without overwriting other branches. All commits are on `chatgpt/chat-15-b` only.
+
+Markup and JSX tag-name sequences before/after each change were compared for the ten-file second batch; the first batch also made only class/text styling changes without opening/closing JSX elements. Explicit incomplete `</Select`, `</Button`, `</Link` and native closing lines were checked. Source review cannot certify runtime pixel parity: screenshots and TypeScript verification remain outstanding, and **no CI, test, typecheck or application execution occurred**.
