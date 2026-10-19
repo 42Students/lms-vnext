@@ -669,7 +669,7 @@ export async function PlacementCalendarWorkspace({
         ))}
       </section>
 
-      <section className="border-b border-border pb-5">
+      <section className={isTpo?"border-b border-border pb-5 "+calendarStyles.tpoCommandBar:"border-b border-border pb-5"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -681,7 +681,7 @@ export async function PlacementCalendarWorkspace({
             </p>
           </div>
           <div
-            className="flex flex-wrap gap-2"
+            className={"flex flex-wrap gap-2 "+(isTpo?calendarStyles.tpoViewSwitch:"")}
             role="group"
             aria-label="Calendar view"
           >
@@ -711,7 +711,7 @@ export async function PlacementCalendarWorkspace({
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <div className={"mt-4 flex flex-wrap items-center gap-2 "+(isTpo?calendarStyles.tpoNavigationRow:"")}>
           <Link
             href={calendarHref(
               basePath,
@@ -960,7 +960,7 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`} tabIndex={0}
-          className="hidden overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]"
+          className={"hidden overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)] "+(isTpo?calendarStyles.tpoMonthFrame:"")}
         >
           <CalendarGrid variant="hairline" className={"min-w-[56rem] "+calendarStyles.calendarHairline}>
             {[
