@@ -335,8 +335,8 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
   --lms-space-4: 16px;
   --lms-space-5: 24px;
   --lms-space-6: 32px;
-  --lms-space-7: 48px;
-  --lms-space-8: 64px;
+  --lms-space-7: 40px;
+  --lms-space-8: 48px;
 }
 body {
   font-size: 14px;
