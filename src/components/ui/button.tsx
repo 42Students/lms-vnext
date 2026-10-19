@@ -2,7 +2,7 @@ import type { ComponentPropsWithRef } from "react";
 import { cx } from "@/lib/class-names";
 
 export type ButtonProps = ComponentPropsWithRef<"button"> & {
-  variant?: "primary" | "secondary" | "ghost" | "danger";
+  variant?: "primary" | "secondary" | "ghost" | "danger" | "link";
   size?: "sm" | "md" | "lg" | "icon" | "icon-sm";
   loading?: boolean;
 };
@@ -11,6 +11,7 @@ const variantClasses = {
   primary: "border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] text-[var(--lms-on-primary)] enabled:hover:border-[var(--lms-button-primary-hover)] enabled:hover:bg-[var(--lms-button-primary-hover)] disabled:border-[var(--lms-neutral-200)] disabled:bg-[var(--lms-neutral-200)] disabled:text-[var(--lms-neutral-500)]",
   secondary: "border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] text-[var(--lms-body-text)] enabled:hover:border-[var(--lms-primary)] enabled:hover:bg-[var(--lms-primary)] enabled:hover:text-white",
   ghost: "border-transparent bg-transparent text-[var(--lms-body-text)] enabled:hover:bg-[var(--lms-primary-subtle)] enabled:hover:text-[var(--lms-primary-text)]",
+  link: "border-transparent bg-transparent text-[var(--lms-link-text)] underline-offset-4 enabled:hover:underline enabled:hover:text-[var(--lms-link-text)]",
   danger: "border-[var(--lms-error)] bg-[var(--lms-error)] text-[var(--lms-on-primary)] enabled:hover:border-[#dc2626] enabled:hover:bg-[#dc2626]",
 } as const;
 const sizeClasses = {
