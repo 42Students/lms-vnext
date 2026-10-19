@@ -98,12 +98,12 @@ export function LearnerJobsBrowse({
       <nav aria-label="Drive bookmarks" className="flex flex-wrap items-center gap-3">
         <button type="button" aria-pressed={!savedOnly}
           onClick={()=>updateQuery({saved:null})}
-          className={!savedOnly?"min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-[14px] font-[650] text-on-primary sm:min-h-9":"min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-[14px] font-semibold text-body sm:min-h-9"}>
+          className={!savedOnly?"min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] sm:min-h-9":"min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-[14px] font-semibold text-body sm:min-h-9"}>
           All drives
         </button>
         <button type="button" aria-pressed={savedOnly}
           onClick={()=>updateQuery({saved:"1"})}
-          className={savedOnly?"min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-[14px] font-[650] text-on-primary sm:min-h-9":"min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-[14px] font-semibold text-body sm:min-h-9"}>
+          className={savedOnly?"min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] sm:min-h-9":"min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-[14px] font-semibold text-body sm:min-h-9"}>
           Saved ({savedSummary.saved})
         </button>
       </nav>
@@ -195,7 +195,7 @@ export function LearnerJobsBrowse({
             <select value={filters.sort}
               aria-label="Sort placement drives"
               onChange={(event) => updateQuery({ sort: event.target.value })}
-              className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9">
               <option value="deadline">Deadline soonest</option>
               <option value="newest">Newest first</option>
               <option value="ctc">Highest CTC</option>
@@ -293,13 +293,13 @@ export function LearnerJobsBrowse({
         <nav aria-label="Drive results pages" className="flex items-center justify-between gap-4">
           <button type="button" disabled={page <= 1}
             onClick={() => updateQuery({ page: String(page - 1) })}
-            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-40 sm:min-h-9">
             Previous
           </button>
           <span className="text-sm tabular-nums text-body">Page {page} of {totalPages}</span>
           <button type="button" disabled={page >= totalPages}
             onClick={() => updateQuery({ page: String(page + 1) })}
-            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-40 sm:min-h-9">
             Next
           </button>
         </nav>

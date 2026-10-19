@@ -7,6 +7,6 @@ export default function LearnerCalendarError({reset}:{error:Error&{digest?:strin
     description="Your schedule could not be retrieved. This does not mean you have no events. Retry to reload the selected calendar view."
     action={<div className="flex flex-wrap justify-center gap-3">
       <Button className="min-h-11" variant="secondary" onClick={reset}>Retry</Button>
-      <Link href="/learn/my-placements" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">My Placements</Link>
+      <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">My Placements</Link>
     </div>} />;
 }

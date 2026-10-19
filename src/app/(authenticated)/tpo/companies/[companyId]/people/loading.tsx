@@ -1,1 +1,1 @@
-export default function Loading() { return <div aria-busy="true" aria-label="Loading contact people" className="space-y-4"><div className="h-20 animate-pulse rounded-[var(--radius)] bg-muted" /><div className="h-48 animate-pulse rounded-[var(--radius)] bg-muted" /></div>; }
+export default function Loading() { return <div aria-busy="true" aria-label="Loading contact people" className="space-y-4"><div className="h-20 animate-pulse rounded-[var(--lms-canvas-radius)] bg-muted" /><div className="h-48 animate-pulse rounded-[var(--lms-canvas-radius)] bg-muted" /></div>; }

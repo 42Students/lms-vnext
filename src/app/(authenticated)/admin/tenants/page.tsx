@@ -50,10 +50,15 @@ export default async function TenantDirectory({searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
-   actions={<TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />} />
+   actions={<div className="flex flex-wrap items-center justify-end gap-2">
+    <TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
+    <Link href="/admin/tenants/create"
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">
+      Create an organization and its colleges
+    </Link>
+   </div>} />
   <Link href="/admin/domains" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Domains</Link>
   <div className="flex flex-wrap gap-3">
-   <Link href="/admin/tenants/create" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Create an organization and its colleges</Link>
    <Link href="/admin/tenants/setup" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
   </div>
   <form className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">

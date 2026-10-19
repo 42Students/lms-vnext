@@ -11,11 +11,11 @@ const tabs = [
 export function TpoBatchWorkspaceTabs({ batchId, active, students }: {
   batchId: string; active: typeof tabs[number]["slug"]; students?: number;
 }) {
-  return <nav aria-label="Batch workspace tabs" className="flex flex-wrap gap-2 border-b border-border pb-3">
+  return <nav aria-label="Batch workspace tabs" className="flex flex-wrap gap-2 border-b border-border">
     {tabs.map(tab => <Link key={tab.slug} aria-current={tab.slug === active ? "page" : undefined}
       href={`/tpo/batches/${encodeURIComponent(batchId)}${tab.slug ? "/"+tab.slug : ""}`}
-      className={`inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold ${tab.slug === active
-        ? "border-primary bg-primary-subtle text-link" : "border-border bg-surface text-body"}`}>
+      className={`inline-flex min-h-9 items-center border-b-[3px] px-3 text-sm font-semibold transition-colors ${tab.slug === active
+        ? "border-primary text-link" : "border-transparent text-body hover:border-primary hover:text-link"}`}>
       {tab.label}{tab.slug === "students" && students !== undefined ? ` (${students})` : ""}
     </Link>)}
   </nav>;

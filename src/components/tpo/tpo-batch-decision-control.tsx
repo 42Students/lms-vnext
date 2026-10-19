@@ -1,4 +1,7 @@
 "use client";
+import {Button} from "@/components/ui/button";
+import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
@@ -35,17 +38,17 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
   <h2 className="font-semibold">Who is in placements?</h2>
   <p className="text-sm text-muted-foreground">This sets the default for this whole cohort. More specific class and student decisions override it.</p>
   <label className="block text-sm">Batch default decision
-   <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" value={decision} disabled={pending}
+   <Select  value={decision} disabled={pending}
      onChange={e=>setDecision(e.target.value as Decision)}>
     <option value="NOT_DECIDED">Not decided</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
-   </select>
+   </Select>
   </label>
   {decision==="INELIGIBLE"?<label className="block text-sm">Reason required
-   <textarea className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" maxLength={200} value={reason}
+   <Textarea  maxLength={200} value={reason}
     onChange={e=>setReason(e.target.value)} disabled={pending}/>
   </label>:null}
-  <button type="button" onClick={()=>void submit()} disabled={pending||!valid}
-   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary disabled:opacity-50">{pending?"Saving…":"Review and save batch decision"}</button>
+  <Button type="button" onClick={()=>void submit()} disabled={pending||!valid}
+   >{pending?"Saving…":"Review and save batch decision"}</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm">{message}</p>:null}
   {actionId?<TpoBatchUndoControl batchId={batchId} actionId={actionId}/>:null}

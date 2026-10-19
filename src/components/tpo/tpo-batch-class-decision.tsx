@@ -1,4 +1,7 @@
 "use client";
+import {Button} from "@/components/ui/button";
+import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -35,21 +38,21 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
  return <div className="space-y-2">
   <div className="flex flex-wrap items-end gap-2">
    <label className="grid gap-1 text-sm font-semibold">Who is in
-    <select value={choice} onChange={e=>{setChoice(e.target.value as Decision);setError("");}} disabled={busy||finished}
-     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+    <Select value={choice} onChange={e=>{setChoice(e.target.value as Decision);setError("");}} disabled={busy||finished}
+     >
      <option value="NOT_DECIDED">Follows the batch</option>
      <option value="ELIGIBLE">Eligible</option>
      <option value="INELIGIBLE">Ineligible</option>
-    </select>
+    </Select>
    </label>
-   <button type="button" onClick={review} disabled={busy||finished||!changed}
-    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+   <Button type="button" onClick={review} disabled={busy||finished||!changed}
+    >
     {busy?"Saving…":"Save"}
-   </button>
+   </Button>
   </div>
   {choice==="INELIGIBLE"?<label className="grid gap-1 text-sm">Reason
-   <textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={200} rows={2}
-    disabled={busy||finished} className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" placeholder="Reason for ineligible decision"/>
+   <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={200} rows={2}
+    disabled={busy||finished}  placeholder="Reason for ineligible decision"/>
   </label>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
