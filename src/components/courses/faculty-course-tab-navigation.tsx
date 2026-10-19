@@ -1,4 +1,5 @@
 "use client";
+import {Select} from "@/components/ui/select";
 
 import Link from "next/link";
 import { useEffect } from "react";
@@ -53,16 +54,16 @@ export function FacultyCourseTabNavigation({
         {teachingSections.length > 1 ? (
           <label htmlFor="faculty-course-section" className="text-xs font-semibold text-body">
             {activeTab==="attendanceDetail"?"Select class to view attendance":"Teaching Section"}
-            <select
+            <Select
               id="faculty-course-section"
               value={deliveryId}
               onChange={(event) => router.push(facultyCourseTabHref(event.target.value, activeTab))}
-              className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground sm:min-h-9"
+              className="ml-2 min-h-11 w-auto"
             >
               {teachingSections.map((section) => (
                 <option key={section.deliveryId} value={section.deliveryId}>{section.label}</option>
               ))}
-            </select>
+            </Select>
           </label>
         ) : null}
       </div>
