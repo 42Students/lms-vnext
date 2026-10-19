@@ -327,7 +327,7 @@ export function AcademicsOverview({
             College calendar windows with explicit lifecycle.
           </p>
         </div>
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Academic periods" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={periodColumns}
           rows={workspace.periods}
           getRowKey={(period) => period.id}
