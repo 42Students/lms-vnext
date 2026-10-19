@@ -59,15 +59,15 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     </select></label>
    <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">Preview filters</button>
   </form>
-  <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+  <p className="text-sm text-body rounded-[9px] border border-border bg-muted p-3">
    {result.rows.length} application records shown in this preview.
    {result.truncated?" More records exist; only the first 500 are shown in this preview. The download includes every match.":""}
    {" "}Each row represents an application, not necessarily a distinct learner.
   </p>
-  {result.rows.length===0?<p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+  {result.rows.length===0?<p role="status" className="text-sm text-body rounded-[9px] border border-border bg-muted p-3">
    No persisted applications match these filters.</p>:
    <section aria-label="Applicant export preview" className="grid gap-3">
-    {result.rows.map(row=><article key={row.applicationId} className="rounded-xl border border-border bg-surface p-4">
+    {result.rows.map(row=><article key={row.applicationId} className="border-b border-border py-4">
      <h2 className="font-semibold text-foreground">{row.studentName??"Name unavailable"}</h2>
      <p className="text-sm text-body">{row.roleTitle} · {row.status} · {row.screeningStatus??"Screening unavailable"}</p>
      <p className="text-xs text-body">Channel: {row.channel} · Submitted {new Date(row.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
