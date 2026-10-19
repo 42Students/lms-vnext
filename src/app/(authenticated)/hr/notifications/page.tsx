@@ -42,7 +42,8 @@ export default async function HrMessagesPage({searchParams}:{
    <nav aria-label="Inbox filters" className="flex flex-wrap gap-2">
     {result.choices.length>1?result.choices.map(grant=><Link key={grant.id}
      href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
-     className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary"}>{grant.collegeName}</Link>):null}
+     aria-current={grant.collegeId===result.collegeId?"page":undefined}
+     className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>{grant.collegeName}</Link>):null}
     <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
       (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
      className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
