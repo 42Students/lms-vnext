@@ -38,7 +38,8 @@ export function PopoverListbox({ label, children, className, onDismiss, onKeyDow
     if (event.key === "Escape") {
       event.preventDefault();
       onDismiss?.();
-      event.currentTarget.parentElement?.querySelector<HTMLInputElement>("input")?.focus();
+      const trigger = event.currentTarget.parentElement?.querySelector<HTMLElement>("input, button[aria-expanded], [role=combobox]");
+      trigger?.focus();
       return;
     }
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
