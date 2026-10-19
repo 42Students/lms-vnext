@@ -51,11 +51,11 @@ export function SuperAdminFacultyAssignmentCreate({
    }
   });
  }
- const inputClass="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
+ const inputClass="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground sm:min-h-9";
  return <section aria-label="Create teaching assignment" className="space-y-3">
    <button type="button" disabled={!available.length||!faculty.length||pending}
     onClick={()=>setOpen(value=>!value)} aria-expanded={open}
-    className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
     Create teaching assignment
    </button>
    {!available.length?<p role="status" className="text-sm text-body">
@@ -109,7 +109,7 @@ export function SuperAdminFacultyAssignmentCreate({
        {pending?"Assigning…":"Assign faculty"}
       </button>
       <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-       className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Cancel</button>
+       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold sm:min-h-9">Cancel</button>
     </div>
    </form>:null}
  </section>;
@@ -154,14 +154,14 @@ export function SuperAdminTeachingRoleEdit({
       <label className="grid gap-1 text-xs font-semibold">Teaching role
        <select value={role} disabled={pending}
         onChange={e=>setRole(e.target.value as CourseTeachingRole)}
-        className="min-h-11 rounded border border-border bg-surface px-2">
+        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm sm:min-h-9">
         {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
           {facultyAssignmentRoleLabel(value)}</option>)}
        </select>
       </label>
       <button type="button" disabled={pending||role===initialRole}
        onClick={()=>void save()}
-       className="min-h-11 rounded border border-border px-3 text-sm font-semibold">
+       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold sm:min-h-9">
        {pending?"Saving…":"Save role"}
       </button>
     </div>:null}
