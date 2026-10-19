@@ -4,6 +4,7 @@ import {useEffect,useId,useMemo,useState,type ReactNode} from "react";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
@@ -206,8 +207,7 @@ export function GridWorkspace<Row>({
    {extraActions}
   </div>
   {activeFilters.length?<div className="flex flex-wrap gap-2" aria-label="Active grid filters">
-   {activeFilters.map(field=><Button variant="secondary" size="sm" key={field.key}
-    className="rounded-full" type="button"
+   {activeFilters.map(field=><FilterChip key={field.key} type="button"
     aria-label={"Remove "+field.label+" filter"}
     onClick={()=>{
      const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{
@@ -215,7 +215,7 @@ export function GridWorkspace<Row>({
      });router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
     }}>
     {field.label}: {field.options.find(opt=>opt.value===params.get(field.urlKey??"filter."+field.key))?.label??"Unknown"} ×
-   </Button>)}
+   </FilterChip>)}
   </div>:null}
   {filterOpen&&filters.length?<div id={id+"-filters"}>
    <TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet/>
