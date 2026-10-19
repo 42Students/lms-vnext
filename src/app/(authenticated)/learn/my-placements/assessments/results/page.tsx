@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -58,16 +60,16 @@ export default async function LearnerAssessmentResultsPage({
       />
       <Tabs ariaLabel="Filter published assessment results" renderPanel={false} value={view} items={views.map(option=>({value:option.id,label:option.label,count:results.counts[option.id],href:href(option.id)}))}/>
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        {view!=="all" ? <input type="hidden" name="view" value={view}/> : null}
+        {view!=="all" ? <Input type="hidden" name="view" value={view}/> : null}
         <label className="min-w-0 flex-1 text-xs font-semibold text-body">
           Search published results
-          <input type="search" name="q" defaultValue={q} maxLength={100}
+          <Input type="search" name="q" defaultValue={q} maxLength={100}
             placeholder="Company, role or round"
-            className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+            className="mt-1 min-h-11"/>
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">
+        <Button type="submit" className="min-h-11">
           Search
-        </button>
+        </Button>
         {q?<Link href={href(view,1,"")}
           className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
       </form>
