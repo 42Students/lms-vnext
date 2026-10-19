@@ -1,4 +1,5 @@
 "use client";
+import {Select} from "@/components/ui/select";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 
 import {useState} from "react";
@@ -62,23 +63,23 @@ export function TpoAfterCollegeEditor({
   return <div className="min-w-40 space-y-2" aria-label={"After college for " + learnerName}>
     <label className="grid gap-1 text-xs font-medium">
       After college
-      <select value={draft} disabled={!available || pending}
+      <Select value={draft} disabled={!available || pending}
         onChange={event => setDraft(event.target.value as AfterCollegeOutcome)}
-        className="min-h-11 sm:min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2 text-xs">
+        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-xs">
         {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(draft)?<option value={draft} disabled>{AFTER_COLLEGE_LABELS[draft]} · Automatic</option>:null}
         {afterCollegeOptions().map(option => <option value={option.value} key={option.value}>
           {option.label}
         </option>)}
-      </select>
+      </Select>
     </label>
     {["ENTREPRENEURSHIP","COMPETITIVE_EXAMS"].includes(draft)?<p className="text-xs text-muted-foreground">Additional destination details are not yet stored; verify these with the learner before saving.</p>:null}
     <div className="flex flex-wrap gap-2">
-      <button type="button" disabled={!available || pending || draft === saved}
-        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-xs font-semibold disabled:opacity-50"
-        onClick={() => write(draft)}>Save</button>
-      {undo !== null && undo !== saved ? <button type="button" disabled={pending}
-        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-xs disabled:opacity-50"
-        onClick={() => write(undo, true)}>Undo</button> : null}
+      <Button variant="secondary" type="button" disabled={!available || pending || draft === saved}
+        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold disabled:opacity-50"
+        onClick={() => write(draft)}>Save</Button>
+      {undo !== null && undo !== saved ? <Button variant="secondary" type="button" disabled={pending}
+        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs disabled:opacity-50"
+        onClick={() => write(undo, true)}>Undo</Button> : null}
     </div>
     {!available ? <p className="text-xs text-muted-foreground">Outcome storage unavailable.</p> : null}
     {message ? <p role="status" className="text-xs">{message}</p> : null}
