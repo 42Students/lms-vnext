@@ -24,7 +24,7 @@ export function TpoInboxSearch({value,placeholder}:{
  },[]);
  return <Input ref={searchInput} name="q" type="search" defaultValue={value} maxLength={120}
   placeholder={placeholder}
-  className="min-h-11 w-full min-[768px]:min-h-9"
+  className="min-h-11 w-full md:min-h-9"
   onChange={event=>{
     const text=event.currentTarget.value.trim();
     if(timer.current)clearTimeout(timer.current);
