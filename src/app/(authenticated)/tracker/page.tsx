@@ -24,10 +24,10 @@ export default async function TrackerReportPage({
     <PageHeader eyebrow="Report an LMS issue" title="What went wrong?"
       description="Pick the context, describe the problem, and submit." />
     {isSuperAdmin(context)?<TrackerAdminNav />:
-      <Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      <Link href="/tracker/mine" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         My reports
       </Link>}
-    {!ready ? <div role="status" className="rounded-xl border border-border bg-surface p-5">
+    {!ready ? <div role="status" className="border-y border-border py-5">
       <p className="font-semibold">Reports are temporarily unavailable.</p>
       <p className="mt-2 text-sm text-body">
         Try again soon. Your report has not been submitted.
