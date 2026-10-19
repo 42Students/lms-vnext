@@ -18,8 +18,8 @@ export default async function MentorProjectTimelinePage({
     normalized?{projectId:p.projectId,...normalized}:null,
   );
   if(!parsed.success)return <section role="alert" className="space-y-2">
-    <h1>Invalid timeline selector</h1>
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Projects</Link>
+    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid timeline selector</h1>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
   </section>;
   const data=await getMentorProjectTimeline(
     await getCurrentRequestContext(),parsed.data,
@@ -28,7 +28,7 @@ export default async function MentorProjectTimelinePage({
     <PageHeader eyebrow="Mentor · Project" title="Release &amp; Sprint timeline"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Sprint workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -40,7 +40,7 @@ export default async function MentorProjectTimelinePage({
           <Link key={status} href={mentorTimelineHref({
             ...data.query,releaseStatus:status,page:1,
           })} aria-current={data.query.releaseStatus===status?"page":undefined}
-            className="inline-flex min-h-11 items-center rounded-full border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            className="inline-flex min-h-11 items-center rounded-full border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             {status.replaceAll("_"," ")}
           </Link>)}
       </nav>
@@ -48,7 +48,7 @@ export default async function MentorProjectTimelinePage({
         {(["ALL","PLANNED","ACTIVE","COMPLETED"] as const).map(status=>
           <Link key={status} href={mentorTimelineHref({...data.query,sprintStatus:status,page:1})}
             aria-current={data.query.sprintStatus===status?"page":undefined}
-            className="inline-flex min-h-11 items-center rounded-full border border-border px-3 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            className="inline-flex min-h-11 items-center rounded-full border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             {status==="ALL"?"All Sprint states":status}
           </Link>)}
       </nav>
@@ -69,7 +69,7 @@ export default async function MentorProjectTimelinePage({
           {release.sprints.length===0
             ?<p className="mt-3 text-sm text-body">No registered Sprints in this Release.</p>
             :<ol className="mt-3 grid gap-3">{release.sprints.map(sprint=>
-              <li key={sprint.id} className="rounded-lg bg-surface-subtle p-3">
+              <li key={sprint.id} className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="font-semibold text-foreground">
                     Sprint {sprint.sequence+1}: {sprint.title}
@@ -88,9 +88,9 @@ export default async function MentorProjectTimelinePage({
         <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
           {data.page>1&&<Link href={mentorTimelineHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+            className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
           {data.page<data.totalPages&&<Link href={mentorTimelineHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+            className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
         </div>
       </nav>
     </>}
