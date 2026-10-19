@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -131,11 +132,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         </Link>)}
       </div>
     </section>:null}
-    <nav aria-label="Drive lifecycle" className="flex flex-wrap gap-3 border-b border-border">{viewOptions.map(option =>
-      <Link key={option.view} href={recruiterDrivesHref({...query.data, collegeId: selectedCollege, view: option.view, page: 1})}
-        aria-current={query.data.view === option.view ? "page" : undefined}
-        className={query.data.view === option.view ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
-        {option.label} ({option.count})</Link>)}</nav>
+    <Tabs renderPanel={false} ariaLabel="Drive lifecycle" value={query.data.view}
+      items={viewOptions.map(option => ({value:option.view,label:option.label,count:option.count,
+        href:recruiterDrivesHref({...query.data,collegeId:selectedCollege,view:option.view,page:1})}))}/>
     {query.data.view!=="WAITING"?<div className="flex justify-end">
       <Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:1})
         .replace("/recruiter/drives","/api/placements/recruiter/drives/export")}
