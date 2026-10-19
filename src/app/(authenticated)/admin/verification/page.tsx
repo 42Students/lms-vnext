@@ -14,7 +14,7 @@ export default async function AdminVerificationEntry() {
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
     return <div className="min-w-0 space-y-6">
-      <PageHeader eyebrow="Super Admin" title="Profile verification"/>
+      <PageHeader title="Profile verification"/>
       <ErrorState title="Verification access denied"
         description="Your account cannot access Super Admin verification."
         action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
@@ -28,7 +28,6 @@ export default async function AdminVerificationEntry() {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
         title="Profile verification"
         description="Students' education and identity, checked against their documents."
         actions={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Browse colleges</Link>}
