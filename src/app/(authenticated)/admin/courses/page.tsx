@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminCourseOverview } from "@/components/courses/admin-course-overview";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
 import {parseSuperAdminCourseQuery} from "@/modules/admin-ui/super-admin-course-query-model";
 import { ErrorState } from "@/components/ui/error-state";
@@ -21,15 +22,18 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
           title="Courses"
           description="Course administration requires a college safety scope."
         />
-        <nav aria-label="Course and content directories" className="flex flex-wrap items-center gap-2">
-      <Link href="/admin/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Lessons directory →</Link>
-      <Link href="/admin/videos" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Videos directory →</Link>
-      <Link href="/admin/resources" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Resources directory →</Link>
-      <Link href="/admin/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Live Classes directory →</Link>
-        <Link href="/admin/course-progress" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Course Progress directory →</Link>
-        <Link href="/admin/assignments" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Assignments directory →</Link>
-        <Link href="/admin/quizzes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Quizzes directory →</Link>
-      </nav>
+        <Tabs ariaLabel="Course and content directories" value="courses" renderPanel={false}
+          items={[
+            { value: "courses", label: "Courses", href: "/admin/courses" },
+            { value: "lessons", label: "Lessons directory →", href: "/admin/lessons" },
+            { value: "videos", label: "Videos directory →", href: "/admin/videos" },
+            { value: "resources", label: "Resources directory →", href: "/admin/resources" },
+            { value: "live", label: "Live Classes directory →", href: "/admin/live-classes" },
+            { value: "progress", label: "Course Progress directory →", href: "/admin/course-progress" },
+            { value: "assignments", label: "Assignments directory →", href: "/admin/assignments" },
+            { value: "quizzes", label: "Quizzes directory →", href: "/admin/quizzes" },
+          ]}
+        />
         <EmptyState
           title="Select a college to continue"
           description="Choose a college in the header above to see its courses."
@@ -57,15 +61,18 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         title="Courses"
         description="Course structure inside the selected college safety scope."
       />
-      <nav aria-label="Course and content directories" className="flex flex-wrap items-center gap-2">
-      <Link href="/admin/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Lessons directory →</Link>
-      <Link href="/admin/videos" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Videos directory →</Link>
-      <Link href="/admin/resources" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Resources directory →</Link>
-      <Link href="/admin/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Live Classes directory →</Link>
-      <Link href="/admin/course-progress" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Course Progress →</Link>
-      <Link href="/admin/assignments" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Assignments →</Link>
-      <Link href="/admin/quizzes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Quizzes →</Link>
-      </nav>
+      <Tabs ariaLabel="Course and content directories" value="courses" renderPanel={false}
+          items={[
+            { value: "courses", label: "Courses", href: "/admin/courses" },
+            { value: "lessons", label: "Lessons directory →", href: "/admin/lessons" },
+            { value: "videos", label: "Videos directory →", href: "/admin/videos" },
+            { value: "resources", label: "Resources directory →", href: "/admin/resources" },
+            { value: "live", label: "Live Classes directory →", href: "/admin/live-classes" },
+            { value: "progress", label: "Course Progress →", href: "/admin/course-progress" },
+            { value: "assignments", label: "Assignments →", href: "/admin/assignments" },
+            { value: "quizzes", label: "Quizzes →", href: "/admin/quizzes" },
+          ]}
+        />
       <AdminCourseOverview
         workspace={workspace}
         courseBasePath="/admin/courses"
