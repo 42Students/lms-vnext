@@ -17,7 +17,7 @@ export type PopoverPanelProps = Omit<ComponentPropsWithoutRef<"section">, "role"
 export const PopoverPanel = forwardRef<HTMLElement, PopoverPanelProps>(
   function PopoverPanel({ label, className, children, onDismiss, onKeyDown, ...rest }, ref) {
     return <section {...rest} ref={ref} role="dialog" aria-modal={false} aria-label={label}
-      onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && event.key === "Escape" && onDismiss) { event.preventDefault(); onDismiss(); } }}
+      onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && event.key === "Escape" && onDismiss) { event.preventDefault(); event.stopPropagation(); onDismiss(); } }}
       data-slot={rest["data-slot"] ?? "popover"}
       className={cx("min-w-0 rounded-[6px] border border-[var(--lms-canvas-border)] bg-white shadow-[var(--lms-dropdown-shadow)]", className)}>
       {children}
@@ -37,6 +37,8 @@ export function PopoverListbox({ label, children, className, onDismiss, onKeyDow
     if (event.defaultPrevented) return;
     if (event.key === "Escape") {
       event.preventDefault();
+      // Keep Escape inside this nonmodal listbox from closing an outer menu/dialog.
+      event.stopPropagation();
       onDismiss?.();
       const trigger = event.currentTarget.parentElement?.querySelector<HTMLElement>("input, button[aria-expanded], [role=combobox]");
       trigger?.focus();

@@ -65,7 +65,7 @@ export function HrRecruiterBell(){
    if(rootRef.current && !rootRef.current.contains(event.target as Node))setOpen(false);
   };
   const key=(event:KeyboardEvent)=>{
-   if(event.key!=="Escape")return;
+   if(event.defaultPrevented||event.key!=="Escape")return;
    if(event.target instanceof Node && rootRef.current && !rootRef.current.contains(event.target))return;
    event.preventDefault();setOpen(false);triggerRef.current?.focus();
   };
@@ -111,13 +111,14 @@ export function HrRecruiterBell(){
   <Button ref={triggerRef} type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"}
    aria-expanded={open} aria-haspopup="dialog" aria-busy={loading} aria-controls={open?(mobile?"hr-topbar-mobile-notifications":"hr-topbar-desktop-notifications"):undefined}
    onClick={()=>setOpen(value=>!value)}
-   variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 md:!h-9 md:!w-9 md:!min-w-9">
+   variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 md:!h-9 md:!w-9 md:!min-w-9 hover:!bg-[rgba(0,0,0,0.035)] active:!bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
    <ShellNavGlyph name="bell"/>
    {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">{unread>99?"99+":unread}</span>:null}
   </Button>
   {mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} bodyClassName={style.hrNotificationDrawerBody} footer={panelFooter}>
    {panelBody}
-  </Drawer> : open ? <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}>
+  </Drawer> : open ? <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}
+    onDismiss={()=>{setOpen(false);triggerRef.current?.focus();}}>
    <div className={style.hrNotificationHeader}>
     <h2>Recruiter notifications</h2>
     <Button variant="ghost" size="sm" type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}>Close</Button>

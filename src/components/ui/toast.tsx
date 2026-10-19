@@ -34,7 +34,7 @@ export function clearEvictedToastTimers(
 ): void {
   for (const id of evictedIds) {
     const timer = timers.get(id);
-    if (timer) cancel(timer);
+    if (timer !== undefined) cancel(timer);
     timers.delete(id);
   }
 }
@@ -100,7 +100,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const nextToastOrdinal = useRef(0);
   const dismiss = useCallback((id: string) => {
     const timer = timers.current.get(id);
-    if (timer) clearTimeout(timer);
+    if (timer !== undefined) clearTimeout(timer);
     timers.current.delete(id);
     timerStartedAt.current.delete(id);
     readingDurations.current.delete(id);
@@ -109,7 +109,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, []);
   const scheduleTimedToast = useCallback((id: string, duration: number) => {
     const existing = timers.current.get(id);
-    if (existing) clearTimeout(existing);
+    if (existing !== undefined) clearTimeout(existing);
     timers.current.delete(id);
     timerStartedAt.current.delete(id);
     if (!document.hidden && !interacting.current.hover && !interacting.current.focus) {

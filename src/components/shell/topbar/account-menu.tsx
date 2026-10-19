@@ -39,30 +39,36 @@ export function TopbarAccountMenu({
   useEffect(() => {
     if (!open) return;
     // The legacy dropdown is an operable menu, not merely an avatar hover card.
-    root.current?.querySelector<HTMLElement>('[data-slot="popover"] a, [data-slot="popover"] button, [data-slot="popover"] input, [data-slot="popover"] select')?.focus();
+    const first = root.current?.querySelector<HTMLElement>(
+      '[data-slot="popover"] a[href]:not([aria-disabled="true"]), [data-slot="popover"] button:not(:disabled), [data-slot="popover"] input:not(:disabled), [data-slot="popover"] select:not(:disabled)'
+    );
+    (first ?? root.current?.querySelector<HTMLElement>('[data-slot="popover"]'))?.focus();
     const onPointer = (event: PointerEvent) => {
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
     };
     const onKey = (event: KeyboardEvent) => {
+      // Other menus may be open elsewhere in the shell; this listener owns
+      // only the account panel and never overrides an inner listbox's key.
+      if (event.defaultPrevented || !(event.target instanceof HTMLElement) ||
+          !root.current?.contains(event.target)) return;
       if (event.key === "Escape") {
         event.preventDefault();
         setOpen(false);
         trigger.current?.focus();
         return;
       }
-      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
-      if (!(event.target instanceof HTMLElement) ||
-          !root.current?.contains(event.target) ||
-          event.target.matches("input, select, textarea")) return;
+      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key) ||
+          event.target.closest('input, select, textarea, [contenteditable="true"], [role="listbox"]')) return;
       const actions = Array.from(root.current.querySelectorAll<HTMLElement>(
-        '[data-slot="popover"] a[href], [data-slot="popover"] button:not([disabled])'
-      )).filter(action => action.getClientRects().length > 0);
+        '[data-slot="popover"] a[href]:not([aria-disabled="true"]), [data-slot="popover"] button:not(:disabled):not([aria-disabled="true"])'
+      )).filter(action => action.getClientRects().length > 0 &&
+        !action.closest('[hidden], [inert], [aria-disabled="true"]'));
       if (!actions.length) return;
       const index = actions.indexOf(event.target);
       event.preventDefault();
       const next = event.key === "Home" ? 0 : event.key === "End" ? actions.length - 1
         : event.key === "ArrowDown" ? (index + 1) % actions.length
-        : (index - 1 + actions.length) % actions.length;
+        : index < 0 ? actions.length - 1 : (index - 1 + actions.length) % actions.length;
       actions[next]?.focus();
     };
     document.addEventListener("pointerdown", onPointer);
@@ -103,13 +109,14 @@ export function TopbarAccountMenu({
       const next = event.relatedTarget;
       if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
     }}>
-    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={style.avatar}
+    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={`${style.avatar} !min-h-11 !min-w-11`}
       aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </Button>
-    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={style.menu}>
+    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={style.menu}
+      tabIndex={-1} onDismiss={() => { setOpen(false); trigger.current?.focus(); }}>
       <div className="px-2 pb-2 text-left">
         <p className={style.accountHeading}>{roleLabel}</p>
         <p className={style.accountSubheading}>{organizationName}</p>

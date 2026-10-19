@@ -28,10 +28,10 @@ export function SplitButton({
         {label}
       </Button>
       {disabled || loading
-        ? <Button variant="secondary" size="icon" disabled aria-label={menuLabel}>
+        ? <Button variant="secondary" size="icon" disabled aria-label={menuLabel} className="min-h-11 min-w-11 md:min-h-9 md:min-w-9">
             <span aria-hidden="true">▾</span>
           </Button>
-        : <Dropdown align="end" label={menuLabel} trigger={<span aria-hidden="true">▾</span>}>
+        : <Dropdown align="end" label={menuLabel} triggerClassName="min-h-11 min-w-11 md:min-h-9 md:min-w-9" trigger={<span aria-hidden="true">▾</span>}>
             {menu}
           </Dropdown>}
     </div>
