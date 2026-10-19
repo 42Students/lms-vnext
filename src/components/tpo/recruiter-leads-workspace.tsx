@@ -1,6 +1,7 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
+import { FilterChip } from "@/components/ui/filter-chip";
 import { Dropdown } from "@/components/ui/dropdown";
 
 import Link from "next/link";
@@ -682,18 +683,11 @@ export function RecruiterLeadsWorkspace({
                 ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
                 ["QUIET","Gone quiet",rows.filter(row=>row.chips?.includes("QUIET")).length],
               ] as const).filter(([, ,count])=>count>0).map(([key,label,count])=>
-                <button key={key} type="button" aria-pressed={attention===key}
-                  className={attention===key
-                   ?"min-h-11 rounded-md bg-primary px-3 text-sm text-on-primary"
-                   :"min-h-11 rounded-md border border-border px-3 text-sm text-body"}
-                  onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>{label} ({count})</button>)}
-              {needCounts.unassigned>0?<button type="button"
-                aria-pressed={need==="UNASSIGNED"}
-                className={need==="UNASSIGNED"
-                  ?"min-h-11 rounded-md bg-primary px-3 text-sm text-on-primary"
-                  :"min-h-11 rounded-md border border-border px-3 text-sm text-body"}
+                <FilterChip key={key} type="button" aria-pressed={attention===key}
+                  onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>{label} ({count})</FilterChip>)}
+              {needCounts.unassigned>0?<FilterChip type="button" aria-pressed={need==="UNASSIGNED"}
                 onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>
-                Unassigned ({needCounts.unassigned})</button>:null}
+                Unassigned ({needCounts.unassigned})</FilterChip>:null}
             </div>:null}
             {needsExpanded&&!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
              needCounts.unassigned===0?<p role="status" className="text-sm">Nothing right now.</p>:null}
