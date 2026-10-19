@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -42,7 +43,7 @@ export default async function FacultyQuizAttemptPage({
         className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Full Quiz report
       </Link>} />
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <p className="text-sm text-body">
         {data.quiz.resultsPublished
           ? "Results are published for learners."
@@ -53,12 +54,12 @@ export default async function FacultyQuizAttemptPage({
         Question accuracy below uses each learner&apos;s latest attempt, not every retake.
       </p>
     </section>
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
       <h2 className="text-base font-semibold text-foreground">Question accuracy (latest attempts)</h2>
       {data.questions.length===0
         ? <p className="mt-3 text-sm text-muted-foreground">No registered Quiz questions.</p>
         : <ul className="mt-3 grid gap-2">{data.questions.map(q=>
-          <li key={q.id} className="rounded-lg bg-surface-subtle p-3 text-sm text-body">
+          <li key={q.id} className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-sm text-body">
             <span className="font-semibold">{q.prompt}</span>
             <span className="mt-1 block">
               {q.correctCount} correct of {q.answeredCount} answered ·{" "}
@@ -84,7 +85,7 @@ export default async function FacultyQuizAttemptPage({
       {data.query.view!=="ALL"?<input type="hidden" name="view" value={data.query.view}/>:null}
       <label className="grid min-w-0 flex-1 basis-56 gap-1 text-sm font-semibold text-body">
         Search learner attempts
-        <input type="search" name="q" defaultValue={data.query.q} maxLength={120}
+        <Input type="search" name="q" defaultValue={data.query.q} maxLength={120}
           placeholder="Learner name" className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-body text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
       </label>
       <Button type="submit" variant="primary">Search</Button>
@@ -94,7 +95,7 @@ export default async function FacultyQuizAttemptPage({
     {data.items.length===0?<EmptyState title="No matching Quiz attempts"
       description={data.query.q||data.query.view!=="ALL"?"No attempts match these filters in your authorized Section. Clear the filters to see the full history.":"There are no persisted attempts in your authorized Section. This does not mean that results were published."} />
     : <ol className="grid gap-3">{data.items.map(item=>
-      <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+      <li key={item.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h2 className="font-semibold text-foreground">{item.learnerName}</h2>
           <span className="text-sm text-body">Attempt {item.attemptNumber}</span>
@@ -110,7 +111,7 @@ export default async function FacultyQuizAttemptPage({
         {item.questionResults.length===0
           ? <p className="mt-2 text-sm text-body">No recorded question answers.</p>
           : <ul className="mt-3 space-y-2">{item.questionResults.map(result=>
-            <li key={result.questionId} className="rounded-lg bg-surface-subtle px-3 py-2 text-sm text-body">
+            <li key={result.questionId} className="rounded-[var(--lms-control-radius)] bg-surface-subtle px-3 py-2 text-sm text-body">
               <span>{data.questions.find(q=>q.id===result.questionId)?.prompt??"Recorded question"}</span>
               <span className="ml-2 font-semibold">{result.correct?"Correct":"Incorrect"} ·{" "}
                 {result.pointsAwarded}/{result.pointsPossible} points</span>
