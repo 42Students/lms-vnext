@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -43,7 +44,7 @@ export default async function FacultyGradebookPage({
   } catch(error) {
     if(error instanceof CoursesServiceError &&
        error.code==="FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS") {
-      return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
+      return <section role="alert" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
         <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Gradebook report limit</h1>
         <p className="text-sm text-body">
           This Section has more than 100 published assessments. Contact your college
@@ -73,7 +74,7 @@ export default async function FacultyGradebookPage({
     <form method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-foreground">
         Find learner
-        <input type="search" name="search" defaultValue={view.data.search}
+        <Input type="search" name="search" defaultValue={view.data.search}
           maxLength={120} placeholder="Name, roll number or email"
           className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" />
       </label>
@@ -95,7 +96,7 @@ export default async function FacultyGradebookPage({
       description="Try another name, roll number or email. Published grades were not inferred."/>
     :<div className="grid gap-3">
       {filtered.items.map(row=><article key={row.membershipId}
-        className="rounded-xl border border-border bg-surface p-4">
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">
           {row.displayName||row.email||"Unnamed learner"}
         </h2>
