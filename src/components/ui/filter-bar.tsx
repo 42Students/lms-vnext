@@ -78,7 +78,7 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
       {action}
     </div>
     {open ? <button type="button" aria-label="Close filters" onClick={() => setOpen(false)}
-      className="fixed inset-0 z-30 bg-[rgba(23,32,51,0.24)] sm:hidden"/> : null}
+      className="fixed inset-0 z-30 bg-[rgba(30,54,63,0.1)] sm:hidden"/> : null}
     <div id={panelId} ref={panel} style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties} role={open ? "dialog" : undefined} aria-modal={open ? true : undefined}
       aria-label={open ? `${title} options` : undefined}
       className={cx("min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-space-4)] sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none",
