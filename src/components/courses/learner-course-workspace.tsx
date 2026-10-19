@@ -342,13 +342,13 @@ function ContentCard({
         <div className="mt-4 flex flex-wrap gap-2">
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file`}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-on-primary transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Open resource ↗
           </a>
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file?download=1`}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-on-primary transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Download
           </a>
@@ -506,7 +506,7 @@ function AssignmentCard({
         <div role="status" className="mt-3 space-y-2 text-sm text-warning">
           <p>{assignment.dueAt?"Submissions are closed":"Submission unavailable · deadline missing"}</p>
           <button type="button" disabled aria-disabled="true"
-            className="min-h-11 rounded-md border border-border px-4 text-sm text-muted-foreground">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-muted-foreground">
             {assignment.dueAt?"Submission closed":"Unavailable"}
           </button>
         </div>:null}
@@ -837,7 +837,7 @@ export function LearnerCourseWorkspace({
                 <li key={lesson.id}>
                   <Link
                     href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${activeFilter}&lesson=${encodeURIComponent(lesson.id)}#lesson-${encodeURIComponent(lesson.id)}`}
-                    className="flex min-h-11 items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-primary-text hover:bg-muted">
+                    className="flex min-h-11 sm:min-h-9 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-muted">
                     <span className="min-w-0 break-words">{index+1}. {lesson.name}</span>
                     <span className="shrink-0 text-xs text-muted-foreground">{lesson.count} items</span>
                   </Link>

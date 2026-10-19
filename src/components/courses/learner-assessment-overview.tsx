@@ -210,7 +210,7 @@ export function LearnerAssessmentOverview({
   if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
     return <div role="alert" className="rounded-lg border border-border bg-surface p-4">
       <p>Couldn&apos;t load your class, so quizzes can&apos;t be shown.</p>
-      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>
+      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
     </div>;
   }
   if (items.length === 0) {
@@ -294,7 +294,7 @@ export function LearnerAssessmentOverview({
           <input type="search" value={search} maxLength={100}
             onChange={event => {setSearch(event.target.value);setPage(1);}}
             placeholder="Title, lesson or course"
-            className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground" />
+            className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground" />
         </label>
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -349,7 +349,7 @@ export function LearnerAssessmentOverview({
         <button type="button" onClick={() => {
           setCourseId("");setSearch("");setStateFilter("ALL");setSort("DUE");setPage(1);
           if(initialCourseId)router.push(learnerAssessmentCourseHref(kind,null));
-        }} className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        }} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Clear assessment filters
         </button>
       ) : null}
@@ -399,9 +399,9 @@ export function LearnerAssessmentOverview({
                   const state=quizOverviewActionState(item,currentNowMs);
                   return <div className="flex flex-wrap gap-2">
                     <Link href={`/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review?"&review=true":""}`}
-                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">{state.action}</Link>
+                      className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">{state.action}</Link>
                     <Link href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
-                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Attempt history</Link>
+                      className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Attempt history</Link>
                   </div>;
                 }},
             ]}
@@ -496,14 +496,14 @@ export function LearnerAssessmentOverview({
                             `${item.deliveryId}:${item.id}`,
                           )
                         }
-                        className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
+                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
                       >
                         {state.action}
                       </button>
                     ) : (
                       <Link
                         href={href}
-                        className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
+                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
                       >
                         {state.action}
                       </Link>
@@ -511,7 +511,7 @@ export function LearnerAssessmentOverview({
                     {item.kind === "QUIZ" ? (
                       <Link
                         href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-11 sm:w-auto"
+                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-11 sm:min-h-9 sm:w-auto"
                       >
                         Attempt history
                       </Link>
@@ -544,12 +544,12 @@ export function LearnerAssessmentOverview({
             <>
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text sm:w-auto"
+              className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text sm:w-auto"
             >
               Open in Learning Path
             </Link>
             <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
-              className="mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text hover:underline sm:ml-2 sm:mt-0 sm:w-auto">
+              className="mt-2 inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:underline sm:ml-2 sm:mt-0 sm:w-auto">
               Full assignment details
             </Link>
             </>
@@ -693,7 +693,7 @@ export function LearnerAssessmentOverview({
                     deliveryId={selectedAssignment.deliveryId}
                   />
                 ) : <button type="button" disabled aria-disabled="true"
-                  className="mt-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-muted-foreground">
+                  className="mt-3 min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-muted-foreground">
                   {selectedAssignment.dueAt?"Submission closed":"Unavailable"}
                 </button>}
               </>
@@ -711,7 +711,7 @@ export function LearnerAssessmentOverview({
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             Previous
           </button>
@@ -722,7 +722,7 @@ export function LearnerAssessmentOverview({
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             Next
           </button>
