@@ -242,7 +242,7 @@ export default async function HrCalendarPage({
   const query = await searchParams;
   if (Object.values(query).some(Array.isArray)) {
     return <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader eyebrow="Recruiter" title="Calendar" />
+      <PageHeader title="Calendar" />
       <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
         Invalid calendar filters.
       </p>
@@ -308,7 +308,6 @@ export default async function HrCalendarPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
-        eyebrow="Recruiter"
         title="Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
         actions={
