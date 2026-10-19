@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "@/components/courses/faculty-report-legacy-charts.module.css";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import {notFound} from "next/navigation";
@@ -110,16 +111,16 @@ export default async function FacultyQuizReportPage({
           { title: "Not attempted", rows: notAttemptedLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
       />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className={styles.stats}>
         {[
           ["Submitted", `${metrics.submittedLearners}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Questions", metrics.questionCount],
           ["Due date", quiz.dueAt ? facultyReportIstTimestamp(quiz.dueAt) : "—"],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
-            <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
+          <div key={label} className={styles.stat}>
+            <p className={styles.statLabel}>{label}</p>
+            <p className={styles.statValue}>{value}</p>
           </div>
         ))}
       </div>
@@ -151,11 +152,11 @@ export default async function FacultyQuizReportPage({
             const total = Math.max(metrics.submittedLearners, 1);
             const width = Math.round((bucket.count / total) * 100);
             return (
-              <Disclosure key={bucket.label} title={<span className="grid min-w-0 flex-1 grid-cols-[6rem_minmax(0,1fr)_2rem] items-center gap-3">
-                <span className="text-body">{bucket.label}</span>
-                <MetricBar label={bucket.label+" grade distribution"}
+              <Disclosure key={bucket.label} title={<span className={styles.distribution+" min-w-0 flex-1"}>
+                <span className={styles.distributionLabel}>{bucket.label}</span>
+                <MetricBar className={styles.distributionTrack} label={bucket.label+" grade distribution"}
                   value={width} maximum={100} unit="percent" />
-                <strong className="text-right text-foreground">{bucket.count}</strong>
+                <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}
                  className="rounded-md border border-border p-2 text-sm [&>summary]:min-h-9 [&>summary]:px-0">
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
@@ -190,7 +191,7 @@ export default async function FacultyQuizReportPage({
             {questions.map((question, index) => (
               <li
                 key={question.id}
-                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4"
+                className={styles.accuracyRow+" "+(question.accuracyPercent===null?"":question.accuracyPercent<50?styles.accuracyRowPoor:question.accuracyPercent<75?styles.accuracyRowFair:"")}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -207,7 +208,7 @@ export default async function FacultyQuizReportPage({
                       : `${question.accuracyPercent}%`}
                   </strong>
                 </div>
-                <MetricBar className="mt-3" label="Question answer accuracy"
+                <MetricBar className={styles.accuracyTrack+" mt-3 "+(question.accuracyPercent===null?styles.accuracyUnanswered:question.accuracyPercent<50?styles.accuracyPoor:question.accuracyPercent<75?styles.accuracyFair:styles.accuracyGood)} label="Question answer accuracy"
                   value={question.accuracyPercent ?? 0} maximum={100} unit="percent" />
                 <p className="mt-2 text-xs text-muted-foreground">
                   {question.answeredCount > 0
