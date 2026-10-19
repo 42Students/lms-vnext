@@ -37,26 +37,26 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
   }catch(e){setError(e instanceof Error?e.message:"Could not save this change. Please try again.");}
   finally{locked.current=false;setPending(false);}
  }
- return <section aria-label="Timed debarment" className="space-y-4 rounded-[12px] border border-border bg-surface p-5">
+ return <section aria-label="Timed debarment" className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Debar until a date or for N drives</h2>
   <p className="text-sm text-body">A debarment blocks new placement applications until it expires or is lifted. Existing applications stay recorded.</p>
   {active.length>0?<p role="status" className="text-sm font-semibold">Debarred · {active.length} active restriction(s)</p>:null}
   <div className="space-y-3">
    <label className="grid gap-1 text-sm">Reason for Debar
     <textarea value={reason} rows={2} maxLength={500} onChange={e=>setReason(e.target.value)}
-     className="rounded border border-border p-2"/></label>
+     className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
    <label className="grid gap-1 text-sm">How long
     <select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")}
-     className="min-h-9 rounded-[var(--radius)] border border-border p-2">
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
      <option value="DATE">Until a date</option><option value="DRIVES">For N drives</option><option value="MANUAL">Until lifted</option>
     </select></label>
    {duration==="DATE"?<label className="grid gap-1 text-sm">Until date (IST)
     <input type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)}
-     className="min-h-9 rounded-[var(--radius)] border border-border p-2"/></label>:null}
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>:null}
    {duration==="DRIVES"?<label className="grid gap-1 text-sm">Number of drives
     <input type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)}
-     className="min-h-9 rounded-[var(--radius)] border border-border p-2"/></label>:null}
-   <button type="button" className="min-h-9 rounded-[var(--radius)] border border-border px-3 font-semibold disabled:opacity-50"
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2"/></label>:null}
+   <button type="button" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold disabled:opacity-50"
     disabled={pending||active.length>0||reason.trim().length===0||duration==="DATE"&&!untilDate||
       duration==="DRIVES"&&(!Number.isInteger(Number(untilDrives))||Number(untilDrives)<1||Number(untilDrives)>10000)}
     onClick={()=>{setError("");setConfirm({action:"DEBAR"});}}>Review debarment</button>
@@ -65,7 +65,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
   <div className="space-y-3">
    <h3 className="font-semibold">Debarment history</h3>
    {rows.length===0?<p>No timed debarment is recorded for this student.</p>:null}
-   {rows.map(row=><article key={row.id} className="space-y-2 rounded-[var(--radius)] border border-border p-3">
+   {rows.map(row=><article key={row.id} className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
     <p className="break-words font-semibold">{row.active?"Active":"Ended"} · {row.reason}</p>
     <p className="text-sm text-body">{row.untilDate?"Until "+row.untilDate+" IST":row.untilDrives!==null
      ?"For "+row.untilDrives+" drives ("+row.drivesCounted+" counted)":"Until lifted"}</p>
@@ -73,10 +73,10 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     {row.active?<div className="space-y-2">
      <label className="grid gap-1 text-sm">Reason for lifting
       <textarea value={liftReason} maxLength={500} onChange={e=>setLiftReason(e.target.value)}
-       className="rounded border border-border p-2"/></label>
+       className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
      <button type="button" disabled={pending||!liftReason.trim()}
       onClick={()=>{setError("");setConfirm({action:"LIFT",id:row.id});}}
-      className="min-h-9 rounded-[var(--radius)] border border-border px-3 font-semibold disabled:opacity-50">Review lift</button>
+      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold disabled:opacity-50">Review lift</button>
     </div>:null}
    </article>)}
   </div>
