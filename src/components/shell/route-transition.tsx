@@ -25,6 +25,7 @@ export function RouteTransition({children}:{children:ReactNode}) {
   document.addEventListener("click",onNavigate,true);
   return ()=>document.removeEventListener("click",onNavigate,true);
  },[pathname]);
+ useEffect(()=>{setLeaving(false);},[pathname]);
  return <div key={pathname} data-slot="route-content" data-route-transitioning={leaving?"true":undefined}
    className="lms-shell-route-content">{children}</div>;
 }
