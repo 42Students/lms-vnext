@@ -22,7 +22,7 @@ type Invite = {
 };
 type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined";
 
-const actionLink="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-primary px-4 py-2 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const actionLink="inline-flex min-h-9 w-full items-center justify-center rounded-[9px] border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function RecruiterInviteLanding({ token }: { token: string }) {
   const [state, setState] = useState<State>("loading");
@@ -138,7 +138,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   if(state === "load_error") {
     return shell(<div className="space-y-4 text-center">
-      <h1 className="text-xl font-semibold text-foreground">{RECRUITER_INVITE_LOAD_ERROR_HEADING}</h1>
+      <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">{RECRUITER_INVITE_LOAD_ERROR_HEADING}</h1>
       <p className="text-sm text-muted-foreground">Check your connection and try again. Your invitation has not been consumed.</p>
       <Button type="button" className="w-full" onClick={()=>{
         setState("loading");setRetrySequence(i=>i+1);
@@ -149,7 +149,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   if (state === "invalid" || !invite) {
     return shell(
       <div className="text-center">
-        <h1 className="text-xl font-semibold text-foreground">This link is no longer valid</h1>
+        <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">This link is no longer valid</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           It may have expired or already been used. Ask the placement cell to send you a new one.
         </p>
@@ -159,7 +159,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   if(state==="joined"){
     return shell(<div className="text-center space-y-3">
-      <h1 className="text-xl font-semibold text-foreground">You now have access to {invite.collegeName}</h1>
+      <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">You now have access to {invite.collegeName}</h1>
       <p className="text-sm text-muted-foreground">Sign in with your work email, {invite.contactEmail}. We&apos;ll email you a code each time.</p>
       <Link className={actionLink} href="/login">Sign in</Link>
     </div>);
@@ -167,7 +167,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   if (state === "declined") {
     return shell(
       <div className="text-center">
-        <h1 className="text-xl font-semibold text-foreground">Thank you, we have told the placement cell</h1>
+        <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">Thank you, we have told the placement cell</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           You will not be contacted about this again.
         </p>
@@ -177,7 +177,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   return shell(
     <>
-      <h1 className="text-xl font-semibold text-foreground">
+      <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">
         {invite.collegeName} would like you to hire from their students
       </h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
@@ -186,7 +186,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         Contact details are shared only as the placement cell allows.
       </p>
 
-      <div className="mt-5 rounded-lg border border-border bg-surface-secondary p-4 text-sm">
+      <div className="mt-5 rounded-[9px] border border-border bg-surface-secondary p-4 text-sm">
         <p><strong>Contact:</strong> {invite.contactName}</p>
         {invite.designation ? <p><strong>Designation:</strong> {invite.designation}</p> : null}
       </div>
