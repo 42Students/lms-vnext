@@ -130,7 +130,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    </label>
   </div>
   <p className="text-xs text-muted-foreground">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
-  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain bg-surface [mask-image:linear-gradient(to_right,black_0%,black_95%,transparent_100%)] "+weekStyles.grid}>
+  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain bg-surface "+weekStyles.grid}>
    <div className={"grid min-w-[56rem] "+weekStyles.weekColumns}>
     <div className={"sticky left-0 z-10 border-b border-r bg-surface "+weekStyles.corner}>IST</div>
     {days.map(day=><div key={day} className={"border-b border-r text-center text-xs font-semibold "+weekStyles.dayHead}>
@@ -166,7 +166,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         width:(100/event.columns)+"%"};
        const inner=<><strong className="block truncate">{event.title}</strong>
         <span className="block truncate">{event.companyName}</span>
-        <span className="block text-[10px]">{kinds[event.kind]??event.kind}</span></>;
+        <span className="block text-xs">{kinds[event.kind]??event.kind}</span></>;
        return canCreate&&event.followupId&&event.status==="OPEN"?
         <button key={event.id} type="button"
          aria-label={"Move follow-up: "+event.title} data-event-kind={event.kind}
