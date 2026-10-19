@@ -65,14 +65,14 @@ export function RecruiterNotificationBell(){
   <button ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
-    className="relative inline-flex min-h-9 min-w-11 items-center justify-center rounded-[var(--radius)] border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     <span aria-hidden="true">🔔</span>
     {data?.unread&&data.unread>0?<span aria-hidden="true"
       className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
       {data.unread>99?"99+":data.unread}</span>:null}
   </button>
   {isOpen?<section ref={popoverRef} role="dialog" aria-modal="false" aria-label="Notifications"
-    className="absolute right-0 top-full z-50 mt-2 w-[min(25rem,94vw)] rounded-xl border border-border bg-surface p-4 shadow-xl">
+    className="absolute right-0 top-full z-50 mt-2 w-[min(25rem,94vw)] rounded-xl border border-border bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between gap-3">
     <h2 className="font-semibold text-foreground">Notifications</h2>
     <button type="button" onClick={()=>setIsOpen(false)}
