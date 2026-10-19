@@ -305,7 +305,7 @@
 }
 .topbarNotificationBody::-webkit-scrollbar { display:none; }
 
-.topbarNotificationBody > ul {
+.topbarNotificationBody ul[aria-label="Recent placement notifications"] {
   list-style:none;
   margin:0;
   padding:0 12px;
