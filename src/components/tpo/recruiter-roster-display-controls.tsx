@@ -25,8 +25,10 @@ export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,as
    Ascending
   </label>
   {showColumns?<Dropdown align="end" label="Roster columns" trigger="Columns">
-   <div className="max-h-72 min-w-52 space-y-1 overflow-auto overscroll-contain">
-    {ENGAGE_COLUMNS.map(column=><label key={column} className="flex items-center gap-2 text-sm">
+   <div className="max-h-72 min-w-[min(13rem,calc(100vw_-_5rem))] max-w-full space-y-1 overflow-auto overscroll-contain">
+    {ENGAGE_COLUMNS.map(column=><label key={column}
+      className={"flex min-h-11 items-center gap-2 rounded-[8px] px-2 py-1 text-sm transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none "+
+        (column==="Contact"?"cursor-not-allowed opacity-50":"hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)]")}>
       <Checkbox checked={columns.includes(column)} disabled={column==="Contact"}
        onChange={e=>onColumns(e.target.checked?[...columns,column]:columns.filter(x=>x!==column))}/>
       {column}
