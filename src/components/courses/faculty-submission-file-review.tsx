@@ -1,7 +1,8 @@
+"use client";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageLoading } from "@/components/ui/page-loading";
-"use client";
+
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
