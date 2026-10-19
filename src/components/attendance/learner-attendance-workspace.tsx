@@ -142,7 +142,7 @@ function Metric({
   history?:readonly {at:string;label:string}[];
 }) {
   return (
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <section className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </p>
@@ -274,9 +274,9 @@ export function LearnerAttendanceWorkspace({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
       {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{urlNotice}</p> : null}
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <label className="w-full max-w-sm text-xs font-semibold text-body">
             Course
@@ -301,7 +301,7 @@ export function LearnerAttendanceWorkspace({
           </label>
 
           <div className="flex flex-wrap items-end gap-2">
-            <Button
+            <Button className="max-md:min-h-11"
               size="sm"
               variant="secondary"
               aria-label="Previous month"
@@ -329,12 +329,12 @@ export function LearnerAttendanceWorkspace({
               />
             </label>
             {learnerAttendanceCanReturnToMonth(filters.month,defaultMonth) ? (
-              <Button size="sm" variant="secondary"
+              <Button className="max-md:min-h-11" size="sm" variant="secondary"
                 onClick={() => changeMonth(parseMonth(defaultMonth))}>
                 This month
               </Button>
             ) : null}
-            <Button
+            <Button className="max-md:min-h-11"
               size="sm"
               variant="secondary"
               aria-label="Next month"
@@ -356,7 +356,7 @@ export function LearnerAttendanceWorkspace({
             </p>
             {learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month) ? (
               <Link href={learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month)!}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
                 Full course attendance history →
               </Link>
             ) : null}
@@ -364,7 +364,7 @@ export function LearnerAttendanceWorkspace({
         ) : null}
       </section>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
         <Metric label="Total" value={monthRows.length}
           detail="All scheduled and held classes in the selected month."/>
         <Metric
@@ -399,7 +399,7 @@ export function LearnerAttendanceWorkspace({
         />
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-sm font-semibold text-foreground">
@@ -441,13 +441,13 @@ export function LearnerAttendanceWorkspace({
         </p>
       ) : null}
 
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
         <h2 className="m-0 text-sm font-semibold text-foreground">
           Course overview
         </h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {summaries.map((item) => (
-            <Button variant="secondary"
+            <Button className="max-md:min-h-11" variant="secondary"
               key={item.deliveryId}
               type="button"
               onClick={() =>
@@ -496,22 +496,22 @@ export function LearnerAttendanceWorkspace({
           <h2 className="text-sm font-semibold text-foreground">Session history</h2>
           <p className="mt-1 text-xs text-muted-foreground">Status filters affect only the session list, not attendance totals.</p>
         </div>
-        <div className="flex w-full flex-wrap gap-3 sm:w-auto">
+        <div className="flex w-full min-w-0 flex-wrap gap-3 md:w-auto">
         <label className="w-full min-w-44 flex-1 text-xs font-semibold text-body">Order
-          <Select className="mt-1.5 min-h-11 sm:min-h-9 w-full" value={historyOrder}
+          <Select className="mt-1.5 min-h-11 md:min-h-9 w-full" value={historyOrder}
             onChange={event=>changeHistoryOrder(event.target.value as LearnerAttendanceOrder)}>
             <option value="NEWEST">Newest first</option>
             <option value="OLDEST">Oldest first</option>
           </Select>
         </label>
         <label className="w-full min-w-44 flex-1 text-xs font-semibold text-body">Show
-          <Select className="mt-1.5 min-h-11 sm:min-h-9 w-full" value={historyFilter}
+          <Select className="mt-1.5 min-h-11 md:min-h-9 w-full" value={historyFilter}
             onChange={event => changeHistoryFilter(event.target.value as LearnerAttendanceHistoryFilter)}>
             {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
         </label>
         {(historyFilter !== "ALL" || historyOrder !== "NEWEST") ? (
-          <Button variant="secondary" type="button" onClick={() => router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false})}
+          <Button className="max-md:min-h-11" variant="secondary" type="button" onClick={() => router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false})}
             >
             Reset history filters
           </Button>
@@ -523,7 +523,7 @@ export function LearnerAttendanceWorkspace({
           <span>{attendanceCsv.truncated ? "CSV includes the first 200 matching sessions; narrow the selection for remaining records." : "CSV includes the matching sessions shown for this month."}</span>
           <a download="learner-attendance-history.csv"
             href={"data:text/csv;charset=utf-8,"+encodeURIComponent(attendanceCsv.content)}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
             Download attendance CSV
           </a>
         </div>

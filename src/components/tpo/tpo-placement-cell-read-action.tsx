@@ -29,10 +29,10 @@ export function TpoPlacementCellReadAction({id}:{id:string}){
  }
  return <div className="mt-3 space-y-1">
   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void markRead()}
-   className="min-h-9 px-3">
+   className="min-h-11 min-[768px]:min-h-9 px-3">
    {busy?"Saving…":"Mark as read for our placement cell"}
   </Button>
-  {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
+  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-body">{notice}</p>:null}
  </div>;
 }

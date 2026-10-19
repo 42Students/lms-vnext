@@ -12,7 +12,7 @@ type SelectedAudiencePreview={
  selected:number;eligible:number;leftOut:number;unavailable:number;
  suppressed:{NO_EMAIL:number;UNSUBSCRIBED:number;BOUNCED:number;NOT_NOW:number;DUPLICATE:number};
 };
-const field="mt-1 min-h-11 w-full sm:min-h-9";
+const field="mt-1 min-h-11 w-full min-[768px]:min-h-9";
 const SEGMENTS=[
  {value:"ALL_ELIGIBLE",label:"All eligible contacts"},
  {value:"NEW",label:"New recruiter leads"},
@@ -85,7 +85,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     <h3 className="font-semibold">Selected recruiter audience</h3>
     {audienceStatus==="loading"?<p role="status">Checking selected contacts and suppression rules…</p>:null}
     {audienceStatus==="error"?<div role="alert"><p>Could not check selected contacts. No emails have been sent.</p>
-      <Button variant="ghost" type="button" className="mt-2 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</Button>
+      <Button variant="ghost" type="button" className="mt-2 min-h-11 min-[768px]:min-h-9 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</Button>
     </div>:null}
     {audienceStatus==="ready"&&audience?<div role="status" className="mt-2 space-y-1">
       <p><strong>{audience.eligible} potential recipients</strong> out of {audience.selected} selected · {audience.leftOut} left out.</p>
@@ -129,14 +129,14 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     </span>
    </label>
    {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
-    className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
+    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">
     Preview audience
    </Link>:<Link href="/tpo/recruiters"
-    className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
+    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">
     Change selected recruiters in Engage
    </Link>}
    {!deliveryReady?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
-   <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 sm:min-h-9">
+   <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 min-[768px]:min-h-9">
     {busy?"Saving…":"Save draft"}
    </Button>
   </form>

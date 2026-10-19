@@ -155,7 +155,7 @@ export function ProjectAdminFilters({
       </Button>
       <Link
         href={filterView?"?view=NOT_SUBMITTED":"?"}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle"
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
       >
         Clear
       </Link>
