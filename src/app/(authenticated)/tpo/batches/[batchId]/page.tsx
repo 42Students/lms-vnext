@@ -34,7 +34,6 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    eligible:summary.complete?summary.eligible:null,undecided:summary.complete?summary.undecided:null,
    invited:Boolean(lifecycle?.invitedAt),deadline:lifecycle?.registrationDeadline??null,
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
- const tabs=[{label:"Students",href:"students"},{label:"Registrations",href:"registrations"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
  return <div className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
  <Link href={backHref} className="text-sm text-link underline lms-inline-link">← Placement eligibility</Link>
  {undoable?<details className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
