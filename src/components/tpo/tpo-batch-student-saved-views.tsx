@@ -92,7 +92,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
     <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>void openSaved(view)}
      >Open</Button>
     <a href={batchStudentViewExportHref(batchId,1,view.query)}
-     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-2">Download CSV</a>
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Download CSV</a>
     <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>setDeleteTarget(view)}
      >Delete</Button>
    </li>)}</ul>
