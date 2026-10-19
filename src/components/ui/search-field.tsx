@@ -13,7 +13,7 @@ export function SearchField({onSearch,buttonLabel="Search",wrapperClassName,clas
   const inputRef=useRef<HTMLInputElement>(null);
   function submit(event:FormEvent<HTMLFormElement>) {event.preventDefault();onSearch(inputRef.current?.value??"");}
   return <form data-slot="search-field" role="search" onSubmit={submit} className={cx("flex min-w-0 items-stretch gap-2",wrapperClassName)}>
-    <Input {...props} ref={inputRef} type="search" className={className} />
-    <Button type="submit" variant="secondary">{buttonLabel}</Button>
+    <Input {...props} ref={inputRef} type="search" className={cx("w-[clamp(180px,20vw,280px)]", className)} />
+    <Button type="submit" variant="secondary" disabled={props.disabled}>{buttonLabel}</Button>
   </form>;
 }
