@@ -233,6 +233,7 @@ export function LearnerCareerCalendar({
               const dayEvents = byDay.get(day) ?? [];
               const chips = learnerCareerDayChips(dayEvents);
               const outside = view === "month" && day.slice(0, 7) !== anchor.slice(0, 7);
+              const isSunday = new Date(day+"T12:00:00Z").getUTCDay()===0;
               return (
                 <button
                   type="button"
@@ -240,9 +241,9 @@ export function LearnerCareerCalendar({
                   aria-label={`${prettyDay(day)}: ${dayEvents.length} events`}
                   aria-current={day===todayAnchor?"date":undefined}
                   onClick={() => { changeCalendar({date:day,view:"day"}); }}
-                  className={`min-h-24 border p-2 text-left transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] ${calendarStyles.calendarDay} ${day===todayAnchor?calendarStyles.calendarCurrentDay:""} ${new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:""} ${outside ? "opacity-50" : ""}`}
+                  className={`min-h-24 border p-2 text-left transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] ${calendarStyles.calendarDay} ${day===todayAnchor?calendarStyles.calendarCurrentDay:""} ${isSunday?calendarStyles.calendarSunday:""} ${outside ? "opacity-50" : ""}`}
                 >
-                  <span className="block text-xs font-semibold text-foreground">{day.slice(-2)}</span>
+                  <span className={"block text-xs font-semibold text-foreground "+(isSunday?calendarStyles.calendarSunday:"")}>{day.slice(-2)}</span>
                   <span className="mt-2 block text-xs text-body">
                     {dayEvents.length ? `${dayEvents.length} event${dayEvents.length === 1 ? "" : "s"}` : "—"}
                   </span>
