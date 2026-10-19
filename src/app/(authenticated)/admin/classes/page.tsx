@@ -39,31 +39,31 @@ export default async function SuperAdminClassesPage({ searchParams }: {
         <form method="get" action="/admin/classes" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 w-full sm:min-w-44 gap-1 text-sm font-semibold text-body">Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              className="min-h-11 sm:min-h-9">
               <option value="">All programs</option>
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
             </Select>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-40 gap-1 text-sm font-semibold text-body">Batch code
             <Input name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11 sm:min-h-9" />
           </label>
           <label className="grid min-w-0 w-full sm:min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search class, program or batch
             <Input name="q" type="search" defaultValue={data.query.q}
-              className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11 sm:min-h-9" />
           </label>
           <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Status
-            <Select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9">
               {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
             </Select>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
-            <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 sm:min-h-9">
               {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
             </Select>
           </label>
-          <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</Button>
-          <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
+          <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
+          <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9">Refresh</Button>
           <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
         </form>
       </section>
