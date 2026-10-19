@@ -1,4 +1,6 @@
 import { Input } from "@/components/ui/input";
+import { StatTile } from "@/components/ui/stat-tile";
+import { MetricBar } from "@/components/ui/metric-bar";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
@@ -64,17 +66,10 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
   </section>
   <section className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5" aria-label="Placement status metrics">
    {[["Total Applications",data.totalApplications],...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
-    .map(([name,value])=><div key={name} className="rounded-xl border border-border bg-surface p-4">
-      <p className="text-sm text-muted-foreground">{name}</p>
-      <strong className="mt-1 block text-2xl tabular-nums">{value.toLocaleString("en-IN")}</strong>
-    </div>)}
-   <div className="rounded-xl border border-border bg-surface p-4">
-    <p className="text-sm text-muted-foreground">Avg. time to shortlist</p>
-    <strong className="mt-1 block text-xl">
-      {data.averageHoursToShortlist==null?"No recorded transitions":
-       data.averageHoursToShortlist.toFixed(1)+" hours"}
-    </strong>
-   </div>
+    .map(([name,value])=><StatTile key={name} label={name} value={value} />)}
+   <StatTile label="Avg. time to shortlist"
+    value={data.averageHoursToShortlist==null?"No recorded transitions":
+      data.averageHoursToShortlist.toFixed(1)+" hours"} />
   </section>
   <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
    <h2 className="text-lg font-semibold">Hiring Funnel</h2>
@@ -85,10 +80,8 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    </div>:<div className="space-y-3">
     {order.map(stage=><div key={stage} className="grid grid-cols-[7rem_1fr_4rem] items-center gap-3 text-sm">
       <span>{label(stage)}</span>
-      <div className="h-3 overflow-hidden rounded-full bg-muted">
-       <div className="h-full rounded-full bg-primary" style={{width:
-        Math.min(100,100*(data.totals[stage]??0)/total)+"%"}}/>
-      </div>
+      <MetricBar label={label(stage)} size="default"
+       value={data.totals[stage]??0} maximum={total} unit="applications" />
       <span className="text-right tabular-nums">{data.totals[stage]??0}</span>
     </div>)}
    </div>}
