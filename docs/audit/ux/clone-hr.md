@@ -86,57 +86,57 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 
 - [ ] `src/app/(authenticated)/recruiter/calendar/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/calendar/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/calendar/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/calendar/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/colleges/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/colleges/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/colleges/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/colleges/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/company/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/company/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/company/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/company/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/loading.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/interview-slots/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/interview-slots/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/interview-slots/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/interview-slots/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/loading.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/drives/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/loading.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/new/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/new/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/new/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/new/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
+- [x] `src/app/(authenticated)/recruiter/drives/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/drives/proposals/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/proposals/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/proposals/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/drives/recorded-outside/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/recorded-outside/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/home/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/home/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/home/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/layout.tsx`
+- [x] `src/app/(authenticated)/recruiter/home/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
+- [x] `src/app/(authenticated)/recruiter/layout.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/loading.tsx`
 - [ ] `src/app/(authenticated)/recruiter/messages/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/messages/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/messages/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/messages/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/not-found.tsx`
-- [ ] `src/app/(authenticated)/recruiter/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 - [ ] `src/app/(authenticated)/recruiter/profile/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/profile/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/profile/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/profile/page.tsx` (zero own DOM; re-export, redirect, or role-only layout; own visual values/responsive: N/A; fetched source scan: native/hex/heading/overlays 0/0/0/0)
 
 ### 3. `src/app/(authenticated)/tracker` — 21 TSX files
 
@@ -404,3 +404,37 @@ The numbers above were collected on fetched current source, not via local CLI/Pl
 | `hr/round-results/loading.tsx` | `components___antddesign.scss:6-13` loading/transition pattern | `GracefulPageLoading shape="directory"` | No custom pulse blocks, route layout shared; actual motion values unverified |
 
 **Decision:** the next untouched high-complexity surfaces are recruiter calendar interactions/events and HR draft component field/preview nuances. Source markup now uses shared components in many files, but exact old-LMS computed state values and a real phone/tablet comparison are not available. The 3 zero-DOM route shims remain the only definitively ticked per-file items; these visible pages remain [ ] until those proofs are supplied. **No CI, tests, app execution, or browser screenshots were run.**
+
+
+## 2026-10-19 replacement lane — source-complete route shims and shared-state judgement
+
+Baseline: branch `chatgpt/chat-15-b` was safely fast-forwarded from `59b91901` onto main `68d52934` (0 ahead / 1229 behind beforehand), then changed exclusively on the lane. Other lanes may advance main later. Current source verification was made by re-fetching edited files after writes. No app, test, typecheck, CI, screenshots or pixel-diff were run.
+
+### Completed zero-DOM recruiter route shims (17 files)
+
+These 17 paths are direct re-exports of HR routes, redirects without rendering, or the role-only layout that returns children unchanged. The source itself has **no HTML or JSX element**: 0 native controls, 0 literal hex, 0 h1, 0 hand-rolled table/dialog/overlay. Source-equivalent scan patterns: `/<(button|input|select|textarea|table)(?=[\\s/>])/g`, `/#[0-9a-fA-F]{3,8}\\b/g`, `/<h1(?=[\\s>])/g`, `/fixed inset-0|role=["'](?:dialog|alertdialog)["']/g`, all **0** for each file. This is verified fetched-content scanning, not a claim of a local CLI grep.
+
+| Proof property | Old LMS reference | vNext source | Result |
+| --- | --- | --- | --- |
+| Own rendered heading/fonts/colours/hover/disabled/error/loading | `docs/design/old-lms-pages.md:6-12` | All 17 shims: zero own DOM | N/A — appearance delegated to target |
+| Own canvas, tab, grid or modal | `docs/design/old-lms-pages.md:6-12` | Direct re-export, `redirect()`, or `return children`; zero markup | N/A — no extra wrapper |
+| Own mobile/tablet CSS, stacking, interaction or input | `docs/design/legacy-styles/components___listing-page-header.scss:131-158` | Zero own layout or breakpoint rules | N/A — target owns responsive behaviour |
+| No-regression | Existing HR route and role checks | Re-export destinations and recruiter role guard unchanged | No source edit to these 17 files |
+
+**Important:** This checks *only* each route shim's own markup. The underlying HR pages, shared UI states, and viewport parity are independent unticked items.
+
+### Edited judgement cases (2026-10-19)
+
+| File | Source change and shared contract | Source-level coverage after edit | Still open |
+| --- | --- | --- | --- |
+| `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx` | Replaced hand-styled 'Back to drive' Link with `PageBackLink`; unchanged href and visible desktop label. Shared `page-back-link.tsx` implements legacy icon-only at max 767px and min 44px touch | 0 native/hex/h1; no custom table or overlay | Computed hover/focus and phone render |
+| `src/components/hr/hr-drive-draft-form.tsx` | Validation issues inside `Alert tone="error"` instead of bespoke bordered `role=alert`; message and list unchanged | 0 native/hex/h1; `Alert` opening/closing 1/1 | Form-row pixel comparison, all preview/error states, tablet |
+| `src/components/hr/recruiter-round-inline-editor.tsx` | Success and error feedback now `InlineNotice` from shared UI; pending/author-only guards, dialog and verified receipts untouched | 0 native/hex/h1; 3 shared `InlineNotice` sites | Modal/focus/keyboard and all pending states |
+| `src/components/hr/recruiter-notification-bell.tsx` | Shared `Badge tone="error"` replaces local unread count chip; red backdrop and 99+ clipping remain; existing Drawer and polling unchanged | 0 native/hex/h1; `Badge` opening/closing 1/1 | Exact count pill pixel offsets and keyboard |
+| `src/components/hr/hr-unsent-drive-alert.tsx` | Error feedback uses shared `InlineNotice tone="error"` within existing `Alert`; draft storage, confirm action and dismissal unchanged | 0 native/hex/h1; `Alert` opening/closing 1/1 | Responsive live/hover/error checks |
+
+Legacy back-link reference is `docs/design/legacy-styles/learn-layout.scss:361-383` as recorded in `src/components/ui/page-back-link.tsx`. Legacy banners / chips / compact canvas reference `docs/design/old-lms-pages.md:6-12`. Shared primitives are not modified. These visible component/page items remain **unticked** until the strict value, viewport and runtime proofs exist.
+
+**Current E8 blocker:** `src/components/tpo/grid/tpo-grid.tsx` imports native AG Grid Quartz, and `grid/grid-workspace.tsx` exists, but `package.json` on the synchronized branch still does **not** declare `ag-grid-community` or `ag-grid-react`; user instructed not to edit the manifest. No AG Grid runtime/parity claim is made.
+
+**Next unticked file:** `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx` (finish shared heading/content/viewport proof), then `src/components/hr/hr-drive-draft-form.tsx` validation/preview states and `src/app/(authenticated)/hr/drives/page.tsx` E8 worksheet.
