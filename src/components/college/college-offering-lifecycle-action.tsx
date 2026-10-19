@@ -26,7 +26,7 @@ export function CollegeOfferingLifecycleAction({id,name,status}:{
   }
   return <div className="space-y-1">{confirmation}
     <Button variant="secondary" type="button" disabled={pending} onClick={submit}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold text-primary-text">
+      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text">
       {pending?"Saving…":action==="ARCHIVE"?"Archive":"Restore"}
     </Button>
     {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
