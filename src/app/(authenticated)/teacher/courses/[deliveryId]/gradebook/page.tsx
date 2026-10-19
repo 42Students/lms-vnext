@@ -29,7 +29,7 @@ export default async function FacultyGradebookPage({
     knownKeys&&noRepeatedKeys?rawSearch:{invalid:true},
   );
   if(!parsed.success||!view.success)return <section role="alert" className="space-y-3 p-6">
-    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid gradebook link or filters</h1>
+    <PageHeader title="Invalid gradebook link or filters" />
     <Link href={parsed.success?
       facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
       "/teacher/courses"} className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
@@ -44,7 +44,7 @@ export default async function FacultyGradebookPage({
     if(error instanceof CoursesServiceError &&
        error.code==="FACULTY_GRADEBOOK_TOO_MANY_ASSESSMENTS") {
       return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
-        <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Gradebook report limit</h1>
+        <PageHeader title="Gradebook report limit" />
         <p className="text-sm text-body">
           This Section has more than 100 published assessments. Contact your college
           administrator to request a gradebook report. No grades have been changed.
