@@ -24,11 +24,11 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
   <PageHeader eyebrow="Super Admin · Tenant" title={item.name} description="Read-only tenant identity and setup links in the authorized scope."/>
   <nav aria-label="College tabs" className="flex flex-wrap items-center gap-3">
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}`}
-     aria-current="page" className="inline-flex min-h-11 items-center font-semibold text-primary-text">College</Link>
+     aria-current="page" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text">College</Link>
    <Link href={`/activity?collegeId=${encodeURIComponent(item.id)}`}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Activity</Link>
+     className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">Activity</Link>
    <Link href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Export activity CSV</Link>
+     className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">Export activity CSV</Link>
   </nav>
   <dl className="grid gap-4 border-t border-border pt-4 sm:grid-cols-2">
    {fields.map(([label,value])=><div key={label}><dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
@@ -45,15 +45,15 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
    </p>:null}
   <div className="flex flex-wrap gap-3">
    {tenantSetupLinksAvailable(item.status,item.organizationStatus) ? <>
-   {context.adminScope?.collegeId===item.id ? <Link href="/admin/tenants/setup" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Set up this college</Link> : null}
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Readiness</Link>
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/branding`} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Branding</Link>
-   {superAdminVerificationHref(item.id,item.status,item.organizationStatus) ? <Link href={superAdminVerificationHref(item.id,item.status,item.organizationStatus)!} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Profile Verification</Link> : null}
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/admins`} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Admins</Link>
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/signin`} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Sign-in Methods</Link>
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Web address</Link>
+   {context.adminScope?.collegeId===item.id ? <Link href="/admin/tenants/setup" className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Set up this college</Link> : null}
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Readiness</Link>
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/branding`} className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Branding</Link>
+   {superAdminVerificationHref(item.id,item.status,item.organizationStatus) ? <Link href={superAdminVerificationHref(item.id,item.status,item.organizationStatus)!} className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Profile Verification</Link> : null}
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/admins`} className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Admins</Link>
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/signin`} className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Sign-in Methods</Link>
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Web address</Link>
    </> : <p className="text-sm text-muted-foreground">Setup links are unavailable while this college or its organization is archived.</p>}
-   <Link href="/admin/tenants" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Tenant directory</Link>
+   <Link href="/admin/tenants" className="inline-flex min-h-[var(--lms-control-height)]  items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">Tenant directory</Link>
   </div>
  </div>;
 }
