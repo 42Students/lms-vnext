@@ -24,7 +24,7 @@ const columns:readonly TpoGridColumn<CompanyMemoryDriveRow>[]=[
  {key:"status",label:"Status",read:row=>statusLabel(row.status)},
  {key:"year",label:"Year",read:row=>year(row.createdAt),sortKind:"date",sortValue:row=>new Date(row.createdAt).getTime()},
  {key:"applied",label:"Applied",read:row=>row.applied+" · "+row.offers+" offers"},
- {key:"created",label:"Created",read:row=>date(row.createdAt)},
+ {key:"created",label:"Created",read:row=>date(row.createdAt),sortKind:"date",sortValue:row=>new Date(row.createdAt).getTime()},
 ];
 const rowColumns:readonly DataTableColumn<CompanyMemoryDriveRow>[]=[
  {key:"role",header:"Role",mobilePriority:"primary",cell:row=>
