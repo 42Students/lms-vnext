@@ -54,7 +54,7 @@ export default async function SuperAdminCompaniesPage({
     {view==="GLOBAL"&&context.adminScope?.collegeId?<p role="status" className="rounded-md border border-warning bg-surface p-3 text-sm text-warning">
       A college is currently selected. The results below remain restricted to that college. Clear the college scope in the header to view 42&apos;s global company catalogue.
     </p>:null}
-    {data.query.companyId ? <section role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+    {data.query.companyId ? <section role="status" className="border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm text-body">
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
       <Link href="/admin/companies" className="font-semibold text-primary-text underline">Show all employers</Link>
     </section> : null}
@@ -161,7 +161,7 @@ export default async function SuperAdminCompaniesPage({
       <h2 className="text-base font-semibold text-foreground">Same-name identities to review</h2>
       <p className="text-sm text-body">Distinct employer IDs with matching normalized names may be aliases, franchises or unrelated companies. No automatic verification or merge is made.</p>
       {nameConflicts.length===0?<p className="text-sm text-muted-foreground">No distinct IDs share a normalized name in this page.</p>:
-       <ul className="grid gap-2 sm:grid-cols-2">{nameConflicts.map(group=><li key={group.key} className="min-w-0 rounded-lg border border-border p-3">
+       <ul className="grid gap-2 sm:grid-cols-2">{nameConflicts.map(group=><li key={group.key} className="min-w-0 border-b border-border py-3">
         <h3 className="break-words text-sm font-semibold">{group.label}</h3>
         <p className="mt-2 text-xs text-muted-foreground">{group.companyIds.length} distinct identities · manual verification required</p>
        </li>)}</ul>}
