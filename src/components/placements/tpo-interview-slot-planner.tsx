@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {useState} from "react";
@@ -58,11 +59,11 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
    </div>
    <div className="mt-4 flex flex-wrap gap-3">
-    <button type="button" disabled={busy||!date||!rooms.trim()} onClick={()=>void action({
+    <Button variant="primary" type="button" disabled={busy||!date||!rooms.trim()} onClick={()=>void action({
       action:"GENERATE_DAY",startsAt:new Date(date+"+05:30").toISOString(),durationMinutes:minutes,
       gapMinutes:gap,slotsPerRoom:count,rooms:rooms.split(",").map(v=>v.trim()).filter(Boolean),
     })} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
-     Generate day</button>
+     Generate day</Button>
     <button type="button" disabled={busy||!free.length} onClick={()=>setConfirmRequest({title:"Remove "+free.length+" unbooked interview slots?",description:"Existing bookings stay unchanged.",body:{action:"CLEAR_AVAILABLE"}})}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
      Clear {free.length} unbooked slot(s)</button>
@@ -105,10 +106,10 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
     </div>
     <div className="flex flex-wrap gap-3">
-     <button type="button" disabled={busy||!requestTarget[req.id]||(requestReason[req.id]??"").trim().length<3}
+     <Button variant="primary" type="button" disabled={busy||!requestTarget[req.id]||(requestReason[req.id]??"").trim().length<3}
       onClick={()=>void action({action:"MOVE_REQUEST",requestId:req.id,targetSlotId:requestTarget[req.id],
        reason:(requestReason[req.id]??"").trim()})}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50">Move</button>
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50">Move</Button>
      <button type="button" disabled={busy||(requestReason[req.id]??"").trim().length<3}
       onClick={()=>void action({action:"KEEP_REQUEST",requestId:req.id,reason:(requestReason[req.id]??"").trim()})}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">Keep existing slot</button>
@@ -123,12 +124,12 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      <Input value={venue[p.id]??p.meetingLocation??""} onChange={e=>setVenue(v=>({...v,[p.id]:e.target.value}))}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
     </label>
-    <button type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
+    <Button variant="primary" type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
      onClick={()=>void action({action:"CONFIRM_RECRUITER_PROPOSAL",proposalId:p.id,expectedVersion:p.version,
       venue:(venue[p.id]??p.meetingLocation??"").trim()})}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
      Confirm recruiter proposal
-    </button>
+    </Button>
    </div>)}
   </div>:null}
   <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
@@ -145,8 +146,8 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
         className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
         <option value="">Choose student</option>{waiting.map(c=><option key={c.applicationId} value={c.applicationId}>{c.roll??""} {c.name??"Learner"}</option>)}
        </Select
-       <button type="button" disabled={busy||!pick[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground"
-        onClick={()=>void action({action:"BOOK",slotId:slot.id,expectedVersion:slot.version,applicationId:pick[slot.id]})}>Book</button>
+       <Button variant="primary" type="button" disabled={busy||!pick[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground"
+        onClick={()=>void action({action:"BOOK",slotId:slot.id,expectedVersion:slot.version,applicationId:pick[slot.id]})}>Book</Button>
       </div>:<div className="flex flex-wrap items-center gap-2">
        <Select aria-label="Move to available slot" value={move[slot.id]??""}
         onChange={e=>setMove(p=>({...p,[slot.id]:e.target.value}))} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
