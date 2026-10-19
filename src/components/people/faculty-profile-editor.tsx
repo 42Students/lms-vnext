@@ -82,7 +82,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   {pending&&savingSection?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground">
     Saving {facultyProfileSaveSectionLabel(savingSection)}…</p>:null}
   {success?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground">{success}</p>:null}
-  <nav aria-label="Profile sections" className="rounded-xl border border-border bg-surface p-4">
+  <nav aria-label="Profile sections" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <p className="mb-3 text-sm font-semibold text-foreground">Jump to a profile section</p>
     <div className="flex flex-wrap gap-2">{FACULTY_PROFILE_NAV.map(item=><a key={item.section}
       className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text hover:underline"
