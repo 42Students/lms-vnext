@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { learnerUpcomingQuizEligible } from "@/modules/courses/learner-course-upcoming-quiz-model";
@@ -60,19 +61,7 @@ function Metric({
   value: string | number;
   detail: string;
 }) {
-  return (
-    <section className="border-b border-border pb-3">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold text-foreground">
-        {value}
-      </p>
-      <p className="mt-1 text-xs leading-5 text-body">
-        {detail}
-      </p>
-    </section>
-  );
+  return <StatTile label={label} value={value} detail={detail} />;
 }
 
 export function LearnerCourseOverview({
