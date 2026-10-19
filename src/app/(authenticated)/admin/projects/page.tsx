@@ -147,8 +147,8 @@ export default async function SuperAdminProjectsPage({
         }
       />
 
-      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
-        <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
+      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
+        <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
 
       {!templatesResult.ok && (
         <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
