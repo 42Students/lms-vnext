@@ -23,11 +23,11 @@ export function TpoTeamThreadDetails({threadId,topic,counterpart,createdDate,dec
  return <section className="space-y-2">
   <button type="button" onClick={toggle} aria-expanded={open}
    aria-controls={"team-details-"+threadId}
-   className="min-h-9 rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
    {open?"Hide details":"Details"}
   </button>
   {open?<aside id={"team-details-"+threadId} aria-label="Conversation details"
-   className="w-full rounded-[12px] border border-border bg-surface p-4 text-sm lg:max-w-md">
+   className="w-full rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 text-sm lg:max-w-md">
    <h2 className="font-semibold">About this conversation</h2>
    <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-2">
     <dt className="text-muted-foreground">Topic</dt><dd className="break-words">{topic}</dd>
