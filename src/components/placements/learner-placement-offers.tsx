@@ -264,7 +264,7 @@ export function LearnerPlacementOffers({
       </div>
 
       <button type="button" onClick={downloadOwnOffers}
-        className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
         Export displayed offers CSV
       </button>
       {sortedOffers.length>LEARNER_OFFER_CSV_LIMIT ? (
@@ -339,7 +339,7 @@ export function LearnerPlacementOffers({
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-body">
               {item.letterHref ? (
                 <a href={item.letterHref} rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+                  className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">
                   View offer letter
                 </a>
               ) : null}
@@ -352,13 +352,13 @@ export function LearnerPlacementOffers({
 
             {learnerOfferApplicationHref(item.applicationId) ? (
               <Link href={learnerOfferApplicationHref(item.applicationId)!}
-                className="mt-3 mr-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                className="mt-3 mr-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
                 View related application
               </Link>
             ) : null}
             {learnerOfferHref(item.offerId) ? (
               <Link href={learnerOfferHref(item.offerId)!}
-                className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
                 Link to this offer
               </Link>
             ) : null}
@@ -395,7 +395,7 @@ export function LearnerPlacementOffers({
                   Number.isFinite(Date.parse(item.acceptedDisputableUntil)) &&
                   Number.isFinite(Date.parse(snapshotNowIso)) &&
                   Date.parse(item.acceptedDisputableUntil)>Date.parse(snapshotNowIso) ? (
-                    <Link className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+                    <Link className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline"
                       href={"/learn/my-placements/placement?"+new URLSearchParams({
                         request:"acceptance-dispute",offerId:item.offerId,
                       }).toString()+"#requests"}>
@@ -516,7 +516,7 @@ export function LearnerPlacementOffers({
             Requested new deadline (IST)
             <input type="datetime-local" value={extensionAt}
               onChange={event=>setExtensionAt(event.target.value)}
-              className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm"/>
+              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
           </label>
           <label className="block text-sm font-semibold text-foreground">
             Reason

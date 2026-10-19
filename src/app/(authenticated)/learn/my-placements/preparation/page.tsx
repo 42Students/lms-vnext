@@ -21,7 +21,7 @@ export default async function LearnerPlacementPreparationPage({
   const raw=await searchParams;
   const parsed=learnerPreparationQuerySchema.safeParse({view:first(raw.view)??undefined});
   if(!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid preparation filter</h1>
+    <h1 className="font-semibold text-[30px] leading-9">Invalid preparation filter</h1>
     <Link href="/learn/my-placements/preparation"
       className="text-[var(--lms-teal-deep)] underline">Clear filters</Link>
   </section>;
@@ -76,7 +76,7 @@ export default async function LearnerPlacementPreparationPage({
             </div>
             <p className="mt-2 text-sm leading-6 text-body">{item.description}</p>
             <Link href={item.href}
-              className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+              className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
               {item.recorded?"Review recorded information":"Review this section"} →
             </Link>
           </li>)}

@@ -11,7 +11,7 @@ export default function LearnerPlacementsError({
 }) {
   return (
     <section role="alert" className="rounded-xl border border-border bg-surface p-8 text-center">
-      <h1 className="m-0 text-lg font-semibold text-foreground">
+      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         We could not load your placements
       </h1>
       <p className="mt-2 text-sm text-body">

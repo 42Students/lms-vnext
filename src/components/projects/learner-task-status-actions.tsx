@@ -59,15 +59,15 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
   </label>:null}
   <div className="flex flex-wrap gap-3">
    {canStart?<button type="button" disabled={pending} onClick={()=>void change("IN_PROGRESS")}
-     className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">Start work</button>:null}
+     className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">Start work</button>:null}
    {canBlock?<button type="button" disabled={pending} onClick={()=>void change("BLOCKED")}
-     className="min-h-11 rounded-md border border-border px-4 font-semibold text-foreground disabled:opacity-50">Report blocker</button>:null}
+     className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-foreground disabled:opacity-50">Report blocker</button>:null}
   </div>
   {["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?<div className="flex flex-wrap gap-2" aria-label="Reorder my task">
    <button type="button" disabled={pending} onClick={()=>void reorder("MOVE_UP")}
-    className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-foreground">Move up</button>
+    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground">Move up</button>
    <button type="button" disabled={pending} onClick={()=>void reorder("MOVE_DOWN")}
-    className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-foreground">Move down</button>
+    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground">Move down</button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}

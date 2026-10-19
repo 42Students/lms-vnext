@@ -535,7 +535,7 @@ export function LearnerProfileWorkspace(props: {
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
           {mobileQuickLinks.map(item=><Link key={item.section}
             href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 min-w-0 items-center justify-center rounded-lg border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
+            className="flex min-h-11 sm:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
             {item.label}
           </Link>)}
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
@@ -552,7 +552,7 @@ export function LearnerProfileWorkspace(props: {
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">Learner profile</p>
-            <h1 className="mt-1 break-words text-2xl font-semibold text-foreground">{props.displayName || "Learner"}</h1>
+            <h1 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[30px] leading-9">{props.displayName || "Learner"}</h1>
             <p className="mt-1 break-words text-sm text-body">{document.headline || "Add a headline to introduce yourself."}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {props.rollNumber ? <StatusBadge>Roll {props.rollNumber}</StatusBadge> : null}
@@ -579,7 +579,7 @@ export function LearnerProfileWorkspace(props: {
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
           </h2>
-          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             Review full checklist
           </Link>
           <div className="flex items-center gap-3" aria-label={percent+" percent complete"}>
@@ -622,7 +622,7 @@ export function LearnerProfileWorkspace(props: {
             <li key={item.section}>
               <Link
                 href={"/learn/profile?section=" + encodeURIComponent(item.section)}
-                className="flex min-h-11 items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                className="flex min-h-11 sm:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 onClick={() => {
                   if (props.initialSection === item.section) {
                     window.document.getElementById(item.section)?.scrollIntoView({
@@ -930,7 +930,7 @@ export function LearnerProfileWorkspace(props: {
               placeholder="e.g. Software Engineer, Data Analyst"
               onChange={event=>setJobPrefsDraft(current=>({...current,
                 rolePreferences:event.target.value.split(",").map(x=>x.trim()).filter(Boolean)}))}
-              className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm"/>
+              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
           </label>
           <label className="text-sm font-semibold text-body">Specific Role Preference
             <Input className="mt-1" value={jobPrefsDraft.specificRolePreference} maxLength={200}
@@ -980,7 +980,7 @@ export function LearnerProfileWorkspace(props: {
                 </label>;
               if(collection==="education"&&field.key==="qualifyingExam")
                 return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
-                  <input className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3"
+                  <input className="mt-1.5 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
                     list="learner-qualifying-exams" value={value} maxLength={120}
                     onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
                   <datalist id="learner-qualifying-exams">

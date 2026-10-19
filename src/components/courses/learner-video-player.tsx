@@ -228,7 +228,7 @@ export function LearnerVideoPlayer({
     {mediaError ? <div className="space-y-2">
       <p role="alert" className="text-sm font-semibold text-error">{mediaError}</p>
       <button type="button" onClick={() => { failureRefreshRef.current = 0; void start(); }}
-        className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
         Retry video
       </button>
     </div> : null}

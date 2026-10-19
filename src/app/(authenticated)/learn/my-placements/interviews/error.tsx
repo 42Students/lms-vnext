@@ -9,7 +9,7 @@ export default function LearnerInterviewError({ reset }: {
 }) {
   return (
     <section className="rounded-xl border border-border bg-surface p-6 text-center">
-      <h1 className="text-lg font-semibold text-foreground">Interviews could not load</h1>
+      <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Interviews could not load</h1>
       <p className="mt-2 text-sm text-body">
         A loading failure does not mean you have no scheduled interview rounds.
       </p>

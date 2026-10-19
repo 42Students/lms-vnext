@@ -197,7 +197,7 @@ export function LearnerApplicationsBrowse({
         <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
           That screening stage is no longer present in your applications. Showing all stages while keeping your other filters.
           <button type="button" onClick={()=>updateQuery({stage:null})}
-            className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+            className="ml-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">
             Update stage link
           </button>
         </p>
@@ -222,7 +222,7 @@ export function LearnerApplicationsBrowse({
                   <strong className="break-words text-foreground">{row.title}</strong>
                   <span className="ml-2 text-xs text-muted-foreground">{row.detail}</span>
                 </span>
-                <Link href={row.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                <Link href={row.href} className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
                   View application →
                 </Link>
               </li>
@@ -238,7 +238,7 @@ export function LearnerApplicationsBrowse({
       <section aria-label="Application list filters" className="rounded-xl border border-border bg-surface p-3 sm:p-5">
         <button type="button" aria-controls="learner-app-filters" aria-expanded={mobileOpen}
           onClick={()=>setMobileOpen(open=>!open)}
-          className="flex min-h-11 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
+          className="flex min-h-11 sm:min-h-9 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
           <span>{mobileOpen?"Hide application filters":learnerApplicationMobileSummary(filters)}</span>
           <span aria-hidden="true">{mobileOpen?"−":"+"}</span>
         </button>
@@ -277,14 +277,14 @@ export function LearnerApplicationsBrowse({
             <input type="search" value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search company or role" maxLength={100}
-              className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]" />
+              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]" />
           </label>
           <label className="text-xs font-semibold text-body">
             Screening stage
             <select
               value={filters.stage}
               onChange={(event) => updateQuery({stage:event.target.value})}
-              className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
               <option value="all">All stages</option>
               {stages.map((stage) => (
                 <option value={stage} key={stage}>{humanize(stage)}</option>
@@ -296,7 +296,7 @@ export function LearnerApplicationsBrowse({
             <select
               value={sort}
               onChange={(event) => updateQuery({sort:event.target.value})}
-              className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
               <option value="activity">Recent activity</option>
               <option value="company">Company A–Z</option>
               <option value="stage">Screening stage A–Z</option>
@@ -310,7 +310,7 @@ export function LearnerApplicationsBrowse({
         <p role="status">{rows.length} of {items.length} applications</p>
         {rows.length>0 ? (
           <button type="button" onClick={downloadOwnApplications}
-            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
             Export matching applications CSV
           </button>
         ) : null}
@@ -340,7 +340,7 @@ export function LearnerApplicationsBrowse({
             <p className="text-sm text-body">No applications have been recorded for this learner yet.
               Browse your published college drives and check eligibility before applying.</p>
             <Link href="/learn/my-placements/jobs"
-              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
               Browse available drives →
             </Link>
           </div>
@@ -380,22 +380,22 @@ export function LearnerApplicationsBrowse({
             <>
               {ownApplicationJobHref(selected.jobId) ? <Link
                 href={ownApplicationJobHref(selected.jobId)!}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
                 View drive
               </Link> : null}
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}`}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
+                className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >Application detail</Link>
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/history`}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
+                className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >
                 Full history
               </Link>
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/company`}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
+                className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >
                 What the company sees
               </Link>
@@ -416,10 +416,10 @@ export function LearnerApplicationsBrowse({
             </Button>
           ) : null}
           <Link href={selectedAssessment?.href??"/learn/my-placements/assessments"}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
+            className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
             {selectedAssessment?"Open this assessment":"Assessments"}
           </Link>
-          <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
+          <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto">
             {selectedInterview?"Open this interview":"Interviews"}
           </Link>
           <Button onClick={() => updateQuery({applicationId:null})}>Got it</Button>
@@ -467,7 +467,7 @@ export function LearnerApplicationsBrowse({
                 <h3 className="text-sm font-semibold text-foreground">Recent recorded milestones</h3>
                 <Link href={"/learn/my-placements/applications/"+
                   encodeURIComponent(selected.applicationId)+"/history"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                  className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
                   Full saved history →
                 </Link>
               </div>

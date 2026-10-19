@@ -28,10 +28,10 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
     <form action={base} className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment title
         <input name="q" type="search" maxLength={100} defaultValue={data.query.q}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All</option><option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
           {!assignment ? <option value="CLOSED">Closed</option> : null}
@@ -39,19 +39,19 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course code
-        <input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+        <input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Audience
-        <select name="scope" defaultValue={data.query.scope} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <select name="scope" defaultValue={data.query.scope} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
         </select>
       </label>
       {!assignment?<label className="grid gap-1 text-sm font-semibold text-body">Results
-        <select name="results" defaultValue={data.query.results} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <select name="results" defaultValue={data.query.results} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
         </select>
       </label>:null}
-      <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
     <p className="text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
@@ -92,7 +92,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
               deadlineReached={item.resultsReleaseReady}/>:null}
         </div>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}#lesson-authoring`}
-          className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering builder / submissions →
         </Link>
       </article>)}
@@ -107,6 +107,6 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]">← Courses</Link>
   </div>;
 }

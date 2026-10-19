@@ -59,7 +59,7 @@ export function LearnerPlacementJobDetail({
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
               Published campus drive
             </p>
-            <h1 id="drive-title" className="mt-2 text-2xl font-bold leading-tight text-foreground">
+            <h1 id="drive-title" className="mt-2 font-semibold leading-tight text-[var(--lms-heading)] text-[30px] leading-9">
               {summary.title}
             </h1>
             <p className="mt-2 text-base font-semibold text-body">{summary.companyName}</p>
@@ -94,12 +94,12 @@ export function LearnerPlacementJobDetail({
         </dl>
         <div className="mt-5 flex flex-wrap gap-3">
           <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={initialSaved}/>
-          <a href="#job-role-options" className="inline-flex min-h-11 items-center rounded-lg bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+          <a href="#job-role-options" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
             {summary.appliedCount ? "View my application" : "See roles & application"} ↓
           </a>
           {website ? (
             <a href={website} target="_blank" rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center rounded-lg border border-border px-5 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-5 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
               Company website ↗
             </a>
           ) : null}
@@ -119,16 +119,16 @@ export function LearnerPlacementJobDetail({
           {availability.kind!=="OPEN" ? (
             <div className="mt-3 flex flex-wrap gap-4">
               <Link href="/learn/my-placements/applications"
-                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
                 Check my applications →
               </Link>
               <Link href="/learn/profile"
-                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
                 Review my profile →
               </Link>
               {(availability.kind==="NOT_OPEN" || availability.kind==="EVIDENCE") ? (
                 <Link href="/learn/my-placements#registration"
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                  className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
                   Register for placements →
                 </Link>
               ) : null}
@@ -161,11 +161,11 @@ export function LearnerPlacementJobDetail({
         </ul>
         <div className="mt-4 flex flex-wrap gap-4">
           <Link href="/learn/my-placements/rules"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             Review placement rules →
           </Link>
           <Link href="/learn/profile"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">
             Review profile evidence →
           </Link>
         </div>

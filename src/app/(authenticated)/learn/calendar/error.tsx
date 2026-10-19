@@ -10,7 +10,7 @@ export default function LearnerCalendarError({
 }) {
   return (
     <section className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
-      <h1 className="text-lg font-semibold text-foreground">
+      <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         Unable to load class schedule. Please try again.
       </h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
