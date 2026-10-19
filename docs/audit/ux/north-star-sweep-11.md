@@ -13,7 +13,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 ## Follow-on execution
 
 - Fast-forwarded `chatgpt/chat-11-b` to `main` (`7e3ab610`) before edits; the historical chat-11 sweep was already merged.
-- **172 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 90 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
+- **201 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 93 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
 - Eliminated duplicate filters/form shell cards in TPO blocked dates and Super Admin module filters, plus redundant section padding in settings and public placements. Preserved distinct metric/tenant/setup cards and status notices.
 - Replaced residual literal 9px, generic `rounded-md`, and legacy `--radius` control overrides with the canonical `--lms-control-radius`, without changing inputs' values, forms, labels or handlers. Fixed inconsistent tap targets on tenant setup tabs.
 - Removed invalid standalone `-`/`-subtle` utility tokens in tenant domains, college sign-in, logo upload, college setup checklist, and tenant settings scope.
@@ -39,9 +39,11 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - `src/app/(authenticated)/admin/tenants/create/page.tsx`
 - `src/app/(authenticated)/admin/tenants/page.tsx`
 - `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- `src/app/(authenticated)/tpo/settings/after-college/page.tsx`
 - `src/app/(authenticated)/tpo/settings/branding/page.tsx`
 - `src/app/(authenticated)/tpo/settings/notices/page.tsx`
 - `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
 - `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
 - `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
 - `src/app/(authenticated)/tpo/settings/rules/page.tsx`
@@ -81,6 +83,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - `src/components/tpo/tpo-after-college-bulk-editor.tsx`
 - `src/components/tpo/tpo-after-college-editor.tsx`
 - `src/components/tpo/tpo-blocked-dates-editor.tsx`
+- `src/components/tpo/tpo-builtin-job-types-editor.tsx`
 - `src/components/tpo/tpo-communication-settings-editors.tsx`
 - `src/components/tpo/tpo-company-visibility-editor.tsx`
 - `src/components/tpo/tpo-custom-job-type-placed.tsx`
@@ -298,6 +301,50 @@ Then **18 `[chat-11]` source commits** were pushed to `chatgpt/chat-11-b`, chang
 - `src/components/admin/tenant-directory-csv-control.tsx`
 - `src/components/tpo/tpo-notice-read-progress.tsx`
 - `src/components/tpo/tpo-notification-refresh.tsx`
+- `src/components/tpo/tpo-team-ask-panel.tsx`
+- `src/components/tpo/tpo-team-message-actions.tsx`
+
+## Eighth pass — completed next TPO settings and tenant-control batch (2026-10-19)
+
+Pulled `origin/main` first. The lane branch was **0 commits ahead / 1,529 behind** at the check, so it was safely fast-forwarded to `8049636671c9`; no merge rewrite or conflict replay was necessary.
+
+Pushed **29 source commits** to `chatgpt/chat-11-b` with the `[chat-11]` prefix, touching **29 TSX source files**, including 3 new paths in this inventory. The cumulative continuation ledger now records **201 source commits across 93 distinct files**.
+
+- TPO after-college single and bulk editors, custom job-type rename/placed controls and outcome-labels editor: stripped bespoke border, font and background classes from shared `Select`, `Input` and `Button` elements while retaining existing selection, confirmations, validation and optimistic version behavior.
+- TPO company visibility: replaced native checkboxes and save button with the shared `Checkbox` / `Button` components using native input change-event semantics; retained individual visibility choices. Standardized readiness course chips, built-in employment type toggle tap area, and warning/metric object canvas radii.
+- Super Admin tenant and college setup: replaced academic rule-lock checkboxes with the shared `Checkbox`, used the shared `Input` for the branding logo file picker, aligned college address disclosure, brand mockups and DNS instructions to the old-LMS canvas radius, while leaving real image-crop range sliders and colour pickers native.
+- Additional TPO settings actions: migrated recruiter join-link Retry, announcement read status, team message edit/delete/cancel actions and team ask actions to appropriate shared `Button` variants, preserving confirmation and request handlers. Updated public placement metric reordering, saved CTA contrast, recruiter grant controls and season quick-edit.
+- Reviewed all 29 modified TSX files from the pushed branch. Text-level checks found no excess/shared JSX closing tags or truncated `</Select>`, `</Button>`, `</Textarea>` endings. File inputs, checkboxes, button labels and self-closing inputs were checked in-source. **No application execution, TypeScript run, tests, CI, or browser screenshot comparison was performed.**
+
+### Eighth-pass changed source files
+
+- `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- `src/app/(authenticated)/tpo/settings/after-college/page.tsx`
+- `src/app/(authenticated)/tpo/settings/branding/page.tsx`
+- `src/app/(authenticated)/tpo/settings/notices/page.tsx`
+- `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
+- `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
+- `src/components/admin/college-branding-form.tsx`
+- `src/components/admin/college-branding-preview.tsx`
+- `src/components/admin/college-create-form.tsx`
+- `src/components/admin/college-feature-rule-editor.tsx`
+- `src/components/admin/college-logo-uploader.tsx`
+- `src/components/admin/descendant-feature-rule-editor.tsx`
+- `src/components/admin/tenant-domain-manager.tsx`
+- `src/components/placements/tpo-public-placement-content-editor.tsx`
+- `src/components/placements/tpo-recruiter-grant-controls.tsx`
+- `src/components/placements/tpo-season-controls.tsx`
+- `src/components/tpo/tpo-after-college-bulk-editor.tsx`
+- `src/components/tpo/tpo-after-college-editor.tsx`
+- `src/components/tpo/tpo-builtin-job-types-editor.tsx`
+- `src/components/tpo/tpo-company-visibility-editor.tsx`
+- `src/components/tpo/tpo-custom-job-type-placed.tsx`
+- `src/components/tpo/tpo-custom-job-type-rename.tsx`
+- `src/components/tpo/tpo-notice-read-progress.tsx`
+- `src/components/tpo/tpo-notification-refresh.tsx`
+- `src/components/tpo/tpo-outcome-labels-editor.tsx`
+- `src/components/tpo/tpo-prep-readiness-editor.tsx`
+- `src/components/tpo/tpo-public-join-link-card.tsx`
 - `src/components/tpo/tpo-team-ask-panel.tsx`
 - `src/components/tpo/tpo-team-message-actions.tsx`
 
