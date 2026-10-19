@@ -20,8 +20,7 @@ export type PageHeaderProps = {
 export function PageHeader({ eyebrow, title, description, actions, needsDoingItems, selectedNeedKey, needsDoingLabel }: PageHeaderProps) {
   const subtitle = [eyebrow?.trim(), description?.trim()].filter(Boolean).join(" · ");
 
-  return (
-    <>
+  const heading = (
     <header
       data-slot="page-header"
       className="flex min-w-0 items-start justify-between gap-4 pb-[var(--lms-space-4)]"
@@ -49,8 +48,14 @@ export function PageHeader({ eyebrow, title, description, actions, needsDoingIte
         </div>
       ) : null}
     </header>
-    {needsDoingItems?.length ? <NeedsDoingChips items={needsDoingItems} selectedKey={selectedNeedKey}
-      label={needsDoingLabel} className="mb-[var(--lms-space-4)]" /> : null}
-    </>
   );
+  // Pages frequently use space-y on their root: keep the title and quick
+  // filters in one layout child so they appear immediately below the head.
+  return needsDoingItems?.length ? (
+    <div data-slot="page-heading" className="min-w-0">
+      {heading}
+      <NeedsDoingChips items={needsDoingItems} selectedKey={selectedNeedKey}
+        label={needsDoingLabel}/>
+    </div>
+  ) : heading;
 }
