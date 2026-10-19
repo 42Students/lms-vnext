@@ -42,7 +42,7 @@ export function LegacyTopbar({
       </ShellWidgetBoundary>
     </div>
     <div className={style.command}>
-      <TopbarCommandSearch items={navigation}/>
+      <TopbarCommandSearch key={pathname} items={navigation}/>
       {config.portal === "tpo" && tpoCollegeId
         ? <Suspense fallback={<Link href="/tpo/placements/new" className={style.new} aria-label="New placement work">
             <PlusIcon/><span className={style.newLabel}>New</span>
@@ -55,7 +55,7 @@ export function LegacyTopbar({
           </Link> : null}
     </div>
     <ShellWidgetBoundary name="Header notifications" fallbackHref={config.notificationsHref}>
-      <TopbarNotifications config={config}/>
+      <TopbarNotifications key={config.portal} config={config}/>
     </ShellWidgetBoundary>
     <div className={style.accountArea}>
       <p className={style.orgName} title={organizationName}>{organizationName}</p>
