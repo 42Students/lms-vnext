@@ -52,7 +52,7 @@ export function ListToolbar({
       </div> : null}
     </div>
     {count !== null || bulkAction ? <div className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-2)] text-[12px] text-[var(--lms-neutral-500)]">
-      {count !== null ? <span className="tabular-nums">{count} {count === 1 ? "item" : "items"} in this view</span> : <span />}
+      {count !== null ? <span role="status" aria-live="polite" className="tabular-nums">{count} {count === 1 ? "item" : "items"} in this view</span> : <span />}
       {bulkAction}
     </div> : null}
   </section>;
