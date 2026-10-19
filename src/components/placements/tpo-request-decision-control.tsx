@@ -6,6 +6,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {useToast} from "@/components/ui/toast";
 
 import {tpoRequestNeedsConfirmation} from "@/modules/placements/tpo-request-decision-copy";
@@ -87,10 +88,8 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
       {mode==="REJECT"?<div className="space-y-3">
         <p className="text-sm font-semibold">Reason for rejection</p>
         <div role="group" aria-label="Rejection reasons" className="flex flex-wrap gap-2">
-          {rejectionReasons.map(choice=><button key={choice} type="button" disabled={pending||guardedPending}
-            aria-pressed={reason===choice} onClick={()=>{setReason(choice);setError(null);}}
-            className={reason===choice?"min-h-11 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-[var(--lms-teal-deep)]":
-              "min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-body"}>{choice}</button>)}
+          {rejectionReasons.map(choice=><FilterChip key={choice} type="button" disabled={pending||guardedPending}
+            aria-pressed={reason===choice} onClick={()=>{setReason(choice);setError(null);}}>{choice}</FilterChip>)}
         </div>
         {reason==="Other"?<label className="block text-sm font-semibold">Explain the rejection
           <Textarea value={note} onChange={e=>setNote(e.target.value)} minLength={3} maxLength={2000}
