@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {useState} from "react";
@@ -48,7 +49,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   <h2 className="text-lg font-semibold">Edit Tenant Settings</h2>
   <p className="text-sm text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
    Each field has its legacy validation range. Platform security overrides require a separate rollout before taking effect.</p>
-  {!ready?<p role="status" className="text-warning-text">The tenant-settings migration is pending. This form is read-only.</p>:null}
+  {!ready?<Alert tone="warning">The tenant-settings migration is pending. This form is read-only.</Alert>:null}
   {groups.map(group=><fieldset disabled={!ready||saving} key={group} className="space-y-3">
    <legend className="mb-2 text-base font-semibold">{group}</legend>
    <div className="grid gap-3 md:grid-cols-2">
@@ -76,7 +77,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    </Button>
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>
   </div>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   <ConfirmDialog open={impactConfirm} onOpenChange={setImpactConfirm}
    title="Review high-impact tenant setting changes"
    description="Host, authentication and messaging overrides can lock users out if deployed incorrectly. Review every changed key and activate only through the approved deployment process."
@@ -93,8 +94,8 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </ConfirmDialog>
   {results.length>0?<div role="status" className="space-y-2">
    <h3 className="font-semibold">Save results</h3>
-   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] text-sm focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">{results.map(row=><li key={row.key} className="rounded-[var(--lms-control-radius,9px)] border border-border p-2">
-    <strong>{row.key}</strong> — {row.status}: {row.message}</li>)}</ul>
+   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 divide-y divide-border overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] text-sm focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">{results.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
+    <strong className="break-all">{row.key}</strong><StatusBadge tone={row.status==="SAVED"?"success":row.status==="DELETED"?"info":"error"}>{row.status}</StatusBadge><span className="min-w-0 break-words text-body">{row.message}</span></li>)}</ul>
   </div>:null}
  </section>;
 }
