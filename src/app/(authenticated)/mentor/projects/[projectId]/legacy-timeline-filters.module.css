@@ -1,0 +1,11 @@
+/* Old LMS quick-filter touch layout: 44px until 767px and
+ * compact desktop pills from 768px. Scoped only to this timeline.
+ * Reference: components___variables.scss:139,148 and
+ * components___listing-page-header.scss:130-159.
+ */
+.filters { min-width: 0; }
+@media (max-width: 767px) {
+  .filters :global(a), .filters :global(button) {
+    min-height: 44px;
+  }
+}
