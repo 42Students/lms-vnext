@@ -488,3 +488,25 @@
   background-color: var(--lms-scrollbar-thumb) !important;
   border-radius: 1px;
 }
+
+/* GENERIC FOCUS FEEDBACK
+ * Legacy: components___accessibility.scss:19-35 (visible teal focus,
+ * 4px outer teal 12% halo on card-like interactive elements);
+ * components___variables.scss:12,258 (teal-text, standard easing).
+ * Native outlines are deliberately preserved for accessibility.
+ * Shared button/field components have their own focus systems.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(summary, [role="button"], button:not([data-slot="button"]))
+  :not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12) !important;
+}
+/* Legacy: components___accessibility.scss:13-23,
+ * components___form.scss:23-36 (pointer focus reset, keyboard kept).
+ * Do not remove native outlines on click: existing global focus rules handle it.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input, select, textarea, summary):not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1),
+    box-shadow 150ms cubic-bezier(0.2, 0, 0, 1);
+}
