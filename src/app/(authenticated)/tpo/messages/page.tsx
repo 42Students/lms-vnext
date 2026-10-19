@@ -90,7 +90,7 @@ export default async function TpoMessagesPage({
           action={
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               Clear filters
             </Link>
@@ -132,7 +132,7 @@ export default async function TpoMessagesPage({
    <ErrorState title="Recruiter conversations are temporarily unavailable"
     description="Your placement notifications remain available separately. No recruiter messages were loaded."
     action={<Link href="/tpo/notifications"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">
       Open notifications
      </Link>}/>
   </div>;
@@ -168,13 +168,13 @@ export default async function TpoMessagesPage({
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
             <Link
               href="/tpo/messages/notifications"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary"
             >
               My placement notifications
             </Link>
             <Link
               href="/tpo/more"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               More TPO tools
             </Link>
@@ -269,7 +269,7 @@ export default async function TpoMessagesPage({
           key={status}
           href={tpoMessagesHref({...commonFilters,status,page:1})}
           aria-current={query.status===status?"page":undefined}
-          className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold "+
+          className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border px-4 text-sm font-semibold "+
             (query.status===status?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":
               "border-border bg-surface text-foreground")}>
             {label} ({count})
@@ -290,7 +290,7 @@ export default async function TpoMessagesPage({
             <Select
               name="status"
               defaultValue={query.status}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               {TPO_MESSAGE_STATUSES.filter(
                 (status) =>
@@ -315,7 +315,7 @@ export default async function TpoMessagesPage({
               type="date"
               name="from"
               defaultValue={query.from ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
             />
           </label>
 
@@ -325,7 +325,7 @@ export default async function TpoMessagesPage({
               type="date"
               name="to"
               defaultValue={query.to ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
             />
           </label>
 
@@ -335,7 +335,7 @@ export default async function TpoMessagesPage({
               value={query.q} placeholder="Recruiter, subject or message"/>:
               <Input type="search" name="q" maxLength={120} defaultValue={query.q}
                 placeholder="TPO name or event type"
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>}
+                className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"/>}
           </label>
 
           <label className="grid gap-1 text-sm font-semibold text-body">
@@ -343,7 +343,7 @@ export default async function TpoMessagesPage({
             <Select
               name="pageSize"
               defaultValue={String(pageSize)}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
             >
               <option value="25">25</option>
               <option value="50">50</option>
@@ -354,14 +354,14 @@ export default async function TpoMessagesPage({
           <div className="flex flex-wrap gap-3 sm:col-span-2 xl:col-span-5">
             <Button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
             >
               Apply filters
             </Button>
 
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
             >
               Clear filters
             </Link>
@@ -413,7 +413,7 @@ export default async function TpoMessagesPage({
                cell:item=><div className="min-w-0">
                 <strong className="break-words text-foreground">{item.participantName}</strong>
                 {item.companyName?<p className="mt-1 text-xs text-muted-foreground">{item.companyName}</p>:null}
-                {item.waitingForYou?<span className="mr-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">Waiting for you</span>:null}
+                {item.waitingForYou?<span className="mr-2 rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-1 text-xs">Waiting for you</span>:null}
                 {item.accessEnded?<span className="rounded border border-border px-2 py-1 text-xs">Access ended</span>:null}
                </div>},
               {key:"subject",header:"Subject",mobileLabel:"Subject",mobilePriority:"action",
@@ -454,7 +454,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Previous
               </Link>
@@ -466,7 +466,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)]"
               >
                 Next
               </Link>
