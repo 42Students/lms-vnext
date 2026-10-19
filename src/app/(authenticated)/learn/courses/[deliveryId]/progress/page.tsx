@@ -1,4 +1,6 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import { StatTile } from "@/components/ui/stat-tile";
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -39,25 +41,15 @@ export default async function LearnerCourseProgressPage({
           { label: "Assignments", value: progress.summary.assignmentsCompleted + "/" + progress.summary.assignmentsTotal },
           { label: "Quizzes", value: progress.summary.quizzesCompleted + "/" + progress.summary.quizzesTotal },
         ].map((metric) => (
-          <article key={metric.label} className="rounded-xl border border-border bg-surface p-4">
-            <h2 className="text-xs font-semibold text-muted-foreground">{metric.label}</h2>
-            <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{metric.value}</p>
-          </article>
+          <StatTile key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </section>
       {!progress.learningPathPublished ? (
-        <section role="status" className="border-b border-border py-4">
-          <h2 className="font-semibold text-foreground">Learning path not published</h2>
-          <p className="mt-2 text-sm text-body">
-            Your college has not published a learning path for this delivery.
-            Zero published items is not evidence of course completion.
-          </p>
-        </section>
+        <EmptyState title="Learning path not published"
+          description="Your college has not published a learning path for this delivery. Zero published items is not evidence of course completion." />
       ) : progress.lessons.length === 0 ? (
-        <section role="status" className="border-b border-border py-4">
-          <h2 className="font-semibold text-foreground">No published lessons</h2>
-          <p className="mt-2 text-sm text-body">Lesson progress will appear after course content is published.</p>
-        </section>
+        <EmptyState title="No published lessons"
+          description="Lesson progress will appear after course content is published." />
       ) : (
         <section className="space-y-4" aria-label="Lesson completion">
           {progress.lessons.map((lesson) => (
