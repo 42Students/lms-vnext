@@ -236,11 +236,24 @@
   letter-spacing: -.02em;
   color: var(--lms-neutral-900);
 }
+/* docs/design/legacy-styles/components___notification-drawer.scss:192-223 */
+[data-slot="notification-popover"] :is(ul, ol) a[href] {
+  border-radius: 8px;
+  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
 [data-slot="notification-popover"] :is(ul, ol) a[href]:hover {
-  background: rgba(0, 0, 0, .035);
+  background: var(--lms-neutral-50);
+  border-color: var(--lms-neutral-200);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
 }
 [data-slot="notification-popover"] :is(ul, ol) a[href]:active {
   background: rgba(0, 0, 0, .06);
+  box-shadow: none;
+}
+[data-slot="notification-popover"] :is(ul, ol) a[href]:focus-visible {
+  outline: 1px solid var(--lms-neutral-500);
+  outline-offset: 1px;
 }
 [data-slot="notification-popover"] :is(ul, ol) {
   scrollbar-width: none;
