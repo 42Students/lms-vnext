@@ -62,6 +62,7 @@
  }
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-nav-heading {
   justify-content:flex-start;
+  font-size:12px;
  }
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-nav-heading-text {
   display:block;
