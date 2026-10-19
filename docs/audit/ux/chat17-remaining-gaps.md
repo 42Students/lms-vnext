@@ -105,3 +105,21 @@ Do not wrap `PageCanvas` per page: it is already present in the authenticated la
 **Canvas:** `src/app/(authenticated)/layout.tsx` still renders exactly one `<PageCanvas>` enclosing the portal access notice, connection failure notice and authenticated route children. The marked full-height surface uses `#fff`, `#e5e9f0`, radius 12px, 24px desktop and 16px small-screen padding over the `#f1f4f9` shell. Authentication guard remains outside the surface; shell ownership stays in its separate lane.
 
 **Not certified by this pass:** UI parity on actual browser/phone resolutions, overlay stacking and precise font metrics remain live visual review gates. As instructed, no application execution, typecheck, unit test, Playwright, lint or CI was run.
+
+
+## Fourth shared skin follow-up — semantic focus and tokens
+
+**Main synchronization:** `main@284472433ab9399db9afd36fee633958d0866d7b` was 53 commits ahead of the lane with zero lane-only commits at synchronization. Fast-forwarded `chatgpt/chat-17-b` before changing any source. Commits were pushed individually to that branch.
+
+**Fresh visual parity work:**
+- `Input`, `Select`, `Textarea`: keyboard focus teal `#26bac7`, 9px shell-era controls, disabled neutral surface, and invalid red background, border and ring. A later `globals.css` generic teal-focus rule could previously override the red invalid-focus ring; an explicit later selector now restores the intended `rgba(239,68,68,.2)` red shadow and error outline without weakening keyboard focus.
+- `Button`: shared body/teal text tokens for secondary/ghost variants; primary 36px solid `#0a7c88` white CTA remains unchanged; busy/disabled native attributes remain.
+- `Badge`, `StatusBadge`: semantic background pills retain the old-LMS 12px/18px scale, with stronger readable semantic text `#065f46`/`#92400e`/`#b91c1c` via new `--lms-*-text` variables rather than unrelated raw text colors.
+- `StatTile`: standardized neutral small copy and subtle card border/radius/padding with existing safe internal navigation and numeric formatting.
+- `ScrollCue`: legacy teal focus and consistent reduced-motion fade treatment. Actual overflow measurement/ARIA and visible keyboard scroll affordances remain unchanged.
+- `InlineNotice`, `Alert`, `Banner`: reuse matching semantic text variables so shared notices and badges cannot drift.
+- `Skeleton`: rounded placeholder token from the old LMS 6px/8px-compatible scale, with shimmer and reduced-motion handling unchanged.
+
+**Single PageCanvas integration:** Already wired once inside `src/app/(authenticated)/layout.tsx`; the existing `data-authenticated-canvas="true"` selector and `data-lms-page-surface="legacy-single-canvas"` marker were verified. The canvas encloses portal access/connectivity notices and the authenticated children and remains white with 12px radius, 1px `#e5e9f0` border, 24px desktop and 16px phone inset, full-height shell behavior. No second wrapper was introduced and no unrelated shell file was edited.
+
+**Execution:** Source-only GitHub updates; no TS compilation, lint, unit/E2E, visual snapshots, browser run or CI per orchestrator directive. Pixel-exact and keyboard screen-reader behavior still need a later controlled integrated verification.
