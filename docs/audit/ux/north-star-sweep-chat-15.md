@@ -1,6 +1,6 @@
 # Chat-15 — North Star old-LMS visual parity sweep (HR / Recruiter)
 
-Status: IN PROGRESS · 2026-10-19 · owner: chat-15 · branch `chatgpt/chat-15-b`
+Status: SOURCE SWEEP COMPLETE — screenshot verification pending · 2026-10-19 · owner: chat-15 · branch `chatgpt/chat-15-b`
 
 ## Binding reference and non-goals
 
@@ -32,13 +32,13 @@ All `recruiter/{home,drives,calendar,colleges,company,messages,profile}` aliases
 
 ## Exact deviation checklist, to update as edits land
 
-- [ ] Remove local hardcoded hex/rgb/hsl/text-color/font families, inline shadows and redundant foreground backgrounds; use the shared semantic tokens/classes.
-- [ ] Replace non-legacy `rounded-full` **on controls/tabs only** (do not change avatar or genuinely rounded status pills) with legacy button/input 9px or token.
-- [ ] Normalize raw `min-h-11` (44px) CTA/input controls to old-LMS 36px `h-9` / `min-h-9`, while retaining touch target adaptations where required on small screens.
-- [ ] Remove redundant `bg-surface`, border, radius and padding on ordinary **section wrappers**, but keep separate objects/modals/cards and table grid hairlines.
-- [ ] Page h1 headings inherit shared PageHeader 30/600/#172033, remove custom competing title treatments; keep h2 hierarchy and all wording.
-- [ ] Use global link/button/input/select/textarea/table tokens and shared components where doing so preserves existing client interfaces and form behavior.
-- [ ] Recheck every source file in above inventory and update this audit with file-by-file status plus any remaining exceptions.
+- [x] Remove local hardcoded hex/rgb/hsl/text-color/font families, inline shadows and redundant foreground backgrounds; use the shared semantic tokens/classes.
+- [x] Replace non-legacy `rounded-full` **on controls/tabs only** (do not change avatar or genuinely rounded status pills) with legacy button/input 9px or token.
+- [x] Normalize raw `min-h-11` (44px) CTA/input controls to old-LMS 36px `h-9` / `min-h-9`, while retaining touch target adaptations where required on small screens.
+- [x] Remove redundant `bg-surface`, border, radius and padding on ordinary **section wrappers**, but keep separate objects/modals/cards and table grid hairlines.
+- [x] Page h1 headings inherit shared PageHeader 30/600/#172033, remove custom competing title treatments; keep h2 hierarchy and all wording.
+- [x] Use global link/button/input/select/textarea/table tokens and shared components where doing so preserves existing client interfaces and form behavior.
+- [x] Recheck every source file in above inventory and update this audit with file-by-file status plus any remaining exceptions.
 
 ## Coordination and verification
 
@@ -48,6 +48,30 @@ All `recruiter/{home,drives,calendar,colleges,company,messages,profile}` aliases
 
 - [x] Synced branch to `origin/main`, read NORTH STAR and measured old-LMS reference.
 - [x] Enumerated 143 implementation, alias and fallback files, identified single canvas inheritance.
-- [ ] HR page implementation sweep.
-- [ ] Recruiter source/alias and HR component sweep.
-- [ ] Final textual class/token audit and page list update.
+- [x] HR page implementation sweep.
+- [x] Recruiter source/alias and HR component sweep.
+- [x] Final textual class/token audit and page list update.
+
+
+## File-by-file disposition (source audit complete)
+
+**Implemented and modified:** all substantive HR display pages that carried non-legacy hardcoded link/control classes: `hr/{home,drives,calendar,activity,company,company/reports,conversations,conversations/[threadId],notifications,profile,round-results}`; `hr/placements/jobs/[jobId]`; `hr/drives/{new,proposals,recorded-outside,[jobId]/messages,[jobId]/interview-slots,[jobId]/rounds/editor,[jobId]/rounds/editor/remove/[roundId]}`. Other implementation files including `hr/{colleges,messages,placements}` already delegate to shared/canonical pages and required no override. The independently implemented `recruiter/drives/[jobId]/change-requests/page.tsx` was restyled.
+
+**Client HR components modified as applicable:** `hr-drive-draft-form`, `hr-notification-read-button`, `hr-recruiter-bell`, `hr-unsent-drive-alert`, `recruiter-conversation-read-control`, `recruiter-decision-read-button`, `recruiter-designation-editor`, `recruiter-display-name-editor`, `recruiter-drive-focus-refresh`, `recruiter-notification-bell`, `recruiter-private-rating-editor`, `recruiter-profile-access`, `recruiter-profile-details-editor`, `recruiter-request-cancel-button`, `recruiter-round-inline-editor`. `recruiter-applicant-review-drawer`, `recruiter-conversation-live-refresh`, `recruiter-conversation-reply-form`, `recruiter-request-feedback` already use shared styles or have no hardcoded styling outside the old spec; leave their functionality and state alone.
+
+**Recruiter-owned placement components:** `placement-recruiter-access`, `recruiter-interview-slot-form`, `recruiter-placement-portfolio`, `recruiter-result-controls`, `recruiter-resume-download` updated where hardcoded radius/control classes existed; `recruiter-focused-review-shortcuts` had no conflicting classes and was left intact. Shared TPO controls, global `src/components/ui`, shell and auth/login sources deliberately excluded to respect lane ownership.
+
+**Recruiter aliases:** inspected all 17 `recruiter/**/page.tsx` files. Sixteen are canonical HR imports or redirects (including the nested messages/interview-slots/rounds paths); the distinct change-requests page was changed here. `hr/**/loading.tsx`, `hr/**/error.tsx`, `hr/**/not-found.tsx` and the recruiter counterparts delegate to shared loading/error/not-found primitives, already skinned by their respective owner.
+
+### Exact changes by visual surface
+
+1. **Buttons and inputs:** changed native `min-h-11` (44px) overrides to shared control minimum `min-h-9` (36px), and `rounded-md` (6px) overrides to exactly `rounded-[9px]`, consistent with the currently installed `ui/button.tsx` / `ui/input.tsx` skins. Draft form inputs explicitly use 36px height, 14px and 9px radius. Retained wider wrapping as needed.
+2. **Palette:** removed raw variable-specific link-text overrides in favor of `text-primary-text` (mapped in `globals.css` to `--lms-link-text: #0e7c87`). Existing `bg-primary`/ `text-on-primary` resolve to old-LMS CTA teal `#0a7c88` and pure white. Replaced local outline color overrides with the same primary-text focus color used by shared buttons, rather than faint translucent rings.
+3. **One continuous canvas:** flattened *ordinary* `<section>` card treatments in the job details, calendar, company/reports, profile, conversations and round-results pages to hairline bottom dividers and whitespace; the four substantive HR draft form sections also sit directly on the inherited white canvas. No added outer canvas and no changes to section order or markup structure.
+4. **Legacy tabs:** recruiter job offer-state and round-result tab navigation now uses the slim 3px teal underline for selected items and transparent border for other items rather than full teal pill-buttons.
+5. **Preserved separate objects:** Today “Next up”, per-drive attention, individual applicant/recruiter tiles, report option articles, dropdown popovers with deliberate shadow, status/count pills, avatars, warning banners, modal dialogs, and horizontally scrollable tables retained their object separation and responsive behavior.
+6. **Typography:** all substantive HR page-level titles use the shared `PageHeader` h1 (30px/600/#172033 on the measured desktop breakpoint). No nested page h1/custom font families, raw hex colors, non-semantic Tailwind color palette overrides, or large local shadows remain in the examined HR page files; icon/number size semantics are intentionally preserved.
+
+### Visual verification remaining
+
+The source audit and commits are complete. Exact pixel parity **cannot be certified without side-by-side authenticated browser screenshots**, especially at desktop 1280×800 and phone widths, for Home, Drives, Job detail, Calendar, Messages, Company, and Profile. No CI, typecheck, snapshots or browser tests were run, as ordered. This audit is a source-completion record, not a claim that the final browser pixels have been independently verified.
