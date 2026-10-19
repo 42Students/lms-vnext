@@ -48,7 +48,7 @@ export default async function FacultyContactsPage({
   const raw=await searchParams;
   const filters=parseFacultyContactsQuery(raw);
   if(!filters)return <section role="alert" className="space-y-3 p-5">
-    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid directory filters</h1>
+    <PageHeader title="Invalid directory filters" />
     <Link href={"/teacher/contacts/"+contactsTab}
       className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Return to Contacts
