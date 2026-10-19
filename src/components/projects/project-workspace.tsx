@@ -278,7 +278,7 @@ export function ProjectWorkspace({
     <div className="space-y-6">
       <Link
         href={backHref}
-        className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+        className="inline-flex text-sm font-semibold text-link hover:text-primary-hover"
       >
         {backLabel === "Projects" ? "Back to projects" : backLabel}
       </Link>
@@ -302,8 +302,8 @@ export function ProjectWorkspace({
               className={
                 "whitespace-nowrap border-b-[3px] px-3 py-2 text-[14px] font-[650] transition " +
                 (activeSection === section
-                  ? "border-primary bg-primary-subtle text-primary-text"
-                  : "border-transparent text-body hover:bg-primary-subtle hover:text-primary-text")
+                  ? "border-primary bg-primary-subtle text-link"
+                  : "border-transparent text-body hover:bg-primary-subtle hover:text-link")
               }
             >
               {PROJECT_WORKSPACE_SECTION_LABELS[section]}
@@ -346,7 +346,7 @@ export function ProjectWorkspace({
 
       {mode === "ADMIN" && show("readiness") ? (
         <Link href={"/admin/projects/readiness?projectId=" + encodeURIComponent(workspace.project.id)}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link">
           Manage override
         </Link>
       ) : null}
@@ -468,7 +468,7 @@ export function ProjectWorkspace({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</h2>
             {mentorReviewHref ? <Link href={mentorReviewHref}
-              className="inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link">
               Review submission
             </Link> : null}
           </div>
@@ -486,7 +486,7 @@ export function ProjectWorkspace({
             </div>
           </div>:null}
           {mode!=="ADMIN"?<div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <section className="rounded-lg border border-border p-3">
+            <section className="rounded-[var(--lms-control-radius)] border border-border p-3">
               <h3 className="font-semibold text-foreground">Definition of done</h3>
               <p className="mt-1 text-sm text-body">
                 Finish the planned tasks, have each sprint signed off, and send the final submission for mentor review.
@@ -495,7 +495,7 @@ export function ProjectWorkspace({
                 Submission also needs all {workspace.sprints.length} sprint(s) signed off.
               </p>
             </section>
-            <section className="rounded-lg border border-border p-3">
+            <section className="rounded-[var(--lms-control-radius)] border border-border p-3">
               <h3 className="font-semibold text-foreground">Who’s who</h3>
               <ul className="mt-2 space-y-1 text-sm text-body">
                 <li>Mentor · Reviews tasks and final delivery</li>
@@ -505,17 +505,17 @@ export function ProjectWorkspace({
               </ul>
             </section>
           </div>:null}
-          {mode==="MENTOR"?<section aria-label="Final submission" className="mt-4 rounded-lg border border-border p-3 text-sm text-body">
+          {mode==="MENTOR"?<section aria-label="Final submission" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
             <h3 className="font-semibold text-foreground">Final submission</h3>
             <p className="mt-1">Status: {readiness.finalSubmission.latest?label(readiness.finalSubmission.latest.status):"Not submitted"}</p>
             <Link href={mentorReviewHref??("/mentor/projects/"+workspace.project.id+"?tab=delivery")}
-              className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Review submission</Link>
+              className="mt-2 inline-flex min-h-10 items-center font-semibold text-link underline">Review submission</Link>
           </section>:null}
-          {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 rounded-lg border border-border p-3">
+          {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3">
             <h3 className="font-semibold">Task progress</h3>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
-                <div key={lane.id} className="rounded-lg bg-muted p-2 text-center">
+                <div key={lane.id} className="rounded-[var(--lms-control-radius)] bg-muted p-2 text-center">
                   <p className="text-xl font-bold tabular-nums">{lane.tasks.length}</p>
                   <p className="text-xs text-body">{lane.label}</p>
                 </div>)}
@@ -523,7 +523,7 @@ export function ProjectWorkspace({
             <p className="mt-2 text-xs text-body">Submission also needs all {readiness.execution.sprints.total}
               {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>
           </section>:null}
-          {mode==="LEARNER"?<section aria-label="Task completion donut" className="mt-4 rounded-lg border border-border p-4">
+          {mode==="LEARNER"?<section aria-label="Task completion donut" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-4">
             <h3 className="text-sm font-semibold">Task completion</h3>
             {readiness.execution.tasks.total>0?<div className="mt-3 flex flex-wrap items-center gap-4">
               <svg viewBox="0 0 42 42" role="img"
@@ -550,11 +550,11 @@ export function ProjectWorkspace({
                 {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>:
               <p className="mt-3 text-xs text-body">Tasks only — this project has no sprints.</p>}
           </section>:null}
-          {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 rounded-lg border border-border p-3">
+          {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3">
             <h3 className="font-semibold text-foreground">Task progress</h3>
             <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
-                <div key={lane.id} className="rounded-lg bg-muted p-2 text-center">
+                <div key={lane.id} className="rounded-[var(--lms-control-radius)] bg-muted p-2 text-center">
                   <p className="text-xl font-bold tabular-nums">{lane.tasks.length}</p>
                   <p className="text-xs text-body">{lane.label}</p>
                 </div>)}
@@ -593,18 +593,18 @@ export function ProjectWorkspace({
               {workspace.project.nextAction ?
                 <p>Next step: {workspace.project.nextAction}</p> : null}
               {workspace.project.blocker ?
-                <div className="rounded-lg border border-warning-border bg-warning-subtle p-3">
+                <div className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
                   <p className="font-semibold">Requires attention</p>
                   <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker}</p>
                   <Link href={"/learn/projects/"+workspace.project.id+"?tab=board&taskStatus=BLOCKED"}
-                    className="inline-flex min-h-10 items-center text-primary-text underline">
+                    className="inline-flex min-h-10 items-center text-link underline">
                     Open blocked work
                   </Link>
                 </div> : null}
             </div>
           ) : null}
           {mode === "LEARNER" ? (
-            <section className="mt-4 rounded-lg border border-border bg-surface-subtle p-4">
+            <section className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="text-sm font-semibold text-foreground">Final submission</h3>
                 <StatusBadge tone={readiness.finalSubmission.latest?.status === "APPROVED" ? "success" :
@@ -623,7 +623,7 @@ export function ProjectWorkspace({
                 }</p>
               ) : null}
               <Link href={"/learn/projects/" + workspace.project.id + "?tab=delivery"}
-                className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-link underline">
                 {readiness.finalSubmission.latest?.status === "CHANGES_REQUESTED"
                   ? "Update your submission" : "Open final submission"}
               </Link>
@@ -632,51 +632,51 @@ export function ProjectWorkspace({
           {mode === "LEARNER" ? (
             <div className="mt-4 space-y-3">
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-lg bg-muted p-3 text-sm">
+                <div className="rounded-[var(--lms-control-radius)] bg-muted p-3 text-sm">
                   <p className="font-semibold text-foreground">Mentor</p>
                   <p className="mt-1 text-body">{workspace.members.find(member =>
                     member.role === "MENTOR" && member.isPrimary)?.displayName ??
                     workspace.members.find(member => member.role === "MENTOR")?.displayName ??
                     "Not assigned"}</p>
                 </div>
-                <div className="rounded-lg bg-muted p-3 text-sm">
+                <div className="rounded-[var(--lms-control-radius)] bg-muted p-3 text-sm">
                   <p className="font-semibold text-foreground">Next step</p>
                   <Link href={"/learn/projects/" + workspace.project.id + "?tab=board"}
-                    className="mt-1 inline-flex min-h-10 items-center font-semibold text-primary-text hover:underline">
+                    className="mt-1 inline-flex min-h-10 items-center font-semibold text-link hover:underline">
                     Open the Board →
                   </Link>
                 </div>
               </div>
               {workspace.tasks.some(task => task.status === "BLOCKED") ? (
-                <div className="rounded-lg border border-warning-border bg-warning-subtle p-3">
+                <div className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
                   <h3 className="text-sm font-semibold">Requires attention</h3>
                   <p className="mt-1 text-sm text-body">One or more tasks are blocked.</p>
                   <Link href={"/learn/projects/" + workspace.project.id + "?tab=board&taskStatus=BLOCKED"}
-                    className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                    className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-link underline">
                     Open blocked work
                   </Link>
                 </div>
               ) : null}
             </div>
           ) : null}
-          {mode==="MENTOR"?<section className="mt-4 space-y-3 rounded-lg border border-border p-3 text-sm">
+          {mode==="MENTOR"?<section className="mt-4 space-y-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
             <p>Mentor: {workspace.members.find(m=>m.role==="MENTOR"&&m.isPrimary)?.displayName??
               workspace.members.find(m=>m.role==="MENTOR")?.displayName??"Not assigned"}</p>
             <p>Due date: <strong>{workspace.project.dueLabel??workspace.project.endDate??"No due date"}</strong></p>
             {workspace.project.phase?<p>Phase: {workspace.project.phase}</p>:null}
             <div className="flex flex-wrap gap-3">
               <Link href={"/mentor/projects/"+workspace.project.id+"?tab=board"}
-                className="min-h-10 font-semibold text-primary-text underline">
+                className="min-h-10 font-semibold text-link underline">
                 {workspace.project.nextAction??"Next step · Open the Board"} →
               </Link>
             </div>
             {workspace.project.blocker||workspace.tasks.some(t=>t.status==="BLOCKED")?
-              <div role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3">
+              <div role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
                 <p className="font-semibold">Requires attention</p>
                 <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker||
                   workspace.tasks.filter(t=>t.status==="BLOCKED").length+" blocked tasks"}</p>
                 <Link href={"/mentor/projects/"+workspace.project.id+"?tab=board&lane=BLOCKED"}
-                  className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open blocked work</Link>
+                  className="inline-flex min-h-10 items-center font-semibold text-link underline">Open blocked work</Link>
               </div>:null}
           </section>:null}
           {workspace.project.summary ? (
@@ -700,7 +700,7 @@ export function ProjectWorkspace({
             <>
               <Link href={(backHref.startsWith("/college/") ? "/college/projects" : "/admin/projects") +
                 "/reassign-mentor?projectId=" + encodeURIComponent(workspace.project.id)}
-                className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                className="inline-flex min-h-10 items-center text-sm font-semibold text-link underline">
                 Reassign mentor
               </Link>
               <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
@@ -715,7 +715,7 @@ export function ProjectWorkspace({
           ) : null}
         </div>
         {mode==="MENTOR" && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
-          <p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+          <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
             No primary Mentor is recorded in the current Project roster.
             Team staffing changes remain a College Admin action.
           </p>
@@ -729,7 +729,7 @@ export function ProjectWorkspace({
           </p>;
         })() : null}
         {workspace.project.teamGroupId ? (
-          <p className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+          <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
             Learner assignments in this workspace come from its managed class team.
             Only College Admin or Super Admin may change team membership in the class team workspace;
             mentors can review Project work but cannot edit team membership.
@@ -756,7 +756,7 @@ export function ProjectWorkspace({
                 {member.bio?<p className="whitespace-pre-wrap break-words">{member.bio}</p>:
                   <p className="text-xs">No mentor bio yet. Update your faculty profile to introduce your role.</p>}
                 {linkedIn?<a href={linkedIn} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex min-h-10 items-center text-primary-text underline">LinkedIn profile ↗</a>:null}
+                  className="inline-flex min-h-10 items-center text-link underline">LinkedIn profile ↗</a>:null}
               </div>:null}
             </article>;
           }):null}
@@ -811,7 +811,7 @@ export function ProjectWorkspace({
             {mode==="ADMIN"?"Execution":"Releases and Sprints"}
           </h2>
           {mentorReviewHref ? <Link href={mentorReviewHref}
-            className="mt-2 inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
+            className="mt-2 inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link">
             Review submission
           </Link> : null}
           {mode==="ADMIN"?<p className="mt-1 text-sm text-body">Release and sprint execution records.</p>:null}
@@ -820,16 +820,16 @@ export function ProjectWorkspace({
               <MentorReleaseEditor projectId={workspace.project.id}/>
             </div>:null}
           {mode==="MENTOR"&&workspace.releases.length===0?
-            <div role="status" className="mt-2 rounded-md border border-border p-4 text-sm text-body">
+            <div role="status" className="mt-2 rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
               <p>No sprints yet. Add the sprints this project should be measured against.</p>
               {readOnly?
                 <p className="mt-2">This workspace is read-only, so sprints cannot be added.</p>:
                 <p className="mt-2">First <a href="#mentor-project-add-release"
-                  className="font-semibold text-primary-text underline">add a release</a>,
+                  className="font-semibold text-link underline">add a release</a>,
                   then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
             </div>:null}
         </div>
-        {mode==="LEARNER"?<div role="status" className="rounded-lg border border-border p-3 text-sm text-body">
+        {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
             const today=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",
               year:"numeric",month:"2-digit",day:"2-digit"}).format(renderTime);
@@ -843,9 +843,9 @@ export function ProjectWorkspace({
             {workspace.releases.map(release=><a key={release.id}
               href={"#project-release-"+release.id}
               aria-current={release.status==="ACTIVE"?"step":undefined}
-              className={"min-h-11 rounded-md border px-3 py-2 text-sm font-semibold "+
+              className={"min-h-11 rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold "+
                 (release.status==="SHIPPED"?"border-success-border bg-success-subtle text-success-text":
-                  release.status==="ACTIVE"?"border-primary bg-primary-subtle text-primary-text":
+                  release.status==="ACTIVE"?"border-primary bg-primary-subtle text-link":
                   "border-border bg-surface text-body")}>
               {release.title} · {label(release.status)}
             </a>)}
@@ -859,7 +859,7 @@ export function ProjectWorkspace({
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
+                  <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-link">
                     Release {release.sequence + 1}
                   </p>
                   <h3 className="mt-1 text-base font-semibold text-foreground">
@@ -910,7 +910,7 @@ export function ProjectWorkspace({
                   []).map((sprint) => (
                   <section
                     key={sprint.id}
-                    className="rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4"
+                    className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-neutral-50)] p-4"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
@@ -1006,7 +1006,7 @@ export function ProjectWorkspace({
 
                     <div className="mt-3 grid gap-2">
                       {mode==="MENTOR" && mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[]) ? (
-                        <p role="status" className="rounded-lg border border-border bg-surface p-3 text-xs text-body">
+                        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-xs text-body">
                           {mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[])}
                         </p>
                       ) : null}
@@ -1025,7 +1025,7 @@ export function ProjectWorkspace({
                           <div
                             key={task.id}
                             id={"mentor-task-"+task.id}
-                            className="rounded-lg border border-border bg-surface px-3 py-3"
+                            className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-3"
                           >
                             <div className="flex flex-wrap items-start justify-between gap-3">
                               <div className="min-w-0">
@@ -1042,8 +1042,8 @@ export function ProjectWorkspace({
                                   <p className="whitespace-pre-wrap break-words">{task.approach}</p>
                                 </section>:null}
                                 {showMentorTaskCriteria(mode,task.acceptanceCriteria) ? (
-                                  <details className="mt-2 rounded-lg border border-border bg-surface-subtle px-3 py-2">
-                                    <summary className="min-h-9 cursor-pointer py-1 text-xs font-semibold text-primary-text">
+                                  <details className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2">
+                                    <summary className="min-h-9 cursor-pointer py-1 text-xs font-semibold text-link">
                                       Acceptance criteria
                                     </summary>
                                     <p className="mt-2 whitespace-pre-wrap break-words text-xs leading-5 text-body">
@@ -1052,13 +1052,13 @@ export function ProjectWorkspace({
                                   </details>
                                 ) : null}
                                 {mode==="MENTOR" && mentorTaskReviewEvidence(task.status,latestAttempt)==="REVIEW_PENDING" ? (
-                                  <p role="status" className="mt-2 text-xs font-semibold text-primary-text">
+                                  <p role="status" className="mt-2 text-xs font-semibold text-link">
                                     Submitted attempt v{latestAttempt?.version} is waiting for Mentor review.
                                   </p>
                                 ) : null}
                                 {mode==="MENTOR" && latestAttempt ? (
                                   <Link href={mentorTaskFeedbackHref(workspace.project.id,task.id)}
-                                    className="mt-2 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">
+                                    className="mt-2 inline-flex min-h-10 items-center text-xs font-semibold text-link underline">
                                     Review recorded task feedback →
                                   </Link>
                                 ) : null}
@@ -1106,7 +1106,7 @@ export function ProjectWorkspace({
                                 <div className="sm:col-span-2"><dt className="font-semibold">Submission</dt>
                                   <dd><a target="_blank" rel="noreferrer"
                                     href={safeHttpHref(latestAttempt.submissionUrl)!}
-                                    className="text-primary-text underline">Open submission</a></dd>
+                                    className="text-link underline">Open submission</a></dd>
                                 </div> : null}
                             </dl>
                             {mode === "LEARNER" &&
@@ -1217,7 +1217,7 @@ export function ProjectWorkspace({
 
       {show("delivery") ? <section className="space-y-3">
         {mode === "LEARNER" && workspace.members.filter(member => member.role === "LEARNER").length > 1 ? (
-          <div role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+          <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">
             Team submission: this final delivery is shared with everyone on your project team.
             Edits and submission status are visible to all team members.
           </div>
@@ -1229,7 +1229,7 @@ export function ProjectWorkspace({
 
         </div>
         {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
-          <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+          <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
             Latest recorded delivery: version {workspace.mentorEvidence.latestDelivery?.version}
             {" · "}{workspace.mentorEvidence.latestDelivery?.status}.
             Historic versions remain available below.
@@ -1267,7 +1267,7 @@ export function ProjectWorkspace({
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
+                        <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-link">
                           Version {submission.version}
                         </p>
                         <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
@@ -1315,7 +1315,7 @@ export function ProjectWorkspace({
                           return <p key={index} className="text-xs text-body">
                             {href && row.kind === "LINK" ?
                               <a href={href} rel="noopener noreferrer" target="_blank"
-                                className="text-primary-text hover:underline">Open link · {name}</a> :
+                                className="text-link hover:underline">Open link · {name}</a> :
                               row.kind === "FILE" && typeof row.fileId === "string"
                                 ? <ProjectDeliveryEvidenceDownload projectId={workspace.project.id}
                                     fileId={row.fileId} name={name}/>
@@ -1332,7 +1332,7 @@ export function ProjectWorkspace({
                             href={source}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-primary-text hover:text-primary-hover"
+                            className="text-link hover:text-primary-hover"
                           >
                             Open source ↗
                           </a>
@@ -1342,7 +1342,7 @@ export function ProjectWorkspace({
                             href={demo}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-primary-text hover:text-primary-hover"
+                            className="text-link hover:text-primary-hover"
                           >
                             Open demo ↗
                           </a>
@@ -1351,7 +1351,7 @@ export function ProjectWorkspace({
                     ) : null}
 
                     {review ? (
-                      <div className="mt-4 rounded-lg bg-muted p-3">
+                      <div className="mt-4 rounded-[var(--lms-control-radius)] bg-muted p-3">
                         <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                           Review · {label(review.decision)}
                         </p>
@@ -1363,8 +1363,8 @@ export function ProjectWorkspace({
                       </div>
                     ) : null}
 
-                    {mode!=="LEARNER"?<details className="mt-3 rounded-lg border border-border p-3">
-                      <summary className="cursor-pointer text-sm font-semibold text-primary-text">
+                    {mode!=="LEARNER"?<details className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+                      <summary className="cursor-pointer text-sm font-semibold text-link">
                         Submission history
                       </summary>
                       <ul className="mt-2 space-y-2 text-xs text-body">
@@ -1423,7 +1423,7 @@ export function ProjectWorkspace({
                     ) : null}
 
                     {evaluation ? (
-                      <div className="mt-3 rounded-lg bg-[var(--lms-success-subtle)] p-3">
+                      <div className="mt-3 rounded-[var(--lms-control-radius)] bg-[var(--lms-success-subtle)] p-3">
                         <p className="m-0 text-sm font-semibold text-success">
                           Evaluation ·{" "}
                           {evaluation.totalScore}/
@@ -1519,7 +1519,7 @@ export function ProjectWorkspace({
               </p>:
                 <p className="mt-1 text-sm text-muted-foreground">No upcoming meeting.</p>}
               {upcoming.length>1?<details className="mt-2 text-sm">
-                <summary className="cursor-pointer font-semibold text-primary-text">Also scheduled ({upcoming.length-1})</summary>
+                <summary className="cursor-pointer font-semibold text-link">Also scheduled ({upcoming.length-1})</summary>
                 <ul className="mt-2 space-y-1">{upcoming.slice(1).map(m=>
                   <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}
                     {m.meetingType?" · "+label(m.meetingType):""}</li>)}</ul>
@@ -1587,7 +1587,7 @@ export function ProjectWorkspace({
                       </p>
                     ) : null}
                     {meeting.outcome ? (
-                      <p className="mt-2 rounded-lg bg-muted p-3 text-sm leading-6 text-body">
+                      <p className="mt-2 rounded-[var(--lms-control-radius)] bg-muted p-3 text-sm leading-6 text-body">
                         Outcome: {meeting.outcome}
                       </p>
                     ) : null}
@@ -1595,7 +1595,7 @@ export function ProjectWorkspace({
                       const detail=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
                       const hasDetail=Boolean(detail.notes||detail.actionItems||detail.wentWell||
                         detail.improve||detail.nextTime||detail.followUpAt||detail.followUpNotes);
-                      return hasDetail?<details className="mt-2 rounded-md border border-border p-3 text-sm">
+                      return hasDetail?<details className="mt-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
                         <summary className="cursor-pointer font-semibold text-foreground">Meeting notes and follow-up</summary>
                         {([
                           ["Notes",detail.notes],["Action items",detail.actionItems],
@@ -1613,7 +1613,7 @@ export function ProjectWorkspace({
                       <Link
                         href={"/mentor/projects/"+encodeURIComponent(workspace.project.id)+
                           "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
-                        className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                        className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-link underline">
                         {meeting.outcome?"View notes":"Add notes"}
                       </Link>
                     ) : null}
@@ -1622,7 +1622,7 @@ export function ProjectWorkspace({
                         href={href}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
+                        className="mt-3 inline-flex text-sm font-semibold text-link hover:text-primary-hover"
                       >
                         Join meeting ↗
                       </a>
@@ -1682,7 +1682,7 @@ export function ProjectWorkspace({
           </div>
 
           {mode === "ADMIN" ? <Link href={"/admin/projects/audit?projectId=" + encodeURIComponent(workspace.project.id)}
-            className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View full project audit</Link> : null}
+            className="inline-flex min-h-10 items-center text-sm font-semibold text-link underline">View full project audit</Link> : null}
           <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()} resourceAudit={mode==="ADMIN"}/>
 
 
