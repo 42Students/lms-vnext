@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 "use client";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -182,8 +183,8 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
    disabled={pending||!methodsLoaded||existing?.status==="ARCHIVED"}
    onChange={next=>{setAllowedMethods(next);setMethodsDirty(true);setConfirmed(false);}}/>:null}
   {methodsEnabled&&methodsLoading?<p role="status" className="text-xs">Loading allowed methods…</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {success?<p role="status" className="text-sm text-body">{success}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {success?<Alert tone="success">{success}</Alert>:null}
   <div className="flex flex-wrap gap-2">
    {!existing?<div className="flex flex-wrap items-center gap-3">
     <Checkbox label="Publish now" checked={publishNow} disabled={pending}
