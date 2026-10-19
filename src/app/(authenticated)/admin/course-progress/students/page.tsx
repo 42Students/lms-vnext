@@ -36,10 +36,10 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     description="Persisted video completion, assignment submissions and quiz attempts for active enrolled students in the selected course offering."/>
   {back}
   <dl className="grid gap-3 sm:grid-cols-4">
-   <div className="rounded-[var(--lms-control-radius)] border border-border p-3"><dt>Average completion</dt><dd className="text-xl font-semibold">{mean===null?"Not measured":mean+"%"}</dd></div>
-   <div className="rounded-[var(--lms-control-radius)] border border-border p-3"><dt>Students</dt><dd className="text-xl font-semibold">{report.rows.length}</dd></div>
-   <div className="rounded-[var(--lms-control-radius)] border border-border p-3"><dt>Not started</dt><dd className="text-xl font-semibold">{report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length}</dd></div>
-   <div className="rounded-[var(--lms-control-radius)] border border-border p-3"><dt>Items measured</dt><dd className="text-xl font-semibold">{lowestMeasured===highestMeasured?
+   <div className="border-b border-border py-3"><dt>Average completion</dt><dd className="text-xl font-semibold">{mean===null?"Not measured":mean+"%"}</dd></div>
+   <div className="border-b border-border py-3"><dt>Students</dt><dd className="text-xl font-semibold">{report.rows.length}</dd></div>
+   <div className="border-b border-border py-3"><dt>Not started</dt><dd className="text-xl font-semibold">{report.rows.filter(row=>row.videos+row.assignments+row.quizzes===0).length}</dd></div>
+   <div className="border-b border-border py-3"><dt>Items measured</dt><dd className="text-xl font-semibold">{lowestMeasured===highestMeasured?
      highestMeasured:lowestMeasured+"–"+highestMeasured+" per learner"}</dd></div>
   </dl>
   <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
