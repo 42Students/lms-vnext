@@ -19,6 +19,9 @@ import {canPublishTpoNoticeWithCurrentStorage} from "@/modules/announcements/tpo
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
@@ -34,11 +37,11 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const raw=await searchParams;
  const scalarKeys=["tab","page","mine","audience","targetId"] as const;
  if(scalarKeys.some(key=>Array.isArray(raw[key])))
-  return <div role="alert" className="p-5">Invalid announcement filters. <Link href="/tpo/announcements">Return to announcements</Link></div>;
+  return <Alert tone="error">Invalid announcement filters. <Link href="/tpo/announcements">Return to announcements</Link></Alert>;
  const t=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
  const legacyTab=t==="from42"?"from-42":t==="students"?"yours":t;
  const tab=tpoAnnouncementTabSchema.safeParse(legacyTab??"yours");
- if(!tab.success)return <div role="alert" className="p-5">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></div>;
+ if(!tab.success)return <Alert tone="error">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></Alert>;
  const pageValue=Array.isArray(raw.page)?raw.page[0]:raw.page;
  const page=pageValue&&/^[1-9][0-9]{0,3}$/.test(pageValue)?Math.min(1000,Number(pageValue)):1;
  const showTeam=Array.isArray(raw.mine)?raw.mine[0]==="0":raw.mine==="0";
@@ -79,8 +82,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
   <PageHeader title="Announcements"
    description={tab.data==="from-42"?"What 42 tells placement cells.":
     "What you tell your students, to whom, and who has read it. They read it under Placements."}/>
-  {first(raw.noticeSuccess)==="DELETED"?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm">Deleted. Its notices were taken back.</p>:null}
-  {noticeError?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-danger">{noticeError}</p>:null}
+  {first(raw.noticeSuccess)==="DELETED"?<InlineNotice tone="success" message="Deleted. Its notices were taken back."/>:null}
+  {noticeError?<InlineNotice tone="error" message={noticeError}/>:null}
   {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={sent.createdAt.toISOString()}/>:null}
   {result.status==="READY" && tab.data==="yours"?<TpoNoticeComposerDialog><section className="space-y-4">
    <h2 className="font-semibold text-foreground">Compose a college notice</h2>
@@ -95,21 +98,21 @@ export default async function TpoAnnouncements({searchParams}:Props){
       initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
      <Button variant="secondary" type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text">Preview audience</Button>
    </form>
-   {!query.success?<p role="alert" className="mt-2 text-sm">Choose a valid audience and target ID.</p>:null}
-   {preview.failed?<p role="alert" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+   {!query.success?<Alert tone="error">Choose a valid audience and target ID.</Alert>:null}
+   {preview.failed?<Alert tone="error">
      Could not check the audience right now. Your selection is unchanged.
      <Link href={retryPreviewHref} className="ml-2 font-semibold text-primary-text underline">Retry audience preview</Link>
-    </p>:null}
-   {audience?<div role="status" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+    </Alert>:null}
+   {audience?<Alert tone="info">
      <p className="text-sm font-semibold text-foreground">Current {query.success?query.data.audience.toLowerCase():"college"} visibility preview</p>
      <p className="mt-1 text-sm text-body">{selected?"Goes to "+audience.potentiallyVisibleMemberships+" students · "+(query.success?query.data.audience.toLowerCase().replaceAll("_"," "):"placements"):audience.potentiallyVisibleMemberships+" active college members could see this announcement."}</p>
      <p className="mt-1 text-xs text-muted-foreground">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users. The selected audience determines recipient visibility when targeted storage is ready.</p>
-   </div>:null}
+   </Alert>:null}
    {query.success&&!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)?
-    <p role="alert" className="mt-4 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+    <Alert tone="warning">
       Targeted announcement publishing is not ready. This audience preview cannot be published
       until fixed recipient storage is registered. Choose COLLEGE only to publish to the whole college.
-    </p>:null}
+    </Alert>:null}
    <TpoNoticeDraftGuard formId="tpo-notice-create" actorId={context.user.id}/>
    <form id="tpo-notice-create" action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
     <input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
@@ -154,10 +157,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <Link href={"/tpo/announcements?tab="+tab.data+"&mine=0"} aria-current={showTeam?"page":undefined}
     className={showTeam?"font-semibold underline underline-offset-4":"text-primary-text"}>All team notices</Link>
   </nav>:null}
-  {result.status==="NOT_REGISTERED"?<section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+  {result.status==="NOT_REGISTERED"?<Alert tone="warning">
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
-  </section>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
+  </Alert>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
    {result.items.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
     <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}
      {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs text-primary-text">New</span>:null}
@@ -271,8 +274,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <p className="mt-3 text-xs text-muted-foreground">
      {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)} IST</p>
    </li>)}
-  </ol>:<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
-   No currently visible college-wide announcements from this sender.</p>}
+  </ol>:<EmptyState title="No currently visible college-wide announcements from this sender."/>}
   {result.status==="READY"?<nav aria-label="Announcement pages"
     className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
