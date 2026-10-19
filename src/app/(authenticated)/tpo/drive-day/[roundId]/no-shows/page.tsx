@@ -69,7 +69,7 @@ export default async function TpoNoShowReportPage({
             </a>
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-surface-secondary"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-primary-subtle"
             >
               Export complete attendance CSV
             </a>
