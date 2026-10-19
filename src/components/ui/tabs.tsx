@@ -61,13 +61,13 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
             tabIndex={interactive && index === activeIndex ? 0 : -1}
             onKeyDown={event => keyDown(event, index)}
             onClick={() => { if (interactive) onValueChange?.(item.value); }}
-            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center whitespace-nowrap border-b-[3px] px-0 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50",
+            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center whitespace-nowrap border-b-[3px] px-0 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-[13px] leading-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7] disabled:opacity-50",
               index === activeIndex ? "border-[var(--lms-primary)] text-primary-text" : "border-transparent text-body hover:bg-transparent hover:text-primary-text")}>
             {item.label}
           </button>
         ))}
-      </div></ScrollCue> : <ScrollCue axis="x" label={`${ariaLabel} navigation`}><nav aria-label={ariaLabel} className="flex min-w-max gap-2 border-b border-border pb-1">
-        {items.map(item => item.disabled || !item.href || !isSafeInternalHref(item.href) ? <span key={item.value} aria-disabled="true" className="inline-flex min-h-9 items-center whitespace-nowrap border-b-[3px] border-transparent px-4 text-sm text-body opacity-60">{item.label}</span> : <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
+      </div></ScrollCue> : <ScrollCue axis="x" label={`${ariaLabel} navigation`}><nav aria-label={ariaLabel} className="flex min-w-max gap-5 border-b border-border pb-0">
+        {items.map(item => item.disabled || !item.href || !isSafeInternalHref(item.href) ? <span key={item.value} aria-disabled="true" className="inline-flex min-h-9 items-center whitespace-nowrap border-b-[3px] border-transparent px-0 text-[13px] leading-4 text-body opacity-60">{item.label}</span> : <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
             className={cx("inline-flex min-h-9 shrink-0 items-center justify-center whitespace-nowrap border-b-[3px] px-0 text-[13px] leading-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]",
               item.value === value ? "border-[var(--lms-primary)] text-primary-text" : "border-transparent text-body hover:bg-transparent hover:text-primary-text")}>
               {item.label}</Link>)}

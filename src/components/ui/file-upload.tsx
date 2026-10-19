@@ -84,8 +84,8 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
       <input {...props} ref={bindInput} id={id} type="file" accept={accept} disabled={disabled} onChange={handleChange}
         aria-invalid={pickerUnavailable || disabled ? undefined : error ? true : props["aria-invalid"]}
         aria-describedby={describedBy}
-        className="block min-h-9 w-full min-w-0 rounded-[9px] border border-border bg-surface px-3 py-2 text-[14px] text-foreground file:mr-3 file:rounded-[6px] file:border-0 file:bg-primary-subtle file:px-3 file:py-2 file:text-sm file:font-semibold file:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50" />}
-    {helper ? <p id={`${id}-help`} className="text-sm leading-6 text-body">{helper}</p> : null}
+        className="block min-h-9 w-full min-w-0 rounded-[9px] border border-border bg-surface px-3 py-2 text-[14px] text-foreground file:mr-3 file:rounded-[6px] file:border-0 file:bg-primary-subtle file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[#1a95a1] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7] disabled:opacity-50" />}
+    {helper ? <p id={`${id}-help`} className="text-[13px] leading-5 text-body">{helper}</p> : null}
     {error ? <p id={`${id}-error`} role="alert" className="text-xs text-error">{error}</p> : null}
     {fallback ? <div className="min-w-0 space-y-2">{fallback}</div> : null}
     {(pickerUnavailable || disabled) ? <p id={`${id}-unavailable`} role="alert" className="text-sm text-body">This upload cannot continue with the file picker disabled. {fallback ? "Use the alternative provided." : "Enable file selection before continuing."}</p> : null}
