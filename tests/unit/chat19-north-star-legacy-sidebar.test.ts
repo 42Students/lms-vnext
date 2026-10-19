@@ -41,6 +41,18 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(scopedShellNavigation([college,collegeMore,faculty],"/teacher/courses")).toEqual([faculty]);
   expect(scopedShellNavigation([college,collegeMore,faculty],"/college/courses")).toEqual([college,collegeMore]);
  });
+ it("restores the exact unqualified legacy labels after role filtering",()=>{
+  const items:ShellNavItem[]=[
+   {href:"/learn/courses",label:"Courses · Learning",shortLabel:"C"},
+   {href:"/teacher/courses",label:"Courses · Teaching",shortLabel:"C"},
+  ];
+  expect(scopedShellNavigation(items,"/teacher/courses")).toEqual([
+   {href:"/teacher/courses",label:"Courses",shortLabel:"C"},
+  ]);
+  expect(scopedShellNavigation(items,"/learn/courses")).toEqual([
+   {href:"/learn/courses",label:"Courses",shortLabel:"C"},
+  ]);
+ });
  it("keeps visible group headings exclusive to TPO and hairlines elsewhere",()=>{
   const nav=source("src/components/shell/sidebar-nav.tsx");
   const css=source("src/components/shell/sidebar-legacy.css");
