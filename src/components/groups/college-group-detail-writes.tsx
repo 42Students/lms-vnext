@@ -1,5 +1,4 @@
 "use client";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -62,7 +61,7 @@ export function CollegeGroupDetailWrites({
           <span className="text-sm text-body">{member.displayName||"Unnamed learner"} · Position {member.waitlistPosition??"not recorded"}{member.isLocked?" · Locked":""}</span>
           <Button variant="secondary" type="button" disabled={busy||groupStatus!=="ACTIVE"||!hasSpace||
             front?.membershipId!==member.membershipId||member.isLocked}
-            className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50"
+            
             onClick={()=>{void submit({
               action:"PROMOTE_WAITLIST",memberId:member.membershipId,
               expectedMemberVersion:member.version,expectedGroupVersion:groupVersion,confirm:true,
@@ -84,7 +83,7 @@ export function CollegeGroupDetailWrites({
         Enable rule auto-refresh setting (does not execute a refresh now)
       </label>
       <Button variant="primary" type="button" disabled={busy} onClick={saveRule}
-        className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+        >
         {busy?"Saving…":"Confirm rule update"}
       </Button>
     </div>
