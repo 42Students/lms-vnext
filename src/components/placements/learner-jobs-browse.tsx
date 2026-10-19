@@ -22,6 +22,7 @@ import {learnerDrivesEmptyState} from "@/modules/placements/learner-drives-empty
 import {learnerSavedDriveSummary} from "@/modules/placements/learner-saved-drives-model";
 import {Button} from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Pagination } from "@/components/ui/pagination";
 
 const PAGE_SIZE = 20;
 
@@ -198,13 +199,12 @@ export function LearnerJobsBrowse({
               <option value="title">Role A–Z</option>
             </Select>
           </label>
-          <button type="button" onClick={() => {
+          <Button variant="link" type="button" onClick={() => {
               setSearch("");
               router.push(pathname, { scroll: false });
-            }}
-            className="min-h-10 px-2 text-sm font-semibold text-primary-text hover:underline">
+            }} className="min-h-11 px-2 sm:min-h-9">
             Clear filters
-          </button>
+          </Button>
         </div>
         </div>
       </section>
@@ -227,18 +227,18 @@ export function LearnerJobsBrowse({
         <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
           Your requested results page is no longer available after filtering.
           Showing page {page} instead.
-          <button type="button" onClick={()=>updateQuery({page:String(page)})}
-            className="ml-2 min-h-10 font-semibold text-primary-text underline">
+          <Button variant="link" type="button" onClick={()=>updateQuery({page:String(page)})}
+            className="ml-2 min-h-11 px-0 sm:min-h-9">
             Update page link
-          </button>
+          </Button>
         </p>
       ):null}
 
       {savedOnly && matchingItems.length===0?<div className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <h2 className="font-semibold text-foreground">No saved drives yet</h2>
         <p className="text-sm text-body">Save drives from All Drives by tapping the heart. They will appear here.</p>
-        <button type="button" className="min-h-11 text-sm font-semibold text-primary-text underline"
-          onClick={()=>updateQuery({saved:null})}>Browse all jobs</button>
+        <Button variant="link" type="button" className="min-h-11 px-0"
+          onClick={()=>updateQuery({saved:null})}>Browse all jobs</Button>
       </div>:empty.kind==="NO_PUBLISHED" ? (
         <div className="space-y-3">
           <EmptyState title={empty.title} description={empty.description} />
@@ -251,11 +251,11 @@ export function LearnerJobsBrowse({
         <div className="rounded-xl border border-border bg-surface p-6 text-center" role="status">
           <p className="font-semibold text-foreground">{empty.title}</p>
           <p className="mt-2 text-sm text-body">{empty.description}</p>
-          {empty.showReset ? <button type="button"
+          {empty.showReset ? <Button variant="link" type="button"
             onClick={()=>{setSearch("");router.push(pathname,{scroll:false});}}
-            className="mt-3 min-h-11 text-sm font-semibold text-primary-text hover:underline">
+            className="mt-3 min-h-11 px-0">
             Clear all filters
-          </button>:null}
+          </Button>:null}
         </div>
       ) : (
         savedOnly?<div className="space-y-5">
@@ -286,19 +286,12 @@ export function LearnerJobsBrowse({
       )}
 
       {totalPages > 1 ? (
-        <nav aria-label="Drive results pages" className="flex items-center justify-between gap-4">
-          <Button type="button" disabled={page <= 1}
-            onClick={() => updateQuery({ page: String(page - 1) })}
-            >
-            Previous
-          </Button>
-          <span className="text-sm tabular-nums text-body">Page {page} of {totalPages}</span>
-          <Button type="button" disabled={page >= totalPages}
-            onClick={() => updateQuery({ page: String(page + 1) })}
-            >
-            Next
-          </Button>
-        </nav>
+        <Pagination page={page} pageCount={totalPages} label="Drive results pages"
+          className="justify-center sm:justify-between"
+          hrefForPage={target=>{
+            const query=learnerDriveQueryWithChanges(params.toString(),{page:String(target)});
+            return pathname+(query?"?"+query:"");
+          }}/>
       ) : null}
     </div>
   );
