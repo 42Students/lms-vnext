@@ -118,6 +118,8 @@
   background: rgba(0, 0, 0, .06);
 }
 [data-slot="notification-popover"] {
+  max-width: min(420px, calc(100vw - 24px));
+  max-height: min(520px, calc(100dvh - 120px));
   border: 1px solid var(--lms-neutral-200);
   border-radius: 12px;
   background: #fff;
