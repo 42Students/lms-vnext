@@ -15,23 +15,37 @@ export function RouteTransition({children}:{children:ReactNode}) {
  const recoveryTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  useEffect(()=>{
   if(!learnerRoute)return;
+  const beginLeaving=()=>{
+   setLeaving(true);
+   if(recoveryTimer.current!==null)window.clearTimeout(recoveryTimer.current);
+   recoveryTimer.current=window.setTimeout(()=>setLeaving(false),3000);
+  };
   const onNavigate=(event:MouseEvent)=>{
    if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.altKey||event.shiftKey)return;
    const target=event.target;
    if(!(target instanceof Element))return;
    const link=target.closest("a[href]");
-   if(!(link instanceof HTMLAnchorElement)||link.target==="_blank"||link.hasAttribute("download"))return;
-   if(link.getAttribute("aria-disabled")==="true")return;
-   const destination=new URL(link.href,window.location.href);
+   if(!(link instanceof HTMLAnchorElement)||
+      (link.target&&link.target!=="_self")||
+      link.hasAttribute("download")||
+      link.getAttribute("aria-disabled")==="true")return;
+   let destination:URL;
+   try{destination=new URL(link.href,window.location.href);}
+   catch{return;}
    if(destination.origin!==window.location.origin||destination.pathname===pathname)return;
-   setLeaving(true);
-   if(recoveryTimer.current!==null)window.clearTimeout(recoveryTimer.current);
-   recoveryTimer.current=window.setTimeout(()=>setLeaving(false),3000);
+   beginLeaving();
+  };
+  // Browser Back/Forward changes URL before Next has committed the new body.
+  // Query- or hash-only history must preserve the current form and focus.
+  const onPopState=()=>{
+   if(window.location.pathname!==pathname)beginLeaving();
   };
   // Observe before Next Link prevents the native click during client routing.
   document.addEventListener("click",onNavigate,true);
+  window.addEventListener("popstate",onPopState);
   return ()=>{
    document.removeEventListener("click",onNavigate,true);
+   window.removeEventListener("popstate",onPopState);
    if(recoveryTimer.current!==null)window.clearTimeout(recoveryTimer.current);
    recoveryTimer.current=null;
   };

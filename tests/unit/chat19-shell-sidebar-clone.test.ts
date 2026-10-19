@@ -17,6 +17,13 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(css()).not.toContain("padding-left:256px");
   });
 
+  it("points brand and sidebar recovery to the first permitted account destination", () => {
+    expect(shell()).toContain('const homeHref=navigation[0]?.href??"/dashboard"');
+    expect(shell()).toContain('<Link href={homeHref} aria-label="42Students LMS home"');
+    expect(shell()).toContain('fallbackHref={homeHref}');
+    expect(shell()).not.toContain('<Link href="/dashboard" aria-label="42Students LMS home"');
+  });
+
   it("retains the exact legacy collapsed and hover widths and easing", () => {
     expect(css()).toContain("width:96px");
     expect(css()).toContain("min-width:96px");
@@ -36,6 +43,23 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(css()).toContain("width:82vw");
     expect(css()).toContain("max-width:300px");
     expect(css()).toContain('-webkit-overflow-scrolling:touch');
+  });
+
+  it("matches the original 82 percent mobile drawer shadow, dividers and readable long labels", () => {
+    const legacy = read("docs/design/legacy-styles/components___antddesign.scss");
+    expect(legacy).toContain("box-shadow: 4px 0 16px rgba(0, 0, 0, 0.12)");
+    expect(legacy).toContain("word-break: break-word");
+    expect(legacy).toContain("overflow-wrap: break-word");
+    expect(legacy).toContain("margin: 6px 8px !important");
+    expect(css()).toContain("box-shadow:4px 0 16px rgba(0,0,0,.12)");
+    expect(css()).toContain(".lms-mobile-sidebar .lms-nav-label {");
+    expect(css()).toContain("white-space:normal;");
+    expect(css()).toContain("overflow-wrap:break-word;");
+    expect(css()).toContain("word-break:break-word;");
+    expect(css()).toContain("margin:6px 8px;");
+    // Desktop's original ellipsis remains intact; mobile overrides it only
+    // inside the Drawer, without changing any portal's navigation labels.
+    expect(css()).toContain("text-overflow:ellipsis;");
   });
 
   it("maps every sidebar destination to a real glyph or existing image", () => {
