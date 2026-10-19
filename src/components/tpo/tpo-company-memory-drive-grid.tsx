@@ -22,7 +22,7 @@ const date=(value:string)=>new Intl.DateTimeFormat("en-IN",{
 const columns:readonly TpoGridColumn<CompanyMemoryDriveRow>[]=[
  {key:"role",label:"Role",read:row=>row.jobTitle},
  {key:"status",label:"Status",read:row=>statusLabel(row.status)},
- {key:"year",label:"Year",read:row=>year(row.createdAt)},
+ {key:"year",label:"Year",read:row=>year(row.createdAt),sortKind:"date",sortValue:row=>new Date(row.createdAt).getTime()},
  {key:"applied",label:"Applied",read:row=>row.applied+" · "+row.offers+" offers"},
  {key:"created",label:"Created",read:row=>date(row.createdAt)},
 ];
