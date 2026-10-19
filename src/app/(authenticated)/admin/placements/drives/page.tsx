@@ -77,7 +77,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     <Link href="/admin/placements/new" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Create drive →</Link>
   </div>
   <form action="/admin/placements/drives" method="get"
-   className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search by drive or company
     <input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
      className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground"/>
@@ -95,7 +95,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
      {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
     </select>
    </label>
-   <button type="submit" className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-[var(--lms-on-primary)]">Filter</button>
+   <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover">Filter</button>
    <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-[var(--lms-teal-deep)]">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
