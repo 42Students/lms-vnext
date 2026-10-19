@@ -1,6 +1,7 @@
 "use client";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Input } from "@/components/ui/input";
+import { CalendarGrid } from "@/components/ui/calendar-grid";
 
 import Link from "next/link";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
@@ -634,7 +635,7 @@ export function LearnerClassSchedule({
           <>
             {view === "month" ? (
               <div className="mt-5 space-y-4" aria-label="Monthly class schedule">
-                <div className="grid grid-cols-7 gap-px overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-border"
+                <CalendarGrid variant="hairline" className="overflow-hidden"
                   role="group" aria-label="42 day month grid">
                   {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>(
                     <span key={day} className="bg-surface p-1 text-center text-[10px] font-semibold text-muted-foreground sm:p-2 sm:text-xs">
@@ -665,7 +666,7 @@ export function LearnerClassSchedule({
                       </span> : null}
                     </button>;
                   })}
-                </div>
+                </CalendarGrid>
                 <section className="-subtle p-3 sm: border-t border-border pt-4" aria-label="Selected day agenda">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="text-sm font-semibold text-foreground">
