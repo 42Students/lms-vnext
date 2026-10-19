@@ -38,7 +38,7 @@ export function PageHeader({ eyebrow, title, description, actions }: PageHeaderP
         ) : null}
       </div>
       {actions ? (
-        <div className="flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-2">
+        <div className="ml-auto flex min-w-0 max-w-[60%] shrink-0 flex-wrap items-center justify-end gap-2">
           {actions}
         </div>
       ) : null}
