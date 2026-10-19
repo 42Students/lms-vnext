@@ -21,3 +21,15 @@ export const PopoverPanel = forwardRef<HTMLElement, PopoverPanelProps>(
     </section>;
   },
 );
+
+/** Anchored search/listbox panel shares LMS popup geometry without making the
+ * search field inert. Native links inside remain real navigation targets. */
+export type PopoverListboxProps = Omit<ComponentPropsWithoutRef<"div">, "role" | "aria-label"> & {
+  label: string;
+};
+export function PopoverListbox({ label, children, className, ...props }: PopoverListboxProps) {
+  return <div {...props} data-slot="popover-listbox" role="listbox" aria-label={label}
+    className={cx("min-w-0 overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-white p-2 shadow-[var(--lms-overlay-shadow)]", className)}>
+    {children}
+  </div>;
+}
