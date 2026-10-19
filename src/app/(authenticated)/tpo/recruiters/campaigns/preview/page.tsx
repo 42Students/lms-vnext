@@ -20,7 +20,7 @@ export default async function PreviewCampaign({searchParams}:PageProps){
   <nav aria-label="Audience segments" className="flex flex-wrap gap-2">
    {(["ALL_ELIGIBLE","NEW","UNASSIGNED"] as const).map(item=><Link key={item}
     href={"/tpo/recruiters/campaigns/preview?segment="+item} aria-current={query.data.segment===item?"page":undefined}
-    className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">
     {item.replaceAll("_"," ")}
    </Link>)}
   </nav>
@@ -29,11 +29,11 @@ export default async function PreviewCampaign({searchParams}:PageProps){
       ["No email",preview.withoutEmail],["Opted out",preview.unsubscribed],
       ["Previously bounced",preview.bounced],["Not now",preview.notNow],
       ["Outside selected segment",preview.outsideSegment]] as const).map(([label,value])=>
-    <div key={label} className="rounded-xl border border-border bg-surface p-4">
+    <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
      <dt className="text-sm text-body">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value}</dd>
     </div>)}
   </dl>
   <p className="text-sm text-body">Potential does not mean deliverable: provider availability, daily caps, global email suppression and non-production allowlists require checks again at dispatch. Sending is not enabled here.</p>
-  <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-[var(--lms-link-text)]">Back to Engage</Link>
+  <Link href="/tpo/recruiters" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-link">Back to Engage</Link>
  </div>;
 }
