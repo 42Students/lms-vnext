@@ -132,7 +132,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/project-team-controls.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/components/projects/project-template-catalogue-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-template-controls.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-template-view.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/project-template-view.tsx` (greps: full-file raw/hex/native-overlay/manual-tab scan=>0; values: 18 shared/legacy source checks; responsive: 1 column through991, 2 >=992, text wrap; evidence below)
 - [x] `src/components/projects/project-workspace-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-workspace-readiness.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-workspace.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -813,3 +813,32 @@ Repeat in orchestrator checkout: rg -n '<(button|input|select|textarea)\b|#[[:xd
 **SuperAdminTemplateRollbackControl (45 lines):** action disabled when selectedVersion is already current or template archived, with explanatory captions; allowed state displays 14px/650 secondary Button, shared confirm retains detailed version/snapshot warning; accept sends unchanged versionId/currentVersion and confirmed:true POST. Inline success notice, error and pending states stay unchanged. Root section uses min-w-0 touch scoped class: all action and confirmation footer Buttons stay min44 through767, normal36 from768; neutral hairline border remains. No raw overlay.
 
 Note: exact CSS values are from the old-LMS shell/SCSS and shared source; mobile/tablet proofs are source breakpoint comparisons. The app was not run, visual screenshots not taken; orchestrator section J handles final pixel acceptance.
+
+## Completed: ProjectTemplateView blueprint read-only content
+
+Full GitHub source scan (173 lines) after edits: 0 native JSX button/input/select/textarea, 0 hardcoded colour literals, 0 native confirm, 0 custom fixed-position dialog and 0 aria tab/toggle controls. The only imported visual primitive is StatusBadge. Optional description/priority, five named content blocks and no-data captions remain unchanged.
+
+To reproduce: rg -n '<(button|input|select|textarea)\b|#[[:xdigit:]]{3,8}|window.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' src/components/projects/project-template-view.tsx => full GitHub source inspection 0 matching lines; local command not run.
+
+| Property and state | Legacy source/reference | Present vNext source/value | Verdict |
+|---|---|---|---|
+| Single white canvas | old-lms-shell-spec.md:18-20 #fff, neutral200 border, radius12 pad24 | authenticated PageCanvas; project root unpainted div | inherited |
+| Text colour/size | variables.scss:25 #54505d and 14px | text-sm text-body, globals.css:73,844 | match |
+| Section heading | old-lms-pages.md:14 short section headers | h2 text-lg font-semibold, original hierarchy preserved | match hierarchy |
+| Detail labels | old-lms-pages.md:14 headings over grouped rows | h3 text-sm semibold | match hierarchy |
+| Hairline separators | common.scss:700-713 1px #e5e9f0 | border-b, border-y and divide-y canvas token | match |
+| Row density | common.scss:720-726 12px vertical | TemplateRows py-[var(--lms-space-3)], globals.css:352=12px | match |
+| Muted details | variables.scss:27 #6b7280 | text-muted-foreground token | match |
+| Goal wrapping | old _learn-projects.scss:1063-1079 anywhere wrap | whitespace-pre-wrap break-words | match |
+| Item title wrapping | old _learn-projects.scss:3787-3815 wrap anywhere | break-words on titles and item rows | match |
+| List item wrapping | old _learn-projects.scss:1125-1152 sentences not pill chips | line-wrapped semantic list items | match |
+| Counts | old-lms-pages.md:11 neutral badge | existing StatusBadge tone neutral; server count only | delegated |
+| Missing goal | old-lms-pages.md:6 inline not fabricated | No project goal recorded fallback, no extra card | match |
+| Missing array entries | old-lms-pages.md:6 inline empty state | None configured / None recorded, no fabricated data | match |
+| Invalid/partial blueprint | old-lms-pages.md:6 truthful placeholders | unknown input guarded into empty object and optional arrays | match |
+| Phone layout <=767 | listing-page-header.scss:130-159 one column | grid-cols-1, min-w-0; wraps text | match |
+| Tablet layout 768-991 | variables.scss:149 $smd=991px | min-[992px] remains one column | match |
+| Desktop >=992 | variables.scss:149 next breakpoint above991px | grid-cols-2 from 992px | match |
+| Focus/hover/disabled/load | no interactive control or local mutation | all four local state sets empty; no overlays/buttons | n/a |
+
+At 320px/767px and up to 991px each grid is one column and every variable-length text field wraps; at >=992px both switch to two columns while retaining min-w-0. The legacy project SCSS at 42Students/lms2-fe prod-2026 src/styles/components/_learn-projects.scss:1125-1152 verifies deliverables should be sentence lists, not narrow pill chips. No page content, props or semantics were modified beyond visual overflow, density and fluid grid classes. This is source proof; browser/CI/screenshot verification remains the orchestrator's section J.
