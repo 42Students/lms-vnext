@@ -9,6 +9,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {SuperAdminTemplatePageExport} from "@/components/projects/super-admin-template-page-export";
 import {SuperAdminTemplateArchiveControl} from "@/components/projects/super-admin-template-archive-control";
@@ -80,10 +81,10 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     <p className="mt-1 text-xs text-muted-foreground">{item.slug}</p>
     {item.summary?<p className="mt-2 text-sm text-body">{item.summary}</p>:null}
     {item.sectionCounts?<div className="mt-3 flex flex-wrap gap-2 text-xs text-body">
-      <span className="rounded-full border border-border bg-primary-subtle px-2.5 py-1 text-xs text-body">Overview</span>
-      <span className="rounded-full border border-border bg-primary-subtle px-2.5 py-1 text-xs text-body">Sprints {item.sectionCounts.sprints}</span>
-      <span className="rounded-full border border-border bg-primary-subtle px-2.5 py-1 text-xs text-body">Tasks {item.sectionCounts.tasks}</span>
-      <span className="rounded-full border border-border bg-primary-subtle px-2.5 py-1 text-xs text-body">Resources {item.sectionCounts.resources}</span>
+      <Badge tone="info">Overview</Badge>
+      <Badge tone="info">Sprints {item.sectionCounts.sprints}</Badge>
+      <Badge tone="info">Tasks {item.sectionCounts.tasks}</Badge>
+      <Badge tone="info">Resources {item.sectionCounts.resources}</Badge>
     </div>:null}
     <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
     <div className="mt-3 flex flex-wrap items-center gap-3">
