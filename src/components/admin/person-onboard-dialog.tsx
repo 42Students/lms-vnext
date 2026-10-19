@@ -222,7 +222,7 @@ export function PersonOnboardDialog({
               {MEMBERSHIP_ROLES.map((role) => (
                 <label
                   key={role}
-                  className="flex min-h-[var(--lms-control-height)] cursor-pointer items-center justify-between gap-3 px-3 py-2 hover:bg-primary-subtle"
+                  className="flex min-h-11 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)]"
                 >
                   <span className="text-sm font-semibold text-body">
                     {roleLabel(role)}
