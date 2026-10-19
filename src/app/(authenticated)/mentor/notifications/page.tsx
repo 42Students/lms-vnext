@@ -91,7 +91,7 @@ export default async function MentorNotificationsPage({
   return <div className="min-w-0 max-w-full space-y-8">
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
-    {failedSources.length ? <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
+    {failedSources.length ? <div role="alert" className="rounded-[var(--lms-radius-lg)] border border-border bg-surface p-4">
       <h2 className="font-semibold text-foreground">Some notification sources are unavailable</h2>
       <p className="mt-1 text-sm text-body">
         Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
@@ -170,7 +170,7 @@ export default async function MentorNotificationsPage({
         baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
         confirmMarkAll /> : null}
       {inbox?.cursor.invalid
-        ? <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 text-sm text-foreground">
+        ? <div role="alert" className="rounded-[var(--lms-radius-lg)] border border-border bg-surface p-4 text-sm text-foreground">
             The notification page link is invalid.{" "}
             <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
               className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
