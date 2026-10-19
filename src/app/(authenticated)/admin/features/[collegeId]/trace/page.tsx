@@ -198,7 +198,7 @@ export default async function SuperAdminLearnerAccessTracePage({
               maxLength={100}
               defaultValue={query.q}
               placeholder="Find learner"
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base text-foreground"
+              className="w-full"
             />
           </label>
 
@@ -221,7 +221,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </label>
           <Button
             type="submit"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="min-h-11 sm:min-h-9"
           >
             Search
           </Button>
