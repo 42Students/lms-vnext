@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 import {useRouter,useSearchParams} from "next/navigation";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
@@ -55,17 +56,17 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
    onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</button>:null}
   <section aria-label="Verification filters" className="grid gap-3 rounded-xl border border-border p-3 sm:grid-cols-2">
    <label className="text-sm font-semibold">Marksheets
-    <select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
+    <Select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
      className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3">
      <option value="ANY">Any</option><option value="MISSING">Missing</option><option value="PRESENT">All uploaded</option>
-    </select>
+    </Select>
    </label>
    <label className="text-sm font-semibold">Needs a closer look
-    <select value={filters.attention} onChange={e=>update("attention",e.target.value as TpoVerificationLocalFilters["attention"])}
+    <Select value={filters.attention} onChange={e=>update("attention",e.target.value as TpoVerificationLocalFilters["attention"])}
      className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3">
      <option value="ALL">All requests</option><option value="MISSING_DOCUMENT">Missing document</option>
      <option value="WAITING_OVER_WEEK">Waiting over a week</option>
-    </select>
+    </Select>
    </label>
    <p className="text-xs text-muted-foreground sm:col-span-3">Showing {visible.length} of {rows.length} records from the server-filtered authorized page. Status, section, batch and branch filters apply before pagination.</p>
   </section>
