@@ -78,9 +78,9 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
   </ol>
   {dirty?<p role="status">Unsaved changes</p>:null}
   {!initial.ready?<p role="status">Page content editing is temporarily unavailable until storage is ready.</p>:null}
-  <button type="button" disabled={busy||!initial.ready||!dirty}
+  <Button variant="primary" type="button" disabled={busy||!initial.ready||!dirty}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-50"
-   onClick={()=>void save()}>{busy?"Saving…":"Save"}</button>
+   onClick={()=>void save()}>{busy?"Saving…":"Save"}</Button>
   {message?<p role="status" className="text-sm">{message}</p>:null}
  </section>;
 }

@@ -277,7 +277,7 @@ export function TpoBulkRoundResultRecorder({
             Export per-learner staging report (CSV)
           </button>
           <p className="font-semibold">Per-learner outcomes</p>
-          <ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border">
+          <ul className="divide-y divide-border border-t border-border">
             {results.map((item) => (
               <li key={item.applicationId} className="flex flex-wrap gap-2 px-3 py-2">
                 <span className="font-semibold text-foreground">

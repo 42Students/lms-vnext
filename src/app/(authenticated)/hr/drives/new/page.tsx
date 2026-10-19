@@ -74,7 +74,7 @@ export default async function RecruiterRequestDrivePage({
         <section className="grid gap-3 sm:grid-cols-2">
           {grants.map((grant) => (
             <Link key={grant.id} href={"/hr/drives/new?collegeId=" + encodeURIComponent(grant.collegeId)}
-              className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               {grant.collegeName}
             </Link>
           ))}
