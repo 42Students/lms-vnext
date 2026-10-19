@@ -4,6 +4,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {EmptyState} from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { collegeHallAvailabilitySchema } from "@/modules/academics/college-hall-availability-model";
 import {
@@ -53,14 +55,14 @@ export default async function SuperAdminLectureHallAvailability({
       actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Back to Lecture Halls</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">From (IST)
-        <input name="from" type="date" required defaultValue={typeof raw.from === "string" ? raw.from : ""}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+        <Input name="from" type="date" required defaultValue={typeof raw.from === "string" ? raw.from : ""}
+          className="w-full" />
       </label>
       <label className="grid gap-1 text-sm font-semibold">To (IST)
-        <input name="to" type="date" required defaultValue={typeof raw.to === "string" ? raw.to : ""}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+        <Input name="to" type="date" required defaultValue={typeof raw.to === "string" ? raw.to : ""}
+          className="w-full" />
       </label>
-      <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View schedule</button>
+      <Button type="submit">View schedule</Button>
     </form>
     {!parsed.success
       ? raw.from !== undefined || raw.to !== undefined
@@ -75,8 +77,8 @@ export default async function SuperAdminLectureHallAvailability({
           More than 500 sessions match. Choose a shorter date range.
         </p> : null}
         {result?.sessions.length === 0 ? <p>No persisted bookings; availability is not guaranteed.</p> : null}
-        <ul className="space-y-2">{result?.sessions.map(row => <li key={row.id}
-          className="rounded-xl border border-border bg-surface p-4">
+        <ul className="divide-y divide-border border-y border-border">{result?.sessions.map(row => <li key={row.id}
+          className="py-4">
           <h3 className="font-semibold">{row.title}{row.hasConflict ? " · Potential conflict" : ""}</h3>
           <p className="text-sm">{inIst(row.startsAt)} – {inIst(row.endsAt)} · {row.sectionName}</p>
           <p className="text-xs text-muted-foreground">Class capacity: {row.sectionCapacity ?? "Unknown"};
