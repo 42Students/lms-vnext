@@ -3,6 +3,7 @@ import { MenuSeparator } from "@/components/ui/menu";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
+import {Avatar} from "@/components/ui/avatar";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
