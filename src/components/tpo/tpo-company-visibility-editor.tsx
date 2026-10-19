@@ -39,7 +39,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
    <input type="checkbox" disabled={busy} checked={values[key as keyof Choice]}
     onChange={e=>setValues(current=>({...current,[key]:e.target.checked}))}/>
   </label>)}
-  <details className="rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+  <details className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
     <summary className="cursor-pointer text-sm font-semibold">Additional sharing options</summary>
     {Object.entries(labels).slice(3).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
       <span>{label}</span>
@@ -48,7 +48,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
     </label>)}
   </details>
   <button type="button" disabled={busy} onClick={()=>void save()}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">{busy?"Saving…":"Save"}</button>
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">{busy?"Saving…":"Save"}</button>
   {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message} onDismiss={()=>setMessage("")}/>:null}
  </section>;
 }
