@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { Alert } from "@/components/ui/alert";
 import { TpoDriveCancelForm } from "@/components/placements/tpo-drive-cancel-form";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
@@ -36,12 +35,12 @@ export default async function TpoDriveCancelPreviewPage({
       {preview.cancellable ? (
         <TpoDriveCancelForm preview={preview} />
       ) : (
-        <Alert tone="warning">
+        <p role="status" className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
           {preview.pendingPromotions>0
             ? "A waitlisted learner's reserved offer is still pending. Finish the waitlist offer before cancelling this drive."
             : "Cancellation is available for drafts or published drives in an active season."}
-        </Alert>
-      )
+        </p>
+      )}
     </div>
   );
 }
