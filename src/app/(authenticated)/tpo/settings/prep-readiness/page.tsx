@@ -25,7 +25,7 @@ export default async function PrepSettings(){
   {!data.ready?<p role="status" className="rounded border border-border p-4">Readiness settings storage is pending migration registration.</p>:
   <>
    {!parsed.success?<p role="alert" className="text-sm">The saved readiness config uses an unsupported shape. No changes will be made until it is reviewed.</p>:null}
-   {!coursesResult.ok?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm">
+   {!coursesResult.ok?<p role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-warning-border bg-warning-subtle p-3 text-sm">
      Couldn&apos;t load preparation courses. Saved choices were not changed. <a href="/tpo/settings/prep-readiness" className="font-semibold underline">Retry</a>
    </p>:null}
    {parsed.success&&coursesResult.ok?<TpoPrepReadinessEditor key={context.membership?.collegeId??"unscoped"} choices={courses} initial={{courseIds:initial.courseIds,minimumCompleted:initial.minimumCompleted}}
