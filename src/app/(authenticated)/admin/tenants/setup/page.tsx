@@ -92,13 +92,13 @@ export default async function SuperAdminTenantSetup({
     <p className="mt-2 break-words text-sm font-semibold">{college?.name??(id?"Selected college":"No college selected")}</p>
    </article>
   </section>
-  <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2 border-b border-border">
+  <nav aria-label="Tenant Setup steps" className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-1">
    <Link href={tabLink("STRUCTURE")} aria-current={tab==="STRUCTURE"?"page":undefined}
-    className={"inline-flex min-h-[var(--lms-control-height)]  items-center border-b-[3px] px-3 text-sm font-semibold "+ (tab==="STRUCTURE"?active:inactive)}>
+    className={"inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] px-3 text-sm font-semibold transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9 "+(tab==="STRUCTURE"?active:inactive)}>
     1. Tenant structure
    </Link>
    <Link href={tabLink("LAUNCH")} aria-current={tab==="LAUNCH"?"page":undefined}
-    className={"inline-flex min-h-[var(--lms-control-height)]  items-center border-b-[3px] px-4 text-sm font-semibold "+(tab==="LAUNCH"?active:inactive)}>
+    className={"inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] px-4 text-sm font-semibold transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9 "+(tab==="LAUNCH"?active:inactive)}>
     2. Launch setup
    </Link>
   </nav>
