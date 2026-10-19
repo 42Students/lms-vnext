@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {ZodError} from "zod";
@@ -26,7 +27,7 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
  return <div className="min-w-0 space-y-5">
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
     className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
-  <header><h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Interview slot proposals</h1>
+  <header><PageHeader title="Interview slot proposals" />
    <p className="mt-2 text-sm text-body">{data.job.title} · Employer-proposed time blocks for your college.</p>
   </header>
   <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
