@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ListRow } from "@/components/ui/list-row";
+import { Disclosure } from "@/components/ui/disclosure";
 import { COLLEGE_SETUP_GUIDE_COPY } from "@/modules/admin-ui/admin-dashboard-navigation";
 import type { collegeChecklistProjection } from "@/modules/admin-ui/college-setup-checklist-model";
 
@@ -8,10 +9,7 @@ type Phases = ReturnType<typeof collegeChecklistProjection>;
 export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
   const steps = phases.flatMap(phase => phase.steps);
   const recorded = steps.filter(step => step.hasRecords).length;
-  return <details aria-label="College setup evidence" className="min-w-0 border-t border-border pt-4">
-    <summary className="cursor-pointer text-sm font-semibold text-foreground">
-      {COLLEGE_SETUP_GUIDE_COPY.collapseLabel}
-    </summary>
+  return <Disclosure title={COLLEGE_SETUP_GUIDE_COPY.collapseLabel} className="min-w-0 border-t border-border pt-4">
     <div className="mt-4 space-y-4">
     <div className="flex flex-wrap items-baseline justify-between gap-3">
       <div>
@@ -39,5 +37,5 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
       </section>)}
     </div>
     </div>
-  </details>;
+  </Disclosure>;
 }
