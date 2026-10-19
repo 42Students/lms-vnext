@@ -1,1 +1,5 @@
-export default function Loading(){return <div role="status" className="animate-pulse space-y-4"><div className="h-12 w-64 rounded-[var(--lms-control-radius)] bg-muted"/><div className="grid gap-3 sm:grid-cols-3">{[1,2,3].map(i=><div key={i} className="h-28 rounded-[var(--lms-control-radius)] bg-muted"/>)}</div></div>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading() {
+  return <GracefulPageLoading label="Loading recruiter home…" shape="directory" />;
+}
