@@ -1,4 +1,5 @@
 "use client";
+import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {useEffect,useState} from "react";
 import type {EngageColumn} from "@/modules/placements/tpo-recruiter-table-view-model";
@@ -102,7 +103,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
       </button>)}
     </nav>:null}
     <label className="block text-sm">Open saved view
-     <select className="mt-1 min-h-10 w-full max-w-sm rounded-[9px] border border-border px-3"
+     <Select className="mt-1 min-h-10 w-full max-w-sm rounded-[9px] border border-border px-3"
       value={selected} onChange={e=>{
        setSelected(e.target.value);setDeleteReview(null);
        const view=views.find(item=>item.id===e.target.value);
@@ -110,7 +111,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
       }}>
       <option value="">Choose a view</option>
       {views.map(view=><option key={view.id} value={view.id}>{view.pinned?"★ ":""}{view.name}</option>)}
-     </select>
+     </Select>
     </label>
     {active?<div className="flex flex-wrap gap-2">
      <label className="text-sm">Rename view<Input maxLength={100} className="ml-2 min-h-10 rounded-[9px] border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
