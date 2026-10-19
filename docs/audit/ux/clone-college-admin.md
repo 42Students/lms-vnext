@@ -73,10 +73,10 @@
 - [ ] `src/app/(authenticated)/college/companies/page.tsx`
 - [ ] `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
+- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/contacts/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/contacts/loading.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
+- [ ] `src/app/(authenticated)/college/contacts/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/course-progress/error.tsx`
 - [ ] `src/app/(authenticated)/college/course-progress/loading.tsx`
 - [ ] `src/app/(authenticated)/college/course-progress/page.tsx`
@@ -1754,3 +1754,45 @@ Shared component references from inspected source: `src/components/admin/managed
 **Strict ticks: 0.** These files have scoped source value/grep/responsive tables but the global grep across all 434 queue items, exact every-state computed legacy CSS, actual mobile/tablet rendered screenshots and TSX compiler/interaction proof remain open. Do not mark these pixel-perfect based on local source-only checks.
 
 **Next exact file:** `src/app/(authenticated)/college/contacts/page.tsx` (then `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`, remaining College Admin views).
+
+
+### Replacement chat-4 College Admin contacts directory and detail source audit — 2026-10-20
+
+Both routes were updated and fetched again. Existing College Admin/tenant access checks, read-only masking, filtered CSV, row links, pagination, IST dates and semantic navigation preserved. The contacts directory keeps two native **`type="hidden"`** input fields solely to persist tab and membership selection in GET filters; they are nonvisual form transport, **documented exemptions** rather than hand-rolled user controls.
+
+**Bounded scoped grep:** `/<(button|select|input|textarea|table)\b/g`; `/#[a-f0-9]{3,8}\b/gi`; `/fixed inset-0|role=["']dialog["']/g`; `/<h1\b/g`. For contacts page, raw-control count is exactly the two hidden inputs named tab and membershipId; do not report a fake zero. Name closing/open JSX tag families compared, no orphan closing families observed. Not a whole-route or repository grep.
+
+| Route | Raw controls | Explicit hidden exemptions | Hex literals | Custom overlay | Native h1 | md / sm source prefixes |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/college/contacts/page.tsx` | 2 | 2 | 0 | 0 | 0 | 13 / 0 |
+| `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx` | 0 | 0 | 0 | 0 | 0 | 1 / 0 |
+
+#### `src/app/(authenticated)/college/contacts/page.tsx`
+
+| Property/state | Legacy source/value | Current value/source | Strict comparison |
+| --- | --- | --- | --- |
+| Single page canvas | old-lms-shell-spec.md:18-20: one #fff canvas with #e5e9f0 border 1px, radius 12px, 24px padding | Both routes inherit PageCanvas; no extra nested PageCanvas added | **Source matches inherited canvas, exact runtime coordinates not measured** |
+| Heading/title | legacy-styles/components___listing-page-header.scss:33-58: 28px/600/1.3 desktop, 20px mobile | Shared PageHeader; detail redundant eyebrow removed; back action PageBackLink | **Shared desktop 30px vs legacy SCSS 28px upstream mismatch** |
+| Filters, forms and tabs | legacy-styles/components___form.scss:117-143: radius 10px input, 14px/20px typography, teal focus shadow | Directory shared FilterBar, Tabs, Disclosure, Input/Select with token chrome; 2 hidden transport inputs | **Interactive shared states source reviewed; exact legacy tab underline/focus mismatch not cleared** |
+| States/empty/error | old-lms-pages.md:6,11: slim banners, shared empty copy inside single canvas | Directory bookmark banner => Alert(info), zero results => EmptyState with reset; invalid filters => ErrorState | **Exact legacy warning/empty heights not measured** |
+| Row/status detail | old-lms-pages.md:6,11: hairline rows and compact pills | Shared DataTable rows, StatusBadge; contact detail StatusBadge(active/warning) | **Pill values inherited; old LMS contact row precise padding not measured** |
+| Buttons/hover/focus | old-lms-shell-spec.md:22-24: 36px desktop CTA, radius 9px, 14px/650, 150ms transitions in button.scss:13-24 | Links 44px min-height phone, 36px md+; PageBackLink 44px with focus-visible; shared Button | **Source token contract only; no pressed/hover/disabled browser comparisons** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: stacked <=767px and 44px mobile targets, md from 768px | Contact filter grid now single column under 768px, 2 cols at md, 4 lg; DataTable own mobile card threshold 640px | **Known DataTable cutoff discrepancy; mobile/tablet visual proof open** |
+| Data/permission no regression | old-lms-pages.md:6: copy and content unaffected by skin work | Two hidden inputs preserve active tab/selected record; private learner contacts remain masked; links remain scoped | **Code path source intact; service calls not executed** |
+
+#### `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
+
+| Property/state | Legacy source/value | Current value/source | Strict comparison |
+| --- | --- | --- | --- |
+| Single page canvas | old-lms-shell-spec.md:18-20: one #fff canvas with #e5e9f0 border 1px, radius 12px, 24px padding | Both routes inherit PageCanvas; no extra nested PageCanvas added | **Source matches inherited canvas, exact runtime coordinates not measured** |
+| Heading/title | legacy-styles/components___listing-page-header.scss:33-58: 28px/600/1.3 desktop, 20px mobile | Shared PageHeader; detail redundant eyebrow removed; back action PageBackLink | **Shared desktop 30px vs legacy SCSS 28px upstream mismatch** |
+| Filters, forms and tabs | legacy-styles/components___form.scss:117-143: radius 10px input, 14px/20px typography, teal focus shadow | Directory shared FilterBar, Tabs, Disclosure, Input/Select with token chrome; 2 hidden transport inputs | **Interactive shared states source reviewed; exact legacy tab underline/focus mismatch not cleared** |
+| States/empty/error | old-lms-pages.md:6,11: slim banners, shared empty copy inside single canvas | Directory bookmark banner => Alert(info), zero results => EmptyState with reset; invalid filters => ErrorState | **Exact legacy warning/empty heights not measured** |
+| Row/status detail | old-lms-pages.md:6,11: hairline rows and compact pills | Shared DataTable rows, StatusBadge; contact detail StatusBadge(active/warning) | **Pill values inherited; old LMS contact row precise padding not measured** |
+| Buttons/hover/focus | old-lms-shell-spec.md:22-24: 36px desktop CTA, radius 9px, 14px/650, 150ms transitions in button.scss:13-24 | Links 44px min-height phone, 36px md+; PageBackLink 44px with focus-visible; shared Button | **Source token contract only; no pressed/hover/disabled browser comparisons** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: stacked <=767px and 44px mobile targets, md from 768px | Contact filter grid now single column under 768px, 2 cols at md, 4 lg; DataTable own mobile card threshold 640px | **Known DataTable cutoff discrepancy; mobile/tablet visual proof open** |
+| Data/permission no regression | old-lms-pages.md:6: copy and content unaffected by skin work | Two hidden inputs preserve active tab/selected record; private learner contacts remain masked; links remain scoped | **Code path source intact; service calls not executed** |
+
+**Strict tick: 0.** Runtime keyboard/phone/tablet, exact legacy hover/focus/disabled/loading geometry and full-scope grep all remain open. The two native hidden fields are explicitly exempted as invisible transport controls; every other source control delegates to shared UI. This confirms source migration, not a pixel clone.
+
+**Exact next file:** `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx` is source-migrated; continue with `src/app/(authenticated)/college/college-profile/page.tsx`, then remaining Academic and Super Admin queue pages.
