@@ -332,3 +332,23 @@ flow from the page head through whitespace rather than an invented separating ha
 Re-fetched all nine touched TSX/JSX files and checked for incomplete closing tags,
 including the `</Select>` regression pattern; none were found. This is not a parser,
 compiler or browser visual test.
+
+
+## Third pass — page-head/canvas and Super Admin last-third verification (2026-10-19)
+
+**Start-of-pass sync:** the lane branch was `0 behind` `main` at the start of this continuation (and contained 12 previous lane commits). All subsequent writes remain on `chatgpt/chat-9-b` under `[chat-9]` commits.
+
+**Canvas/shell integration:**
+- Authenticated layout already places one `PageCanvas` around every authenticated page, access notice and connection notice. No nested canvas was introduced.
+- The older global media queries still set `[data-slot="page-canvas"]` to 16px on small viewports; the canvas now puts the 24px token on its own `style` prop to take precedence while allowing caller-supplied styles.
+- Shell main uses 16px right gutter (24px desktop left gutter) even against an older `main#lms-main-content` specificity override, yielding the reference 256px-sidebar + 24px-left / 16px-right offsets.
+- Shared shell already contains the `TrackerQuickReportLauncher`; removed the additional copy from the Super Admin layout to avoid two fixed launchers and duplicate `Alt+B` event subscriptions.
+- PageHeader remains a single horizontal title/subtitle/actions row with 30px/600 heading and no eyebrow, stacked description or rule. The right actions are bounded so narrow screens do not push the canvas beyond the viewport.
+
+**Last-third routes reviewed:** all 37 entries numbered 75–111 in `docs/orchestrator/ui-ux/pages-admin.md`. Direct styling changes covered tenant setup/directory/creation, platform settings, module access, semester mapping, semester directory, quizzes, students, and Projects overview, creation, templates/versions and subviews, readiness, risks and submissions. Route delegates/redirects were kept intact. The placements-specific shortlisted routes and course/video/resource shared content implementation remain with their owning lanes; this pass did not rewrite those screens' internals.
+
+**Visible changes:** count tokens and canonical radius on template cards, pill counters, active teal tab underlines, canonical 36px desktop controls, back actions in the page head, Tenant Setup creation CTA in its header, neutral notices for empty settings filters, and thin pale-warning strips for degraded reads. Independently actionable cards, original data sections, copy, permissions and routes are retained.
+
+**Source review:** re-fetched changed TSX files and reviewed `Button`, `Select`, `Link` opening/closing pairs and known truncated-tag patterns. No truncated `</Select>` or other touched JSX closing tag was found. No code execution, build, lint, tests or CI was performed; TS compilation and visual fidelity remain unverified.
+
+**Concurrent integration state:** after this continuation began, `main` advanced rapidly. The last branch comparison read `29` commits ahead and `831` behind `main`. GitHub branch updates here preserve the lane commits without force-pushing; this is *not* a claim of a subsequent merge of those new upstream commits. A conflict-aware merge remains necessary before final integration.
