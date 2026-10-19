@@ -213,6 +213,15 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   background-color: rgba(0, 0, 0, 0.06);
   box-shadow: none;
 }
+/* Legacy: components___notification-drawer.scss:192-210 — button actions
+   inside the notification list use the same 200ms neutral hover treatment as
+   anchor actions. The legacy-overlays layer already styles list links; this
+   fills only the button gap without changing hit areas or component markup. */
+[data-slot="notification-popover"] :is(ul, ol) button:not(:disabled):not([aria-disabled="true"]):hover {
+  background-color: var(--lms-neutral-50);
+  border-color: var(--lms-neutral-200);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
 /* Legacy: components___notification-drawer.scss:217-224 (row keyboard ring:
    1px neutral-500, offset 1px); keep ordinary 2px teal focus elsewhere. */
 [data-slot="notification-popover"] li :is(a[href], button):focus-visible {
