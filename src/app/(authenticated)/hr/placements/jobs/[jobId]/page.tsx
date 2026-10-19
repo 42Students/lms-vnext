@@ -828,7 +828,7 @@ export default async function HrPlacementJobPage({
                           <p className="break-words font-semibold text-foreground">{candidate.name}</p>
                           <div className="mt-2 flex flex-wrap gap-2">
                             <StatusBadge tone={candidate.outcome==="PASS"?"success":candidate.outcome==="FAIL"?"error":candidate.outcome==="HOLD"?"warning":"neutral"}>{candidate.outcome ?? "UNRECORDED"}</StatusBadge>
-                            <StatusBadge>{candidate.status}</StatusBadge>
+                            <StatusBadge tone={candidate.status==="APPLIED"?"success":candidate.status==="STAGED"?"warning":"neutral"}>{candidate.status}</StatusBadge>
                           </div>
                           {candidate.scorePercent != null
                             ? <p className="mt-2 text-sm text-body">Score: {candidate.scorePercent}%</p> : null}
