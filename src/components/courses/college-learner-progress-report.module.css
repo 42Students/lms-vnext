@@ -1,0 +1,38 @@
+/*
+ * Class / course progress readout from old course home neutral progress skin.
+ * Original: lms2-fe@prod-2026/src/styles/components/_learn-courses.scss
+ * 2447-2462,2486-2500. Existing DataTable and metric amounts are unchanged.
+ */
+.progressCell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+.progressTrack {
+  flex: 0 1 96px;
+  width: 96px;
+  min-width: 40px;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f1f4f9 !important;
+}
+.progressTrack > div {
+  border-radius: 999px;
+  background: #6b7280 !important;
+}
+.progressValue {
+  color: #1a1d21;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 767px) {
+  .progressCell { gap: 6px; }
+  .progressTrack { flex-basis: 72px; width: 72px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .progressTrack > div { transition: none; }
+}
