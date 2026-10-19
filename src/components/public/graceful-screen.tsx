@@ -18,8 +18,8 @@ export function GracefulScreen({ title, message, homeHref = "/", retry, requestI
     <main className={styles.page}>
       <header className={styles.header}>
         <Link href="/" className={styles.brand} aria-label="42LMS home">
-          <span aria-hidden="true" className={styles.mark} />
-          <span className={styles.wordmark}>42<span className={styles.wordmarkAccent}>LMS</span></span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
         </Link>
       </header>
       <div className={styles.center}>

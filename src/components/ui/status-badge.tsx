@@ -7,8 +7,8 @@ export type StatusBadgeProps = {
   className?: string;
 };
 const toneClasses = {
-  neutral: "bg-muted text-body",
-  info: "bg-primary-subtle text-primary-text",
+  neutral: "bg-[#f1f4f9] text-[#54505d]",
+  info: "bg-[#eff8fa] text-[#1a95a1]",
   success: "bg-[var(--lms-success-subtle)] text-success",
   warning: "bg-[var(--lms-warning-subtle)] text-warning",
   error: "bg-[var(--lms-error-subtle)] text-error",
