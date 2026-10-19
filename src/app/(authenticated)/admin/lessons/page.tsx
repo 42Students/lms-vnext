@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {getSuperAdminLearningFilterOptions} from "@/modules/admin-ui/super-admin-learning-filter-options-service";
 import {SuperAdminLearningFilterFields} from "@/components/admin/super-admin-learning-filter-fields";
 import {SuperAdminLessonBulkVisibility} from "@/components/courses/super-admin-lesson-bulk-visibility";
@@ -56,16 +59,16 @@ export default async function SuperAdminLessonsPage({
      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export lessons.csv</a>
     <form className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
-        <input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"
+        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"
           className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+        <Select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
-        </select>
+        </Select>
       </label>
       <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
-      <button type="submit" className="min-h-9 self-end rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)]">Filter</button>
+      <Button type="submit" className="self-end">Filter</Button>
     </form>
     <Link className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)]" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
@@ -105,9 +108,9 @@ export default async function SuperAdminLessonsPage({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page - 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-[14px] font-semibold text-primary-text sm:min-h-9">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page + 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-[14px] font-semibold text-primary-text sm:min-h-9">Next</Link> : null}
       </div>
     </nav>
     <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]">← Courses</Link>
