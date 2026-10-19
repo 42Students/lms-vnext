@@ -148,7 +148,17 @@ export function DateInput({
   if (!hasPanel || !calendarPopup) return native;
 
   return (
-    <div ref={rootRef} data-slot="date-field" className="relative min-w-0">
+    <div ref={rootRef} data-slot="date-field" className="relative min-w-0"
+      onBlur={event => {
+        if (open && !event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+      onKeyDown={event => {
+        if (event.defaultPrevented || event.key !== "Escape" || !open) return;
+        event.preventDefault();
+        event.stopPropagation();
+        setOpen(false);
+        inputRef.current?.focus();
+      }}>
       {native}
       <Button type="button" variant="ghost" size="icon-sm"
         aria-label={mode === "time" ? "Open time picker" : mode === "month" ? "Open month picker" : "Open date calendar"}
