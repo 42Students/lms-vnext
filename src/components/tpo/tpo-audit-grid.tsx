@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -64,11 +65,11 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
      maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm" />
    </label>
    <label className="text-sm">When
-    <select value={oldestFirst?"oldest":"newest"}
+    <Select value={oldestFirst?"oldest":"newest"}
      onChange={e=>setOldestFirst(e.target.value==="oldest")}
      className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm">
      <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
-    </select>
+    </Select>
    </label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" checked={showAbout} onChange={e=>setShowAbout(e.target.checked)} />About
