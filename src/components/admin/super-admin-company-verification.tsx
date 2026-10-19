@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {Button} from "@/components/ui/button";
 export function SuperAdminCompanyVerification({companyId,name,verified}:{
  companyId:string;name:string;verified:boolean;
 }){
@@ -21,17 +22,17 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
  }
  return <div className="mt-2 space-y-2">
   {confirm?<div role="group" aria-label="Confirm global company verification"
-   className="space-y-2 rounded border border-border p-3 text-sm">
+   className="space-y-2 border-l-2 border-border py-2 pl-4 text-sm">
    <p>{verified?"Unverify":"Verify"} {name} globally for 42?</p>
-   <button type="button" disabled={busy} onClick={()=>void save()}
-    className="min-h-10 rounded bg-primary px-3 font-semibold text-on-primary disabled:opacity-50">
-    {busy?"Saving…":verified?"Confirm unverify":"Confirm verify"}</button>
-   <button type="button" disabled={busy} onClick={()=>setConfirm(false)}
-    className="ml-2 min-h-10 rounded border border-border px-3">Cancel</button>
+   <Button type="button" disabled={busy} onClick={()=>void save()}
+    className="min-h-9">
+    {busy?"Saving…":verified?"Confirm unverify":"Confirm verify"}</Button>
+   <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirm(false)}
+    className="ml-2">Cancel</Button>
   </div>:
-  <button type="button" disabled={busy} onClick={()=>setConfirm(true)}
-   className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">
-   {verified?"Unverify":"Verify"} company</button>}
+  <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirm(true)}
+   className="min-h-9">
+   {verified?"Unverify":"Verify"} company</Button>}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
  </div>;
 }
