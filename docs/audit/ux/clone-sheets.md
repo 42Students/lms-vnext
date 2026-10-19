@@ -279,3 +279,23 @@ Phone source path: custom forms and saved-view/selection lists are one column, w
 **Source scan:** the three touched/new files were fetched after the commits; `/<(button|input|select|textarea|table)(?=[\\s/>])/g` => 0 raw native controls each; `/#[0-9a-fA-F]{3,8}\\b/g` => 0 inline hex each. All paired JSX wrappers were inspected by source; no local TS compiler, app, CI, or browser executed. Existing legacy-grid directory not available through the connector at this checkpoint; exact old export filenames remain unverified. Existing package manifest lacks declared AG Grid packages despite native imports. **E8 remains [ ].**
 
 **Next E8 file:** `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` (applicant/offer/round sheet contract), after a runtime/dependency gate when permitted.
+
+
+## 2026-10-19 chat-15 replacement — Shared applicants desktop AG Grid (source-wired, unticked)
+
+- [ ] `src/components/hr/hr-job-applicants-grid.tsx`: new `TpoGrid` for the server-approved, already-paginated `applicants.rows`; columns Applicant, Role, Roll no., Branch, UG %, 10th %, 12th / diploma %, Application, Placement-cell screening, Applied; original `Review applicant` row route preserved. This component neither fetches nor persists applicant records.
+- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`: shared applicant table visible at the `md` desktop breakpoint; all original detailed cards remain on phones. Existing focused review `RecruiterApplicantReviewDrawer`, server CSV button labelled `Export shared applicants CSV`, stage tabs and 25-row pagination unchanged. Storage key includes user, drive, stage; each sheet is built strictly from the authorized page rows. Employer-visible applicant detail fields unchanged.
+- [ ] Exact Quartz/import/export/column/selection parity needs native dependency, runtime, viewport and legacy-grid source verification.
+
+| Property/state | Old LMS source/value | vNext source/value | Match/evidence |
+| --- | --- | --- | --- |
+| One canvas with directly embedded dense table | `docs/design/old-lms-pages.md:6,10`: white canvas, hairline table | `hr/placements/jobs/[jobId]/page.tsx` uses `HrJobApplicantsGrid` through shared `TpoGrid` without another canvas | Source-level structure only |
+| Responsive mobile boundary | `docs/design/legacy-styles/components___listing-page-header.scss:131-158`: mobile max-width 767px | Desktop `hidden md:block`; mobile `md:hidden`; 768px switch | Source breakpoint matches; viewport not tested |
+| Applicant-scoped row action | `old-lms-pages.md:10`: row menu/actions | `hr-job-applicants-grid.tsx`: each row provides `Review applicant` to its original authorized route | Read-only action preserved |
+| Search, CSV/export, page and status | `old-lms-pages.md:8-11`: filters, export, status pills | Existing `hr/placements/jobs/[jobId]/page.tsx` Tabs, `Export shared applicants CSV` and pagination retained; grid text fields instead of all pill renderers | Functional source only; visual/state parity open |
+| Selected/detail privacy and server scope | Employer page's existing authorized `applicants.rows` only | No extra client retrieval; scoped storage preference, Drawer unchanged | No apparent scope broadening; untested |
+| Keyboard, hover, active, focus, empty/error/loading | Legacy shared states require exact computed values | Native `TpoGrid` delegates states; mobile remains original cards | Missing complete source value table and browser capture |
+
+Post-edit fetched-source checks: applicant page 0 native `button/input/select/textarea/table` tags, 0 literal hex, 0 custom `h1`; `<div>` / `</div>` counts 53/53, fragments 3/3. New grid 0 raw controls/hex/h1; no custom dialog. This is not a local grep or a TS/CI/Playwright verification. AG Grid packages are absent from the inspected manifest despite Quartz code; by instruction, `package.json` was not touched. **E8 remains unticked.**
+
+**Next E8 file:** `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx` to compare round list/editor against shipped `TpoGrid` and legacy sheet action patterns.
