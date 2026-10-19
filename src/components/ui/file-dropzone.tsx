@@ -33,7 +33,7 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     if(Array.from(files).some(file=>!fileMatchesAccept(file,accept))){droppedRef.current=false;setDroppedNames([]);setDropError("This file type is not allowed.");onFiles(null);return;}
     setDropError(null);setDroppedNames(Array.from(files,file=>file.name));droppedRef.current=true;onFiles(files);
   }
-  return <div data-slot="file-dropzone" onDragOver={event=>{if(!disabled){event.preventDefault();setDragging(true);}}}
+  return <div data-slot="file-dropzone" onDragOver={event=>{if(!disabled && Array.from(event.dataTransfer.types).includes("Files")){event.preventDefault();setDragging(true);}}}
     onDragLeave={()=>setDragging(false)} onDrop={onDrop}
     className={cx("min-w-0 rounded-[var(--lms-control-radius)] border border-dashed border-[var(--lms-neutral-300)] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-150",dragging?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)]":"",disabled?"opacity-50":"",className)}>
     <FileUpload label={label} onFiles={files=>{droppedRef.current=false;setDroppedNames([]);setDropError(null);onFiles(files);}} accept={accept} multiple={multiple} maxBytes={maxBytes} progress={progress} showSelectedFiles={showSelectedFiles} disabled={disabled} helper={helper} fallback={fallback}/>
