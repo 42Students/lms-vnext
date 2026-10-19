@@ -1264,3 +1264,76 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 ```
 
 Responsive proof is limited to the 44px mobile/36px 768px+ source classes and inherited shared form control contracts. No React/TypeScript validation, screen recording, printer PDF render or provider-hosted email template comparison. **G4/G5 remain unticked.**
+
+## chat-6 college sign-in, branding and academic print source verification
+
+- [x] Scoped source file `src/components/admin/college-signin-method-form.tsx` — Saved college sign-in policy label prints as text; Radio edit/save only on screen, server version-check unchanged.
+- [x] Scoped source file `src/components/admin/college-branding-form.tsx` — Branding form hidden on paper; fixed sign-in preview remains, no API/color persistence behavior changed.
+- [x] Scoped source file `src/components/admin/college-logo-uploader.tsx` — Stored logo image stays printable, file chooser/crop sliders/mutation controls hidden; file checks and crop geometry untouched.
+- [x] Scoped source file `src/components/admin/academic-module-scope-inventory.tsx` — Scope DataTable print wrapper shows existing bounded loaded rows, pagination and disclosure controls hidden; does NOT claim printing all hierarchy pages.
+- [ ] **Next exact source file**: `src/components/admin/college-create-form.tsx` — remaining Super Admin/new-college form Button and responsive/print states. G4/G5 historical template parity still unticked.
+
+Numeric legacy baseline: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` mobile min **44px** through 767px; `docs/design/ui-clone-checklist.md:46-47` desktop **36px**, radius 9px, text 14/650; `docs/design/legacy-styles/components___accessibility.scss:18-21` keyboard focus 2px teal and offset 3px. The original authenticated print/PDF/email templates are still unavailable.
+
+#### `src/components/admin/college-signin-method-form.tsx`
+
+| State | Exact legacy file:line/value | Current vNext file:line/value | Verdict |
+|---|---|---|---|
+| Mobile tap control | `pages___admin-list-pages.scss:8,193-214`: **44px ≤767px** | `src/components/admin/college-signin-method-form.tsx:67` `min-h-11` when present | Token match, no physical test |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14/650 | `src/components/admin/college-signin-method-form.tsx:67` `md:min-h-9` | Token source comparison only |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal/3px offset** | `src/components/admin/college-signin-method-form.tsx:59` explicit 3px where applied; shared controls otherwise | Shared focus may differ; open |
+| Print interaction | No historical print template for this report | `src/components/admin/college-signin-method-form.tsx:57, 67` hidden edit controls, `:65` read-only paper values | Intended print source; no rendered preview |
+| Data/table/empty | `old-lms-pages.md:9` compact shared table/empty | `src/components/admin/college-signin-method-form.tsx:none` inherited table if present, existing error/empty states | No exact legacy screenshot for all states |
+| Behavior | Historic flows not in supplied SCSS | Saved college sign-in policy label prints as text; Radio edit/save only on screen, server version-check unchanged | Business actions preserved, no runtime tests |
+
+#### `src/components/admin/college-branding-form.tsx`
+
+| State | Exact legacy file:line/value | Current vNext file:line/value | Verdict |
+|---|---|---|---|
+| Mobile tap control | `pages___admin-list-pages.scss:8,193-214`: **44px ≤767px** | `src/components/admin/college-branding-form.tsx:169, 195, 209, 249` `min-h-11` when present | Token match, no physical test |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14/650 | `src/components/admin/college-branding-form.tsx:169, 195, 209, 249` `md:min-h-9` | Token source comparison only |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal/3px offset** | `src/components/admin/college-branding-form.tsx:none` explicit 3px where applied; shared controls otherwise | Shared focus may differ; open |
+| Print interaction | No historical print template for this report | `src/components/admin/college-branding-form.tsx:145` hidden edit controls, `:none` read-only paper values | Intended print source; no rendered preview |
+| Data/table/empty | `old-lms-pages.md:9` compact shared table/empty | `src/components/admin/college-branding-form.tsx:none` inherited table if present, existing error/empty states | No exact legacy screenshot for all states |
+| Behavior | Historic flows not in supplied SCSS | Branding form hidden on paper; fixed sign-in preview remains, no API/color persistence behavior changed | Business actions preserved, no runtime tests |
+
+#### `src/components/admin/college-logo-uploader.tsx`
+
+| State | Exact legacy file:line/value | Current vNext file:line/value | Verdict |
+|---|---|---|---|
+| Mobile tap control | `pages___admin-list-pages.scss:8,193-214`: **44px ≤767px** | `src/components/admin/college-logo-uploader.tsx:83, 100, 105` `min-h-11` when present | Token match, no physical test |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14/650 | `src/components/admin/college-logo-uploader.tsx:83, 100, 105` `md:min-h-9` | Token source comparison only |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal/3px offset** | `src/components/admin/college-logo-uploader.tsx:none` explicit 3px where applied; shared controls otherwise | Shared focus may differ; open |
+| Print interaction | No historical print template for this report | `src/components/admin/college-logo-uploader.tsx:80, 85, 105` hidden edit controls, `:none` read-only paper values | Intended print source; no rendered preview |
+| Data/table/empty | `old-lms-pages.md:9` compact shared table/empty | `src/components/admin/college-logo-uploader.tsx:none` inherited table if present, existing error/empty states | No exact legacy screenshot for all states |
+| Behavior | Historic flows not in supplied SCSS | Stored logo image stays printable, file chooser/crop sliders/mutation controls hidden; file checks and crop geometry untouched | Business actions preserved, no runtime tests |
+
+#### `src/components/admin/academic-module-scope-inventory.tsx`
+
+| State | Exact legacy file:line/value | Current vNext file:line/value | Verdict |
+|---|---|---|---|
+| Mobile tap control | `pages___admin-list-pages.scss:8,193-214`: **44px ≤767px** | `src/components/admin/academic-module-scope-inventory.tsx:49, 50, 63, 65` `min-h-11` when present | Token match, no physical test |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14/650 | `src/components/admin/academic-module-scope-inventory.tsx:49, 50, 63, 65` `md:min-h-9` | Token source comparison only |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal/3px offset** | `src/components/admin/academic-module-scope-inventory.tsx:63, 65` explicit 3px where applied; shared controls otherwise | Shared focus may differ; open |
+| Print interaction | No historical print template for this report | `src/components/admin/academic-module-scope-inventory.tsx:48, 60` hidden edit controls, `:none` read-only paper values | Intended print source; no rendered preview |
+| Data/table/empty | `old-lms-pages.md:9` compact shared table/empty | `src/components/admin/academic-module-scope-inventory.tsx:55` inherited table if present, existing error/empty states | No exact legacy screenshot for all states |
+| Behavior | Historic flows not in supplied SCSS | Scope DataTable print wrapper shows existing bounded loaded rows, pagination and disclosure controls hidden; does NOT claim printing all hierarchy pages | Business actions preserved, no runtime tests |
+
+### Scoped grep and responsive proof
+| File | Native button/input/select/textarea/table | Hex | Shared Button open/close |
+|---|---|---:|---:|
+| `src/components/admin/college-signin-method-form.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/college-branding-form.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/college-logo-uploader.tsx` | 0/0/0/0/0 | 0 | 2/2 |
+| `src/components/admin/academic-module-scope-inventory.tsx` | 0/0/0/0/0 | 0 | 2/2 |
+
+All four full files were re-read. This is **not** a repository-wide grep. Reproduce in a checkout, **not executed**:
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+ 'src/components/admin/college-signin-method-form.tsx' \\
+ 'src/components/admin/college-branding-form.tsx' \\
+ 'src/components/admin/college-logo-uploader.tsx' \\
+ 'src/components/admin/academic-module-scope-inventory.tsx'
+```
+
+**Responsive source:** 44px `min-h-11` until 767px, 36px `md:min-h-9` from 768px where those overrides exist; no phone/tablet browser measurement. **Print source:** mutating forms and pagination do not appear in paper output; stored sign-in setting, branding preview and existing academic rows are legible as noninteractive text/graphics. Academic scope pagination still limits the underlying loaded data, so print is **not** the entire hierarchy. No CI/app/compile or printer validation. **G4/G5 remain unticked.**
