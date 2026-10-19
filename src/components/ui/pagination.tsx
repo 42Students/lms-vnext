@@ -33,11 +33,11 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
   const previousHref = current > 1 ? hrefForPage(current - 1) : null;
   const nextHref = current < total ? hrefForPage(current + 1) : null;
   const pageLinks = paginationWindow(current, total).map(item=>({item,href:hrefForPage(item)}));
-  const buttonClass = "inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none";
+  const buttonClass = "inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none";
   return (
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]", className)}>
       {!previousHref || !isSafeInternalHref(previousHref) ?
-        <span aria-disabled="true" className={cx(buttonClass, "opacity-50")}>Previous</span> :
+        <span aria-disabled="true" className={cx(buttonClass, "pointer-events-none opacity-50")}>Previous</span> :
         <Link className={buttonClass} href={previousHref}>Previous</Link>}
       <span className="sr-only" aria-label="Current page">Page {current} of {total}</span>
       {pageLinks.map(({item,href}) => isSafeInternalHref(href) ?
