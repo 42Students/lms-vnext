@@ -1,4 +1,6 @@
 "use client";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 
 import { useRef, useState, type FormEvent } from "react";
@@ -61,21 +63,21 @@ export function TpoCompanyCreateForm() {
 
   return (
     <>
-      <button
+      <Button
         type="button"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary"
+        
         onClick={() => { setOpen(true); setReviewing(false); setError(""); }}
       >
         Add company
-      </button>
+      </Button>
       <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title="Create employer relationship"
        description="Create or link a company to your college; new relationships are untrusted by default.">
           <form onSubmit={(event) => void submit(event)}
             className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <strong className="text-base font-semibold text-foreground">Company details</strong>
-              <button type="button" disabled={pending} className="text-sm text-primary-text"
-                onClick={close}>Cancel</button>
+              <Button variant="ghost" type="button" disabled={pending} className="text-link"
+                onClick={close}>Cancel</Button>
             </div>
             <p className="text-sm text-body">
               Reuse an existing global employer when its identity matches; otherwise
@@ -83,23 +85,23 @@ export function TpoCompanyCreateForm() {
             </p>
             <label className="block text-sm font-semibold text-foreground">
               Company name
-              <input required minLength={2} maxLength={200}
-                className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+              <Input className="mt-1" required minLength={2} maxLength={200}
+                
                 value={form.name} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, name: event.target.value }));}}/>
             </label>
             <label className="block text-sm font-semibold text-foreground">
               Website URL (optional)
-              <input type="url" maxLength={500}
+              <Input className="mt-1" type="url" maxLength={500}
                 placeholder="https://company.example"
-                className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+                
                 value={form.websiteUrl} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, websiteUrl: event.target.value }));}}/>
             </label>
             <label className="block text-sm font-semibold text-foreground">
               Primary domain (optional)
-              <input maxLength={255} placeholder="company.example"
-                className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+              <Input className="mt-1" maxLength={255} placeholder="company.example"
+                
                 value={form.primaryDomain} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, primaryDomain: event.target.value }));}}/>
             </label>
@@ -109,10 +111,10 @@ export function TpoCompanyCreateForm() {
               This creates an auditable college relationship.
             </p>:null}
             {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
-            <button type="submit" disabled={pending}
-              className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+            <Button type="submit" disabled={pending}
+              >
               {pending ? "Saving relationship…" : reviewing ? "Confirm company creation" : "Review and create company"}
-            </button>
+            </Button>
           </form>
       </Dialog>
     </>
