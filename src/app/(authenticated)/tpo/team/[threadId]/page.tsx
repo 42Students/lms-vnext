@@ -75,12 +75,12 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
    <button type="submit"
-    className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-link">
+    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
     Mark this conversation&apos;s alerts as read
    </button>
   </form>
   {result.messages.some(message=>message.decision&&!message.removed)?
-   <aside aria-label="Decisions here" className="space-y-2 rounded-[var(--radius)] border border-border bg-surface p-4">
+   <aside aria-label="Decisions here" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <h2 className="text-sm font-semibold">Decided:</h2>
     {result.messages.filter(message=>message.decision&&!message.removed).slice(-5).map(message=>
      <Link key={message.id} href={"#team-message-"+message.id}
@@ -96,8 +96,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     return <li id={"team-message-"+message.id} key={message.id} className="min-w-0">
      {showDay?<p className="my-3 text-center text-xs font-semibold text-muted-foreground">{day(message.createdAt)}</p>:null}
      <div className={own?
-      "ml-auto max-w-[88%] rounded-[12px] border border-border bg-surface-secondary p-4":
-      "mr-auto max-w-[88%] rounded-[12px] border border-border bg-surface p-4"}>
+      "ml-auto max-w-[88%] rounded-[var(--lms-canvas-radius)] border border-border bg-surface-secondary p-4":
+      "mr-auto max-w-[88%] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"}>
       <p className="text-xs text-muted-foreground">
        {own?"You":message.authorName?.trim()||"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
@@ -122,17 +122,17 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <span className="text-body">Page {result.page} of {result.pages}</span>
    {result.page < result.pages ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page+1)}
-    className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-link">
+    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
     Older messages
    </Link> : null}
    {result.page > 1 ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page-1)}
-    className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-link">
+    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
     Newer messages
    </Link> : null}
   </nav>
   <TpoTeamReplyComposer threadId={result.thread.id} actorUserId={context.user.id}/>
-  {!result.messages.length?<p role="status" className="rounded-[12px] border border-border p-5 text-sm text-body">No messages in this thread yet.</p>:null}
+  {!result.messages.length?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-5 text-sm text-body">No messages in this thread yet.</p>:null}
 
  </div>;
 }
