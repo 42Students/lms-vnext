@@ -8,7 +8,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 import {trySaveReportCsv} from "./report-interactive-table-download-model";
-import {reportTableCsv,reportTableTsv,safeReportDownloadName,type ReportCell} from "./report-interactive-table-export-model";
+import {reportTableCsv,reportTableTsv,type ReportCell} from "./report-interactive-table-export-model";
 
 type Cell=ReportCell;
 const stringValue=(value:Cell)=>value===null?"":String(value);
