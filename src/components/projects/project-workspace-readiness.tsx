@@ -36,7 +36,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
   const readiness=result.value;
   return <div className="space-y-6">
     <ProjectAdminNav basePath={basePath} active="readiness" />
-    <Link href={basePath} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Back to workspaces</Link>
+    <Link href={basePath} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">← Back to workspaces</Link>
     <nav aria-label="Workspace sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border">
       {([
         ["summary","Summary"], ["overview","Overview"], ["team","Team"], ["sprints","Sprints"],
@@ -45,7 +45,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       ] as const).map(([segment, title]) => (
         <Link key={segment} href={basePath+"/"+projectId+"/"+segment}
           aria-current={segment==="readiness"?"page":undefined}
-          className={"inline-flex min-h-11 items-center border-b-2 border-transparent px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] "+(segment==="readiness"?"border-primary text-primary-text":"text-body hover:text-primary-text")}>
+          className={"inline-flex min-h-11 items-center border-b-2 px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+(segment==="readiness"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
           {title}
         </Link>
       ))}
