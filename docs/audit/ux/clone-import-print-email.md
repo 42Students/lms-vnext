@@ -1059,3 +1059,125 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 **Important source repair:** the previously stored `src/components/tpo/tpo-campaign-compose.tsx` Save draft button had an incomplete JSX expression `{busy?"Saving…":"Save draft"`; this pass explicitly repaired it to `{busy?"Saving…":"Save draft"}`. `src/app/(authenticated)/tpo/settings/notices/page.tsx` referenced `Badge` without an import, which was added from shared UI. These fixes are source-verified only; no compiler/CI was run.
 
 **Still open, no strict G4/G5 tick:** repository-wide grep, all state/value tables, tablet/small-phone computed geometry, authenticated print preview and exact external PDF/certificate/receipt/offer/email HTML.
+
+## chat-6 auth and Super Admin shared-Button source pass
+
+These **seven complete source files** were re-fetched from the branch after updates. All visible native raw `<button>` candidates in this set were already converted to shared `Button` when this lane arrived, so this pass corrected breakpoints and paper states rather than performing redundant tag replacements. **No shared `src/components/ui/*.tsx` source was edited.**
+
+- [x] Source pass `src/components/auth/device-list.tsx` — Device sign-out, other-device and all-device controls: shared Button hit targets; confirmations unchanged.
+- [x] Source pass `src/components/auth/membership-recovery.tsx` — Membership recovery continuation: explicit type button, disabled while pending; same route and recovery call.
+- [x] Source pass `src/components/auth/membership-chooser.tsx` — Membership chooser continue action: shared Button 44px/36px; selected membership logic unchanged.
+- [x] Source pass `src/components/auth/login-form.tsx` — Sign-in method tab buttons, submit, resend, email fallback and restart actions: 44px/36px classes; keyboard arrows and submit/auth requests unchanged.
+- [x] Source pass `src/components/admin/admin-revoke-sessions.tsx` — Admin revoke-sessions danger action: 44px/36px, print hidden; confirmation and permission API unchanged.
+- [x] Source pass `src/components/admin/placement-panel-error-boundary.tsx` — Admin placement panel error recovery: Retry shared Button 44px/36px and paper hidden.
+- [x] Source pass `src/components/admin/copy-finding-for-claude.tsx` — Copy findings for external review: shared Button 44px/36px, paper hidden; copy logic unchanged, JSX callback closing brace rechecked.
+- [ ] **Next exact file:** `src/components/admin/college-archive-button.tsx` — inspect remaining Super Admin/raw-button queue and preserve its confirm/destructive behavior.
+
+### Legacy file:line value tables (source-only)
+Old values: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` 44px tap target through 767px; `docs/design/ui-clone-checklist.md:46-47` 36px/9px desktop button; `docs/design/legacy-styles/components___accessibility.scss:18-21` teal focus 2px / offset 3px. These are exact old **style sources**, not a computed browser read.
+
+#### `src/components/auth/device-list.tsx`
+
+| State | Legacy file:line/value | vNext source file:line/value | Evidence |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `src/components/auth/device-list.tsx:83, 106` `min-h-11` | Source token comparison, not device screenshot |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` 36px and 9px radius | `src/components/auth/device-list.tsx:83, 106` `md:min-h-9` + shared radius | Source only |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px offset | `src/components/auth/device-list.tsx:not present` explicit focus when present, otherwise shared Button inherited outline | Shared focus offset differs from global legacy in some states; open |
+| Busy/disabled/error | Legacy shared hover/disabled/error states not fully available for this specific screen | `src/components/auth/device-list.tsx:not present` alert; existing `disabled`/pending/ConfirmDialog kept | Behavior source preserved; no actual execution |
+| Print | No historical authenticated PDF or device-print target source | `src/components/auth/device-list.tsx:not present` print:hidden if applicable | Source only; G5 open |
+| Functional state | No old end-to-end interaction fixture | Device sign-out, other-device and all-device controls: shared Button hit targets; confirmations unchanged | Code only; not executed |
+
+#### `src/components/auth/membership-recovery.tsx`
+
+| State | Legacy file:line/value | vNext source file:line/value | Evidence |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `src/components/auth/membership-recovery.tsx:56` `min-h-11` | Source token comparison, not device screenshot |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` 36px and 9px radius | `src/components/auth/membership-recovery.tsx:56` `md:min-h-9` + shared radius | Source only |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px offset | `src/components/auth/membership-recovery.tsx:not present` explicit focus when present, otherwise shared Button inherited outline | Shared focus offset differs from global legacy in some states; open |
+| Busy/disabled/error | Legacy shared hover/disabled/error states not fully available for this specific screen | `src/components/auth/membership-recovery.tsx:64` alert; existing `disabled`/pending/ConfirmDialog kept | Behavior source preserved; no actual execution |
+| Print | No historical authenticated PDF or device-print target source | `src/components/auth/membership-recovery.tsx:not present` print:hidden if applicable | Source only; G5 open |
+| Functional state | No old end-to-end interaction fixture | Membership recovery continuation: explicit type button, disabled while pending; same route and recovery call | Code only; not executed |
+
+#### `src/components/auth/membership-chooser.tsx`
+
+| State | Legacy file:line/value | vNext source file:line/value | Evidence |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `src/components/auth/membership-chooser.tsx:130, 161` `min-h-11` | Source token comparison, not device screenshot |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` 36px and 9px radius | `src/components/auth/membership-chooser.tsx:161` `md:min-h-9` + shared radius | Source only |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px offset | `src/components/auth/membership-chooser.tsx:not present` explicit focus when present, otherwise shared Button inherited outline | Shared focus offset differs from global legacy in some states; open |
+| Busy/disabled/error | Legacy shared hover/disabled/error states not fully available for this specific screen | `src/components/auth/membership-chooser.tsx:111` alert; existing `disabled`/pending/ConfirmDialog kept | Behavior source preserved; no actual execution |
+| Print | No historical authenticated PDF or device-print target source | `src/components/auth/membership-chooser.tsx:not present` print:hidden if applicable | Source only; G5 open |
+| Functional state | No old end-to-end interaction fixture | Membership chooser continue action: shared Button 44px/36px; selected membership logic unchanged | Code only; not executed |
+
+#### `src/components/auth/login-form.tsx`
+
+| State | Legacy file:line/value | vNext source file:line/value | Evidence |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `src/components/auth/login-form.tsx:395, 396, 434, 514, 530, 540, 550` `min-h-11` | Source token comparison, not device screenshot |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` 36px and 9px radius | `src/components/auth/login-form.tsx:395, 396, 434, 514, 530, 540, 550` `md:min-h-9` + shared radius | Source only |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px offset | `src/components/auth/login-form.tsx:not present` explicit focus when present, otherwise shared Button inherited outline | Shared focus offset differs from global legacy in some states; open |
+| Busy/disabled/error | Legacy shared hover/disabled/error states not fully available for this specific screen | `src/components/auth/login-form.tsx:329, 427` alert; existing `disabled`/pending/ConfirmDialog kept | Behavior source preserved; no actual execution |
+| Print | No historical authenticated PDF or device-print target source | `src/components/auth/login-form.tsx:not present` print:hidden if applicable | Source only; G5 open |
+| Functional state | No old end-to-end interaction fixture | Sign-in method tab buttons, submit, resend, email fallback and restart actions: 44px/36px classes; keyboard arrows and submit/auth requests unchanged | Code only; not executed |
+
+#### `src/components/admin/admin-revoke-sessions.tsx`
+
+| State | Legacy file:line/value | vNext source file:line/value | Evidence |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `src/components/admin/admin-revoke-sessions.tsx:39` `min-h-11` | Source token comparison, not device screenshot |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` 36px and 9px radius | `src/components/admin/admin-revoke-sessions.tsx:39` `md:min-h-9` + shared radius | Source only |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px offset | `src/components/admin/admin-revoke-sessions.tsx:not present` explicit focus when present, otherwise shared Button inherited outline | Shared focus offset differs from global legacy in some states; open |
+| Busy/disabled/error | Legacy shared hover/disabled/error states not fully available for this specific screen | `src/components/admin/admin-revoke-sessions.tsx:not present` alert; existing `disabled`/pending/ConfirmDialog kept | Behavior source preserved; no actual execution |
+| Print | No historical authenticated PDF or device-print target source | `src/components/admin/admin-revoke-sessions.tsx:39` print:hidden if applicable | Source only; G5 open |
+| Functional state | No old end-to-end interaction fixture | Admin revoke-sessions danger action: 44px/36px, print hidden; confirmation and permission API unchanged | Code only; not executed |
+
+#### `src/components/admin/placement-panel-error-boundary.tsx`
+
+| State | Legacy file:line/value | vNext source file:line/value | Evidence |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `src/components/admin/placement-panel-error-boundary.tsx:14` `min-h-11` | Source token comparison, not device screenshot |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` 36px and 9px radius | `src/components/admin/placement-panel-error-boundary.tsx:14` `md:min-h-9` + shared radius | Source only |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px offset | `src/components/admin/placement-panel-error-boundary.tsx:not present` explicit focus when present, otherwise shared Button inherited outline | Shared focus offset differs from global legacy in some states; open |
+| Busy/disabled/error | Legacy shared hover/disabled/error states not fully available for this specific screen | `src/components/admin/placement-panel-error-boundary.tsx:11` alert; existing `disabled`/pending/ConfirmDialog kept | Behavior source preserved; no actual execution |
+| Print | No historical authenticated PDF or device-print target source | `src/components/admin/placement-panel-error-boundary.tsx:14` print:hidden if applicable | Source only; G5 open |
+| Functional state | No old end-to-end interaction fixture | Admin placement panel error recovery: Retry shared Button 44px/36px and paper hidden | Code only; not executed |
+
+#### `src/components/admin/copy-finding-for-claude.tsx`
+
+| State | Legacy file:line/value | vNext source file:line/value | Evidence |
+|---|---|---|---|
+| Phone | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `src/components/admin/copy-finding-for-claude.tsx:20` `min-h-11` | Source token comparison, not device screenshot |
+| Tablet/desktop | `ui-clone-checklist.md:46-47` 36px and 9px radius | `src/components/admin/copy-finding-for-claude.tsx:20` `md:min-h-9` + shared radius | Source only |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px offset | `src/components/admin/copy-finding-for-claude.tsx:not present` explicit focus when present, otherwise shared Button inherited outline | Shared focus offset differs from global legacy in some states; open |
+| Busy/disabled/error | Legacy shared hover/disabled/error states not fully available for this specific screen | `src/components/admin/copy-finding-for-claude.tsx:not present` alert; existing `disabled`/pending/ConfirmDialog kept | Behavior source preserved; no actual execution |
+| Print | No historical authenticated PDF or device-print target source | `src/components/admin/copy-finding-for-claude.tsx:20` print:hidden if applicable | Source only; G5 open |
+| Functional state | No old end-to-end interaction fixture | Copy findings for external review: shared Button 44px/36px, paper hidden; copy logic unchanged, JSX callback closing brace rechecked | Code only; not executed |
+
+
+### Scoped grep source counts
+
+| File | Raw button/input/select/textarea/table | Hard-coded hex | Shared Button open/close |
+|---|---|---:|---:|
+| `src/components/auth/device-list.tsx` | 0/0/0/0/0 | 0 | 2/2 |
+| `src/components/auth/membership-recovery.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/auth/membership-chooser.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/auth/login-form.tsx` | 0/0/0/0/0 | 0 | 6/6 |
+| `src/components/admin/admin-revoke-sessions.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/placement-panel-error-boundary.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/copy-finding-for-claude.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+
+All seven listed files have **0 raw native form/button/table tags** and **0 local CSS hex literals** by source regex; opener/closer counts match. This covers exactly the fetched files, **not** every file in the repo.
+
+Reproduce in a checkout (**not executed**):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+  'src/components/auth/device-list.tsx' \\
+  'src/components/auth/membership-recovery.tsx' \\
+  'src/components/auth/membership-chooser.tsx' \\
+  'src/components/auth/login-form.tsx' \\
+  'src/components/admin/admin-revoke-sessions.tsx' \\
+  'src/components/admin/placement-panel-error-boundary.tsx' \\
+  'src/components/admin/copy-finding-for-claude.tsx'
+```
+
+**Responsive source proof:** `min-h-11` is 44px mobile 0–767px, `md:min-h-9` is 36px from 768px. Login method selection keeps keyboard arrow/Home/End handlers, resend and cooldown/disabled states. Explicit sign-out confirmation dialogs stay shared. Native browser screenshots, actual 640px/768px computed CSS, runtime typecheck, CLI lint, tests and CI **not run**. G4/G5 historical PDF/email output and category tick remain open.
