@@ -5,7 +5,7 @@ Reference: `docs/orchestrator/queues/master-queue.md` NORTH STAR and `docs/desig
 Scope is the **shell and global visual skin only**. Keep all pages' own sections, table columns, business rules, forms and wording.
 
 ## Top bar — swept
-- [x] `src/components/shell/topbar/topbar.module.css`: 68px shell, command search, white/teal action, 36px icons, account menu, focused controls, adaptive notification dropdowns with legacy overlay shadows/radii.
+- [x] `src/components/shell/topbar/topbar.module.css`: 68px shell, command search, white/teal action, 36px icons, account menu, focused controls, adaptive notification dropdowns with legacy overlay shadows/radii. Shared global skin tokens govern button/border/radius/shadows, and measured header-only colors are centralized as local CSS custom properties.
 - [x] `src/components/shell/topbar/command-search.tsx`: make ArrowDown reach all actual search options, not just TPO results; use semantic text colors.
 - [x] `src/components/shell/topbar/tpo-find-suggestions.tsx`: semantic suggestion palette.
 - [x] `src/components/shell/topbar/tpo-notification-cluster.tsx`: accessible action grouping.
