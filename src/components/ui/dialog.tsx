@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useId, useRef, type ReactNode, type CSSProperties } from "react";
+import { useId, useRef, type ReactNode, type CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { cx } from "@/lib/class-names";
 import { OverlayCloseIcon } from "@/components/ui/overlay-close-icon";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
+import { useOverlayExit } from "@/components/ui/use-overlay-exit";
 
 export type DialogProps = {
   open: boolean;
@@ -33,17 +34,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
   const visualCenter = availableHeight && viewportTop
     ? `${Number.parseFloat(viewportTop) + Number.parseFloat(availableHeight) / 2}px` : "50dvh";
 
-  useEffect(() => {
-    const modal = ref.current;
-    if (!modal) return;
-    if (open && !modal.open) {
-      opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      modal.showModal();
-    } else if (!open && modal.open) {
-      modal.close();
-      opener.current?.focus();
-    }
-  }, [open]);
+  useOverlayExit(ref, opener, open, 180);
 
   return <dialog data-slot="dialog" role={role} ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
     onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
