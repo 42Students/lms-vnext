@@ -97,11 +97,11 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   <button type="button" aria-expanded={filtersOpen}
     aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-link">
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
     Filters{activeFilterCount?" ("+activeFilterCount+")":""}
   </button>
   {filtersOpen?<div id="mentor-allocation-filters"
-    className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
+    className="flex flex-wrap gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
    <label className="text-sm font-semibold">Release
     <select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
       remember("release",e.target.value);remember("sprint","");}}
