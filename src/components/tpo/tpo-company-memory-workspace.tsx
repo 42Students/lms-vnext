@@ -65,7 +65,7 @@ type CompanyMemory = {
 type Phase = "loading" | "ready" | "error" | "migration-pending" | "not-found";
 
 const buttonStyle =
-  "inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-primary-subtle";
+  "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-primary-subtle";
 
 function dateLabel(value: string) {
   const date = new Date(value);
