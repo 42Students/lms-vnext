@@ -7,6 +7,8 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
+import { ListToolbar } from "@/components/ui/list-toolbar";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseProjectAdminRiskQuery } from "@/modules/projects/admin-risk-query-model";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -73,9 +75,9 @@ export async function ProjectAdminAtRiskPage({
         }
       />
       {!result.blockerSignalSupported ? (
-        <section className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm leading-5 text-body">
+        <Banner tone="warning">
           Workspace blocker data is unavailable. Task blockers are still counted.
-        </section>
+        </Banner>
       ) : null}
       <div className="grid gap-3 sm:grid-cols-3">
         {([
@@ -92,6 +94,7 @@ export async function ProjectAdminAtRiskPage({
       </div>
       <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
       <ProjectAdminFilters query={query} includeRiskSort />
+      <ListToolbar label="At-risk workspaces" viewCount={result.total} />
 
       {!result.items.length ? (
         <section className="border-b border-border py-6 text-sm text-muted-foreground">
