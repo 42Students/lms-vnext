@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Tabs } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -40,17 +41,18 @@ export default async function HrMessagesPage({searchParams}:{
     href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
     className="block rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 sm:min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
-   <nav aria-label="Inbox filters" className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)]">
+   <div className="flex flex-wrap gap-3">
     {result.choices.length>1?result.choices.map(grant=><Link key={grant.id}
      href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
      aria-current={grant.collegeId===result.collegeId?"page":undefined}
-     className={grant.collegeId===result.collegeId ? "inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>{grant.collegeName}</Link>):null}
-    <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
-      (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
-     className="inline-flex min-h-9 max-sm:min-h-11 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-primary-text hover:border-[var(--lms-primary)] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-     {query.data.unreadOnly==="true"?"Show all":"Unread only"}
-    </Link>
-   </nav>
+     className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>{grant.collegeName}</Link>):null}
+   </div>
+   <Tabs ariaLabel="Inbox filters" renderPanel={false}
+     value={query.data.unreadOnly==="true"?"UNREAD":"ALL"}
+     items={[
+       {value:"ALL", label:"All notifications", href:"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly=false&q="+encodeURIComponent(query.data.q)},
+       {value:"UNREAD", label:"Unread only", count:result.unread, href:"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly=true&q="+encodeURIComponent(query.data.q)},
+     ]} />
    <form action="/hr/notifications" method="get" className="flex flex-wrap gap-2">
      <input type="hidden" name="collegeId" value={result.collegeId} />
      <input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
