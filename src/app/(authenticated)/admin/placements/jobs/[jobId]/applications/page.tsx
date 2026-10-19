@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { Tabs } from "@/components/ui/tabs";
 import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPORT_CAP } from "@/modules/placements/college-drive-applications-model";
 import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
@@ -85,12 +86,11 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       </label>
       <Button type="submit" className="self-end">Filter</Button>
     </form>
-    <Tabs ariaLabel="Application pipeline stages" renderPanel={false} value={query.stage}
+    <Tabs ariaLabel="Application pipeline stages" value={query.stage} renderPanel={false}
       items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>({
-        value:stage,
-        label:stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase(),
-        href:adminHref(jobId,{...query,stage,page:1}),
-        count:stage==="ALL"?Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):data.stageCounts[stage]??0,
+       value:stage,label:stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase(),
+       count:stage==="ALL"?Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):data.stageCounts[stage]??0,
+       href:adminHref(jobId,{...query,stage,page:1}),
       }))}/>
     <div className="flex flex-wrap justify-between gap-3 text-sm">
       <span>{data.total} matching applications</span>
