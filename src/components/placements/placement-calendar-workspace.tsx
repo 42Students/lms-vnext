@@ -696,8 +696,8 @@ export async function PlacementCalendarWorkspace({
                 }
                 className={
                   state.view === view
-                    ? "inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold capitalize text-foreground"
-                    : "inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)]"
+                    ? "inline-flex min-h-9 items-center rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold capitalize text-[var(--lms-on-primary)]"
+                    : "inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)]"
                 }
               >
                 {view}
@@ -876,7 +876,7 @@ export async function PlacementCalendarWorkspace({
       {isTpo?<nav aria-label="Filter calendar by event type" className="flex flex-wrap gap-2">
  <Link href={calendarHref(basePath,audience,state,{kind:undefined,kinds:[]})}
   aria-current={!state.kind&&!state.kinds.length?"page":undefined}
-  className={!state.kind&&!state.kinds.length?"inline-flex min-h-11 items-center rounded-full bg-primary px-3 text-xs font-semibold text-foreground":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
+  className={!state.kind&&!state.kinds.length?"inline-flex min-h-9 items-center rounded-full bg-[var(--lms-button-primary)] px-3 text-xs font-semibold text-[var(--lms-on-primary)]":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
   All events ({eventTypeCountsSource&&blockedDays?.ready?countSourceEvents.length+toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length:"unavailable"})
  </Link>
  {TPO_CALENDAR_CHIP_CHOICES.map(filter=>{
@@ -887,7 +887,7 @@ export async function PlacementCalendarWorkspace({
   return <Link key={filter.value} href={calendarHref(basePath,audience,state,{kind:undefined,kinds:nextKinds})}
    aria-current={active?"page":undefined}
    aria-label={filter.label+" ("+count+"), "+(active?"selected":"not selected")}
-   className={active?"inline-flex min-h-11 items-center rounded-full bg-primary px-3 text-xs font-semibold text-foreground":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
+   className={active?"inline-flex min-h-9 items-center rounded-full bg-[var(--lms-button-primary)] px-3 text-xs font-semibold text-[var(--lms-on-primary)]":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
    <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-full "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
    {filter.label} ({count})
   </Link>;
@@ -941,7 +941,7 @@ export async function PlacementCalendarWorkspace({
         aria-label="All-day blocked dates" className="rounded-xl border border-border bg-surface-subtle p-4">
         <h2 className="text-sm font-semibold text-foreground">Blocked (exam) dates · All day</h2>
         <ul className="mt-2 flex flex-wrap gap-2">{blockedEvents.map(event=>
-         <li key={event.id} className="rounded-md border border-border bg-muted px-3 py-2 text-sm text-body">
+         <li key={event.id} className="rounded-[9px] border border-border bg-muted px-3 py-2 text-sm text-body">
           <strong>{dateLabel(placementCalendarDayKey(event.startsAt))} · Blocked</strong>
           {event.note?<p className="text-xs">{event.note}</p>:null}
          </li>)}</ul>
@@ -1039,7 +1039,7 @@ export async function PlacementCalendarWorkspace({
                       ) : (
                         <div
                           key={event.id}
-                          className="rounded-md bg-muted px-2 py-1 text-xs text-body"
+                          className="rounded-[9px] bg-muted px-2 py-1 text-xs text-body"
                         >
                           {event.title}
                         </div>

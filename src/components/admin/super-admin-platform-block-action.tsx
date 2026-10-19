@@ -38,7 +38,7 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
     onChange={event=>setReason(event.target.value)} className="rounded-[9px] border border-border bg-surface p-2"/>
   </label>
   <button type="button" disabled={pending||reason.trim().length<4}
-   onClick={()=>void submit()} className="mt-3 min-h-10 rounded-md border border-error px-4 font-semibold text-error disabled:opacity-50">
+   onClick={()=>void submit()} className="mt-3 min-h-10 rounded-[9px] border border-error px-4 font-semibold text-error disabled:opacity-50">
    {pending?"Updating…":status==="ACTIVE"?"Block platform account":"Reactivate platform account"}
   </button>
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}

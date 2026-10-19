@@ -63,12 +63,12 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
     <div className="mt-4 flex flex-wrap gap-2">
      {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
       <button key={action.status} type="button" disabled={busy} onClick={()=>void change(selected,action.status)}
-       className={action.status==="RESOLVED"?"min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50":"min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"}>
+       className={action.status==="RESOLVED"?"min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] disabled:opacity-50":"min-h-11 rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"}>
        {busy?"Saving…":action.label}
       </button>)}
     </div>
     {message?<p role="status" className="mt-3 text-sm text-body">{message}</p>:null}
-    <section className="mt-5 min-w-0 rounded-md border border-border p-4">
+    <section className="mt-5 min-w-0 rounded-[9px] border border-border p-4">
       <h3 className="text-sm font-semibold">Plain text message</h3>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{selected.bodyPlain.slice(0,15000)}</p>
       {selected.bodyPlain.length>15000?<p className="text-xs text-muted-foreground">Message preview truncated after 15,000 characters.</p>:null}

@@ -379,13 +379,13 @@ export async function PlacementDriveWorkspace({
       {isTpo&&job.status==="DRAFT"?
        <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
       {isTpo&&!lifecycleReadiness?
-       <p role="status" className="rounded-md border border-border p-3 text-sm text-body">
+       <p role="status" className="rounded-[9px] border border-border p-3 text-sm text-body">
         Could not load: Publication readiness. Publishing is unavailable until these checks recover.
         Refresh the drive to try again.
        </p>:null}
       <section aria-label="Drive status and details" className="border-b border-border pb-6">
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <strong className="rounded-md border border-border bg-muted px-2 py-1">{headerFacts.status}</strong>
+          <strong className="rounded-[9px] border border-border bg-muted px-2 py-1">{headerFacts.status}</strong>
           <span>{headerFacts.applicationMode}</span>
           <span>· {headerFacts.workMode}</span>
           <span>· {headerFacts.employmentType}</span>
@@ -488,7 +488,7 @@ export async function PlacementDriveWorkspace({
                 <article key={round.id} className="rounded-lg border border-border bg-muted p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
-                    <span className="rounded-md border border-border px-2 py-1 text-xs font-semibold">{round.status}</span>
+                    <span className="rounded-[9px] border border-border px-2 py-1 text-xs font-semibold">{round.status}</span>
                   </div>
                   <dl className="mt-3 grid gap-2 text-sm text-body sm:grid-cols-2">
                     <div><dt className="font-semibold">When</dt><dd>{round.scheduledAt
@@ -683,7 +683,7 @@ export async function PlacementDriveWorkspace({
         }))}
       />
       {isTpo&&job.status==="PUBLISHED"&&!bulkCandidates?
-       <p role="status" className="rounded-md border border-border p-3 text-sm text-body">
+       <p role="status" className="rounded-[9px] border border-border p-3 text-sm text-body">
         Could not load: Bulk applicants. Other drive sections are still available.
         Refresh the drive to retry this section.
        </p>:null}
