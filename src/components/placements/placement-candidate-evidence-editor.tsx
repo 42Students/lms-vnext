@@ -1,5 +1,6 @@
 "use client";
 
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   useState,
   type FormEvent,
@@ -221,10 +222,7 @@ export function PlacementCandidateEvidenceEditor({
   }
 
   return (
-    <details className="mt-3 border-y border-border">
-      <summary className="cursor-pointer py-3 text-xs font-semibold text-foreground">
-        Academic evidence
-      </summary>
+    <Disclosure title="Academic evidence" className="mt-3 border-y border-border">
       <div className="border-t border-border py-3">
         {!loaded ? (
           <Button
@@ -415,6 +413,6 @@ export function PlacementCandidateEvidenceEditor({
           </form>
         )}
       </div>
-    </details>
+    </Disclosure>
   );
 }
