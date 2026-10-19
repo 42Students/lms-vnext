@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 export function RecordedOutsideForm({collegeId,choices}:{
  collegeId:string;choices:readonly {id:string;name:string}[];
 }){
  return <form method="post" action="/api/placements/recorded-outside" className="grid gap-4 sm:grid-cols-2">
   <input type="hidden" name="collegeId" value={collegeId}/>
   <label className="grid gap-1 text-sm text-body">Company relationship
-   <select name="companyRelationshipId" required defaultValue="" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+   <Select name="companyRelationshipId" required defaultValue="" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     <option value="" disabled>Choose an authorized company</option>
     {choices.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
-   </select>
+   </Select>
   </label>
   <label className="grid gap-1 text-sm text-body">External drive title
    <input name="title" required minLength={3} maxLength={200} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"/>
