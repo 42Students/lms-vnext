@@ -499,7 +499,7 @@ export default async function HrPlacementJobPage({
           <input type="hidden" name="collegeId" value={workspace.college.id}/>
           <input type="hidden" name="jobId" value={workspace.job.id}/>
           <p className="text-sm text-body">No private drive discussion exists yet.</p>
-          <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Open drive discussion</button>
+          <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Open drive discussion</button>
         </form>}
       </section>:null}
       {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 border-b border-border pb-4 sm:pb-5">
@@ -613,7 +613,7 @@ export default async function HrPlacementJobPage({
                 {driveOverview.readOnly?"This drive is finished. Results can no longer be sent.":"Official screening is controlled by the placement cell. Open Focused review to stage results for this applicant."}
               </p>}
               <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery}
-                className="mt-4 inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Review rounds</Link>
+                className="mt-4 inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Review rounds</Link>
             </RecruiterApplicantReviewDrawer>
           ) : null}
           <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">

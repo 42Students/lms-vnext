@@ -61,7 +61,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         {detail.collegeCode?<p className="text-xs text-muted-foreground">College code: {detail.collegeCode}</p>:null}
         <p className="text-xs text-muted-foreground">Access granted: {detail.grantedAtLabel} (IST)</p>
         <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
-          className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
+          className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
           Open recruiter Today
         </Link>
       </article>;
@@ -128,7 +128,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <PageHeader title={greeting.title}
       description={greeting.subtitle}
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedId})}
-        className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
+        className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
         Request a drive
       </Link>} />
     <HrUnsentDriveAlert collegeId={selectedId}
@@ -180,7 +180,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             <li>Applicants show up here; you review them one by one and send results to the placement cell.</li>
           </ol>
           <Link href={recruiterDriveDraftHref({collegeId:selectedId})}
-            className="mt-4 inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
+            className="mt-4 inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
             Request your first drive
           </Link>
         </div>

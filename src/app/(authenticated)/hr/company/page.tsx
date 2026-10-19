@@ -225,7 +225,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
-              className="min-h-9 min-w-48 flex-1 rounded-[9px] border border-border bg-surface px-3 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"/>
+              className="min-h-9 min-w-48 flex-1 rounded-[9px] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"/>
             <button type="submit" className="rounded-[9px] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text min-h-9">Search</button>
           </form>
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates

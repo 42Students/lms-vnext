@@ -30,7 +30,7 @@ export default async function HrMessagesPage({searchParams}:{
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Recruiter" title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."/>
-  <Link href="/hr/conversations" className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+  <Link href="/hr/conversations" className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Open recruiter conversations
   </Link>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
@@ -54,8 +54,8 @@ export default async function HrMessagesPage({searchParams}:{
      <input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
      <input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
-       placeholder="Search drive titles" className="min-h-9 min-w-48 flex-1 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
-     <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Search</button>
+       placeholder="Search drive titles" className="min-h-9 min-w-48 flex-1 rounded-[var(--radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
+     <button type="submit" className="min-h-9 rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Search</button>
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
    <div className="flex justify-end">
