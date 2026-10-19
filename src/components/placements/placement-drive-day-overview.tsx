@@ -25,7 +25,7 @@ export function PlacementDriveDayOverview({ driveDay }: { driveDay: DriveDay }) 
           <div key={String(label)} className="border-b border-border px-4 py-3 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0"><p className="m-0 text-xs font-semibold text-muted-foreground">{label}</p><p className="mt-1 text-xl font-semibold text-foreground">{value}</p></div>)}
       </div>
     </section>
-    {driveDay.attention.length > 0 ? <section className="rounded-xl border border-border bg-surface"><div className="border-b border-border px-5 py-4"><h2 className="m-0 text-base font-semibold text-foreground">Attention</h2></div><div className="flex flex-wrap gap-2 p-5">{driveDay.attention.map((item,index) =>
+    {driveDay.attention.length > 0 ? <section className="border-b border-border"><div className="border-b border-border px-5 py-4"><h2 className="m-0 text-base font-semibold text-foreground">Attention</h2></div><div className="flex flex-wrap gap-2 p-5">{driveDay.attention.map((item,index) =>
       <StatusBadge key={String(item.code)+index} tone={item.code === "RESULTS_OVERDUE" || item.code === "INACTIVE_CANDIDATES" ? "error" : "warning"}>{String(item.code).toLowerCase().split("_").join(" ")}{typeof item.count === "number" ? " · "+item.count : ""}</StatusBadge>)}</div></section> : null}
     <section className="space-y-3">
       <div><h2 className="m-0 text-base font-semibold text-foreground">Round pipeline</h2><p className="mt-1 text-sm text-body">Progression is derived from applied results, never staged drafts.</p></div>
