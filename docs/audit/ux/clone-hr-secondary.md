@@ -224,3 +224,27 @@ Queue status: **10 ticked non-rendering files; 77 visual files still open** unde
 ## Next file
 
 `src/app/(authenticated)/hr/calendar/page.tsx` — finish remaining week/agenda cell nesting, then `src/components/tracker/tracker-report-form.tsx` responsive copy and audit per-state values.
+
+
+## Replacement lane source repair batch (2026-10-19, continued from existing branch)
+
+Integration: the prior head `abca757a` was an ancestor of `main` `12ee0a58` (GitHub compare: 0 ahead/1023 behind), so `chatgpt/chat-18-b` was safely fast-forwarded with an expected-head lease. Existing chat-18 fixes and audit were **not** discarded. Nine new scoped source corrections followed; this section is the tenth push in the batch.
+
+| File (source location on refreshed branch) | Change and legacy match | Source-only verification |
+| --- | --- | --- |
+| `src/components/hr/recruiter-decision-read-button.tsx:3,31` | Deduplicated `Button` import; original correct button kept. Legacy button values: `old-lms-shell-spec.md:25-27` | One import, button JSX opening/closing balanced; no page-content change |
+| `src/app/(authenticated)/hr/notifications/page.tsx:2,44` | Restored missing shared `NeedsDoingChips` binding for college quick filters. `old-lms-pages.md:6-8` | Filter labels and selected college URLs unchanged |
+| `src/app/(authenticated)/hr/company/reports/page.tsx:2,188` | Restored shared `Tabs` import for Company/Team/Reports (without unused StatusBadge); `old-lms-pages.md:7-10` | One shared tab component; existing destinations unchanged |
+| `src/app/(authenticated)/hr/company/page.tsx:2,219` | Restored shared `Pagination` for team roster. `old-lms-pages.md:9-11` | Label, page, pageCount, href builder retained |
+| `src/app/(authenticated)/tracker/audit-findings/page.tsx:2,39` | Restored shared `Banner` import for pale-warning unavailable/setup strip. `old-lms-pages.md:10-11` | Warning text and denied-service state unchanged |
+| `src/components/hr/hr-recruiter-bell.tsx:102-115` | Replaced nonlegacy text-only trigger with `ShellNavGlyph name="bell"`, phone 44px / desktop 36px icon touch area and 16px red count, clipped to `99+`. `old-lms-shell-spec.md:12-18`; `components___notification-drawer.scss:27-59` | Trigger aria-label and expanded/controls state preserved; read/drawer behaviour untouched |
+| `src/components/hr/hr-recruiter-bell.tsx:102-105` | Notification list uses 6px row gap, 8px radius, bordered white item, `12px 16px` padding, 200ms hover and 1px focus outline. `components___notification-drawer.scss:180-216` | Default/hover/active/focus Tailwind sources read; actual computed pixels not tested |
+| `src/components/hr/recruiter-notification-bell.tsx:72-76` | Same 6px separated notification rows and legacy bordered hover/focus treatment, with phone minimum 44px. `components___notification-drawer.scss:180-216` | Rows remain scoped; URLs and college selection unchanged |
+
+**Value/source table for the repaired bell rows:** gap `6px` vs SCSS line 187; radius `8px` vs line 20 and 188; padding `12px 16px` vs lines 195-196; white surface and border vs lines 197-198; hover shadow `0 1px 3px rgba(0,0,0,0.04)` vs line 209; transition `200ms` vs line 202; focus-visible outline `1px` vs lines 219-223. Branch source expresses each value. Phone and desktop breakpoints of `!h-11 / sm:!h-9` and `min-h-11` were inspected, **not** rendered.
+
+**Read-back / syntax checks:** all seven distinct changed source files were fetched again; checked for one intended component import, missing target bindings, `<Button>` closure count and duplicate single-symbol imports. The code-connector source scan of the nine high-priority HR pages and nine selected tracker components plus nine tracker pages found the above missing bindings. This is *not* a compiler, executable grep, browser, or TypeScript strict check. Source-only comparison cannot satisfy STRICT TICK RULE.
+
+**STRICT TICK counts unchanged: 10/87 files closed** (non-rendering); 77 rendered files remain open pending measured legacy hover/focus/disabled, full coverage grep and phone/tablet/browser proofs. No additional visual file was ticked merely because an import or a visual class was repaired. All changes remained inside the secondary lane's owned files; no shared UI, CSS skin, shell or chat-15 HR primary page was edited.
+
+Next unticked file: `src/app/(authenticated)/hr/calendar/page.tsx` (mobile week/month/agenda and loaded calendar theme), then `src/app/(authenticated)/hr/conversations/page.tsx` (message list and filter states).

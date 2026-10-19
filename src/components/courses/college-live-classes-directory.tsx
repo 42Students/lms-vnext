@@ -1,8 +1,11 @@
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { DateInput } from "@/components/ui/date-input";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
+import {Pagination} from "@/components/ui/pagination";
 import {CollegeContentCsvExport} from "./college-content-csv-export";
 import {CollegeContentPreview} from "./college-content-preview";
 import {collegeLiveClassHref} from "@/modules/courses/college-live-classes-model";
@@ -11,8 +14,12 @@ import type {listCollegeContentAggregate} from "@/modules/courses/college-conten
 type Data=Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 export function CollegeLiveClassesDirectory({data}:{data:Data}){
  return <div className="space-y-5">
-  <PageHeader eyebrow="College Admin · Courses & Content" title="Live Classes"
-    description="Saved lesson sessions in your college. Meeting links are available only through authorized course workspaces."/>
+  <PageHeader title="Live Classes"
+    description="Saved lesson sessions in your college. Meeting links are available only through authorized course workspaces."
+    actions={<CollegeContentCsvExport filename={"live-classes-page-"+data.query.page+".csv"}
+     rows={data.items.map(item=>({title:item.title,course:item.courseName+" ("+item.courseCode+")",
+      lesson:item.lessonName,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
+      visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>}/>
   <form method="get" action="/college/live-classes"
     className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
@@ -68,11 +75,7 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     <Button type="submit" className="min-h-11">Filter</Button>
     <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Clear</Link>
   </form>
-  <CollegeContentCsvExport filename={"live-classes-page-"+data.query.page+".csv"}
-   rows={data.items.map(item=>({title:item.title,course:item.courseName+" ("+item.courseCode+")",
-    lesson:item.lessonName,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
-    visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>
-  <section aria-label="Persisted live classes" className="rounded-xl border border-border bg-surface">
+  <section aria-label="Persisted live classes" className="border-y border-border">
     <p className="border-b border-border p-4 text-sm text-muted-foreground">{data.total} matching live classes</p>
     {data.items.length===0?<p className="p-5 text-sm text-body">No saved sessions match these filters.</p>:
       <div className="divide-y divide-border">{data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 p-4">
@@ -81,7 +84,7 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
           <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
            type:item.contentType,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
            visible:item.visibleToStudents,details:liveClassIstSchedule(item.startsAt,item.endsAt)}}/>
-          <span className="text-xs text-muted-foreground">{item.status}</span>
+          <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="ARCHIVED"?"neutral":"warning"}>{item.status}</StatusBadge>
         </div>
         <p className="text-sm text-body">{liveClassIstSchedule(item.startsAt,item.endsAt)}</p>
         <p className="text-xs text-muted-foreground">{item.deliveryId?"Section-specific session":"Shared offering session"}</p>
@@ -92,14 +95,8 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
         </Link>
       </article>)}</div>}
   </section>
-  <nav aria-label="Live class pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-    <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
-    <div className="flex gap-2">
-      {data.query.page>1?<Link href={collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page:data.query.page-1})}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Previous</Link>:null}
-      {data.query.page<data.totalPages?<Link href={collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page:data.query.page+1})}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Next</Link>:null}
-    </div>
-  </nav>
+  <Pagination page={data.query.page} pageCount={data.totalPages}
+    hrefForPage={page=>collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page})}
+    label="Live class pagination" showBoundaryLinks={false}/>
  </div>;
 }

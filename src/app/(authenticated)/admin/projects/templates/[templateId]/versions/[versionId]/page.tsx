@@ -1,5 +1,4 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -22,7 +21,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
       <PageHeader title="Template version comparison"/>
       <ErrorState title="Template history access denied"
         description="Only an authorized administrator can read global template version snapshots."
-        action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>}/>
+        action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
     </div>;
   }
   let detail;
@@ -34,8 +33,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
       <PageHeader title="Template version comparison"/>
       <ErrorState title="Template history unavailable"
         description="The version comparison could not be loaded. No private version content is shown."
-        action={<Link href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"}
-          className="font-semibold text-primary-text">Back to version history</Link>}/>
+        action={<PageBackLink href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"} label="Back to version history" />}/>
     </div>;
   }
   return <div className="min-w-0 space-y-6">

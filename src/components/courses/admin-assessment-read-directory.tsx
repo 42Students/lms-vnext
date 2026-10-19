@@ -3,6 +3,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {FacultyItemActions} from "@/components/courses/faculty-item-actions";
@@ -100,15 +101,12 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
         </Link>
       </article>)}
     </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}
-    <nav aria-label={title + " pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm print:hidden">
-      <span className="text-muted-foreground">Page {data.page} of {data.totalPages} · 25 per page</span>
-      <div className="flex gap-2">
-        {data.page > 1 ? <Link href={adminAssessmentHref(data.kind, { ...data.query, page: data.page - 1 })}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous</Link> : null}
-        {data.page < data.totalPages ? <Link href={adminAssessmentHref(data.kind, { ...data.query, page: data.page + 1 })}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next</Link> : null}
-      </div>
-    </nav>
+    <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+      <span className="text-xs text-muted-foreground">25 per page</span>
+      <Pagination page={data.page} pageCount={data.totalPages}
+        hrefForPage={page => adminAssessmentHref(data.kind, { ...data.query, page })}
+        label={title + " pages"} showBoundaryLinks={false} />
+    </div>
     <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
     <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text print:hidden">← Courses</Link>
   </div>;

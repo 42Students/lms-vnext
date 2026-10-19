@@ -43,9 +43,11 @@ export function PopoverListbox({ label, children, className, onDismiss, onKeyDow
       return;
     }
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+    // Preserve text-input caret controls when the popup embeds an editable field.
+    if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
     const options = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
       'a[href]:not([aria-disabled="true"]), button[role="option"]:not(:disabled), [role="option"] button:not(:disabled), [role="option"][tabindex]:not([tabindex="-1"])',
-    )).filter(item => item.getClientRects().length > 0);
+    )).filter(item => item.getClientRects().length > 0 && !item.closest("[hidden], [inert]"));
     if (!options.length) return;
     const index = options.indexOf(document.activeElement as HTMLElement);
     const next = event.key === "Home" ? 0 : event.key === "End" ? options.length - 1 :

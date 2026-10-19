@@ -17,19 +17,19 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
   <label className="block text-sm font-semibold">Search workspace title or ID
    <Input value={search} onChange={e=>{setSearch(e.target.value);setPage(1)}}
     placeholder="Search workspace" className="mt-1 w-full"/></label>
-  <fieldset className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
+  <fieldset className="max-h-64 min-w-0 space-y-1 overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2">
    <legend className="sr-only">Select a workspace</legend>
-   {rows.map(item=><label key={item.id} className="flex min-h-10 cursor-pointer items-center gap-2 text-sm">
+   {rows.map(item=><label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer items-center gap-2 text-sm">
     <input type="radio" className="size-4 accent-[var(--lms-button-primary)]" name="workspaceId" value={item.id} checked={choice===item.id}
       onChange={()=>setChoice(item.id)}/>
-    <span className="flex-1">{item.title}</span>
+    <span className="min-w-0 flex-1 break-words">{item.title}</span>
     <span className="text-xs text-muted-foreground">{item.status}</span>
    </label>)}
    {!rows.length?<p className="p-3 text-sm text-muted-foreground">No matching workspaces.</p>:null}
   </fieldset>
   <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span>{matching.length} matching · Page {current} of {count}</span>
-   <div className="flex gap-2">
+   <div className="flex flex-wrap gap-2">
     <Button type="button" variant="secondary" disabled={current===1} onClick={()=>setPage(x=>Math.max(1,x-1))}
       >Previous</Button>
     <Button type="button" variant="secondary" disabled={current===count} onClick={()=>setPage(x=>Math.min(count,x+1))}

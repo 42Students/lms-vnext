@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { PageLoading } from "@/components/ui/page-loading";
 import Link from "next/link";
@@ -61,10 +62,13 @@ export default async function LearnerPlacementApplicationsPage() {
 
   return (
     <div className="min-w-0 space-y-6">
-
-      <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+      <PageHeader title="Applications" actions={(
+        <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Review all official offers →
       </Link>
+      )} />
+
+      
       {!roundsRead.available ? <Alert tone="error">
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
         <Link href="/learn/my-placements/applications" className="ml-2 font-semibold text-primary-text underline">Retry round shortcuts</Link>

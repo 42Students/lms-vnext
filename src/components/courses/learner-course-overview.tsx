@@ -230,10 +230,10 @@ export function LearnerCourseOverview({
   return (
     <div className="space-y-5">
       <nav aria-label="Course overview sections"
-        className="sticky top-16 z-10 -mx-1 flex gap-2 overflow-x-auto border-b border-border bg-surface p-2 shadow-none sm:hidden">
+        className="sticky top-[68px] z-10 -mx-1 flex gap-2 overflow-x-auto border-b border-border bg-surface p-2 shadow-none md:hidden">
         {jumpLinks.map(item=>(
           <a key={item.id} href={"#"+item.id}
-            className="inline-flex min-h-11 sm:min-h-9 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
+            className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none">
             {item.label}
           </a>
         ))}

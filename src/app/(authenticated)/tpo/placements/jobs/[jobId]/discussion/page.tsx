@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {notFound} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
+import {Alert} from "@/components/ui/alert";
+import {EmptyState} from "@/components/ui/empty-state";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getTpoDriveDiscussion} from "@/modules/placements/tpo-drive-discussion-service";
 import {PlacementsServiceError} from "@/modules/placements/errors";
@@ -17,13 +19,11 @@ export default async function TpoDriveDiscussion({params}:{
   <PageHeader eyebrow="TPO · Drive" title={data.job.title+" · Discussion"}
     description="Conversations with recruiters attached to this drive. Private team notes are not shared with recruiters."/>
   <Link href={root} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
-  {!data.available?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
+  {!data.available?<Alert tone="warning">
     Recruiter conversation records are unavailable right now. Other drive work is still available. Try again later.
-   </p>:data.threads.length===0?<section role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
-    No recruiter conversation is attached to this drive yet.
-    <p className="mt-2">Use Recruiter Messages to begin or find a recruiter conversation.</p>
-    <Link href="/tpo/messages" className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Open Recruiter Messages</Link>
-   </section>:<section aria-label="Recruiter conversations" className="space-y-3">
+   </Alert>:data.threads.length===0?<EmptyState title="No recruiter conversation is attached to this drive yet."
+    description="Use Recruiter Messages to begin or find a recruiter conversation."
+    action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Open Recruiter Messages</Link>}/>:<section aria-label="Recruiter conversations" className="space-y-3">
    <p role="status" className="text-sm text-body">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
    <ul className="divide-y divide-border">{data.threads.map(thread=><li key={thread.id} className="min-w-0 py-4">
     <h2 className="break-words font-semibold">{thread.recruiterName?.trim()||"Recruiter"}</h2>

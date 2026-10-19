@@ -78,7 +78,7 @@ export async function ProjectAdminAtRiskPage({
           Workspace blocker data is unavailable. Task blockers are still counted.
         </Banner>
       ) : null}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid min-w-0 gap-3 md:grid-cols-3">
         {([
           ["Stalled", result.buckets.stalled, "STALLED"],
           ["Active blocker", result.buckets.blocker, "BLOCKER"],
@@ -142,7 +142,7 @@ export async function ProjectAdminAtRiskPage({
                 <p className="font-semibold">Active blocker</p>
                 <p className="mt-1 whitespace-pre-wrap break-words">{project.blockerReason}</p>
               </div> : null}
-              <dl className="mt-3 grid gap-3 text-sm text-body sm:grid-cols-3">
+              <dl className="mt-3 grid min-w-0 gap-3 text-sm text-body md:grid-cols-3">
                 <div><dt className="font-semibold">Severity</dt><dd>
                   {project.riskReasons.length > 1 || project.blockerReason ? "Risk" : "Watch"}
                 </dd></div>

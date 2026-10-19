@@ -72,7 +72,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   finally{window.clearTimeout(timeout);busyRef.current=false;setBusy(false);}
  }
  return <form onSubmit={e=>void save(e)} className="sm:col-span-2 space-y-3">
-  <div className="grid gap-3 sm:grid-cols-2">
+  <div className="grid gap-3 min-[768px]:grid-cols-2">
    {([["firstName","First name"],["lastName","Last name"],["title","Designation"],["phone","Mobile"]] as const).map(([key,label])=>
     <label key={key} className="grid gap-1 text-sm text-body">{label}
      <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}

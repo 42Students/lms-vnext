@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { notFound } from "next/navigation";
 import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
@@ -74,17 +74,12 @@ export async function AdminOfferingLearningPage({
             .academicPeriodName
         }
         actions={
-          <Link
-            href={backHref}
-            className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
-          >
-            Back to Courses
-          </Link>
+          <PageBackLink href={backHref} label="Back to Courses" />
         }
       />
       <AdminOfferingSectionTabs/>
-      <section id="course-home" aria-label="Course Home" className="space-y-2">
-      <h2 className="text-lg font-semibold">Home</h2>
+      <section id="course-home" aria-label="Course Home" className="scroll-mt-24 space-y-2">
+      <h2 className="text-lg font-semibold text-foreground">Home</h2>
       <AdminCourseDisplayEditor
         courseId={workspace.offering.courseId}
         enabled={displayEnabled}
@@ -108,7 +103,7 @@ export async function AdminOfferingLearningPage({
       <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
       <AdminOfferingSectionPreview data={sectionPreview}/>
       <section id="course-syllabus" aria-label="Course Syllabus" className="scroll-mt-24 space-y-2">
-       <h2 className="text-lg font-semibold">Syllabus</h2>
+       <h2 className="text-lg font-semibold text-foreground">Syllabus</h2>
        <AdminOfferingLearningOverview workspace={workspace}/>
       </section>
     </div>
