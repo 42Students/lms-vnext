@@ -109,7 +109,8 @@ export function scopedShellNavigation(items: readonly ShellNavItem[], pathname: 
   .filter(portal => counts.has(portal));
  // One navigation item can still represent a separate role. Do not assume
  // every role has multiple rows before isolating its workspace.
- if (substantial.length < 2 && rolePortals.length < 2) return [...items];
+ const mixedCollege = (counts.get("college") ?? 0) > 1 && rolePortals.length > 0;
+ if (substantial.length < 2 && rolePortals.length < 2 && !mixedCollege) return [...items];
  const pathPortal = navPortal(pathname);
  const selected = pathPortal && counts.has(pathPortal) ? pathPortal :
   substantial[0] ?? rolePortals[0] ?? "college";
