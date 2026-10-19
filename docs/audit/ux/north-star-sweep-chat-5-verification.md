@@ -102,3 +102,11 @@ Second-pass commits and discovered exceptions will be recorded below. Visual pix
 - `src/components/placements/tpo-waitlist-promotion-control.tsx`
 - `src/components/placements/tpo-week-hour-calendar.tsx`
 - `src/components/tpo/tpo-drive-request-actions.tsx`
+
+## Third-pass verification addendum (2026-10-19)
+
+- Before this batch, `chatgpt/chat-5-b` was fast-forwarded to `main` SHA `6222f78a4a19084be6529aa802810ee98193c1d2`. The third pass added **67 source commits covering 67 source files** plus documentation commits, all directly on `chatgpt/chat-5-b` and no commits to `main`.
+- Rechecked the 103-file chat-5 inventory by fetching the branch source, with direct TPO drives/jobs/selection/waitlist/offers/joining and round pages clear of raw utility-radius and fixed-status palette patterns. Remaining known hits were either canonical documentation colors (e.g. `#172033`), or cross-lane TPO reporting, first-third and notification helpers explicitly excluded from this lane's ownership.
+- Tightened nested drive About rows, request-change summaries, the create-drive clone list, legacy warning badge, the drive workspace popover shadow, form and tab/button corner tokens and 44px mobile / 36px desktop targets. No application state logic, routes or wording changed.
+- Branch `main` advanced concurrently while changes were being pushed. All updates are on the lane branch; a later integration merge must reconcile that newer `main` before final acceptance.
+- Validation remains source-only by owner instruction: **no application code, compiler, tests or CI ran**, and no browser pixel comparison was made. The screenshot owner must confirm typography, spacing, canvas, header and sidebar parity at runtime.
