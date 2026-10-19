@@ -191,6 +191,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(nav).toContain('aria-label={badge&&count!==null?');
   expect(nav).toContain('${item.label}, ${count} pending');
   expect(nav).toContain("ShellNavGlyph");
+  expect(nav).toContain('loading="eager" draggable={false}');
   expect(nav).toContain("lms-sidebar-badge");
   expect(nav).toContain("legacySidebarItemActive");
  });
