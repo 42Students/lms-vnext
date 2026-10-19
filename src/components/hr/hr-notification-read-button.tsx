@@ -5,7 +5,6 @@ import {createHrBellMutationGate} from "@/modules/placements/hr-recruiter-bell-m
 import {hrNotificationReadError} from "@/modules/placements/hr-notification-read-feedback-model";
 import {isVerifiedRecruiterDecisionReadReceipt} from "@/modules/placements/recruiter-decision-read-model";
 import {useRouter} from "next/navigation";
-import {Button} from "@/components/ui/button";
 export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
  notificationId:string;expectedCreatedAt:string;
 }){
