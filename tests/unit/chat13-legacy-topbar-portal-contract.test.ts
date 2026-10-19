@@ -79,8 +79,8 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
    expect(shell).not.toContain("<AccountActions ");
    const topbar=read("src/components/shell/topbar/legacy-topbar.tsx");
    expect(topbar).toContain("<MobileNavigation items={navigation}");
-   expect(topbar).toContain("<TopbarCommandSearch items={navigation}");
-   expect(topbar).toContain("<TopbarNotifications config={config}");
+   expect(topbar).toContain("<TopbarCommandSearch key={pathname} items={navigation}");
+   expect(topbar).toContain("<TopbarNotifications key={config.portal} config={config}");
    expect(topbar).toContain("<TopbarAccountMenu");
  });
  it("TOPBAR-05 precisely specifies the old white, 68px and 36px actions",()=>{
