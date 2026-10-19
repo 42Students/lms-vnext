@@ -191,6 +191,7 @@
 [data-slot="toast-stack"] button[aria-label^="Dismiss"] { min-width: 44px; min-height: 44px; }
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:focus-visible { outline: 2px solid var(--lms-primary); outline-offset: 2px; }
 [data-slot="toast-action"] button { min-height: 44px; }
+[data-slot="toast-action"] :is(a, button):focus-visible { outline: 2px solid var(--lms-primary); outline-offset: 2px; }
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
