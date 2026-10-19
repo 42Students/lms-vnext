@@ -69,7 +69,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  ].filter(Boolean).join(" · ")||"No flags recorded"},
  {key:"eligibilityReason",label:"Eligibility reason",read:row=>row.participationReason??"Not recorded"},
  {key:"eligibilityLevel",label:"Eligibility set by",read:row=>row.participationLevel??"Not recorded"},
- {key:"eligibilityDate",label:"Eligibility set at",read:row=>row.participationDecidedAt?
+ {key:"eligibilityDate",label:"Eligibility set at",sortKind:"date",sortValue:row=>row.participationDecidedAt?new Date(row.participationDecidedAt).getTime():null,read:row=>row.participationDecidedAt?
   row.participationDecidedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Not recorded"},
  {key:"attention",label:"Needs attention",read:row=>tpoStudentNeedsAttention(row)?"Review needed":"No flags"},
  {key:"debarred",label:"Debarred",filter:{urlKey:"debarred",
