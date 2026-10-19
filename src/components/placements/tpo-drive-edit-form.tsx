@@ -1,3 +1,5 @@
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 "use client";
 import {useState,type FormEvent} from "react";
 import Link from "next/link";
@@ -81,19 +83,19 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  }
  const cls="mt-2 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-foreground";
  return <><form onSubmit={submit} className="space-y-4 border-b border-border pb-5">
-  <label className="block text-sm font-semibold text-body">Title<input required name="title" defaultValue={job.title} minLength={2} maxLength={200} className={cls}/></label>
-  <label className="block text-sm font-semibold text-body">Description<textarea required name="description" defaultValue={job.description} maxLength={20000} rows={5} className={cls}/></label>
-  <label className="block text-sm font-semibold text-body">Locations (comma-separated)<input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
+  <label className="block text-sm font-semibold text-body">Title<Input required name="title" defaultValue={job.title} minLength={2} maxLength={200} className={cls}/></label>
+  <label className="block text-sm font-semibold text-body">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={5} className={cls}/></label>
+  <label className="block text-sm font-semibold text-body">Locations (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
   <div className="grid gap-4 sm:grid-cols-3">
-   <label className="block text-sm font-semibold text-body">Openings<input type="number" min={1} max={100000} name="openings" defaultValue={job.openings??""} className={cls}/></label>
-   <label className="block text-sm font-semibold text-body">Minimum annual CTC (INR)<input type="number" min={0} max={100000000} name="minimumAnnualCtcInr" defaultValue={job.minimumAnnualCtcInr??""} className={cls}/></label>
-   <label className="block text-sm font-semibold text-body">Maximum annual CTC (INR)<input type="number" min={0} max={100000000} name="maximumAnnualCtcInr" defaultValue={job.maximumAnnualCtcInr??""} className={cls}/></label>
+   <label className="block text-sm font-semibold text-body">Openings<Input type="number" min={1} max={100000} name="openings" defaultValue={job.openings??""} className={cls}/></label>
+   <label className="block text-sm font-semibold text-body">Minimum annual CTC (INR)<Input type="number" min={0} max={100000000} name="minimumAnnualCtcInr" defaultValue={job.minimumAnnualCtcInr??""} className={cls}/></label>
+   <label className="block text-sm font-semibold text-body">Maximum annual CTC (INR)<Input type="number" min={0} max={100000000} name="maximumAnnualCtcInr" defaultValue={job.maximumAnnualCtcInr??""} className={cls}/></label>
    <label className="block text-sm font-semibold text-body">Fixed CTC (LPA)
-    <input name="fixedCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.fixedCtcLpa??""} className={cls}/></label>
+    <Input name="fixedCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.fixedCtcLpa??""} className={cls}/></label>
    <label className="block text-sm font-semibold text-body">Variable CTC (LPA)
-    <input name="variableCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.variableCtcLpa??""} className={cls}/></label>
+    <Input name="variableCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.variableCtcLpa??""} className={cls}/></label>
    <label className="block text-sm font-semibold text-body">Stipend per month (INR)
-    <input name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}
+    <Input name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}
       defaultValue={job.stipendPerMonthInr??""} className={cls}/></label>
   </div>
   <label className="flex items-center gap-3 text-sm font-semibold text-body">
@@ -102,16 +104,16 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   </label>
   <div className="grid gap-4 sm:grid-cols-2">
    <label className="block text-sm font-semibold text-body">Application deadline (IST)
-    <input name="applicationDeadline" type="datetime-local"
+    <Input name="applicationDeadline" type="datetime-local"
       defaultValue={job.applicationDeadline?new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
       className={cls}/>
    </label>
    <label className="block text-sm font-semibold text-body">Minimum CGPA for eligibility
-    <input name="minCgpa" type="number" min={0} max={10} step="0.01"
+    <Input name="minCgpa" type="number" min={0} max={10} step="0.01"
       defaultValue={job.minCgpaHundredths===null?"":job.minCgpaHundredths/100} className={cls}/>
    </label>
   </div>
-    <label className="block text-sm font-semibold text-body">Reason for edit (audited)<textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
+    <label className="block text-sm font-semibold text-body">Reason for edit (audited)<Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
   <p className="text-xs text-body">Active-season draft and live drives can be edited. Live changes are audited; choose whether to notify existing applicants. A changed version must be refreshed before another save.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 px-5">{pending?"Saving…":"Save changes"}</Button>
