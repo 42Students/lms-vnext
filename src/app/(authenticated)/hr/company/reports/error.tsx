@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import { Button } from "@/components/ui/button";
 
@@ -13,9 +14,7 @@ export default function RecruiterCompanyReportsError({
       role="alert"
       className="space-y-4"
     >
-      <h1 className="text-[30px] font-semibold text-[var(--lms-heading)]">
-        Couldn&apos;t load Company Reports
-      </h1>
+      <PageHeader title={"Couldn't load Company Reports"} />
       <p className="mt-2 max-w-xl text-sm leading-6 text-body">
         Hiring report records could not be retrieved for
         your selected college. This error does not establish
