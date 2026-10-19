@@ -36,14 +36,14 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
   <p className="text-xs text-muted-foreground">Free-mail addresses cannot be trusted. Trust never replaces verification or recruiter access checks.</p>
   <label className="grid gap-1 text-sm font-semibold">Domain
    <Input value={domain} onChange={event=>setDomain(event.target.value)} maxLength={253} placeholder="company.example"
-    className="min-h-9"/></label>
+    className="min-h-11 sm:min-h-9"/></label>
   <Button type="button" disabled={busy||domain.trim().length<4}
    onClick={()=>setReview({action:"TRUST",value:domain})}
-   className="min-h-9">Trust @{domain.replace(/^@/,"")||"domain"}</Button>
+   className="min-h-11 sm:min-h-9">Trust @{domain.replace(/^@/,"")||"domain"}</Button>
   <ul className="divide-y divide-border">{domains.map(item=><li key={item} className="flex min-h-12 items-center justify-between gap-3 py-2">
    <span className="break-all text-sm">@{item}</span>
    <Button type="button" disabled={busy} onClick={()=>setReview({action:"REMOVE",value:item})}
-    variant="secondary" className="min-h-9">Stop trusting</Button>
+    variant="secondary" className="min-h-11 sm:min-h-9">Stop trusting</Button>
   </li>)}</ul>
   {domains.length===0?<p role="status" className="text-sm text-muted-foreground">No explicit trusted domains.</p>:null}
   {status?<p role="status" className="text-sm">{status}</p>:null}
