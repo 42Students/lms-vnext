@@ -72,7 +72,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    {waiting.map(row=>{const key=verificationSelectionKey(row);return <label key={key} className="flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
     <Checkbox  disabled={busy||selected.length>=20&&!selected.includes(key)}
      checked={selected.includes(key)} onChange={()=>toggle(key)}/>
-    <span>{row.learnerName} · {row.section==="EDUCATION"?"Education":"Identity"}{row.missingMarksheet||row.missingIdentityProof?" · Missing document":""}</span>
+    <span className="min-w-0 break-words">{row.learnerName} · {row.section==="EDUCATION"?"Education":"Identity"}{row.missingMarksheet||row.missingIdentityProof?" · Missing document":""}</span>
    </label>;})}
   </div>
   <label className="grid gap-1 text-sm">Action
