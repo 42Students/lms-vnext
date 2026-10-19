@@ -1,5 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
 import { Drawer } from "@/components/ui/drawer";
 import { PopoverPanel } from "@/components/ui/popover";
@@ -89,13 +93,12 @@ export function HrRecruiterBell(){
     {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
       variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
-   {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}</>;
+   {saveError?<Alert tone="error" className="mt-2">{saveError}</Alert>:null}</>;
  const panelBody=<>
-   {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
-   {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
+   {error?<ErrorState title="Notifications unavailable" description={state?error:"Couldn't load your notifications"}/>:null}
+   {!state&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
-    state.items.length===0?<div className="mt-3 text-sm"><p className="font-semibold">{HR_BELL_EMPTY}</p>
-     <p className="text-muted-foreground">{HR_BELL_EMPTY_HELP}</p></div>:
+    state.items.length===0?<EmptyState title={HR_BELL_EMPTY} description={HR_BELL_EMPTY_HELP}/>:
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul role="list" aria-label="Recent recruiter notifications" className="space-y-1.5">{state.items.map(item=><li key={item.id}>
      <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-11 items-start gap-2 rounded-[8px] border border-border bg-surface px-4 py-3 text-sm text-body hover:bg-[var(--lms-neutral-50)] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--lms-error)]":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
