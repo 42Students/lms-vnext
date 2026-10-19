@@ -97,7 +97,7 @@ export function FacultyLiveClassEditor({
     finally{setPending(false);setConfirmOpen(false);}
   }
   return <section aria-label="Manage Faculty live classes"
-    className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    className="space-y-3">
     <h2 className="font-semibold text-foreground">Schedule or manage a live class</h2>
     <p className="text-xs text-muted-foreground">
       Enter meeting times in IST (Asia/Kolkata), regardless of your device time zone.
