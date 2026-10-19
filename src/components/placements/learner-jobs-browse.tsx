@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {Disclosure} from "@/components/ui/disclosure";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -270,18 +271,16 @@ export function LearnerJobsBrowse({
         </div>:<div className="space-y-5">
           {ordinaryRoleCards.length>0?<LearnerPlacementJobs items={ordinaryRoleCards}
             snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
-          {notOpenRoleCards.length>0?<details className="rounded-xl border border-border bg-surface p-4"
-            open={filters.availability==="not-open"} aria-label="Not open to you">
-            <summary className="min-h-11 cursor-pointer font-semibold text-foreground">
-              Not open to you ({notOpenRoleCards.length} roles on this page) · See reasons
-            </summary>
+          {notOpenRoleCards.length>0?<Disclosure title={"Not open to you ("+notOpenRoleCards.length+" roles on this page) · See reasons"}
+             defaultOpen={filters.availability==="not-open"} ariaLabel="Not open to you"
+             className="rounded-xl border border-border bg-surface p-4 [&>summary]:min-h-11 [&>summary]:text-foreground">
             <p className="mb-3 mt-2 text-sm text-body">
               These published roles target your cohort but a registration, academic,
               deadline, or college policy check currently prevents self-application.
             </p>
             <LearnerPlacementJobs items={notOpenRoleCards}
               snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>
-          </details>:null}
+          </Disclosure>:null}
         </div>
       )}
 

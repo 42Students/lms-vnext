@@ -55,7 +55,7 @@ function FieldLabel({
   return (
     <label
       htmlFor={htmlFor}
-      className="mb-1.5 block text-xs font-semibold text-body"
+      className="mb-1.5 block text-[13px] leading-4 font-semibold text-body"
     >
       {children}
     </label>
@@ -299,7 +299,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
-            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !periodName.trim() ||
@@ -397,7 +397,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
-            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !programDepartmentId ||
@@ -537,7 +537,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
-            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !cohortProgramId ||
@@ -666,7 +666,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
-            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !sectionCohortId ||

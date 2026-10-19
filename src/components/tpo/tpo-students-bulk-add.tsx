@@ -165,12 +165,12 @@ export function TpoStudentsBulkAdd({
   }
 
   if (available.length === 0) return (
-    <section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
+    <section role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
       No learners are listed on this filtered roster page. There is nobody to select.
     </section>
   );
   return (
-    <section id="student-bulk-add" className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+    <section id="student-bulk-add" className="min-w-0 space-y-4 border-y border-border py-4">
       <div>
         <h2 className="text-lg font-semibold text-foreground">
           Add selected students to a drive
@@ -217,7 +217,7 @@ export function TpoStudentsBulkAdd({
             </label>
           </div>
           {roleError ? <p role="alert" className="text-sm text-error">{roleError}</p> : null}
-          <div className="max-h-80 space-y-1 overflow-auto rounded-[var(--lms-control-radius)] border border-border p-2">
+          <div className="max-h-80 min-w-0 space-y-1 overflow-auto overscroll-contain border-y border-border py-2">
             {learners.map((learner) => (
               <label key={learner.membershipId} className="flex min-h-11 items-center gap-3 rounded-[var(--lms-control-radius)] p-2 text-sm hover:bg-surface-secondary">
                 <Checkbox  className="h-4 w-4"
@@ -234,7 +234,7 @@ export function TpoStudentsBulkAdd({
               </label>
             ))}
           </div>
-          <label className="flex items-start gap-2 text-sm">
+          <label className="flex min-h-11 items-start gap-2 text-sm">
             <Checkbox  checked={includeIneligible} disabled={busy}
               onChange={event=>{setIncludeIneligible(event.target.checked);setError("");}}/>
             Add students who are not eligible anyway, with a recorded inclusion reason

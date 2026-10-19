@@ -1,4 +1,5 @@
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -146,23 +147,20 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-5">
             <h3 className="text-base font-semibold text-foreground">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
-            <div className="mt-4 grid gap-3 md:grid-cols-3">
-              {[
-                {label: "All visible drives", value: overview.total},
-                {label: "Live drives", value: overview.active},
-                {label: "Closed drives", value: overview.closed},
-              ].map(item=><div key={item.label} className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
-                <span className="block text-xs text-muted-foreground">{item.label}</span>
-                <span className="mt-1 block text-xl font-bold tabular-nums text-foreground">{item.value}</span>
-              </div>)}
-            </div>
+            <SummaryStrip label="Hiring footprint with this college" className="mt-4" steps={[
+              {label:"All visible drives",value:overview.total},
+              {label:"Live drives",value:overview.active},
+              {label:"Closed drives",value:overview.closed},
+            ]}/>
             {overview.recent.length ? <div className="mt-4 space-y-2">
               <h4 className="text-sm font-semibold text-foreground">Recent hiring drives</h4>
+              <div className="divide-y divide-border border-y border-border">
               {overview.recent.map(job=><Link key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
-                className="flex flex-wrap justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">
+                className="flex min-h-11 flex-wrap items-center justify-between gap-2 px-1 py-3 text-sm transition-colors hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                 <span className="font-medium text-primary-text">{job.title}</span>
                 <StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge>
               </Link>)}
+              </div>
             </div> : <p className="mt-4 text-sm text-muted-foreground">No published or closed drives for this relationship.</p>}
           </section>
         </section>
@@ -184,8 +182,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <Input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
-              className="min-w-0 w-full basis-full md:min-w-48 md:basis-auto md:flex-1"/>
-            <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Search</Button>
+              className="min-h-11 min-w-0 w-full basis-full md:w-[220px] md:basis-auto md:flex-none"/>
+            <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           </form>
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
             {" · Displaying "+teamPageResult.first+"–"+teamPageResult.last}

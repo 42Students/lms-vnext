@@ -25,7 +25,7 @@ export default async function AdminDeviceSessionsPage({params}:{
    actions={<div className="flex flex-wrap items-center gap-2">
     <PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="Admins"/>
     <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 sm:min-h-9">Administrator activity history →</Link>
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Administrator activity history →</Link>
    </div>}/>
   <p className="text-sm text-body">{data.devices.length} active session(s), up to 100 shown.</p>
   <DataTable<DeviceRow> caption="Active administrator device sessions" rows={data.devices} getRowKey={row=>row.id}

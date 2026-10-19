@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
 import {useState} from "react";
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
@@ -39,24 +40,24 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
   {options.length>1?<label className="grid gap-1 text-xs font-semibold">Section
    <Select value={chosen.deliveryId} disabled={loading} onChange={e=>{
     setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
-    className="min-h-11 rounded border border-border px-2">
+    className="min-h-11 md:min-h-9">
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
    </Select></label>:null}
   <Button variant="secondary" type="button" disabled={loading} onClick={()=>opened?setOpened(false):void open()}
-   aria-expanded={opened} className="text-primary-text">
+   aria-expanded={opened} className="min-h-11 md:min-h-9">
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
   </Button>
   {opened?<div role="region" aria-label="Quiz submissions, scroll for more attempts" tabIndex={0}
    className="max-h-80 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-   {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-error">{error}
-    <Button variant="ghost" type="button" className="underline" disabled={loading} onClick={()=>void open(page)}>Retry</Button>
-   </div>:null}
+   {error?<Alert tone="error" className="flex-row flex-wrap items-center gap-2">{error}
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={loading} onClick={()=>void open(page)}>Retry</Button>
+   </Alert>:null}
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
     <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student on this page
      <Input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
-      className="min-h-11 rounded border border-border bg-background p-2" placeholder="Student name or email"/>
+      className="min-h-11 md:min-h-9" placeholder="Student name or email"/>
     </label>
     {learnerSearch.trim()&&!attempts.some(item=>(item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||(item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase()))?
      <p className="text-xs text-muted-foreground">No Students match your search.</p>:null}
@@ -85,15 +86,15 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    </>:null}
     {loading?<p role="status" className="mt-3 text-xs text-muted-foreground">Loading quiz submissions, page {page}…</p>:null}
     {!loading&&!error&&attempts.length>5?<p className="mt-2 text-xs text-muted-foreground">Scroll inside this panel to see more quiz submissions.</p>:null}
-    {!loading&&!error?<nav aria-label="Quiz submission pages" className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3 text-xs">
+    {!loading&&!error?<nav aria-label="Quiz submission pages" className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3 text-xs">
       <span>Page {page} · up to 25 attempts per page</span>
       <div className="flex items-center gap-3">
        <Button variant="secondary" type="button" disabled={loading||page<=1}
         onClick={()=>{setLearnerSearch("");void open(page-1);}}
-        className="text-primary-text">Previous</Button>
+        className="min-h-11 md:min-h-9">Previous</Button>
        <Button variant="secondary" type="button" disabled={loading||!hasMore}
         onClick={()=>{setLearnerSearch("");void open(page+1);}}
-        className="text-primary-text">Next</Button>
+        className="min-h-11 md:min-h-9">Next</Button>
       </div>
      </nav>:null}
   </div>:null}

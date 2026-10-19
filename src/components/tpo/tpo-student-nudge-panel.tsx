@@ -48,10 +48,10 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
  }
  if(!rows.length)return null;
  return <section aria-label="Send a message to students"
-  className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+  className="min-w-0 space-y-3 border-y border-border py-4">
   <h2 className="font-semibold">Send a message</h2>
   <p className="text-sm text-body">Choose up to 25 learners on this page. Messages are delivered in-app and audited.</p>
-  <label className="flex items-center gap-2 text-sm">
+  <label className="flex min-h-11 items-center gap-2 text-sm">
    <Checkbox checked={validSelected.length===Math.min(rows.length,25)}
     disabled={pending} onChange={e=>setSelected(e.target.checked?rows.slice(0,25).map(row=>row.id):[])} />
    Select first {Math.min(rows.length,25)} on this page
@@ -66,7 +66,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   </ScrollCue>
   <p role="status" className="text-xs text-muted-foreground">{validSelected.length} selected;
    {outside} not registered for placements (messages still deliver).</p>
-  <label className="grid gap-1 text-sm">Message template
+  <label className="grid min-w-0 gap-1 text-sm">Message template
    <Select value={template} disabled={pending} 
     onChange={e=>setChoice(e.target.value as TpoStudentNudgeTemplate)}>
     {Object.entries(tpoStudentNudgeLabels).map(([key,label])=><option key={key} value={key}>{label}</option>)}

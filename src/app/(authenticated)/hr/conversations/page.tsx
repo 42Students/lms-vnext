@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/ui/empty-state";
+import {Disclosure} from "@/components/ui/disclosure";
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -112,8 +113,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    <section className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
-    {generalThread?<details className="mt-3 border-b border-border py-3">
-      <summary className="min-h-9 max-md:min-h-11 cursor-pointer rounded-[var(--lms-control-radius)] py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Message the placement cell · General</summary>
+    {generalThread?<Disclosure title="Message the placement cell · General"
+      className="mt-3 border-b border-border py-3 [&>summary]:min-h-11 md:[&>summary]:min-h-9">
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
       {generalThread.preview&&!generalHistory&&!generalHistoryResult?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
@@ -134,14 +135,14 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       {generalHistoryResult?.ok?<div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>:null}
       <Link href={"/hr/conversations/"+generalThread.id}
         className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open full conversation</Link>
-    </details>:null}
+    </Disclosure>:null}
     {generalLookup && !generalLookup.ok?
       <p role="status" className="mt-3 text-sm text-body">
         General conversation preview is temporarily unavailable. Refresh to try again; existing conversations remain accessible.
       </p>:null}
     {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <Input name="collegeId" type="hidden" value={result.collegeId}/>
-      <Button type="submit">Open general conversation</Button>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open general conversation</Button>
     </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
@@ -154,9 +155,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
     </label>
-    <label className="min-w-0 basis-full text-sm text-body md:basis-auto md:flex-1">Search by drive or message
-     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 w-full"/></label>
-    <Button type="submit" variant="secondary" className="min-h-11 self-end md:min-h-9">Search</Button>
+    <label className="min-w-0 w-full basis-full text-sm text-body md:w-[220px] md:basis-auto md:flex-none">Search by drive or message
+     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full"/></label>
+    <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form>
    <Tabs renderPanel={false} ariaLabel="Conversation kind" value={parsed.data.scope}
     items={HR_CONVERSATION_KINDS.map(item => ({value:item.value,label:item.label,
@@ -179,12 +180,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,
       sort:parsed.data.sort,scope:parsed.data.scope,page:result.page,
      })}/>
-     <Button type="submit" variant="secondary">Mark visible unread conversations as read</Button>
+     <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Mark visible unread conversations as read</Button>
      <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="divide-y divide-border border-y border-border">
-    {visibleRows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] px-4 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
+    {visibleRows.map(row=><li key={row.id} className="min-w-0 px-1 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
      <Link href={"/hr/conversations/"+row.id}
       className="block min-h-9 max-md:min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="mt-2">{row.unread} new</Badge>:null}
