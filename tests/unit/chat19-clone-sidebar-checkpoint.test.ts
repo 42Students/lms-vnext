@@ -44,4 +44,10 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(sidebar()).toContain("background:rgba(38,186,199,.07);");
  expect(sidebar()).toContain("color:#1a95a1;");
 });
+ it("preserves 24px icon box and 20px upstream glyph",()=>{
+ expect(legacy()).toContain("opacity: 0.55; flex: 0 0 24px");
+ expect(sidebar()).toContain("flex:0 0 24px;");
+ expect(sidebar()).toContain("opacity:.55;");
+ expect(sidebar()).toContain("width:20px;height:20px;");
+});
 });
