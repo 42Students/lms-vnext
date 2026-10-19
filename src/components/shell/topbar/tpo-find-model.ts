@@ -16,6 +16,7 @@ export function safeTpoFindResult(value: unknown): value is TpoFindResult {
   // Canonicalization must not move a result outside the TPO portal.
   // Encoded slash, dot and backslash path separators are not permitted.
   if (/%(?:2e|2f|5c)/i.test(path) || /%(?![0-9a-f]{2})/i.test(path)) return false;
+  if (/(?:^|\/)\.{1,2}(?=\/|$)/.test(path)) return false;
   try {
     const url = new URL(row.href, "https://lms.invalid");
     return url.origin === "https://lms.invalid" &&
