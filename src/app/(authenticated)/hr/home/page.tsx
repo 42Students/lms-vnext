@@ -1,3 +1,4 @@
+import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -134,10 +135,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </Link>} />
     <HrUnsentDriveAlert collegeId={selectedId}
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedId,null)}/>
-    {grants.length > 1 ? <nav aria-label="Choose college" className="flex flex-wrap gap-2">{grants.map(item=>
-      <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
-        aria-current={item.collegeId === selectedId ? "page" : undefined}
-        className={item.collegeId === selectedId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>{item.collegeName}</Link>)}</nav> : null}
+    {grants.length > 1 ? <NeedsDoingChips label="Choose college:" selectedKey={selectedId}
+      items={grants.map(grant=>({
+        key:grant.collegeId,label:grant.collegeName,
+        href:"/hr/home?collegeId="+encodeURIComponent(grant.collegeId),
+      }))}/> : null}
     {recentJobCapReached?<aside role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-surface p-3 text-sm text-body">
       Today is displaying the 500 most recently created employer drives for this college.
       Older drives may not appear in these quick summaries. Open Drives for full history.
