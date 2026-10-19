@@ -115,11 +115,28 @@ Owner: chat-9 · 2026-10-19 · branch `chatgpt/chat-9-b`
 
 - [x] Fast-forwarded `chatgpt/chat-9-b` to current `main` after confirming main contained prior chat-9 work (old head `f8dd4c4966`, main head at sync `ee999dda2fc7`); no force push or overwrite.
 - [x] Re-read the current NORTH STAR, old LMS shell rules/spec, pages anatomy, and legacy SCSS token, button, form, dropdown, antd and common references.
-- [ ] Re-inventory all 37 last-third Super Admin routes and the College/Super Admin Projects components following recent chat-17 shared-kit changes; separate static redirect/delegating routes from styled routes.
-- [ ] Replace remaining native bespoke buttons, inputs, selects, form shells, nested nonfunctional cards and local control overrides with actual shared kit, keeping role permissions, wording, dynamic content, touch/phone semantics and object-card exceptions intact.
-- [ ] Record exactly what is changed and what needs browser-level visual verification. Do not claim pixel-perfect compliance without screenshot diff.
+- [x] Re-inventory all 37 last-third Super Admin routes and 61 Projects TSX components following chat-17's shared-kit changes; distinguish static delegates.
+- [x] Second-pass replacement of identified bespoke buttons, fields, repeated canvas shells and local overrides with shared kit or exact legacy dimensions; native exceptions preserved.
+- [x] Record changed paths, source-level checks and outstanding browser-level acceptance; no pixel-perfect certification.
 
 ### Current ownership boundaries
 - Page shell and font tokens remain owned by chat-17; top bar chat-13; sidebar chat-19. Do not edit `src/components/ui/**`, `src/components/shell/**`, or `src/app/globals.css`.
 - Last-third includes /admin routes 75–111 in `docs/orchestrator/ui-ux/pages-admin.md`; Projects includes `src/app/(authenticated)/admin/projects/**`, `src/app/(authenticated)/college/projects/**` and pages' `src/components/projects/**` dependencies, plus owned tenant/settings/verification/admin components. Placement-specific routes remain in other lanes except the existing scoped student lookup.
 - Inspect literal color/spacing only where a role-local override fights the shared components; leave native controls where behavior depends on browser affordances (checkbox, radio, file input, live drag/drop).
+
+### Second-pass execution and verification results (2026-10-19)
+
+**Checked source inventory:** all 37 last-third `/admin` routes at positions 75–111 in `docs/orchestrator/ui-ux/pages-admin.md`, including route-only delegates/redirects, plus 61 non-`learner-*`/non-`mentor-*` Projects TSX components in `src/components/projects/`. Inspected related Super Admin inventory/editor components imported by those routes. This is **source inspection only**, not a visual-browser sign-off.
+
+**Applied work on top of chat-17 merged shared styles:** replaced remaining raw searches/selects/textareas and custom buttons in Super Admin scoped directories, program directory, import history, membership lifecycle and Project activity/participant/resource filters, mentor reassignment, brief editor, task comment/assignee menus and CSV actions. Normalized navigation and contextual control shape to 36px by 9px with shared token foregrounds. Flattened ordinary section/overview wrappers while retaining separately actionable tiles, object cards, confirmation dialogs, native checkbox/radio/file controls and semantic warnings. Adjusted the Admin-mode project overview container to a hairline-separated section, without altering learner/mentor layout for that section.
+
+**Files changed in this continuation:**
+- Super Admin route files: `/admin/placements/student-lookup`, `projects/templates`, `projects/templates/[templateId]/colleges`, `quizzes`, `semesters`, `settings`, `settings/auth`, `tenants`, `tenants/setup`.
+- Super Admin components: `admin-scoped-read-page`, `admin-scoped-live-search`, `admin-program-directory`, `scoped-membership-lifecycle-actions`, `super-admin-student-import-history`, `super-admin-placement-detail-view`, `super-admin-legacy-group-tabs`, `academic-setup-steps`.
+- Projects components: `workspace-brief-editor`, `project-activity-filtered-list`, `project-mentor-reassignment`, `project-participant-list-controls`, `project-resource-controls`, `project-task-assignee-control`, `project-task-comments`, `project-submissions-page-export`, `project-audit-page-export`, `project-resource-open-link`, `project-delivery-file-uploader`, `class-team-workspace-creator`, `project-admin-submissions-page`, `project-admin-readiness-page`, `project-admin-reassign-mentor-page`, `project-admin-collection-controls`, `project-admin-audit-page`, `project-admin-nav`, `project-workspace`, `super-admin-template-tabs`, `super-admin-template-subview-page`.
+
+**Source validation:** compared opening/closing native and shared `Button`/`Select` tags and searched for duplicate JSX `variant` props in all branch-modified TSX files. Corrected a duplicate refresh variant and a duplicate membership suspension variant as well as two missed active-tab styling substitutions. No reported tag/variant mismatches remain in those targeted source scans. Types, module resolution, lint, CI, screenshot-diff, behavior/keyboard navigation and device breakpoint checks remain **unverified** by design.
+
+**Unchanged by intent:** API/permission code, page layout structure, user wording, `src/components/ui/**`, `src/components/shell/**`, `src/app/globals.css`, React control semantics and all native checkbox/radio/file controls. Standalone cards around independent actionable objects remain intentional and are not considered duplicate page canvases.
+
+**Integration limitation:** During the second pass `main` advanced independently. The lane fast-forward was performed before edits; subsequent main changes are not merged into this source-only second pass. Integration conflict resolution and pixel acceptance must happen against final main; do not claim exact legacy screenshots from source inspection alone.
