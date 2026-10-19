@@ -19,7 +19,7 @@ export default async function CollegeSignInMethods({params}:{params:Promise<{col
  catch(error){if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();throw error;}
  const {college,policy}=result;
  return <div className="min-w-0 space-y-6">
-  <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← College setup</Link>
+  <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">← College setup</Link>
   <PageHeader eyebrow="Super Admin · College sign-in" title={college.name}
    description="Choose the one-time-code channels offered on this college web address."/>
   {policy.kind==="INVALID_POLICY"?<p role="alert" className="text-error">Stored sign-in method is invalid. Please contact an administrator.</p>:null}
