@@ -92,7 +92,6 @@ export default async function CollegeLectureHallsPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="College Admin · Academic Setup"
         title="Lecture Halls"
         description={"Manage registered teaching rooms at " + result.collegeName +
           ". Find rooms by name, room type, department or archive status."}
