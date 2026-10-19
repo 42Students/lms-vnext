@@ -15,7 +15,7 @@ export function Menu({ className, onKeyDown, children, ...props }: MenuProps) {
     if (items.length === 0 && event.key !== "Escape") return;
     let target = current;
     if (event.key === "ArrowDown") target = (current + 1) % items.length;
-    else if (event.key === "ArrowUp") target = (current - 1 + items.length) % items.length;
+    else if (event.key === "ArrowUp") target = current < 0 ? items.length - 1 : (current - 1 + items.length) % items.length;
     else if (event.key === "Home") target = 0;
     else if (event.key === "End") target = items.length - 1;
     else if (event.key === "Escape") {
