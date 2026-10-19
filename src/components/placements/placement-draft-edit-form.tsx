@@ -1,5 +1,6 @@
 "use client";
 
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   useState,
   type FormEvent,
@@ -356,10 +357,7 @@ export function PlacementDraftEditForm({
   }
 
   return (
-    <details className="border-y border-border">
-      <summary className="cursor-pointer py-4 text-base font-semibold text-foreground">
-        Edit draft opportunity
-      </summary>
+    <Disclosure title="Edit draft opportunity" className="border-y border-border">
       <form
         onSubmit={submit}
       onChange={markDirty}
@@ -709,6 +707,6 @@ export function PlacementDraftEditForm({
         </div>
         {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
       </form>
-    </details>
+    </Disclosure>
   );
 }
