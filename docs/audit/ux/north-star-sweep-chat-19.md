@@ -43,6 +43,6 @@ Source audit test: `tests/unit/chat19-north-star-hr-sweep.test.ts`, reading the 
 
 ## Integration risks and handoff
 
-- This sidebar change touches `app-shell.tsx` only for the fixed sidebar, logo and content-push class. Chat-13 owns the topbar, and its header work should be reconciled carefully at merge; no chat-13 topbar markup was intentionally changed here.
+- This sidebar change touches `app-shell.tsx` only for the fixed sidebar, logo and content-push class. The concurrent chat-13 `LegacyTopbar` integration was fetched from main and preserved in a two-parent branch merge; no topbar markup was intentionally changed.
 - Desktop layout push, hovering at width breakpoints, fast pointer transitions, focus-within expansion, overflow edge cases, TalkBack/VoiceOver, and mobile Escape/focus-return need interactive verification on the dev site.
 - No scripts/CI/TypeScript, browser or PostgreSQL runs were performed. Source-created tests and source edits are **not** a claim of runtime signoff. Owners should validate at 320, 360, 390, 768, 1024 and 1280px.
