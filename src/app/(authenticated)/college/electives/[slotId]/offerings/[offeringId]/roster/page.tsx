@@ -113,7 +113,7 @@ export default async function ElectiveRoster({
     <PageHeader eyebrow="College Admin · Electives"
       title={"Offering roster · " + slot.name}
       description="Student state, source, joining date and confirmed movement between offerings."
-      actions={<Link href="/college/electives" className="font-semibold text-[var(--lms-teal-deep)]">
+      actions={<Link href="/college/electives" className="font-semibold text-link">
         Back to Electives</Link>} />
     <div className="flex flex-wrap gap-4 rounded-[8px] border border-border bg-surface p-4 text-sm">
       <span>Seats: {offering.capacity ?? "Unlimited"}</span>
@@ -124,7 +124,7 @@ export default async function ElectiveRoster({
     {feedback.updated && <p role="status" className="text-sm">Roster updated.</p>}
     {feedback.error && <p role="alert" className="text-sm text-error">{feedback.error}</p>}
     {archived && <p className="text-sm text-muted-foreground">Archived offerings are read-only.</p>}
-    <section className="space-y-3 - border-t border-border pt-4">
+    <section className="space-y-3 border-t border-border pt-4">
       <h2 className="text-lg font-semibold">Faculty</h2>
       <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
       {assignments.length === 0 && <p className="text-sm text-muted-foreground">No faculty assigned.</p>}
@@ -151,7 +151,7 @@ export default async function ElectiveRoster({
           </select>
         </label>
         <button disabled={faculty.length === 0}
-          className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
+          className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
           Assign faculty
         </button>
       </form>}
@@ -187,7 +187,7 @@ export default async function ElectiveRoster({
                   <label className="inline-flex min-h-11 items-center gap-2">
                     <input type="checkbox" name="confirm" value="yes" required /> Confirm
                   </label>
-                  <button className="min-h-11 rounded border border-border px-3 text-[var(--lms-teal-deep)]">Move</button>
+                  <button className="min-h-11 rounded border border-border px-3 text-link">Move</button>
                 </form>}
                 <form action={mutate} className="flex flex-wrap items-center gap-2">
                   <input type="hidden" name="action" value="REMOVE" />

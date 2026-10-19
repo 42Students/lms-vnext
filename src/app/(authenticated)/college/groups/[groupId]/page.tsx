@@ -87,7 +87,7 @@ export default async function CollegeGroupDetailPage({
         actions={
           <Link
             href="/college/groups"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-teal-deep)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-link"
           >
             All groups
           </Link>
@@ -146,7 +146,7 @@ export default async function CollegeGroupDetailPage({
       {rule ? (
         <section className="border-t border-border pt-4">
           <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
-            className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+            className="font-semibold text-link hover:underline">
             Preview persisted membership rule (read-only)
           </Link>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -189,7 +189,7 @@ export default async function CollegeGroupDetailPage({
       {group.kind === "STUDY_GROUP" ? <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Manage members</h2>
         <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
           Validate member CSV (dry run)
         </Link>
         <CollegeStudyMemberActions groupId={group.id} name={group.name}

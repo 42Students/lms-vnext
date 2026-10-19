@@ -51,7 +51,7 @@ export default async function TpoNoShowReportPage({
 
   return (
     <div className="space-y-6">
-      <Link href={roundHref} className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
+      <Link href={roundHref} className="text-sm font-semibold text-link hover:underline">
         ← Back to round overview
       </Link>
       <PageHeader
@@ -63,13 +63,13 @@ export default async function TpoNoShowReportPage({
           <div className="flex flex-wrap gap-2">
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows/export"}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-primary-foreground"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground"
             >
               Export explicit no-shows CSV
             </a>
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-primary-subtle"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-primary-subtle"
             >
               Export complete attendance CSV
             </a>
@@ -87,18 +87,18 @@ export default async function TpoNoShowReportPage({
         ))}
       </section>
       {data.round.status !== "COMPLETED" ? (
-        <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
           This round is {data.round.status.replaceAll("_", " ")}. The report is a current
           snapshot, not a finalized attendance register.
         </p>
       ) : null}
       {report.awaitingMarkCount > 0 || report.unknownCount > 0 ? (
-        <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
           {report.awaitingMarkCount} waiting/unmarked and {report.unknownCount} unknown
           attendance entries are excluded from no-show totals. No absence is inferred.
         </p>
       ) : null}
-      <section className="overflow-hidden rounded-xl border border-border bg-surface">
+      <section className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
           <h2 className="text-lg font-semibold text-foreground">Explicitly absent learners</h2>
           <p className="mt-1 text-sm text-body">

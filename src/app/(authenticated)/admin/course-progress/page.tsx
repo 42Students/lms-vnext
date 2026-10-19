@@ -43,10 +43,10 @@ export default async function SuperAdminCourseProgressPage({
     <form className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
-          className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11 sm:min-h-9" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Offering status
-        <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+        <Select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
       </label>
