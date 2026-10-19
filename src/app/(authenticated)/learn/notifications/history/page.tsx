@@ -51,7 +51,7 @@ export default async function LearnerNotificationHistoryPage({
         title="Personal notification history"
         description="Browse your recorded personal notifications beyond the latest inbox items. College announcements use the main Notifications page."
       />
-      <nav aria-label="Notification history filters" className="flex flex-wrap gap-2">
+      <nav aria-label="Notification history filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
         <Link href="/learn/notifications/history"
           aria-current={!page.unreadOnly ? "page" : undefined}
           className={!page.unreadOnly ? "inline-flex min-h-11 items-center rounded-[8px] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover sm:min-h-9" : "inline-flex min-h-11 items-center rounded-[8px] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle sm:min-h-9"}>
@@ -68,7 +68,7 @@ export default async function LearnerNotificationHistoryPage({
         Counts are page-local; this is not a complete-inbox count.
       </p>
       {emptyMessage ? (
-        <section role="status" className="rounded-[var(--lms-radius-lg)] border border-border bg-surface p-5">
+        <section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-6 py-12 text-center">
           <p className="text-sm text-body">{emptyMessage}</p>
         </section>
       ) : (
