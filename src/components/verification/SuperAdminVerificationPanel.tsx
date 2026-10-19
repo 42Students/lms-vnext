@@ -68,12 +68,12 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  return <div className="min-w-0 space-y-4">
   <div className="flex flex-wrap justify-end gap-2">
    <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
-   <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11">Refresh</Button>
+   <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-[var(--lms-control-height)]">Refresh</Button>
   </div>
   {activeTab==="WAITING"&&candidates.length>0?<div className="flex flex-wrap gap-3">
    <Button variant="secondary" type="button" onClick={()=>{
     const picks=candidates.slice(0,20);setSequence(picks);setSequenceIndex(0);setSelected(picks[0]??null);
-   }} className="min-h-11">
+   }} className="min-h-[var(--lms-control-height)]">
     Review one by one ({Math.min(20,candidates.length)})
    </Button>
    <p className="self-center text-xs text-muted-foreground">Review up to 20 waiting requests on this page. Each decision keeps its own audit history.</p>
@@ -83,13 +83,13 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
-     className="min-h-11">Select first 20 waiting</Button>
+     className="min-h-[var(--lms-control-height)]">Select first 20 waiting</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
-     className="min-h-11">Clear selection</Button>
+     className="min-h-[var(--lms-control-height)]">Clear selection</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setBulkAction("VERIFY");setAcknowledged(false);}}
-     className="min-h-11">Verify without opening</Button>
+     className="min-h-[var(--lms-control-height)]">Verify without opening</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>setBulkAction("SEND_BACK")}
-     className="min-h-11">Send back</Button>
+     className="min-h-[var(--lms-control-height)]">Send back</Button>
    </div>
    <ul className="max-h-44 space-y-2 overflow-y-auto">
     {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)}>
@@ -112,7 +112,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
       I have checked their documents by another method. Each verification will be recorded with my name.
      </label>}
     <Button variant="primary" type="button" disabled={bulkBusy||!applicable.length||bulkAction==="VERIFY"&&!acknowledged||bulkAction==="SEND_BACK"&&reason.trim().length<3}
-     onClick={()=>void submitBulk()} className="min-h-11">
+     onClick={()=>void submitBulk()} className="min-h-[var(--lms-control-height)]">
      {bulkBusy?"Processing…":"Confirm "+applicable.length+" selected"}
     </Button>
    </div>:null}
@@ -126,8 +126,8 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    onReview={row=>{setSequence([]);setSequenceIndex(0);setSelected(row);}}/>
   <nav aria-label="Verification pages" className="flex flex-wrap gap-3 text-sm">
    <span>Showing {rows.length} of {total} in this status</span>
-   {page>1?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="min-h-11 underline">Previous</Button>:null}
-   {hasMore?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page+1)})} className="min-h-11 underline">Next</Button>:null}
+   {page>1?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="min-h-[var(--lms-control-height)] underline">Previous</Button>:null}
+   {hasMore?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page+1)})} className="min-h-[var(--lms-control-height)] underline">Next</Button>:null}
   </nav>
   {selected?<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
    row={selected} apiBase="/api/admin/verification"
