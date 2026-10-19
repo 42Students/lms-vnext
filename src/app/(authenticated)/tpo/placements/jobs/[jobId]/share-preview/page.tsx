@@ -3,6 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { tpoShareableShortlistQuerySchema } from "@/modules/placements/tpo-shareable-shortlist-model";
@@ -84,7 +86,7 @@ export default async function TpoShortlistSharePreviewPage({
     </p>
     <DataTable<(typeof data.rows)[number]> caption="Shortlisted applicant cards"
       rows={data.rows} getRowKey={item=>item.applicationId}
-      empty={<p role="status" className="text-sm text-body">No recruiter-visible shortlisted applications are recorded on this page. Screening state may have changed; absence here is not proof of no applicants.</p>}
+      empty={<EmptyState title="No recruiter-visible shortlisted applications are recorded on this page. Screening state may have changed; absence here is not proof of no applicants." />}
       columns={[
         {key:"application",header:"Application ID",mobilePriority:"secondary",cell:item=><span className="break-all font-mono text-xs">{item.applicationId}</span>},
         {key:"learner",header:"Learner",mobilePriority:"primary",cell:item=><strong>{item.displayName}</strong>},
@@ -103,10 +105,9 @@ export default async function TpoShortlistSharePreviewPage({
        {companyShareStatusLabel(status)}
       </Link>)}
     </nav>
-    {(linkPage.wasInvalid||!parsedStatus.success)?<p role="status"
-      className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
+    {(linkPage.wasInvalid||!parsedStatus.success)?<Alert tone="warning">
       An invalid company-share status or page was reset to the default view.
-    </p>:null}
+    </Alert>:null}
     <CompanyShareControls jobId={data.job.id} preferenceKey={companySharePreferenceKey(data.job.collegeId,data.job.companyRelationshipId)} ready={shares.ready} status={shareStatus} linkPage={shares.page}
       initialLinks={shares.links.map(link => ({
         id: link.id, expiresAt: link.expiresAt.toISOString(),
