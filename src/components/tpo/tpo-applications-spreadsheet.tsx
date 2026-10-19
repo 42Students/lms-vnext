@@ -57,7 +57,7 @@ const filters:TpoFilterField[]=[
 export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly Row[];jobId:string;jobStatus:string}){
  return <GridWorkspace rows={rows} columns={columns} rowKey={row=>row.id}
   filters={filters} filterTitle="Filter applicants" exportName="tpo-drive-applications">
-  <TpoGrid rows={rows} columns={columns} rowKey={row=>row.id}
+  <TpoGrid integratedWorkspace rows={rows} columns={columns} rowKey={row=>row.id}
    mobileActionsCollapsible storageKey={"tpo-drive-applicant-grid:"+jobId}
    rowActions={row=><div className="space-y-1">
     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
