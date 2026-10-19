@@ -38,7 +38,7 @@ export default async function MentorTeamMeetingsPage({
     <PageHeader eyebrow="Mentor · Project" title="Team &amp; meeting log"
       description={data.enabled?data.projectTitle:"Projects access is disabled. No private team or meeting data was loaded."}
       actions={<Link href={board}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0">
         Team workspace
       </Link>} />
     {!data.enabled?<section role="status"
