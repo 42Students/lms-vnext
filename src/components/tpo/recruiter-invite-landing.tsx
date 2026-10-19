@@ -22,7 +22,7 @@ type Invite = {
 };
 type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined";
 
-const actionLink="inline-flex min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const actionLink="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function RecruiterInviteLanding({ token }: { token: string }) {
   const [state, setState] = useState<State>("loading");
@@ -123,7 +123,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   }
 
   const shell = (children: React.ReactNode) => (
-    <main className={`${authStyles.page} flex min-h-dvh min-w-0 items-center justify-center px-4 py-8 sm:py-12`}>
+    <main className={`${authStyles.page} flex min-h-dvh min-w-0 items-center justify-center px-4 py-8 md:py-12`}>
       <Card as="section" className="w-full max-w-md">
         {children}
       </Card>
@@ -140,7 +140,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     return shell(<div className="space-y-4 text-center">
       <h1 className="text-[30px] font-semibold leading-10 text-[var(--lms-heading)]">{RECRUITER_INVITE_LOAD_ERROR_HEADING}</h1>
       <p className="text-sm text-muted-foreground">Check your connection and try again. Your invitation has not been consumed.</p>
-      <Button type="button" className="w-full" onClick={()=>{
+      <Button type="button" className="min-h-11 w-full md:min-h-9" onClick={()=>{
         setState("loading");setRetrySequence(i=>i+1);
       }}>Retry</Button>
     </div>);
@@ -195,7 +195,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         <label className="block text-sm font-semibold text-foreground">
           Work email
           <Input type="email" readOnly value={invite.contactEmail??""} autoComplete="email"
-            className="mt-1 w-full"/>
+            className="mt-1 min-h-11 w-full md:min-h-9"/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
             {"From your invitation. You'll sign in with it."}
           </span>
@@ -203,20 +203,20 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         <label className="block text-sm font-semibold text-foreground">Your name
          <Input required maxLength={150} autoComplete="name" value={name}
            onChange={event=>setName(event.target.value)}
-           className="mt-1 w-full"/>
+           className="mt-1 min-h-11 w-full md:min-h-9"/>
         </label>
         <label className="block text-sm font-semibold text-foreground">Designation (optional)
          <Input maxLength={100} value={designation} onChange={event=>setDesignation(event.target.value)}
-           className="mt-1 w-full"/>
+           className="mt-1 min-h-11 w-full md:min-h-9"/>
         </label>
         <label className="block text-sm font-semibold text-foreground">Mobile (optional)
          <Input type="tel" autoComplete="tel" maxLength={30} value={mobile}
            onChange={event=>setMobile(event.target.value)}
-           className="mt-1 w-full"/>
+           className="mt-1 min-h-11 w-full md:min-h-9"/>
          <span className="mt-1 block text-xs font-normal text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</span>
         </label>
         {!codeSent?(
-          <Button type="button" className="w-full" loading={busy} onClick={()=>void sendCode()}>
+          <Button type="button" className="min-h-11 w-full md:min-h-9" loading={busy} onClick={()=>void sendCode()}>
             {busy?"Sending…":"Send me a code"}
           </Button>
         ):(
@@ -225,11 +225,11 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
               Code sent to {invite.contactEmail}
               <Input type="text" inputMode="numeric" autoComplete="one-time-code"
                 pattern="[0-9]{6}" maxLength={6} value={code} onChange={event=>setCode(event.target.value)}
-                className="mt-2 w-full"/>
+                className="mt-2 min-h-11 w-full md:min-h-9"/>
             </label>
-            <Button className="w-full" type="button" loading={busy}
+            <Button className="min-h-11 w-full md:min-h-9" type="button" loading={busy}
               onClick={()=>void acceptCode()}>{busy?"Joining…":"Join "+invite.collegeName+" placements"}</Button>
-            <Button className="w-full" variant="secondary" type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</Button>
+            <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</Button>
           </>
         )}
         <p className="text-xs text-muted-foreground">
@@ -240,16 +240,16 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       {actionError ? <div ref={errorRef} tabIndex={-1} className="mt-4 outline-none"><InlineNotice tone="error" message={actionError} /></div> : null}
 
       <div className="mt-5 space-y-2">
-        <Button type="button" className="w-full" variant="secondary" disabled={busy} onClick={() => void answer("not-hiring")}>
+        <Button type="button" className="min-h-11 w-full md:min-h-9" variant="secondary" disabled={busy} onClick={() => void answer("not-hiring")}>
           Not hiring from this college this season
         </Button>
-        <Button type="button" className="w-full" variant="secondary" disabled={busy} onClick={() => void answer("unsubscribe")}>
+        <Button type="button" className="min-h-11 w-full md:min-h-9" variant="secondary" disabled={busy} onClick={() => void answer("unsubscribe")}>
           Stop contacting me
         </Button>
       </div>
 
       <p className="mt-5 text-center text-xs text-muted-foreground">
-        Already have an account? <Link className="inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/login">Sign in</Link>
+        Already have an account? <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/login">Sign in</Link>
       </p>
     </>,
   );
