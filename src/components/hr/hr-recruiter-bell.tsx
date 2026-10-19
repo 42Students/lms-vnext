@@ -83,14 +83,7 @@ export function HrRecruiterBell(){
  }
 
  const unread=state?.unread??0;
- return <div ref={rootRef} className="relative">
-  <Button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
-   aria-expanded={open} aria-haspopup="dialog" aria-controls={open?(mobile?"hr-topbar-mobile-notifications":"hr-topbar-desktop-notifications"):undefined}
-   onClick={()=>setOpen(value=>!value)}
-   variant="secondary" className="relative">
-   Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
-  </Button>
-  <Drawer open={open} onOpenChange={setOpen} title="Recruiter notifications">
+ const panelBody=<>
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
@@ -107,6 +100,22 @@ export function HrRecruiterBell(){
       variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
    {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
-  </Drawer>
+</>;
+ return <div ref={rootRef} className="relative">
+  <Button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
+   aria-expanded={open} aria-haspopup="dialog" aria-controls={open?(mobile?"hr-topbar-mobile-notifications":"hr-topbar-desktop-notifications"):undefined}
+   onClick={()=>setOpen(value=>!value)}
+   variant="secondary" className="relative">
+   Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
+  </Button>
+  {open ? (mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer}>
+   {panelBody}
+  </Drawer> : <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}>
+   <div className={style.hrNotificationHeader}>
+    <h2>Recruiter notifications</h2>
+    <Button variant="ghost" size="sm" type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}>Close</Button>
+   </div>
+   <div className={style.hrNotificationBody}>{panelBody}</div>
+  </PopoverPanel>) : null}
  </div>;
 }
