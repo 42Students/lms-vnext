@@ -73,7 +73,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
             </li>)}
           </ul></ScrollCue>
         </Disclosure>
-        <Disclosure title="{sections.length} Section(s)" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+        <Disclosure title={`${sections.length} Section(s)`} className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
           <ScrollCue axis="y" label="Teaching Sections" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {sections.map(section=><li key={section.id}>{section.name} · {section.count} teaching assignment(s)</li>)}
           </ul></ScrollCue>
