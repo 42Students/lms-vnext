@@ -35,7 +35,7 @@ function SignInStylePreview({
       className={
         mobile
           ? "mx-auto flex h-[360px] w-[235px] max-w-full items-center justify-center overflow-hidden rounded-[2rem] border-[7px] border-border p-3 shadow-none"
-          : "flex min-h-[360px] items-center justify-center overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border p-5"
+          : "flex min-h-[360px] items-center justify-center overflow-hidden rounded-[var(--college-card-radius,8px)] border border-border p-5"
       }
       style={canvasStyle}
     >
@@ -265,11 +265,11 @@ export function CollegeBrandingPreview({
           maths. This is not a live tenant-host login or a pixel-perfect legacy preview.
         </p>
         <div className="grid gap-5 lg:grid-cols-2">
-          <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+          <article className="rounded-[var(--college-card-radius,8px)] border border-border bg-surface p-4">
             <h3 className="mb-3 text-sm font-semibold text-foreground">Desktop</h3>
             <SignInStylePreview branding={branding} mobile={false} />
           </article>
-          <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+          <article className="rounded-[var(--college-card-radius,8px)] border border-border bg-surface p-4">
             <h3 className="mb-3 text-sm font-semibold text-foreground">Mobile</h3>
             <SignInStylePreview branding={branding} mobile />
           </article>
