@@ -17,7 +17,8 @@ export type ShellNavIconName =
  | "users" | "shield" | "briefcase" | "folder" | "calendar"
  | "checklist" | "clipboard" | "messages" | "bell" | "megaphone"
  | "chart" | "contact" | "search" | "layers" | "user"
- | "award" | "target" | "clock" | "table" | "inbox" | "help";
+ | "award" | "target" | "clock" | "table" | "inbox" | "help"
+ | "comment" | "check-circle" | "file-text" | "wrench";
 
 export type ShellNavItem = {
   label: string;
@@ -58,15 +59,15 @@ export const SHELL_NAV_ICON_KEYS:ReadOnly<Record<string,ShellNavIconName>>={
  "/teacher/profile":"user",
  "/mentor/projects":"folder", "/mentor/calendar":"calendar",
  "/mentor/notifications":"bell",
- "/tpo/home":"home", "/tpo/batches":"target", "/tpo/recruiters":"contact",
- "/tpo/placements":"briefcase", "/tpo/team":"users",
- "/tpo/students":"school", "/tpo/requests":"inbox",
+ "/tpo/home":"dashboard", "/tpo/batches":"building", "/tpo/recruiters":"users",
+ "/tpo/placements":"briefcase", "/tpo/team":"comment",
+ "/tpo/students":"users", "/tpo/requests":"check-circle",
  "/tpo/verification":"shield", "/tpo/calendar":"calendar",
- "/tpo/announcements":"megaphone", "/tpo/reports":"chart",
- "/tpo/messages":"messages", "/tpo/settings":"settings",
+ "/tpo/announcements":"megaphone", "/tpo/reports":"file-text",
+ "/tpo/messages":"messages", "/tpo/settings":"wrench",
  "/tpo/audit":"history", "/tpo/notifications":"bell",
- "/hr/home":"home", "/hr/drives":"briefcase", "/hr/calendar":"calendar",
- "/hr/conversations":"messages", "/hr/company":"building",
+ "/hr/home":"dashboard", "/hr/drives":"briefcase", "/hr/calendar":"calendar",
+ "/hr/conversations":"messages", "/hr/company":"users",
  "/college":"dashboard", "/college/activity":"history",
  "/college/departments":"school", "/college/courses":"book",
  "/college/faculty":"users", "/college/verification":"shield",
