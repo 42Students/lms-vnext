@@ -211,7 +211,7 @@ export function ProgramActions({
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
           </label> : null}
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <label className="mb-1.5 block text-xs font-semibold text-body">
               Program name
             </label>
@@ -905,7 +905,7 @@ export function SectionActions({
               maxLength={64}
             />
           </div>
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <label className="mb-1.5 block text-xs font-semibold text-body">
               Capacity · blank for unlimited
             </label>
