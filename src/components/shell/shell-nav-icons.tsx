@@ -1,4 +1,5 @@
 import type {ShellNavIconName} from "./shell-model";
+import Image from "next/image";
 
 /** Inline, stroke-based icons: lucide-react is not installed in lms-vnext.
  * Using SVG instead of initial-letter boxes preserves the legacy icon rail. */
@@ -61,4 +62,9 @@ export function ShellLogoMark(){
   <path d="M0 27.3826H17.2627V37H25.6174V27.3826V24.427V0L0 27.3826Z" fill="#9EE4E8"/>
   <path d="M25.6174 24.4274V8.20052C24.4082 7.88762 23.1638 7.72966 21.9144 7.73047C21.7449 7.73047 21.5774 7.73766 21.4092 7.74354V37.0018H25.6174V24.4274Z" fill="#26BAC7"/>
  </svg>;
+}
+
+/** The original 151×37 old LMS wordmark; distinct from the exact 38×36 rail mark. */
+export function ShellLogoWordmark(){
+  return <Image alt="" aria-hidden="true" src="/assets/images/legacy-42lms-logo.svg" width={151} height={37} className="block h-[37px] w-[151px] max-w-none" />;
 }
