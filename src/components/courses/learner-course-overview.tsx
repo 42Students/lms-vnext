@@ -61,7 +61,7 @@ function Metric({
   detail: string;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <section className="border-b border-border pb-3">
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </p>
@@ -319,30 +319,27 @@ export function LearnerCourseOverview({
             ) : null}
           </div>
           <div className="flex max-w-md flex-wrap gap-2">
-            <Badge  tone="neutral">
+            <Badge tone="neutral">
               {workspace.course.code}
             </Badge>
             {meta.credits !== null ? (
-              <Badge  tone="neutral">
+              <Badge tone="neutral">
                 {meta.credits} Credits
               </Badge>
             ) : null}
-            <Badge  tone="neutral">
+            <Badge tone="neutral">
               {meta.sectionName}
             </Badge>
-            <Badge  tone="neutral">
+            <Badge tone="neutral">
               {meta.academicPeriodName}
             </Badge>
             {meta.instructors.length===0 ? (
-              <Badge  tone="neutral">
+              <Badge tone="neutral">
                 Faculty not recorded
               </Badge>
             ) : null}
             {meta.instructors.map((instructor) => (
-              <Badge
-                key={instructor.membershipId}
-                
-               tone="neutral">
+              <Badge tone="neutral" key={instructor.membershipId}>
                 {instructor.name}
                 {instructor.role === "PRIMARY"
                   ? " · Faculty"
@@ -440,7 +437,7 @@ export function LearnerCourseOverview({
         </section>
       ) : null}
 
-      <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-32 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-32 grid gap-4 border-t border-border pt-4 sm:grid-cols-2 xl:grid-cols-4">
         <Metric
           label="Overall"
           value={progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
