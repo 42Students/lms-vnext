@@ -179,7 +179,7 @@ export function GridWorkspace<Row>({
      const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{[searchParam]:typed.trim()});
      router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
     }}><Image src="/assets/images/common/search.svg" alt="" aria-hidden="true" width={19} height={19}/>Search</Button>
-   </div>
+   </div>:null}
    {filters.length?<Button variant="secondary" type="button" aria-expanded={filterOpen}
     aria-controls={id+"-filters"} onClick={()=>setFilterOpen(value=>!value)}>
     Filters{activeFilters.length?" ("+activeFilters.length+")":""}
