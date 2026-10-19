@@ -57,11 +57,11 @@ export default async function FacultyCalendarPage({
         </h2>
         <div className="flex flex-wrap gap-3 text-sm font-semibold">
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous month</Link>
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Previous month</Link>
           <Link href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Current month</Link>
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Current month</Link>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] px-2 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next month</Link>
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[13px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Next month</Link>
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className="mt-4 flex flex-wrap items-end gap-3">
