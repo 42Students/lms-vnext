@@ -3,7 +3,7 @@
 Owner: chat-19. Source: `docs/design/ui-clone-checklist.md:8-18`, `docs/design/old-lms-shell.css`, `docs/design/old-lms-shell-spec.md` and `docs/design/legacy-styles/`. The owner runs runtime/CI and screenshot comparison later; **none was run here**.
 
 - [ ] **B3 Sidebar** (missing: command-level full-repository grep proof and exact historical icon/artwork equivalence; browser icon/hover/tablet verification is deferred to checklist J. See refreshed source-value and import evidence below.)
-- [ ] **B4 Footer, progress and route transitions** (TPO/recruiter/learner/faculty source values now recovered from lms2-fe/prod-2026 and implemented; still missing strict repository grep outputs and a pixel-equivalent legacy fullscreen loader in place of the modern thin progress bar.)
+- [ ] **B4 Footer, progress and route transitions** (footer roles and original styling now source-matched to lms2-fe/prod-2026; slow-route overlay matches legacy fullscreen layout and 20s recovery text, but indeterminate thin bar and hand-rendered spin dots are modern adaptations; exact browser comparison and executable full-repo greps remain outstanding.)
 
 ## B3 value proof (legacy → vNext)
 
@@ -225,3 +225,30 @@ recovery action. That is separate from the new App Router thin indicator and
 is **not** yet copied pixel-for-pixel. Under the strict rule the combined B4
 checkbox remains unticked pending that loader equivalence and executable
 repository-wide grep proof; do not report both as a perfect match.
+
+
+### Fullscreen loader follow-up — source values now implemented
+
+The new `route-progress.tsx:14-95` maintains its nonblocking top indicator
+for immediate route intent. After 700ms pending navigation, it displays a
+fullscreen overlay based on original
+`lms2-fe/prod-2026/src/styles/components/_common.scss:1008-1019`.
+The old `Loader/loader.js:6-35` showed a large AntD Spin and offered
+`Still loading…` / `Reload` after 20s. Those copy and recovery timing
+values are now reproduced. The fallback guard at 30s is an additional safety
+measure, not an old LMS property.
+
+| Loading state | Original production file:line | vNext file:line | Result |
+|---|---|---|---|
+| Overlay fixed top0 left0 100%×100% | `_common.scss:1008-1013` | `route-progress.css:35-40` | Match |
+| Flex centered, z-index 999 | `_common.scss:1014-1017` | `route-progress.css:41-44` | Match |
+| Near-white mask rgba(255,255,255,.99) | `_common.scss:1018` | `route-progress.css:45` | Match |
+| Spinner wrapper margins/padding/radius | `_antddesign.scss:741-748` | `route-progress.css:47-53` | Match |
+| Large spinner | `Loader/loader.js:20` AntD `Spin size="large"` | `route-progress.tsx:83-86`, `route-progress.css:54-75` 32px four-dot approximate | **Not exact AntD path/animation** |
+| Slow recovery copy and action | `Loader/loader.js:21-30` 20s `Still loading…`, `Reload` | `route-progress.tsx:43,87-91` | Text/timing match |
+| Top route-intent progress strip | No matching bar in original `_app.js:1-228` / shell SCSS | `route-progress.tsx:76-80`, CSS :7-29 | Modern requested enhancement, not pixel legacy |
+| Reduced motion | `learn-layout.scss:577-585` disables motions | `route-progress.css:24-29,80-83` | Static fallback |
+
+The mixed solution is intentionally labeled as partial legacy parity.
+**Do not tick B4** without the full checkout grep, final icon/spinner artwork
+comparison and actual phone/tablet browser proof. No CI/browser run occurred.
