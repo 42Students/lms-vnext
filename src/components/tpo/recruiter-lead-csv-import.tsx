@@ -228,7 +228,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                         onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/>},
                     ]}/>
                 </ScrollCue>
-                {reviewReady&&!result ? <p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-foreground">
+                {reviewReady&&!result ? <p role="status" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body">
                   Import {newRows} recruiter lead row(s) from {fileName}. {preview.invalid} invalid row(s) will be skipped. Existing contacts will be reported as duplicates. Each created lead receives an audit entry.
                 </p>:null}
                 {!result ? (
