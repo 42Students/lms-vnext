@@ -117,3 +117,5 @@ The user explicitly prohibited executing the app/tests/CI. A full cloned-reposit
 
 ## Next file and unverified work
 **Next:** `src/components/placements/report-interactive-table.tsx` — interactive report exports and keyboard/focus/dynamic filtering; then CSV download actions and G5 template evidence.
+
+**SMARTER PLAN repeat-pattern codemod (2026-10-19):** `scripts/codemods/chat6-report-export-links.cjs` targets static TPO report CSV/export `<a>` skin classes in eight explicitly enumerated report files (expected at least 3 candidates). `node scripts/codemods/chat6-report-export-links.cjs` reports a dry run; `node scripts/codemods/chat6-report-export-links.cjs --apply` applies only primary-button color tokens. It preserves anchor tags, hrefs, labels, downloads and layout. **Script committed but not run; orchestrator to apply and typecheck.** No G4 parity tick.
