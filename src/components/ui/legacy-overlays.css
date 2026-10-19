@@ -45,11 +45,11 @@
     min-height: 44px;
   }
 }
-[data-slot="drawer"] > div > header {
+[data-slot="drawer-header"] {
   background: var(--lms-neutral-50);
   border-bottom: 1px solid var(--lms-canvas-border);
 }
-[data-slot="drawer"] > div > footer {
+[data-slot="drawer-footer"] {
   padding: 12px 20px max(12px, env(safe-area-inset-bottom));
   background: var(--lms-neutral-50);
 }
