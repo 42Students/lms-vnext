@@ -79,20 +79,25 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </div>
    {preview.unmatched.length?<div className="space-y-2">
     <h4 className="font-semibold">Unmatched rows — review or skip</h4>
-    {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 border-b border-border py-3 sm:grid-cols-2">
-     <p className="text-sm">Row {row.line}: {row.identity||"No ID"} · {row.reason}</p>
-     <div className="flex flex-wrap gap-2">
-      <Select aria-label={"Match row "+row.line} className="min-h-11 md:min-h-9 flex-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"
-       value={overrides[row.line]??""} disabled={busy} onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
-       <option value="">Do not match this row</option>
-       {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
-      </Select>
-      <label className="flex items-center gap-2 text-sm">
-       <Checkbox checked={skips.includes(row.line)} disabled={busy}
-        onChange={e=>{setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line));if(e.target.checked)setOverrides(p=>({...p,[row.line]:""}));}}/> Skip row
-      </label>
-     </div>
-    </div>)}
+    <DataTable<Missing> caption="Unmatched round result rows" rows={preview.unmatched}
+      getRowKey={row=>String(row.line)} empty={<p>All result rows were matched.</p>}
+      columns={[
+       {key:"row",header:"Row",cell:row=>row.line,mobilePriority:"primary"},
+       {key:"identity",header:"Identity",cell:row=>row.identity||"No ID",mobilePriority:"secondary"},
+       {key:"reason",header:"Reason",cell:row=>row.reason,mobilePriority:"secondary"},
+       {key:"review",header:"Review",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
+         <Select aria-label={"Match row "+row.line} className="min-w-36 flex-1"
+           value={overrides[row.line]??""} disabled={busy}
+           onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
+           <option value="">Do not match this row</option>
+           {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
+         </Select>
+         <label className="flex items-center gap-2 text-sm">
+           <Checkbox checked={skips.includes(row.line)} disabled={busy}
+             onChange={e=>{setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line));if(e.target.checked)setOverrides(p=>({...p,[row.line]:""}));}}/> Skip row
+         </label>
+       </div>},
+      ]}/>
    </div>:null}
    <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
     <summary className="cursor-pointer font-semibold">Not in file ({preview.notInFile.length})</summary>
