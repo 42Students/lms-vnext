@@ -42,7 +42,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    showToast({title:"Bulk Import failed",tone:"error"});}
   finally{inFlightRef.current=false;setBusy(false);}
  }
- return <section className="space-y-3 border-t border-border pt-4">
+ return <section aria-busy={busy} className="space-y-3 border-t border-border pt-4">
   <Button type="button" variant="secondary"
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
   {open?<div className="space-y-3">
