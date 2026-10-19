@@ -8,6 +8,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {PageBackLink} from "@/components/ui/page-back-link";
+import {HrRoundEditorGrid} from "@/components/hr/hr-round-editor-grid";
 import {EmptyState} from "@/components/ui/empty-state";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
@@ -60,10 +61,24 @@ export default async function HrRoundsEditorPage({params}:{
   <section className="space-y-3">
    <h2 className="font-semibold text-foreground">Current rounds ({rounds.length})</h2>
    {rounds.length===0?<EmptyState title="No hiring rounds" description="This drive has no hiring rounds. Add a round using the form above."/>:null}
-   {rounds.map(round=><article key={round.id} className="min-w-0 space-y-3 border-b border-border pb-5 last:border-b-0">
-    <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
+   {rounds.length>0?<div className="hidden min-w-0 md:block">
+    <HrRoundEditorGrid
+     scopeKey={context.user.id+":"+jobId}
+     rows={rounds.map(round=>({
+       id:round.id,sequence:round.sequence,name:round.name,kind:round.kind,
+       mode:round.mode??"Not scheduled",status:round.status,
+       duration:round.durationMinutes,editable:round.editable,
+       editHref:"#round-edit-"+round.id,
+       removeHref:"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id,
+     }))}/>
+   </div>:null}
+   {rounds.map(round=><article id={"round-edit-"+round.id} key={round.id}
+    className={"min-w-0 space-y-3 border-b border-border pb-5 last:border-b-0 "+
+     (round.editable?"":"md:hidden")}>
+    <div className="flex flex-wrap justify-between gap-2 md:hidden"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
      <span className="flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge>{round.status}</StatusBadge></span></div>
     {round.editable?<form action={endpoint} method="post" className="grid gap-3 md:grid-cols-2">
+      <h3 className="hidden font-semibold text-foreground md:col-span-2 md:block">Change {round.sequence}. {round.name}</h3>
       <Input type="hidden" name="action" value="UPDATE"/><Input type="hidden" name="roundId" value={round.id}/>
       <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
       <label className="grid gap-1 text-sm text-body">Name
@@ -83,7 +98,7 @@ export default async function HrRoundsEditorPage({params}:{
      </form>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
     {round.editable?<Link
       href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:hidden">
       Review round removal
     </Link>:null}
    </article>)}
