@@ -19,7 +19,7 @@ type Preferences = {
   notifyApplicationUpdates: boolean;
 };
 
-const inputClass = "min-h-11 sm:min-h-9";
+const inputClass = "min-h-11 md:min-h-9";
 
 function splitList(value: string) {
   return value
@@ -160,7 +160,7 @@ export function LearnerPlacementPreferences({
   }
 
   return (
-    <section id="placement-job-preferences" className="scroll-mt-24 border-b border-border pb-5">
+    <section id="placement-job-preferences" className="scroll-mt-24 min-w-0 border-b border-border pb-5">
       <div className="border-b border-border py-4">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Opportunity preferences
@@ -169,7 +169,7 @@ export function LearnerPlacementPreferences({
           Tell the placement workspace what kinds of roles should surface first for you.
         </p>
       </div>
-      <div className="grid gap-4 py-5 lg:grid-cols-2">
+      <div className="grid min-w-0 gap-4 py-5 lg:grid-cols-2">
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Preferred role titles
@@ -205,7 +205,7 @@ export function LearnerPlacementPreferences({
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Employment types
           </span>
-          <div className="flex flex-wrap gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2.5">
+          <div className="flex min-w-0 flex-wrap gap-2 rounded-lg border border-border bg-surface px-3 py-2.5">
             {[
               ["FULL_TIME", "Full time"],
               ["INTERNSHIP", "Internship"],
@@ -213,7 +213,7 @@ export function LearnerPlacementPreferences({
             ].map(([value, label]) => (
               <label
                 key={value}
-                className="flex items-center gap-2 text-sm text-body"
+                className="flex min-h-11 min-w-0 items-center gap-2 text-sm text-body"
               >
                 <Checkbox
                   checked={employmentTypes.includes(
@@ -331,7 +331,7 @@ export function LearnerPlacementPreferences({
           <span className="text-xs font-semibold text-body">
             Notifications
           </span>
-          <label className="flex items-center gap-2 text-sm text-body">
+          <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm text-body">
             <Checkbox
               checked={notifyMatchingJobs}
               onChange={(event) =>
@@ -342,7 +342,7 @@ export function LearnerPlacementPreferences({
             />
             Matching opportunities
           </label>
-          <label className="flex items-center gap-2 text-sm text-body">
+          <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm text-body">
             <Checkbox
               checked={
                 notifyApplicationUpdates
