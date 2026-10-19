@@ -49,18 +49,18 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  return <div className="space-y-5">
   <PageHeader eyebrow="College Admin · Placements" title="Interviews"
    description="Interview appointments across drives in the selected college."/>
-  {!data.ready?<p role="status" className="rounded-xl border border-border p-5 text-sm text-warning-text">
+  {!data.ready?<p role="status" className="rounded-[8px] border border-border p-5 text-sm text-warning-text">
     Candidate interview appointment storage is not registered. No schedule or conflict counts are inferred from round-level placeholders.
    </p>:<>
    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Interview summary">
     {([{label:"Scheduled",value:data.summary?.scheduled??0},{label:"Today",value:data.summary?.today??0},
       {label:"Companies",value:data.summary?.companies??0},{label:"Conflicts",value:data.summary?.conflicts??0}]
-    ).map(card=><div key={card.label} className="rounded-xl border border-border p-4">
+    ).map(card=><div key={card.label} className="rounded-[8px] border border-border p-4">
      <h2 className="text-xs font-semibold uppercase text-body">{card.label}</h2>
      <p className="mt-2 text-2xl font-semibold">{card.value}</p>
     </div>)}
    </div>
-   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-3">
+   <form method="get" className="grid gap-3 rounded-[8px] border border-border bg-surface p-4 sm:grid-cols-3">
     <label className="grid gap-1 text-sm">Search student, company or role
      <input name="q" defaultValue={valid.data.q} maxLength={100} className="min-h-11 rounded border border-border px-2 text-base sm:text-sm"/>
     </label>

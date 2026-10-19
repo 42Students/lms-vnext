@@ -51,7 +51,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
     <PageHeader eyebrow="College Admin · Placements" title="Drives"
       description="College-owned placement drives. This list is independent of cross-college recruiter access."
       actions={<Link href="/college/placements" className="text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Operations workspace</Link>} />
-    <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-3 lg:grid-cols-6">
+    <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 rounded-[8px] border border-border p-4 sm:grid-cols-3 lg:grid-cols-6">
       <label className="grid gap-1 text-sm">Title or company
         <input name="q" defaultValue={query.q} maxLength={100}
           className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-2 text-base sm:text-sm" />

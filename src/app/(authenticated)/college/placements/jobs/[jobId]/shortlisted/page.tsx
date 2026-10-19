@@ -39,7 +39,7 @@ export default async function CollegeDriveShortlistedPage({
       description={data.drive.title}
       actions={<Link href={driveApplicationsHref(jobId,{...query,screening:"ALL"})}
         className="font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11 inline-flex items-center">Applications</Link>} />
-    <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
+    <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Student
         <input type="search" name="q" maxLength={100} defaultValue={query.q}
           className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-base sm:text-sm"/>
