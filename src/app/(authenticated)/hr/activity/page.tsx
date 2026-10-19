@@ -44,13 +44,13 @@ export default async function HrJobActivityPage({searchParams}:{
      key:grant.collegeId,label:grant.collegeName,
      href:"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId),
     }))}/>:null}
-   <form action="/hr/activity" method="get" className="flex flex-wrap gap-2">
+   <form action="/hr/activity" method="get" className="flex min-w-0 flex-wrap items-end gap-2">
      <Input type="hidden" name="collegeId" value={result.collegeId}/>
      <Input type="hidden" name="kind" value={input.data.kind}/>
      <label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</label>
      <Input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
-       placeholder="Search hiring drive titles" className="min-w-48 flex-1"/>
-     <Button variant="secondary" type="submit">Search</Button>
+       placeholder="Search hiring drive titles" className="min-w-0 w-full basis-full md:min-w-48 md:basis-auto md:flex-1"/>
+     <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Search</Button>
    </form>
    <Tabs ariaLabel="Hiring activity event type" renderPanel={false} value={input.data.kind}
      items={HR_ACTIVITY_FILTER_KINDS.map(kind=>({

@@ -214,14 +214,14 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       <section aria-label="Similar issues" className="rounded-[var(--lms-control-radius)] border border-border p-4">
         <h2 className="text-sm font-semibold text-foreground">Similar issues</h2>
         <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
           <Input aria-label="Find similar issues by keyword" type="search" value={similarQuery}
             onChange={event=>{setSimilarQuery(event.target.value);setSimilarSearched(false);setSimilarError("");}}
             maxLength={100} placeholder="e.g. Quiz submission"
-            className={field+" min-w-48 flex-1"}/>
+            className={field+" min-w-0 w-full basis-full md:min-w-48 md:basis-auto md:flex-1"}/>
           <Button type="button" onClick={()=>void checkSimilar()}
             disabled={similarLoading||similarQuery.trim().length<3}
-            variant="secondary">
+            variant="secondary" className="min-h-11 md:min-h-9">
             {similarLoading?"Searching…":"Find similar issues"}
           </Button>
         </div>
@@ -240,8 +240,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       {error && <p role="alert" className="text-sm text-error">{error}</p>}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
-        <Button disabled={pending} loading={pending} type="submit"
-          >
+        <Button disabled={pending} loading={pending} type="submit" className="min-h-11 md:min-h-9">
           {pending ? "Reporting…" : "Report issue"}
         </Button>
       </div>

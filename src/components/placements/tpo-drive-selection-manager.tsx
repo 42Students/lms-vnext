@@ -7,6 +7,9 @@ import {DataTable} from "@/components/ui/data-table";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 type Candidate={applicationId:string;name:string;email?:string|null;roleTitle:string;offerReady:boolean;alreadyOffered:boolean};
 type RoleOption={id:string;title:string;annualCtcInr:number|null};
 type Selection={id:string;applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null;status:string;recordedAt:string;offerReady:boolean;releasedOfferId:string|null};
@@ -59,11 +62,11 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     >
     Verify and release ({releasable.length})</Button>
   </div>
-  {lastRecorded>0?<p role="status" className="text-sm font-semibold">{lastRecorded} selection(s) recorded, not yet released.</p>:null}
+  {lastRecorded>0?<InlineNotice tone="success" message={lastRecorded+" selection(s) recorded, not yet released."}/>:null}
   <p className="text-sm text-body">Selection alone does not issue an offer. Verify and release only after checking the company&apos;s selection list.</p>
   <DataTable<(typeof selections)[number]> caption="Recorded selections"
     rows={selections} getRowKey={row=>row.id}
-    empty={<p role="status">No selections yet.</p>}
+    empty={<EmptyState title="No selections yet."/>}
     columns={[
       {key:"student",header:"Student",mobilePriority:"primary",cell:row=><strong>{row.name}</strong>},
       {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
@@ -72,17 +75,17 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       {key:"stage",header:"Stage",mobilePriority:"secondary",cell:row=>row.status==="RELEASED"
         ?"Released":row.status==="VERIFIED"?"Verified, release pending":"Selected"},
     ]}/>
-  {report.length&&!mode?<p role="status">{report.filter(r=>r.status==="released").length} offers released.</p>:null}
+  {report.length&&!mode?<InlineNotice tone="success" message={report.filter(r=>r.status==="released").length+" offers released."}/>:null}
   <Dialog open={mode!==null} onOpenChange={next=>{if(!next&&!pending){setMode(null);setError("");}}}
     dismissible={!pending} title={mode==="RECORD"?"Record the company's selections":"Verify and release selections"}>
     <div className="min-w-0 space-y-4">
     <p className="text-sm text-body">{mode==="RECORD"
       ?"Choose selected students and enter their package. Nothing is sent until release."
       :"Releasing issues offers immediately. Eligibility, held-offer limits and response deadlines are rechecked for each student. Skipped rows will be reported."}</p>
-    {mode==="VERIFY_AND_RELEASE" && chosen.length>0 ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+    {mode==="VERIFY_AND_RELEASE" && chosen.length>0 ? <Alert tone="info">
       {chosen.length} selections · {selections.filter(s=>chosen.includes(s.id)&&s.offerReady).length} ready to verify · {selections.filter(s=>chosen.includes(s.id)&&!s.offerReady).length} need review.
       Successful releases issue official offers and notify learners.
-    </p>:null}
+    </Alert>:null}
     {mode==="RECORD"?<label className="grid gap-1 text-sm">Package from this drive
      <Select defaultValue=""
       onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);
@@ -116,7 +119,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
         <span>{item.name} · {item.note}</span>
        </label>)}
     </fieldset>
-    {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+    {error?<InlineNotice tone="error" message={error}/>:null}
     {report.length?<div role="status" tabIndex={0} aria-label="Selection release results, scroll for more" className="max-h-32 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_85%,transparent_100%)]">
      {report.map(x=><p key={x.selectionId}>{x.status}: {x.applicationId} {x.reason??""}</p>)}
     </div>:null}

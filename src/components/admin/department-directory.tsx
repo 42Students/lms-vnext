@@ -69,7 +69,7 @@ export function DepartmentDirectory({
       <h2 className="m-0 text-base font-semibold text-foreground">{DEPARTMENT_COPY.existingTitle}</h2>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-48 flex-1">
-          <label htmlFor="department-directory-search" className="mb-1.5 block text-xs font-semibold text-body">
+          <label htmlFor="department-directory-search" className="mb-1.5 block text-[13px] font-semibold text-body">
             Search departments
           </label>
           <Input
@@ -83,11 +83,11 @@ export function DepartmentDirectory({
           />
         </div>
         <div className="flex flex-wrap items-end gap-2">
-          <label htmlFor="department-directory-page-size" className="grid gap-1 text-xs font-semibold text-body">
+          <label htmlFor="department-directory-page-size" className="grid gap-1 text-[13px] font-semibold text-body">
             Rows per page
             <Select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground">
+              className="min-h-11 w-full min-[768px]:min-h-9">
               {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
             </Select>
           </label>
@@ -96,7 +96,7 @@ export function DepartmentDirectory({
             <a
               href={exportHref}
               download="departments.csv"
-              className="inline-flex min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-link"
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
             >
               Export CSV
             </a>

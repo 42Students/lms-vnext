@@ -547,3 +547,100 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 **Responsive source scope:** the controls use the 44px target through 767px and 36px from 768px where locally overridden; shared Button/Select/FileUpload behavior otherwise inherits the central skin. TPO eligibility uses shared Tabs and DataTable with phone card-style rows, while the selected/round result wrappers expand clipped scroll regions in print using `print:max-h-none print:overflow-visible`. `ReportInteractiveTable` now emits a print-only text header alongside its interactive header Button so the shared print CSS's button hiding cannot blank paper table headings. Actual phone, tablet, printed pagination, PDF/email output and side-by-side rendering **not performed**.
 
 **Still OPEN:** G4 needs complete old-LMS wizard-specific state/value sources, report computed properties and repository-wide scan; G5 needs authentic print/PDF/certificate/receipt/offer-letter and provider-hosted email HTML, plus printed/browser visual output. These cannot be certified from checked-in SCSS alone.
+
+## G4 follow-on faculty and college reports — chat-6
+
+**Scope and proof policy:** The four complete sources below were inspected and re-fetched after their file updates. They reuse shared form/table/buttons and preserve export URLs, selectors, handlers and existing user content. This records *source remediation* only. Every unspecified historical property, rendered phone/tablet state, print media geometry and actual browser output remains explicitly open under STRICT TICK RULE.
+
+### Completed source-file remediation and next target
+- [x] **Scoped source pass only**: `src/components/admin/super-admin-faculty-bulk-import.tsx` — Sample CSV, selection state, local validation, confirm and row status outcomes; sample link already uses delayed URL revocation and shared StatusBadge; on paper show result summary/table, suppress input/status controls.
+- [x] **Scoped source pass only**: `src/components/courses/college-learner-progress-report.tsx` — Class/course filters, conditional content, four summary tiles, per-learner result table and CSV link; filter form and export CTA omitted on paper, query strings and export route unchanged.
+- [x] **Scoped source pass only**: `src/components/courses/college-live-classes-directory.tsx` — Seven-plus filters including date bounds, report header CSV control, row statuses, query and paginator; filter controls now 44px phone/36px desktop, paper output suppresses interactive search.
+- [x] **Scoped source pass only**: `src/components/courses/college-content-aggregate.tsx` — Content catalogue with sixteen filter controls, page CSV export, mobile-only cards and desktop table; print forces one table and hides mobile duplicates, filter/navigation controls suppressed.
+- [ ] **Next exact file**: `src/components/courses/college-assessment-aggregate.tsx` — assessment CSV actions, 44px controls, table/print treatment, complete state+responsive value audit.
+
+### Per-file legacy comparison tables
+
+#### `src/components/admin/super-admin-faculty-bulk-import.tsx`
+
+| Property/state | Old LMS source:value | vNext source:value | Source-level verdict |
+|---|---|---|---|
+| Mobile action target | `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214`: minimum **44px** through **767px** | `src/components/admin/super-admin-faculty-bulk-import.tsx:91, 93, 99`: `min-h-11` (3 source occurrences) | Size token matches where applied; phone tap/browser proof missing |
+| Tablet/desktop target | `docs/design/ui-clone-checklist.md:46-47`: measured button **36px**, radius **9px**, font **14px/650** | `src/components/admin/super-admin-faculty-bulk-import.tsx:91, 99`: `md:min-h-9`; default shared control token `src/app/globals.css:334-337` | Source token matches 768px+; computed style still unverified |
+| Keyboard focus | `docs/design/legacy-styles/components___accessibility.scss:18-21`: **2px** teal / **3px** offset | `src/components/admin/super-admin-faculty-bulk-import.tsx:not present`: explicit export/nav anchor offset-3 when present; otherwise inherited shared Button focus | Explicit anchors match light-theme token; shared Button global offset remains separate unverified/mismatch |
+| Display/result | `docs/design/old-lms-pages.md:9`, `pages___admin-list-pages.scss:69-111`: hairline compact rows | `src/components/admin/super-admin-faculty-bulk-import.tsx:105`: shared table or report list, `StatusBadge` and consistent tokens | Structural source only; exact row-height/padding/hover states not certified |
+| Printed interaction chrome | No legacy `@media print`/certificate/letter/receipt source in supplied SCSS | `src/components/admin/super-admin-faculty-bulk-import.tsx:90, 91, 93, 96, 97, 99`: 6 print-hide marker(s), authenticated print CSS `:1-80` | Conservative print-only separation; historical parity **OPEN** |
+| Behavior/empty/error | No old counterpart for all states | Sample CSV, selection state, local validation, confirm and row status outcomes; sample link already uses delayed URL revocation and shared StatusBadge; on paper show result summary/table, suppress input/status controls. | Existing component logic retained; tests and browser interactions **not run** |
+
+#### `src/components/courses/college-learner-progress-report.tsx`
+
+| Property/state | Old LMS source:value | vNext source:value | Source-level verdict |
+|---|---|---|---|
+| Mobile action target | `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214`: minimum **44px** through **767px** | `src/components/courses/college-learner-progress-report.tsx:35, 43, 52, 56, 74`: `min-h-11` (5 source occurrences) | Size token matches where applied; phone tap/browser proof missing |
+| Tablet/desktop target | `docs/design/ui-clone-checklist.md:46-47`: measured button **36px**, radius **9px**, font **14px/650** | `src/components/courses/college-learner-progress-report.tsx:35, 43, 52, 56, 74`: `md:min-h-9`; default shared control token `src/app/globals.css:334-337` | Source token matches 768px+; computed style still unverified |
+| Keyboard focus | `docs/design/legacy-styles/components___accessibility.scss:18-21`: **2px** teal / **3px** offset | `src/components/courses/college-learner-progress-report.tsx:56, 74`: explicit export/nav anchor offset-3 when present; otherwise inherited shared Button focus | Explicit anchors match light-theme token; shared Button global offset remains separate unverified/mismatch |
+| Display/result | `docs/design/old-lms-pages.md:9`, `pages___admin-list-pages.scss:69-111`: hairline compact rows | `src/components/courses/college-learner-progress-report.tsx:77`: shared table or report list, `StatusBadge` and consistent tokens | Structural source only; exact row-height/padding/hover states not certified |
+| Printed interaction chrome | No legacy `@media print`/certificate/letter/receipt source in supplied SCSS | `src/components/courses/college-learner-progress-report.tsx:32, 74`: 2 print-hide marker(s), authenticated print CSS `:1-80` | Conservative print-only separation; historical parity **OPEN** |
+| Behavior/empty/error | No old counterpart for all states | Class/course filters, conditional content, four summary tiles, per-learner result table and CSV link; filter form and export CTA omitted on paper, query strings and export route unchanged. | Existing component logic retained; tests and browser interactions **not run** |
+
+#### `src/components/courses/college-live-classes-directory.tsx`
+
+| Property/state | Old LMS source:value | vNext source:value | Source-level verdict |
+|---|---|---|---|
+| Mobile action target | `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214`: minimum **44px** through **767px** | `src/components/courses/college-live-classes-directory.tsx:28, 34, 39, 46, 55, 62 (+4 more)`: `min-h-11` (10 source occurrences) | Size token matches where applied; phone tap/browser proof missing |
+| Tablet/desktop target | `docs/design/ui-clone-checklist.md:46-47`: measured button **36px**, radius **9px**, font **14px/650** | `src/components/courses/college-live-classes-directory.tsx:28, 34, 39, 46, 55, 62 (+4 more)`: `md:min-h-9`; default shared control token `src/app/globals.css:334-337` | Source token matches 768px+; computed style still unverified |
+| Keyboard focus | `docs/design/legacy-styles/components___accessibility.scss:18-21`: **2px** teal / **3px** offset | `src/components/courses/college-live-classes-directory.tsx:76`: explicit export/nav anchor offset-3 when present; otherwise inherited shared Button focus | Explicit anchors match light-theme token; shared Button global offset remains separate unverified/mismatch |
+| Display/result | `docs/design/old-lms-pages.md:9`, `pages___admin-list-pages.scss:69-111`: hairline compact rows | `src/components/courses/college-live-classes-directory.tsx:78`: shared table or report list, `StatusBadge` and consistent tokens | Structural source only; exact row-height/padding/hover states not certified |
+| Printed interaction chrome | No legacy `@media print`/certificate/letter/receipt source in supplied SCSS | `src/components/courses/college-live-classes-directory.tsx:24`: 1 print-hide marker(s), authenticated print CSS `:1-80` | Conservative print-only separation; historical parity **OPEN** |
+| Behavior/empty/error | No old counterpart for all states | Seven-plus filters including date bounds, report header CSV control, row statuses, query and paginator; filter controls now 44px phone/36px desktop, paper output suppresses interactive search. | Existing component logic retained; tests and browser interactions **not run** |
+
+#### `src/components/courses/college-content-aggregate.tsx`
+
+| Property/state | Old LMS source:value | vNext source:value | Source-level verdict |
+|---|---|---|---|
+| Mobile action target | `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214`: minimum **44px** through **767px** | `src/components/courses/college-content-aggregate.tsx:33, 44, 50, 55, 60, 65 (+13 more)`: `min-h-11` (19 source occurrences) | Size token matches where applied; phone tap/browser proof missing |
+| Tablet/desktop target | `docs/design/ui-clone-checklist.md:46-47`: measured button **36px**, radius **9px**, font **14px/650** | `src/components/courses/college-content-aggregate.tsx:33, 44, 50, 55, 60, 65 (+12 more)`: `md:min-h-9`; default shared control token `src/app/globals.css:334-337` | Source token matches 768px+; computed style still unverified |
+| Keyboard focus | `docs/design/legacy-styles/components___accessibility.scss:18-21`: **2px** teal / **3px** offset | `src/components/courses/college-content-aggregate.tsx:33, 161`: explicit export/nav anchor offset-3 when present; otherwise inherited shared Button focus | Explicit anchors match light-theme token; shared Button global offset remains separate unverified/mismatch |
+| Display/result | `docs/design/old-lms-pages.md:9`, `pages___admin-list-pages.scss:69-111`: hairline compact rows | `src/components/courses/college-content-aggregate.tsx:217`: shared table or report list, `StatusBadge` and consistent tokens | Structural source only; exact row-height/padding/hover states not certified |
+| Printed interaction chrome | No legacy `@media print`/certificate/letter/receipt source in supplied SCSS | `src/components/courses/college-content-aggregate.tsx:38, 187, 264`: 3 print-hide marker(s), authenticated print CSS `:1-80` | Conservative print-only separation; historical parity **OPEN** |
+| Behavior/empty/error | No old counterpart for all states | Content catalogue with sixteen filter controls, page CSV export, mobile-only cards and desktop table; print forces one table and hides mobile duplicates, filter/navigation controls suppressed. | Existing component logic retained; tests and browser interactions **not run** |
+
+### Scoped grep results and responsive/print proof
+
+These counts came from entire **GitHub connector file reads** (not shell execution or a global checkout scan); all existing JSX Button opener/closer pairs were checked lexically. Native matches are literal lowercase tags, not shared `Button`, `Select`, `Input`, `DataTable` calls.
+
+| File | Native button/input/select/textarea/table | Hard-coded hex | Print-hide markers | Button opener/closer |
+|---|---|---:|---:|---:|
+| `src/components/admin/super-admin-faculty-bulk-import.tsx` | 0/0/0/0/0 | 0 | 6 | 2/2 |
+| `src/components/courses/college-learner-progress-report.tsx` | 0/0/0/0/0 | 0 | 2 | 1/1 |
+| `src/components/courses/college-live-classes-directory.tsx` | 0/0/0/0/0 | 0 | 1 | 1/1 |
+| `src/components/courses/college-content-aggregate.tsx` | 0/0/0/0/0 | 0 | 3 | 1/1 |
+
+Reproduce in checkout (not executed):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+  src/components/admin/super-admin-faculty-bulk-import.tsx \
+  src/components/courses/college-learner-progress-report.tsx \
+  src/components/courses/college-live-classes-directory.tsx \
+  src/components/courses/college-content-aggregate.tsx
+```
+
+**Responsive source evidence:** Buttons/inputs/selects use `min-h-11` through 767px (44px) and `md:min-h-9` from 768px (36px); already flex-wrapped search filters remain multi-row on phones. Print-only rules hide search/picker/confirmation, preserve summary and result tables, expand import result overflow, and in the catalogue hide card-form mobile duplicates while forcing the DataTable wrapper visible. Actual phone/tablet/print preview, long-content truncation, margins, focus placement and email/PDF templates are **not verified**.
+
+**G4/G5 remain [ ]:** Pixel parity needs complete legacy wizard/progress/report fixtures and every computed state. Provider-hosted email and original certificate/offer/receipt PDF styling are still unavailable. No CI, tests, compile, app run or browser rendering performed.
+
+## G4 additional assessment directory source completion — chat-6
+
+- [x] **Source remediation only:** `src/components/courses/college-assessment-aggregate.tsx` — assessment CSV export and sibling navigation; 10 locally styled search/filter controls now responsive; source filter form and pager are print-hidden; phone card version hidden on paper while one DataTable wrapper prints; existing protected assessment read/actions untouched.
+- [ ] **Next exact file:** `src/components/courses/faculty-course-roster.tsx`, then remaining G4 report/export sources. G4/G5 strict ticks stay OPEN until historical values, rendered snapshots and print/email template artifacts exist.
+
+| Property/state | Legacy source:value | vNext source:value | Evidence status |
+|---|---|---|---|
+| Phone tap minimum | `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/courses/college-assessment-aggregate.tsx:83, 87, 91, 107, 112, 117, 122, 127, 135, 143 (+9 more)` — `min-h-11` (44px) | Local source matches token; physical phone not rendered |
+| Tablet/desktop minimum | `docs/design/ui-clone-checklist.md:46-47` — 36px/9px/14px/650 for standard buttons | `src/components/courses/college-assessment-aggregate.tsx:83, 87, 91, 107, 112, 117, 122, 127, 135, 143 (+7 more)` — `md:min-h-9` (36px) plus shared control radius | Tokens match; computed state proof pending |
+| Anchor focus | `docs/design/legacy-styles/components___accessibility.scss:18-21` — 2px solid `$teal-text` / 3px offset | `src/components/courses/college-assessment-aggregate.tsx:83, 87, 91, 177, 295, 301` — `focus-visible:outline-2`, offset 3px, `--lms-primary-text` | Local export/navigation anchor source match in light theme |
+| Table/status/empty | `docs/design/old-lms-pages.md:9`, `pages___admin-list-pages.scss:69-111` compact table / status pills | `src/components/courses/college-assessment-aggregate.tsx:236` uses shared DataTable and existing shared StatusBadge | Actual row heights, loading/empty/hover not browser-checked |
+| Print/no duplicate phone cards | No checked-in old authenticated print stylesheet, PDF or email markup | `src/components/courses/college-assessment-aggregate.tsx:81, 99, 205, 288` print-hidden actions; `print:hidden` phone cards and `print:block` table | vNext source correction only; print and PDF parity unprovable |
+| Regression | No content or route behavior rewrite permitted | Assessment query, CSV href and actions preserved; shared Button still owns click behavior | Source read verified; no tests or CI run |
+
+**Scoped grep equivalent on complete file:** native lowercase button/input/select/textarea/table = `0`; CSS hex literal = `0`; shared Button open/close = `1/1`. Reproduce without running app: `grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' src/components/courses/college-assessment-aggregate.tsx` (expected **0** matching lines in this file). Phone/tablet proof is strictly a breakpoint/class inspection: `min-h-11` at 0–767px and `md:min-h-9` at 768px and above. Side-by-side browser screenshots and printer preview are **not performed**. G4/G5 remain unchecked.

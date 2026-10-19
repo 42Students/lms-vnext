@@ -187,7 +187,7 @@ Source baseline: `docs/orchestrator/queues/master-queue.md` OWNER GOAL and the e
 | Collapsed badge `top:4px;left:50%;margin-left:5px;scale(.72)`; expanded badge inline | Same selectors and values | Matched |
 | TPO hover scrollbar thin, 4px thumb rgba(107,114,128,.28) | TPO-only scroll selector on expanded rail | Matched, includes keyboard focus |
 | Header 38×36px logomark | `ShellLogoMark` 38×36 inline SVG in desktop shell and mobile drawer | Matched size and supplied logo SVG |
-| Desktop hidden below 768px, touch drawer at 256px max | `md:flex` desktop, separate native-dialog drawer at 82vw/max300px | Matched behaviour |
+| Desktop hidden below 768px, touch drawer 82vw capped at 300px (`components___antddesign.scss:305-308`) | `md:flex` desktop, separate native-dialog drawer at 82vw/max300px | Source dimensions match; browser unverified |
 | Different portal rows kept in different account menus | `scopedShellNavigation` now filters *all* rows from other account portals, including a stray single-row role | Corrected |
 
 **Icon identity corrections:** Built route-to-glyph mappings cover all 61 literal sidebar navigation routes. The previous generic briefcase icon is now a Solution-style icon for recruiting/placement flows; Bank, Appstore, Partition, Apartment, and UsergroupAdd icon families are distinct, following the names in `docs/audit/legacy-copy-B.md`. Existing learner icon image paths were cross-checked against the 12 actual files under `public/assets/images/common/`. SVGs are faithful *style-family approximations* of the original Ant Design outlines, not claims of identical upstream path data.
@@ -245,3 +245,25 @@ it was **not run**. The whole B4 category is still unticked because the
 original thin route progress bar is absent and browser/complete-tree proof
 is still missing. This source-complete footer is not a visual-certification
 claim.
+
+### Replacement-lane route and mobile refinements (source-level)
+
+The current branch's `src/components/shell/route-transition.tsx` retains
+the old `pageSlideIn` 250ms ease-out on page entrance and the learner
+220ms opacity / 260ms transform exit, now covering browser Back/Forward
+for changed pathnames. It skips same-path query/history, download links,
+modifier clicks, non-self targets, and invalid/external URLs. A 3-second
+recovery remains a modern safety enhancement, not a measured old-LMS
+duration. Source tests were refreshed; not executed.
+
+The mobile drawer now uses the legacy SCSS `box-shadow:4px 0 16px
+rgba(0,0,0,.12)`, 6px by 8px divider spacing, and 15px long labels with
+word-break/overflow-wrap instead of clipped desktop ellipsis. These
+changes apply below 768px; 96→256px desktop rail layout remains unchanged.
+The College Admin `Placement cell` cross-link never displays a misleading
+TPO section heading, including when visiting `/tpo/home`. The desktop
+sidebar brand and navigation fallback now use its first available account
+destination, rather than unconditionally `/dashboard`.
+
+Full value references, exact edited file lines, source-scan counts and
+remaining B3/B4 strict proof blockers are in `clone-sidebar.md`.

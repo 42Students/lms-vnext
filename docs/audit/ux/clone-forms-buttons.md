@@ -474,3 +474,28 @@ At the old LMS SCSS `components___variables.scss:148-156` phone boundary 767px a
 | Touch target | `components___variables.scss:139,148` 44px phone target at 767px | `button.tsx:19-23` icon sizing uses `max-[767px]`; `globals.css:618-624` min-height >=44px | Matched breakpoint declarations |
 
 **Exact fetched-file grep:** `button.tsx`: raw `<button>` **1** (intentional shared primitive), `<input>` **0**, `<select>` **0**, `<textarea>` **0**; 2 existing `#dc2626` danger-hover color tokens remain in the shared-component file, and the global skin's source colors are separate. **Phone/tablet source proof:** at 767px and narrower, icon buttons now meet 44px in *both dimensions*; 768px and above retain the 36px desktop action role. Whole-repository raw-button grep and browser interaction/rendered measurements are outstanding, so strict D stays **[ ]**.
+
+
+ 
+## 2026-10-19 replacement lane — native-compatible time and month picker parity
+
+- [x] `src/components/ui/date-input.tsx` **source file updated and checked**, not the strict C3 category. The existing `DateInputProps` union, `mode`, ref, name, value/defaultValue, onChange, min/max, disabled/readOnly, calendarPopup and form-native validation are preserved. The date grid, month grid and minute-resolution time panel are now all anchored to the shared `PopoverPanel`; seconds/any-step, week and datetime-local still deliberately retain their browser-native UI.
+- [ ] C3 date/time/range category (missing: week/datetime-local AntD-equivalent popups; screenshot and keyboard/focus checks for 375px and 768px; full caller inventory and authoritative whole-src grep).
+
+| State/property | Legacy old-LMS source and exact property | vNext source and property | Source comparison |
+| --- | --- | --- | --- |
+| Date selected cell | `components___antddesign.scss:191-203` selected background `$clrThird` #26bac7 | `date-input.tsx:225-238` date button selected `--lms-primary` #26bac7 | Matches role's selected paint |
+| Month selected cell | `components___antddesign.scss:191-203` selected picker cell #26bac7 | `date-input.tsx:204-220` selected month #26bac7/white | Matches selected paint; old month-cell dimensions not proven |
+| Time selected option | `components___antddesign.scss:204-207` #26bac7/white | `date-input.tsx:168-202` time hour/minute pressed option `--lms-primary`/white | Matches selected paint |
+| Time scroll area | `components___antddesign.scss:209-215` scrollbar-width none and hidden WebKit track | `date-input.tsx:171,183` scrollbar-width none and WebKit scrollbar hidden | Matches source declarations |
+| Picker selected-day border | `components___antddesign.scss:191-194` `$clrThird` before ring | `date-input.tsx:227-238` active selected button teal and existing focus outline via `Button` | Partial: old cell pseudo-border geometry is not reproduced |
+| Popup surface | `components___form.scss:66-79` white #fff, 12px radius, subtle shadow | `date-input.tsx:158-164` anchored white, radius 12px, shared search-dropdown shadow | Color/radius match; original AntD picker popup shadow is not specified here |
+| Default field | `components___form.scss:117-127` background #fbfcfd, 10px, 14px/20px, 400 | `date-input.tsx:139-145` delegates to `Input` and `globals.css` shared field tokens | Match shared field role |
+| Error/focus | `components___form.scss:130-143` teal 15% focus and red 20% invalid halo | `date-input.tsx:139-143` shared Input error/focus styles | Matches available source states |
+| Disabled/read-only | `components___antddesign.scss:153-185` disabled button neutral, `components___variables.scss:29-32` muted disabled | `date-input.tsx:70-71,93-95,150-154` noninteractive popup button and native input | States retained; visual browser proof pending |
+| Time step and min/max | Native `input[type=time]` standards; legacy `components___antddesign.scss:204-215` shows minute panel without step logic | `date-input.tsx:65-82` validates integer minute step, min/max and min-based step offset; unsupported second steps fall back to native | Behaviour compatibility improvement, not claim of historical exact parity |
+| Phone/tablet | `components___variables.scss:139,148-156` >=44px phone at <=767px; tablet from 768px | `date-input.tsx:154,178,191,212` popup controls >=44px on phone; shared Input and Button desktop/tablet controls | Source breakpoint agreement only; actual phone/tablet not observed |
+
+**Exact fetched-file grep:** in `date-input.tsx`, raw `<button>`: **0**, raw `<input>`: **0**, raw `<select>`: **0**, raw `<textarea>`: **0**, hex literals in style declarations: **0**. The 24-hour/60-minute popup renders with shared `<Button>...</Button>` and `<PopoverPanel>...</PopoverPanel>` paired tags; untouched React input controls remain native only inside shared `Input`. No code, tests, browser, full-tree grep or CI was run. Strict A1–A4, C1–C7 and D remain **12 open / 0 strict ticks**.
+
+**Next exact file:** `src/components/ui/selection-controls.tsx` (verify native checkbox/radio/switch readonly-like/invalid semantics, touch geometry and focus states), followed by `src/components/ui/file-upload.tsx` and `src/components/ui/file-dropzone.tsx` (selection/drop ownership and accessible progress).

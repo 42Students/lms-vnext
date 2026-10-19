@@ -1,4 +1,4 @@
-import Link from "next/link";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -16,8 +16,7 @@ export default async function RecruiterChangeRequestsPage({params}:{params:Promi
  return <div className="space-y-5">
   <PageHeader eyebrow="Recruiter · Drive" title={data.job.title+" · Change requests"}
    description="Suggest changes to the college, reply to their questions and review recorded decisions."
-   actions={<Link href={"/recruiter/drives/"+encodeURIComponent(jobId)}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive</Link>}/>
+   actions={<PageBackLink href={"/recruiter/drives/"+encodeURIComponent(jobId)} label="Back to drive"/>}/>
   {!data.storageReady?<p role="status" className="border-b border-border pb-5 text-sm text-body">
    {data.pendingMessage} The college cannot receive changes here until registration is complete.</p>:
    <TpoDriveChangeRequests jobId={jobId} party={data.party} userId={context.user.id} requests={data.requests}/>}

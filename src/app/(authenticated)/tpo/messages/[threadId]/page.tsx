@@ -27,7 +27,7 @@ export default async function TpoRecruiterConversationPage({params}:{
  const data=await getTpoRecruiterThreadDetail(context,threadId);
  if(!data)notFound();
  return <div className="space-y-5">
-  <Link href="/tpo/messages" className="text-sm font-semibold text-primary-text">
+  <Link href="/tpo/messages" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text">
    ← All conversations
   </Link>
   <PageHeader title="Recruiter conversation"/>

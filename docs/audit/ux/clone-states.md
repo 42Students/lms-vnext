@@ -303,3 +303,128 @@ All 16 changed pages retain original copy, conditionals, permissions, links, fil
 - [ ] F5 empty/error/system states (missing: entire 403/404/500/offline/session/maintenance inventory, full grep, responsive browser proof).
 
 Next exact file: src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx — two capped-result notices. Then src/app/(authenticated)/tpo/placements/lifecycle/page.tsx — recruiter-access-ended notice.
+
+
+## Chat-5 continuation: next 36 TPO state/component sources (2026-10-19)
+
+**Branch baseline and output.** Fast-forwarded the lane to its then-current `main` ancestor `68d52934a61acdeeda3b4c68804550b86607a5ea` (no rewrite, no changes to `main`). Edited 36 **distinct** TPO placement route/component TSX source files, each through a branch-only `[chat-5]` update. All 36 changed sources were independently re-fetched from the lane and scanned with anchored, text-level regexes. This is not execution of TypeScript, app code, tests, lint, CI, browser screenshots, or checkout-local `rg`.
+
+### Per-source grep-equivalent proof
+
+The following counts came from re-fetched `chatgpt/chat-5-b` file bytes. Alert and Banner counts show **open / close**. Raw includes deliberately retained unstyled `role="status"` announcements on live counters and structured result lists; Styled is raw status regions containing their own border/bg/padding. Path source prefix is exact. All 36 Alert pairs matched. No new skeletal loader was introduced in this turn.
+
+| Re-fetched modified source | Alert open/close | Banner open/close | EmptyState | InlineNotice | Remaining raw status/alert | Styled raw |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx` | 2/2 | 0/0 | 2 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/page.tsx` | 1/1 | 0/0 | 0 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx` | 0/0 | 0/0 | 1 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/page.tsx` | 1/1 | 0/0 | 0 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx` | 1/1 | 0/0 | 1 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx` | 0/0 | 0/0 | 1 | 0 | 0 | 0 |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx` | 2/2 | 0/0 | 0 | 3 | 0 | 0 |
+| `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx` | 1/1 | 0/0 | 3 | 0 | 2 | 0 |
+| `src/components/placements/tpo-applicant-review-form.tsx` | 0/0 | 0/0 | 0 | 2 | 0 | 0 |
+| `src/components/placements/tpo-bulk-drive-reminder.tsx` | 0/0 | 0/0 | 0 | 2 | 0 | 0 |
+| `src/components/placements/tpo-company-feedback-form.tsx` | 0/0 | 0/0 | 0 | 2 | 0 | 0 |
+| `src/components/placements/tpo-company-interaction-form.tsx` | 0/0 | 0/0 | 0 | 2 | 0 | 0 |
+| `src/components/placements/tpo-drive-cancel-form.tsx` | 0/0 | 0/0 | 0 | 1 | 0 | 0 |
+| `src/components/placements/tpo-drive-change-requests.tsx` | 1/1 | 0/0 | 1 | 3 | 0 | 0 |
+| `src/components/placements/tpo-drive-clone-action.tsx` | 0/0 | 0/0 | 0 | 1 | 0 | 0 |
+| `src/components/placements/tpo-drive-close-preview-form.tsx` | 0/0 | 0/0 | 0 | 1 | 0 | 0 |
+| `src/components/placements/tpo-drive-deadline-form.tsx` | 0/0 | 0/0 | 0 | 1 | 0 | 0 |
+| `src/components/placements/tpo-drive-edit-form.tsx` | 0/0 | 0/0 | 0 | 1 | 0 | 0 |
+| `src/components/placements/tpo-drive-saved-views.tsx` | 0/0 | 0/0 | 1 | 2 | 0 | 0 |
+| `src/components/placements/tpo-drive-selection-manager.tsx` | 1/1 | 0/0 | 1 | 3 | 1 | 1 |
+| `src/components/placements/tpo-general-requests-panel.tsx` | 0/0 | 0/0 | 1 | 3 | 0 | 0 |
+| `src/components/placements/tpo-interview-slot-planner.tsx` | 0/0 | 0/0 | 1 | 3 | 1 | 0 |
+| `src/components/placements/tpo-joining-update-form.tsx` | 0/0 | 0/0 | 0 | 1 | 0 | 0 |
+| `src/components/placements/tpo-remind-non-applicants.tsx` | 0/0 | 0/0 | 0 | 5 | 0 | 0 |
+| `src/components/placements/tpo-report-invalid-filters.tsx` | 1/1 | 0/0 | 0 | 0 | 0 | 0 |
+| `src/components/placements/tpo-request-bulk-decision.tsx` | 1/1 | 0/0 | 0 | 2 | 2 | 0 |
+| `src/components/placements/tpo-request-decision-control.tsx` | 0/0 | 0/0 | 0 | 2 | 0 | 0 |
+| `src/components/placements/tpo-round-apply-control.tsx` | 1/1 | 0/0 | 0 | 1 | 1 | 0 |
+| `src/components/placements/tpo-round-calendar-control.tsx` | 2/2 | 0/0 | 1 | 1 | 0 | 0 |
+| `src/components/placements/tpo-round-check-in.tsx` | 0/0 | 0/0 | 0 | 1 | 0 | 0 |
+| `src/components/placements/tpo-round-reorder.tsx` | 0/0 | 0/0 | 0 | 4 | 0 | 0 |
+| `src/components/placements/tpo-round-result-entry-form.tsx` | 0/0 | 0/0 | 0 | 2 | 0 | 0 |
+| `src/components/placements/tpo-round-results-import.tsx` | 0/0 | 0/0 | 4 | 1 | 2 | 1 |
+| `src/components/placements/tpo-selection-import.tsx` | 0/0 | 0/0 | 2 | 2 | 1 | 0 |
+| `src/components/placements/tpo-trust-toggle.tsx` | 0/0 | 0/0 | 0 | 2 | 0 | 0 |
+| `src/components/placements/tpo-waitlist-promotion-control.tsx` | 1/1 | 0/0 | 1 | 2 | 0 | 0 |
+| **Scoped total** | **16/16** | **0/0** | **21** | **56** | **10** | **2** |
+
+**Intentional exemptions from notice-component conversion:** the two styled raw `role="status"` containers are `src/components/placements/tpo-drive-selection-manager.tsx` and `src/components/placements/tpo-round-results-import.tsx`, both bounded/scrollable **itemized operation-result regions** rather than inline banners. The other raw status regions are unstyled live counts, selection totals, and import/result announcements. These are not claims of zero remaining hand-rolled states across the application. No `src/components/ui/*` files were modified in this continuation; the shared primitives retain their existing APIs. `tpo-round-reorder.tsx` had a duplicate `Button` import removed while updating the source.
+
+Commands for local verification (NOT EXECUTED here):
+```sh
+git ls-tree -r --name-only chatgpt/chat-5-b src/app | grep -E '(^|/)(loading|error|not-found)\.tsx$' | sort
+rg -n 'role="(alert|status)"|<Alert|</Alert>|<Banner|</Banner>|<InlineNotice|<EmptyState' src/app src/components -g '*.tsx'
+rg -n '<(p|div|span|section)[^>]*role="(alert|status)"[^>]*(rounded|border|bg-|p-[0-9]|px-|py-)' src/app src/components -g '*.tsx'
+rg -n 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g 'loading.tsx'
+```
+This is *source-file grep proof only*, not whole-repo command output. The main-branch GitHub source index is asynchronous and cannot establish a zero remaining instance count for the lane.
+
+### Legacy / vNext value comparison, exact source lines
+
+| Element property / state | Legacy exact value/source | vNext exact source/value | Verdict |
+| --- | --- | --- | --- |
+| Success hue and subtle fill | `docs/design/legacy-styles/components___variables.scss:67-68`: `#059669`, `rgba(5,150,105,.10)` | `src/app/globals.css:47-48`: same values; `src/components/ui/inline-notice.tsx:10` uses token fill | **MATCH** color tokens; 0.25 border opacity not sourced as exact old property |
+| Warning hue/fill | `components___variables.scss:69-70`: `#d97706`, `rgba(217,119,6,.10)` | `globals.css:49-50` same; `src/components/ui/alert.tsx:12` uses `--lms-warning-surface` (actual `globals.css:1077` = `#fef6e7`) | **MISMATCH / missing source equivalence** for rendered warning fill |
+| Error hue/fill | `components___variables.scss:71-72`: `#ef4444`, `rgba(239,68,68,.10)` | `globals.css:51-52` same; `alert.tsx:13`, `inline-notice.tsx:9` use fill token and `rgba(239,68,68,.25)` border | **MATCH** base fill and hue; **OPEN** border opacity and tone text |
+| Info hue/fill | `components___variables.scss:73-74`: `#26bac7`, `#eff8fa` | `globals.css:56-57` same; `alert.tsx:10`, `inline-notice.tsx:11` use `--lms-primary-subtle` | **MATCH** base palette; border exact old value **OPEN** |
+| Default notice geometry | `docs/design/old-lms-pages.md:12`: visually slim yellow strip with dot and outlined action; no authoritative per-element px rule on this source line | `src/components/ui/banner.tsx:17-22`: 6px dot, 10px vertical padding, flex-wrap and optional action; `alert.tsx:18`: 16px horizontal / 12px vertical, `--lms-control-radius` | **OPEN** exact match, especially radius and original outlined-action metrics |
+| Control radius | `components___variables.scss:133`: `6px` | `globals.css:343`: `9px` used by `alert.tsx:18`, `inline-notice.tsx:33` | **MISMATCH**; owning foundation/forms lane must reconcile without cross-lane CSS overwrite |
+| Spacing 1–6 | `components___variables.scss:116-121`: 4/8/12/16/24/32px | `globals.css:350-355`: same values | **MATCH** first six tokens |
+| Spacing 7/8 | `components___variables.scss:122-123`: 40/48px | `globals.css:356-357`: 48/64px | **MISMATCH**, not altered by chat-5 |
+| Error vs status live region | Legacy bespoke per-route markup varied; `components___accessibility.scss:19-23` keyboard ring 2px, 3px offset | `src/components/ui/inline-notice.tsx:32-36` provides role alert/status, assertive/polite announcement, wrapped text, 44px mobile dismiss target | **Source semantic parity** for migrated notices; keyboard-focus ring offset differs; no browser proof |
+| Empty-state word wrapping | `docs/design/legacy-styles/components___antddesign.scss:21-23` mobile max-width 767px (drawer example), `old-lms-pages.md:6` one white canvas | `src/components/ui/empty-state.tsx:6-9` transparent interior, `min-w-0`, `break-words`, `[overflow-wrap:anywhere]`, phone 16px padding, `sm:` (640px) 24px padding | **Overflow-conscious source**, but **OPEN** 640–767px breakpoint mismatch and actual 320px/767px/991px rendering |
+| Hover/focus/disabled/loading | `components___accessibility.scss:19-23`: 2px outline, 3px offset; `components___variables.scss:139`: 44px touch target | `inline-notice.tsx:35-36`: dismiss focus offset 2px, min-h-11 then `sm:` control height 36px, hover white/50; `Button` callers retain `disabled={pending}`; `Alert` no actions of its own | **OPEN** hover/focus/disabled exact-value proof and rendered target sizes. No change to shared Button |
+| Loading and reduced motion | Legacy page observation `old-lms-pages.md:26`: dotted compile spinner in dev, not a page spec | `src/components/ui/skeleton.tsx:21-30`: shimmer with `motion-reduce:animate-none`; this continuation migrated error/empty/inline, not route loaders | **OPEN** dotted-spinner comparison; no F4 strict tick |
+
+### Responsive / no-regression proof (static, bounded)
+
+All updated feedback mounts only shared `Alert` / `InlineNotice` / `EmptyState` in place of visual one-off markup. `Alert` has `min-w-0 max-w-full flex-col break-words` (`alert.tsx:18`); `InlineNotice` has `min-w-0` and a wrapping `flex-1 break-words` message (`inline-notice.tsx:32-34`); `EmptyState` uses word wrapping and phone/tablet padding (`empty-state.tsx:6-9`). Existing TPO grids retain `sm:grid-cols-2/3`, `md:min-h-9`, wrapping action rows and scrolling result lists. Per-route conditions (data truncation, absent result/offer, storage migration gate, invalid date, audited cancellation, offer/selection release, role permission) and original recovery/confirmation functions remained unchanged. Converted JSX opening/closing names re-read and balanced for Alert/Banner/Button. These are **static source-level phone/tablet overflow checks, not viewport screenshots or pixel parity**. In particular the Tailwind 640px breakpoint and old 767px distinction is not resolved by this turn.
+
+- [ ] **F3 alerts/banners/inline** (missing exact old padding, radius, color and focus/hover state equivalence; whole-repo grep; browser 320px/767px/tablet proofs).
+- [ ] **F4 loading** (missing all-route loading census, component animation timing and reduced-motion proof, live screenshot).
+- [ ] **F5 empty/error/system states** (missing whole-repo census including 403/404/500/maintenance/offline/session, responsive browser proofs and visual parity).
+
+**Next exact source:** `src/components/placements/tpo-sequential-request-review.tsx` (unreviewed response/error statuses); after that `src/components/placements/tpo-recruiter-grant-controls.tsx`. Do not tick entire F3–F5 or route inventory just because the source component was updated.
+
+
+### Next 12 TPO state sources after the 36-file table — 2026-10-19
+
+This continuation extends the same chat-5 lane source-migration evidence to twelve more distinct `src/components/placements/tpo-*.tsx` files. All twelve were fetched from the written lane branch and reviewed for Alert/InlineNotice/EmptyState use, role semantics and mobile source tokens. No `src/components/ui/*` changes, build, tests, CI, runtime or screenshots.
+
+| Updated source file | Alert pairs | EmptyState | InlineNotice | Remaining raw status | Styled raw | Source line(s) | Responsive/exemption check |
+| --- | ---: | ---: | ---: | ---: | ---: | --- | --- |
+| `src/components/placements/tpo-sequential-request-review.tsx` | 0/0 | 0 | 2 | 1 | 0 | 53,57 | status-counter kept; shared notices wrap |
+| `src/components/placements/tpo-public-placement-toggle.tsx` | 0/0 | 0 | 1 | 0 | 0 | 41 | original button unchanged |
+| `src/components/placements/tpo-company-lifecycle-editor.tsx` | 0/0 | 0 | 3 | 0 | 0 | 107-109 | existing action wrap intact |
+| `src/components/placements/tpo-round-result-recorder.tsx` | 0/0 | 0 | 1 | 0 | 0 | 232 | result form unchanged |
+| `src/components/placements/tpo-request-page-clipboard.tsx` | 0/0 | 1 | 1 | 1 | 0 | 98,129 | mobile table selection unchanged |
+| `src/components/placements/tpo-recruiter-grant-controls.tsx` | 0/0 | 1 | 9 | 0 | 0 | 50,78-85,120-126,163-169 | sm:grid-cols-3; min-h-11 buttons |
+| `src/components/placements/tpo-college-rules-control.tsx` | 0/0 | 0 | 2 | 1 | 1 | 84,114 | policy explanatory section kept as role=status |
+| `src/components/placements/tpo-outside-participants-editor.tsx` | 1/1 | 0 | 1 | 0 | 0 | 38,59 | availability gate and flex-wrap preserved |
+| `src/components/placements/tpo-company-person-editor.tsx` | 1/1 | 0 | 1 | 0 | 0 | 109,119 | review Button no longer nested inside a paragraph |
+| `src/components/placements/tpo-season-controls.tsx` | 1/1 | 0 | 1 | 0 | 0 | 71,102 | sm:grid-cols-2, mobile action wrap |
+| `src/components/placements/tpo-public-placement-content-editor.tsx` | 1/1 | 0 | 2 | 0 | 0 | 81-82,86 | 44px touch targets and flex items unchanged |
+| `src/components/placements/tpo-drive-act-on-panel.tsx` | 0/0 | 0 | 1 | 1 | 0 | 132 | count/status report retained, feedback shared |
+| **Scoped total** | **4/4** | **2** | **25** | **4** | **1** | — | Re-fetched source, not browser proof |
+
+**Incremental source-regex proof:** Alert openings and closings each **4**; `<EmptyState` **2**; `<InlineNotice` **25**; raw `role="status"/"alert"` **4**; one styled retained `role="status"` explanatory policy-summary section (`tpo-college-rules-control.tsx:104`), not an actionable alert. Other raw statuses are per-page counts / sequencing and bulk action summaries with intentionally preserved live reporting. New UI imports are named and matched, with no mismatched `<Alert>`/closing pairs. The parent 36-file table plus this table covers **48** distinct source files in this turn (excluding the two audit files).
+
+**Value and responsive cross-check carried forward:** `docs/design/legacy-styles/components___variables.scss:67-74` semantic status colors match `src/app/globals.css:47-57` for success/warning/error/info base colors. Rendered warning fill still differs (`globals.css:1077` is `#fef6e7` versus SCSS's `rgba(217,119,6,.10)`), control radius is still 9px vs legacy 6px (`globals.css:343` vs `variables.scss:133`), and focus outline offset in `inline-notice.tsx:35-36` is 2px versus legacy 3px (`components___accessibility.scss:19-23`). `Alert.tsx:18` and `InlineNotice.tsx:32-34` ensure `min-w-0` and message breaks, with old responsive selectors at `components___antddesign.scss:21-23` max-width 767px and modern `sm:` 640px requiring side-by-side comparison. All discrepancies remain **OPEN** and were not silently normalized to unverified values.
+
+To reproduce the **scoped** source counts locally (commands NOT run):
+```sh
+rg -n '<Alert|</Alert>|<InlineNotice|<EmptyState|role="(alert|status)"' src/components/placements/tpo-*.tsx
+rg -n 'max-w-full|min-w-0|break-words|flex-wrap|sm:|md:|lg:' src/components/placements/tpo-*.tsx
+```
+These commands, if run against the entire glob, will include files outside the 48 modified-source scope; the counts above are from fetched individual source files only, not purported whole-repository results.
+
+- [ ] F3 **OPEN** — full legacy property/state match, whole-repo zero hand-rolled count, 320/767/tablet actual visuals.
+- [ ] F4 **OPEN** — route loaders, spinner timing and reduced-motion broad proof not completed by this batch.
+- [ ] F5 **OPEN** — complete 403/404/500, maintenance, offline, session, error and empty inventory plus responsive checks.
+
+**Next exact file:** `src/components/placements/tpo-report-presentation.tsx` (error/status fallbacks), followed by `src/components/placements/tpo-report-record-links.tsx`.

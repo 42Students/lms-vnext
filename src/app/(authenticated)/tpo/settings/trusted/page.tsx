@@ -63,7 +63,7 @@ export default async function TpoTrustedCompaniesPage() {
         </section>
       ) : null}
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
         {[
           [
             "Linked companies",

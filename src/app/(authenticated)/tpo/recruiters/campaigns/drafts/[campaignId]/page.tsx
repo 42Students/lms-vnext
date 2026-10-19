@@ -26,7 +26,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
  const page=Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(totalPages,requestedPage)):1;
  if(ready&&!draft)notFound();
  return <div className="min-w-0 space-y-5">
-  <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-link underline">
+  <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline">
    ← Campaign history
   </Link>
   {!ready?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)]">{CAMPAIGN_DRAFT_UNAVAILABLE}</p>:
@@ -52,7 +52,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
      {recipients.rows.length?<ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border">
       {recipients.rows.slice((page-1)*25,page*25).map(row=><li key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 p-3 text-sm">
        <Link href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
-        className="inline-flex min-h-11 sm:min-h-9 min-w-0 items-center break-words font-semibold text-link underline">{row.name}</Link>
+        className="inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center break-words font-semibold text-link underline">{row.name}</Link>
        <span className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">
         {({PENDING:"Not sent",QUEUED:"Queued · delivery not confirmed",SENT:"Provider accepted",FAILED:"Failed",
           SKIPPED_NO_EMAIL:"Skipped · no email",SKIPPED_UNSUBSCRIBED:"Skipped · opted out",

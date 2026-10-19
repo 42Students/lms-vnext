@@ -1,4 +1,5 @@
 import { StatTile } from "@/components/ui/stat-tile";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Badge } from "@/components/ui/badge";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
@@ -585,14 +586,13 @@ export function FacultyCourseWorkspace({
                     ]);
 
                   return (
-                    <details
-                      key={lesson.id}
-                      open={selectedLessonId?true:lessonIndex===0?true:undefined}
-                      className="group rounded-[var(--lms-canvas-radius)] border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
-                    >
-                      <summary aria-label={"Lesson "+(lessonIndex+1)+": "+lesson.name+
-                        ", "+itemCount+" items. Expand or collapse lesson"}
-                        className="mb-4 flex min-h-11 cursor-pointer list-none flex-wrap items-start justify-between gap-3 rounded-[var(--lms-control-radius)] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-primary">
+                    <Disclosure key={lesson.id}
+                      defaultOpen={Boolean(selectedLessonId || lessonIndex === 0)}
+                      summaryAriaLabel={"Lesson "+(lessonIndex+1)+": "+lesson.name+", "+itemCount+" items. Expand or collapse lesson"}
+                      summaryClassName="mb-4 flex min-h-11 cursor-pointer list-none flex-wrap items-start justify-between gap-3 rounded-[var(--lms-control-radius)] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-primary"
+                      preserveSummary
+                      title={<>
+
                         <div>
                           <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                             Lesson{" "}
@@ -612,7 +612,9 @@ export function FacultyCourseWorkspace({
                         <Badge tone="neutral">
                           {itemCount} items · Expand lesson
                         </Badge>
-                      </summary>
+                      
+                      </>}
+                      className="group rounded-[var(--lms-canvas-radius)] border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5">
 
                       {!selectedLessonId?<Link href={"?lesson="+encodeURIComponent(lesson.id)}
                         className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
@@ -695,7 +697,7 @@ export function FacultyCourseWorkspace({
                           )}
                         </div>
                       )}
-                    </details>
+                    </Disclosure>
                   );
                 },
               )}
