@@ -87,7 +87,7 @@ export function LearnerNotificationBell(){
    {error?<div className="mt-2 space-y-2"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
     <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center text-sm text-primary-text underline" onClick={()=>void refresh()}>Retry notifications</Button>
    </div>:null}
-   {loading&&!everLoaded?<GracefulPageLoading/>:null}
+   {loading&&!everLoaded?<div data-learner-notification-state="" role="status"><GracefulPageLoading/></div>:null}
    {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground">Showing the last successful notifications.</p>:null}
    {items.length===0&&!error&&!loading?<p role="status" className="mt-3 text-sm text-muted-foreground">No notifications yet</p>:null}
    {due.length>0?<section aria-label="Assignments due soon" className="mt-3">
