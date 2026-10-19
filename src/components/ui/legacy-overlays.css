@@ -197,6 +197,22 @@
 [data-slot="popover"] {
   box-shadow: 9px 11px 28px rgba(0, 0, 0, .1);
 }
+/* docs/design/legacy-styles/components___dropdown.scss:96-126: profile menu variant */
+#lms-topbar-account-dialog {
+  width: min(280px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  min-height: 150px;
+  padding: 16px 24px;
+  border-radius: 6px;
+  box-shadow: 9px 11px 28px rgba(0, 0, 0, .1);
+}
+@media (max-width: 767px) {
+  #lms-topbar-account-dialog {
+    width: calc(100vw - 24px);
+    border-radius: 14px;
+    padding: 16px;
+  }
+}
 [data-slot="popover-listbox"] { border-radius: 12px; }
 [data-slot="popover-listbox"] { box-shadow: 0 4px 24px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04); }
 [data-slot="popover-listbox"] { max-width: min(420px, calc(100vw - 24px)); }
