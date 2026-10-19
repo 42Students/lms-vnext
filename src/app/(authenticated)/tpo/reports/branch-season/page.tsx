@@ -53,7 +53,7 @@ export default async function TpoBranchSeasonPage({
             <Select
               name="seasonId"
               defaultValue={dashboard.season?.id ?? ""}
-              className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm font-normal"
+              className="mt-2 block min-h-11 sm:min-h-9"
             >
               {dashboard.seasons.map((season) => (
                 <option key={season.id} value={season.id}>
@@ -64,7 +64,7 @@ export default async function TpoBranchSeasonPage({
           </label>
           <Button variant="secondary"
             type="submit"
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground"
+            className="min-h-11 sm:min-h-9"
           >
             View season
           </Button>
