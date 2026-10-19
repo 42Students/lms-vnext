@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StatTile } from "@/components/ui/stat-tile";
 import type {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import type {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
@@ -20,12 +21,10 @@ export function CollegeDrivePipelineOverview({jobId,data,attention}:{
    <h2 className="text-lg font-semibold">Application pipeline</h2>
    <p className="text-xs text-muted-foreground">These are current registered College Admin application stages, not cumulative funnel conversions.</p>
    <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-5">
-    {stages.map(stage=><Link key={stage} href={base+"/applications?stage="+stage}
-      className="rounded-xl border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-      <p className="text-sm">{labels[stage]}</p>
-      <strong className="mt-2 block text-2xl tabular-nums">{data.totals[stage]??0}</strong>
-      <span className="text-xs text-primary-text underline">View applications</span>
-    </Link>)}
+    {stages.map(stage=><StatTile key={stage} href={base+"/applications?stage="+stage}
+      label={labels[stage]} value={data.totals[stage]??0}>
+      <span className="mt-2 block text-xs text-primary-text underline">View applications</span>
+    </StatTile>)}
    </div>
   </section>
   <section aria-label="Drive needs attention" className="rounded-xl border border-border bg-surface p-5">
