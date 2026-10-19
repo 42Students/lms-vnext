@@ -1,3 +1,4 @@
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 "use client";
 import Link from "next/link";
@@ -34,7 +35,7 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  const columns:DataTableColumn<TpoAuditRow>[]=[
   {key:"selected",header:"Select",mobileLabel:"Select row",mobilePriority:"action",
    cell:row=><label className="inline-flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" aria-label={"Select "+row.title}
+    <Checkbox aria-label={"Select "+row.title}
      checked={selected.includes(row.kind+":"+row.id)}
      onChange={e=>setSelected(ids=>e.target.checked?[...ids,row.kind+":"+row.id]:ids.filter(id=>id!==row.kind+":"+row.id))}/>
     <span className="sm:sr-only">Select</span></label>},
@@ -71,17 +72,17 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
     </Select>
    </label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={showAbout} onChange={e=>setShowAbout(e.target.checked)} />About
+    <Checkbox checked={showAbout} onChange={e=>setShowAbout(e.target.checked)} />About
    </label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={showDetail} onChange={e=>setShowDetail(e.target.checked)} />Detail
+    <Checkbox checked={showDetail} onChange={e=>setShowDetail(e.target.checked)} />Detail
    </label>
    <button type="button" onClick={()=>void copy()}
     className="min-h-11 rounded border border-border px-3 text-sm text-[var(--lms-teal-deep)]">Copy rows</button>
    <button type="button" onClick={()=>{setWho("");setWhat("");setOldestFirst(false);setSelected([]);setShowAbout(true);setShowDetail(true);}}
     className="min-h-11 rounded border border-border px-3 text-sm">Reset grid</button>
   </div>
-  <label className="inline-flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" aria-label="Select all visible rows"
+  <label className="inline-flex min-h-11 items-center gap-2 text-sm"><Checkbox aria-label="Select all visible rows"
    checked={visible.length>0&&visible.every(row=>selected.includes(row.kind+":"+row.id))}
    onChange={event=>setSelected(event.target.checked?visible.map(row=>row.kind+":"+row.id):[])}/>
    Select all visible rows</label>
