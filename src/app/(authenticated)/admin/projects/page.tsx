@@ -157,7 +157,7 @@ export default async function SuperAdminProjectsPage({
       {!templatesResult.ok ? <Banner tone="warning">
         Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
       </Banner> : null}
-      <Tabs ariaLabel="Workspace display mode" renderPanel={false} value={view}
+      <Tabs ariaLabel="Workspace display mode" renderPanel={false} value={view??"cards"}
         items={[
           {value:"table",label:"Table",href:viewHref("table"),count:result.total},
           {value:"cards",label:"Cards",href:viewHref("cards"),count:result.total},
