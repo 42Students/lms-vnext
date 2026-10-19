@@ -54,6 +54,20 @@ export function HrRecruiterBell(){
   mq.addEventListener("change",check);
   return ()=>mq.removeEventListener("change",check);
  },[]);
+ useEffect(()=>{
+  if(!open || mobile)return;
+  const pointer=(event:PointerEvent)=>{
+   if(rootRef.current && !rootRef.current.contains(event.target as Node))setOpen(false);
+  };
+  const key=(event:KeyboardEvent)=>{
+   if(event.key!=="Escape")return;
+   if(event.target instanceof Node && rootRef.current && !rootRef.current.contains(event.target))return;
+   event.preventDefault();setOpen(false);triggerRef.current?.focus();
+  };
+  document.addEventListener("pointerdown",pointer);
+  document.addEventListener("keydown",key);
+  return ()=>{document.removeEventListener("pointerdown",pointer);document.removeEventListener("keydown",key);};
+ },[open,mobile]);
  async function markAll(){
   if(!markAllGate.current.tryBegin())return;
   setLoading(true);setSaveError("");
