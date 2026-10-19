@@ -20,6 +20,6 @@ export function AdminScopedCsvControl({href,filename}:{href:string;filename:stri
  }
  return <div className="space-y-2"><Button size="sm" variant="secondary" disabled={pending} onClick={()=>void download()}>
   {pending?"Preparing CSV…":"Export matching CSV (max 250)"}</Button>
-  {error?<p role="alert" className="max-w-sm text-sm text-error-text">{error}</p>:null}
+  {error?<p role="alert" className="max-w-sm text-sm text-error">{error}</p>:null}
  </div>;
 }
