@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {groupRuleCriteriaSchema} from "@/modules/groups/rule-evaluator";
@@ -76,10 +78,10 @@ export function CollegeGroupDetailWrites({
       <p className="text-sm text-body">Edit the supported V1 criteria as JSON. At least one criterion is required. Saving does not run a refresh or change membership.</p>
       <label className="grid gap-2 text-sm font-semibold text-body">Rule criteria
         <Textarea rows={9} spellCheck={false} value={ruleJson} onChange={e=>setRuleJson(e.target.value)}
-          className="w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono text-xs text-foreground" />
+          className="w-full font-mono text-xs" />
       </label>
       <label className="flex items-center gap-2 text-sm text-body">
-        <input type="checkbox" checked={autoRefresh} onChange={e=>setAutoRefresh(e.target.checked)}/>
+        <Checkbox checked={autoRefresh} onChange={e=>setAutoRefresh(e.target.checked)}/>
         Enable rule auto-refresh setting (does not execute a refresh now)
       </label>
       <Button variant="primary" type="button" disabled={busy} onClick={saveRule}
