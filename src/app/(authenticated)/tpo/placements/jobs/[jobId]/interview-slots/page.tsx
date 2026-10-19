@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 import {notFound,redirect} from "next/navigation";
 import {ZodError} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -26,9 +27,7 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
  return <div className="min-w-0 space-y-5">
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
     className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
-  <header><h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Interview slot proposals</h1>
-   <p className="mt-2 text-sm text-body">{data.job.title} · Employer-proposed time blocks for your college.</p>
-  </header>
+  <PageHeader title="Interview slot proposals" description={data.job.title+" · Employer-proposed time blocks for your college."} />
   <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
    Proposals and employer-internal reservations are not confirmed student interviews. The placement cell must arrange its own rooms, candidates and confirmed schedule separately.
   </p>
