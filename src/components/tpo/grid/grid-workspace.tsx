@@ -173,8 +173,11 @@ export function GridWorkspace<Row>({
  return <section className="min-w-0 space-y-3" aria-label="TPO grid workspace" data-tpo-grid-workspace>
   <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label="TPO table tools">
    {searchMode!=="hidden"?<div className="flex min-w-[190px] max-w-lg flex-1 items-center gap-2">
-    <Input aria-label="Search table" value={typed} maxLength={searchMaxLength}
-     placeholder={searchPlaceholder} onChange={event=>setTyped(event.target.value)}/>
+    <Input aria-label="Search table" value={searchMode==="controlled"?querySearch:typed} maxLength={searchMaxLength}
+     placeholder={searchPlaceholder} onChange={event=>{
+     if(searchMode==="controlled")onSearchChange?.(event.target.value);
+     else setTyped(event.target.value);
+    }}/>
     <Button variant="secondary" type="button" onClick={()=>{
      const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{[searchParam]:typed.trim()});
      router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
