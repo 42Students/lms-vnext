@@ -72,7 +72,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </fieldset>)}
   <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries}/>
   <div className="flex flex-wrap items-center gap-3">
-   <Button variant="primary" type="button" disabled={!ready||saving||changed.length===0} onClick={()=>void save()}>
+   <Button variant="primary" type="button" className="min-h-11 md:min-h-9" disabled={!ready||saving||changed.length===0} onClick={()=>void save()}>
     {saving?"Saving…":"Save "+changed.length+" changed setting"+(changed.length===1?"":"s")}
    </Button>
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>
