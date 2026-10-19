@@ -64,7 +64,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
     className="mt-2 w-full rounded-[9px] border border-border bg-surface p-3 text-foreground"/></label>
   <p className="text-xs text-body">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <button type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-5 font-semibold disabled:opacity-50 text-primary-foreground">
+  <button type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-5 font-[650] disabled:opacity-50 text-primary-foreground">
    {pending?"Closing…":"Review and close drive"}</button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
     title="Close this drive?"
