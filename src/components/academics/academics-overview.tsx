@@ -223,6 +223,7 @@ export function AcademicsOverview({
   >[] = [
     {
       key: "section",
+      mobilePriority: "primary",
       header: "Section",
       cell: (section) => (
         <div>
@@ -237,6 +238,7 @@ export function AcademicsOverview({
     },
     {
       key: "cohort",
+      mobilePriority: "secondary",
       header: "Cohort / Program",
       cell: (section) => (
         <div>
@@ -271,6 +273,7 @@ export function AcademicsOverview({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (section) => (
