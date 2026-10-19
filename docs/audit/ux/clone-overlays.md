@@ -4,8 +4,8 @@ Owner: chat-16. Date: 2026-10-19. Reference: `docs/design/ui-clone-checklist.md`
 
 ## Strict results
 
-- [ ] **F1 — Modals, dialogs, drawers, popconfirm** (missing: full visual and exit-state proof; 2 live responsive hand-rolled modal/drawer implementations remain, mobile navigation and FilterBar; all responsive/hover/focus/closing variants have not been verified)
-- [ ] **F2 — Toasts, tooltips, popovers, dropdown/context menus** (missing: legacy toast-specific state and duration source, tooltip arrow placement, context-menu complete icon/divider inventory, zero nonmodal popup coverage proof, and closing-animation parity)
+- [ ] **F1 — Modals, dialogs, drawers, popconfirm** (missing: exhaustive legacy variant/state tables, fresh checkout-wide grep proof, and browser/phone/tablet verification; native responsive filter Drawer and mobile navigation have been migrated, but CSS/behavior parity of all consumers remains unverified)
+- [ ] **F2 — Toasts, tooltips, popovers, dropdown/context menus** (missing: legacy toast-specific state/duration source, context-menu icon/divider/state inventory, branch-wide grep proof, and popup closing-animation parity)
 
 No item is ticked: both value and coverage proof are incomplete even though many individual values match.
 
@@ -15,7 +15,7 @@ No item is ticked: both value and coverage proof are incomplete even though many
 | --- | --- | --- | --- |
 | Drawer scrim default | `rgba(30,54,63,.1)`; `docs/design/legacy-styles/components___antddesign.scss:143-145` | `rgba(30,54,63,.1)`; `src/components/ui/legacy-overlays.css:12-15` | Match, drawer type |
 | Desktop/right notification drawer shadow | `-4px 0 24px rgba(0,0,0,.12)`; `components___notification-drawer.scss:402-405` | `-4px 0 24px rgba(0,0,0,.12)`; `src/components/ui/drawer.tsx:40` | Match, right drawer |
-| Generic side-drawer mobile/nav width | `82%` with `max-width:300px`; `components___antddesign.scss:305-310, 414-417` | Generic Drawer `width:100%` on mobile, `600px` max desktop; `src/components/ui/drawer.tsx:40`. Specialized mobile nav retains separate panel | **Mismatch / variant not cloned** |
+| Generic side-drawer mobile/nav width | `82%` with `max-width:300px`; `components___antddesign.scss:305-310, 414-417` | Mobile navigation passes `side="left"` in `src/components/shell/mobile-navigation.tsx:32-36`; `[data-side=left]` uses `min(82vw,300px)` in `src/components/ui/legacy-overlays.css:48-54` | Match for the legacy navigation variant; other side drawers unverified |
 | Modal phone max width | `calc(100vw - 32px)`; `components___antddesign.scss:1037-1041` | `w-[calc(100%_-_2rem)]`; `src/components/ui/dialog.tsx:53` | Match when viewport container is full width |
 | Modal mobile available height | `calc(100dvh - 48px)`; `components___antddesign.scss:1057-1061` | `calc(var(--lms-visual-height) - 3rem)`; `src/components/ui/dialog.tsx:53-54` | Match height allowance; visualViewport adjustment is an intentional WebView enhancement |
 | Modal mobile radius | `12px`; `components___antddesign.scss:1057-1062` | `var(--lms-canvas-radius)`; `src/components/ui/dialog.tsx:53` | Token resolution / every variant not independently proved |
@@ -28,11 +28,11 @@ No item is ticked: both value and coverage proof are incomplete even though many
 | Modal body padding | `24px`; `components___common.scss:1084-1090` | `sm:p-[var(--lms-canvas-padding)]`; `src/components/ui/dialog.tsx:62` | Token resolution / narrow phones differ; not fully proved |
 | Modal footer action gap, phone | `8px`; `components___antddesign.scss:1064-1070` | `8px`; `src/components/ui/legacy-overlays.css:40-43` | Match |
 | Footer mobile action target | `min-height:44px`; `components___antddesign.scss:1069-1073` | `min-height:44px`; `src/components/ui/legacy-overlays.css:44-46` | Match |
-| Close glyph | Old Ant close icon `16px`; `components___common.scss:1068-1075` | SVG canvas `18px`; `src/components/ui/overlay-close-icon.tsx:3-8` | **Mismatch (18 versus 16)** |
+| Close glyph | Old Ant close icon `16px`; `components___common.scss:1068-1075` | SVG canvas `16px`; `src/components/ui/overlay-close-icon.tsx:3-8` | Match dimensions; icon path still needs side-by-side visual proof |
 | Drawer close mobile touch target | `44px`; `components___antddesign.scss:335-346` | `min-h-11 min-w-11`; `src/components/ui/drawer.tsx:45` | Match |
 | Drawer mobile body scroll | `scrollbar-width:none`, WebKit scrollbar hidden; `components___antddesign.scss:349-360` | `ScrollCue` plus scrollbar suppression; `src/components/ui/drawer.tsx:47`, `src/app/globals.css` overlay scrollbar rules | Partially proved |
 | Modal opening animation | Various Ant modal variants / pageSlideIn 180ms; `components___antddesign.scss:1-15, 960-1065` | `lms-legacy-dialog-enter 180ms ease-out`; `src/components/ui/legacy-overlays.css:150-165` | **Not proved as same keyframes** |
-| Modal exit/close animation | Native Ant close motion not exhaustively represented in bundled SCSS | Native `dialog.close()` immediately; `src/components/ui/dialog.tsx:35-43` | **Missing closing animation equivalence** |
+| Modal exit/close animation | Native Ant close motion not exhaustively represented in bundled SCSS | `useOverlayExit` holds native dialog top layer for `180ms` (`src/components/ui/dialog.tsx:36`, `src/components/ui/use-overlay-exit.ts:10-45`); CSS `lms-legacy-dialog-exit` in `src/components/ui/legacy-overlays.css` | Implemented exit; exact legacy keyframes/duration not proven |
 | Disabled or pending destructive confirmation | Ant button disabled/confirm rules; `components___antddesign.scss:899-906` and button override rules | Shared `dismissible` and pending guards; `src/components/ui/dialog.tsx:15-25, 49-51`, `src/components/ui/confirm-action-dialog.tsx:7-20` | Behaviour guarded; visual state not fully audited |
 | Error / empty / loading modal content | Page-specific legacy variants | Consumer-owned content under `ScrollCue`; `src/components/ui/dialog.tsx:62` | **Not equivalent for all callers** |
 
@@ -47,7 +47,7 @@ No item is ticked: both value and coverage proof are incomplete even though many
 | Tooltip min height | `27px`; `components___antddesign.scss:55` | `27px`; `src/components/ui/legacy-overlays.css:68` | Match |
 | Tooltip shadow | `0 2px 8px rgba(0,0,0,.2)`; `components___antddesign.scss:56` | Same; `src/components/ui/legacy-overlays.css:73` | Match |
 | Tooltip arrow dimensions | `10×10px`; `components___antddesign.scss:59-63` | `10×10px`; `src/components/ui/legacy-overlays.css:75-79` | Match dimensions |
-| Tooltip arrow alignment | Legacy arrow right `-2px`; `components___antddesign.scss:60-64` | Left-aligned arrow (`left-4`); `src/components/ui/tooltip.tsx:54` | **Mismatch / placement-dependent behavior not proved** |
+| Tooltip arrow alignment | Legacy arrow right `-2px`; `components___antddesign.scss:59-64` | Right `-2px`; `src/components/ui/tooltip.tsx:54` and `src/components/ui/legacy-overlays.css:75-79` | Match static right-edge offset; other placements still unverified |
 | Tooltip Escape/focus | Ant trigger keyboard behavior varies by placement | `Escape`, hover, focus and touch paths; `src/components/ui/tooltip.tsx:20-54` | **Legacy timing equivalence unproved** |
 | Header dropdown radius | `6px`; `components___dropdown.scss:27-35, 93-101` | `6px`; `src/components/ui/dropdown.tsx:85-86` | Match |
 | Header dropdown shadow | `9px 11px 28px rgba(0,0,0,.1)`; `components___dropdown.scss:32-35, 98-100` | Same; `src/components/ui/legacy-overlays.css:80-83` | Match |
@@ -75,7 +75,7 @@ The GitHub repository code-search API was queried on the then-current `main` ind
 
 | Requested command for local/orchestrator recheck | GitHub code-search equivalent and file count | Remaining non-shared uses / exemption |
 | --- | --- | --- |
-| `git grep -nl 'fixed inset-0' -- src` | exact phrase `"fixed inset-0"`: **3 files** | `src/components/ui/filter-bar.tsx` (hand-built mobile filter overlay); `src/components/shell/mobile-navigation.tsx` (hand-built left navigation drawer); `src/app/company-share/[token]/page.tsx` (noninteractive confidentiality watermark, **not** an overlay) |
+| `git grep -nl 'fixed inset-0' -- src` | exact phrase `"fixed inset-0"`: **3 files** | Main-index results only; branch uses `ResponsiveFilterDrawer` backed by a single native Drawer (`src/components/ui/drawer.tsx:58-97`) and mobile navigation already uses shared Drawer (`src/components/shell/mobile-navigation.tsx:32-36`); `src/app/company-share/[token]/page.tsx` is a noninteractive confidentiality watermark, **not** a modal |
 | `git grep -nl 'role="dialog"' -- src` | exact phrase `role="dialog"`: **9 files** | Includes CSS selector/observer literals; nonmodal account menu, HR, recruiter, learner popovers and mobile navigation |
 | `git grep -nl 'role="alertdialog"' -- src` | exact phrase `role="alertdialog"`: **3 files** | TPO callers passing `role="alertdialog"` to the **shared Dialog**, not nested custom alertdialog markup |
 | `git grep -nl '<dialog' -- src` | case-insensitive GitHub search for `<dialog`: **105 files** | This search includes capitalized JSX `<Dialog>`; **not** a native-`<dialog>` count; local case-sensitive grep still required |
@@ -85,6 +85,23 @@ The GitHub repository code-search API was queried on the then-current `main` ind
 
 ## Coverage and no-regression notes
 
-The TPO reminder preview, announcement delete, calendar move/create, offer withdrawal, team ask/message confirmations, verification review and mentor/learner task details were migrated to shared dialogs/drawers in preceding chat-16 batches. Existing nonmodal notification popovers were deliberately not changed to `showModal()`, to avoid trapping the rest of the page. Responsive filter and left-navigation overlays still need a dedicated same-subtree / left-side shared Drawer adaptation; blindly converting either would change navigation and form behavior.
+The TPO reminder preview, announcement delete, calendar move/create, offer withdrawal, team ask/message confirmations, verification review and mentor/learner task details were migrated to shared dialogs/drawers in preceding chat-16 batches. Existing nonmodal notification popovers were deliberately not changed to `showModal()`, to avoid trapping the rest of the page. Responsive filter now uses the one-subtree `inlineDesktop` shared Drawer with a native phone dialog; mobile navigation uses `side="left"` shared Drawer. Inline-desktop closed-dialog CSS/accessibility, breakpoint transitions, and focus restoration require device/browser verification.
 
 Source-only JSX opening/closing checks across **12 modified TSX files** in this branch comparison reported **zero counted tag mismatches**. This is not a compiler check. No CI, tests, typecheck, lint, application run or browser comparison was performed. Source evidence alone does **not** close F1 or F2.
+
+
+## Work queue and 2026-10-19 branch checkpoint
+
+- [x] Sync branch with current main using a merge commit (not a history-rewriting rebase), preserving all 25 lane-modified paths and reconciling shared controls. The branch contains the checked main commit; future main merges remain necessary as other lanes push.
+- [x] Migrate the responsive filter popup from a separate `fixed inset-0` scrim and custom `role="dialog"` focus trap to native shared `Drawer` with a single mounted form subtree: `src/components/ui/drawer.tsx:58-97`; `src/components/ui/filter-bar.tsx` continues to use the same exported wrapper with its unchanged props.
+- [x] Keep mobile nav on shared left `Drawer`, including the legacy 82vw/300px panel and 44px close target: `src/components/shell/mobile-navigation.tsx:32-36`, `src/components/ui/legacy-overlays.css:47-69`.
+- [x] Tooltip arrow right `-2px` and close glyph 16px: `src/components/ui/tooltip.tsx:54`, `src/components/ui/overlay-close-icon.tsx:3-8` compared with `components___antddesign.scss:59-64` and `components___common.scss:1068-1075`.
+- [x] Replace interactive TPO request column chooser: `src/components/placements/tpo-request-page-clipboard.tsx` now uses shared `Dropdown` / `Button`; previously duplicated `Checkbox` import removed.
+- [x] Replace recruiter-lead row actions accordion-menu: `src/components/tpo/recruiter-leads-workspace.tsx` now uses shared responsive `Dropdown` with existing child controls preserved.
+- [ ] Check true overlay disclosures vs inline expandable content beginning at `src/components/tpo/tpo-spreadsheet-grid.tsx` (mobile row actions). Do not replace ordinary static `<details>` help/section disclosure just to reduce a grep count.
+- [ ] Inspect nonmodal popovers and header account/context menus for legacy menu icons, separators, keyboard focus, disabled/hover/active and phone layouts; check `src/components/shell/topbar/account-menu.tsx` and `src/components/hr/hr-recruiter-bell.tsx` first.
+- [ ] Establish source-backed toast timeout/persistence and global popup exit motion; selected SCSS lacks one shared source for all variants.
+- [ ] Required checkout verification **NOT RUN by owner constraint**: `git grep -n 'fixed inset-0' -- src`, `git grep -n 'role="dialog"' -- src`, `git grep -n 'role="alertdialog"' -- src`, and inventory of `<details>/<summary>` used as menus. The remote default-branch code search returned legacy/indexed matches and is **not** strict zero-coverage proof.
+- [ ] Required viewport verification **NOT RUN**: 375px/767px phone, 768px tablet and desktop sizes; focus trap/recovery, Escape, outside click, Back history, safe areas, exit/reduced-motion, footer alignment, scroll containment and error/disabled/loading states.
+
+F1 and F2 stay **unticked under STRICT TICK RULE** until exact per-state value proof, complete branch-coverage proof and responsive/no-regression evidence are available. No app, CI, lint, typecheck, unit test, or browser was run in this turn.
