@@ -636,12 +636,12 @@ export function LearnerClassSchedule({
                     const inside=day.slice(0,7)===
                       anchor.getFullYear()+"-"+String(anchor.getMonth()+1).padStart(2,"0");
                     const selected=chosenDay===day;
-                    return <button key={day} type="button"
+                    return <Button key={day} variant="ghost" type="button"
                       data-outside={!inside}
                       aria-label={day+", "+dayItems.length+" classes"}
                       aria-pressed={selected}
                       onClick={()=>setChosenDay(day)}
-                      className={styles.monthDay}>
+                      className={styles.monthDay+" !block !w-full !min-h-[96px] !justify-start"}>
                       <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
                       {dayItems.length ? <span aria-hidden="true" className="mt-1 flex flex-wrap gap-0.5">
                         {dayItems.slice(0,3).map(event=><span key={event.id} className={"size-1.5 rounded-full bg-primary " +
@@ -652,7 +652,7 @@ export function LearnerClassSchedule({
                       {dayItems.length ? <span className="mt-1 block break-words text-[10px] font-semibold text-primary-text sm:text-xs">
                         {dayItems.length} {dayItems.length===1?"class":"classes"}
                       </span> : null}
-                    </button>;
+                    </Button>;
                   })}
                 </CalendarGrid>
                 <section className={styles.selectedAgenda} aria-label="Selected day agenda">
