@@ -1,3 +1,4 @@
+import { MetricBar } from "@/components/ui/metric-bar";
 import Link from "next/link";
 import { ProjectArchiveControl } from "@/components/projects/project-archive-control";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -87,10 +88,8 @@ export function ProjectAdminWorkspaceList({
         const progress=safeProjectProgressPercent(item.progressPercent);
         return progress===null ? <span className="text-sm text-muted-foreground">Progress unavailable</span> :
         <div className="flex items-center gap-2">
-          <div role="progressbar" aria-label={item.title+" progress"} aria-valuemin={0}
-            aria-valuemax={100} aria-valuenow={progress}
-            className="h-2 w-24 overflow-hidden rounded bg-muted">
-            <div className="h-full bg-primary" style={{width:progress+"%"}}/></div>
+          <MetricBar role="progressbar" className="w-24"
+            label={item.title+" progress"} value={progress} maximum={100} unit="percent" />
           <span className="tabular-nums">{progress}%</span>
         </div>;
       }},
