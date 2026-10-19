@@ -92,7 +92,7 @@ export function MobileNavigation({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="lms-mobile-sidebar absolute inset-y-0 left-0 flex max-h-[var(--lms-visual-height)] w-[min(82vw,300px)] flex-col border-r-0 bg-surface shadow-[var(--lms-overlay-shadow)]"
+            className="lms-mobile-sidebar absolute inset-y-0 left-0 flex max-h-[var(--lms-visual-height)] w-[min(82vw,300px)] flex-col border-r-0 bg-surface shadow-[var(--lms-overlay-shadow)] overscroll-contain"
           >
             <div className="flex min-h-[calc(52px+env(safe-area-inset-top,0px))] shrink-0 items-center justify-between gap-2 border-b border-[#f0f0f0] pt-[calc(10px+env(safe-area-inset-top,0px))] pr-1 pb-[10px] pl-4">
               <div className="inline-flex h-10 w-10 items-center justify-center" aria-label="42Students LMS">
