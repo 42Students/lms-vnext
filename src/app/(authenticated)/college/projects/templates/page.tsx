@@ -77,7 +77,7 @@ export default async function CollegeProjectTemplatesPage({
         <Button type="submit" variant="secondary">
           Search
         </Button>
-        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">
+        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">
           Clear search
         </Link> : null}
         <ProjectTemplateCatalogueExport rows={rows} />
