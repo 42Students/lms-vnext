@@ -20,15 +20,26 @@ export function FacultyReportDownload(props: Props) {
         ...reportData,
         summary:incomplete?["This report is incomplete",...reportData.summary]:reportData.summary,
       });
-      const url = URL.createObjectURL(new Blob([pdf], { type: "application/pdf" }));
-      const title = props.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70) || props.kind;
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = props.kind + "-report-" + title + ".pdf";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      let url: string | null = null;
+      let link: HTMLAnchorElement | null = null;
+      try {
+        url = URL.createObjectURL(new Blob([pdf], { type: "application/pdf" }));
+        const title = props.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70) || props.kind;
+        link = document.createElement("a");
+        link.href = url;
+        link.download = props.kind + "-report-" + title + ".pdf";
+        document.body.appendChild(link);
+        link.click();
+        // Keep the object URL available until the browser has accepted the handoff.
+        const pendingUrl = url;
+        window.setTimeout(() => URL.revokeObjectURL(pendingUrl), 30_000);
+        url = null;
+      } finally {
+        link?.remove();
+        if (url !== null) {
+          try { URL.revokeObjectURL(url); } catch { /* best effort on failed download */ }
+        }
+      }
     } catch {
       setError(props.kind==="attendance"?"Couldn\'t generate the attendance report. Please try again.":"Could not generate the PDF. Please try again.");
     }
