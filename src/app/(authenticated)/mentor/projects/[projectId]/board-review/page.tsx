@@ -24,8 +24,8 @@ export default async function MentorBoardReviewPage({
     normalized?{projectId,...normalized}:null,
   );
   if(!validated.success)return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid board filters" />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>
+    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid board filters</h1>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Projects</Link>
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -81,7 +81,7 @@ export default async function MentorBoardReviewPage({
         <Button type="submit" variant="primary">
           Filter
         </Button>
-        <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+        <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
