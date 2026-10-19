@@ -185,6 +185,7 @@
 }
 [data-slot="toast-stack"] { max-width: min(420px, calc(100vw - 32px)); }
 [data-slot="toast-stack"] > section { border-radius: 12px; background: #fff; }
+[data-slot="toast-stack"] > section { overflow-wrap: anywhere; }
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
