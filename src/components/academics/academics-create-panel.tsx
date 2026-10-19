@@ -299,6 +299,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !periodName.trim() ||
@@ -396,6 +397,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !programDepartmentId ||
@@ -535,6 +537,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !cohortProgramId ||
@@ -663,6 +666,7 @@ export function AcademicsCreatePanel({
         <div className="mt-4">
           <Button
             type="submit"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             disabled={
               pending ||
               !sectionCohortId ||
