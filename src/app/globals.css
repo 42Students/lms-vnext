@@ -392,6 +392,10 @@ body {
   cursor: not-allowed;
   opacity: .5;
 }
+[data-slot="button"]:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
 [data-slot="input"]:disabled,
 [data-slot="select"]:disabled,
 [data-slot="textarea"]:disabled {
@@ -1081,4 +1085,10 @@ body {
   background: var(--lms-neutral-50);
   color: var(--lms-neutral-400);
   border-color: var(--lms-border);
+}
+
+/* Empty listings live on the single page canvas, including in the optional tracker theme. */
+:root[data-tracker-theme="dark"] [data-slot="empty-state"] {
+  background: transparent;
+  border-color: transparent;
 }
