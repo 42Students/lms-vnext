@@ -63,17 +63,17 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
  }
  return <>
  <div className="flex flex-wrap items-center gap-2" aria-label={kind+" lifecycle actions"}>
-   {actions.map(action=><Button key={action} type="button" size="sm" className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+   {actions.map(action=><Button key={action} type="button" size="md" className="min-h-11 md:min-h-[var(--lms-control-height)]"
      variant={action==="ARCHIVE"?"ghost":"secondary"}
      disabled={pending!==null||saved}
      onClick={()=>setConfirmAction(action)}>
      {pending===action?"Saving…":action==="CLOSE"?"Close quiz":
        action==="PUBLISH"?"Publish":"Delete"}
    </Button>)}
-   {saved?<span role="status" className="text-xs text-success">
+   {saved?<Alert tone="success">
      {lastAction==="ARCHIVE"?(kind==="QUIZ"?"Quiz deleted successfully.":"Assignment deleted."):"Change saved. Refreshing Section state…"}
-   </span>:null}
-   {error?<span role="alert" className="text-xs font-semibold text-error">{error}</span>:null}
+   </Alert>:null}
+   {error?<Alert tone="error">{error}</Alert>:null}
  </div>
  <ConfirmDialog
    open={confirmAction!==null}
