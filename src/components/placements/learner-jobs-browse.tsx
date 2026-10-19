@@ -4,6 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
 import {
   availableLearnerJobFacets,
@@ -92,7 +95,7 @@ export function LearnerJobsBrowse({
   const savedOpen=paged.filter(item=>!item.deadlinePassed);
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
-  const selectClass = "mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] text-foreground outline-none focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9";
+  const selectClass = "mt-1 min-h-11 sm:min-h-9";
   return (
     <div className="space-y-5">
       <nav aria-label="Drive bookmarks" className="flex flex-wrap items-center gap-3">
@@ -119,7 +122,7 @@ export function LearnerJobsBrowse({
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="text-xs font-semibold text-body sm:col-span-2">
             Search drives, companies and roles
-            <input
+            <Input
               type="search"
               value={search}
               maxLength={100}
@@ -130,25 +133,25 @@ export function LearnerJobsBrowse({
           </label>
           <label className="text-xs font-semibold text-body">
             Employment type
-            <select value={filters.employmentType}
+            <Select value={filters.employmentType}
               onChange={(event) => updateQuery({ type: event.target.value })}
               className={selectClass}>
               <option value="all">All types</option>
               {facets.types.map((type) => (
                 <option key={type} value={type}>{humanize(type)} ({employmentCounts.get(type)??0})</option>
               ))}
-            </select>
+            </Select>
           </label>
           <label className="text-xs font-semibold text-body">
             Location
-            <select value={filters.location}
+            <Select value={filters.location}
               onChange={(event) => updateQuery({ loc: event.target.value })}
               className={selectClass}>
               <option value="all">All locations</option>
               {facets.locations.map((location) => (
                 <option key={location} value={location}>{location}</option>
               ))}
-            </select>
+            </Select>
           </label>
         </div>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Drive application availability">
@@ -169,8 +172,7 @@ export function LearnerJobsBrowse({
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={filters.eligibleOnly}
               onChange={(event) => updateQuery({
                 eligible: event.target.checked ? "1" : null,
@@ -180,8 +182,7 @@ export function LearnerJobsBrowse({
             Eligible only
           </label>
           <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={filters.closingSoon}
               onChange={(event) => updateQuery({
                 soon: event.target.checked ? "1" : null,
@@ -192,15 +193,15 @@ export function LearnerJobsBrowse({
           </label>
           <label className="ml-auto inline-flex min-h-10 items-center gap-2 text-sm text-body">
             Sort by
-            <select value={filters.sort}
+            <Select value={filters.sort}
               aria-label="Sort placement drives"
               onChange={(event) => updateQuery({ sort: event.target.value })}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9">
+              className="min-h-11 sm:min-h-9">
               <option value="deadline">Deadline soonest</option>
               <option value="newest">Newest first</option>
               <option value="ctc">Highest CTC</option>
               <option value="title">Role A–Z</option>
-            </select>
+            </Select>
           </label>
           <button type="button" onClick={() => {
               setSearch("");

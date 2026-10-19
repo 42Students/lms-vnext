@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
@@ -7,35 +8,6 @@ import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-cour
 type Signals = Awaited<
   ReturnType<typeof getFacultyCourseHomeSignals>
 >;
-
-function SignalCard({
-  label,
-  value,
-  detail,
-  href,
-}: {
-  label: string;
-  value: string | number;
-  detail: string;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 outline-none transition hover:border-primary hover:bg-primary-subtle focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-    >
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold text-foreground">
-        {value}
-      </p>
-      <p className="mt-1 text-xs leading-5 text-body">
-        {detail}
-      </p>
-    </Link>
-  );
-}
 
 export function FacultyCourseHomeSignals({
   signals,
@@ -125,13 +97,13 @@ export function FacultyCourseHomeSignals({
           </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <SignalCard
+          <StatTile
             label="Reviews"
             value={assignmentsReady ? signals.pendingSubmissions.length : "—"}
             detail="Submitted assignments waiting for grading."
             href={firstPending ? reviewHref : `/teacher/allAssignments`}
           />
-          <SignalCard
+          <StatTile
             label="Attendance"
             value={
               !attendanceReady || signals.attendance.averagePercent === null
@@ -143,7 +115,7 @@ export function FacultyCourseHomeSignals({
               : "Attendance data unavailable."}
             href={`/teacher/courses/${deliveryId}/attendanceDetail`}
           />
-          <SignalCard
+          <StatTile
             label="At-risk Students"
             value={riskReady ? signals.atRiskTotal : "—"}
             detail={riskReady
@@ -151,7 +123,7 @@ export function FacultyCourseHomeSignals({
               : "Risk could not be calculated from incomplete signals."}
             href={`/teacher/courses/${deliveryId}/students`}
           />
-          <SignalCard
+          <StatTile
             label="Performance"
             value={
               !assignmentsReady || signals.performance.averagePercent === null

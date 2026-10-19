@@ -1,4 +1,5 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -59,7 +60,7 @@ export function TpoDriveRequestActions({requestId,status}:{
         action==="SEND_BACK"?"Tell the recruiter what needs to change.":
         "Tell the recruiter why this request is not accepted."}</p>
       <label className="block text-sm">Reason
-        <textarea value={reason} maxLength={1000} rows={3} disabled={busy||guardedPending}
+        <Textarea value={reason} maxLength={1000} rows={3} disabled={busy||guardedPending}
           onChange={event=>setReason(event.target.value)}
           className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
       </label>

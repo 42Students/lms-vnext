@@ -3,6 +3,9 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
@@ -75,7 +78,7 @@ export function TpoDraftDriveStepOneForm({
       setPending(false);
     }
   }
-  const cls = "mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground";
+  const cls = "mt-1";
   return (
     <form onSubmit={(event) => void submit(event)}
       className="space-y-5 border-b border-border pb-5">
@@ -85,48 +88,48 @@ export function TpoDraftDriveStepOneForm({
       </p>
       <label className="block text-sm font-semibold text-foreground">
         Company relationship
-        <select className={cls} value={companyRelationshipId}
+        <Select className={cls} value={companyRelationshipId}
           onChange={(event) => setCompanyRelationshipId(event.target.value)} disabled={pending}>
           {companies.map((company) => (
             <option key={company.relationshipId} value={company.relationshipId}>{company.name}</option>
           ))}
-        </select>
+        </Select>
       </label>
       <label className="block text-sm font-semibold text-foreground">
         Initial role / drive title
-        <input className={cls} required minLength={3} maxLength={100}
+        <Input className={cls} required minLength={3} maxLength={100}
           value={title} disabled={pending}
           onChange={(event) => setTitle(event.target.value)}/>
       </label>
       <label className="block text-sm font-semibold text-foreground">
         Role description
-        <textarea className={cls} required rows={4} maxLength={20000}
+        <Textarea className={cls} required rows={4} maxLength={20000}
           value={description} disabled={pending}
           onChange={(event) => setDescription(event.target.value)}/>
       </label>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm font-semibold text-foreground">
           Employment type
-          <select className={cls} value={employmentType} disabled={pending}
+          <Select className={cls} value={employmentType} disabled={pending}
             onChange={(event) => setEmploymentType(event.target.value as typeof employmentType)}>
             <option value="FULL_TIME">Full time</option>
             <option value="INTERNSHIP">Internship</option>
             <option value="CONTRACT">Contract</option>
-          </select>
+          </Select>
         </label>
         <label className="block text-sm font-semibold text-foreground">
           Work mode
-          <select className={cls} value={workMode} disabled={pending}
+          <Select className={cls} value={workMode} disabled={pending}
             onChange={(event) => setWorkMode(event.target.value as typeof workMode)}>
             <option value="ONSITE">On site</option>
             <option value="HYBRID">Hybrid</option>
             <option value="REMOTE">Remote</option>
-          </select>
+          </Select>
         </label>
       </div>
       <label className="block text-sm font-semibold text-foreground">
         Application deadline (optional, IST)
-        <input className={cls} type="datetime-local" value={deadline}
+        <Input className={cls} type="datetime-local" value={deadline}
           disabled={pending} onChange={(event) => setDeadline(event.target.value)}/>
       </label>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
