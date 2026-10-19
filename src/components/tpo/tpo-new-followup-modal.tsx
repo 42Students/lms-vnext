@@ -10,7 +10,7 @@ import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-follow
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type LeadChoice={id:string;name:string;companyName:string|null};
-const field="min-h-11 w-full";
+const field="min-h-9 w-full";
 export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const router=useRouter();
  const [open,setOpen]=useState(false);
@@ -114,8 +114,8 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
      <div className="flex justify-end gap-2">
       <Button variant="secondary" type="button" disabled={saving} onClick={dismiss}
-       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</Button>
-      <Button variant="primary" type="submit" disabled={saving||loading} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</Button>
+      <Button variant="primary" type="submit" disabled={saving||loading} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
        {saving?"Adding…":"Add"}
       </Button>
      </div>
