@@ -1,6 +1,7 @@
 "use client";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
+import {Switch} from "@/components/ui/selection-controls";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -72,7 +73,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
     <option value="INHERIT">Inherit</option><option value="ON" disabled={ancestorLocked}>On</option><option value="OFF" disabled={ancestorLocked}>Off</option>
    </Select>
   </label>
-  <label className="flex items-center gap-2 text-xs text-body"><Checkbox checked={locked} disabled={busy||ancestorLocked||choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock this college rule</label>
+  <Switch label="Lock this college rule" checked={locked} disabled={busy||ancestorLocked||choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>
   <div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={disabled||impactBusy} onClick={()=>{void reviewChange();}}>Review policy change</Button><Button size="sm" variant="ghost" disabled={busy} onClick={()=>{void recheck();}}>Recheck stored rule</Button></div>
   {feedback?<p role="status" className="text-xs text-body">{feedback}</p>:null}
   <ConfirmDialog open={confirm} onOpenChange={setConfirm} title={lockChanged?"Confirm college feature lock change":"Confirm college feature policy"}
