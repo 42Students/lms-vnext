@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
+import monthStyles from "@/components/academics/legacy-class-month-grid.module.css";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
@@ -122,26 +123,26 @@ export default async function LearnerAttendanceCalendarPage({
       {" "}Attendance percentage: {data.summary.percentage===null
         ?"Unknown (no marked classes)" : data.summary.percentage+"%"}.
     </p>
-    <section aria-label={monthLabel+" attendance calendar"} className="rounded-xl border border-border bg-surface p-3 sm:p-5">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <section aria-label={monthLabel+" attendance calendar"} className={monthStyles.calendarCard}>
+      <div className={monthStyles.toolbar}>
         <Link href={previous} aria-label="Previous month"
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">← Previous</Link>
-        <h2 className="text-lg font-semibold text-foreground">{monthLabel}</h2>
+          className={monthStyles.navLink}>← Previous</Link>
+        <h2 className={monthStyles.period}>{monthLabel}</h2>
         <Link href={next} aria-label="Next month"
-          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
+          className={monthStyles.navLink}>Next →</Link>
       </div>
-      <CalendarGrid className="text-center text-xs font-semibold text-muted-foreground sm:gap-2">
+      <CalendarGrid className={monthStyles.mobileGrid+" p-3 sm:p-5"}>
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>
-          <span key={day} className={"py-1 "+(index===0?calendarStyles.calendarSunday:"")}>{day}</span>)}
+          <span key={day} className={monthStyles.mobileWeekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{day}</span>)}
         {days.map((day,index)=>{
           if(!day) return <div key={"pad-"+index} aria-hidden="true"/>;
           const entries=byDay.get(day)??[];
           const label=Number(day.slice(-2));
           return <div key={day}
             aria-label={day+": "+entries.length+" matching classes"}
-            className="min-h-14 rounded-[var(--lms-control-radius)] border border-border p-1 sm:min-h-20 sm:p-2">
-            <div className={"text-right font-semibold text-foreground "+(new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>{label}</div>
-            {entries.length>0?<div className="mt-1 rounded bg-primary-subtle px-1 py-0.5 text-center text-xs font-semibold text-primary-text">
+            className={monthStyles.mobileDay}>
+            <div className={monthStyles.dayNumber+" "+(new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>{label}</div>
+            {entries.length>0?<div className={monthStyles.mobileCount}>
               {entries.length} class{entries.length===1?"":"es"}
             </div>:null}
             <div className="mt-1 hidden flex-wrap gap-1 sm:flex">
