@@ -2,6 +2,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {FileUpload} from "@/components/ui/file-upload";
 import {Checkbox} from "@/components/ui/checkbox";
 import { useRef, useState } from "react";
@@ -94,7 +95,7 @@ export function CollegeFacultyCsvImport(){
         getRowKey={item=>String(item.row)}
         columns={[
           {key:"row",header:"Row",cell:item=>item.row,mobilePriority:"primary"},
-          {key:"status",header:"Status",cell:item=>item.status,mobilePriority:"secondary"},
+          {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="CREATED"||item.status==="VALID"?"success":item.status==="FAILED"||item.status==="INVALID"?"error":"neutral"}>{item.status}</StatusBadge>,mobilePriority:"secondary"},
           {key:"reason",header:"Reason",cell:item=>item.detail,mobilePriority:"secondary"},
         ]}
         empty={<p className="text-sm text-body">No row-level results are available.</p>}/>
