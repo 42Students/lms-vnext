@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useMemo,useState} from "react";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
@@ -46,7 +47,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
    {choices("Department",unique(events.map(x=>x.departmentName??"Not recorded")),department,setDepartment)}
    {choices("Sort",["DATE","COMPANY"],sort,setSort)}
    <label className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={conflictsOnly} onChange={e=>setConflictsOnly(e.target.checked)}/>
+    <Checkbox checked={conflictsOnly} onChange={e=>setConflictsOnly(e.target.checked)}/>
     Possible conflicts only
    </label>
    <Button type="button" variant="secondary" onClick={()=>{
