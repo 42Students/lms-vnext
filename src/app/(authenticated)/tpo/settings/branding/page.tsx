@@ -25,7 +25,7 @@ function BrandColor({
   field: TpoBrandingField;
 }) {
   return (
-    <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+    <div className="border-b border-border pb-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <h3 className="m-0 text-base font-semibold text-foreground">
           {label}
@@ -45,7 +45,7 @@ function BrandColor({
         <span
           aria-hidden="true"
           className={
-            "h-12 w-12 shrink-0 rounded-[var(--lms-control-radius,9px)] border border-border " +
+            "h-12 w-12 shrink-0 rounded-[var(--lms-control-radius)] border border-border " +
             (field.value ? "" : "bg-primary")
           }
           style={
@@ -159,7 +159,7 @@ export default async function TpoPlacementBrandingPage() {
         </div>
 
         {branding.logoPreviewUrl ? (
-          <div className="mt-5 flex min-h-32 items-center justify-center rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-6">
+          <div className="mt-5 flex min-h-32 items-center justify-center rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-6">
             {/* Same validated public HTTPS image pattern
                 used by the college sign-in page. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
