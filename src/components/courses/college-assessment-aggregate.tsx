@@ -80,15 +80,15 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         actions={
           <div className="flex flex-wrap gap-2">
             <Link prefetch={false} download href={collegeAssessmentExportHref(data.kind,data.query)}
-              className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Export CSV
             </Link>
             <Link href={isAssignment ? "/college/quizzes" : "/college/assignments"}
-              className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               {isAssignment ? "View quizzes" : "View assignments"}
             </Link>
             <Link href="/college/courses"
-              className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Course catalogue
             </Link>
           </div>
@@ -96,7 +96,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
       />
 
       <section aria-label="Assessment directory filters"
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+        className="border-b border-border pb-5">
         <form method="get"
           action={isAssignment ? "/college/assignments" : "/college/quizzes"}
           className="flex flex-wrap items-end gap-3">
@@ -170,7 +170,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
             </Select>
           </label>
           <Button type="submit"
-            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
+            className="min-h-11 md:min-h-9">
             Filter
           </Button>
           <Link href={collegeAssessmentHref(data.kind, { q: "", scope: "ALL", results: "ALL", duePresence: "ALL", dueWindow: "ALL", status: "ALL", page: 1 })}
@@ -180,7 +180,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         </form>
       </section>
 
-      <section aria-label="Displayed assessment summary" className="grid gap-3 sm:grid-cols-3">
+      <section aria-label="Displayed assessment summary" className="grid gap-3 md:grid-cols-3">
         {[
           ["Matching records", data.total],
           ["Published on this page", summary.published],
@@ -193,7 +193,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         ))}
       </section>
 
-      <section aria-label={name + " records"} className="min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
+      <section aria-label={name + " records"} className="min-w-0 overflow-hidden border-y border-border">
         {data.items.length === 0 ? (
           <p className="p-6 text-sm text-body">
             {data.total === 0
@@ -202,7 +202,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           </p>
         ) : (
           <>
-            <div className="divide-y divide-border sm:hidden">
+            <div className="divide-y divide-border md:hidden">
               {data.items.map(item=><article key={item.id} className="min-w-0 space-y-3 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <h2 className="min-w-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
@@ -232,7 +232,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                  filesEnabled={assignmentFilesEnabled}/>:null}
               </article>)}
             </div>
-            <div className="hidden min-w-0 sm:block">
+            <div className="hidden min-w-0 md:block">
               <DataTable
                 caption={name+" records"}
                 rows={data.items}
@@ -292,13 +292,13 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         <div className="flex gap-2">
           {data.page > 1 ? (
             <Link href={collegeAssessmentHref(data.kind, { ...data.query, page: data.page - 1 })}
-              className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Previous
             </Link>
           ) : null}
           {data.page < data.totalPages ? (
             <Link href={collegeAssessmentHref(data.kind, { ...data.query, page: data.page + 1 })}
-              className="inline-flex min-h-10 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Next
             </Link>
           ) : null}
