@@ -5,6 +5,9 @@ import { RecruiterPlacementPortfolio } from "@/components/placements/recruiter-p
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import {recruiterDriveListQuerySchema,recruiterDrivesHref} from "@/modules/placements/recruiter-drive-list-model";
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
@@ -144,27 +147,27 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <input type="hidden" name="view" value={query.data.view} />
       <input type="hidden" name="page" value="1" />
       <label className="grid min-w-52 flex-1 gap-1 text-sm text-body">Search role
-        <input name="q" defaultValue={query.data.q} maxLength={100} placeholder="Job title" className="min-h-9 rounded-[9px] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text" /></label>
+        <Input name="q" defaultValue={query.data.q} maxLength={100} placeholder="Job title" className="w-full" /></label>
       <label className="grid min-w-36 gap-1 text-sm text-body">Employment
-        <select name="employment" defaultValue={query.data.employment} className="min-h-9 rounded-[9px] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
+        <Select name="employment" defaultValue={query.data.employment} className="w-full">
           <option value="ALL">All</option><option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
-        </select></label>
+        </Select></label>
       <label className="grid min-w-36 gap-1 text-sm text-body">Work mode
-        <select name="mode" defaultValue={query.data.mode} className="min-h-9 rounded-[9px] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
+        <Select name="mode" defaultValue={query.data.mode} className="w-full">
           <option value="ALL">All</option><option value="ONSITE">On-site</option><option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
-        </select></label>
+        </Select></label>
       <label className="grid min-w-36 gap-1 text-sm text-body">Deadline
-        <select name="deadline" defaultValue={query.data.deadline} className="min-h-9 rounded-[9px] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
+        <Select name="deadline" defaultValue={query.data.deadline} className="w-full">
           <option value="ALL">Any</option><option value="TODAY">Today (IST)</option><option value="SOON">Within 7 days</option><option value="PAST">Recorded deadline passed</option><option value="UNKNOWN">Not recorded</option>
-        </select></label>
+        </Select></label>
       <label className="grid min-w-36 gap-1 text-sm text-body">Sort
-        <select name="sort" defaultValue={query.data.sort} className="min-h-9 rounded-[9px] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
+        <Select name="sort" defaultValue={query.data.sort} className="w-full">
           <option value="RECENT">Newest first</option>
           <option value="DEADLINE">Deadline first</option>
           <option value="TITLE">Title A–Z</option>
-        </select>
+        </Select>
       </label>
-      <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Search</button>
+      <Button type="submit">Search</Button>
       <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="py-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">Reset</Link>
     </form>
     {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
