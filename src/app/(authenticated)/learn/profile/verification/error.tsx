@@ -1,2 +1,3 @@
+import { PageHeader } from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
-"use client";export default function Error({reset}:{error:Error;reset:()=>void}){return <main role="alert" className="py-5"><h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Verification status unavailable</h1><p className="mt-2 text-sm">Please retry. A load failure does not mean a verification was rejected.</p><Button type="button" onClick={reset} className="mt-4">Retry</Button></main>}
+"use client";export default function Error({reset}:{error:Error;reset:()=>void}){return <main role="alert" className="py-5"><PageHeader title={"Verification status unavailable"} /><p className="mt-2 text-sm">Please retry. A load failure does not mean a verification was rejected.</p><Button type="button" onClick={reset} className="mt-4">Retry</Button></main>}
