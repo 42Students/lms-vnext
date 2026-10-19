@@ -258,10 +258,10 @@ export function AssignmentSubmissionControl({
 
         {methodsError?<Alert tone="error" className="mt-2">{methodsError}</Alert>:null}
         {methodsEnabled&&!methodsLoaded&&!methodsError?<p role="status" className="mt-2 text-xs">Loading allowed submission methods…</p>:null}
-        {!fileUploadsEnabled&&mayUpload ? <p role={!mayWrite&&!mayLink?"alert":"status"} className="mt-2 text-xs text-muted-foreground">
+        {!fileUploadsEnabled&&mayUpload ? <Alert tone={mayWrite||mayLink?"warning":"error"} role={!mayWrite&&!mayLink?"alert":"status"} className="mt-2">
           {mayWrite||mayLink?"File uploads are currently unavailable. You can submit a written response or an HTTPS link.":
             "This assignment requires a PDF or file, but private uploads are unavailable. Ask your Faculty or college administrator to enable private file storage."}
-        </p> : null}
+        </Alert> : null}
         {submissionType==="LINK"&&methodsEnabled&&mayLink?
           <label className="mt-3 grid gap-1 text-xs font-semibold text-body">Link type
             <Select value={linkKind} disabled={submitting}
