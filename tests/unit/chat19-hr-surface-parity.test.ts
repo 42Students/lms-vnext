@@ -44,10 +44,10 @@ describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
   it("uses shared form controls for recruiter hiring round creation and editing", () => {
     const rounds = source(hr + "drives/[jobId]/rounds/editor/page.tsx");
     const remove = source(hr + "drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx");
-    expect((rounds.match(/<Input\\b/g) ?? []).length).toBe(3);
-    expect((rounds.match(/<Select\\b/g) ?? []).length).toBe(4);
-    expect((rounds.match(/<\\/Select>/g) ?? []).length).toBe(4);
-    expect((rounds.match(/<Button\\b/g) ?? []).length).toBe(2);
+    expect((rounds.match(/<Input\b/g) ?? []).length).toBe(3);
+    expect((rounds.match(/<Select\b/g) ?? []).length).toBe(4);
+    expect((rounds.match(/<\/Select>/g) ?? []).length).toBe(4);
+    expect((rounds.match(/<Button\b/g) ?? []).length).toBe(2);
     expect(rounds).not.toContain("<select ");
     expect(rounds).not.toContain("<button type=\"submit\"");
     expect(remove).toContain("<Button type=\"submit\">");
