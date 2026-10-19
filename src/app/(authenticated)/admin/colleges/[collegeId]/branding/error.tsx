@@ -19,7 +19,7 @@ export default function CollegeBrandingPreviewError({
           <Button variant="secondary" onClick={reset}>Retry</Button>
           <Link
             href="/admin/colleges"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
           >
             Colleges
           </Link>
