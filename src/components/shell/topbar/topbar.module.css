@@ -480,3 +480,13 @@
 @media (prefers-reduced-motion:reduce) {
   .orgTrigger,.orgPopover { animation:none; transition:none; }
 }
+
+/* Shared Input keeps the 36px legacy header combobox, not ordinary form height. */
+.searchBox .searchInput[data-slot="input"] {
+  min-height:0; height:100%; padding:0; border:0; border-radius:0;
+  background:transparent; box-shadow:none; outline:none;
+  font-size:12px; line-height:1.4;
+}
+.searchBox .searchInput[data-slot="input"]:focus-visible {
+  box-shadow:none; border:0; outline:none;
+}
