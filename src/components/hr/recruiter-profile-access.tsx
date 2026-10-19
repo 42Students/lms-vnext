@@ -1,9 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
+import { EmptyState } from "@/components/ui/empty-state";
 
 import { useRef, useState } from "react";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
-import {Button} from "@/components/ui/button";
 import {isConfirmedRecruiterLeaveResponse} from "@/modules/placements/recruiter-profile-access-model";
 import Link from "next/link";
 import {hrRecruiterGrantLinks} from "@/modules/placements/hr-recruiter-grant-navigation-model";
@@ -55,9 +56,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
         Open a page for the exact college you select. These links do not change your account-wide active college. Leaving access takes effect immediately and requires a new placement-cell grant to return.
       </p>
       {error ? (
-        <div role="alert" className="mt-3 rounded-[var(--lms-control-radius)] border border-error-border bg-error-subtle p-3 text-sm text-error">
-          {error}
-        </div>
+        <InlineNotice tone="error" message={error}/>
       ) : null}
       <ConfirmActionDialog open={confirmGrant!==null}
         title={"Leave access to "+(confirmGrant?.collegeName??"this college")+"?"}
@@ -66,7 +65,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
         onCancel={()=>setConfirmGrant(null)}
         onConfirm={()=>{if(confirmGrant)void leave(confirmGrant);}}/>
       {items.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">No active college access.</p>
+        <EmptyState title="No active college access."/>
       ) : (
         <div className="mt-4 divide-y divide-border">
           {items.map((grant) => (
