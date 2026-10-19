@@ -465,3 +465,5 @@
 
 .topbarNotificationState > p { margin:0; }
 .topbarNotificationState > p + p { max-width:260px; color:var(--lms-muted-text); }
+
+@media (max-width:767px) { .topbarNotificationState { min-height:88px; padding:32px 16px; } }
