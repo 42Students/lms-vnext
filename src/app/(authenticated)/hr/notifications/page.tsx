@@ -60,13 +60,13 @@ export default async function HrMessagesPage({searchParams}:{
        {value:"true",label:"Unread only",href:"/hr/notifications?collegeId="+
          encodeURIComponent(result.collegeId)+"&unreadOnly=true&q="+encodeURIComponent(query.data.q)},
      ]}/>
-   <form action="/hr/notifications" method="get" className="flex flex-wrap gap-2">
+   <form action="/hr/notifications" method="get" className="flex min-w-0 flex-wrap items-end gap-2">
      <Input type="hidden" name="collegeId" value={result.collegeId} />
      <Input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
      <Input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
-       placeholder="Search drive titles" className="min-w-48 flex-1" />
-     <Button type="submit" variant="secondary">Search</Button>
+       placeholder="Search drive titles" className="min-w-0 w-full basis-full sm:min-w-48 sm:basis-auto sm:flex-1" />
+     <Button type="submit" variant="secondary" className="min-h-11 sm:min-h-9">Search</Button>
    </form>
    <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
    <div className="flex justify-end">
