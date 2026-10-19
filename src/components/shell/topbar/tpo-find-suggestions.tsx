@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import { SearchIcon } from "./icons";
+import { Button } from "@/components/ui/button";
 import style from "./topbar.module.css";
 import { safeTpoFindResult, type TpoFindResult } from "./tpo-find-model";
 
@@ -47,23 +48,14 @@ export function TpoFindSuggestions({
     <p className="px-2 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Matching records</p>
     {!ready ? <p role="status" className="p-2 text-xs text-muted-foreground">Searching…</p> : null}
     {ready && state.error ? <p role="alert" className="p-2 text-xs text-error">{state.error}</p> : null}
-    {ready && !state.error && state.results.map((result, index) =>
-      <button type="button" role="option" aria-selected={false}
+    {ready && !state.error && state.results.map(result =>
+      <Button type="button" variant="ghost" role="option" aria-selected={false}
         data-tpo-result="" key={result.href} className={style.suggestion}
-        onKeyDown={event => {
-          if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
-          event.preventDefault();
-          const buttons = event.currentTarget.closest("section")?.querySelectorAll<HTMLButtonElement>("button[data-tpo-result]");
-          if (!buttons?.length) return;
-          const next = event.key === "ArrowDown" ? (index + 1) % buttons.length
-            : (index - 1 + buttons.length) % buttons.length;
-          buttons[next]?.focus();
-        }}
         onClick={() => onOpen(result.href)}>
         <SearchIcon/>
         <span className="min-w-0 flex-1 truncate">{result.label}</span>
         <span className="shrink-0 text-[11px] text-muted-foreground">{result.group}</span>
-      </button>
+      </Button>
     )}
     {ready && !state.error && state.results.length === 0
       ? <p role="status" className="p-2 text-xs text-muted-foreground">No matching records.</p> : null}

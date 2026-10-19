@@ -6,6 +6,7 @@ import {canSubmitFacultyBulkImport} from "@/modules/people/faculty-bulk-import-s
 import {facultyBulkImportResponseSchema,facultyBulkImportFailureMessage} from "@/modules/people/faculty-bulk-import-response-model";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 
 type Result={row:number;name:string;status:"CREATED"|"FAILED"|"SKIPPED";message:string};
@@ -87,9 +88,9 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
    <Button type="button" variant="secondary" onClick={downloadSample}
     className="min-h-9">Download sample CSV</Button>
    <label className="text-sm font-semibold">Choose CSV
-    <input type="file" accept=".csv,text/csv" disabled={busy}
+    <Input type="file" accept=".csv,text/csv" disabled={busy}
       onChange={event=>void fileSelected(event.target.files?.[0]??null)}
-      className="ml-2 max-w-full text-sm"/>
+      className="mt-2 max-w-full file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-2 file:py-1 file:text-[var(--lms-primary-text)]"/>
    </label>
   </div>
   {filename?<p className="text-xs text-muted-foreground">File: {filename}</p>:null}

@@ -2,6 +2,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,7 +46,7 @@ export function TemplateMetadataEditControl({ templateId, title, summary, curren
           value={editedSummary} onChange={event => setSummary(event.target.value)} /></label>
         <label className="grid gap-1 text-sm font-semibold text-body">Change note<Textarea required maxLength={1000} disabled={pending}
           value={changeNote} onChange={event => setNote(event.target.value)} /></label>
-        <label className="flex items-start gap-2 text-sm text-body"><input type="checkbox" className="size-4 accent-[var(--lms-button-primary)]" checked={confirmed} disabled={pending}
+        <label className="flex items-start gap-2 text-sm text-body"><Checkbox className="size-5" checked={confirmed} disabled={pending}
           onChange={event => setConfirmed(event.target.checked)} />I confirm that this creates a new version and preserves pinned snapshots.</label>
         {error ? <p role="alert" className="text-sm text-error-text">{error}</p> : null}
         <div className="flex flex-wrap justify-end gap-2"><Button variant="secondary" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>

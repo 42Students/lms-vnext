@@ -42,9 +42,10 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    ]);
   }catch{
    return <div className="min-w-0 space-y-5">
+    <PageHeader eyebrow="Super Admin" title="Students"/>
     <ErrorState title="Student register unavailable"
      description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
-     action={<Link href="/admin/students" className="font-semibold text-[var(--lms-teal-deep)]">Retry student register</Link>}/>
+     action={<Link href="/admin/students" className="font-semibold text-primary-text">Retry student register</Link>}/>
    </div>;
   }
  }
@@ -57,12 +58,14 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    };
  });
  return <div className="min-w-0 space-y-4">
-  {context.adminScope?.collegeId?<div className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
-    <a href="#register-student" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Register New Student ↓</a>
-    <Link className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]" href="/admin/people">
+  <PageHeader eyebrow="Super Admin" title="Students"
+   description="Manage student identity, academic placement and account access from one roster."
+   actions={context.adminScope?.collegeId?<div className="flex flex-wrap items-center justify-end gap-2">
+    <a href="#register-student" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">Register New Student ↓</a>
+    <Link href="/admin/people" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
       Manage memberships, profiles and account status →
     </Link>
-  </div>:null}
+   </div>:undefined}/>
   {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-2"><h2 id="register-student-heading" className="text-lg font-semibold">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
   {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-5">
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -72,7 +75,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     <p className="text-sm text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
     <CollegeStudentCsvImport choices={choices}/>
   </section>:null}
-  <AdminScopedReadPage peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
+  <AdminScopedReadPage headingMode="section" peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="super-admin-students-ist.csv"
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
