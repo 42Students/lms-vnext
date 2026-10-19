@@ -277,3 +277,18 @@ These do **not** satisfy the strict branch-wide zero-hand-rolled-overlay proof. 
 **STRICT CATEGORY STATUS — F1 [ ], F2 [ ].** Cannot tick without exact legacy value proof for all variants (including toast policy/exit timing), true checkout grep, phone/tablet/browser behavior and no-regression verification. The source tables above prove only the rows labeled Match. No code/application/CI execution was performed.
 
 **Next source file:** `src/components/ui/popover.tsx` (review listbox keyboard semantics and responsive popup geometry), followed by `src/components/ui/toast.tsx` and then the F1 confirmation-specific actions in `src/components/ui/confirm-action-dialog.tsx`.
+
+
+### Popover follow-up source review — completed source file
+
+- [x] `src/components/ui/popover.tsx` — listbox arrows/Home/End now skip editable fields and hidden/inert actions, while Escape still dismisses and returns focus to its owning trigger. The shared `PopoverPanel` remains a **nonmodal** `<section role="dialog" aria-modal={false}>` with the matching `</section>`; the listbox keeps its single `<div role="listbox">` and `</div>`. No page-level layout or content changed.
+
+| Property/state | Old LMS source | Current vNext source | Result |
+| --- | --- | --- | --- |
+| Basic header popup background/radius/elevation | `docs/design/legacy-styles/components___dropdown.scss:96-100`: white, 6px radius, 9px 11px 28px rgba(0,0,0,.1) | `src/components/ui/popover.tsx:23-26`; `src/components/ui/legacy-overlays.css:190-204`: white, 6px, identical shadow | Exact static visual match on the shared nonmodal panel; consumer geometry may differ |
+| Notification listbox maximum width/height | `components___notification-drawer.scss:113-126`: max min(420px, viewport - 24px), max min(520px, viewport - 120px) | `src/components/ui/legacy-overlays.css:218-220`: same constraints, dynamic viewport instead of vh | Numeric cap matches; viewport-unit enhancement documented |
+| Popup links / touch target | `components___notification-drawer.scss:21,39-49`: min 44px, hover rgba(0,0,0,.035), active .06 | `src/components/ui/legacy-overlays.css:221-226`: same numeric values | Match selected link states |
+| Option focus, disabled, keyboard | Legacy bundled SCSS gives focus appearance but no canonical algorithm | `src/components/ui/popover.tsx:34-62`: Escape, ArrowUp/Down, Home/End, visible options only, preserve editable caret | Source functionality reviewed; keyboard/browser equivalence unknown |
+| Popover phone/tablet width | `components___notification-drawer.scss:23,113-126,395-493`: 767px mobile drawer, notification desktop 420px max | Generic shared popup is nonmodal; phone bell consumers use native Drawer and desktop uses PopoverPanel; `popover.tsx` itself defines no breakpoint | Source-specific consumer paths are documented, but no runtime/viewport proof |
+
+**Next file to resolve:** `src/components/ui/toast.tsx`; look for an actual legacy toast/message-specific duration and presentation reference before changing its persistence/timeout semantics. Following that, audit `src/components/ui/confirm-action-dialog.tsx` against `components___antddesign.scss:899-906`. F1/F2 remain unticked.
