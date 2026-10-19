@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
+import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import {
   attendanceCalendarDayKey, attendanceCalendarDays,
   attendanceCalendarHref, learnerAttendanceCalendarQuerySchema,
@@ -82,7 +84,7 @@ export default async function LearnerAttendanceCalendarPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
-          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 w-full sm:min-h-9">
           <option value="ALL">All accessible Courses</option>
           {data.courses.map(course=>
             <option key={course.deliveryId} value={course.deliveryId}>
@@ -92,7 +94,7 @@ export default async function LearnerAttendanceCalendarPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <Select name="status" defaultValue={data.query.status}
-          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 w-full sm:min-h-9">
           <option value="ALL">All status types</option>
           {Object.entries(statusNames).map(([value,label])=>
             <option key={value} value={value}>{label}</option>)}
@@ -113,10 +115,7 @@ export default async function LearnerAttendanceCalendarPage({
         ["Not marked",data.summary.unmarked],
         ["Scheduled",data.summary.scheduled],
       ] as const).map(([label,value])=>
-        <section key={label} className="rounded-xl border border-border bg-surface p-4">
-          <h2 className="text-xs font-semibold uppercase text-muted-foreground">{label}</h2>
-          <p className="mt-2 text-xl font-semibold tabular-nums">{value}</p>
-        </section>)}
+        <StatTile key={label} label={label} value={value} />)}
     </div>
     <p className="text-sm text-body">
       {data.summary.total} recorded class{data.summary.total===1?"":"es"} match the filters.
@@ -132,8 +131,8 @@ export default async function LearnerAttendanceCalendarPage({
           className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Next →</Link>
       </div>
       <CalendarGrid className="text-center text-xs font-semibold text-muted-foreground sm:gap-2">
-        {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day=>
-          <span key={day} className="py-1">{day}</span>)}
+        {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>
+          <span key={day} className={"py-1 "+(index===0?calendarStyles.calendarSunday:"")}>{day}</span>)}
         {days.map((day,index)=>{
           if(!day) return <div key={"pad-"+index} aria-hidden="true"/>;
           const entries=byDay.get(day)??[];
@@ -141,7 +140,7 @@ export default async function LearnerAttendanceCalendarPage({
           return <div key={day}
             aria-label={day+": "+entries.length+" matching classes"}
             className="min-h-14 rounded-[var(--lms-control-radius)] border border-border p-1 sm:min-h-20 sm:p-2">
-            <div className="text-right font-semibold text-foreground">{label}</div>
+            <div className={"text-right font-semibold text-foreground "+(new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>{label}</div>
             {entries.length>0?<div className="mt-1 rounded bg-primary-subtle px-1 py-0.5 text-center text-xs font-semibold text-primary-text">
               {entries.length} class{entries.length===1?"":"es"}
             </div>:null}

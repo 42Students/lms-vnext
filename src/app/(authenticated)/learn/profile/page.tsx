@@ -9,6 +9,7 @@ import {LearnerProfileAcademicRetry} from "@/components/profile/learner-profile-
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerProfileWorkspace } from "@/components/profile/learner-profile-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import { getOwnLearnerProfileWithRuntime } from "@/modules/people/runtime";
 import { getOwnLearnerAcademicSummary } from "@/modules/people/learner-academic-summary-service";
 import {getOwnLearnerVerificationStatus} from "@/modules/placements/learner-verification-status-service";
@@ -62,13 +63,13 @@ export default async function LearnerProfilePage({
             </p>;
           })}
           {verification.education.status==="UPDATE_PENDING"||verification.identity.status==="UPDATE_PENDING"?
-            <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-warning bg-warning-subtle p-3">
+            <Banner tone="warning">
               You changed this after it was verified. The verified details stay in use until you send the changes for review.
-            </p>:null}
+            </Banner>:null}
         </div>:<p role="status" className="mt-2 text-sm text-body">Verification status is temporarily unavailable.</p>}
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review verification status</Link>
       </section>
-      {sectionNotice ? <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-warning bg-warning-subtle p-3 text-sm text-body">{sectionNotice}</p> : null}
+      {sectionNotice ? <Banner tone="warning">{sectionNotice}</Banner> : null}
       <section aria-label="Academic identity" className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>

@@ -20,7 +20,7 @@ export function SegmentedControl({options,value,onChange,label,name,disabled=fal
     {options.map(option=><label key={option.value} className="relative inline-flex min-h-9 max-[767px]:min-h-11 cursor-pointer items-center has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
       <input type="radio" name={name??id} value={option.value} checked={value===option.value} disabled={disabled||option.disabled} aria-invalid={error || undefined}
         onChange={()=>onChange(option.value)} className="peer sr-only" />
-      <span className="inline-flex min-h-9 max-[767px]:min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] px-3 text-[13px] font-semibold text-[var(--lms-body-text)] transition-colors duration-150 peer-checked:bg-[var(--lms-button-primary)] peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--lms-primary)]">{option.label}</span>
+      <span className="inline-flex min-h-9 max-[767px]:min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] px-3 text-[13px] font-semibold text-[var(--lms-body-text)] transition-colors duration-150 peer-checked:bg-[var(--lms-primary)] peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--lms-primary)] peer-aria-[invalid=true]:peer-focus-visible:outline-[var(--lms-error)] peer-disabled:opacity-50 motion-reduce:transition-none">{option.label}</span>
     </label>)}
   </fieldset>;
 }

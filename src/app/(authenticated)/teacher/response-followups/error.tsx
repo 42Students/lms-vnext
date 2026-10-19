@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
 
 export default function Error({ reset }: {
@@ -6,7 +7,7 @@ export default function Error({ reset }: {
   reset: () => void;
 }) {
   return <section role="alert" className="border-b border-border bg-transparent py-6">
-    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Unable to load Faculty response follow-ups</h1>
+    <PageHeader title={"Unable to load Faculty response follow-ups"} />
     <p className="mt-2 text-sm text-body">
       The read failed. No data absence is inferred from this error.
     </p>

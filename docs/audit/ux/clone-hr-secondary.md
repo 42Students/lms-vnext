@@ -17,7 +17,7 @@ Source inventory taken from the recursively enumerated Git trees recorded in `do
 - [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/hr/colleges/error.tsx`
 - [ ] `src/app/(authenticated)/hr/colleges/loading.tsx`
-- [ ] `src/app/(authenticated)/hr/colleges/page.tsx`
+- [x] `src/app/(authenticated)/hr/colleges/page.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
 - [ ] `src/app/(authenticated)/hr/company/error.tsx`
 - [ ] `src/app/(authenticated)/hr/company/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/company/page.tsx`
@@ -32,28 +32,27 @@ Source inventory taken from the recursively enumerated Git trees recorded in `do
 - [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
 - [ ] `src/app/(authenticated)/hr/messages/error.tsx`
 - [ ] `src/app/(authenticated)/hr/messages/loading.tsx`
-- [ ] `src/app/(authenticated)/hr/messages/page.tsx`
+- [x] `src/app/(authenticated)/hr/messages/page.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
 - [ ] `src/app/(authenticated)/hr/notifications/error.tsx`
 - [ ] `src/app/(authenticated)/hr/notifications/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/reports/page.tsx:333-344`
 
 ### Recruiter secondary aliases (15 files)
 - [ ] `src/app/(authenticated)/recruiter/calendar/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/calendar/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/calendar/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/calendar/page.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
 - [ ] `src/app/(authenticated)/recruiter/colleges/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/colleges/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/colleges/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/colleges/page.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
 - [ ] `src/app/(authenticated)/recruiter/company/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/company/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/company/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/company/page.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
 - [ ] `src/app/(authenticated)/recruiter/messages/error.tsx`
 - [ ] `src/app/(authenticated)/recruiter/messages/loading.tsx`
-- [ ] `src/app/(authenticated)/recruiter/messages/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/messages/page.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
 
 ### Tracker audit, issues, logs and reports (23 files)
 - [ ] `src/app/(authenticated)/tracker/audit-findings/[publicId]/error.tsx`
@@ -77,21 +76,19 @@ Source inventory taken from the recursively enumerated Git trees recorded in `do
 - [ ] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx:152-185`
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx:152-190`
 
 ### HR conversation, bell, notification controls (7 files)
 - [ ] `src/components/hr/hr-notification-read-button.tsx`
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/hr/recruiter-conversation-live-refresh.tsx`
+- [x] `src/components/hr/recruiter-conversation-live-refresh.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
 - [ ] `src/components/hr/recruiter-conversation-read-control.tsx`
 - [ ] `src/components/hr/recruiter-conversation-reply-form.tsx`
 - [ ] `src/components/hr/recruiter-decision-read-button.tsx`
 - [ ] `src/components/hr/recruiter-notification-bell.tsx`
 
 ### Tracker supporting components (17 files)
-- [ ] `src/components/tracker/audit-finding-filter-memory.tsx`
-- [ ] `src/components/tracker/audit-finding-filter-persistence.tsx`
+- [x] `src/components/tracker/audit-finding-filter-memory.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
+- [x] `src/components/tracker/audit-finding-filter-persistence.tsx` (non-rendering redirect/re-export or effect-only helper; 0 element-level value rows, 0 own breakpoints)
 - [ ] `src/components/tracker/audit-finding-status-action.tsx`
 - [ ] `src/components/tracker/independent-finding-actions.tsx`
 - [ ] `src/components/tracker/independent-finding-copy-action.tsx`
@@ -107,6 +104,34 @@ Source inventory taken from the recursively enumerated Git trees recorded in `do
 - [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx`
 - [ ] `src/components/tracker/tracker-theme-toggle.tsx`
 - [ ] `src/components/tracker/tracker-workflow-panel.tsx`
+
+## Completed non-rendering file proof (2026-10-19)
+
+**10/10 non-rendering files ticked**, because they own zero visual properties. No shared-component or legacy CSS value is added by these files, and phone/tablet layout is inherited entirely from the routed destination or parent. Source inspection showed **zero** raw buttons/selects/inputs/textareas/tables, hex colours, custom pills, PageHeaders or overlays across these ten files. Their own per-file value-comparison tables have **zero applicable rows**, rather than unknown rows.
+
+| File or group | Inspected source and exact scope | Legacy comparison and responsive behaviour |
+| --- | --- | --- |
+| HR colleges redirect | `src/app/(authenticated)/hr/colleges/page.tsx:1-5` | Renders nothing; `/hr/home` owns visuals |
+| HR Messages alias | `src/app/(authenticated)/hr/messages/page.tsx:1-4` | Delegates to `/hr/conversations` without added DOM |
+| Recruiter calendar alias | `src/app/(authenticated)/recruiter/calendar/page.tsx:1` | Uses HR calendar visual tree unchanged |
+| Recruiter colleges redirect | `src/app/(authenticated)/recruiter/colleges/page.tsx:1-3` | Redirect only; no CSS or viewport rules |
+| Recruiter company alias | `src/app/(authenticated)/recruiter/company/page.tsx:1` | Uses HR company visual tree unchanged |
+| Recruiter drive-messages alias | `src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx:1` | Delegates to chat-15-owned drive messaging screen |
+| Recruiter Messages alias | `src/app/(authenticated)/recruiter/messages/page.tsx:1` | Uses HR conversations visual tree unchanged |
+| Recruiter live refresh | `src/components/hr/recruiter-conversation-live-refresh.tsx:5-23` | Effect-only component; `return null`, never renders a UI state |
+| Tracker finding filter memory | `src/components/tracker/audit-finding-filter-memory.tsx:8-31` | Effect-only; `return null`, no UI properties |
+| Tracker finding filter persistence | `src/components/tracker/audit-finding-filter-persistence.tsx:10-39` | Effect-only; `return null`, no UI properties |
+
+Work queue closure here means these files introduce no presentation of their own; the destination/shared parent screens retain their **separate, open** value-parity checkboxes.
+
+## Additional file-level changes on synced `main`
+
+- **12 route-state files**: `scripts/codemods/chat18-route-states.cjs` and the corresponding 5 loading and 7 error pages now use `GracefulPageLoading`, `PageHeader`, `ErrorState`, `Button` instead of nested skeleton cards or raw headings. Routes include HR calendar, company reports, conversations, messages/activity and tracker audit findings. Props and retry behavior retained. Not ticked: shared-component legacy default/hover/focus/mobile value proof still outstanding.
+- **9 secondary route files**: source-level removal of static PageHeader `eyebrow` on HR activity/calendar/company/reports and tracker issues/audit/logs, matching `docs/design/old-lms-pages.md:4-6` one title + inline subtitle. Notification duplicate `NeedsDoingChips` import fixed.
+- **HR notifications**: `hr/notifications/page.tsx` now uses shared `Tabs` for All/Unread instead of a hand-built active underline, retaining the college and search query; no dynamic `border-b-[3px]` branch remains.
+- **HR bell**: `src/components/hr/hr-recruiter-bell.tsx` uses shared icon glyph with token-based unread red and clipped count, no hard-coded fallback hex; drawer/popover behavior preserved.
+- **Calendar/report nesting**: `hr/calendar/page.tsx` replaces redundant week outer border and day-card backgrounds with a continuous canvas; `src/components/tracker/tracker-report-form.tsx` removes the receipt-card-in-canvas wrapper.
+- **Tracker logs**: `tracker/logs/page.tsx` uses three shared `Alert` and two `ErrorState` states, matching pale banner and continuous canvas anatomy in `docs/design/old-lms-pages.md:4-11`.
 
 ## Source-level corrections completed
 
@@ -170,4 +195,4 @@ Count: **unverified**. This lane cannot run repository code, grep, CI, visual co
 
 ## Next file
 
-`src/app/(authenticated)/tracker/logs/page.tsx` — audit logs/known-error toolbar and list states, then `src/components/tracker/known-errors-workspace.tsx`.
+`src/app/(authenticated)/hr/calendar/page.tsx` — finish remaining week/agenda cell nesting, then `src/components/tracker/tracker-report-form.tsx` responsive copy and audit per-state values.

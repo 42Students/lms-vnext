@@ -138,9 +138,10 @@ export function ProgramActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
           size="sm"
+          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={openEdit}
         >
@@ -148,6 +149,7 @@ export function ProgramActions({
         </Button>
         <Button
           size="sm"
+          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
           variant="ghost"
           disabled={programHasLinkedRecords}
           title={programHasLinkedRecords
@@ -203,13 +205,13 @@ export function ProgramActions({
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {departments.length ? <label className="grid gap-1 text-sm font-semibold">Department
             <Select value={departmentId} onChange={event=>setDepartmentId(event.target.value)}>
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
           </label> : null}
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <label className="mb-1.5 block text-xs font-semibold text-body">
               Program name
             </label>
@@ -350,7 +352,7 @@ export function AcademicPeriodActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         {period.status === "PLANNED" ? (
           <>
             <Button
@@ -382,6 +384,7 @@ export function AcademicPeriodActions({
         ) : (
           <Button
             size="sm"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             variant="secondary"
             onClick={() => setCloseOpen(true)}
           >
@@ -435,7 +438,7 @@ export function AcademicPeriodActions({
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-body">
               Name
@@ -566,7 +569,7 @@ export function CohortActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         {cohort.status === "PLANNED" ? (
           <>
             <Button
@@ -607,6 +610,7 @@ export function CohortActions({
         ) : cohort.status === "ACTIVE" ? (
           <Button
             size="sm"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             variant="secondary"
             onClick={() =>
               setConfirmAction("COMPLETE")
@@ -617,6 +621,7 @@ export function CohortActions({
         ) : (
           <Button
             size="sm"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             variant="ghost"
             onClick={() =>
               setConfirmAction("ARCHIVE")
@@ -806,15 +811,16 @@ export function SectionActions({
 
   return (
     <>
-      <div className="flex justify-end gap-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Link
           href={operationsHref}
-          className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]"
         >
           Open
         </Link>
         <Button
           size="sm"
+          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={openEdit}
         >
@@ -822,6 +828,7 @@ export function SectionActions({
         </Button>
         <Button
           size="sm"
+          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
           variant="ghost"
           onClick={() => setArchiveOpen(true)}
         >
@@ -873,7 +880,7 @@ export function SectionActions({
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-body">
               Name
@@ -898,7 +905,7 @@ export function SectionActions({
               maxLength={64}
             />
           </div>
-          <div className="sm:col-span-2">
+          <div className="md:col-span-2">
             <label className="mb-1.5 block text-xs font-semibold text-body">
               Capacity · blank for unlimited
             </label>
