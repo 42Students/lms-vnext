@@ -381,7 +381,7 @@
  */
 /* Legacy refs: components___form.scss:110-115; components___global.scss:60-69 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(label:not(:has(input[type="checkbox"], input[type="radio"], [role="switch"]))):not(:where([data-unskin], [data-unskin] *)) {
+  :where(label:not(:has(input[type="checkbox"], input[type="radio"], input[type="range"], [role="switch"]))):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-400) !important;
   font-size: 13px !important;
   font-weight: 600 !important;
@@ -593,7 +593,7 @@
  * components___variables.scss:25,43,184 (body ink, #0a0517 checked, 14px).
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(label:has(input[type="checkbox"], input[type="radio"], [role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
+  :where(label:has(input[type="checkbox"], input[type="radio"], input[type="range"], [role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-700) !important;
   font-size: 14px !important;
   font-weight: 400 !important;
