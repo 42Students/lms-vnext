@@ -316,6 +316,7 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
   --lms-canvas-border: #e5e9f0;
   --lms-table-header: #fafbfc;
   --lms-control-height: 36px;
+  --lms-tab-gap: 20px;
   --lms-control-radius: 9px;
   --lms-canvas-radius: 12px;
   --lms-canvas-padding: 24px;
@@ -900,7 +901,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="tabs"] :is([role="tablist"],nav) {
   background: transparent;
   box-shadow: none;
-  gap: 20px;
+  gap: var(--lms-tab-gap);
 }
 [data-slot="tabs"] :is([role="tab"],nav > a,nav > span) {
   font-size: 13px;
