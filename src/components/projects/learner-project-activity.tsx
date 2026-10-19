@@ -1,4 +1,7 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 import {useState} from "react";
 import {filterLearnerProjectActivityText} from "@/modules/projects/learner-project-activity-text-model";
@@ -35,32 +38,32 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     <form method="get" action={route} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-5">
       <input type="hidden" name="tab" value="activity" />
       <label className="text-sm font-semibold text-foreground">Activity type
-        <select name="activityCategory" defaultValue={category}
-          className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal">
+        <Select name="activityCategory" defaultValue={category}
+          className="mt-2 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal">
           {learnerProjectActivityCategories.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="text-sm font-semibold text-foreground">From (IST)
-        <input type="date" name="activityFrom" defaultValue={parsed.success ? parsed.data.from : ""}
-          className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
+        <Input type="date" name="activityFrom" defaultValue={parsed.success ? parsed.data.from : ""}
+          className="mt-2 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
       </label>
       <label className="text-sm font-semibold text-foreground">Through (IST)
-        <input type="date" name="activityTo" defaultValue={parsed.success ? parsed.data.to : ""}
-          className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
+        <Input type="date" name="activityTo" defaultValue={parsed.success ? parsed.data.to : ""}
+          className="mt-2 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
       </label>
-      <button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply</button>
-      <Link href={route + "?tab=activity"} className="inline-flex min-h-11 sm:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
+      <Button type="submit" variant="primary" className="self-end">Apply</Button>
+      <Link href={route + "?tab=activity"} className="inline-flex min-h-9 sm:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
     </form>
     {parsed.success && pageRows.length > 0 ? (
       <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="min-w-0 flex-1 text-sm font-semibold text-foreground">Find in this activity page
-          <input type="search" maxLength={100} value={textQuery}
+          <Input type="search" maxLength={100} value={textQuery}
             onChange={event=>setTextQuery(event.target.value)}
             placeholder="Search summary, subject or actor"
-            className="mt-1.5 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
+            className="mt-1.5 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
         </label>
-        {textQuery ? <button type="button" onClick={()=>setTextQuery("")}
-          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Clear text search</button> : null}
+        {textQuery ? <Button type="button" variant="secondary" onClick={()=>setTextQuery("")}
+          className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Clear text search</Button> : null}
       </div>
     ) : null}
     {!parsed.success ? <p role="alert" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">Choose valid dates with the start on or before the end, and a listed activity type. If this page link is invalid, use Clear to return to recent activity.</p> : null}
@@ -69,7 +72,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <p role="status" className="text-sm text-muted-foreground">{shown.length} matching events shown</p>
       {parsed.success && shown.length ? (
         <a href={"data:text/csv;charset=utf-8,"+encodeURIComponent(csv.content)} download="learner-project-activity.csv"
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
           Download shown events CSV
         </a>
       ) : null}
@@ -92,9 +95,9 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     </li>)}</ol>}
     {parsed.success ? <nav aria-label="Activity pages" className="flex flex-wrap gap-3">
       {parsed.data.beforeTime ? <Link href={learnerProjectActivityPageHref(projectId, parsed.data)}
-        className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Newest activity page</Link> : null}
+        className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Newest activity page</Link> : null}
       {hasMore && lastEvent ? <Link href={learnerProjectActivityPageHref(projectId, parsed.data, { time: lastEvent.cursorOccurredAt, id: lastEvent.id })}
-        className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Older activity page →</Link> : null}
+        className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Older activity page →</Link> : null}
     </nav> : null}
     <p className="text-xs leading-5 text-muted-foreground">Category and IST dates are applied to authorized Project history. Text search only filters the current page of up to 100 fetched events; Older activity pages use the original page cursor to avoid skipping history. CSV downloads include only the currently displayed matches.</p>
   </section>;
