@@ -123,10 +123,10 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         href:recruiterDrivesHref({...query.data,collegeId:grant.collegeId}),
       }))}/> : null}
     {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
-      className="border-b border-border pb-4 sm:pb-5">
+      className="border-b border-border pb-4 md:pb-5">
       <h2 className="font-semibold text-foreground">Deadline attention</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
         {attention.soon.map(item=><Link key={"soon:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
           className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           <span className="block font-semibold">{item.job.title}</span>
@@ -181,7 +181,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     </form>
     {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
       <h2 className="text-lg font-semibold text-foreground">Your drive requests</h2>
-      <ul className="grid gap-3 sm:grid-cols-2">{requestView.map(req=>{
+      <ul className="grid gap-3 md:grid-cols-2">{requestView.map(req=>{
         const draft=req.draft&&typeof req.draft==="object"?req.draft:{};
         const title=typeof draft.title==="string"?draft.title:"Drive request";
         const editable=req.status==="REQUEST"||req.status==="SENT_BACK";
