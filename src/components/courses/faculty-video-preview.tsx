@@ -39,7 +39,7 @@ export function FacultyVideoPreview({videoId,deliveryId}:{videoId:string;deliver
  },[videoId,deliveryId]);
  return <section aria-label="Video preview" className="space-y-2">
   {loading?<PageLoading label="Preparing video preview" variant="card" count={1} />:null}
-  <video ref={videoRef} controls preload="metadata" className="aspect-video w-full max-w-2xl rounded-[var(--lms-control-radius)] bg-foreground"/>
+  <video ref={videoRef} controls preload="metadata" className="aspect-video w-full max-w-2xl rounded-[var(--lms-canvas-radius)] bg-foreground"/>
   {error?<Alert tone="error">{error}</Alert>:null}
  </section>;
 }

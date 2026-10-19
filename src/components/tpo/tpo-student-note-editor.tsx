@@ -28,10 +28,10 @@ export function TpoStudentNoteEditor({membershipIds,afterSave}:{
   }catch(error){setError(error instanceof Error?error.message:"Could not save note.");}
   finally{inFlight.current=false;setBusy(false);}
  }
- return <section className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+ return <section className="min-w-0 space-y-2 border-t border-border pt-3">
   <h4 className="font-semibold">Add a note</h4>
   <p className="text-xs text-muted-foreground">Private to the college placement team, appended permanently to each selected student&apos;s history.</p>
-  <Textarea aria-label="Internal student note" value={note} rows={3} maxLength={2000}
+  <Textarea aria-label="Internal student note" className="min-h-32 w-full" value={note} rows={3} maxLength={2000}
    onChange={e=>setNote(e.target.value)} onKeyDown={e=>{
     if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();void runGuarded(save);}
    }} />
