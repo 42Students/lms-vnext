@@ -23,7 +23,7 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
   const droppedRef=useRef(false);
   const onFilesRef=useRef(onFiles);
   useEffect(()=>{onFilesRef.current=onFiles;},[onFiles]);
-  useEffect(()=>{if(disabled&&droppedRef.current){droppedRef.current=false;onFilesRef.current(null);setDropError(null);setDroppedNames([]);}},[disabled]);
+  useEffect(()=>{if(!disabled)return;setDragging(false);setDropError(null);setDroppedNames([]);if(droppedRef.current){droppedRef.current=false;onFilesRef.current(null);}},[disabled]);
   function onDrop(event:DragEvent<HTMLDivElement>){
     event.preventDefault();setDragging(false);if(disabled)return;
     const files=event.dataTransfer.files;
