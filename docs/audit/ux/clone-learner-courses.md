@@ -565,3 +565,20 @@ Paired tag checks from complete source text: `learner-course-list.tsx` Button 3/
 **Outstanding STRICT TICK:** H1–H6 remain `[ ]`. Even with the scoped zero-grep and legacy breakpoint proof, no live phone/tablet computed styles or screenshot comparisons were possible; disabled/focus states and UI-owned Tabs/Badge/Table skin mismatches need authoritative verification, and the 247-file area inventory is not globally zero. Do not mark any whole-area H category complete. The source-level edits above are delivered, with full parity pending orchestrator section J.
 
 **Next exact source file:** `src/components/courses/learner-course-card-image.tsx` (thumbnail ratio, opacity and fallback against legacy cards), then `src/components/courses/learner-live-class-link.tsx` (external action semantics and responsive target), then scan remaining Super Admin authored lessons/content files.
+
+### Batch 5 source audit addendum — card media, live meeting and concurrent-main reconciliation
+
+- `src/components/courses/learner-course-card-image.tsx`: retained both existing decorative `Next/Image` presentations, fallback, `onError` and 20% media opacity; changed only the `sizes` hint to `(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw`. This exactly follows the `learner-course-list.tsx` source layout: mobile single column, `md:grid-cols-2` from 768px, `xl:grid-cols-3` from 1280px. This is media-fetch sizing and preserves image layout. Legacy `learn-layout.scss:34` uses <=767px phone.
+- `src/components/courses/learner-live-class-link.tsx`: standalone `Copy meeting link` shared secondary Button is now `min-h-11 md:min-h-9` (44px phone, 36px desktop). The pre-existing ended-state denial, copy error/success message, 15-second visibility update and `ThirdPartyLink` are unchanged. **Residual shared dependency:** `src/components/ui/third-party-link.tsx` has a `sm:` 640px cutoff in its child link controls. Chat-7 does not own or modify shared UI, so this exact 640–767px hit-target issue is referred to chat-17 and H3 remains unticked.
+
+| Checked file | Raw button/input/select/textarea/table, hex, manual dialog, h1 source hits | Local responsive source | Source-only outcome |
+| --- | --- | --- | --- |
+| `learner-course-card-image.tsx` | 0 for all named patterns | `Next/Image sizes` 767px/1279px following existing `md`/ `xl` grid | Completed source-specific media sizes; original legacy card opacity not independently documented |
+| `learner-live-class-link.tsx` | 0 for all named patterns | `Button min-h-11 md:min-h-9`, shared ThirdPartyLink external action | Copy control source matching; shared-link breakpoint not resolved |
+
+Two concurrent source conflicts were reconciled against `main@6807f03ba77e54396d6bbd66b9052dcc565da262`, not overwritten:
+- `college-content-aggregate.tsx`: kept upstream `print:hidden` filters, `print:overflow-visible` on the flattened catalogue, `print:hidden` phone grid, `print:block` desktop grid, and focus outline offset/style plus `md:min-h-9` inputs. Retained our `md:hidden/md:block` 767px breakpoint and one-canvas `border-y` presentation.
+- `quiz-attempt-control.tsx`: kept upstream shared `Disclosure` substitution for the quiz question selector (opening and closing tags both preserved); retained our 44px phone links, missed-review Close control and answer-label focus-within ring.
+These resolved files were committed again before main sync. No local build or CI performed.
+
+**Strict H1–H6:** unchecked. Remaining proof: computed keyboard/mouse/touch and screen widths against legacy, full shared Tabs/Button/StatusBadge/DataTable parity, and complete 247-path inventory; no final all-area grep claim. **Next:** `src/components/courses/college-quiz-attempts.tsx` for Super Admin/College Admin quiz review list and action state parity, followed by `src/components/courses/college-quiz-actions.tsx`.
