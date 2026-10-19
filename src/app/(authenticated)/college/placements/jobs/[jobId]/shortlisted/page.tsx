@@ -38,18 +38,18 @@ export default async function CollegeDriveShortlistedPage({
     <PageHeader eyebrow="Drives" title="Shortlisted"
       description={data.drive.title}
       actions={<Link href={driveApplicationsHref(jobId,{...query,screening:"ALL"})}
-        className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">Applications</Link>} />
+        className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Applications</Link>} />
     <form method="get" role="search" aria-label="Shortlisted student filters" className="flex flex-wrap items-end gap-3 rounded-[8px] border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Student
         <input type="search" name="q" maxLength={100} defaultValue={query.q}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm"/>
+          className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-base sm:text-sm"/>
       </label>
-      <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
+      <button type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Filter</button>
     </form>
     <p role="status" className="text-sm">{data.total} shortlisted</p>
     {query.q&&data.total===0?<Link href={collegeShortlistedHref(jobId,{q:"",page:1})}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>:null}
-    <a className="text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center" href={
+      className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>:null}
+    <a className="text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center" href={
       "/api/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications/export"+
       (driveApplicationsHref(jobId,query,true).split("/export")[1]??"")
     }>Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
