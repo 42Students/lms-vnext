@@ -724,6 +724,7 @@ export function SectionOperations({
 
         <div className="flex flex-col gap-3 border-b border-border pb-5 md:flex-row">
           <Select
+            aria-label="Faculty member to assign"
             value={facultyMembershipId}
             onChange={(event) =>
               setFacultyMembershipId(
@@ -744,6 +745,7 @@ export function SectionOperations({
             ))}
           </Select>
           <Select
+            aria-label="Faculty responsibility"
             value={facultyRole}
             onChange={(event) =>
               setFacultyRole(
