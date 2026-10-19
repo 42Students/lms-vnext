@@ -70,7 +70,7 @@ export function ApplicantNotesPanel({
       ) : (
         <ul className="grid gap-3">
           {snapshot.notes.map((note) => (
-            <li key={note.id} className="min-w-0 rounded-lg border border-border bg-muted p-3">
+            <li key={note.id} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
               <p className="whitespace-pre-wrap break-words text-sm text-foreground">{note.body}</p>
               <p className="mt-2 text-xs text-body">
                 {note.mine ? "You" : note.authorName} · {formatIst(note.createdAt)} IST
