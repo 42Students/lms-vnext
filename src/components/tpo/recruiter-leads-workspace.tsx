@@ -642,6 +642,7 @@ export function RecruiterLeadsWorkspace({
           <RecruiterLeadCsvImport onImported={() => void load()} />
           <button ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase !== "ready"}
             onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null);setReviewingCreate(false); }}>
+            <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
             Add recruiter lead
           </button>
         </div>
