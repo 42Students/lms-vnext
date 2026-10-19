@@ -9,7 +9,6 @@ import {useEffect,useRef,useState,type CSSProperties,type ReactNode} from "react
 import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
 import {gridSelectionClick, gridSelectionCheckbox, selectedGridIdsWithin} from "./grid/grid-selection";
-import {sortTpoGridRows,type TpoGridSort} from "./grid/grid-sort";
 
 export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection,showColumnChooser=true}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;mobilePrimaryKeys?:readonly string[];storageKey?:string;showColumnChooser?:boolean;
  selection?:{selected:readonly string[];onChange:(ids:string[])=>void;allIds?:readonly string[]};
@@ -158,9 +157,9 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
        className="min-w-11">{columnView[col.key]?.pinned?"Unpin":"Pin"}</Button>
      </div>:null}
     </th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
-    <tbody>{orderedRows.map(row=><tr key={rowKey(row)} aria-selected={selection?.selected.includes(rowKey(row))||undefined}
+    <tbody>{rows.map(row=><tr key={rowKey(row)} aria-selected={selection?.selected.includes(rowKey(row))||undefined}
      onClick={event=>{
-      if(event.target instanceof HTMLElement && event.target.closest("button,a,input,select,textarea,label,summary,[role=button],[role=checkbox],[contenteditable=true]"))return;
+      if(event.target instanceof HTMLElement && event.target.closest("button,a,input,select,textarea,[role=button]"))return;
       changeRowClick(rowKey(row),event);
      }} className="cursor-default border-t border-border align-top aria-selected:bg-primary-subtle">{selection?<td className="px-3 py-2"><Checkbox checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
    </Table></div>
