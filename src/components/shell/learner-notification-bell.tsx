@@ -78,7 +78,7 @@ export function LearnerNotificationBell(){
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-notification-unread,#ff7576)] px-1 text-[10px] font-bold leading-none text-white">
      {count>99?"99+":count}</span>:null}
   </Button>
-  {open?<PopoverPanel id="lms-learner-notifications" label="Notifications" className={style.learnerNotificationPopover}>
+  {open?<PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}>
    <div className="flex items-center justify-between">
     <h2 id="learner-notification-title" className="m-0 text-lg font-semibold leading-[1.3] text-foreground">Notifications</h2>
     <Button variant="ghost" type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
