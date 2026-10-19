@@ -109,7 +109,7 @@ export function AdminCourseCreatePanel({
   const duplicated=courses.find(course=>course.id===duplicateCourseId);
   const [shortTitle,setShortTitle]=useState(duplicated?.shortTitle??copy?.name?.slice(0,120)??"");
   const [officialCode,setOfficialCode]=useState(duplicated?.officialCode??"");
-  const [cardColor,setCardColor]=useState(duplicated?.cardColor??"#1677FF");
+  const [cardColor,setCardColor]=useState(duplicated?.cardColor??"");
   const [takeaways,setTakeaways]=useState(duplicated?.takeaways??"");
   const superAdmin=courseBasePath.startsWith("/admin/");
 
@@ -196,7 +196,7 @@ export function AdminCourseCreatePanel({
         code:superAdmin?"SA-"+crypto.randomUUID().replaceAll("-","").slice(0,16):courseCode,
         shortTitle:superAdmin?shortTitle.trim():undefined,
         officialCode:superAdmin?officialCode.trim()||null:undefined,
-        cardColor:superAdmin?cardColor:null,
+        cardColor:superAdmin?cardColor.trim()||null:null,
         takeaways:superAdmin?takeaways.trim()||null:undefined,
         description: courseDescription.trim() || null,
       }),
@@ -319,7 +319,7 @@ export function AdminCourseCreatePanel({
             <div>
               <FieldLabel htmlFor="course-card-color">Card colour</FieldLabel>
               <Input id="course-card-color" value={cardColor} onChange={event=>setCardColor(event.target.value)}
-                maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="#1677FF"/>
+                maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="Optional #RRGGBB"/>
             </div>
           </div>:<div>
             <FieldLabel htmlFor="course-code">Code</FieldLabel>
