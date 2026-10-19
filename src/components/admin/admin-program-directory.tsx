@@ -40,7 +40,7 @@ function rememberSize(size: number) {
 
 const columns = (departments: readonly {id:string;name:string}[]): DataTableColumn<AdminProgramRow>[] => [
   {
-    key: "name", header: "Program",
+    key: "name", header: "Program", mobilePriority: "primary",
     cell: (item) => (
       <div>
         <p className="m-0 font-semibold text-foreground">{item.name}</p>
@@ -48,8 +48,8 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
       </div>
     ),
   },
-  { key: "department", header: "Department", cell: (item) => item.departmentName },
-  { key: "duration", header: "Duration", cell: (item) => programDurationYearsLabel(item.durationTerms) },
+  { key: "department", header: "Department", mobilePriority: "secondary", cell: (item) => item.departmentName },
+  { key: "duration", header: "Duration", mobilePriority: "secondary", cell: (item) => programDurationYearsLabel(item.durationTerms) },
   {
     key: "contents",
     header: "Contents",
@@ -61,6 +61,7 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
   },
   {
     key: "actions",
+    mobilePriority: "action",
     header: <span className="sr-only">Actions</span>,
     className: "text-right",
     cell: (item) => <ProgramActions displayDurationYears program={{
