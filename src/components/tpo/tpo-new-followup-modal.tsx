@@ -11,7 +11,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type LeadChoice={id:string;name:string;companyName:string|null};
-const field="min-h-9 w-full";
+const field="min-h-11 w-full md:min-h-9";
 export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const router=useRouter();
  const {showToast}=useToast();
@@ -88,7 +88,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  }
  return <>
   <Button variant="ghost" type="button" onClick={()=>void show()}
-   className="block min-h-11 w-full rounded px-2 py-2 text-left text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">
+   className="lms-inline-link block min-h-11 w-full rounded-[var(--lms-control-radius)] px-2 py-2 text-left text-sm text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
    Follow-up
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)dismiss();}} title="New follow-up"
@@ -114,8 +114,8 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
      <div className="flex justify-end gap-2">
       <Button variant="secondary" type="button" disabled={saving} onClick={dismiss}
-       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</Button>
-      <Button variant="primary" type="submit" disabled={saving||loading} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm md:min-h-9">Cancel</Button>
+      <Button variant="primary" type="submit" disabled={saving||loading} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 md:min-h-9">
        {saving?"Adding…":"Add"}
       </Button>
      </div>
