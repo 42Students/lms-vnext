@@ -17,8 +17,8 @@ export function Select({ className, children, error = false, ...props }: SelectP
   const invalid = error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
   return (
     <select
+      data-slot="select"
       {...props}
-      data-slot={props["data-slot"] ?? "select"}
       aria-invalid={invalid ? true : props["aria-invalid"]}
       className={cx(
         "min-h-[var(--lms-control-height)] w-full min-w-0 cursor-pointer appearance-auto",
