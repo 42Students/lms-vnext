@@ -13,7 +13,7 @@ export default async function CollegeActivityDetailPage({
     dateStyle: "full", timeStyle: "medium", timeZone: "Asia/Kolkata",
   }).format(event.occurredAt);
   return <div className="min-w-0 overflow-x-clip space-y-6">
-    <PageHeader eyebrow="College Admin · Activity Log" title="Activity detail"
+    <PageHeader title="Activity detail"
       description={event.summary}
       actions={<Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">
         Back to Activity Log
