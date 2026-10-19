@@ -610,3 +610,69 @@ The next five owned modules were source-audited, modified, pushed and re-read:
 **Work done this batch:** 25 distinct TSX files were updated and source-probed across learner/course, college assessment and Super Admin pages, plus this audit documentation. These are file-level code changes; H1–H6 remain **open** under STRICT TICK pending the 247-path complete inventory and exact visual/focus/disabled phone/tablet evidence. No build, TypeScript check, tests, CI or screenshots run.
 
 **Next exact unticked file:** `src/components/courses/college-assignment-review.tsx` (college assessment published grade visibility/disabled/empty and responsive source check), then `src/components/courses/college-quiz-create.tsx` only if the orchestrator returns a concrete computed-style diff.
+
+## 2026-10-20 chat-7 continuation — college courses, assignment and lessons (batch 6)
+
+**Source-check method:** Each changed file was fetched again by its exact GitHub branch path after the write and inspected as complete UTF-8 text. No application build, compiler, static analyzer, browser or CI ran (lane constraint). A path passing these source probes is *not automatically a strict visual parity tick*. Changes preserve routes, service calls, confirmation flows, state guards, saved versions and user-facing copy unless specifically noted.
+
+### 19 inspected and updated TSX files — work ledger
+
+| Path below `src/components/courses/` | Concrete judgement-case change | Responsive and state evidence |
+| --- | --- | --- |
+| `college-assignment-review.tsx` | Partial, pending, successful and retryable grade publication now use shared `Alert` with status, success or warning tone; section selector and Publish/Retry controls sized | `min-h-11 md:min-h-9`, retains disabled-while-pending, result counters and refresh |
+| `super-admin-course-bulk-visibility.tsx` | Three old `sm:` overrides changed to `md:`; existing `ScrollCue`, checkbox selection, failure retry and status `Alert` untouched | Breakpoint >=768, selected row 44px, secondary and primary buttons 44px phone |
+| `college-course-missing-scope.tsx` | Shared `PageHeader` stays outside and above shared `Alert tone=error`; no bespoke error typography | Page title shared; alert's default role/typography/spacing inherited; missing-scope copy untouched |
+| `college-content-preview.tsx` | Shared preview `Dialog` open and Close controls now 44px phone/36px desktop; privacy-safe summary retained | `min-h-11 md:min-h-9`; focus-trapping/backdrop owned by shared Dialog |
+| `college-student-visibility-control.tsx` | Student visibility toggle preserves `aria-pressed`, confirmation, stale-version handling, pending disable and error alert, with 36px desktop reduction | `min-h-11 md:min-h-9` |
+| `college-lesson-create-control.tsx` | All picker/form/action controls now 44px until 768; Create Another and Cancel use outlined secondary, not local teal-on-primary overrides; 13px semibold labels | `min-h-11 md:min-h-9`, labels `text-xs font-semibold text-body`; authoring, validation and toast states unchanged |
+| `admin-offering-section-preview.tsx` | Section selector/submit 44px phone and 36px desktop, lesson/item headings explicit foreground | `min-h-11 md:min-h-9`; metadata-only section audience semantics unchanged |
+| `resource-progress-control.tsx` | Completion action responsive and error result now shared `Alert tone=error`; `Badge` success and `ConfirmDialog` retained | `min-h-11 md:min-h-9`; pending, confirmed, complete/disabled and error states preserved |
+| `admin-course-actions.tsx` | All six small Edit/Archive/End lifecycle buttons given 44px phone targets; duplicate link breakpoint from 640 to 768; existing dialogs/confirmation unchanged | `min-h-11 md:min-h-9`, `md:min-h-9`; preserved course, delivery and faculty assignment scope |
+| `admin-learning-structure-actions.tsx` | Switched two learning path/ordering grid breakpoints from `sm:` to `md:` | `md:grid-cols-[1fr_2fr_auto]`, `md:items-end`; all mutation/disabled states preserved |
+| `admin-offering-learning-overview.tsx` | Four content links/lesson panel responsive modifiers now `md:`, badge JSX normalized, removed redundant duplicated `md:p-3` tile override | `min-h-11 md:min-h-9` link controls; distinct Lesson cards kept (not flattened) |
+| `admin-course-display-editor.tsx` | Shared Input and Save action now 44px phone/36px tablet; 13px semibold field labels; rich description and thumbnail fields preserved | `min-h-11 md:min-h-9`; migration-disabled warning status and pending save untouched |
+| `college-content-authoring-control.tsx` | Removed extra ordinary outer card, tokens for heading, 13px/600 labels; 44px phone New/Save/filer/Order/external-link controls, removed local input border/bg/40px overrides; error and success now shared `Alert` | `border-b border-border pb-5`, `md:grid-cols-2`, `min-h-11 md:min-h-9`; timezone conversions/filters/link material state preserved |
+| `college-lesson-visibility-controls.tsx` | Page-scoped selection list uses 768px two-column breakpoint and >=44px checkbox labels/buttons; Show/Hide/Retry remain shared secondary | `md:grid-cols-2`; existing shared `ScrollCue`, optimistic timestamps, failure report and retry retained |
+| `college-lesson-drag-order.tsx` | Reorder heading foreground; drag-sort fallback Move up/Move down buttons 44px phone | `min-h-11 md:min-h-9`; actual drag and persistent sort logic retained |
+| `college-lesson-reorder-actions.tsx` | Compact lesson sequence arrows have 44px phone targets | `min-h-11 md:min-h-9`; up/down disable and pending confirmation preserved |
+| `college-archived-lesson-restore.tsx` | Restore action remains shared ghost/link with responsive size | `min-h-11 md:min-h-9`; existing confirmation and error inline retained |
+| `college-assignment-create.tsx` | **Fixed a real duplicated JSX `variant` prop** on Create New Assignment; removed extra form canvas; converted all 6 grid breakpoints to `md:`, shared Input/Select/Textarea skins and 13px labels, 44px controls | `md:grid-cols-2`, `md:col-span-2`, `min-h-11 md:min-h-9`; dual create/discard `ConfirmDialog` and submission methods retained |
+| `college-assignment-actions.tsx` | Edit/Publish use secondary variant, Delete danger, Save primary without ad hoc border/bg overrides; shared Input/Textarea, flat edit area and success/error Alerts | `min-h-11 md:min-h-9`; API concurrency, archive/publish and no-edit-after-submission guards untouched |
+
+### Legacy value table — checked properties and supported states
+
+| Property and state | Legacy/owner source and expected value | Changed source and resolved value | Source result |
+| --- | --- | --- | --- |
+| Text/form labels | `legacy-styles/components___form.scss:102-126` 14px input text/20px/0.2px and `components___form.scss:107-111` 13px semibold labels | `admin-course-display-editor.tsx`, `college-lesson-create-control.tsx`, `college-content-authoring-control.tsx`, `college-assignment-create.tsx`: `text-xs font-semibold text-body` (13px/600 token), shared Input/Select font14px | Label role source MATCH; per-font visual no rendering |
+| Form default/focus/error | `components___form.scss:102-138` #fbfcfd, teal focus rgba(38,186,199,.15), error border #ef4444, error fill .06 | All migrated inputs use `src/components/ui/{input,select,textarea}.tsx`; inherited globals `--lms-form-bg:#fbfcfd`, focus shadow and error from shared skin; no local rounded/border override in modified assignment/content controls | Source token path MATCH, computed disabled/error states need shared-owner review |
+| Accent default and hover | `legacy-styles/components___variables.scss:10-14` teal #26bac7, hover #1e9aa8, text #1a95a1, subtle #eff8fa | Shared `Button`, `Badge`, `StatusBadge`, `Alert`; remaining dynamic class colors use `--lms-*` tokens | MATCH resolved brand tokens; hover pixel comparison pending |
+| Primary/secondary/danger | `master-queue.md:4-9` revised binding owner spec primary #0a7c88 white/36px/9px/14px/650 and outlined secondary; legacy `components___button.scss:1-90` older `.ln-btn` family variants include 8px/40px exceptions | `college-assignment-actions`, `college-lesson-create`, `college-quiz-actions` now use shared variants instead of forced page bg/teal text; `--lms-control-height=36px`, radius9px in `globals.css:341-343` | MATCH newer owner spec via shared button, **historical legacy `.ln-btn` variation remains non-identical**, so no strict global-button tick |
+| Phone action target | `legacy-styles/components___learn-layout.scss:361-383` min 44px for back and other mobile actions; `old-lms-shell.css` phone touch spec | Targeted buttons, selectors and section links `min-h-11` (44px) until >=768px; `md:min-h-9`=36px from tablet | MATCH source sizing for touched controls, not all descendants |
+| Phone/tablet breakpoint | `legacy-styles/components___learn-layout.scss:34,379,419,450` at max-width:767px | **All 19 re-fetched TSX have zero `sm:` occurrences**, 75 `md:` occurrences; responsive selectors now switch at 768px | Source breakpoint MATCH; physical viewport proof open |
+| Flat ordinary page and divider | `docs/design/old-lms-pages.md:7-12` one white 12px-radius canvas, ordinary lists/filters hairlines, separate report tile cards only | Course/assignment authoring ordinary wrappers `border-b` or `border-y`; genuine lessons retain separate card semantics | Source layout MATCH in modified files |
+| Error, empty, loading, success | `variables.scss:63-78` error #ef4444, warning #d97706, success #059669, info #26bac7 | `Alert tone=error/warning/success/info` in course scope, grade publication, authoring, resource progress; no changes to EmptyState/service state guards | State token source MATCH; exact alert surface differ with shared `--lms-warning-surface`, browser proof OPEN |
+| Page title/header | `old-lms-pages.md:7-10` one row page head above content | Missing college scope now one `PageHeader` OUTSIDE one semantic `Alert`, rather than nesting header in banner; other shared heads retained | MATCH source placement |
+
+### Coverage and JSX proof — exact scope 19 files
+
+Post-write, fetched every file named in the preceding 19-row table, and counted the following regex matches on complete source:
+
+| Source regex probe | Count across these 19 TSX |
+| --- | ---: |
+| `/<(button\\|input\\|select\\|textarea\\|table)(?=[\\s>])/g` (raw controls/table) | **0** |
+| `/#[a-f0-9]{6}\\b/gi` (six-digit hex) | **0** |
+| `/fixed inset-0\\|role=["']dialog["']/g` (handmade overlay) | **0** |
+| `/<h1(?=[\\s>])/g` (local competing page title) | **0** |
+| `/\\bsm:/g` (premature 640px breakpoint) | **0** |
+| `/\\bmd:/g` (>=768px breakpoint use) | **75** |
+
+Paired JSX tag checks across each source: Button and Alert openings/closings are balanced; `admin-course-actions` 10 Button pairs; `admin-learning-structure-actions` 13 Button pairs and 2 form pairs; `college-content-authoring-control` 8 Button and 2 Alert pairs; `college-assignment-actions` 4 Button pairs; `college-assignment-create` 3 Button pairs and both existing ConfirmDialog usages; `college-course-missing-scope` one Alert pair outside one `PageHeader`; `resource-progress-control` one Button/Alert pair and one ConfirmDialog usage. The other 12 scoped paths also have balanced form/button/alert tags; shared inputs can self-close. **The scan was executed over fetched source strings, NOT via local `rg` or compiler.**
+
+Reproducible local search, when orchestrator runs it:
+```bash
+rg -n '<(button|input|select|textarea|table)([[:space:]>])|#[0-9A-Fa-f]{6}|fixed inset-0|role="dialog"|<h1([[:space:]>])' src/components/courses/{admin-course-actions,admin-course-display-editor,admin-learning-structure-actions,admin-offering-learning-overview,admin-offering-section-preview,college-archived-lesson-restore,college-assignment-actions,college-assignment-create,college-assignment-review,college-content-authoring-control,college-content-preview,college-course-missing-scope,college-lesson-create-control,college-lesson-drag-order,college-lesson-reorder-actions,college-lesson-visibility-controls,college-student-visibility-control,resource-progress-control,super-admin-course-bulk-visibility}.tsx
+```
+
+**Strict ticks:** H1–H6 remain **[ ]**, because full 247-file inventory + computed style/interaction states of all shared Button/Dialog/Alert/Checkbox etc and phone/tablet visual comparison still lack proof; do not claim that changes alone certify pixel-level parity. Sources do confirm no raw controls/hex/overlays and valid balanced known JSX tag pairs for the exact 19 files above. Next owner stage is orchestrator side-by-side screenshot verification per checklist J; no tests or CI in chat-7.
+
+**Next exact unticked file:** `src/components/courses/college-content-csv-export.tsx` (export link token, loading and mobile hit area), followed by `src/components/courses/assignment-file-open-control.tsx` and its learner submission adjacent controls.
