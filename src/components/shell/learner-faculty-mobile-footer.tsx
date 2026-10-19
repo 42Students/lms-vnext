@@ -96,7 +96,7 @@ export function LearnerFacultyMobileFooter({items}:{items:readonly ShellNavItem[
               className="lms-legacy-mobile-footer-link">
               <Image src={current?item.activeIcon??item.icon:item.icon} alt=""
                 width={24} height={24} draggable={false} className="lms-legacy-mobile-footer-icon"/>
-              {alerts&&unread>0?<span aria-hidden="true" className="lms-legacy-mobile-footer-badge">
+              {alerts&&unread!==null&&unread>0?<span aria-hidden="true" className="lms-legacy-mobile-footer-badge">
                 {unread>99?"99+":unread}
               </span>:null}
               <span className="lms-legacy-mobile-footer-label">{item.visibleLabel??item.label}</span>
