@@ -50,4 +50,12 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(sidebar()).toContain("opacity:.55;");
  expect(sidebar()).toContain("width:20px;height:20px;");
 });
+ it("changes TPO group headings from zero-font separators to 12px uppercase",()=>{
+ const css=sidebar();
+ expect(css).toContain("font-size:0;");
+ expect(css).toContain("font-size:12px;");
+ expect(css).toContain("width:22px;");
+ expect(css).toContain("letter-spacing:.105em;");
+ expect(css).toContain("text-transform:uppercase;");
+});
 });
