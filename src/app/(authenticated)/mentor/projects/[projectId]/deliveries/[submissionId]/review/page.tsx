@@ -17,13 +17,13 @@ export default async function MentorDeliveryVersionPage({params}:{
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Final delivery" title={"Delivery version "+v.version}
       description={data.projectTitle+" · "+data.projectStatus}
-      actions={<Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-overview"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-overview"}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-safe:transition-colors motion-safe:duration-150 motion-reduce:transition-none">
         Review overview
       </Link>}/>
     <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
       <h2 className="text-base font-semibold">Registered review decision</h2>
-      <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+      <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Submission state</dt>
           <dd className="mt-1 text-sm font-semibold">{v.status}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Submission type</dt>
@@ -66,7 +66,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
           {label:"Demo",href:safeProjectExternalHref(v.demoUrl)}]).map(item=>
             item.href?<a key={item.label} href={item.href} target="_blank"
-              rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Open {item.label.toLowerCase()} link ↗</a>:null)}
         {!safeProjectExternalHref(v.sourceUrl)&&!safeProjectExternalHref(v.demoUrl)?
           <p className="text-sm text-muted-foreground">No valid source or demo URL.</p>:null}
@@ -80,9 +80,9 @@ export default async function MentorDeliveryVersionPage({params}:{
         const kind=entry.kind==="FILE"?"File":entry.kind==="LINK"?"Link":"Attachment";
         const href=typeof entry.url==="string"?safeProjectExternalHref(entry.url):null;
         return <li key={index} className="py-[var(--lms-space-3)] text-sm">
-          <span className="font-semibold">{name}</span> · {kind}
+          <span className="break-words font-semibold">{name}</span> · {kind}
           {href?<a href={href} target="_blank" rel="noopener noreferrer"
-            className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open link ↗</a>:null}
+            className="ml-2 inline-flex min-h-11 max-w-full items-center break-all text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open link ↗</a>:null}
           {kind==="File"&&typeof entry.fileId==="string"?
             <span className="ml-2 text-muted-foreground">Uploaded file recorded</span>:null}
         </li>;
@@ -90,12 +90,12 @@ export default async function MentorDeliveryVersionPage({params}:{
     </section>
     <section className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
       <h2 className="font-semibold">Recorded submission history</h2>
-      <ol className="mt-3 space-y-2 text-sm">
-        {v.createdAt?<li>Draft created · {format(v.createdAt)} · {data.createdByName??"Project learner"}</li>:null}
-        {v.submittedAt?<li>Submitted · {format(v.submittedAt)} · {data.submittedByName??"Project learner"}</li>:null}
-        {v.reviewedAt?<li>Reviewed ({v.decisionLabel}) · {format(v.reviewedAt)}
+      <ol className="mt-3 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-sm">
+        {v.createdAt?<li className="py-[var(--lms-space-3)]">Draft created · {format(v.createdAt)} · {data.createdByName??"Project learner"}</li>:null}
+        {v.submittedAt?<li className="py-[var(--lms-space-3)]">Submitted · {format(v.submittedAt)} · {data.submittedByName??"Project learner"}</li>:null}
+        {v.reviewedAt?<li className="py-[var(--lms-space-3)]">Reviewed ({v.decisionLabel}) · {format(v.reviewedAt)}
           {" · "+(data.reviewedByName??"Reviewer")}</li>:null}
-        {data.events.map(event=><li key={event.id}>
+        {data.events.map(event=><li key={event.id} className="py-[var(--lms-space-3)]">
           {event.eventType.replaceAll("_"," ").toLowerCase()} · {format(event.occurredAt)}
           {" · "+event.actorName}
           {event.reason?<p className="whitespace-pre-wrap break-words text-xs text-body">{event.reason}</p>:null}
