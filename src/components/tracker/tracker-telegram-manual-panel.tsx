@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import {useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -36,14 +37,14 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
   return <section className="space-y-3 border-b border-border pb-4">
     <h2 className="font-semibold">Telegram alerts</h2>
     <div className="flex flex-wrap gap-3">
-      <button type="button" disabled={pending} onClick={()=>setOpen(true)}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
+      <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(true)}
+       >
         Daily digest
-      </button>
-      <button type="button" disabled={!configured||pending} onClick={()=>setConfirm("TEST")}
-        className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold disabled:opacity-50">
+      </Button>
+      <Button variant="secondary" type="button" disabled={!configured||pending} onClick={()=>setConfirm("TEST")}
+       >
         Send test alert
-      </button>
+      </Button>
     </div>
     {!configured?<p role="status" className="text-sm text-body">
       Telegram alerts are not configured. Manual sends are unavailable.
@@ -59,12 +60,12 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
         <div><dt>Deploy</dt><dd>{deploy??"Not recorded"}</dd></div>
       </dl>
       <div className="mt-3 flex flex-wrap gap-3">
-        <button type="button" disabled={!configured||pending} onClick={()=>setConfirm("DIGEST")}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
+        <Button variant="secondary" type="button" disabled={!configured||pending} onClick={()=>setConfirm("DIGEST")}
+         >
           Send to Telegram now
-        </button>
-        <button type="button" onClick={()=>setOpen(false)}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Close</button>
+        </Button>
+        <Button variant="secondary" type="button" onClick={()=>setOpen(false)}
+         >Close</Button>
       </div>
     </Dialog>
     <ConfirmDialog open={confirm!==null} onOpenChange={value=>{if(!value)setConfirm(null);}}

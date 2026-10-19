@@ -105,7 +105,7 @@ export function RecruiterPlacementPortfolio({
               </nav>
               {(unansweredRequests[item.job.id]??0)>0?<Link
                 href={"/recruiter/drives/"+item.job.id+"?tab=requests"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}
-                className="mt-2 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-primary-text">
+                className="mt-2 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-warning bg-[var(--lms-warning-subtle)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 Answer {unansweredRequests[item.job.id]} open {unansweredRequests[item.job.id]===1?"request":"requests"} →
               </Link>:null}
               <p className="mt-2 text-sm text-body">
@@ -122,7 +122,7 @@ export function RecruiterPlacementPortfolio({
             <Link
               href={"/recruiter/drives/" + item.job.id +
                 (returnTo ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
-              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
             >
               Open hiring flow
             </Link>

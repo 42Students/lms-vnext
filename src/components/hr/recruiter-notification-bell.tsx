@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useCallback,useEffect,useRef,useState} from "react";
@@ -62,32 +63,32 @@ export function RecruiterNotificationBell(){
  },[isOpen]);
  const href="/hr/notifications"+(data?.collegeId?"?collegeId="+encodeURIComponent(data.collegeId):"");
  return <div className="relative">
-  <button ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
+  <Button variant="primary" className="relative" ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
-    className="relative inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+   >
     <span aria-hidden="true">🔔</span>
     {data?.unread&&data.unread>0?<span aria-hidden="true"
       className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
       {data.unread>99?"99+":data.unread}</span>:null}
-  </button>
+  </Button>
   {isOpen?<section ref={popoverRef} role="dialog" aria-modal="false" aria-label="Notifications"
     className="absolute right-0 top-full z-50 mt-2 w-[min(25rem,94vw)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between gap-3">
     <h2 className="font-semibold text-foreground">Notifications</h2>
-    <button type="button" onClick={()=>setIsOpen(false)}
-     aria-label="Close notifications" className="min-h-9 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
+    <Button variant="secondary" type="button" onClick={()=>setIsOpen(false)}
+     aria-label="Close notifications">Close</Button>
    </div>
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
-    <button type="button" onClick={()=>void load()} className="ml-2 inline-flex min-h-9 items-center text-sm text-primary-text underline">Retry</button>
+    <Button variant="ghost" type="button" onClick={()=>void load()}>Retry</Button>
    </div>:null}
    {data?.status==="CHOOSE_COLLEGE"?
     <div className="mt-3 space-y-2 text-sm">{data.choices?.map(item=>
-     <button type="button" key={item.collegeId} onClick={()=>{
+     <Button variant="primary" className="w-full justify-start text-left" type="button" key={item.collegeId} onClick={()=>{
        requestGate.current.invalidate();setData(null);setError("");setCollegeId(item.collegeId);
       }}
-      className="block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-left text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-      {item.collegeName}</button>)}</div>:null}
+     >
+      {item.collegeName}</Button>)}</div>:null}
    {data?.status==="READY"&&data.rows?.length===0?
      <p role="status" className="mt-4 text-sm text-muted-foreground">No notifications yet</p>:null}
    {data?.status==="READY"&&data.rows?.length?
@@ -95,7 +96,7 @@ export function RecruiterNotificationBell(){
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-9 py-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="block min-h-9 py-3 text-sm text-primary-text hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
