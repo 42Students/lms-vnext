@@ -52,7 +52,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
     </label>)}
   </Disclosure>
   <Button type="button" disabled={busy} onClick={()=>void save()}
-   className="min-h-11 min-[768px]:min-h-9">{busy?"Saving…":"Save"}</Button>
+   className="min-h-11 md:min-h-9">{busy?"Saving…":"Save"}</Button>
   {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message} onDismiss={()=>setMessage("")}/>:null}
   {dialog}
  </section>;
