@@ -53,7 +53,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
     });
   }
   return <div className="space-y-5">
-    <form onSubmit={preview} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <form onSubmit={preview} className="space-y-4 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:p-6">
       <p className="text-sm text-body">
         Upload a CSV with one column named <code>email</code>. Maximum 500 rows and 128 KiB.
         Only currently active learners in this college are eligible.
@@ -84,7 +84,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         Download safe error CSV
       </a>
       {result.rows.length === 0 ? <p className="text-sm text-body">No learner rows were supplied.</p> : (
-        <div className="max-h-[35rem] overflow-auto rounded-xl border border-border">
+        <div className="max-h-[35rem] overflow-auto rounded-[var(--lms-control-radius,9px)] border border-border">
           <DataTable<Result["rows"][number]>
             caption="Group import preview validation"
             rows={result.rows} getRowKey={row=>String(row.rowNumber)}

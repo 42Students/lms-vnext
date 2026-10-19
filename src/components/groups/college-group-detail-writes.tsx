@@ -51,7 +51,7 @@ export function CollegeGroupDetailWrites({
     (b.waitlistPosition??Number.MAX_SAFE_INTEGER)||a.membershipId.localeCompare(b.membershipId));
   const front=ordered[0];
   return <section aria-label="Group rule and waitlist actions" className="space-y-5">
-    <div className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <div className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:p-5">
       <h2 className="text-lg font-semibold text-foreground">Waitlist review</h2>
       <p className="mt-1 text-sm text-body">Only the first waitlisted learner can be promoted. Locked members and full groups cannot be overridden.</p>
       {ordered.length===0?<p className="mt-2 text-sm text-muted-foreground">No waitlisted learners recorded.</p>:
@@ -70,7 +70,7 @@ export function CollegeGroupDetailWrites({
         </li>)}</ul>}
       {!hasSpace?<p className="mt-2 text-xs text-warning">Group capacity is full. No manual promotion is available.</p>:null}
     </div>
-    <div className="space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+    <div className="space-y-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:p-5">
       <h2 className="text-lg font-semibold text-foreground">Eligibility rule</h2>
       <p className="text-sm text-body">Edit the supported V1 criteria as JSON. At least one criterion is required. Saving does not run a refresh or change membership.</p>
       <label className="grid gap-2 text-sm font-semibold text-body">Rule criteria
