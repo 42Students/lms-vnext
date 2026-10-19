@@ -299,3 +299,20 @@ Phone source path: custom forms and saved-view/selection lists are one column, w
 Post-edit fetched-source checks: applicant page 0 native `button/input/select/textarea/table` tags, 0 literal hex, 0 custom `h1`; `<div>` / `</div>` counts 53/53, fragments 3/3. New grid 0 raw controls/hex/h1; no custom dialog. This is not a local grep or a TS/CI/Playwright verification. AG Grid packages are absent from the inspected manifest despite Quartz code; by instruction, `package.json` was not touched. **E8 remains unticked.**
 
 **Next E8 file:** `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx` to compare round list/editor against shipped `TpoGrid` and legacy sheet action patterns.
+
+
+## chat-15 rounds editor E8 wiring — 2026-10-19
+
+- [ ] `src/components/hr/hr-round-editor-grid.tsx`: read-only `TpoGrid` displays employer-authorized sequence / round name / type / mode / duration / status / editability and links to existing edit form anchor and removal confirmation route. Row source is the existing `listHrRoundEditorRows(context,jobId)` and never discloses candidate results, attendance or slots.
+- [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`: desktop reads the shared grid; editable rounds retain the original server-post forms below with `expectedUpdatedAt`, round ID and all original fields. Mobile remains the exact existing per-round form/list at max 767px. Noneditable desktop rounds render only the sheet. No double editing surface in a single breakpoint.
+- [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`: time blocks are **interactive forms**, not yet a sheet. They are flattened from per-object cards to hairline canvas rows and use existing `RecruiterInterviewSlotActions`. A grid cannot safely replace those actions without preserving multi-button layout and optimistic version semantics.
+
+| Legacy property | Legacy source | vNext value and source | Source verdict |
+| --- | --- | --- | --- |
+| One white canvas / no ordinary cards | `docs/design/old-lms-pages.md:6,10` | `hr/.../rounds/editor/page.tsx` now has an ordinary `article` with `border-b` and no Card; desktop shows shared native TpoGrid | Structural match only |
+| Sheet columns / actions | `old-lms-pages.md:10` sheet + row menu | `hr-round-editor-grid.tsx` read-only schema and in-page Edit + Review round removal links | Content-specific round columns; no exact legacy columns reference |
+| Mobile threshold | `components___listing-page-header.scss:131-158` max 767px | Editor: `hidden md:block`, `md:hidden` and `md:grid-cols-2` starting at 768px | Exact source threshold, not a screenshot |
+| Server-scope and mutation | Existing per-job recruiter permission and optimistic timestamp form token | `listHrRoundEditorRows` server check and unchanged POST endpoint/fields | No broader data access from client, source-only |
+| Native Quartz / keyboard / status pill / row height | Requires `legacy-grid/*.txt` and complete state inspection | `TpoGrid` reports Quartz engine; job page uses its native client view | Unticked; package declaration and runtime/pixel proof unavailable |
+
+Post-edit GitHub source scans: `hr-round-editor-grid.tsx` and `hr/.../rounds/editor/page.tsx` both have native controls/hex/custom heading/overlay = 0/0/0/0. Editor JSX paired wrappers: `div` 3/3, `article` 1/1, `form` 2/2, `Button` 2/2. The TpoGrid is hidden below 768px and existing forms remain reachable there. No app execution, TypeScript/CI, screenshots or full computed-style property comparison. **E8 stays unticked**.
