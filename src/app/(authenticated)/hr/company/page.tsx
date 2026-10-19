@@ -39,7 +39,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   // value. Keep the existing recoverable invalid-college state on ambiguity.
   const repeated=Object.values(query).some(Array.isArray);
   const collegeQuery = z.string().uuid().optional().safeParse(repeated?null:one(query.collegeId));
-  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Company & Team" />
+  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<Link href="/hr/company" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
@@ -57,7 +57,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   }
 
   const tab = requestedTab === "team" ? "team" : "company";
-  if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader eyebrow="Recruiter" title="Company & Team" />
+  if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
       action={<Link href="/hr/company?tab=team" className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear search</Link>} /></div>;
   const result = await getRecruiterCompanyTeam(context, requestedCollegeId);
@@ -66,7 +66,6 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     return (
       <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
-          eyebrow="Recruiter"
           title="Company & Team"
           description="Choose the college whose recruiter relationship you want to view. We never guess a college when more than one access grant is active."
         />
@@ -107,7 +106,6 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     <div className="min-w-0 max-w-full space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageHeader
-          eyebrow="Recruiter"
           title="Company & Team"
           description={"Your work with " + result.grant.collegeName}
         />
