@@ -1030,7 +1030,7 @@ export function RecruiterLeadsWorkspace({
                         <span className="sm:hidden">Select</span>
                       </label>},
                     {key:"Contact",header:"Contact",mobilePriority:"primary",cell:lead=><div className="min-w-0">
-                      <Link className="inline-flex min-h-11 items-center break-words font-semibold text-[var(--lms-teal-deep)] underline"
+                      <Link className="inline-flex min-h-11 items-center break-words font-semibold text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>{lead.name||"Unnamed contact"}</Link>
                       {lead.designation?<p className="text-xs text-muted-foreground">{lead.designation}</p>:null}
                     </div>},
