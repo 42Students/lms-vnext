@@ -10,7 +10,7 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 - [x] A3: interactive button hover, active, pressed, disabled, loading/pending paint — `components___antddesign.scss:153-181`, `components___button.scss:13-16`; existing `globals.css:371-405,615-635,1127-1148` + micro CSS 38-52,203-205 (no changes to component behavior).
 - [x] A3: touch pressed card feedback — `components___accessibility.scss:49-60`; micro CSS 65-72 (scale .98, opacity .9, 50ms ease).
 - [x] A3/A4: pointer, disabled, loading cursor states — `components___button.scss:13-17`, `components___notification-drawer.scss:26-41,192-203`; micro CSS 38-52,203-205; disabled not-allowed is vNext fallback because legacy leaves it unspecified.
-- [x] A4: click versus keyboard focus — `components___accessibility.scss:13-36`; micro CSS 23-33,55-59 (generic 2px #1a95a1 / +3px, elevated 2px / +2px and 12% halo).
+- [x] A4: click versus keyboard focus — `components___accessibility.scss:13-36`; micro CSS 23-33,55-59,409-413 (generic 2px #1a95a1 / +3px, elevated 2px / +2px and 12% halo; extra `[tabindex]` and editable-region fallback).
 - [x] A4: notification item focus ring — `components___notification-drawer.scss:217-224`; micro CSS 225-230 (1px #6b7280 / +1px).
 - [x] A4: hidden scrollbar baseline — `components___common.scss:307-311,329-331` and `old-lms-shell.css:10-11`; existing `globals.css:183-193`.
 - [x] A4: admin table 4px and tab 3px scrollbars — `pages___admin-list-pages.scss:96-106,244-254`; micro CSS 238-268, using real ScrollCue viewport markup (`src/components/ui/scroll-cue.tsx`).
@@ -26,7 +26,7 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 - [x] I: reduced-motion preference — `components___accessibility.scss:116-124`, `components___antddesign.scss:184-189`; existing `globals.css:304-312`; micro CSS 173-177,374-386.
 - [x] I: print interaction paint only, no layout — `components___accessibility.scss:116-124`; micro CSS 354-372; `src/app/(authenticated)/authenticated-print.css` owns paper/layout rules.
 - [ ] A4: text-selection **legacy exact parity** — `components___variables.scss:10-13,24` supplies colours but no `::selection` selector; micro CSS 122-127 uses those tokens. Actual legacy selection paint unverified.
-- [ ] I: table row hover and selection **legacy exact parity** — `components___common.scss:130-139` proves only no-hover exemption; `old-lms-shell.css:45-48` is for sidebar rows, not table rows. Micro CSS 130-137,271-288 and `globals.css:579` implement safe palette-based behavior, but no old selected-table colour is specified.
+- [ ] I: table-row hover and selected-row **whole-app parity** — standard `.ln-table` hover is now source-matched (`components___common.scss:697-714,849-855` → micro CSS 421-433: cell `background:none !important`); `components___common.scss:130-139` proves the white no-hover exemption. Selected-row colour is still not specified by legacy SCSS (`old-lms-shell.css:45-48` is navigation, not a table), and custom/non-shared table instances have not been exhaustively grepped; full strict tick withheld.
 - [ ] I: checkbox/radio glyph and switch-thumb **animation parity** — teal checked colours matched, 150ms track-transition aligned to `components___variables.scss:251-259` (micro CSS 327-340); the old SCSS does not define the glyph/thumb animation, and native browser checkmarks are not tweenable by CSS.
 - [ ] I: input browser autofill **exact parity** — `components___form.scss:57-60` gives placeholder but not autofill; micro CSS 115-120,342-352 preserves ink/caret. Browser-autofill background remains user-agent controlled.
 - [ ] I: tooltip mouse-enter/mouse-leave **delay parity** — `components___antddesign.scss:46-80` defines visual palette, not delay. `src/components/ui/tooltip.tsx:18-34` opens immediately on pointer-enter. CSS cannot alter the trigger's JS event timing; no delay invented.
@@ -70,6 +70,42 @@ This audit distinguishes **source-matched CSS details** from **unknown or non-CS
 | Sticky shadow | `old-lms-shell.css:56` 0 1px 3px rgba(26,45,72,.035) | `micro-details.css:290-296` same | Equal shadow |
 | Reduced motion | `components___accessibility.scss:116-124` .01ms and scroll auto | `globals.css:304-312`, `micro-details.css:374-386` | Equal |
 | Print interaction | No legacy print-specific declarations in copied SCSS | `micro-details.css:354-372`: transition/animation none, no geometry | Unverifiable |
+
+## Next unticked batch — source-backed value and coverage proof (2026-10-19)
+
+This batch changed only `src/styles/micro-details.css` plus this audit; component markup, event handling, data access and CSS geometry are unchanged. The two additions correspond to exact legacy selectors, not guessed hover colours or tooltip delays.
+
+| Micro-state/property | Old LMS reference, state and value | vNext declaration and value | Finding |
+| --- | --- | --- | --- |
+| Keyboard outline, explicit-focus regions | `components___accessibility.scss:19-23` `:focus-visible`: `2px solid #1a95a1`, offset `3px` | `micro-details.css:409-413` explicit tab stops, editable regions and semantic options: `2px solid var(--lms-micro-focus)` = `#1a95a1`, offset `3px` | Equal for these properties, component-specific rings intentionally retained |
+| Keyboard-focus ring for cards | `components___accessibility.scss:25-36`: `2px` / `2px` offset, `0 0 0 4px rgba(26,149,161,.12)` | `micro-details.css:55-59` same | Already source-matched; no change |
+| Ordinary table cell, resting | `components___common.scss:697-714` `.ln-table td`: `background:#fff` | `table.tsx:14-17`, `data-table.tsx:93-110`: white surface via component/skin | Existing shared table source read; not a new override |
+| Ordinary `.ln-table` cell, hovered | `components___common.scss:849-855`: `background:none !important` on `tr:hover td` | `micro-details.css:421-425` Table and `:427-432` responsive DataTable: `background:none !important` on unselected hovered cells | **Exact hover-property match** for these shared-table states |
+| Legacy hover opt-out | `components___common.scss:130-139` `.ln-table-no-hover`: `background:#fff !important` | `micro-details.css:281-286` existing white exemption; `:423,429` excludes descendant `.ln-table-no-hover` from new clear | Exemption preserved |
+| Selected row, mouse / keyboard | Legacy SCSS supplies no general selected-row colour; `old-lms-shell.css:45-48` is sidebar only | `micro-details.css:130-137,271-280`: `#eff8fa` when selected state is explicit | **Unknown legacy value; unticked** |
+| Exam-table odd-row hover | `components___common.scss:808-815` odd cells `#f8fbff !important` | No change to `Table` striped option or exam-specific styling in this lane | **Special-case parity not claimed; chat-14 owns table types** |
+
+**Read-only source-search / grep evidence.** GitHub code-search in `42Students/lms-vnext` returned the following paths. These are actual search results, not claims that a local `grep`, build, TypeScript checker, or screenshot runner was executed:
+
+| Exact search string | Hits | Production declarations found |
+| --- | ---: | --- |
+| `@import "../styles/micro-details.css"` | 1 | `src/app/globals.css:9`, exactly once after legacy skin at line 6 |
+| `data-slot="table"` | 3 | `src/components/ui/table.tsx:14`; `src/styles/micro-details.css`; `src/app/globals.css` |
+| `data-slot="data-table"` | 14 | `src/components/ui/data-table.tsx:59,85`; remaining hits are skin/print CSS and tests; only one production component source |
+| `data-slot="scroll-cue"` | 12 | `src/components/ui/scroll-cue.tsx:61-69` provides `[tabindex]` and its actual first-child scroll viewport; remaining matches are style/audit/test references |
+
+Whole-repository negative greps required by the STRICT TICK RULE remain **unrun** because this lane is expressly not permitted to run code. Re-run these source-only commands in the orchestrator before ticking broad closure:
+
+```sh
+rg -n --glob '*.tsx' 'data-slot="(table|data-table)"|<table[ >]|<tr[ >]' src
+rg -n --glob '*.tsx' 'tabIndex=|contentEditable|role="(checkbox|radio|option)"' src
+rg -n '::selection|autofill|selected|mouseEnterDelay|mouseLeaveDelay' docs/design/legacy-styles
+rg -n 'micro-details\.css' src/app src/styles
+```
+
+**Responsive source comparison (no screenshots claimed):** `old-lms-shell.css:23,73-100` uses a `767px` mobile limit; `micro-details.css:426-432` therefore applies DataTable's hover-background reset only at `768px+`. `data-table.tsx:93-110` displays card-form rows on small screens; the new rule does not affect those rows at 320–767px. Shared `Table` continues to use its existing horizontal ScrollCue at all widths (no new layout rule); table scrollbar 4px/tab scrollbar 3px are handled by `micro-details.css:238-268`, with actual viewport at `scroll-cue.tsx:61-69`. At tablet width 768–1199px and desktop 1200px+, the shared table-hover declaration applies to unselected cells without changing their dimensions. Focus fallback is width-independent; existing `@media (hover:none)` protects touch press, `@media (prefers-reduced-motion:reduce)` protects animations, and print retains separate `@media print` interaction suppression. **Browser focus rings, selection highlighting, tablet hover with touch hardware, and side-by-side screenshots still need runtime observation.**
+
+**Ownership and no-regression:** No React/TypeScript or shared UI/component file was edited, and no styles were added for positioning, padding, margins, widths, heights, or z-index. Matched elements retain their keyboard order and click handlers. CSS source read confirmed matched `{`/`}` counts after each micro stylesheet edit; runtime CSS parsing and computed-style comparison remain unperformed.
 
 ## Coverage and responsive review
 
