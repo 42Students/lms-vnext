@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -41,10 +42,12 @@ export default async function HrMessagesPage({searchParams}:{
     className="block rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 sm:min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
    <nav aria-label="Inbox filters" className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)]">
-    {result.choices.length>1?result.choices.map(grant=><Link key={grant.id}
-     href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
-     aria-current={grant.collegeId===result.collegeId?"page":undefined}
-     className={grant.collegeId===result.collegeId ? "inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>{grant.collegeName}</Link>):null}
+    {result.choices.length>1?<NeedsDoingChips label="College notifications:"
+     selectedKey={result.collegeId}
+     items={result.choices.map(grant=>({
+      key:grant.collegeId,label:grant.collegeName,
+      href:"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId),
+     }))}/>:null}
     <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
       (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
      className={"inline-flex min-h-11 items-center border-b-[3px] px-3 py-2 text-sm font-semibold transition-colors duration-150 sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+(query.data.unreadOnly==="true"?"border-primary text-primary-text":"border-transparent text-body hover:border-primary hover:bg-primary-subtle")}>
