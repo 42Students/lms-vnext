@@ -51,7 +51,7 @@ export default async function TpoByCompanyReportPage({
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/by-company"/>;
   const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{}),...(first(query.outcome)?{outcome:first(query.outcome)}:{})});
-  if(!viewQuery.success)return <section role="alert" className="rounded-xl border border-border bg-surface p-6"><h1 className="font-semibold text-foreground">Invalid company report filters</h1><p className="mt-2 text-sm text-body">Check search length and page number.</p></section>;
+  if(!viewQuery.success)return <section role="alert" className="rounded-xl border border-border bg-surface p-6"><h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Invalid company report filters</h1><p className="mt-2 text-sm text-body">Check search length and page number.</p></section>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
     seasonId: first(query.seasonId) || undefined,
@@ -98,7 +98,7 @@ export default async function TpoByCompanyReportPage({
             <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>
             <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="APPLICATIONS_DESC">Submitted applications (high first)</option><option value="DRIVES_DESC">Recorded drives (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option><option value="HIGHEST_CTC_DESC">Highest accepted full-time CTC (high first)</option>
           </select>
-        </label><button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
+        </label><button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</button>
       </form>
       <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope; the visible-companies CSV matches this search, order and page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
