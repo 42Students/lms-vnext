@@ -233,7 +233,7 @@ export function LearnerCareerRoundsWorkspace({
     const urgent = learnerRoundUrgency(round, nowMs);
     return urgent === "today" || urgent === "week";
   }).length;
-  const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
+  const selectClass = "mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9";
   const date = selected ? learnerRoundScheduledInstant(selected) : null;
   const meeting = externalLink(selected?.exception?.meetingUrl ?? selected?.meetingUrl ?? null);
   const mobileInterviewSummary=kind==="INTERVIEW"&&selected
