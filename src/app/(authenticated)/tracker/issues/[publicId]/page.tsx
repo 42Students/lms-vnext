@@ -52,7 +52,7 @@ export default async function TrackerIssueDetailPage({
       <div className="space-y-6">
         <PageHeader eyebrow="42 Tracker" title={publicId} description="The tracker is temporarily unavailable." />
         <TrackerAdminNav />
-        <p className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 text-sm text-body">
+        <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
           We could not load tracker details right now. Please try again later.
         </p>
       </div>
@@ -133,7 +133,7 @@ export default async function TrackerIssueDetailPage({
         ) : (
           <div className="grid gap-2">
             {detail.attachments.map((attachment) => (
-              <div key={attachment.id} className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 text-sm">
+              <div key={attachment.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm">
                 <p className="m-0 font-semibold text-foreground">{attachment.originalFilename}</p>
                 <p className="mt-1 text-muted-foreground">
                   {attachment.contentType} · {Math.ceil(attachment.sizeBytes / 1024)} KiB · {when(attachment.createdAt)}
@@ -162,7 +162,7 @@ export default async function TrackerIssueDetailPage({
         ) : (
           <ol className="grid gap-3">
             {detail.activities.map((activity) => (
-              <li key={activity.id} className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+              <li key={activity.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
                 <p className="m-0 text-sm font-semibold text-foreground">{activity.type}</p>
                 <p className="mt-1 text-sm text-body">
                   {auditActivityTransition(activity)}
