@@ -66,14 +66,6 @@ for (const file of files) {
                   if (!/(?:^|\s)md:min-h-9(?:\s|$)/.test(next)) {
                     next += " md:min-h-9";
                   }
-                  // A bordered link with 20px line height + 16px py + 2px
-                  // border is 38px, despite a 36px minimum: clear y padding
-                  // only from md to reach the measured 36px control height.
-                  if (/(?:^|\s)border(?:\s|$)/.test(next) &&
-                      /(?:^|\s)py-2(?:\s|$)/.test(next) &&
-                      !/(?:^|\s)md:py-0(?:\s|$)/.test(next)) {
-                    next += " md:py-0";
-                  }
                   if (old !== next) edits.push({
                     start: cls.initializer.getStart(sf),
                     end: cls.initializer.getEnd(),
