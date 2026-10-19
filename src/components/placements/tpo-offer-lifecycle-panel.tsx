@@ -186,7 +186,7 @@ export function TpoOfferLifecyclePanel({
           type="button"
           disabled={!valid || busy || !reviewed}
           onClick={() => void submit()}
-          className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground"
+          className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-primary-foreground"
         >
           {busy ? "Recording..." : "Review and confirm action"}
         </button>

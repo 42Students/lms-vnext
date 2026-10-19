@@ -84,7 +84,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
           </div>
           <div className="flex flex-wrap gap-3">
             <button type="button" onClick={() => void save()} disabled={busy}
-              className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60 text-primary-foreground">
+              className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60 text-primary-foreground">
               {busy ? "Saving..." : edit ? "Review and confirm edit" : "Review and confirm new season"}
             </button>
             {edit ? <button type="button" onClick={() => select(null)}
