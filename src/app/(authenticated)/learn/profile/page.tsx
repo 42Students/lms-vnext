@@ -41,7 +41,7 @@ export default async function LearnerProfilePage({
         title="Profile"
       />
       <LearnerVerificationLiveRefresh/>
-      <section aria-label="Profile verification summary" className="rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Profile verification summary" className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Profile verification</h2>
           <span className="rounded-full border border-border px-3 py-1 text-sm font-semibold text-foreground">
@@ -107,7 +107,7 @@ export default async function LearnerProfilePage({
         className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Who has my data →
       </Link>
-      <section aria-label="Verification status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <section aria-label="Verification status" className="border-b border-border py-5">
         <h2 className="text-base font-semibold text-foreground">Education and identity verification</h2>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
         {verification?<div className="mt-4 space-y-3">
