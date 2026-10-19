@@ -73,7 +73,7 @@ export function CollegeAdminDashboardActions() {
         {COLLEGE_ADMIN_SETUP_PHASES.map((phase, phaseIndex) => (
           <section
             key={phase.title}
-            className="space-y-3 rounded-xl border border-border bg-surface p-5"
+            className="space-y-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-5"
             aria-label={phase.title}
           >
             <h3 className="m-0 text-base font-semibold text-foreground">
