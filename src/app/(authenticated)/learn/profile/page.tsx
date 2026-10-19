@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {learnerProfileSectionRecoveryNotice,learnerProfileResolveSection} from "@/modules/people/learner-profile-section-recovery-model";
@@ -44,11 +45,11 @@ export default async function LearnerProfilePage({
       <section aria-label="Profile verification summary" className="rounded-xl border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Profile verification</h2>
-          <span className="rounded-full border border-border px-3 py-1 text-sm font-semibold text-foreground">
+          <Badge  tone="neutral">
             {verification&&["VERIFIED","UPDATE_PENDING"].includes(verification.education.status)&&
               ["VERIFIED","UPDATE_PENDING"].includes(verification.identity.status)
               ?"Verified profile":"Not verified yet"}
-          </span>
+          </Badge>
         </div>
         {verification? <div className="mt-3 space-y-2 text-sm text-body">
           {(["education","identity"] as const).map(section=>{

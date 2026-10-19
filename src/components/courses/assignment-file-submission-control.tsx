@@ -1,4 +1,6 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -173,9 +175,9 @@ export function AssignmentFileSubmissionControl({
     <h3 className="text-sm font-semibold text-foreground">{multipartEnabled?"Combined assignment submission":"File Upload"}</h3>
     {uploadsAllowed?<p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>:null}
     {uploadsAllowed?<label className="block text-sm font-semibold text-body">Choose a file to upload
-      <input type="file" multiple accept={pdfOnly?".pdf":acceptAttributeFor("assignment-submission")}
+      <Input type="file" multiple accept={pdfOnly?".pdf":acceptAttributeFor("assignment-submission")}
         disabled={loading || busy || staged.length >= MAX_ASSIGNMENT_FILES_PER_SUBMISSION}
-        className="mt-2 block min-h-11 sm:min-h-9 w-full max-w-full text-sm"
+        className="mt-2 min-h-11 max-w-full"
         onChange={event => { select(event.currentTarget.files); event.currentTarget.value = ""; }} />
     </label>:null}
     {uploadsAllowed?<p role="status" className="text-xs text-muted-foreground">Google Drive import is not configured. To add a file from Google Drive, download it to your device first, then use Choose a file to upload. The uploaded file must pass private-storage security checks.</p>:null}
@@ -207,7 +209,7 @@ export function AssignmentFileSubmissionControl({
     {staged.length||hasWrittenOrLinkParts ? <div className="space-y-3 rounded-xl border border-border bg-surface p-3">
       {hasPending ? <p role="status" className="text-sm text-muted-foreground">Files must pass security checks before final submission.</p> : null}
       <label className="flex min-h-11 items-start gap-2 text-sm text-body">
-        <input type="checkbox" checked={confirmed} disabled={busy || hasPending} className="mt-1"
+        <Checkbox checked={confirmed} disabled={busy || hasPending} className="mt-1"
           onChange={event => setConfirmed(event.target.checked)} />
         <span>I confirm this is my final assignment submission and cannot be replaced after it is recorded.</span>
       </label>

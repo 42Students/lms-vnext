@@ -110,7 +110,7 @@ export default async function TpoNotificationsPage({
             <div className="flex justify-center">
               <Link
                 href={nextHref}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle"
+                className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-foreground hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-primary-subtle)]"
               >
                 Older notifications
               </Link>

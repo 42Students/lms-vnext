@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -21,10 +22,10 @@ export function MentorSprintDeleteControl({projectId,sprintId,title,taskCount,up
   finally{setBusy(false);}
  }
  return <span className="inline-flex flex-col gap-1">
-  <button type="button" disabled={busy}
-   onClick={()=>void remove()} className="min-h-9 rounded-[var(--lms-control-radius)] border border-error bg-surface px-3 text-[13px] font-semibold text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50">
+  <Button variant="danger" type="button" disabled={busy}
+   onClick={()=>void remove()} className="min-h-9 px-3">
    {busy?"Deleting…":"Delete sprint"}
-  </button>
+  </Button>
   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
  </span>;
 }

@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import {TpoOptionalEmailsEditor} from "@/components/tpo/tpo-optional-emails-editor";
 import {TpoSmsCapEditor} from "@/components/tpo/tpo-communication-settings-editors";
@@ -51,7 +52,7 @@ export default async function TpoStudentNoticesSettings(){
     <div className="flex flex-wrap gap-2">{["Round scheduled or changed",
      "Offer released, expiring, expired or withdrawn","Drive cancelled",
      "Application deadline today","Debarred or marked absent"].map(label=>
-     <span key={label} className="rounded-full border border-border px-3 py-1 text-xs">{label}</span>)}</div>
+     <Badge key={label}  tone="neutral">{label}</Badge>)}</div>
     <p className="text-xs text-muted-foreground">These are legacy notification categories. Actual email/SMS delivery is not certified without provider status.</p>
    </section>
   <section className="space-y-2 border-t border-border pt-5">
