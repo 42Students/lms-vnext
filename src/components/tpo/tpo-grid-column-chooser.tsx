@@ -36,20 +36,20 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
         };
         return <div key={key} className="flex flex-wrap items-center gap-2">
           <span className="min-w-24 text-sm">{column.label}</span>
-          <Button variant="secondary" type="button" disabled={index===0} onClick={()=>move(-1)}
+          <Button variant="secondary" type="button" disabled={index===0} onClick={()=>move(-1)} className="min-h-11 md:min-h-9"
             
             aria-label={"Move "+column.label+" earlier"}>Earlier</Button>
-          <Button variant="secondary" type="button" disabled={index===selected.length-1} onClick={()=>move(1)}
+          <Button variant="secondary" type="button" disabled={index===selected.length-1} onClick={()=>move(1)} className="min-h-11 md:min-h-9"
             
             aria-label={"Move "+column.label+" later"}>Later</Button>
         </div>;
       })}
     </div>
     <div className="flex flex-wrap gap-2">
-      <Button variant="secondary" type="button" disabled={selected.length===available.length}
+      <Button variant="secondary" type="button" disabled={selected.length===available.length} className="min-h-11 md:min-h-9"
         onClick={()=>onChange([...selected,...defaultKeys.filter(key=>!selected.includes(key))])}
         >Show all columns</Button>
-      <Button variant="secondary" type="button" disabled={atDefaults} onClick={()=>onChange(defaultKeys)}
+      <Button variant="secondary" type="button" disabled={atDefaults} className="min-h-11 md:min-h-9" onClick={()=>onChange(defaultKeys)}
         >Reset columns</Button>
     </div>
   </fieldset>;
