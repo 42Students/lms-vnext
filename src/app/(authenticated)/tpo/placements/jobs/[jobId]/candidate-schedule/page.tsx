@@ -37,9 +37,9 @@ export default async function TpoCandidateSchedulePage({
   const displayed = roundId ? readiness.displayed.filter(row => row.roundId === roundId) : readiness.displayed;
   return <div className="min-w-0 space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
-      className="text-sm font-semibold text-[var(--lms-link-text)]">← Back to drive</Link>
+      className="text-sm font-semibold text-link">← Back to drive</Link>
     <header>
-      <h1 className="font-semibold text-[30px] text-[#172033]">{drive.job.title} · Candidate round schedule</h1>
+      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">{drive.job.title} · Candidate round schedule</h1>
       <p className="mt-2 text-sm text-body">
         Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes.
       </p>
@@ -47,7 +47,7 @@ export default async function TpoCandidateSchedulePage({
     <section role="status" className="text-sm text-body border-b border-border pb-6">
       {slotsReady ? "Candidate-specific slot booking is available from each interview round. Room-time conflicts are checked at assignment." :
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
-      <Link href="/tpo/calendar/rounds" className="ml-2 font-semibold text-[var(--lms-link-text)]">
+      <Link href="/tpo/calendar/rounds" className="ml-2 font-semibold text-link">
         Edit existing shared round schedules →
       </Link>
     </section>
@@ -70,7 +70,7 @@ export default async function TpoCandidateSchedulePage({
     <div className="flex flex-wrap gap-2">
       {drive.rounds.filter(round=>round.kind==="INTERVIEW").map(round=>
         <Link key={round.id} href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
-          className="inline-flex min-h-11 items-center rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
           Slots and rooms · {round.name}
         </Link>)}
     </div>
@@ -79,16 +79,16 @@ export default async function TpoCandidateSchedulePage({
         {selectedRound ? <p className="font-semibold text-foreground">Round: {selectedRound.name}</p>
           : <p role="alert" className="font-semibold text-error">That round is not part of this drive.</p>}
         <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/candidate-schedule"}
-          className="font-semibold text-[var(--lms-link-text)] underline">Show all rounds</Link>
+          className="font-semibold text-link underline">Show all rounds</Link>
       </div>
     ) : null}
     {drive.rounds.length === 0 ?
-      <p role="status" className="rounded-xl border border-border p-5 text-sm text-body">
+      <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-5 text-sm text-body">
         No persisted rounds exist for this drive.
       </p> : roundId && !selectedRound ?
-      <p role="status" className="rounded-xl border border-border p-5 text-sm text-body">No candidates shown for an unknown round.</p>
+      <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-5 text-sm text-body">No candidates shown for an unknown round.</p>
       : readiness.total === 0 ?
-      <p role="status" className="rounded-xl border border-border p-5 text-sm text-body">
+      <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-5 text-sm text-body">
         No progression-eligible round participants are currently recorded.
         This does not imply slots were assigned.
       </p> : <>

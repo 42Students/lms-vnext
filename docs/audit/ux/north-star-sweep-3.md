@@ -253,3 +253,37 @@ Date: 2026-10-19. Working branch: `chatgpt/chat-3-b` (updated to latest main bef
 - Removed redundant filter-panel borders/background/padding from faculty course filters and Super Admin people filters, restoring the single white canvas; preserved their forms and query behavior.
 - Normalized interactive control radii/heights/text size using existing `--lms-*` tokens and updated route-level error title/retry states. Primary actions continue to use `bg-primary`/white via the shared globals.
 - **Not run:** Next.js dev server, TypeScript compiler, tests, CI and browser pixel-diff (per owner directive). Final visual parity against the running legacy LMS requires the orchestrator's screenshot pass.
+
+## Follow-on portal: Super Admin academic structure + student/faculty directories (2026-10-19)
+The initial 211-file sweep was marked completed, so this extension continues the same NORTH STAR skin in adjacent Super Admin academic/people routes that were outside the original literal URL prefixes. This is a presentation-only follow-on: never change content or behavior, and do not touch shell/shared UI ownership.
+
+- [x] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/page.tsx`
+- [x] `src/app/(authenticated)/admin/classes/page.tsx`
+- [x] `src/app/(authenticated)/admin/departments/page.tsx`
+- [x] `src/app/(authenticated)/admin/electives/page.tsx`
+- [x] `src/app/(authenticated)/admin/faculty-assignment/page.tsx`
+- [x] `src/app/(authenticated)/admin/faculty/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/admin/programs/page.tsx`
+- [x] `src/app/(authenticated)/admin/semester-courses/page.tsx`
+- [x] `src/app/(authenticated)/admin/semesters/page.tsx`
+- [x] `src/app/(authenticated)/admin/students/page.tsx`
+
+### Follow-on sweep status
+- Reviewed 14 adjacent Super Admin academic/people route files; applied page-only token/radius/height and single-canvas filter/list wrapper changes in 12, with 2 thin wrappers left unchanged.
+- Continued use of shared `Input`, `Select`, `Button`, `PageHeader` and `DataTable`; no route permissions, queries, copy, or business actions changed.
+- Visual screenshot and CI verification intentionally deferred per lane instructions.
+
+## Follow-on portal: Super Admin attendance
+Continue legacy-shell skin in the attendance portion of Super Admin academic operations, which shares read-only widgets with College Admin. Keep service calls, table structure, action flows and page content as-is. Table grids may retain their hairline table container; metric and filter-card wrappers should flatten onto the page canvas.
+
+- [x] `src/app/(authenticated)/admin/attendance/page.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
+
+### Attendance pass result
+- Reviewed all three source files; flattened policy metrics and monthly-health block separators in `admin-attendance-workspace.tsx` while retaining the hairline table boundary.
+- Server route and settings editor inherit the shared UI tokens and require no presentation-only changes. No code, tests, typecheck or CI executed.

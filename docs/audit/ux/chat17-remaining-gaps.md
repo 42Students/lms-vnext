@@ -51,3 +51,15 @@
 ## Contract for other lanes
 
 Do not wrap `PageCanvas` per page: it is already present in the authenticated layout. Do not change each page's sections, content or behavior to achieve a global look. Use `Button`, `Input`, `Select`, `Textarea`, `Tabs`, `DataTable`, etc., or their CSS data-slot skins instead of hard-coded colors. `src/components/shell/**` belongs to the dedicated sidebar/topbar lanes. Preserve mobile action targets, permitted hidden table fields and reduced-motion behavior.
+
+
+## Continued shared-kit sweep — 2026-10-19 afternoon
+
+- Fast-forwarded `chatgpt/chat-17-b` to `ee98b58c86df02c0513136baab6d35ef633fef59` (the then-current `main`). At the start of this pass, the lane was **851 commits behind and zero ahead** because the preceding lane commits had already been integrated. Newer parallel merges may advance main again during these edits.
+- Enumerated the repository's actual `src/components/ui` directory using GitHub contents; **49** shared files currently exist (including two non-visual hooks and the `Modal` re-export), rather than relying on the earlier 39-file pre-skin ledger.
+- Reconciled the remaining visual primitives that were not covered in the original skin batch: `confirm-action-dialog`, `confirm-dialog`, `disabled-reason`, `disclosure`, `graceful-page-loading`, `loading-state`, `page-loading`, `inline-notice`, `long-text`, `permission-action`, `selection-controls`, `third-party-link`; followed with precise label, focus and sizing updates in `breadcrumbs`, `form-field`, `stat-tile`, `filter-bar`, `checkbox` and `radio`. Each source file was committed independently under `[chat-17]` on the lane branch.
+- Preserved pre-existing native semantics: confirmation pending/disabled states; loading recovery action; non-dismissible pending overlays; helper/error IDs; switch checkbox/role semantics; URL policy on external links; permissions deny/hide decisions; and keyboard focus for disclosure and disabled reasons.
+- `GracefulPageLoading` stays `aria-busy=true` for the entire mounted loading lifetime, including when its slow-load recovery button appears. A slow loading warning is not completion.
+- Reverified that `AuthenticatedLayout` renders **one** `PageCanvas` inside `AppShell`, enclosing portal access notice, connectivity notice and route children, while session/access guards still enforce authorization outside. Added the named `lms-authenticated-canvas` class and full-viewport minimum height on short pages, accounting for the existing mobile (58px) and desktop (68px) top bars and shell main padding (24px or 32px). Longer content grows naturally.
+- Both white canvas colors (`#fff`, `#e5e9f0`), 12px radius, 24px desktop / 16px mobile padding and the `#f1f4f9` shell remain intact. No nested page-level canvas was introduced.
+- **Unverified:** no CI, tests, compilation or browser screenshot comparison was run per owner instruction. Integration with concurrent header/sidebar and portal lane commits needs combined browser review, especially height, responsive overlays, focus, and reduced-motion behavior.

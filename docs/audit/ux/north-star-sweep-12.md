@@ -89,3 +89,19 @@ Owner: chat-12 · Branch: `chatgpt/chat-12-b` · 2026-10-19
 ## Verification limits / handoff
 - Source edits have been accepted as GitHub commits on `chatgpt/chat-12-b`; no code, TypeScript compiler, tests, CI, dev server, screenshot capture or browser interaction was run, per lane instruction. Syntax was preserved by targeted class/attribute edits, but compile validity and pixel-exact appearance remain unverified.
 - No shared shell/UI/globals files, tests, data structures or placement business logic were modified by this sweep. Pixel-level review against the running old LMS is reserved for the orchestrator's final visual pass.
+
+## Continuation: 2026-10-19 second-pass, adjacent portals (source review only)
+
+After the initial sweep and its merge into main, fast-forwarded `chatgpt/chat-12-b` to `ee98b58c86df02c0513136baab6d35ef633fef59` (the then-current main). Opened the remaining inventory entries and the adjacent `north-star-sweep-chat-11.md` (TPO settings, College Admin setup, Super Admin tenants) and TPO report routes for a second pass. No shared shell, global CSS, UI-kit or business logic edits.
+
+### Second-pass changes
+- Fixed the malformed `rounded-[var(--radius)]-lg` utility and redundant responsive control minimum on the TPO team page.
+- Applied the canonical `--lms-control-radius` (9px), `--lms-canvas-radius` (12px), `--lms-heading` and semantic `text-link` styling across TPO settings pages and their TPO/placements-specific editors and navigation. Kept actual content cards and brand-preview UI distinct.
+- Checked College Admin setup, branding and college role/academic pages. Removed stray standalone `-` Tailwind class tokens from existing section class strings in setup, academic directory, cohort, faculty, people, activity, lecture hall and related presentation components. These are exact class-string corrections, not JSX restructures.
+- Applied remaining canonical card-radius classes to College Admin branding/preview, college dashboard and Super Admin tenants, readiness, module access, features, course progress and settings views. Kept intentional preview shadows, mobile outlines and status semantics intact.
+- Took the adjacent TPO Reports portal through a source-only second pass, covering report summary, branches, companies, CTC, pipeline, placed/unplaced, accreditation, offers, joining, feedback categories, intelligence, `[slug]` and per-route error fallbacks. Replaced leftover literals and non-token radius variants only; report contents and data transformations were preserved.
+
+### Branch and verification at log checkpoint
+- Commits ahead of latest `main`: **26**; behind latest `main`: **289**; currently modified files in this continuation: **26**. Changes by area: TPO settings **0**, TPO reports **26**, admin routes **0**, college routes **0**, TPO components **0**, other components **0**.
+- The lane branch fast-forwarded cleanly when this continuation started; meanwhile other parallel lanes advanced `main`, so this branch diverged again. No forced update, merge rewrite or changes to `main` were made. Integrate latest `main` by a normal three-way merge when coordinating lane branches; the only overlapping file noticed at an intermediate comparison was `src/components/placements/placement-season-manager.tsx` (small token change here, independent change on main).
+- Source-only class edits preserve line structure, JSX components, conditions, events and imports. No application runtime, compiler, tests, CI, pixel diff or browser interaction executed. Pixel parity and strict TypeScript compilation remain to be verified by the orchestrator.

@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
   learnerPlacementChoices, LEARNER_REGISTRATION_COPY,
@@ -45,11 +46,11 @@ export function LearnerPlacementRegistration({registration}:Props) {
       setError(cause instanceof Error?cause.message:LEARNER_REGISTRATION_COPY.failure);
     } finally {setBusy(false);}
   }
-  return <section id="registration" aria-label="Registration" className="rounded-xl border border-border bg-surface p-5 space-y-3">
+  return <section id="registration" aria-label="Registration" className="space-y-3 border-b border-border pb-6">
     <h2 className="font-semibold">{LEARNER_REGISTRATION_COPY.title}</h2>
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
-      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 gap-3 rounded border border-border p-3">
+      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
         <input type="radio" name="sp-choice" checked={choice===item.value}
           onChange={()=>{setChoice(item.value);setConsent(false);}} className="mt-1" />
         <span><span className="block font-semibold">{item.label}</span>
@@ -62,10 +63,9 @@ export function LearnerPlacementRegistration({registration}:Props) {
     </fieldset>
     {registration.stage==="OPEN"?<>
       {registration.deadline?<p className="text-sm">{LEARNER_REGISTRATION_COPY.deadline} {new Date(registration.deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})}.</p>:null}
-      <button type="button" disabled={busy} onClick={()=>void submit()}
-        className="min-h-11 rounded border border-primary bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+      <Button type="button" disabled={busy} onClick={()=>void submit()}>
         {busy?"Saving…":registration.choice?LEARNER_REGISTRATION_COPY.update:LEARNER_REGISTRATION_COPY.register}
-      </button>
+      </Button>
     </>:<p className="text-sm" role="status">{registration.stage==="NOT_INVITED"?
       LEARNER_REGISTRATION_COPY.notInvited:LEARNER_REGISTRATION_COPY.closed}</p>}
     {registration.choice?<p className="text-sm">Your choice: {learnerPlacementChoices.find(item=>item.value===registration.choice)?.label}</p>:null}

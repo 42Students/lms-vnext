@@ -48,3 +48,27 @@ Other first-third route sources already lacked this particular foreground confli
 - `tests/unit/chat13-super-admin-first-third-skin.test.ts`: discovers the actual 37 recorded route files and checks the primary-action foreground contract and remaining manual color overrides.
 
 **Release checks remaining:** on-device 320/360/390px keyboard and overflow; Chrome/Safari account and notification overlays; actual global search outcomes for all portals; badge counts from a real authenticated session; account menu scope switching; TPO/HR/Learner role journeys; app-shell/sidebar hover interaction; visual screenshot comparison at 1280×800. The owner requested no code/CI execution. No production acceptance, pixel-perfect browser comparison or green-test claim is made here.
+
+## Continuation — 19 October: next Super Admin files, TPO, then recruiter/HR
+
+**Workflow:** pulled the moving `origin/main` (fast-forward to `ee98b58c86df02c0513136baab6d35ef633fef59` before further edits), committed each unit on `chatgpt/chat-13-b`, and merged subsequent main updates by retaining non-overlapping changes and resolving the HR focus-ring edits in the resulting source. All this work is **source-authored without CI, runtime or screenshots**.
+
+### Main-header migration gaps closed in the next files
+
+- `src/components/shell/topbar/tpo-quick-create.tsx` + `legacy-topbar.tsx`: old TPO create menu has its contextual `Recruiter lead`, `Drive` and follow-up modal, not just a plain new-drive link. Company-specific prefill and keyboard summary remain. `Suspense` surrounds `useSearchParams`.
+- `src/components/shell/topbar/tpo-find-suggestions.tsx` + `command-search.tsx`: added the actual, college-scoped `/api/tpo/find-suggestions` backend and retained the existing authenticated learner course search; filters malformed suggestions to internal TPO paths, debounces requests, cancels stale searches, supports ArrowDown/ArrowUp result navigation and on-open cleanup. The initial static navigation shortcuts remain.
+- `src/components/shell/topbar/tpo-notification-cluster.tsx` + `notification-actions.tsx` + `src/components/tpo/tpo-bell-panel.tsx`: the previous topbar migration initially replaced the TPO bell with a plain route link, losing the read/mark-all drawer. This pass **restores the original drawer** and unread counts from the validated TPO header snapshot; only the 36px trigger presentation is compact. Unknown/error count is not silently displayed as zero.
+- `src/app/(authenticated)/tpo/layout.tsx`: removed the **entire duplicate quick-access strip** (Find, + New, messages and notifications) from the page canvas after its features moved to the shared top bar. This also removes two independent server reads for every TPO page; the new client header fetches on visibility/polling. `TpoKeyboardShortcuts showTrigger={false}` retains the global `?`, `G → …` and `N → …` bindings with no redundant visible button. TPO mobile footer remains.
+- Search commands now expose only supported portal-local directory searches: TPO students/recruiters/companies, Super Admin people/companies/placement drives/projects, HR drives/conversations and College Admin students/courses. Each destination applies its existing route permission and filter parser. No synthetic cross-tenant federated search was introduced.
+
+### Super Admin first-third follow-up
+
+Beyond the earlier 13 white-on-primary repairs, `/admin/{announcements,batch-promotion,batches,classes,colleges,companies,course-progress,electives,faculty-assignment,features*}` now uses measured 9px shared control radius and 36px desktop/44px phone action-height rules for manually skinned controls. **Batches, Classes, Batch Promotion and Announcements** have ordinary filter/list outer card chrome flattened to hairline separators so the global `PageCanvas` is the one white canvas; meaningful alert, individual review, confirmation and data objects keep their boundaries. `bg-surface-subtle`, not part of the canonical theme, was changed to the supported `bg-muted` on one batch summary.
+
+### Next portal: HR/Recruiter
+
+The adjacent completed `docs/audit/ux/north-star-sweep-chat-15.md` was read and compared against the actual HR source. This follow-up changed only the **HR drives, conversations and notifications search/forms** from native `input`/`select`/`button` overrides to `@/components/ui/{input,select,button}`, retaining hidden filters, GET navigation, POST actions, exact wording and readable/mobile form layouts. The same files received concurrent focus-ring token changes on main; source was rebuilt against main's latest version before branch merge, preserving those edits.
+
+### Test and release caveat
+
+`chat13-legacy-topbar-accessibility-contract.test.ts` now asserts the migrated TPO drawer, inbox actions, new menu, dynamic records and removal of the duplicate strip. `chat13-legacy-topbar-portal-contract.test.ts` covers actual route/alias separation and directory search mappings. No automated checks were executed. The browser/mobile visual comparison, service authorization/tenant tests and deployment acceptance remain the orchestrator's work.

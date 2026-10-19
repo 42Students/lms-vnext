@@ -212,7 +212,7 @@ export async function SuperAdminTemplateSubviewPage({
 
       {detail.template.status==="PUBLISHED"?
         <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
-          className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
           Use this template · Create workspace →
         </Link>:null}
       <SuperAdminTemplateTabs

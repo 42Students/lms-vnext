@@ -16,7 +16,7 @@ export function LearnerProjectMobileFilters({
   const active=learnerProjectMobileFilterSummary(query);
   return (
     <section className="space-y-2 sm:hidden" aria-label="Mobile project filters">
-      <details className="rounded-xl border border-border bg-surface">
+      <details className="border-b border-border pb-4">
         <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-foreground">
           <span>Search &amp; filters</span>
           <span className="text-muted-foreground">

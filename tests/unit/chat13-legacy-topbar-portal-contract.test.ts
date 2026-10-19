@@ -51,6 +51,16 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
    expect(topbarSearchDestinations("/admin/companies","Acme")).toEqual([
      {label:"Search people",href:"/admin/people/directory?q=Acme"},
      {label:"Search companies",href:"/admin/companies?q=Acme"},
+     {label:"Search placement drives",href:"/admin/placements/drives?q=Acme"},
+     {label:"Search project workspaces",href:"/admin/projects?search=Acme"},
+   ]);
+   expect(topbarSearchDestinations("/hr/drives","Jobs")).toEqual([
+     {label:"Search drives",href:"/hr/drives?q=Jobs"},
+     {label:"Search conversations",href:"/hr/conversations?q=Jobs"},
+   ]);
+   expect(topbarSearchDestinations("/college/courses","Mathematics")).toEqual([
+     {label:"Search students",href:"/college/students?q=Mathematics"},
+     {label:"Search courses",href:"/college/courses?q=Mathematics"},
    ]);
    expect(topbarSearchDestinations("/teacher/courses","Acme")).toEqual([]);
    expect(topbarSearchDestinations("/tpo/home","  ")).toEqual([]);
@@ -69,8 +79,8 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
    expect(shell).not.toContain("<AccountActions ");
    const topbar=read("src/components/shell/topbar/legacy-topbar.tsx");
    expect(topbar).toContain("<MobileNavigation items={navigation}");
-   expect(topbar).toContain("<TopbarCommandSearch items={navigation}");
-   expect(topbar).toContain("<TopbarNotifications config={config}");
+   expect(topbar).toContain("<TopbarCommandSearch key={pathname} items={navigation}");
+   expect(topbar).toContain("<TopbarNotifications key={config.portal} config={config}");
    expect(topbar).toContain("<TopbarAccountMenu");
  });
  it("TOPBAR-05 precisely specifies the old white, 68px and 36px actions",()=>{

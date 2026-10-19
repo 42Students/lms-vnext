@@ -29,7 +29,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
      Project resources
    </Link>}/>
-  {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+  {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
    Projects access is disabled; resource metadata was not loaded.
   </section>:<>
    <p className="text-sm text-body">
@@ -93,7 +93,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      "Clear the filters to see other registered resource metadata."}/>:
    <ol className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
     {data.items.map(resource=><li key={resource.id}
-     className="min-w-0 rounded-xl border border-border bg-surface p-4">
+     className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
      <div className="flex flex-wrap items-start justify-between gap-2">
       <h2 className="break-words font-semibold text-foreground">{resource.title}</h2>
       <span className="text-xs font-semibold text-body">

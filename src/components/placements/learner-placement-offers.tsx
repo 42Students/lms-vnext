@@ -264,7 +264,7 @@ export function LearnerPlacementOffers({
       </div>
 
       <button type="button" onClick={downloadOwnOffers}
-        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
         Export displayed offers CSV
       </button>
       {sortedOffers.length>LEARNER_OFFER_CSV_LIMIT ? (
@@ -522,7 +522,7 @@ export function LearnerPlacementOffers({
             Reason
             <textarea rows={3} maxLength={2000} value={extensionReason}
               onChange={event=>setExtensionReason(event.target.value)}
-              className="mt-1 min-h-24 w-full rounded-md border border-border bg-surface p-3 text-sm"/>
+              className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
           </label>
           {extensionError?<p role="alert" className="text-sm text-error">{extensionError}</p>:null}
           <p className="text-xs text-muted-foreground">
@@ -558,7 +558,7 @@ export function LearnerPlacementOffers({
           </label>
           <textarea id="offer-decline-reason" rows={3} maxLength={2000} value={declineReason}
             onChange={(event) => setDeclineReason(event.target.value)}
-            className="min-h-24 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground" />
+            className="min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground" />
         </div> : null}
       </Dialog>
       <Dialog

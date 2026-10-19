@@ -125,25 +125,25 @@ export function SuperAdminContentActions({item}:{item:Content}){
     Private files and existing published URLs are not exposed in this form.</p>
    <label className="grid gap-1 text-xs font-semibold">Title
     <input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
-     className="min-h-11 rounded border border-border bg-background p-2"/></label>
+     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>
    <label className="grid gap-1 text-xs font-semibold">Order
     <input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}
-     className="min-h-11 rounded border border-border bg-background p-2"/></label>
+     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>
    {["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)?
     <label className="grid gap-1 text-xs font-semibold">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Resource HTTPS link"}
      <input type="url" maxLength={2048} value={replacementUrl} onChange={e=>setReplacementUrl(e.target.value)}
-      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-11 rounded border border-border bg-background p-2"/>
+      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/>
     </label>:null}
    {item.contentType==="RESOURCE"?<label className="grid gap-1 text-xs font-semibold">Notes
     <textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
-     className="rounded border border-border bg-background p-2"/>
+     className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
    </label>:null}
    {item.contentType==="YOUTUBE"?<label className="grid gap-1 text-xs font-semibold">Video length (seconds)
     <input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
-     className="min-h-11 rounded border border-border bg-background p-2"/></label>:null}
+     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>:null}
    {item.contentType==="LIVE_CLASS"?<>
     <label className="grid gap-1 text-xs font-semibold">Time Zone
-     <select className="min-h-11 rounded border border-border bg-background p-2" value={timeZone}
+     <select className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9" value={timeZone}
       onChange={e=>{
        const zone=e.target.value as MeetingZone;
        if((startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone))&&
@@ -155,13 +155,13 @@ export function SuperAdminContentActions({item}:{item:Content}){
     </label>
     <label className="grid gap-1 text-xs font-semibold">Start Date and Time
      <input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-      className="min-h-11 rounded border border-border bg-background p-2"/></label>
+      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>
     <label className="grid gap-1 text-xs font-semibold">End Date and Time
      <input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-      className="min-h-11 rounded border border-border bg-background p-2"/></label>
+      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>
    </>:null}
    <button type="button" disabled={busy} onClick={()=>void save()}
-    className="min-h-11 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
+    className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-[650] text-[var(--lms-on-primary)] sm:min-h-9">
     {busy?"Saving…":"Save"}</button>
   </fieldset>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}

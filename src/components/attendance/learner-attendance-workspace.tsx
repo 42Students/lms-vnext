@@ -489,7 +489,7 @@ export function LearnerAttendanceWorkspace({
         </div>
       </section>
 
-      <div className="flex flex-wrap items-end justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
         <div>
           <h2 className="text-sm font-semibold text-foreground">Session history</h2>
           <p className="mt-1 text-xs text-muted-foreground">Status filters affect only the session list, not attendance totals.</p>

@@ -92,7 +92,7 @@ export function LearnerPlacementsDashboard({
           </div>
           <Link
             href={next.href}
-            className="inline-flex min-h-11 sm:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-[14px] font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9"
           >
             {display.firstRun ? "Browse drives" : "View next step"} →
           </Link>
@@ -108,13 +108,13 @@ export function LearnerPlacementsDashboard({
         </p>
       )}
 
-      <section aria-label="Waiting on you" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="Waiting on you" className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-lg font-semibold text-foreground">Waiting on you</h3>
           <span className="text-xs font-semibold text-muted-foreground">{waitingOnYou.length} to-do item{waitingOnYou.length===1?"":"s"}</span>
         </div>
-        {waitingOnYou.length?<ul className="mt-3 space-y-2">{waitingOnYou.map(item=><li key={item.key}
-          className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3">
+        {waitingOnYou.length?<ul className="mt-3 divide-y divide-border border-y border-border">{waitingOnYou.map(item=><li key={item.key}
+          className="flex flex-wrap items-center justify-between gap-3 py-3">
           <div>
             <span className={"text-xs font-semibold "+(item.priority==="URGENT"?"text-warning-text":"text-primary-text")}>{item.priority==="URGENT"?"Urgent":item.priority==="SOON"?"Soon":"Next"}</span>
             <p className="font-semibold text-foreground">{item.label}</p>
@@ -126,7 +126,7 @@ export function LearnerPlacementsDashboard({
         </p>}
       </section>
       {onboarding.length>0 ? (
-        <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="First placement steps">
+        <section className="border-b border-border pb-5" aria-label="First placement steps">
           <h3 className="m-0 text-base font-semibold text-foreground">Get started with placements</h3>
           <p className="mt-1 text-sm text-body">These are useful starting points, not completed or verified milestones.</p>
           <ol className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -172,7 +172,7 @@ export function LearnerPlacementsDashboard({
         />
       </div>
 
-      <section aria-label="Application screening breakdown" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label="Application screening breakdown" className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-base font-semibold text-foreground">Application stages</h3>
           <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>

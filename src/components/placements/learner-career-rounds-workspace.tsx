@@ -233,7 +233,7 @@ export function LearnerCareerRoundsWorkspace({
     const urgent = learnerRoundUrgency(round, nowMs);
     return urgent === "today" || urgent === "week";
   }).length;
-  const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
+  const selectClass = "mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9";
   const date = selected ? learnerRoundScheduledInstant(selected) : null;
   const meeting = externalLink(selected?.exception?.meetingUrl ?? selected?.meetingUrl ?? null);
   const mobileInterviewSummary=kind==="INTERVIEW"&&selected
@@ -290,7 +290,7 @@ export function LearnerCareerRoundsWorkspace({
   return (
     <div className="space-y-5">
       <section aria-label={kind === "ASSESSMENT" ? "Assessment filters" : "Interview filters"}
-        className="space-y-4 rounded-xl border border-border bg-surface p-3 sm:p-5">
+        className="space-y-4 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="m-0 text-sm font-semibold text-foreground">
             {relevant.length} scheduled round{relevant.length === 1 ? "" : "s"}

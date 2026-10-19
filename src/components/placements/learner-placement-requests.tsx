@@ -63,7 +63,7 @@ type OfferOption = {
 };
 
 const textareaClass =
-  "min-h-24 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-[var(--lms-placeholder)] focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
+  "min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-[14px] text-foreground outline-none transition-colors placeholder:text-[var(--lms-placeholder)] focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 function legacyRequestStatus(value:RequestItem["status"]):string{
  return value==="PENDING"?"Waiting for the placement cell":

@@ -35,39 +35,39 @@ export default async function SuperAdminClassesPage({ searchParams }: {
     {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its classes.</p> : null}
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
-      <section aria-label="Filter managed classes" className="rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Filter managed classes" className="border-b pb-4">
         <form method="get" action="/admin/classes" className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-0 w-full sm:min-w-44 gap-1 text-sm font-semibold text-body">Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">All programs</option>
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
             </Select>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-40 gap-1 text-sm font-semibold text-body">Batch code
             <Input name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-0 w-full sm:min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search class, program or batch
             <Input name="q" type="search" defaultValue={data.query.q}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Status
-            <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="status" defaultValue={data.query.status} className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
             </Select>
           </label>
           <label className="grid min-w-0 w-full sm:min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
-            <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
             </Select>
           </label>
-          <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</Button>
-          <Button variant="secondary" type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
+          <Button type="submit" className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary font-[650]">Filter</Button>
+          <Button variant="secondary" type="submit" className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Refresh</Button>
           <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>
         </form>
       </section>
-      <section aria-label="Manage classes" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      <section aria-label="Manage classes" className="space-y-3 pt-2">
         <h2 className="text-lg font-semibold">Manage classes</h2>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage classes" rows={data.items} getRowKey={row=>row.id}

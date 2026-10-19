@@ -57,7 +57,7 @@ export default async function MentorTaskReviewsPage({
         </Link>
       </div>}
     />
-    {!data.enabled ? <section role="status" className="rounded-xl border border-border bg-surface p-5">
+    {!data.enabled ? <section role="status" className="border-b border-border pb-4">
       Projects access is disabled for this membership. No task data was loaded.
     </section> : <>
       <form method="get" action="/mentor/task-reviews"
@@ -138,8 +138,8 @@ export default async function MentorTaskReviewsPage({
             description={data.total > 0
               ? "This page is outside the matching result range. Return to page 1."
               : "No submitted tasks currently need review in your assigned projects. Older reviewed submissions are not pending."} />
-        : <div className="grid min-w-0 gap-3">{data.items.map(item =>
-          <article key={item.id} className="rounded-xl border border-border bg-surface p-4">
+        : <div className="min-w-0 divide-y divide-border">{data.items.map(item =>
+          <article key={item.id} className="py-4">
             <p className="text-sm font-semibold text-foreground">{item.taskTitle}</p>
             <p className="mt-1 text-sm text-body">
               {item.projectTitle} · Version {item.version} · Priority {item.priority}

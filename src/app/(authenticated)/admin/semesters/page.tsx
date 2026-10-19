@@ -120,7 +120,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       ...(data.query.q?{q:data.query.q}:{}),
       ...(data.query.programId?{programId:data.query.programId}:{}),
       ...(data.query.status!=="ALL"?{status:data.query.status}:{})
-    }).toString()} className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3.5 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
+    }).toString()} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
       Export semesters.csv
     </a>
     <section aria-label="Semesters" className="min-w-0 space-y-3">
