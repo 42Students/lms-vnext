@@ -44,20 +44,19 @@ export default async function SuperAdminAcademicsPage() {
         eyebrow="Super Admin"
         title="Academics"
         description="Academic structure inside the selected college safety scope."
+        actions={<div className="flex flex-wrap items-center gap-[var(--lms-space-2)]">
+          <Link href="/admin/electives"
+                    className="mr-2 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    Elective slots
+                  </Link>
+                  <Link
+                    href="/admin/programs"
+                    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    Open Programs directory
+                  </Link><Link href="/admin/batch-promotion" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Batch Promotion Preview →</Link>
+        </div>}
       />
-      <div>
-        <Link href="/admin/electives"
-          className="mr-2 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          Elective slots
-        </Link>
-        <Link
-          href="/admin/programs"
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Open Programs directory
-        </Link>
-      </div>
-      <Link href="/admin/batch-promotion" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Batch Promotion Preview →</Link>
       <AcademicsOverview
         collegeId={collegeId}
         workspace={workspace}
