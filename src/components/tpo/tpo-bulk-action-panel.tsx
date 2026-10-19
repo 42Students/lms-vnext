@@ -9,6 +9,7 @@ import {useRef,useState} from "react";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {apiFetch} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
+import {Disclosure} from "@/components/ui/disclosure";
 import {Button} from "@/components/ui/button";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import Link from "next/link";
@@ -304,8 +305,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
        onClick={()=>void navigator.clipboard.writeText(companyShareUrl).then(
         ()=>setError("Link copied."),()=>setError("Select the link field and copy it manually."))}>Copy link</Button>
      </div>:null}
-     {safeSelected.length>1?<details className="text-sm">
-       <summary>Review selected applicants individually ({safeSelected.length})</summary>
+     {safeSelected.length>1?<Disclosure title={`Review selected applicants individually (${safeSelected.length})`} className="text-sm">
        <ScrollCue axis="y" label="Selected applicant review links" viewportClassName="max-h-40"><ol className="mt-2 space-y-2">
          {safeSelected.map((id,index)=><li key={id}>
            <Link href={tpoReviewOneByOneHref(jobId,id)} className="text-link underline">
@@ -313,7 +313,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
            </Link>
          </li>)}
        </ol></ScrollCue>
-     </details>:null}
+     </Disclosure>:null}
    </div>:null}
    {actionCounts.length>0?<div className="grid gap-2 sm:grid-cols-2">
      {safeSelected.length>200?<p className="col-span-full text-xs text-muted-foreground">Action counts apply to the next 200 selected records. Recheck each subsequent batch.</p>:null}
