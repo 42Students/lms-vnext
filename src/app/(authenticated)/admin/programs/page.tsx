@@ -54,14 +54,11 @@ export default async function SuperAdminProgramsPage() {
     <div className="min-w-0 space-y-6">
       <AcademicSetupSteps step={2} />
       <PageHeader
-        
         title="Programs"
         description="Manage programs within the selected college safety scope."
+        actions={<Link href="/admin/academics"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Open Academic Setup overview →</Link>}
       />
-      <Link href="/admin/academics"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle">
-        Open Academic Setup overview →
-      </Link>
       <AdminProgramDirectory
         programs={programs.map((program) => ({
           id: program.id,
