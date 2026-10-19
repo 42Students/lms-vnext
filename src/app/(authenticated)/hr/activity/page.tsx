@@ -49,8 +49,8 @@ export default async function HrJobActivityPage({searchParams}:{
      <Input type="hidden" name="kind" value={input.data.kind}/>
      <label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</label>
      <Input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
-       placeholder="Search hiring drive titles" className="min-w-0 w-full basis-full md:min-w-48 md:basis-auto md:flex-1"/>
-     <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Search</Button>
+       placeholder="Search hiring drive titles" className="min-h-11 min-w-0 w-full basis-full md:w-[220px] md:basis-auto md:flex-none"/>
+     <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
    <Tabs ariaLabel="Hiring activity event type" renderPanel={false} value={input.data.kind}
      items={HR_ACTIVITY_FILTER_KINDS.map(kind=>({
