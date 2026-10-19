@@ -156,6 +156,9 @@
   outline: 2px solid var(--lms-primary);
   outline-offset: 2px;
 }
+[data-slot="popover"] {
+  border-radius: 6px;
+}
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
