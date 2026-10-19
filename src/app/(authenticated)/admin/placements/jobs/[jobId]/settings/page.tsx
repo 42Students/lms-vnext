@@ -1,4 +1,3 @@
-import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import {SuperAdminDriveDeadline} from "@/components/placements/super-admin-drive-deadline";
 import {SuperAdminDriveDuplicate} from "@/components/placements/super-admin-drive-duplicate";
 import {SuperAdminDriveArchive} from "@/components/placements/super-admin-drive-archive";
@@ -18,7 +17,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
  const job=await getPlacementJob(context,jobId);
  const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
  return <div className="space-y-4">
-    <SuperAdminDriveTabs jobId={jobId} active="Settings"/>
+    
   <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."/>
   <section className="space-y-2 border-b border-border pb-5">
    <h2 className="font-semibold">{job.title}</h2>
