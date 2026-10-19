@@ -45,20 +45,18 @@ export default async function FacultyAssessmentResultsPage({
       className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          
           placeholder="Assessment, course code or Section" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Type
-        <Select name="kind" defaultValue={data.query.kind}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Select name="kind" defaultValue={data.query.kind} >
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
-        <Select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""} >
           <option value="">All teaching sections</option>
           {data.sections.map(section => (
             <option key={section.deliveryId} value={section.deliveryId}>
@@ -68,15 +66,13 @@ export default async function FacultyAssessmentResultsPage({
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <Select name="status" defaultValue={data.query.status}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Select name="status" defaultValue={data.query.status} >
           <option value="ALL">All</option>
           <option value="PUBLISHED">Published</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Due date
-        <Select name="due" defaultValue={data.query.due}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Select name="due" defaultValue={data.query.due} >
           <option value="ALL">All due dates</option>
           <option value="OVERDUE">Past due, published</option>
           <option value="UPCOMING">Upcoming due</option>
@@ -84,20 +80,18 @@ export default async function FacultyAssessmentResultsPage({
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sort
-        <Select name="sort" defaultValue={data.query.sort}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Select name="sort" defaultValue={data.query.sort} >
           <option value="DUE_DESC">Latest due date</option>
           <option value="DUE_ASC">Earliest due date</option>
           <option value="TITLE">Assessment title</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Records per page
-        <Select name="pageSize" defaultValue={data.query.pageSize}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Select name="pageSize" defaultValue={data.query.pageSize} >
           <option value="5">5</option><option value="10">10</option>
         </Select>
       </label>
-      <Button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+      <Button type="submit" >
         Filter
       </Button>
       <Link href="/teacher/results" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
