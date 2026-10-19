@@ -42,6 +42,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    ]);
   }catch{
    return <div className="min-w-0 space-y-5">
+    <PageHeader eyebrow="Super Admin" title="Students"/>
     <ErrorState title="Student register unavailable"
      description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
      action={<Link href="/admin/students" className="font-semibold text-primary-text">Retry student register</Link>}/>
