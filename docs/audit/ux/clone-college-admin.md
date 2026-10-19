@@ -416,22 +416,22 @@
 - [ ] `src/components/admin/college-branding-form.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-branding-preview.tsx` — **SOURCE PASS (replacement chat-4), strict parity open** — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Embedded branding preview)
 - [ ] `src/components/admin/college-bulk-import.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/components/admin/college-closing-quizzes-card.tsx`
+- [ ] `src/components/admin/college-closing-quizzes-card.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-create-form.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/organization-create-form.tsx` — **SOURCE PASS, strict parity open (replacement chat-4)**
-- [ ] `src/components/admin/college-dashboard-cards.tsx`
+- [ ] `src/components/admin/college-dashboard-cards.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-dashboard-section-failure.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-edit-dialog.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-feature-rule-editor.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-logo-uploader.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/college-setup-checklist.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/components/admin/college-signin-method-form.tsx` — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Sign-in method controls)
-- [ ] `src/components/admin/managed-college-subdomain.tsx` — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
-- [ ] `src/components/admin/super-admin-college-company-actions.tsx`
-- [ ] `src/components/admin/super-admin-company-verification.tsx`
-- [ ] `src/components/admin/tenant-directory-csv-control.tsx`
+- [ ] `src/components/admin/college-signin-method-form.tsx` — **SOURCE PASS (replacement chat-4), strict parity open** — **SOURCE IMPLEMENTATION REVIEWED**, strict parity unverified; see source-proof batch below (Sign-in method controls)
+- [ ] `src/components/admin/managed-college-subdomain.tsx` — **SOURCE PASS (replacement chat-4), strict parity open** — **SOURCE REFACTOR REVIEWED (replacement chat-4); strict proof pending**
+- [ ] `src/components/admin/super-admin-college-company-actions.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/admin/super-admin-company-verification.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/admin/tenant-directory-csv-control.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/tenant-domain-manager.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/components/admin/tenant-restore-action.tsx`
+- [ ] `src/components/admin/tenant-restore-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/tenant-settings-editor.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/admin/tenant-settings-other-keys.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 
@@ -937,3 +937,110 @@ Both components were fetched and re-read after their pushes. Native controls, ha
 **Strict status:** 0 newly checked. Shared DataTable's sm=640px switch vs legacy mobile 767px and typography discrepancy remain blocking; exact state-by-state visual and interaction comparisons and global zero grep are missing. The work queue boxes remain unchecked under Section H strict rule.
 
 **Exact next file:** `src/components/admin/college-closing-quizzes-card.tsx`, then remaining unreviewed `src/components/admin/college-dashboard-cards.tsx` and College Admin work queue entries.
+
+
+### Replacement chat-4 continued: College Admin dashboard, sign-in and Super Admin company controls (2026-10-19)
+
+**Scope:** 8 complete fetched/edited component files. All own UI, keep original content/actions and limit mutations to shared controls, state treatment, and responsive layout. This is **source refactor evidence**, not browser pixel proof, TSX parse, automated test or exhaustive repo grep. The changed files were saved directly to the feature branch with `[chat-4]` messages. `src/components/ui/*` unchanged.
+
+#### Per-file scoped grep and tag evidence
+
+Expressions applied to the entire fetched blob for each file: `/<(button|select|input|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`; also compared opening and closing counts for shared `Button`, `Alert`, `EmptyState`, `ConfirmDialog`, `Select`, `Textarea`, `Input`, `DataTable`, `StatusBadge`, `section`, `div`, `label`, `form`, `li`, `ul`, `h2`, `h3`, `span` (self-closing elements exempt). These scoped results do **not** constitute `grep -rl ... src` coverage.
+
+| Full file | Native forms/table | Hex | Hand-rolled overlay | Native h1 | Orphan closing families | md / sm / lg source prefixes |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| `src/components/admin/college-closing-quizzes-card.tsx` | 0 | 0 | 0 | 0 | 0 found | 1 / 0 / 0 |
+| `src/components/admin/college-dashboard-cards.tsx` | 0 | 0 | 0 | 0 | 0 found | 1 / 0 / 1 |
+| `src/components/admin/college-signin-method-form.tsx` | 0 | 0 | 0 | 0 | 0 found | 1 / 0 / 0 |
+| `src/components/admin/super-admin-company-verification.tsx` | 0 | 0 | 0 | 0 | 0 found | 1 / 0 / 0 |
+| `src/components/admin/super-admin-college-company-actions.tsx` | 0 | 0 | 0 | 0 | 0 found | 9 / 0 / 0 |
+| `src/components/admin/tenant-directory-csv-control.tsx` | 0 | 0 | 0 | 0 | 0 found | 1 / 0 / 0 |
+| `src/components/admin/tenant-restore-action.tsx` | 0 | 0 | 0 | 0 | 0 found | 1 / 0 / 0 |
+| `src/components/admin/managed-college-subdomain.tsx` | 0 | 0 | 0 | 0 | 0 found | 3 / 0 / 0 |
+
+#### College closing quizzes — `src/components/admin/college-closing-quizzes-card.tsx`
+
+| Property / state | Legacy source and value | vNext source and value | Strict comparison |
+| --- | --- | --- | --- |
+| Summary and list separation | old-lms-pages.md:6,11: one white canvas, list hairline row separators | college-closing-quizzes-card.tsx:section border-t + ul divide-y, preserved quiz data | **Structural match; row metrics unmeasured** |
+| Empty state | old-lms-pages.md:6: empty state inside canvas, no per-item card | college-closing-quizzes-card.tsx:shared EmptyState uses transparent surface, no nested canvas | **Shared pattern; missing legacy quiz-empty typography values** |
+| Link hit target, focus and phone | listing-page-header.scss:130-153: <=767 stacked and 44px touch target; form.scss:22-36 keyboard outline | college-closing-quizzes-card.tsx:Link min-h-11 (44px), md:min-h-9 (36px), focus-visible 2px accent ring | **Mobile hit target match; exact link decoration not source-matched** |
+
+Shared component references from inspected source: `src/components/admin/college-closing-quizzes-card.tsx:n/a` Button, `src/components/admin/college-closing-quizzes-card.tsx:n/a` Alert, `src/components/admin/college-closing-quizzes-card.tsx:n/a` confirmation, `src/components/admin/college-closing-quizzes-card.tsx:13` empty state. Legacy tab/header desktop 28px (listing-page-header.scss:52-58) versus vNext PageHeader 30px, and legacy <=767px responsive rules (lines 130-153) remain upstream checks.
+
+#### College dashboard cards — `src/components/admin/college-dashboard-cards.tsx`
+
+| Property / state | Legacy source and value | vNext source and value | Strict comparison |
+| --- | --- | --- | --- |
+| Canvas and discrete metrics | old-lms-pages.md:6,8-9: continuous canvas, summary tile allowed for independent metrics | college-dashboard-cards.tsx:StatTile variant college inside one section, no PageCanvas nesting | **Structure aligns; tile padding/colour legacy not fully measured** |
+| Responsive grid | listing-page-header.scss:130-153: mobile cutoff 767px, vertical content | college-dashboard-cards.tsx:grid 1 col <768px, 2 col >=768px, 4 col >=1024px | **Source cutoff matches; old dashboard metric grid not captured** |
+| Empty and loading state | old-lms-pages.md:6: empty content on same canvas | college-dashboard-cards.tsx:EmptyState for zero visible metrics, unknown counts shown em dash via StatTile | **Shared empty; loading delegated to page, exact metrics not proven** |
+
+Shared component references from inspected source: `src/components/admin/college-dashboard-cards.tsx:n/a` Button, `src/components/admin/college-dashboard-cards.tsx:n/a` Alert, `src/components/admin/college-dashboard-cards.tsx:n/a` confirmation, `src/components/admin/college-dashboard-cards.tsx:20` empty state. Legacy tab/header desktop 28px (listing-page-header.scss:52-58) versus vNext PageHeader 30px, and legacy <=767px responsive rules (lines 130-153) remain upstream checks.
+
+#### College sign-in methods — `src/components/admin/college-signin-method-form.tsx`
+
+| Property / state | Legacy source and value | vNext source and value | Strict comparison |
+| --- | --- | --- | --- |
+| Shared selection controls | legacy-styles/components___form.scss:22-36: keyboard focus ring retained | college-signin-method-form.tsx:shared Radio + scoped label selected/hover/disabled classes; 4 choices | **Shared radio; selected background and border value table not fully legacy-grounded** |
+| Authorization/disabled | legacy-styles/components___button.scss:49-51: disabled action state | college-signin-method-form.tsx:fieldset disabled on !ready/saving, shared Alert warning when backend unavailable | **Safe state retained; disabled background mismatch unresolved** |
+| Save success/error/loading | old-lms-pages.md:11: slim inline notices; old-lms-shell-spec.md:22-24: 36px primary CTA desktop | college-signin-method-form.tsx:Alert tone success/error, Button loading & disabled, shared ConfirmDialog | **Central shared states; live response not replayed** |
+| Mobile touch and responsive | listing-page-header.scss:130-153: 767px mobile break; 44px action target | college-signin-method-form.tsx:Button min-h-11 / md:min-h-9; radio choices 56px min-height and full-width | **44px matched; legacy radio-card mobile spacing not sourced** |
+
+Shared component references from inspected source: `src/components/admin/college-signin-method-form.tsx:65` Button, `src/components/admin/college-signin-method-form.tsx:70` Alert, `src/components/admin/college-signin-method-form.tsx:69` confirmation, `src/components/admin/college-signin-method-form.tsx:n/a` empty state. Legacy tab/header desktop 28px (listing-page-header.scss:52-58) versus vNext PageHeader 30px, and legacy <=767px responsive rules (lines 130-153) remain upstream checks.
+
+#### Global company verification — `src/components/admin/super-admin-company-verification.tsx`
+
+| Property / state | Legacy source and value | vNext source and value | Strict comparison |
+| --- | --- | --- | --- |
+| Modal and focus | old-lms-pages.md:6: no hand-rolled overlays; form.scss:22-36 focus-visible | super-admin-company-verification.tsx:replaced conditional role=group controls with shared ConfirmDialog | **No local modal; shared UI dialog focus replayer not executed** |
+| Pending/success/error states | old-lms-pages.md:11: statuses and local error copy | super-admin-company-verification.tsx:shared Button loading, Alert(error), opens only when requested and closes only on success | **Source transitions preserved; exact toast/alert appearance unverified** |
+| Responsive button | old-lms-shell-spec.md:22-24: 36px desktop/9px radius; listing-page-header.scss:130-153 44px mobile | super-admin-company-verification.tsx:Button min-h-11 md:min-h-9 | **Matched declared touch size; live modal width unverified** |
+
+Shared component references from inspected source: `src/components/admin/super-admin-company-verification.tsx:26` Button, `src/components/admin/super-admin-company-verification.tsx:35` Alert, `src/components/admin/super-admin-company-verification.tsx:30` confirmation, `src/components/admin/super-admin-company-verification.tsx:n/a` empty state. Legacy tab/header desktop 28px (listing-page-header.scss:52-58) versus vNext PageHeader 30px, and legacy <=767px responsive rules (lines 130-153) remain upstream checks.
+
+#### College-company relationship actions — `src/components/admin/super-admin-college-company-actions.tsx`
+
+| Property / state | Legacy source and value | vNext source and value | Strict comparison |
+| --- | --- | --- | --- |
+| Company creation form | form.scss:117-143: 14px/20px font, 10px input radius, focus shadow | super-admin-college-company-actions.tsx:shared Input for name/domain/website, mobile 1-col, >=768px two columns | **Shared field value family; full old company form layout not sourced** |
+| Trust/archive confirm | old-lms-pages.md:6: common dialog, no hand-rolled confirmation | super-admin-college-company-actions.tsx:relationship confirmation now uses ConfirmDialog danger/primary with pending and disable guard | **Shared overlay; legacy destructive confirmation visuals unverified** |
+| Errors and action states | old-lms-pages.md:11: slim errors, independent changes | super-admin-college-company-actions.tsx:Alert(error) in create and relationship flows; Button loading/pending/disabled | **Source semantics retained; actual error workflow unexecuted** |
+| Responsive | listing-page-header.scss:130-153: mobile <768px stacked/actions 44px | super-admin-college-company-actions.tsx:md:grid-cols-2, flex-wrap actions, Button min-h-11 md:min-h-9 | **Source breakpoint matched; tablet modal not rendered** |
+
+Shared component references from inspected source: `src/components/admin/super-admin-college-company-actions.tsx:30` Button, `src/components/admin/super-admin-college-company-actions.tsx:40` Alert, `src/components/admin/super-admin-college-company-actions.tsx:86` confirmation, `src/components/admin/super-admin-college-company-actions.tsx:n/a` empty state. Legacy tab/header desktop 28px (listing-page-header.scss:52-58) versus vNext PageHeader 30px, and legacy <=767px responsive rules (lines 130-153) remain upstream checks.
+
+#### Filtered CSV export — `src/components/admin/tenant-directory-csv-control.tsx`
+
+| Property / state | Legacy source and value | vNext source and value | Strict comparison |
+| --- | --- | --- | --- |
+| Control styling | old-lms-shell-spec.md:22-24: 36px outlined secondary button, radius 9px | tenant-directory-csv-control.tsx:shared secondary Button, 44px phone, 36px >=768px | **Token family matches; label width/wrap not measured** |
+| Busy/error | old-lms-pages.md:11: compact status/error, no second canvas | tenant-directory-csv-control.tsx:Button loading/disabled and shared Alert(error) on failed download | **Shared states, server download not executed** |
+| Responsive and keyboard | listing-page-header.scss:130-153: 44px mobile target, actions stack <=767px | tenant-directory-csv-control.tsx:md:min-h-9, content flex wraps, shared Button focus-visible outline | **Hit size source aligned; no viewport screenshots** |
+
+Shared component references from inspected source: `src/components/admin/tenant-directory-csv-control.tsx:21` Button, `src/components/admin/tenant-directory-csv-control.tsx:23` Alert, `src/components/admin/tenant-directory-csv-control.tsx:n/a` confirmation, `src/components/admin/tenant-directory-csv-control.tsx:n/a` empty state. Legacy tab/header desktop 28px (listing-page-header.scss:52-58) versus vNext PageHeader 30px, and legacy <=767px responsive rules (lines 130-153) remain upstream checks.
+
+#### Tenant restore action — `src/components/admin/tenant-restore-action.tsx`
+
+| Property / state | Legacy source and value | vNext source and value | Strict comparison |
+| --- | --- | --- | --- |
+| Destructive/recovery confirmation | old-lms-pages.md:6: central overlays, no nested card; old-lms-shell-spec.md:22-24 secondary outlined | tenant-restore-action.tsx:shared secondary Button, ConfirmDialog, no homemade dialog | **Source component agreement; legacy restore dialog states unknown** |
+| Pending / error / success | old-lms-pages.md:11: statuses must be user-visible | tenant-restore-action.tsx:shared guarded action, Button loading, Toast success/error; closes only upon save | **Source semantics preserved; no runtime test** |
+| Responsive | listing-page-header.scss:130-153: 44px mobile target <=767px, 36px desktop | tenant-restore-action.tsx:Button min-h-11 md:min-h-9, inherited shared confirm buttons | **Trigger source values match; ConfirmDialog footer own shared mobile treatment** |
+
+Shared component references from inspected source: `src/components/admin/tenant-restore-action.tsx:37` Button, `src/components/admin/tenant-restore-action.tsx:n/a` Alert, `src/components/admin/tenant-restore-action.tsx:39` confirmation, `src/components/admin/tenant-restore-action.tsx:n/a` empty state. Legacy tab/header desktop 28px (listing-page-header.scss:52-58) versus vNext PageHeader 30px, and legacy <=767px responsive rules (lines 130-153) remain upstream checks.
+
+#### Managed subdomain — `src/components/admin/managed-college-subdomain.tsx`
+
+| Property / state | Legacy source and value | vNext source and value | Strict comparison |
+| --- | --- | --- | --- |
+| Hostname control | form.scss:117-143: 14px text, 10px radius, focus halo; shell-spec.md:22-24 36px desktop CTA | managed-college-subdomain.tsx:shared Input min-h-11 md:min-h-9 and Button pair min-h-11 md:min-h-9 | **Input/CTA mobile target source match; full legacy domain picker unobserved** |
+| Readiness/feedback | old-lms-pages.md:11: slim warnings and inline errors | managed-college-subdomain.tsx:Alert(warning) when deployment unready, Alert(error/success) for response and confirmation | **Shared statuses; exact warning pale-yellow value not proven** |
+| Confirmation/disabled | old-lms-pages.md:6: shared modal only, focus-visible | managed-college-subdomain.tsx:shared ConfirmDialog, controls busy-disabled, pending action scoped to selected college | **Source safe; keyboard and browser state not rechecked** |
+| Responsive | listing-page-header.scss:130-153: mobile vertical/44px controls | managed-college-subdomain.tsx:input and Buttons 44px through 767px; flex-wrap action row, max-w-md field | **Touch target source match; hostname field+suffix overflow not visually tested** |
+
+Shared component references from inspected source: `src/components/admin/managed-college-subdomain.tsx:57` Button, `src/components/admin/managed-college-subdomain.tsx:44` Alert, `src/components/admin/managed-college-subdomain.tsx:65` confirmation, `src/components/admin/managed-college-subdomain.tsx:n/a` empty state. Legacy tab/header desktop 28px (listing-page-header.scss:52-58) versus vNext PageHeader 30px, and legacy <=767px responsive rules (lines 130-153) remain upstream checks.
+
+**Strict tick result:** **0 newly ticked**. The 8 files were migrated and source-audited, but the required global grep, all-state visual/computed value equality, responsive screenshots and TypeScript parser evidence are not available under lane instructions. Source-only breakpoints are *not* proof of actual rendered phone/tablet UI. No unmatched opening/closing tag families were found in the scoped tag-count checks.
+
+**Exact next file:** `src/components/college/college-admin-profile-editor.tsx` (then department insights and College Admin faculty/student workflows, work queue order).
