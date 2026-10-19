@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import type { ShellNavItem } from "./shell-model";
+import { legacySidebarItemActive } from "./legacy-sidebar-active-model";
 import "./legacy-mobile-footer.css";
 
 type FooterLink = {
@@ -88,7 +89,9 @@ export function LearnerFacultyMobileFooter({items}:{items:readonly ShellNavItem[
     <nav aria-label="Mobile navigation" className="lms-legacy-mobile-footer-nav">
       <ul className="lms-legacy-mobile-footer-items">
         {links.map(item=>{
-          const current=pathname===item.href||pathname.startsWith(item.href+"/");
+          // Match the desktop sidebar on recruiter alias/detail URLs and
+          // college utility pages; the old mobile footer highlighted a role tab.
+          const current=legacySidebarItemActive(pathname,item,null,null);
           const alerts=item.href==="/learn/notifications"&&unread!==null;
           return <li key={item.href} className={current?"active":undefined}>
             <Link href={item.href} aria-current={current?"page":undefined}

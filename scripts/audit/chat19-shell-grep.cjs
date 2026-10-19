@@ -1,16 +1,29 @@
 #!/usr/bin/env node
 "use strict";
 /**
- * Lane 19: exact full-checkout grep ledger for checklist B3/B4.
- * Run from the repo root once the orchestrator has merged the lane.
- * This reports actual matches; it never ticks checklist items or edits files.
+ * Lane chat-19 / checklist B3+B4, read-only complete-checkout grep ledger.
+ *
+ * Usage (from any cwd within the repo, after fetching this branch):
+ *   node scripts/audit/chat19-shell-grep.cjs
+ *   node scripts/audit/chat19-shell-grep.cjs --markdown
+ *
+ * This script only invokes git grep and rev-parse. No app, build, tests or
+ * CI are run. Do not tick B3/B4 from source-only results: the owner also
+ * requires legacy value comparison and responsive visual verification.
  */
 const { execFileSync } = require("node:child_process");
 const { existsSync } = require("node:fs");
 const { resolve } = require("node:path");
 
 const root = resolve(__dirname, "../..");
-if (!existsSync(resolve(root, ".git"))) throw new Error("Run in the checked-out lms-vnext repository");
+if (!existsSync(resolve(root, ".git"))) {
+  throw new Error("Run in a checked-out lms-vnext Git worktree");
+}
+const usage = "Usage: node scripts/audit/chat19-shell-grep.cjs [--json|--markdown]";
+const option = process.argv[2] || "--json";
+if (!["--json", "--markdown"].includes(option) || process.argv.length > 3) {
+  throw new Error(usage);
+}
 
 const rules = [
   {
@@ -38,29 +51,82 @@ const rules = [
     regex: "#[[:xdigit:]]{3,8}|rounded-(lg|xl|md)",
     paths: ["src/components/shell"],
   },
+  {
+    label: "duplicate-sidebar-and-mobile-footer",
+    regex: "lms-desktop-sidebar|lms-legacy-mobile-footer|lms-tpo-mobile-footer|ln-footer",
+    paths: ["src"],
+  },
 ];
 
-function search(rule) {
-  // Git pathspec glob braces are not portable, so issue one query per suffix.
-  const matches = [];
-  for (const ext of ["tsx", "ts", "css"]) {
-    const byExt = ["grep", "-n", "-I", "-E", rule.regex, "--",
-      ...rule.paths.map(path => `:(glob)${path}/**/*.${ext}`)];
-    try {
-      const output = execFileSync("git", byExt, { cwd: root, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
-      matches.push(...output.split("\n").filter(Boolean));
-    } catch (error) {
-      if (error.status !== 1) throw error;
-    }
+function commandFor(rule, ext) {
+  // Git glob pathspecs work recursively and include root-level files too.
+  // Filter extensions at git level, never by substring on the printed lines.
+  return ["grep", "-n", "-I", "-E", rule.regex, "--",
+    ...rule.paths.map(path => `:(glob)${path}/**/*.${ext}`)];
+}
+
+function runGrep(args) {
+  try {
+    return execFileSync("git", args, {
+      cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024,
+    }).split("\n").filter(Boolean);
+  } catch (error) {
+    // git grep exit 1 means exactly zero matches. Exit 128 (bad pathspec,
+    // missing worktree, or other Git failure) must never be counted as zero.
+    if (error.status === 1) return [];
+    throw error;
   }
+}
+
+function parseMatch(line) {
+  const match = /^([^:]+):(\d+):(.*)$/.exec(line);
+  if (!match) throw new Error(`Unexpected git grep -n output: ${line}`);
+  return { path: match[1], line: Number(match[2]), snippet: match[3] };
+}
+
+function search(rule) {
+  const commands = ["tsx", "ts", "css"].map(ext => commandFor(rule, ext));
+  const matches = commands.flatMap(args => runGrep(args)).map(parseMatch);
+  const paths = [...new Set(matches.map(match => match.path))].sort();
   return {
     rule: rule.label,
-    command: `git grep -n -I -E '${rule.regex}' -- ${rule.paths.join(" ")} [tsx,ts,css]`,
+    commands: commands.map(args => "git " + args.map(arg => JSON.stringify(arg)).join(" ")),
     lineCount: matches.length,
-    fileCount: new Set(matches.map(line => line.split(":")[0])).size,
-    matches,
+    fileCount: paths.length,
+    files: paths,
+    shellLineCount: matches.filter(match => match.path.startsWith("src/components/shell/")).length,
+    tpoLineCount: matches.filter(match => match.path.startsWith("src/components/tpo/")).length,
+    // Preserve precise file:line output so the audit can write exemptions
+    // for legitimate legacy SCSS colours or other owner-lane components.
+    matches: matches.map(match => `${match.path}:${match.line}:${match.snippet}`),
   };
 }
 
-const results = rules.map(search);
-process.stdout.write(JSON.stringify({ head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(), results }, null, 2) + "\n");
+const result = {
+  head: execFileSync("git", ["rev-parse", "HEAD"], {
+    cwd: root, encoding: "utf8",
+  }).trim(),
+  note: "Read-only repository-wide source ledger; browser and legacy parity not certified",
+  results: rules.map(search),
+};
+if (option === "--json") {
+  process.stdout.write(JSON.stringify(result, null, 2) + "\n");
+} else {
+  const lines = [
+    "# Chat-19 B3/B4 grep proof",
+    "",
+    `Commit: \`${result.head}\``,
+    "",
+    "| Scope / expression | Lines | Files | Shell lines | TPO lines |",
+    "|---|---:|---:|---:|---:|",
+    ...result.results.map(row =>
+      `| \`${row.rule}\` | ${row.lineCount} | ${row.fileCount} | ${row.shellLineCount} | ${row.tpoLineCount} |`),
+    "",
+  ];
+  for (const row of result.results) {
+    lines.push(`## ${row.rule}`, "", "Commands:", "```sh",
+      ...row.commands, "```", "", "Matching file:line:source output:", "```text",
+      ...(row.matches.length ? row.matches : ["(zero)"]), "```", "");
+  }
+  process.stdout.write(lines.join("\n") + "\n");
+}
