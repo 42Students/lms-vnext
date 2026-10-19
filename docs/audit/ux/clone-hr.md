@@ -363,3 +363,44 @@ Legacy sources checked: `docs/design/old-lms-pages.md:6-12`, `docs/design/legacy
 **HR sheets:** Native `AgGridReact` + Quartz are now in `src/components/tpo/grid/tpo-grid.tsx` on main. `HrCompanyReportsGrid` and `HrRoundResultsGrid` are passed only authorized server rows; no unauthorized client fetch or broadened CSV endpoint was added. The required packages were absent from the inspected `package.json`, and no app was run. Mark integration **source-wired, unverified**, never runtime-complete E8.
 
 **Next high-priority files:** `src/app/(authenticated)/hr/calendar/page.tsx`, `src/app/(authenticated)/hr/conversations/page.tsx`, `src/app/(authenticated)/hr/notifications/page.tsx`, then `src/components/hr/hr-drive-draft-form.tsx`.
+
+## chat-15 extended HR portal whole-file source pass — 2026-10-19
+
+The entire original `71`-file HR route work queue was enumerated from GitHub and inspected in source batches on this lane after the main fast-forward `dba6bbd5456152d9acc1ba31601d9ca32bcab3aa`. The initial scanning caught custom `<h1>` in `company/reports/error.tsx`, `messages/error.tsx`, and `profile/error.tsx`, which were replaced by shared `PageHeader` plus `ErrorState` and preserved retry actions. Hidden form inputs in `drives/[jobId]/messages/page.tsx`, `rounds/editor/page.tsx`, `rounds/editor/remove/[roundId]/page.tsx`, and `placements/jobs/[jobId]/page.tsx` were moved to shared `Input` without changing names, scopes, values or server actions. The re-read on those seven edited files found zero raw controls or custom `h1` tags and zero literal hex values.
+
+### Per-file measured source evidence (final fetched lane contents)
+
+| File | Raw native tags | Literal hex | Custom h1/tabs/pills | Preserved states and responsive proof |
+| --- | ---: | ---: | ---: | --- |
+| `hr/conversations/page.tsx` | 0 | 0 | 0 | `Tabs`, `NeedsDoingChips`, `ErrorState`, `EmptyState`, `Alert`; `max-md:min-h-11` mobile link targets, original server read/acknowledge forms and query filters |
+| `hr/notifications/page.tsx` | 0 | 0 | 0 | `Tabs` replaced hand active underline; `NeedsDoingChips` chooser, `EmptyState`, `ErrorState`; `md` breakpoint for mobile touch targets; original CSV/read receipts |
+| `hr/company/reports/error.tsx` | 0 | 0 | 0 | `PageHeader` + `ErrorState` with preserved error copy and Retry, shared responsive wrapping |
+| `hr/messages/error.tsx` | 0 | 0 | 0 | `PageHeader` + `ErrorState` with preserved messages failure semantics |
+| `hr/profile/error.tsx` | 0 | 0 | 0 | `PageHeader` + `ErrorState` preserving privacy-safe no-inferred-status copy |
+| `hr/drives/[jobId]/messages/page.tsx` | 0 | 0 | 0 | Shared `Input`/Button and `EmptyState`; server-authorized scoped conversation remains |
+| `hr/drives/[jobId]/rounds/editor/page.tsx` | 0 | 0 | 0 | Shared `Input`, `Select`, `Button`, `Card`, `StatusBadge`, `EmptyState`; forms use `md:grid-cols-2` at 768px |
+| `hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx` | 0 | 0 | 0 | Shared `Input` hidden optimistic token, status pill, `Button variant=danger`; read-only/cancel policies untouched |
+| `hr/placements/jobs/[jobId]/page.tsx` | 0 | 0 | 0 | Shared page head, tabs, scoped job offers/selection/results `TpoGrid` and hidden input; responsive source/engine runtime unverified |
+
+The first component pass examined all **19 original HR component TSX files** on this main-based lane. Each had zero raw native control elements; these exceptions require judgement: `hr-recruiter-bell.tsx` had two literal fallback `#ff7576` tokens and hand count bubble (now shared `Badge` and variable fallback), `recruiter-conversation-live-refresh.tsx` contains a **string selector** mentioning `role="dialog"` (not rendered custom dialog), and `recruiter-notification-bell.tsx` includes decorative bell/count markers. Two duplicate Button imports in `hr-unsent-drive-alert.tsx` and `recruiter-drive-focus-refresh.tsx` were removed. Their warning notices, the verified request receipt, and reply-composer feedback now use shared Alert/InlineNotice. Confirm/dismiss/optimistic updates and scoped storage are preserved by source contract.
+
+**Value/reference comparison:** `docs/design/old-lms-pages.md:6-12` supplies single canvas (white, radius12, 1px #e5e9f0), page title and toolbar, source `components___listing-page-header.scss:53-58,131-158` specifies 28px desktop/20px mobile and 767px max mobile; `components___antddesign.scss:148-184` specifies focus/disabled/hover, `components___form.scss:23-33,130-143` specifies keyboard-focus/invalid field paint. All these routes use the shared elements/styles: `src/components/ui/page-header.tsx:19-44`, `tabs.tsx:70-94`, `badge.tsx`, `status-badge.tsx`, `src/styles/legacy-skin.css:102-162`. **Gap:** observed `old-lms-pages.md:7` states ~30px desktop while listing SCSS says 28px, and shared PageHeader uses 30px from 768px. No actual computed style screenshots to reconcile. Native `TpoGrid` Quartz is present on current main, but the inspected `package.json` did not list required AG Grid deps. Therefore **no visible page is newly ticked**.
+
+**Exact on-branch source-scan equivalents**, case-sensitive:
+`/<(button|input|select|textarea|table)(?=[\\s/>])/g` native tags,
+`/#[0-9a-fA-F]{3,8}\\b/g` hex,
+`/<h1(?=[\\s>])|rounded-full|border-b-\\[3px\\]|aria-pressed/g` h1/pill/toggle.
+The numbers above were collected on fetched current source, not via local CLI/Playwright. Cross-portal or legacy runtime comparison, and every shared component state remain unverified. **Do not tick** remaining `hr/*` work queue entries without computed default/hover/focus/disabled and both viewport screenshots.
+
+**Remaining**: complete `hr/calendar/page.tsx`, other rich HR pages and component variations not closed by this source pass; independently review all `recruiter/*` aliases and tracker scopes. No CI/build/dev server executed.
+
+### Final additional HR calendar and route-state source proof (chat-15)
+
+| File | Legacy reference | Re-read vNext value | Source test and gap |
+| --- | --- | --- | --- |
+| `hr/calendar/page.tsx` | `components___listing-page-header.scss:131-158`; `old-lms-pages.md:6-12` | Shared PageHeader/Tabs/CalendarGrid; 2 independent event-card objects now `<Card as="article">…</Card>` (2/2 exact JSX match); bad query shows shared `ErrorState` | 0 native control tags, 0 literal hex, 0 handmade page `h1`, no card-in-card introduced. `md:grid` calendar desktop from 768px, `md:hidden` phone/day events; complete computed pixel comparison still missing. |
+| `hr/drives/[jobId]/messages/error.tsx` | legacy common failure presentation, `old-lms-pages.md:11-12` | Shared `ErrorState` title, description, button retry | Valid self-closing action wrapper, no custom heading; runtime/retry rendering unverified |
+| `hr/round-results/error.tsx` | legacy shared failure state | Shared `ErrorState` with original title and retry | No custom div/h2 shell; responsive handled by kit |
+| `hr/round-results/loading.tsx` | `components___antddesign.scss:6-13` loading/transition pattern | `GracefulPageLoading shape="directory"` | No custom pulse blocks, route layout shared; actual motion values unverified |
+
+**Decision:** the next untouched high-complexity surfaces are recruiter calendar interactions/events and HR draft component field/preview nuances. Source markup now uses shared components in many files, but exact old-LMS computed state values and a real phone/tablet comparison are not available. The 3 zero-DOM route shims remain the only definitively ticked per-file items; these visible pages remain [ ] until those proofs are supplied. **No CI, tests, app execution, or browser screenshots were run.**
