@@ -301,3 +301,18 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 
 - [ ] Browser computed-style visual diff, compile, tests, CI and real interaction/keyboard verification not performed (owner no-runtime instruction).
 - [ ] **Next exact file:** `src/components/admin/scoped-membership-lifecycle-actions.tsx`, then `src/components/admin/admin-revoke-sessions.tsx`.
+
+
+### Tenant membership and organization form source pass
+
+| File | Legacy value/location | Scoped grep and responsive proof |
+| --- | --- | --- |
+| [x] `src/components/admin/scoped-membership-lifecycle-actions.tsx` | Suspension reason label :40 now 13px/600 `components___form.scss:110-112`, shared `Button`/`Input` and semantic alerts. | Raw visual controls `0`, hex `0`, inline styles `0`, Button 3/3. Existing full-width Input and default shared 36px control/touch tokens; confirmation, 500-char reason and lifecycle unchanged. |
+| [x] `src/components/admin/organization-actions.tsx` | Organization edit dialog label :141 uses 13px/600 legacy SCSS typography, shared Input, Dialog and secondary/danger action chrome. | Raw controls `0`, hex `0`, inline styles `0`, Button 4/4. Dialog and controls retain inherited phone widths, focus and pending semantics. |
+| [x] `src/components/admin/organization-create-form.tsx` | Create Organization label :64 uses 13px/600, shared field chrome (10px radius, 14px text), semantic `Alert` states. | Raw controls `0`, hex `0`, inline styles `0`, Button 1/1. Mobile column layout, desktop row at 768px; create action 44px mobile and 36px ≥768px. |
+| [x] `src/components/admin/admin-revoke-sessions.tsx` — source-reviewed | Already uses shared action Button and muted helper/status text; no old-LMS palette/radius bypass found. | Raw controls `0`, hex `0`, inline styles `0`, Button 1/1; no custom mobile control geometry; confirmation and session revocation service unaffected. |
+
+**Source grep:** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l` gives `0`, `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l` gives `0`, `rg -o 'style=\\{' <file> | wc -l` gives `0` across these four files; opening/closing tags match. Legacy labels: `components___form.scss:110-112`, phone target minimum `components___variables.scss:139`, default 36px `globals.css:341` and 768px layout `old-lms-shell.css:73`.
+
+- [ ] Browser screenshots, computed properties, typed build, tests and CI remain explicitly unverified.
+- [ ] **Next file**: `src/components/admin/college-create-form.tsx` (Super Admin first-third tenant setup), followed by `src/components/admin/college-edit-dialog.tsx`.
