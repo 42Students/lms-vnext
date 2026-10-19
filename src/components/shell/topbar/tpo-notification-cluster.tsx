@@ -35,9 +35,11 @@ export function TpoNotificationCluster() {
     void refresh();
     const interval = window.setInterval(() => void refresh(), 30000);
     document.addEventListener("visibilitychange", refresh);
+    window.addEventListener("focus", refresh);
     return () => {
       window.clearInterval(interval);
       document.removeEventListener("visibilitychange", refresh);
+      window.removeEventListener("focus", refresh);
     };
   }, [refresh]);
 
