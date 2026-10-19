@@ -405,3 +405,9 @@ Do not tick any item until each value and state has exact legacy/vNext file:line
 **STRICT TICK:** H1–H6 remain **unticked**. Work-queue paths were source-edited but cannot be marked parity-complete without exhaustive 247-file path coverage, all-property source/value+state proofs, and phone/tablet side-by-side computed verification. No app code, tests, typecheck, lint, screenshots, or CI were executed. The legacy-selected color mismatch noted in batch 1 is still owned by shared-skin chat-17.
 
 **Exact next file:** `src/components/courses/learner-course-overview.tsx` — review the mobile section-jump nav and Recent updates category links for shared chip/tab and focus styles, then `src/components/courses/learner-course-discussion.tsx` for focus/status source review.
+
+### Batch 3 addendum: learner overview mobile anchors
+
+`08ad916` changed `src/components/courses/learner-course-overview.tsx:233-239` only: the mobile section-jump bar now offsets the 68px legacy top bar (previously 64px), stays visible below 768px instead of 640px, and its links have the tokenised hover, focus-visible offset and motion-reduction rules. The anchor IDs and existing scroll margins were not changed. Source-responsive rationale: `docs/design/old-lms-shell.css` 68px header; `docs/design/legacy-styles/components___learn-layout.scss:34,379,419,450` 767px phone treatment. Runtime measured focus and scroll position still unverified, so H3 remains open.
+
+**Next exact file after this commit:** `src/components/courses/learner-course-discussion.tsx`, followed by `src/components/courses/learner-quiz-attempt.tsx`; inspect the keyboard focus/fixed message composer and review state against the legacy SCSS. There are 11 source commits and two audit commits in this bounded batch; no H1–H6 item newly satisfies the strict all-states/all-pages proof.
