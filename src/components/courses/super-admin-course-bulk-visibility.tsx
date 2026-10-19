@@ -39,7 +39,7 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   }
   finally{setPending(false);}
  }
- return <section aria-label="Bulk course visibility" className="space-y-3 rounded-lg border border-border p-4">
+ return <section aria-label="Bulk course visibility" className="space-y-3 border-b border-border pb-5">
   <h3 className="font-semibold text-foreground">Students see it</h3>
   <p className="text-sm text-body">Show to students or hide from students across currently published lesson content in selected courses. Archived or unpublished content remains unchanged. New content keeps its own student visibility setting.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm">
@@ -62,11 +62,11 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   <div className="flex flex-wrap gap-2">
    <button type="button" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(true)}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold disabled:opacity-50">
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
     {pending?"Updating…":"Show to students"}</button>
    <button type="button" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(false)}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold disabled:opacity-50">
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
     Hide from students</button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
@@ -74,7 +74,7 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
    <p>{report.changed} updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
    {report.failures.length?<button type="button" disabled={pending||lastAction===null||!report.failedCourseIds.some(id=>currentIds.has(id))}
     onClick={()=>lastAction!==null?void apply(lastAction,report.failedCourseIds):undefined}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold">
+    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
     Retry failed
    </button>:null}
    {report.matchedLessons===0?<p>No published lesson content is available for the selected courses.</p>:null}
