@@ -581,3 +581,8 @@ Phone <=767px: PageHeader stacks and the primary action remains 44px high; table
 ### Control-source refinement after task/evidence ticks
 
 scripts/codemods/chat8-project-control-font-size.cjs was committed and applied to three completed task/evidence components: mentor-task-status-transition.tsx (1 Button), project-task-assignee-control.tsx (3 Buttons), and project-delivery-evidence-download.tsx (1 Button). Removed only explicit size="sm" opt-ins so the existing global Button source reliably chooses 14px/650 default rather than a 13px local utility. Callback, disabled, variant, children and DOM stay unchanged; the previous ten-state value tables remain accurate. No code execution, typecheck or screenshots were performed.
+
+
+## Next unticked learner workspace component (source fix, no tick)
+
+- `src/components/projects/learner-project-goals.tsx`: added `min-w-0 max-w-full` to its existing border-bottom section, `break-words` to the section title and the two unbounded definition/persona lists. Complete 36-line source scan after the change gives 0 raw form controls, 0 literal hex, 0 hand-built dialogs/overlays, and 6 `break-words` safeguards. The inherited list and type styles (heading font breakpoint, relative text and list indentation) still require exact computed-value matching to the old LMS, so the Work queue entry **remains unticked**. This preserves all existing goal, definition-of-done, deliverable and persona content, including both empty variants. Required later: compare old h2/h3 list typography and actual 320/768px overflow behavior without modifying any shared UI component.
