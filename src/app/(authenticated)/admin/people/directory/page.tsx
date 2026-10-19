@@ -62,11 +62,11 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
   {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
    <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Users without college memberships →</Link> : null}
-  <nav aria-label="People directory tabs" className="flex flex-wrap gap-2">
+  <nav aria-label="People directory tabs" className="flex flex-wrap gap-2 border-b border-border">
    {tabs.map(tab=><Link key={tab.id} href={adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}
     aria-current={data.query.tab===tab.id?"page":undefined}
-    className={"inline-flex min-h-11 items-center rounded-[9px] border px-4 font-semibold "+
-     (data.query.tab===tab.id?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border text-body")}>{tab.label}</Link>)}
+    className={"inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold sm:min-h-9 "+
+     (data.query.tab===tab.id?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>{tab.label}</Link>)}
   </nav>
   <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 text-sm">
    <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Student accounts</Link>
@@ -82,22 +82,22 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    <input type="hidden" name="tab" value={tabForm.hiddenTab} />
    <label className="grid gap-1 text-sm font-semibold text-body">Name or college
     <Input type="search" name="q" maxLength={100} defaultValue={query.data.q}
-     className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground"/>
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Role
-    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
+    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Membership
     <Select name="membershipStatus" defaultValue={query.data.membershipStatus}
-     className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      {membershipOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Platform
     <Select name="platformStatus" defaultValue={query.data.platformStatus}
-     className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-foreground">
+     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
      {platformOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
@@ -106,7 +106,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   <p className="text-xs text-muted-foreground">{data.total} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
   {data.items.length?<div className="grid gap-3 md:grid-cols-2">
    {data.items.map(row=><article key={row.membershipId} className="min-w-0 border-b border-border py-4">
-    <h2 className="m-0 break-words font-semibold text-foreground">{row.displayName||"Unnamed user"}</h2>
+    <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)]">{row.displayName||"Unnamed user"}</h2>
     <p className="mt-1 text-sm text-body">{row.collegeName}</p>
     <p className="mt-1 break-all text-xs text-muted-foreground">
      {data.contactVisible?(row.email??"No email recorded"):"Email masked"} ·
