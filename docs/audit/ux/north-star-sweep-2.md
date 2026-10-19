@@ -110,3 +110,28 @@ Completed source-file work:
 - [x] `src/components/placements/tpo-bulk-drive-reminder.tsx` — shared secondary bulk reminder and selection buttons preserving native form event semantics
 
 This continuation changes **24 production TSX files** (24 lane commits) plus the source-only tracker. Every changed source file was re-read from the branch and inspected for complete JSX shared-component closers, balanced `<Button>` / `</Button>` and `<Select>` / `</Select>`, and necessary imports; no truncated `</Select` was detected. This check does **not** replace TSX parser/typecheck or screenshot verification. **No CI, runtime, tests, TypeScript compilation or visual screenshots were run.**
+
+## Continued North Star source sweep — additional TPO files (2026-10-19)
+
+**Latest main merge:** `63eb159fa20a99b37eeaefd17729434e0fdedcfe` has parents `352dc658` (chat-2) and `a98732e8` (then-current main). Main won 8 overlapping TPO files to preserve concurrent fixes, while 10 non-overlapping lane files were retained. The overlapping TPO style-only gaps addressed below were re-reviewed from that merged source before editing.
+
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`: shared select, date input, textarea and old-LMS buttons; primary action corrected to white text
+- [x] `src/components/tpo/tpo-inbox-search.tsx`: shared search input retains slash-shortcut ref and debounced navigation
+- [x] `src/components/placements/tpo-report-invalid-filters.tsx`: one canvas and old-LMS 30px heading token
+- [x] `src/components/placements/tpo-round-check-in.tsx`: shared secondary attendance actions
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx`: shared buttons; flat divider-separated ask list
+- [x] `src/components/tpo/tpo-team-message-actions.tsx`: shared primary, secondary/ghost and danger actions
+- [x] `src/components/tpo/tpo-team-thread-details.tsx`: canonical canvas radius
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx`: canonical canvas radius
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`: tokenized dialog radius and shadow
+- [x] `src/components/placements/tpo-outside-participants-editor.tsx`: shared three `Select` fields and primary action; flat participant rows
+- [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`: shared buttons with legacy primary Save styling
+- [x] `src/components/tpo/tpo-custom-job-type-rename.tsx`: shared input and button
+- [x] `src/components/tpo/tpo-builtin-job-types-editor.tsx`: shared checkbox
+- [x] `src/components/tpo/tpo-prep-readiness-editor.tsx`: shared checkbox and canonical course border radius
+- [x] `src/components/tpo/tpo-after-college-editor.tsx`: shared selector and buttons, remove duplicate responsive height utilities
+- [x] `src/components/tpo/tpo-custom-job-type-placed.tsx`: shared secondary choice buttons
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`: shared radio controls and hairline-separated list
+- [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`: shared checkbox, select and buttons; canonical radius
+
+**JSX source verification:** all 18 TSX files re-read after push. Complete `</Select>`, `</Button>`, `</Textarea>` syntax checked; all `<Select>` and `<Button>` counts match closing counts and every referenced shared-control import is present. Old native closing tags not left after replacement. No application, tests, typecheck, CI, or screenshots run per lane instruction; owner must still perform complete compile and screenshot parity verification.
