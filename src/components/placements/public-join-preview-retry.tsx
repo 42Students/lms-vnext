@@ -13,7 +13,7 @@ export function PublicJoinPreviewRetry({scope,token}:{
    <p className="text-sm text-body">Check your connection and try again. Your invitation was not used.
     If the problem continues, ask the placement cell for help.</p>
    <Link href={root+encodeURIComponent(token)}
-    className="mt-4 inline-flex min-h-9 items-center rounded-[9px] border border-primary bg-primary px-5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry</Link>
+    className="mt-4 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry</Link>
   </Card>
  </main>;
 }
