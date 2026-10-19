@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {learnerSavedDriveCopy} from "@/modules/placements/learner-saved-drives-model";
 import {apiFetch} from "@/lib/api-fetch";
-import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {friendlyApiError} from "@/lib/friendly-error";
 
 /** LEARNER-placements-13: persisted private bookmark, never an application. */
@@ -28,11 +28,11 @@ export function LearnerSaveDriveButton({jobId,jobTitle,initialSaved}:{jobId:stri
   finally{lock.current=false;setBusy(false);}
  }
  return <span className="inline-flex flex-wrap items-center gap-2">
-  <Button className="max-md:min-h-11" variant="secondary" type="button" disabled={busy} aria-pressed={saved} onClick={()=>void toggle()}
+  <FilterChip className="max-md:min-h-11" type="button" disabled={busy} aria-pressed={saved} onClick={()=>void toggle()}
    aria-label={saved?"Remove "+jobTitle+" from saved drives":"Save "+jobTitle+" for later"}>
    <span aria-hidden="true">{saved?"♥":"♡"}</span>
    {busy?"Saving…":learnerSavedDriveCopy(saved).action}
-  </Button>
+  </FilterChip>
   {message?<span role={(message===learnerSavedDriveCopy(false).toast||message===learnerSavedDriveCopy(true).toast)?"status":"alert"} className="text-xs text-body">{message}</span>:null}
  </span>;
 }
