@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -46,7 +47,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   inFlight.current=false;setPending(false);router.refresh();
  }
  return <section aria-label="Template college bulk assignment" className="space-y-3 border-b border-border pb-5">
-  <h2 className="text-base font-semibold">College availability</h2>
+  <h2 className="text-base font-semibold text-foreground">College availability</h2>
   <p className="text-xs text-muted-foreground">Select colleges on this page to update availability; existing workspaces remain unchanged.</p>
   <div className="flex flex-wrap gap-3 text-sm">
    <Button type="button" variant="secondary" disabled={pending||!allowed.length}
@@ -56,12 +57,12 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
     >Clear selection</Button>
    <span className="self-center">{selectedItems.length} selected</span>
   </div>
-  <ul className="grid gap-2 sm:grid-cols-2">
+  <ul className="grid min-w-0 gap-x-4 md:grid-cols-2">
    {colleges.map(college=><li key={college.id}>
-    <label className="flex min-h-10 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm">
-     <input type="checkbox" className="size-4 accent-[var(--lms-button-primary)]" checked={selected.includes(college.id)} disabled={pending||!college.canAssign}
+    <label className="flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-body transition-colors hover:border-primary hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary sm:min-h-9">
+     <Checkbox checked={selected.includes(college.id)} disabled={pending||!college.canAssign}
       onChange={e=>setSelected(current=>e.target.checked?[...current,college.id]:current.filter(id=>id!==college.id))}/>
-     <span className="flex-1 truncate">{college.name}</span>
+     <span className="min-w-0 flex-1 break-words">{college.name}</span>
      <span className="text-xs text-muted-foreground">{college.assigned?"Assigned":"Not assigned"}</span>
     </label>
    </li>)}

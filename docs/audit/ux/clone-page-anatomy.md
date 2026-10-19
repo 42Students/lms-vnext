@@ -371,3 +371,70 @@ Rules were compared statically using `components___variables.scss:148-159` and `
 **Strict tick scope:** 16 *file-level* source checks completed, but parent B5/B6/E6 audit checkboxes remain **[ ]** for global coverage, visual/interaction proof, other page variants and card-wrapper exemptions. Do not infer repo-wide zero counts.
 
 **Next batch:** `src/app/(authenticated)/tpo/settings/trusted/error.tsx` (verify whether shared `ErrorState` already owns title) followed by `src/app/(authenticated)/tpo/reports/*/error.tsx` leftovers and learner/mentor recovery surfaces that still have source-level nested wrappers.
+
+## Replacement chat-9 bounded turn — 2026-10-19, source-verified file batch
+
+**Upstream and branch:** at turn start `chatgpt/chat-9-b` was nine commits ahead but 640 behind `main`. An explicit two-parent integration merge `857c9d5391ed7b8d2b276ef890717b03914ec554` used `main` `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` as the base tree and preserved the nine newer page-head commits and this audit. This is a **merge**, not a literal `git rebase`, because the connected GitHub operations expose no checked-out git worktree. All writes target `chatgpt/chat-9-b`, never `main`.
+
+### File-complete Work queue: shared PageHeader and single canvas (20)
+
+Each line below means a connector fetch *after the write* confirmed **0** literal native `<h1>`, **1** `<PageHeader>` caller, **1** `PageHeader` import, unchanged `reset` action on each `error.tsx`; `college/verification/loading.tsx` retains `GracefulPageLoading`. All remain inside the authenticated layout's single `PageCanvas`, with no new outer decorative canvas card. This is **scoped source verification, not a repository-wide `git grep`**.
+
+- [x] `src/app/(authenticated)/tpo/requests/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/learn/profile/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/mentor/reviews/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/teacher/results/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/mentor/activity/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/admin/attendance/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/learn/attendance/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/mentor/reports/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/learn/allQuizzes/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/mentor/task-reviews/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/tpo/reports/unplaced/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/tpo/reports/placed-branch/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/tpo/reports/joining-status/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/tpo/reports/placement-summary/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/learn/projects/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/college/verification/loading.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+- [x] `src/app/(authenticated)/tpo/reports/leads/error.tsx` (source-scan: native h1=0, PageHeader=1; copy/action retained; md=768px source-breakpoint)
+
+### File-complete Work queue: back links, breadcrumbs, E6 (10)
+
+- [x] `src/components/projects/project-workspace.tsx` (source inspected: native h1=0, shared PageBackLink used; 1 shared breadcrumb + 1 back link; eight info subcards flattened; 22 section pairs preserved)
+- [x] `src/components/projects/project-workspace-readiness.tsx` (source inspected: native h1=0, shared PageBackLink used; three state-specific Back links; retry views and successful header intact)
+- [x] `src/components/projects/project-admin-reassign-mentor-page.tsx` (source inspected: native h1=0, shared PageBackLink used; one PageHeader action back link; other route filters retained)
+- [x] `src/components/projects/super-admin-template-subview-page.tsx` (source inspected: native h1=0, shared PageBackLink used; template catalogue back link; create-workspace action intact)
+- [x] `src/components/projects/project-admin-missing-college.tsx` (source inspected: native h1=0, shared PageBackLink used; dashboard recovery back link; warning message intact)
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx` (source inspected: native h1=0, shared PageBackLink used; denied/error dashboard recovery link; normal header unchanged)
+- [x] `src/app/(authenticated)/admin/tenants/create/page.tsx` (source inspected: native h1=0, shared PageBackLink used; denied/error dashboard recovery link; normal header unchanged)
+- [x] `src/app/(authenticated)/admin/projects/templates/new/page.tsx` (source inspected: native h1=0, shared PageBackLink used; error + normal header both use back link)
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx` (source inspected: native h1=0, shared PageBackLink used; denied/error and success back links; filters and retry retained)
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx` (source inspected: native h1=0, shared PageBackLink used; denied/error/history and success back links retained)
+
+### Source value proof (scope = above 30 files)
+
+| Property / state | Legacy source (exact value and line) | vNext source (exact value and line) | Scope outcome |
+| --- | --- | --- | --- |
+| Authenticated page surface | `docs/design/old-lms-shell-spec.md:18-20`: #ffffff, solid 1px #e5e9f0, 12px radius, 24px padding, no shadow on #f1f4f9 | `src/components/ui/page-canvas.tsx:13-23`; `src/app/(authenticated)/layout.tsx:147-156` | Inherited canvas; recovery-page outer rounded cards removed |
+| Desktop title | `docs/design/old-lms-shell-spec.md:26-28`: 30px, 600, #172033 | `src/components/ui/page-header.tsx:30-38`, `src/app/globals.css` heading token | Shared title for 20 recovery/loading views |
+| Header separator/spacing | `docs/design/legacy-styles/components___listing-page-header.scss:26-35`: 1px neutral200, padding-bottom16px, margin-bottom16px | `src/components/ui/page-header.tsx:25-28`: border-b/pb-4/md:mb-4 | Nested section border removed where redundant |
+| Title/subtitle alignment | `components___listing-page-header.scss:45-58`: baseline, flex-wrap, gap16px, tracking -.02em | `src/components/ui/page-header.tsx:28-45`: md:items-baseline, md:flex-wrap, md:gap-4 | Shared head, page-specific descriptions intact |
+| Phone head | `components___listing-page-header.scss:130-154`: at <=767px, 20px title, stacked actions, gap8px | `src/components/ui/page-header.tsx:25-49`: before md=768px, 20px title, flex-col, gap-2 and full-width actions | Static breakpoint alignment only |
+| Back-link tap and label | `components___learn-layout.scss:361-383`: min44x44, hide label at <=767px, teal hover #26bac7 at 150ms | `src/components/ui/page-back-link.tsx:18-29`; callers in ten files | Shared mobile-safe back link, aria label preserved |
+| Breadcrumb presentation | `old-lms-pages.md:5-6`: page head and back context; universal slash rule not established | `src/components/ui/breadcrumbs.tsx:7-25`, `project-workspace.tsx:303-319` | Workspace custom nav moved to shared breadcrumbs; legacy exact separator proof still open |
+| E6 information sections | `old-lms-pages.md:5,13`: single white page; cards only genuine separate objects, plain content separated by hairlines | `src/components/projects/project-workspace.tsx` definition of done, roles, task progress, completion chart, final submission and mentor info use `border-b pb-*` | 8 cosmetic subcards flattened; member cards and risk/status banners intentionally retained |
+| Retry/error semantics | Existing vNext error views have retry/back actions (behavior kept, not a legacy restyle target) | All 19 `error.tsx` routes in ledger: `onClick={reset}` remains; respective `role=alert` where applicable | Source invariant preserved; runtime click not executed |
+
+### Verification proof and open category gates
+
+- **Source re-fetch**: 15/15 recovery files passed in batch one; 5/5 remaining recovery/loading plus 10/10 Projects and Super Admin pages passed in batch two. All 30 changed file paths have zero literal native h1; exact PageHeader counts and shared navigation checked; section opening/closing counts in `project-workspace.tsx` remained 22/22. The scoped source scan used JS regex equivalents of `<h1(?:\\s|>)`, `<PageHeader\\b`, `<PageBackLink\\b`, and source-string import/handler checks. **A checked-out recursive grep was not run.**
+- **Responsive source trace**: `components___variables.scss:148-159` phone max767px / tablet min768px versus `PageHeader` md768 and `PageBackLink` md768. Source class rules assessed at 320/390/767/768/991/1024/1199px; no browser or computed-style verification.
+- **No execution**: no TypeScript compiler, CI, tests, app server, code runner, snapshots or pixel comparison. No global claim of zero remaining dynamic `<h1>`, breadcrumbs or nested cards. Existing alternate 28px legacy listing title versus measured 30px TPO title remains unresolved.
+- [ ] **B5 parent** remains open: full repo grep including imported titles, complete legacy breadcrumbs value rows, state/geometry proof.
+- [ ] **B6 parent** remains open: phone/tablet computed responsive geometry and overflow per portal.
+- [ ] **E6 parent** remains open: all-portal card-in-card inventory; retained separately meaningful object tiles need a global exception ledger.
+
+**Next exact file:** `src/components/projects/class-team-workspace-creator.tsx` — distinguish individual team-selection cards from redundant preflight/status wrappers, then `src/components/projects/project-template-view.tsx`; resume global dynamic-heading and breadcrumb inventory when a worktree grep is available.

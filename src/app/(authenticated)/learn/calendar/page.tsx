@@ -44,15 +44,13 @@ export default async function LearnerCalendarPage({searchParams}:{
 
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader
-        title="Class Schedule"
-      />
-      <div className="flex flex-wrap justify-end">
+      <PageHeader title="Class Schedule" actions={(
         <Link href="/learn/attendance/calendar"
           className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
           Attendance calendar →
         </Link>
-      </div>
+      )} />
+      
       <LearnerClassSchedule
         calendarMode="IST"
         initialAnchorDay={filters.anchorDay}

@@ -7,6 +7,7 @@ import {facultyBulkImportResponseSchema,facultyBulkImportFailureMessage} from "@
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/ui/file-upload";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 
 type Result={row:number;name:string;status:"CREATED"|"FAILED"|"SKIPPED";message:string};
@@ -77,22 +78,25 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   const sample="First Name,Last Name,Mobile Number,Email\r\nAnjali,Sharma,9876543210,anjali@example.edu\r\n";
   const element=document.createElement("a");
   const url=URL.createObjectURL(new Blob([sample],{type:"text/csv"}));
-  element.href=url;element.download="bulk_faculty_sample.csv";element.click();
-  URL.revokeObjectURL(url);
+  element.href=url;element.download="bulk_faculty_sample.csv";
+  document.body.appendChild(element);
+  try { element.click(); }
+  finally { element.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
  };
  return <section className="space-y-3 border-t border-border pt-4">
   {dialog}
   <h2 className="font-semibold">Bulk register faculty</h2>
   <p className="text-sm text-body">Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional). Existing identities are verified by the server.</p>
   <div className="flex flex-wrap items-center gap-3">
-   <Button type="button" variant="secondary" onClick={downloadSample}>Download sample CSV</Button>
+   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" onClick={downloadSample}>Download sample CSV</Button>
    <FileUpload label="Choose CSV" accept=".csv,text/csv" maxBytes={1_500_000} disabled={busy}
+     className="[&_input]:min-h-11 md:[&_input]:min-h-9"
      onFiles={files=>void fileSelected(files?.[0]??null)}/>
   </div>
   {filename?<p className="text-xs text-muted-foreground">File: {filename}</p>:null}
   {count>0?<p role="status" className="text-sm">{count} rows validated locally; review before creating.</p>:null}
   {(issue||error)?<p role="alert" className="text-sm text-error">{error||issue}</p>:null}
-  <Button type="button" onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}>
+  <Button type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}>
     {busy?"Importing…":"Validate and Create"}
   </Button>
   {results.length>0?<div className="space-y-2">
