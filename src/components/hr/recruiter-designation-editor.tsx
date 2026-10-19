@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitle:string|null;updatedAt:string}) {
  const router=useRouter();
  const [title,setTitle]=useState(initialTitle??"");
@@ -32,9 +34,9 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
   <form onSubmit={event=>void save(event)} className="space-y-2">
    <label htmlFor="hr-recruiter-designation" className="block text-xs font-medium uppercase tracking-wide text-muted-foreground">Designation</label>
    <div className="flex flex-wrap gap-2">
-    <Input className="min-w-48 flex-1" id="hr-recruiter-designation" value={title} onChange={event=>setTitle(event.target.value)}
-       maxLength={160}/>
-    <Button variant="primary" type="submit" disabled={saving||title.length>160}>
+    <Input id="hr-recruiter-designation" value={title} onChange={event=>setTitle(event.target.value)}
+       maxLength={160} className="min-w-48 flex-1"/>
+    <Button type="submit" disabled={saving||title.length>160}>
       {saving?"Saving…":"Save designation"}</Button>
    </div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
