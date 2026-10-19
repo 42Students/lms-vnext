@@ -7,7 +7,7 @@ export function CollegeReportNavigation(){
   {href:"/college/placements/retention",label:"Data retention report"},
   {href:"/college/placements/student-lookup",label:"Student placement lookup"},
  ] as const;
- return <nav aria-label="College placement reports" className="space-y-2 rounded-xl border border-border bg-surface p-5">
+ return <nav aria-label="College placement reports" className="space-y-2">
   <h2 className="font-semibold">Placement reports</h2>
   <p className="text-xs text-muted-foreground">These reports use College Admin access and contain only data recorded for your college.</p>
   <div className="flex flex-wrap gap-3">

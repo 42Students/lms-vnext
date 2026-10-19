@@ -46,16 +46,16 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     <label className="grid max-w-md gap-1 text-sm">Subdomain
       <div className="flex items-center gap-2">
        <Input value={label} maxLength={63} autoCapitalize="none" spellCheck={false}
-        onChange={e=>setLabel(e.target.value)} className="min-h-11 min-w-0 flex-1"/>
+        onChange={e=>setLabel(e.target.value)} className="min-h-[var(--lms-control-height)] min-w-0 flex-1"/>
        <span>.{state.baseDomain}</span>
       </div>
     </label>
     <div className="flex flex-wrap gap-2">
      <Button type="button" disabled={busy||!label.trim()} onClick={()=>setPendingAction(state.currentHost?"CHANGE":"ALLOT")}
-      className="min-h-11 sm:min-h-9">
+      className="min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)]">
       {state.currentHost?"Change":"Allot"}</Button>
      {state.currentHost&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>setPendingAction("REMOVE")}
-      className="min-h-11 sm:min-h-9">Remove</Button>}
+      className="min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)]">Remove</Button>}
     </div>
     <p className="text-xs text-muted-foreground">A managed address is routed only when the configured wildcard DNS and TLS infrastructure is operational.</p>
    </>}

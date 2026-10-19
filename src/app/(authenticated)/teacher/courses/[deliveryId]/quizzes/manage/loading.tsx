@@ -1,1 +1,5 @@
-export default function Loading(){return <div aria-busy="true" className="space-y-3"><div className="h-16 animate-pulse rounded bg-muted"/><div className="h-60 animate-pulse rounded bg-muted"/></div>}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading() {
+  return <GracefulPageLoading label={"Loading faculty course workspace…"} shape="directory" />;
+}

@@ -2,6 +2,7 @@
 import { Tabs } from "@/components/ui/tabs";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import {FileUpload} from "@/components/ui/file-upload";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -101,10 +102,8 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
   <div className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border p-3"
    onDragOver={event=>event.preventDefault()} onDrop={event=>{event.preventDefault();void chooseFile(event.dataTransfer.files.item(0));}}>
-   <label className="block text-sm font-semibold text-body">Choose or drop eligibility CSV
-    <input ref={fileInput} type="file" accept=".csv,text/csv" disabled={busy}
-     className="mt-2 block min-h-9 max-w-full text-sm" onChange={event=>void chooseFile(event.target.files?.[0]??null)}/>
-   </label>
+   <FileUpload ref={fileInput} label="Choose or drop eligibility CSV" maxBytes={1_500_000}
+      accept=".csv,text/csv" disabled={busy} onFiles={files=>void chooseFile(files?.[0]??null)}/>
    {chosenName?<p className="text-xs text-muted-foreground">Selected: {chosenName}</p>:null}
    <p className="text-xs text-muted-foreground">For Excel files, use Save As → CSV (UTF-8) before import.</p>
    <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Download a template</a>

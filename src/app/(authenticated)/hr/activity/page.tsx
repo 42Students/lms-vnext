@@ -1,5 +1,6 @@
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {redirect} from "next/navigation";
@@ -18,14 +19,14 @@ export default async function HrJobActivityPage({searchParams}:{
  const input=hrActivityQuerySchema.safeParse({
   collegeId:raw.collegeId,kind:raw.kind,page:raw.page,q:raw.q,
  });
- if(!input.success)return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Hiring activity"/>
-  <p role="alert">Invalid activity filters.</p><Link href="/hr/activity" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose again</Link></div>;
+ if(!input.success)return <div className="min-w-0 max-w-full space-y-4"><PageHeader eyebrow="Recruiter" title="Hiring activity"/>
+  <p role="alert">Invalid activity filters.</p><Link href="/hr/activity">Choose again</Link></div>;
  const result=await listRecruiterJobActivity(context,input.data);
  const fmt=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(date);
  return <div className="min-w-0 max-w-full space-y-6">
-  <PageHeader title="Hiring activity"
+  <PageHeader eyebrow="Employer Recruiter" title="Hiring activity"
    description="Published and closed hiring drives at your authorized college. No private applicant information."/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-5">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
@@ -36,7 +37,7 @@ export default async function HrJobActivityPage({searchParams}:{
    {result.choices.length>1?<nav aria-label="College activity filter" className="flex flex-wrap gap-2">
     {result.choices.map(grant=><Link key={grant.id}
      href={"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId)}
-     className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>{grant.collegeName}</Link>)}
+     className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary"}>{grant.collegeName}</Link>)}
    </nav>:null}
    <form action="/hr/activity" method="get" className="flex flex-wrap gap-2">
      <input type="hidden" name="collegeId" value={result.collegeId}/>
@@ -46,10 +47,12 @@ export default async function HrJobActivityPage({searchParams}:{
        placeholder="Search hiring drive titles" className="min-w-48 flex-1"/>
      <Button variant="secondary" type="submit">Search</Button>
    </form>
-   <Tabs renderPanel={false} ariaLabel="Hiring activity event type" value={input.data.kind}
-    items={HR_ACTIVITY_FILTER_KINDS.map(kind=>({value:kind,
-      label:kind==="ALL"?"All events":kind==="PUBLISHED"?"Published":"Closed",
-      href:"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind+"&q="+encodeURIComponent(input.data.q)}))}/>
+   <Tabs ariaLabel="Hiring activity event type" renderPanel={false} value={input.data.kind}
+     items={HR_ACTIVITY_FILTER_KINDS.map(kind=>({
+       value:kind,
+       label:kind==="ALL"?"All events":kind==="PUBLISHED"?"Published":"Closed",
+       href:"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+kind+"&q="+encodeURIComponent(input.data.q),
+     }))} />
    {result.events.length?<ol className="divide-y divide-border border-y border-border">{result.events.map(item=>
     <li key={item.id} className="py-4">
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}

@@ -14,6 +14,7 @@ import {
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { PageHeader } from "@/components/ui/page-header";
@@ -156,11 +157,7 @@ export default async function SuperAdminPeoplePage({
           {["ALL","ACTIVE","SUSPENDED","ENDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
        </label>
-       <label className="grid gap-1 text-sm font-semibold">Rows per page
-        <Select name="pageSize" defaultValue={pageSize} className="min-h-9 w-full">
-          {[10,20,50].map(n=><option key={n} value={n}>{n}</option>)}
-        </Select>
-       </label>
+       <PageSizeSelect name="pageSize" defaultValue={pageSize} options={[10,20,50]} />
        <Button type="submit">Search</Button>
        <Link href="/admin/people" className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
       </form>

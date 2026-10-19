@@ -1,5 +1,5 @@
-import { PageLoading } from "@/components/ui/page-loading";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
-export default function LoadingFacultyProfileDetails() {
-  return <PageLoading label="Loading Faculty profile…" variant="form" count={4} />;
+export default function Loading() {
+  return <GracefulPageLoading label={"Loading faculty workspace…"} shape="directory" />;
 }

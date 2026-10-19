@@ -1,9 +1,12 @@
 "use client";
-import {Button} from "@/components/ui/button";
-export default function ErrorPage({reset}:{error:Error&{digest?:string};reset:()=>void}){
- return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-  <h1 className="font-semibold text-foreground">Couldn&apos;t load interview rounds</h1>
-  <p className="mt-2 text-sm text-body">Failed retrieval is not a cleared scheduling queue.</p>
-  <Button onClick={reset} className="mt-4">Retry</Button>
- </section>;
+
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+
+export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState
+    title="Couldn't load interview rounds"
+    description="Failed retrieval is not a cleared scheduling queue."
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+  />;
 }

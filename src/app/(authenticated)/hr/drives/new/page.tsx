@@ -65,7 +65,7 @@ export default async function RecruiterRequestDrivePage({
 
   if (!collegeId) {
     return <div className="min-w-0 max-w-full space-y-6">
-      <PageHeader title="Request a drive"
+      <PageHeader eyebrow="Recruiter" title="Request a drive"
         description="Choose an authorized college before drafting a hiring request." />
       {grants.length === 0 ? (
         <EmptyState title="No active college access"
@@ -99,7 +99,7 @@ export default async function RecruiterRequestDrivePage({
     : emptyHrDriveDraft();
 
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
+    <PageHeader eyebrow="Recruiter" title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
     <Link href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)}
       className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">

@@ -6,12 +6,13 @@ export type MetricBarProps = {
   value: number;
   maximum: number;
   unit?: string;
-  size?: "compact" | "default";
+  role?: "meter" | "progressbar" | "img";
+  size?: "compact" | "medium" | "default";
   className?: string;
 };
 
 export function MetricBar({
-  label, value, maximum, unit = "", size = "compact", className,
+  label, value, maximum, unit = "", role = "meter", size = "compact", className,
 }: MetricBarProps) {
   const safeMaximum = Number.isFinite(maximum) && maximum > 0 ? maximum : 0;
   const safeValue = Number.isFinite(value) ? Math.max(0, value) : 0;
@@ -20,7 +21,7 @@ export function MetricBar({
   return (
     <div
       data-slot="metric-bar"
-      role="meter"
+      role={role}
       aria-label={label}
       aria-valuemin={0}
       aria-valuemax={safeMaximum}
@@ -28,12 +29,12 @@ export function MetricBar({
       aria-valuetext={numericText + (unit ? " " + unit : "")}
       className={cx(
         "overflow-hidden rounded-full bg-[var(--lms-primary-light)]",
-        size === "compact" ? "h-2" : "h-3",
+        size === "compact" ? "h-2" : size === "medium" ? "h-2.5" : "h-3",
         className,
       )}
     >
       <div
-        className="h-full rounded-full bg-[var(--lms-primary)]"
+        className="h-full rounded-full bg-[var(--lms-primary)] transition-[width] duration-[var(--lms-motion-base)] motion-reduce:transition-none"
         style={{ width: width + "%" }}
       />
     </div>

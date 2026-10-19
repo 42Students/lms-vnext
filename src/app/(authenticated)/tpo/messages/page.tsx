@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import {DataTable} from "@/components/ui/data-table";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
@@ -246,17 +247,7 @@ export default async function TpoMessagesPage({
               : "Not applicable",
           },
         ].map((metric) => (
-          <article
-            key={metric.label}
-            className="border-b border-border px-1 py-4"
-          >
-            <p className="text-xs font-semibold text-muted-foreground">
-              {metric.label}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {metric.value}
-            </p>
-          </article>
+          <StatTile key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </section>
 

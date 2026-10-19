@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -40,8 +41,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin · Read-only version comparison" title={detail.template.title}
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`}
-      actions={<Link href={`/admin/projects/templates/${encodeURIComponent(detail.template.id)}/versions`}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Version history</Link>} />
+      actions={<PageBackLink href={`/admin/projects/templates/${encodeURIComponent(detail.template.id)}/versions`} label="Version history" />} />
     <p className="text-sm text-muted-foreground">This snapshot is read-only. Publication state and college assignments are managed separately.</p>
     {detail.changes.length ? <section aria-label="Changed fields" className="space-y-4">
       {detail.changes.map(change => <article key={change.label} className="min-w-0 border-b border-border py-4">

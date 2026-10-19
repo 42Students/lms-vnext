@@ -1,4 +1,5 @@
-import { Tabs } from "@/components/ui/tabs";
+import { SummaryStrip } from "@/components/ui/summary-strip";
+import { MetricBar } from "@/components/ui/metric-bar";
 import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -65,6 +66,7 @@ export default async function RecruiterCompanyReportsPage({
     return (
       <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
+          eyebrow="Employer Recruiter"
           title="Company Reports"
           description="Read-only, college-scoped employer hiring metrics."
         />
@@ -94,6 +96,7 @@ export default async function RecruiterCompanyReportsPage({
     return (
       <div className="min-w-0 max-w-full space-y-6">
         <PageHeader
+          eyebrow="Employer Recruiter"
           title="Company Reports"
           description="Choose one college to view your employer's authorized hiring reports. Reports from different college relationships are never combined."
         />
@@ -161,6 +164,7 @@ export default async function RecruiterCompanyReportsPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
+        eyebrow="Employer Recruiter"
         title="Company Reports"
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
         actions={<div className="flex flex-wrap gap-2">
@@ -207,38 +211,11 @@ export default async function RecruiterCompanyReportsPage({
           {value:"team",label:"Team",href:`${companyBase}&tab=team`},
           {value:"reports",label:"Reports",href:recruiterCompanyReportsHref({collegeId})}]}/>
 
-      <section
-        aria-label="Hiring portfolio summary"
-        className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-3"
-      >
-        {[
-          {
-            label: "Visible hiring drives",
-            value: summary.total,
-          },
-          {
-            label: "Published drives",
-            value: summary.published,
-          },
-          {
-            label: "Closed drives",
-            value: summary.closed,
-          },
-        ].map((metric) => (
-          <article
-            key={metric.label}
-            className="border-b border-border p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
-          >
-            <p className="text-xs font-semibold text-muted-foreground">
-              {metric.label}
-            </p>
-
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {metric.value}
-            </p>
-          </article>
-        ))}
-      </section>
+      <SummaryStrip label="Hiring portfolio summary" steps={[
+        {label:"Visible hiring drives",value:summary.total},
+        {label:"Published drives",value:summary.published},
+        {label:"Closed drives",value:summary.closed},
+      ]} />
 
       <section aria-label="All your drives at this college" className="border-b border-border pb-4 sm:pb-5">
         <h2 className="font-semibold text-foreground">All your drives at this college</h2>
@@ -249,9 +226,8 @@ export default async function RecruiterCompanyReportsPage({
               <span className="font-semibold text-foreground">{stage.label}</span>
               <span className="tabular-nums text-body">{stage.total} · {stage.previousPercentLabel} of previous</span>
             </div>
-            <div className="mt-1 h-2 overflow-hidden rounded-full bg-border">
-              <div className="h-full bg-primary" style={{width:stage.appliedPercent+"%"}}/>
-            </div>
+            <MetricBar className="mt-1" label={stage.label+" hiring funnel"}
+              value={stage.appliedPercent} maximum={100} unit="percent" />
           </div>)}
         </div>
       </section>
