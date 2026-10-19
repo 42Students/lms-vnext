@@ -1,4 +1,7 @@
 "use client";
+import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
@@ -183,15 +186,15 @@ export function TpoStudentsBulkAdd({
       ) : (
         <>
           <label className="grid gap-1 text-sm">Search open drives
-            <input type="search" value={driveSearch} onChange={event=>setDriveSearch(event.target.value)}
-             className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
+            <Input type="search" value={driveSearch} onChange={event=>setDriveSearch(event.target.value)}
+             
              placeholder="Search company or drive"/>
           </label>
           {visibleDrives.length===0?<p role="status">No open drives match your search.</p>:null}
           <div className="grid gap-3 md:grid-cols-2">
             <label className="text-sm font-semibold text-foreground">
               Published drive
-              <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+              <Select className="mt-1" 
                 value={driveId} disabled={busy}
                 onChange={(event) => void loadRoles(event.target.value)}>
                 <option value="">Choose a drive</option>
@@ -200,16 +203,16 @@ export function TpoStudentsBulkAdd({
                     {drive.companyName} · {drive.title}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
             <label className="text-sm font-semibold text-foreground">
               Active role
-              <select className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+              <Select className="mt-1" 
                 value={roleOptionId} disabled={busy || roles.length === 0}
                 onChange={(event) => setRoleOptionId(event.target.value)}>
                 {roles.length === 0 ? <option value="">Select a drive first</option> : null}
                 {roles.map((role) => <option key={role.id} value={role.id}>{role.title}</option>)}
-              </select>
+              </Select>
             </label>
           </div>
           {roleError ? <p role="alert" className="text-sm text-error">{roleError}</p> : null}
@@ -236,18 +239,18 @@ export function TpoStudentsBulkAdd({
             Add students who are not eligible anyway, with a recorded inclusion reason
           </label>
           {includeIneligible?<label className="grid gap-1 text-sm">Required reason for inclusion
-            <textarea value={overrideReason} disabled={busy} maxLength={500}
+            <Textarea value={overrideReason} disabled={busy} maxLength={500}
              onChange={event=>setOverrideReason(event.target.value)}
-             className="min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
+             />
           </label>:null}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="text-sm text-body">{pageSelected.length} learner(s) selected</span>
-            <button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
+            <Button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
                 includeIneligible&&overrideReason.trim().length<3}
               onClick={() => void preview()}
-              className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+              >
               {busy ? "Checking learners…" : "Review and add selected"}
-            </button>
+            </Button>
           </div>
         </>
       )}
