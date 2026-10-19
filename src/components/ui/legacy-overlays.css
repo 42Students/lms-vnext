@@ -46,6 +46,7 @@
   }
 }
 [data-slot="drawer"][data-side="left"] {
+  box-shadow: 4px 0 16px rgba(0, 0, 0, .12);
   left: 0;
   right: auto;
   width: min(82vw, 300px);
