@@ -2,6 +2,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "./learner-quiz-attempt.module.css";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Radio } from "@/components/ui/radio";
 
@@ -445,7 +446,7 @@ export function LearnerQuizAttempt() {
           ? `You have ${answerProgress.total-answerProgress.answered} unanswered question${answerProgress.total-answerProgress.answered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
           : "Submit this quiz attempt? You cannot edit this attempt after submission."}
         confirmLabel="Submit" onConfirm={() => void submit()} />
-      <div className="pb-4">
+      <div className={styles.header+" pb-4"}>
         <p className="mb-2 text-xs font-semibold text-muted-foreground">
           Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
         </p>
@@ -466,7 +467,7 @@ export function LearnerQuizAttempt() {
           ) : <span className="font-semibold text-success">All questions answered</span>}
         </div>
         <MetricBar label={`Question ${step + 1} of ${questions.length}`}
-          role="progressbar" value={step + 1} maximum={questions.length} className="mt-4" />
+          role="progressbar" value={step + 1} maximum={questions.length} className={styles.track+" mt-4"} />
       </div>
 
       <div className="grid lg:grid-cols-[220px_1fr]">
