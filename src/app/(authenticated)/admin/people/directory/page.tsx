@@ -65,7 +65,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   <nav aria-label="People directory tabs" className="flex flex-wrap gap-2">
    {tabs.map(tab=><Link key={tab.id} href={adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}
     aria-current={data.query.tab===tab.id?"page":undefined}
-    className={"inline-flex min-h-11 items-center rounded-md border px-4 font-semibold "+
+    className={"inline-flex min-h-11 items-center rounded-[9px] border px-4 font-semibold "+
      (data.query.tab===tab.id?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border text-body")}>{tab.label}</Link>)}
   </nav>
   <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 text-sm">

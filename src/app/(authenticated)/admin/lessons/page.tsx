@@ -65,7 +65,7 @@ export default async function SuperAdminLessonsPage({
         </select>
       </label>
       <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
-      <button type="submit" className="min-h-9 self-end rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] text-[var(--lms-on-primary)]">Filter</button>
+      <button type="submit" className="min-h-9 self-end rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)]">Filter</button>
     </form>
     <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
