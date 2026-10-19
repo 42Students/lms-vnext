@@ -24,35 +24,35 @@ export default async function RecruiterDriveProposalHistory({
   <PageHeader eyebrow="Recruiter · Drives" title="Sent drive proposals"
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
   <nav className="flex flex-wrap gap-3">
-   <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to drives</Link>
-   <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Draft another proposal</Link>
+   <Link href="/hr/drives" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Back to drives</Link>
+   <Link href="/hr/drives/new" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Draft another proposal</Link>
   </nav>
   {data.status==="CHOOSE_COLLEGE"?<section className="space-y-3 rounded-xl border border-border p-4">
    <h2 className="font-semibold">Choose a college</h2>
    {data.choices.map(grant=><Link key={grant.id}
-    className="block rounded-md border border-border p-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11"
+    className="block rounded-[9px] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)] min-h-9"
     href={"/hr/drives/proposals?collegeId="+grant.collegeId}>{grant.collegeName}</Link>)}
   </section>:data.status==="NO_ACCESS"?<p role="status">No active recruiter college access.</p>:<>
    <form action="/hr/drives/proposals" method="get" className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
     <input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-48 flex-1 text-sm text-body">Search by role title
      <input name="q" maxLength={100} defaultValue={input.data.q}
-       className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+       className="mt-1 min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
        placeholder="Role title"/>
     </label>
     <label className="text-sm text-body">Order
       <select name="sort" defaultValue={input.data.sort}
-        className="mt-1 block min-h-11 rounded-md border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="mt-1 block min-h-9 rounded-[9px] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
         <option value="LATEST">Most recent</option>
         <option value="OLDEST">Oldest first</option>
       </select>
     </label>
-    <button type="submit" className="self-end min-h-11 rounded-md border border-border px-4 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Search</button>
+    <button type="submit" className="self-end min-h-9 rounded-[9px] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Search</button>
    </form>
    {data.items.length?<Link
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
       page:data.page,sort:input.data.sort})}
-     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+     className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
      Export this page (summary CSV)
     </Link>:null}
    <p role="status" className="text-sm text-body">
@@ -63,7 +63,7 @@ export default async function RecruiterDriveProposalHistory({
     {data.items.map(row=><li key={row.id}
      className="rounded-xl border border-border bg-surface p-4">
      <Link href={"/hr/conversations/"+row.threadId}
-      className="block break-words font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-h-11">{row.title}</Link>
+      className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)] min-h-9">{row.title}</Link>
      <p className="mt-2 text-xs text-muted-foreground">
       Proposal reference: {row.referenceId}
      </p>
@@ -79,9 +79,9 @@ export default async function RecruiterDriveProposalHistory({
    </p>}
    <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-3">
     {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
-      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Newer proposals</Link>:null}
+      className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Newer proposals</Link>:null}
     {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}
-      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Older proposals</Link>:null}
+      className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Older proposals</Link>:null}
    </nav>
   </>}
  </div>;
