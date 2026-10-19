@@ -194,8 +194,8 @@ export default async function RecruiterCompanyReportsPage({
               }
               className={
                 grant.collegeId === collegeId
-                  ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-                  : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary hover:text-primary-text"
+                  ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
               }
             >
               {grant.collegeName}

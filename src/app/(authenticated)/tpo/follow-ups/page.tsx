@@ -49,7 +49,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
           {view==="DUE"?"Due now":"Next 7 days"}
         </Link>)}
       </nav>
-      <form action="/tpo/follow-ups" method="get" className="flex flex-wrap items-end gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <form action="/tpo/follow-ups" method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
         <input type="hidden" name="scope" value={scope}/><input type="hidden" name="window" value={window}/>
         <label className="min-w-0 flex-1 text-sm font-semibold text-body">Find recruiter or company
           <Input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
@@ -67,7 +67,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
           <div className="flex gap-4">{data.page>1?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page-1})} className="font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>:null}
             {data.page<data.totalPages?<Link href={tpoFollowupQueueHref({scope,window,q,page:data.page+1})} className="font-semibold text-[var(--lms-teal-deep)]">Next →</Link>:null}</div>
         </nav></> : (
-        <section role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
+        <section role="status" className="border-t border-border py-6">
           <h2 className="font-semibold text-foreground">Recruiter follow-ups unavailable</h2>
           <p className="mt-2 text-sm text-body">
             DB09 must be verified before recruiter follow-ups can be loaded or changed.

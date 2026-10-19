@@ -51,12 +51,12 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
   <label className="block text-sm font-semibold">Selection list (CSV)
    <input type="file" accept=".csv,text/csv" disabled={busy} onChange={e=>void read(e.target.files?.[0]??null)}
-    className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border p-3 text-sm"/>
+    className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm md:min-h-9"/>
   </label>
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
    <div tabIndex={0} role="group" aria-label="Selection import preview, scroll for more" className="max-h-52 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-    {entries.map(e=><p key={e.applicationId} className="border-b border-border px-2 py-1">{e.name} · {e.roleTitle}
+    {entries.map(e=><p key={e.applicationId} className="min-h-9 border-b border-border px-2 py-2 last:border-b-0">{e.name} · {e.roleTitle}
      {e.annualCtcInr==null?"":" · ₹"+(e.annualCtcInr/100000)+" LPA"}</p>)}
    </div>
    <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}

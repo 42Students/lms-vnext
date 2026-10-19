@@ -416,7 +416,7 @@ export function FacultyCourseWorkspace({
         deliveryId={course.deliveryId}
       />
 
-      <section aria-label="In this Course" className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3">
+      <section aria-label="In this Course" className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
         <span className="rounded-full bg-muted px-3 py-1 text-sm font-semibold text-body">
           {course.credits===null?"Credits not configured":course.credits+" Credits"}
         </span>

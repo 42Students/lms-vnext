@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -107,7 +109,7 @@ export default async function TpoPlacementSummaryPage({
         ].map((item) => (
           <div
             key={item.label}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
+            className="border-b border-border py-4"
           >
             <p className="text-xs font-semibold uppercase text-body">
               {item.label}
@@ -120,7 +122,7 @@ export default async function TpoPlacementSummaryPage({
       </section>
 
       <ReportScopeNote note={workspace.registrationScopeNote} />
-      <section aria-label="Offers by current status" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <section aria-label="Offers by current status" className="space-y-3 border-t border-border pt-4">
        <h2 className="text-lg font-semibold">Offers by status</h2>
        <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {([
@@ -159,25 +161,25 @@ export default async function TpoPlacementSummaryPage({
             {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
             {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
             <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold">Company
-             <select name="companyId" defaultValue={companyId} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+             <Select name="companyId" defaultValue={companyId} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
               <option value="">All companies</option>
               {byCompany.map(row=><option key={row.companyId} value={row.companyId}>{row.companyName}</option>)}
-             </select>
+             </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Work mode
-             <select name="workMode" defaultValue={workMode} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+             <Select name="workMode" defaultValue={workMode} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
               <option value="">All modes</option><option value="ONSITE">Onsite</option>
               <option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
-             </select>
+             </Select>
             </label>
             <label className="grid gap-1 text-sm font-semibold">Pay evidence
-             <select name="payCategory" defaultValue={payCategory} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+             <Select name="payCategory" defaultValue={payCategory} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
               <option value="">All</option><option value="CTC_RECORDED">CTC recorded</option>
               <option value="STIPEND_RECORDED">Stipend recorded</option>
               <option value="NOT_RECORDED">Not recorded</option>
-             </select>
+             </Select>
             </label>
-            <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</button>
+            <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</Button>
             {(companyId||workMode||payCategory)?<a href={"/tpo/reports/placement-summary?"+
              new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
