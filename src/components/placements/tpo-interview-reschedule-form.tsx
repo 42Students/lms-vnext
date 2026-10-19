@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -50,7 +51,7 @@ export function TpoInterviewRescheduleForm({round}:{
    <Input name="meetingUrl" type="url" defaultValue={round.meetingUrl??""} className={field}/></label>
   <label className="text-sm text-body sm:col-span-2">Reason (audited)
    <Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={field}/></label>
-  {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
+  {error?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-primary-foreground disabled:opacity-50 sm:col-span-2 text-primary-foreground">
     {pending?"Rescheduling…":"Confirm interview reschedule"}</Button>
  </form><ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
