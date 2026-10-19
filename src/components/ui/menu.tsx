@@ -10,6 +10,8 @@ export function Menu({ className, onKeyDown, children, ...props }: MenuProps) {
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     onKeyDown?.(event);
     if (event.defaultPrevented) return;
+    // Leave caret navigation inside embedded search fields untouched.
+    if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
     const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button[role="menuitem"]:not(:disabled):not([aria-disabled="true"])'));
     const current = items.indexOf(document.activeElement as HTMLButtonElement);
     if (items.length === 0 && event.key !== "Escape") return;
@@ -31,6 +33,7 @@ export function Menu({ className, onKeyDown, children, ...props }: MenuProps) {
 }
 
 export function MenuItem({ className, children, type = "button", ...props }: MenuItemProps) {
-  return <button {...props} type={type} role="menuitem"
+  const ariaDisabled = props["aria-disabled"] === true || props["aria-disabled"] === "true";
+  return <button {...props} type={type} disabled={props.disabled || ariaDisabled} role="menuitem"
     className={cx("flex min-h-11 w-full items-center rounded-[6px] px-3 py-2 text-left text-[14px] leading-5 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50", className)}>{children}</button>;
 }
