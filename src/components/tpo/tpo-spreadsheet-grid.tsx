@@ -7,6 +7,7 @@ import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {useEffect,useRef,useState,type CSSProperties,type ReactNode} from "react";
 import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
+import {gridSelectionClick, gridSelectionCheckbox, selectedGridIdsWithin} from "./grid/grid-selection";
 
 export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection,showColumnChooser=true}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;mobilePrimaryKeys?:readonly string[];storageKey?:string;showColumnChooser?:boolean;
  selection?:{selected:readonly string[];onChange:(ids:string[])=>void;allIds?:readonly string[]};
@@ -45,7 +46,7 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
  }
  const visibleRowIds=rows.map(rowKey);
  const selectAllIds=selection?.allIds??visibleRowIds;
- const anchor=useRef<number|null>(null);
+ const anchor=useRef<string|null>(null);
  const fullySelected=selectAllIds.length>0&&selectAllIds.every(id=>selection?.selected.includes(id));
  function changePageSelection(checked:boolean){
   if(!selection)return;
@@ -54,13 +55,24 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
  }
  function changeRowSelection(id:string,checked:boolean,shift=false){
   if(!selection)return;
-  const index=visibleRowIds.indexOf(id);
-  const range=shift&&anchor.current!==null&&index>=0?
-    visibleRowIds.slice(Math.min(anchor.current,index),Math.max(anchor.current,index)+1):[id];
-  selection.onChange(checked?[...new Set([...selection.selected,...range])]:
-   selection.selected.filter(key=>!range.includes(key)));
-  anchor.current=index>=0?index:null;
+  const result=gridSelectionCheckbox(visibleRowIds,selection.selected,id,checked,anchor.current,shift);
+  selection.onChange(result.selected);
+  anchor.current=result.anchor;
  }
+ function changeRowClick(id:string,keys:{shiftKey:boolean;ctrlKey:boolean;metaKey:boolean}){
+  if(!selection)return;
+  const result=gridSelectionClick(visibleRowIds,selection.selected,id,anchor.current,keys);
+  selection.onChange(result.selected);
+  anchor.current=result.anchor;
+ }
+ const allowedIds=selection?.allIds??visibleRowIds;
+ const allowedCsv=allowedIds.join("\u001f");
+ const selectedCsv=selection?.selected.join("\u001f")??"";
+ useEffect(()=>{
+  if(!selection)return;
+  const filtered=selectedGridIdsWithin(selection.selected,allowedIds);
+  if(filtered.length!==selection.selected.length)selection.onChange(filtered);
+ },[allowedCsv,selectedCsv,selection,allowedIds]);
  const restored=useRef(false),permittedCsv=permitted.join(",");
  useEffect(()=>{
   if(!viewKey)return;
@@ -135,7 +147,11 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
        className="min-w-11">{columnView[col.key]?.pinned?"Unpin":"Pin"}</Button>
      </div>:null}
     </th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
-    <tbody>{rows.map(row=><tr key={rowKey(row)} className="border-t border-border align-top">{selection?<td className="px-3 py-2"><Checkbox checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
+    <tbody>{rows.map(row=><tr key={rowKey(row)} aria-selected={selection?.selected.includes(rowKey(row))||undefined}
+     onClick={event=>{
+      if(event.target instanceof HTMLElement && event.target.closest("button,a,input,select,textarea,[role=button]"))return;
+      changeRowClick(rowKey(row),event);
+     }} className="cursor-default border-t border-border align-top aria-selected:bg-primary-subtle">{selection?<td className="px-3 py-2"><Checkbox checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
    </Table></div>
    {selection?<label className="flex min-h-11 items-center gap-2 text-sm md:hidden"><Checkbox checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/>Select all filtered students</label>:null}
    <ul aria-label="Current page TPO spreadsheet records" className="space-y-2 md:hidden">{rows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
