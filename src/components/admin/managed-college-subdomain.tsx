@@ -36,7 +36,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
   }catch(err){setMessage(err instanceof Error?err.message:"Unable to update address");}
   finally{setBusy(false);}
  }
- return <section className="space-y-3 border-b border-border pb-5" aria-label="Managed college web address">
+ return <section className="space-y-3 border-t border-border pt-5" aria-label="Managed college web address">
   <h2 className="font-semibold">Web address · Managed subdomain</h2>
   {!state.ready?<p role="status" className="text-sm text-warning-text">
    One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.</p>:
@@ -46,7 +46,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     <label className="grid max-w-md gap-1 text-sm">Subdomain
       <div className="flex items-center gap-2">
        <Input value={label} maxLength={63} autoCapitalize="none" spellCheck={false}
-        onChange={e=>setLabel(e.target.value)} className="min-h-11 min-w-0 flex-1 sm:min-h-9"/>
+        onChange={e=>setLabel(e.target.value)} className="min-h-11 min-w-0 flex-1"/>
        <span>.{state.baseDomain}</span>
       </div>
     </label>
