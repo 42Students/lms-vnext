@@ -541,3 +541,6 @@
 .hrNotificationBody [role="status"],.hrNotificationBody [role="alert"] { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px 20px; margin:0; text-align:center; font-size:14px; line-height:1.5; }
 
 .hrNotificationBody [role="status"] p { margin:0; max-width:260px; color:var(--lms-muted-text); font-size:14px; }
+
+.hrNotificationBody li a > span:nth-child(2) { min-width:0; overflow-wrap:anywhere; }
+.hrNotificationBody li a time { flex:none; color:var(--lms-muted-text); font-size:12px; }
