@@ -33,7 +33,7 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
  }
  return <section tabIndex={0} onKeyDown={keydown}
   aria-label="Batch student keyboard and mobile actions"
-  className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+  className="min-w-0 space-y-2 border-b border-border py-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
    <strong className="text-sm">Student actions · {valid.length} selected on this page</strong>
    <Button variant="secondary" type="button" aria-expanded={expanded} onClick={()=>setExpanded(v=>!v)}
