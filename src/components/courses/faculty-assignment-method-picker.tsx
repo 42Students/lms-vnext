@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 
 import {ALL_ASSIGNMENT_METHODS,ASSIGNMENT_METHOD_LABELS,type AssignmentMethod}
  from "@/modules/courses/assignment-submission-methods";
@@ -13,7 +14,7 @@ export function FacultyAssignmentMethodPicker({methods,onChange,disabled}:{
   <div className="grid gap-2 sm:grid-cols-2">
    {ALL_ASSIGNMENT_METHODS.map(method=><label key={method}
     className="flex min-h-10 items-center gap-2 text-sm text-body">
-    <input type="checkbox" checked={methods.includes(method)}
+    <Checkbox checked={methods.includes(method)}
      onChange={e=>{
       const next=e.target.checked?[...methods,method]:methods.filter(item=>item!==method);
       if(next.length)onChange(next);
