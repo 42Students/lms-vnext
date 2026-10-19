@@ -42,13 +42,13 @@ export function TpoRoundCheckIn({
     <div className="mt-2 flex flex-wrap gap-2">
       {attendance !== "PRESENT" ? (
         <Button variant="secondary" type="button" disabled={busy} onClick={() => void mark("PRESENT")}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60 md:min-h-9">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
           Mark checked-in
         </Button>
       ) : null}
       {attendance !== "ABSENT" ? (
         <Button variant="secondary" type="button" disabled={busy} onClick={() => void mark("ABSENT")}
-          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60 md:min-h-9">
+          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs font-semibold text-primary-text disabled:opacity-60">
           Mark no-show
         </Button>
       ) : null}
