@@ -37,8 +37,8 @@ export function MarketingHero({eyebrow,title,description}:{eyebrow:string;title:
    <h1 id="marketing-hero-heading" className="max-w-4xl break-words text-[30px] font-semibold leading-10 tracking-tight text-foreground">{title}</h1>
    <p className="max-w-3xl break-words text-base leading-7 text-body sm:text-lg sm:leading-8">{description}</p>
    <div className="flex flex-wrap gap-3">
-    <Link href="/request-demo" className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-5 py-3 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Request a demo</Link>
-    <Link href="/platform" className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-5 py-3 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Explore the platform</Link>
+    <Link href="/request-demo" className="inline-flex min-h-9 items-center rounded-[9px] bg-primary px-5 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Request a demo</Link>
+    <Link href="/platform" className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-5 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Explore the platform</Link>
    </div>
  </section>;
 }
