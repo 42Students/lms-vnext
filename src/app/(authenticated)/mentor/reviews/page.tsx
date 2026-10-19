@@ -28,7 +28,7 @@ export default async function MentorReviewsPage({
     page:raw.page,pageSize:raw.pageSize,
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid review filters" />
+    <PageHeader title={"Invalid review filters"} />
     <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
   </section>;
   const data = await getMentorReviewQueue(context, parsed.data);
