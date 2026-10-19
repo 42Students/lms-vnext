@@ -64,7 +64,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
    setError("Could not reach the server. Your entered times are still here.");
   }finally{submitLock.current=false;setSubmitting(false);}
  }
- return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid gap-3 sm:grid-cols-2">
+ return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid gap-3 md:grid-cols-2">
   <Input type="hidden" name="action" value="CREATE"/>
   <label className="grid gap-1 text-sm text-body">Interview round
    <Select name="roundId" required defaultValue="" className="text-sm">
@@ -94,13 +94,13 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   <label className="grid gap-1 text-sm text-body">Panel label (not a learner name)
    <Input name="panelLabel" maxLength={160} className="text-sm"/>
   </label>
-  <label className="grid gap-1 text-sm text-body sm:col-span-2">Meeting location
+  <label className="grid gap-1 text-sm text-body md:col-span-2">Meeting location
    <Input name="meetingLocation" maxLength={500} className="text-sm"/>
   </label>
-  {error?<div className="sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
-  {notice?<div className="sm:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
+  {error?<div className="md:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
+  {notice?<div className="md:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
   <Button type="submit" disabled={!rounds.length||submitting} loading={submitting} aria-busy={submitting}
-    variant="primary" className="sm:col-span-2">
+    variant="primary" className="md:col-span-2">
     {submitting?"Sending time block…":"Propose slot"}
   </Button>
  </form>;
