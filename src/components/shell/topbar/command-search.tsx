@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ShellNavItem } from "../shell-model";
@@ -119,7 +120,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           <SearchIcon />
         </Button>
         <label className="sr-only" htmlFor="lms-topbar-command-search">Search workspace</label>
-        <input id="lms-topbar-command-search" ref={input} type="search" value={query}
+        <Input id="lms-topbar-command-search" ref={input} type="search" value={query}
           autoComplete="off" role="combobox" aria-haspopup="listbox" aria-keyshortcuts="Control+K Meta+K"
           aria-controls={open ? "lms-topbar-command-results" : undefined} aria-expanded={open}
           placeholder={config.placeholder} className={style.searchInput}
