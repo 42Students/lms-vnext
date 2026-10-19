@@ -53,12 +53,12 @@
   padding: 12px 20px max(12px, env(safe-area-inset-bottom));
   background: var(--lms-neutral-50);
 }
-[data-slot="bottom-sheet"] > div > header {
+[data-slot="bottom-sheet-header"] {
   padding: 16px 20px;
   background: var(--lms-neutral-50);
   border-bottom: 1px solid var(--lms-canvas-border);
 }
-[data-slot="bottom-sheet"] > div > footer {
+[data-slot="bottom-sheet-footer"] {
   padding: 12px 20px max(12px, env(safe-area-inset-bottom));
   background: var(--lms-neutral-50);
 }
