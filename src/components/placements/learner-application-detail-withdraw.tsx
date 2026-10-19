@@ -1,4 +1,5 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -45,7 +46,7 @@ export function LearnerApplicationDetailWithdraw({applicationId,requiresRequest=
       <label htmlFor="own-application-withdraw-reason" className="block text-sm font-semibold text-foreground">
         Reason for withdrawal
       </label>
-      <textarea id="own-application-withdraw-reason" rows={4} maxLength={2000}
+      <Textarea id="own-application-withdraw-reason" rows={4} maxLength={2000}
         value={reason} onChange={event=>setReason(event.target.value)}
         className="mt-2 min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-[14px] text-foreground focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         placeholder="Explain why you are withdrawing this application."/>

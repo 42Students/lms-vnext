@@ -1,5 +1,5 @@
-import { BoardColumn } from "@/components/ui/board-column";
 "use client";
+import { BoardColumn } from "@/components/ui/board-column";
 import {useEffect,useMemo,useState} from "react";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";

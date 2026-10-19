@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { StatTile } from "@/components/ui/stat-tile";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { summarizeCollegeCourseContents } from "@/modules/courses/college-course-contents-summary-model";
 import type {
@@ -394,14 +395,11 @@ export function AdminOfferingLearningOverview({
       <section aria-label="In this course" className="min-w-0 border-b border-border pb-5">
         <h2 className="text-lg font-semibold text-foreground">In this course</h2>
         <p className="mt-1 text-sm text-muted-foreground">Recorded shared learning items only. Visibility and publication are separate controls.</p>
-        <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {summarizeCollegeCourseContents(workspace.lessons).map(item=>(
-            <div key={item.key} className="min-w-0 rounded-xl border border-border p-3">
-              <dt className="break-words text-xs text-muted-foreground">{item.label}</dt>
-              <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{item.count}</dd>
-            </div>
+            <StatTile key={item.key} label={item.label} value={item.count} className="p-3 sm:p-3" />
           ))}
-        </dl>
+        </div>
       </section>
 
       <div id="lesson-authoring">
