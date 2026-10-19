@@ -16,8 +16,8 @@ const tones = {
 /** Slim legacy LMS notice strip with an inline recovery action. */
 export function Banner({ tone = "warning", action, className, children, role, ...props }: BannerProps) {
   return <aside {...props} data-slot="banner" data-tone={tone} role={role ?? (tone === "error" ? "alert" : "status")}
-    className={cx("flex min-w-0 max-w-full flex-wrap items-center justify-between gap-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border px-[var(--lms-space-4)] py-[10px] text-[var(--lms-font-sm)] leading-5 break-words [overflow-wrap:anywhere] shadow-none", tones[tone], className)}>
+    className={cx("flex min-w-0 max-w-full flex-wrap items-center justify-between gap-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border px-[var(--lms-space-4)] py-[10px] text-[var(--lms-font-sm)] font-normal tracking-normal leading-5 break-words [overflow-wrap:anywhere] shadow-none", tones[tone], className)}>
     <div className="flex min-w-0 flex-1 items-start gap-[var(--lms-space-2)]"><span aria-hidden="true" className="mt-[7px] h-[6px] w-[6px] shrink-0 rounded-full bg-current opacity-60" /><div className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">{children}</div></div>
-    {action ? <div className="flex min-w-0 max-w-full flex-wrap items-center gap-[var(--lms-space-2)]">{action}</div> : null}
+    {action ? <div className="flex min-w-0 max-w-full shrink-0 flex-wrap items-center gap-[var(--lms-space-2)]">{action}</div> : null}
   </aside>;
 }
