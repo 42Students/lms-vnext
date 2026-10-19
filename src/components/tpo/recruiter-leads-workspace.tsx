@@ -995,7 +995,8 @@ export function RecruiterLeadsWorkspace({
               onExportXlsx={selected=>exportRows(selected?"selected":"shown","xlsx")}
               onCopyRows={()=>void copyRows()}>
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
-                sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}/>
+                sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}
+                 showColumns={false}/>
               <label className="inline-flex min-h-11 items-center gap-2 text-sm">
                 <input type="checkbox" aria-label="Select all visible recruiters"
                   checked={visible.length>0&&visible.every(row=>selectedIds.includes(row.id))}
