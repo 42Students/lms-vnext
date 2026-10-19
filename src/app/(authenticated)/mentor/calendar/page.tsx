@@ -4,7 +4,6 @@ import Link from "next/link";
 import {MentorProjectsUnavailable} from "@/components/projects/mentor-projects-unavailable";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {PageHeader} from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {FilterBar} from "@/components/ui/filter-bar";
