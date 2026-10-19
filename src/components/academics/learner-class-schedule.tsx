@@ -532,15 +532,15 @@ export function LearnerClassSchedule({
               <input type="search" value={sessionSearch} maxLength={100}
                 onChange={event=>setSessionSearch(event.target.value)}
                 placeholder="Class title, faculty, location or course"
-                className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm font-normal text-foreground" />
+                className="mt-1.5 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal text-foreground" />
             </label>
             {sessionSearch ? <button type="button" onClick={()=>setSessionSearch("")}
-              className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
               Clear search
             </button> : null}
             <label className="min-w-44 text-xs font-semibold text-body">Session kind
               <select value={sessionKind} onChange={event=>setSessionKind(event.target.value as LearnerScheduleKind)}
-                className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground">
+                className="mt-1.5 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
                 <option value="ALL">All sessions</option>
                 <option value="COURSE">Course classes only</option>
                 <option value="SECTION">General section events</option>
@@ -558,7 +558,7 @@ export function LearnerClassSchedule({
               setSessionSearch(reset.search);setSessionKind(reset.kind);
               setSectionId(reset.sectionId);setUpcomingOnly(reset.upcomingOnly);
               setSelectedDeliveryIds(reset.deliveryIds);
-            }} className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text">
+            }} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
               Clear schedule filters
             </button>
             <span role="status" className="w-full text-xs text-muted-foreground">
@@ -570,7 +570,7 @@ export function LearnerClassSchedule({
           <label className="mt-4 block max-w-sm border-t border-border pt-4 text-xs font-semibold text-body">
             Section
             <Select value={sectionId} onChange={event => setSectionId(event.target.value)}
-              aria-label="Filter class schedule by section" className="mt-1.5 min-h-11 w-full">
+              aria-label="Filter class schedule by section" className="mt-1.5 min-h-11 sm:min-h-9 w-full">
               <option value="">All my sections</option>
               {sections.map(section => <option key={section.sectionId} value={section.sectionId}>
                 {section.sectionName} · {section.academicPeriodName}
@@ -680,7 +680,7 @@ export function LearnerClassSchedule({
                     </h3>
                     {agenda.length ? <a download={"classes-"+chosenDay+".ics"}
                       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
-                      className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+                      className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
                       Download selected day (.ics)
                     </a> : null}
                   </div>
@@ -696,7 +696,7 @@ export function LearnerClassSchedule({
                 <p className="min-w-0 text-sm font-semibold text-body">{chosenDay} · {agenda.length} authorized sessions</p>
                 <a download={"classes-"+chosenDay+".ics"}
                   href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
-                  className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+                  className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
                   Download selected day (.ics)
                 </a>
                 {dayIcs.truncated ? <p className="w-full text-xs text-warning-foreground">Export includes the first 100 selected sessions only.</p> : null}
