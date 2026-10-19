@@ -124,8 +124,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               key={grant.id}
               href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId) + "&tab=" + tab}
               className={grant.collegeId === result.grant.collegeId
-                ? "inline-flex min-h-9 items-center rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                : "inline-flex min-h-9 items-center rounded-full border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
+                ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-1.5 text-sm font-medium text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}
             >
               {grant.collegeName}
             </Link>
