@@ -34,7 +34,7 @@ const TpoGrid = dynamic<TpoSpreadsheetGridProps<TpoStudentRow>>(
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
    row.displayName+" · From "+row.cohortName:row.displayName},
- {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
+ {key:"number",label:"Roll no.",read:row=>row.rollNumber??row.registrationNumber},
  {key:"batch",label:"Batch",exportAlways:true,read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
  {key:"branch",label:"Branch",exportAlways:true,read:row=>row.branchName},
  {key:"stage",label:"Stage",filter:{urlKey:"journeyState",
