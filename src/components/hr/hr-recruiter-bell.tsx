@@ -80,7 +80,7 @@ export function HrRecruiterBell(){
    className="relative min-h-9 rounded border border-border px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
   </button>
-  {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 w-[400px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-surface p-4 shadow-lg">
+  {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 w-[400px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between gap-2">
     <h2 className="font-semibold">Notifications</h2>
     <button type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
