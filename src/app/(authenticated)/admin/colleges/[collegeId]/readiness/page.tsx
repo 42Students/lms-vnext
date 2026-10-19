@@ -8,6 +8,9 @@ import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { StatTile } from "@/components/ui/stat-tile";
+import { EmptyState } from "@/components/ui/empty-state";
 import {readinessRemediationLink} from "@/modules/colleges/readiness-remediation-links";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
@@ -123,27 +126,13 @@ export default async function CollegeReadinessPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <Link
-        href="/admin/colleges"
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
-      >
-        ← Colleges
-      </Link>
-
       <PageHeader
         title={`${college.name} · Readiness Gate`}
         description={`Read-only go-live checklist for ${college.code}. Checks use persisted, college-scoped data. No settings are modified.`}
-        actions={
-          <StatusBadge
-            tone={overallTone(
-              evaluation.overall,
-            )}
-          >
-            {overallLabel(
-              evaluation.overall,
-            )}
-          </StatusBadge>
-        }
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
+          <PageBackLink href="/admin/colleges" label="Colleges"/>
+          <StatusBadge tone={overallTone(evaluation.overall)}>{overallLabel(evaluation.overall)}</StatusBadge>
+        </div>}
       />
 
       <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-primary-text">Export all persisted readiness checks (CSV) →</Link>
@@ -181,19 +170,7 @@ export default async function CollegeReadinessPage({
             label: "Total checks",
             count: evaluation.counts.total,
           },
-        ].map((metric) => (
-          <article
-            key={metric.label}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
-          >
-            <p className="m-0 text-xs font-semibold text-muted-foreground">
-              {metric.label}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {metric.count}
-            </p>
-          </article>
-        ))}
+        ].map(metric => <StatTile key={metric.label} label={metric.label} value={metric.count}/>)}
       </section>
 
       <section aria-label="Must fix before launch" className="min-w-0 space-y-3 border-t border-border pt-5">
@@ -254,16 +231,14 @@ export default async function CollegeReadinessPage({
         </p>
 
         {shownChecks.length===0 ? (
-          <p role="status" className="mt-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4 text-sm text-body">
-            No readiness checks match the selected status and area. The overall tenant readiness verdict above still uses all ten checks.
-          </p>
+          <EmptyState title="No readiness checks match" description="No readiness checks match the selected status and area. The overall tenant readiness verdict above still uses all ten checks."/>
         ) : null}
         <ol className="mt-5 space-y-3">
           {shownChecks.map(
             (check, index) => (
               <li
                 key={check.id}
-                className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
+                className="min-w-0 border-b border-border py-4 last:border-b-0"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
