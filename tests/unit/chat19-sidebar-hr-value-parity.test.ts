@@ -20,8 +20,9 @@ describe("NORTH-STAR-CHAT19-POLISH: measured legacy sidebar and HR control token
   expect(css).toContain("transform:scale(.72);");
   expect(css).toContain("width:96px;");
   expect(css).toContain("width:256px;");
-  expect(css).toContain("padding-left:96px;");
-  expect(css).toContain("padding-left:256px;");
+  expect(css).toContain(".lms-shell-frame {display:flex;align-items:stretch;}");
+  expect(css).toContain(".lms-shell-page {min-width:0;flex:1 1 0%;}");
+  expect(css).not.toContain("padding-left:256px;");
   expect(css).toContain("border-right:1px solid #f1f4f9;");
   expect(css).toContain("box-shadow:inset 3px 0 #26bac7;");
   const shell=read("src/components/shell/app-shell.tsx");
@@ -36,8 +37,12 @@ describe("NORTH-STAR-CHAT19-POLISH: measured legacy sidebar and HR control token
   const drawer=read("src/components/shell/mobile-navigation.tsx");
   expect(topbar).toContain('className="shrink-0 md:hidden"');
   expect(drawer).toContain("md:hidden");
-  expect(drawer).toContain('aria-modal="true"');
-  expect(drawer).toContain('event.key === "Escape"');
+  const shared=read("src/components/ui/drawer.tsx");
+  expect(drawer).toContain('import { Drawer } from "@/components/ui/drawer"');
+  expect(drawer).toContain('side="left"');
+  expect(shared).toContain("<dialog ref={ref}");
+  expect(shared).toContain("onCancel={event =>");
+  expect(shared).toContain("opener.current.focus()");
  });
  it("uses shared measured 9px radius and primary focus ring across all 22 HR routes",()=>{
   expect(routes).toHaveLength(22);
