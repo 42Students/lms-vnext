@@ -9,6 +9,8 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {Textarea} from "@/components/ui/textarea";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
@@ -122,11 +124,11 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
               className="mt-2 block w-full"
             />
           </label>
-          {selected.action==="PUBLISH"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+          {selected.action==="PUBLISH"?<Alert tone="info">
             <p>{readiness.reach.eligible} students are eligible and will be told in the app.</p>
             <p>{readiness.reach.excluded} registered students are excluded or have turned off matching-job notices.</p>
             <p>Counts reflect a preview. Eligibility is checked again before publishing.</p>
-          </div>:null}
+          </Alert>:null}
           {selected.action==="PUBLISH"?<fieldset className="space-y-1 text-sm">
             <legend>Tell students</legend>
             <label className="flex gap-2"><input type="radio" name="publish-delivery"
@@ -162,8 +164,8 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
           </div>
         </div>
       ) : null}
-      {success?<p role="status" className="mt-3 text-sm">{success}</p>:null}
-      {error ? <p role="alert" className="mt-3 text-sm text-error">{error}</p> : null}
+      {success?<InlineNotice tone="success" message={success}/>:null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
     </section>
   );
 }
