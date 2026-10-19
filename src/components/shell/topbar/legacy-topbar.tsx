@@ -41,8 +41,7 @@ export function LegacyTopbar({
         <MobileNavigation items={navigation}/>
       </ShellWidgetBoundary>
     </div>
-    <div className={style.command}>
-      <TopbarCommandSearch key={pathname} items={navigation}/>
+    <div className={style.command + " " + (!config.newHref ? style.commandNoNew : "")}>
       {config.portal === "tpo" && tpoCollegeId
         ? <Suspense fallback={<Link href="/tpo/placements/new" className={style.new} aria-label="New placement work">
             <PlusIcon/><span className={style.newLabel}>New</span>
@@ -53,6 +52,7 @@ export function LegacyTopbar({
             className={style.new} aria-label="New">
             <PlusIcon/> <span className={style.newLabel}>New</span>
           </Link> : null}
+      <TopbarCommandSearch key={pathname} items={navigation}/>
     </div>
     <ShellWidgetBoundary name="Header notifications" fallbackHref={config.notificationsHref}>
       <TopbarNotifications key={config.portal} config={config}/>
