@@ -65,7 +65,7 @@ Status: `Adjusted — pushed` means a route/component's styling was changed on t
 | `src/components/placements/tpo-report-record-links.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Cross-portal scope — no further edits |
 | `src/components/placements/tpo-report-saved-filters.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Cross-portal scope — no further edits |
 | `src/components/placements/tpo-request-bulk-decision.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Adjusted — pushed |
-| `src/components/placements/tpo-request-decision-control.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Reviewed — inherited shared skin |
+| `src/components/placements/tpo-request-decision-control.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Adjusted — pushed |
 | `src/components/placements/tpo-request-page-clipboard.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Cross-portal scope — no further edits |
 | `src/components/placements/tpo-round-apply-control.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Adjusted — pushed |
 | `src/components/placements/tpo-round-calendar-control.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Adjusted — pushed |
@@ -138,3 +138,45 @@ Status: `Adjusted — pushed` means a route/component's styling was changed on t
 | Additional TPO-only component | Group | Source-level sweep target | Status |
 |---|---|---|---|
 | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx` | Jobs and drive detail | Shared control tokens and standalone section hairlines | Adjusted — pushed |
+
+## Third source verification pass — 2026-10-19, chat-5
+
+- Started with a fast-forward of `chatgpt/chat-5-b` to the then-current `main` at `6222f78a4a19084be6529aa802810ee98193c1d2` (no history rewrite); changes remained exclusively on the lane branch.
+- Reinspected the ledger's 103 listed route/component surfaces against the measured shell and legacy SCSS. Normalized leftover bare `rounded`, `rounded-md`, `rounded-lg` and `rounded-[9px]` classes to `var(--lms-control-radius)` or `var(--lms-canvas-radius)` according to purpose; retained true pill and distinct summary-panel shapes.
+- Removed nested tiles from the drive About view's excluded-learner and eligibility-rule rows, request-detail subcards in the drives lifecycle list, and clone-past-drive list rows; used hairline dividers instead. Kept section order, data, copy, actions and state machines unchanged.
+- Replaced the lone raw amber request-count palette with the semantic warning skin, preserved white primary text, aligned sequential request-review and report-presentation control heights to 44px mobile / 36px desktop, and matched the legacy light dropdown shadow on drive workspace navigation.
+- Extended matching radius tokens across placements create/edit, bulk, offers, day overview, employer and recruiter access workspaces plus TPO-specific form, round, selection and interview widgets. Source verification yielded no remaining legacy raw-radius or fixed-palette hits in directly owned TPO drives/jobs/rounds/waitlist/offers/joining routes. Shared reporting, notification and first-third TPO utilities assigned to other portal lanes retain their existing scope boundaries.
+- No dev server, runtime code, typecheck, tests, CI, browser screenshots or visual pixel-diff were run. Pixel-perfect parity remains unconfirmed until an orchestrator-run screenshot comparison.
+
+## Fourth source styling pass — 2026-10-19 (continued lane work)
+
+- Merged upstream `main` (SHA `8175bfbde69c2ffbec45f33ac08453dfe68a31e4`) **into `chatgpt/chat-5-b` only** via integration PR #180, merge SHA `83baa631542efada407608009db9afa43facf90e`. No merge or commit was made to `main`.
+- Then pushed **27 additional `[chat-5]` source commits across 20 files**, covering drive workspace, creation, operation cards, list tabs, applicants, offer register and evidence, joining, close-out, round result counts, previews, waitlist, schedule and bulk selection tools.
+- Restored old-LMS **teal underline active tabs** for Drives, Offers and drive-workspace navigation. Removed the extra workspace navigation card while retaining mobile section selection and the More dropdown.
+- Replaced per-count and per-row nested cards with continuous **hairline-divided metric strips and rows** for applicant pipeline, drive journey, joining outcome facts, offer evidence, round result counts, close-out summary, create-drive review steps, interview requests, round operations and bulk action panels. Kept genuinely separate alerts, confirmation previews, Next step panels and forms.
+- Normalized primary CTA text to shared white-on-teal tokens, turned CSV/export actions into white secondary controls, made previously 36px-only mobile action links 44px tall (36px desktop), aligned dropdown corners/shadows, and removed unnecessary inner horizontal padding from list rows.
+- Source-only checks of edited TSX class expressions: no intentional business logic, copy, endpoint, filtering, status transition, authorization or test changes. Balanced JSX tags and inline expressions were preserved by localized exact-string substitutions.
+- **No application run, typecheck, unit tests, CI or screenshot comparison**, as requested. Visual acceptance remains blocked on an orchestrator-run side-by-side browser comparison. Concurrent changes to `main` after PR #180 require integration reconciliation before final release.
+
+## Fifth source styling continuation — 2026-10-19
+
+- Attempted to pull the then-latest upstream `main` into `chatgpt/chat-5-b` using integration PR [#181](https://github.com/42Students/lms-vnext/pull/181). GitHub rejected the merge with conflicts (HTTP 405). **No upstream merge was claimed, no history was rewritten, and no commits went to `main`.** The previous successful main sync remains PR #180.
+- Continued file-by-file on the existing lane branch instead of overriding newer upstream changes. **20 additional `[chat-5]` source commits, 19 distinct files** since `95788ffde5dec5074597ecf23352952e7e3f5e48`.
+- Tightened the continuous white-canvas look: replaced per-row bordered cards with hairline-divided rows in bulk applicant selections, round reorder, drive-day pipeline, company change requests, outside participants and bulk request decisions. Consolidated drive-day and reporting metric cards into shared bordered metric strips without reordering facts.
+- Corrected primary button text to the canonical white-on-teal foreground in offer withdrawal, recorded-outside forms, company life-cycle and contact editing, round result actions and publication controls. Matched 44px mobile / 36px desktop targets for check-in, saved views, result recording, presentation ordering and recorded-outside controls.
+- Preserved section headings, rendered copy, state logic, routes, handlers, input validation, role constraints and confirmation behavior. All changes were confined to JSX class strings.
+- Re-read updated source and JSX control closings, including `</Select>`, `</Button>`, `</Input>`, `</Radio>` and `</Checkbox>` where present; no incomplete closing tags were detected in the inspected changed files. **No application execution, typecheck, unit tests, lint, CI or screenshot/browser parity run.** Final integration must resolve PR #181 conflicts rather than discarding either lane's edits or the upstream component syntax fixes.
+
+## Sixth pass — upstream resolution and continued style-only parity (2026-10-19)
+
+- Pulled upstream `main` at `f7dd3e81786adf00538daebf63a075046d159b4c` into `chatgpt/chat-5-b` with two-parent merge `b1f950c9464afd30e34c1ea6992bd847d68431c7`. Both branch histories are retained, and **origin/main was preferred on every conflicted JSX file**. No direct commits to `main`.
+- Reapplied only the lane's styling deltas over the latest upstream JSX across **39 files**. In particular, `rounds/[roundId]/results/page.tsx` keeps upstream `Input`, `Select` and `Button` elements with complete closing tags; `tpo-interview-slot-planner.tsx` keeps upstream `Input`, `Select`, `Button` elements and hooks, with only the round-request row's hairline class restored. Did not resurrect older native `input`, `select`, `button` tags.
+- Reapplied styling in drive/status and offer tabs, applicant/joining/offer/closeout metric strips, form control radii, primary white-on-teal contrast, white secondary CSV controls, mobile target heights, plain canvas spacing, and per-row dividers. Where upstream classes had already changed, made targeted class-only adjustments rather than replacing upstream lines/components.
+- Visually sensitive JSX control closing tags were re-read during each source update, with no incomplete `</Select`, `</Button`, `</Input`, `</Radio`, or `</Checkbox` occurrences detected. This was a **source-only** pass; the application, typecheck, tests, lint, CI and browser screenshots were not run.
+- The earlier #181 PR merge attempt failed automatically, but the subsequent explicit two-parent lane merge resolved it manually. The lane is fully up-to-date with the `main` revision listed above. Future main commits still require reconciliation.
+
+### Additional source-only pass after upstream reconciliation
+
+- Finished four newly inspected TPO elements: interview reschedule primary-button foreground, weekly-calendar follow-up primary-button foreground, sequential-review row divider and bulk round-results outcome list hairline. Retained upstream JSX tags and all event/state logic.
+- An older 40-file sweep from pre-merge history was compared against the latest tree. Where upstream already had more recent styling or shared-control JSX, it remained authoritative; no older HTML/native control tags were restored. Only clear styling deltas were reapplied.
+- No CI, typecheck, app execution or automated code validation was run. Complete component-tag closings were re-read in the touched files.

@@ -689,7 +689,7 @@ export function PlacementJobCreateForm({
         <h2 className="text-base font-semibold text-foreground">Setup review</h2>
         <ol className="mt-3 grid gap-3 border-y border-border sm:grid-cols-4">
           {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
-            <li key={label} className="border-l-2 border-border py-3 pl-3 text-sm">
+            <li key={label} className="border-b border-border py-3 text-sm">
               <span className="block text-xs font-semibold text-primary-text">Step {index+1} of 4</span>
               <span className="mt-1 block font-semibold text-foreground">{label}</span>
             </li>
@@ -1197,7 +1197,7 @@ export function PlacementJobCreateForm({
             Configure explainable numeric requirements now. Program/cohort scoping can remain empty when the opportunity is open across the college.
           </p>
         </div>
-        <div className="grid gap-5 p-5">
+        <div className="grid gap-5 pt-4">
           <label className="grid gap-1 text-sm font-semibold">Department · Target Audience
             <select className={inputClass} value={departmentFilter} onChange={event=>{
               setDepartmentFilter(event.target.value);setSelectedProgramIds([]);

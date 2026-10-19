@@ -69,7 +69,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      Clear {free.length} unbooked slot(s)</button>
    </div>
   </div>
-  <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+  <div className="border-t border-border pt-5">
    <h2 className="font-semibold">Assign rooms by roll range</h2>
    <p className="mt-1 text-sm text-body">Preview the affected roll range, then assign a room. Overlapping room bookings are skipped and reported.</p>
    <div className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -92,7 +92,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   {reschedules.length?<section className="space-y-3 border-b border-border pb-6">
    <h2 className="font-semibold">Pending reschedule requests · {reschedules.length}</h2>
    <p className="text-sm text-body">Move a learner to an available slot, or Keep the current booking and answer the request. Decisions and student notifications are recorded.</p>
-   {reschedules.map(req=><div key={req.id} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+   {reschedules.map(req=><div key={req.id} className="space-y-3 border-b border-border py-4">
     <p className="text-sm"><strong>{req.name??"Learner"}</strong> · {req.reason}</p>
     <div className="flex flex-wrap gap-3">
      <Select value={requestTarget[req.id]??""} aria-label={"New slot for "+(req.name??"learner")}
@@ -132,7 +132,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     </Button>
    </div>)}
   </div>:null}
-  <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+  <div className="border-t border-border pt-5">
    <h2 className="font-semibold">Interview slots · {booked.length} booked · {free.length} available · {waiting.length} students unassigned</h2>
    <p className="mt-1 text-sm text-body">Booking, changing or cancelling a student slot sends a placement notification and records an audit event.</p>
    <div className="mt-3 space-y-3">{slots.map(slot=>{

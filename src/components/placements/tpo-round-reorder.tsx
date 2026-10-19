@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
+import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {moveRound} from "@/modules/placements/tpo-round-reorder-model";
 import {useUnsavedDriveGuard} from "./use-unsaved-drive-guard";
@@ -50,10 +51,10 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
     <span draggable={readiness.allowed&&!busy} onDragStart={()=>setDragged(id)} onDragEnd={()=>setDragged(null)}
      title="Drag to reorder" aria-label={"Drag "+round.name} className={readiness.allowed?"cursor-grab select-none font-semibold":"font-semibold"}>☰</span>
     <span className="flex-1 text-sm font-semibold text-foreground">{index+1}. {round.name}</span>
-    <Button variant="secondary" type="button" aria-label={"Move "+round.name+" up"} disabled={!readiness.allowed||busy||index===0}
+    <Button type="button" variant="secondary" aria-label={"Move "+round.name+" up"} disabled={!readiness.allowed||busy||index===0}
      onClick={()=>{setIds(current=>moveRound(current,id,index-1));markDirty();setSaved(false);}}
      className="min-h-11 md:min-h-9">Move up</Button>
-    <Button variant="secondary" type="button" aria-label={"Move "+round.name+" down"} disabled={!readiness.allowed||busy||index===ids.length-1}
+    <Button type="button" variant="secondary" aria-label={"Move "+round.name+" down"} disabled={!readiness.allowed||busy||index===ids.length-1}
      onClick={()=>{setIds(current=>moveRound(current,id,index+1));markDirty();setSaved(false);}}
      className="min-h-11 md:min-h-9">Move down</Button>
    </li>;
@@ -63,7 +64,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
    <Button type="button" disabled={!readiness.allowed||busy||!changed} onClick={()=>void save()}
     className="min-h-11 md:min-h-9">
     {busy?"Saving…":"Save round order"}</Button>
-   <Button variant="secondary" type="button" disabled={busy||!changed} onClick={()=>{setIds(readiness.rounds.map(round=>round.id));clearDirty();setError(null);}}
+   <Button type="button" variant="secondary" disabled={busy||!changed} onClick={()=>{setIds(readiness.rounds.map(round=>round.id));clearDirty();setError(null);}}
     className="min-h-11 md:min-h-9">Undo</Button>
   </div>
   {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}

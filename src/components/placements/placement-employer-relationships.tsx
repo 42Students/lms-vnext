@@ -179,7 +179,7 @@ export function PlacementEmployerRelationships({
       </div>
 
       {relationships.length === 0 ? (
-        <p className="m-0 px-5 py-6 text-sm text-muted-foreground">
+        <p className="m-0 py-6 text-sm text-muted-foreground">
           No companies yet.
         </p>
       ) : (
