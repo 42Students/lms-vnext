@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeContactProfileForm } from "@/components/colleges/college-contact-profile-form";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { getOwnCollegeContactProfile } from "@/modules/colleges/college-contact-profile-service";
 import { hasMembershipRole } from "@/modules/identity/context";
 
@@ -15,13 +16,13 @@ export default async function CollegeContactProfilePage() {
       title="College contact profile"
       description="Manage the college display name, public support contacts and policy links."
       actions={<Link href="/college/branding"
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Branding workspace
       </Link>}
     />
-      <p role="status" className="border-b border-border pb-3 text-sm text-body">
+      <Alert tone="info">
         College profile manages operational contact details. Sign-in branding, domains and logos are managed by a Super Admin.
-      </p>
+      </Alert>
     <CollegeContactProfileForm initial={profile} />
   </div>;
 }
