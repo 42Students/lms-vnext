@@ -331,3 +331,31 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 
 - [ ] Browser screenshots, computed-style parity, TypeScript build, tests and CI remain open.
 - [ ] **Next file:** `src/components/admin/college-branding-form.tsx`, then `src/components/admin/college-logo-uploader.tsx`.
+
+
+### College branding, logo and sign-in (Super Admin) source closeout
+
+| File | Exact value proof against old LMS | Grep / responsive and exceptions |
+| --- | --- | --- |
+| [x] `src/components/admin/college-branding-form.tsx` | Branding color/text form labels at `:150,184` now 13px/600 semantic `text-body` instead of 14px/500 (legacy `components___form.scss:110-112`); shared Input/Button and preserved right-column preview. | Native controls `0`, literal hex `0`, Button 1/1; **one dynamic inline style at :217** `style={previewStyle}` is intentionally retained for user-selected brand palette preview, not hard-coded global shell CSS. One-column mobile, preview splits at lg. |
+| [x] `src/components/admin/college-logo-uploader.tsx` | Logo label and horizontal/vertical/zoom labels are 13px/600; heading uses `text-foreground` semantic heading token. Shared file input/Button and object preview radius remain. | Native controls `0`, literal hex `0`, Button 2/2; **one dynamic inline style at :88**, image `objectPosition` and `transform` are actual interactive crop coordinates, intentionally retained. Actions min 44px ≤767px, 36px ≥768px. |
+| [x] `src/components/admin/college-signin-method-form.tsx` | Sign-in heading uses semantic foreground instead of inherited unspecified ink; selectable radio cards already have shared radio, white surface, 9px radius and focus. | Native controls `0`, literal hex `0`, inline styles `0`, Button 1/1. Radio row min-height 56px ≥44px, one-column layout and existing 44px phone/36px desktop action. |
+
+**Grep proof from current branch source:** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l` = `0` for all three; `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l` = `0`; `rg -o 'style=\\{' <file> | wc -l` = `1,1,0` respectively, both explained dynamic preview exceptions. Legacy 13px/600 labels: `components___form.scss:110-112`; control radius 9px `globals.css:343`; mobile action 44px `components___variables.scss:139`, at ≤767px `old-lms-shell.css:73`. No crop, signed storage, tenant branding save or sign-in mutation behavior altered.
+
+- [ ] Pixel screenshots, computed CSS, local typecheck, functional tests and CI still unverified.
+- [ ] **Next file:** `src/components/admin/college-branding-preview.tsx` (source-review dynamic branding canvas only), then `src/components/admin/tenant-settings-editor.tsx`.
+
+
+### Tenant settings and branding preview source review
+
+| File | Exact legacy alignment | Grep/responsive evidence |
+| --- | --- | --- |
+| [x] `src/components/admin/tenant-settings-editor.tsx` | Heading and settings group legends now `text-foreground`, group field labels 13px/600 token body (legacy `components___form.scss:110-112`); flat border-b sections, shared inputs and primary save. | Raw visual controls 0; hex 0; inline style 0; Button 1/1. All editable fields and save min 44px phone/36px from 768px, 1-column phone / 2-column tablet; danger confirmation retained. |
+| [x] `src/components/admin/tenant-settings-other-keys.tsx` | Headings semantic `text-foreground`; Key/Value labels 13px/600 body; individual stored-key row uses `--lms-control-radius` 9px (`globals.css:343`) replacing `rounded-[8px]` literal. | Raw controls 0; hex 0; inline style 0; Button 2/2. All save/removal/field controls min 44px ≤767px/36px ≥768px, flex-wrap on phone. |
+| [x] `src/components/admin/college-branding-preview.tsx` — reviewed unchanged | Separate stored-branding and color-preview object panels are intentionally differentiated from page canvas. Five inline style bindings are **dynamic chosen-college palette** presentations, not hard-coded legacy chrome; retaining them is required for accurate branding preview. | Raw controls 0; literal hex 0; **five** inline dynamic styles intentionally retained, no shared Button/Select tags. Panels flex-wrap/stack on phone. |
+
+**Grep reproducibility (GitHub source scan only):** `rg -o '<(button|input|select|textarea)\\b' <file> | wc -l` => `0` for each; literal hex => `0`; `style={` => `0,0,5` with the last five purposefully exempt. Shared Button opens/closes `1/1`, `2/2`, `0/0` respectively. Control labels sourced `components___form.scss:110-112`, radius `globals.css:343`, 44px touch `components___variables.scss:139`, mobile breakpoint `old-lms-shell.css:73`.
+
+- [ ] Browser-level pixel measurements, true runtime CSS and state interactions, compile, test and CI remain not run.
+- [ ] **Next exact file:** `src/components/admin/college-feature-rule-editor.tsx` and `src/components/admin/descendant-feature-rule-editor.tsx`.
