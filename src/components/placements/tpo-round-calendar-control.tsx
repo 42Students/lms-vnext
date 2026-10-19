@@ -89,7 +89,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
         {choices.map((item) => <option key={item.id} value={item.id}>
           {item.companyName} · {item.jobTitle} · {item.name} ({item.status})
         </option>)}
-      </Select
+      </Select>
     </label>
     {round ? <>
       <p className="text-sm text-body">Status: {round.status}. Kind: {round.kind}.
@@ -110,7 +110,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
           value={mode} onChange={(event) => setMode(event.target.value as "ON_CAMPUS" | "VIRTUAL")}>
           <option value="ON_CAMPUS">On campus</option>
           <option value="VIRTUAL">Virtual</option>
-        </Select
+        </Select>
       </label>
       <label className="block text-sm font-semibold text-foreground">
         {mode === "ON_CAMPUS" ? "Venue" : "Meeting URL"}

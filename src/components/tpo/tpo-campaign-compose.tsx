@@ -99,7 +99,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
    <label className="block text-sm font-semibold">To
     <Select className={field} value={selectedLeadIds.length?"ALL_ELIGIBLE":segment} disabled={selectedLeadIds.length>0} onChange={e=>setSegment(e.target.value as typeof segment)}>
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
-    </Select
+    </Select>
    </label>
    {selectedLeadIds.length?<p className="text-xs text-muted-foreground">Audience is fixed to the selected leads from Engage. Return there to change the selection.</p>:null}
    <label className="block text-sm font-semibold">Subject

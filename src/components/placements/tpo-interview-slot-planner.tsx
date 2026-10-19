@@ -100,7 +100,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm">
       <option value="">Choose new slot</option>
       {free.map(slot=><option key={slot.id} value={slot.id}>{format(slot.startsAt)} · {slot.room}</option>)}
-     </Select
+     </Select>
      <Input placeholder="Decision reason" aria-label={"Reason for "+(req.name??"learner")}
       value={requestReason[req.id]??""} onChange={e=>setRequestReason(p=>({...p,[req.id]:e.target.value}))}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
@@ -145,14 +145,14 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
        <Select aria-label="Select learner for slot" value={pick[slot.id]??""} onChange={e=>setPick(p=>({...p,[slot.id]:e.target.value}))}
         className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
         <option value="">Choose student</option>{waiting.map(c=><option key={c.applicationId} value={c.applicationId}>{c.roll??""} {c.name??"Learner"}</option>)}
-       </Select
+       </Select>
        <Button variant="primary" type="button" disabled={busy||!pick[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground"
         onClick={()=>void action({action:"BOOK",slotId:slot.id,expectedVersion:slot.version,applicationId:pick[slot.id]})}>Book</Button>
       </div>:<div className="flex flex-wrap items-center gap-2">
        <Select aria-label="Move to available slot" value={move[slot.id]??""}
         onChange={e=>setMove(p=>({...p,[slot.id]:e.target.value}))} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
         <option value="">Move to free slot</option>{free.map(target=><option key={target.id} value={target.id}>{format(target.startsAt)} · {target.room}</option>)}
-       </Select
+       </Select>
        <button type="button" disabled={busy||!move[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50"
         onClick={()=>void action({action:"MOVE",slotId:slot.id,targetSlotId:move[slot.id],expectedVersion:slot.version,reason:"Rescheduled by placement cell"})}>Move</button>
        <button type="button" disabled={busy} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-danger px-3 text-sm text-foreground disabled:opacity-50"
