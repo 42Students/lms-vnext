@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { PlacementPolicyKey } from "@/modules/placements/platform-placement-policy-model";
 type Field={key:PlacementPolicyKey;label:string;unit:string;value:number;defaultValue:number;version:number;
  min:number;max:number;step:number;isOverridden:boolean;updatedAt:string|null};
@@ -48,30 +50,27 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
   }catch(e){setError(e instanceof Error?e.message:"Policy update failed.");}
   finally{setBusy(null);}
  }
- return <section aria-labelledby="platform-placement-policy" className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section aria-labelledby="platform-placement-policy" className="space-y-4 border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h2 id="platform-placement-policy" className="text-lg font-semibold">Placements policy</h2>
     <p className="text-sm text-muted-foreground">Platform-wide defaults. Clear the college selection to review global settings. Changes require Super Admin access.</p>
    </div>
-   <button type="button" disabled={Boolean(busy)} onClick={()=>void refresh()}
-    className="min-h-10 rounded-[9px] border border-border px-3 font-semibold text-primary-text">Reload</button>
+   <Button type="button" variant="secondary" disabled={Boolean(busy)} onClick={()=>void refresh()}>Reload</Button>
   </div>
   <div className="grid gap-4 md:grid-cols-2">
-   {fields.map(field=><div key={field.key} className="space-y-2 rounded-lg border border-border p-3">
+   {fields.map(field=><div key={field.key} className="space-y-2 border-b border-border py-3">
      <label htmlFor={"policy-"+field.key} className="block text-sm font-semibold">{field.label}</label>
      <p className="text-xs text-muted-foreground">Default: {field.defaultValue} {field.unit} · {field.isOverridden?"Overridden":"Using default"}</p>
      <div className="flex flex-wrap items-center gap-2">
-      <input id={"policy-"+field.key} type="number" min={field.min} max={field.max} step={field.step}
+      <Input id={"policy-"+field.key} type="number" min={field.min} max={field.max} step={field.step}
        value={drafts[field.key]??String(field.value)}
        onChange={event=>setDrafts(current=>({...current,[field.key]:event.target.value}))}
-       className="min-h-10 min-w-28 flex-1 rounded-[9px] border border-border bg-[var(--lms-surface)] px-2 text-foreground" />
+       className="min-w-28 flex-1" />
       <span className="text-xs text-muted-foreground">{field.unit}</span>
      </div>
      <div className="flex gap-2">
-      <button type="button" disabled={Boolean(busy)} onClick={()=>void submit(field,false)}
-       className="min-h-10 rounded-[9px] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-on-primary disabled:opacity-50 text-[var(--lms-on-primary)]">Save</button>
-      <button type="button" disabled={Boolean(busy)||!field.isOverridden} onClick={()=>void submit(field,true)}
-       className="min-h-10 rounded-[9px] border border-border px-3 text-sm font-semibold disabled:opacity-50">Reset to default</button>
+      <Button type="button" disabled={Boolean(busy)} onClick={()=>void submit(field,false)}>Save</Button>
+      <Button type="button" variant="secondary" disabled={Boolean(busy)||!field.isOverridden} onClick={()=>void submit(field,true)}>Reset to default</Button>
      </div>
    </div>)}
   </div>
