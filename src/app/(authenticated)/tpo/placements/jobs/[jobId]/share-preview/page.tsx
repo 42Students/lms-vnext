@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { DataTable } from "@/components/ui/data-table";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
@@ -94,15 +95,12 @@ export default async function TpoShortlistSharePreviewPage({
      className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">
      View company-share access history
     </Link>
-    <nav aria-label="Company-share link status filters"
-      className="flex flex-wrap gap-3 text-sm">
-      {companyShareStatusSchema.options.map(status=><Link key={status}
-       aria-current={shareStatus===status?"page":undefined}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold text-[var(--lms-teal-deep)] md:min-h-9"
-       href={companyShareLinksHref(data.job.id,status,1,parsed.data.q,data.page)}>
-       {companyShareStatusLabel(status)}
-      </Link>)}
-    </nav>
+    <Tabs ariaLabel="Company-share link status filters" value={shareStatus} renderPanel={false}
+      items={companyShareStatusSchema.options.map(status=>({
+        value:status,
+        label:companyShareStatusLabel(status),
+        href:companyShareLinksHref(data.job.id,status,1,parsed.data.q,data.page),
+      }))}/>
     {(linkPage.wasInvalid||!parsedStatus.success)?<p role="status"
       className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
       An invalid company-share status or page was reset to the default view.
