@@ -164,6 +164,7 @@ export function CollegeEditDialog({
             </label>
             <Input
               id={`college-city-${college.id}`}
+              autoComplete="address-level2"
               disabled={pending}
               value={city}
               onChange={(event) =>
