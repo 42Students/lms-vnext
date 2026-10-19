@@ -21,11 +21,11 @@
    keyboard focus is a 2px teal outline at +3px. Already specialized data-slot
    rings retain their stronger rules from globals.css. */
 :where(a[href], button, input, select, textarea, summary,
-  [role="button"], [role="tab"], [role="switch"], [role="menuitem"]):focus:not(:focus-visible) {
+  [role="button"], [role="tab"], [role="switch"], [role="menuitem"]):not(:where([data-unskin], [data-unskin] *)):focus:not(:focus-visible) {
   outline: none;
 }
 :where(a[href], button, input, select, textarea, summary,
-  [role="button"], [role="tab"], [role="switch"], [role="menuitem"]):focus-visible {
+  [role="button"], [role="tab"], [role="switch"], [role="menuitem"]):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   outline-color: var(--lms-micro-focus);
   outline-style: solid;
   outline-width: 2px;
@@ -39,22 +39,22 @@
   [role="button"]:not([aria-disabled="true"]),
   [role="tab"]:not([aria-disabled="true"]),
   [role="menuitem"]:not([aria-disabled="true"]),
-  [role="switch"]:not([aria-disabled="true"])):not([data-unskin]) {
+  [role="switch"]:not([aria-disabled="true"])):not(:where([data-unskin], [data-unskin] *)) {
   cursor: pointer;
 }
 :where(button:disabled, input:disabled, select:disabled, textarea:disabled,
-  [aria-disabled="true"]):not([data-unskin]) {
+  [aria-disabled="true"]):not(:where([data-unskin], [data-unskin] *)) {
   cursor: not-allowed;
 }
 :where(a[href], button, summary, [role="button"], [role="tab"],
-  [role="switch"], [role="menuitem"]):not([data-unskin]) {
+  [role="switch"], [role="menuitem"]):not(:where([data-unskin], [data-unskin] *)) {
   transition-timing-function: var(--lms-micro-ease);
 }
 
 /* Legacy: components___accessibility.scss:25-36 — focus halo for tappable
    cards, but no layout/padding change. */
 main :where([role="button"]:not(button), [data-slot="card"][tabindex],
-  [data-slot="stat-tile"][tabindex]):focus-visible:not([data-unskin]) {
+  [data-slot="stat-tile"][tabindex]):focus-visible:not(:where([data-unskin], [data-unskin] *)) {
   outline: 2px solid var(--lms-micro-focus);
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12);
@@ -65,7 +65,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
    already has its own transform; native cards remain interactive. */
 @media (hover: none) and (prefers-reduced-motion: no-preference) {
   main :where([role="button"]:not([data-slot="button"]):not([aria-disabled="true"]),
-    [data-slot="card"][role="button"]):active:not([data-unskin]) {
+    [data-slot="card"][role="button"]):active:not(:where([data-unskin], [data-unskin] *)) {
     transform: scale(0.98);
     opacity: 0.9;
     transition: transform 0.05s ease, opacity 0.05s ease;
@@ -76,11 +76,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
    Canvas links already receive the legacy-skin colour; preserve visited colour
    in the same family without changing primary button-styled anchors. */
 :where(main, [data-slot="page-canvas"])
-  a[href]:not([data-slot="button"]):not([role="tab"]):not([data-unskin]):visited {
+  a[href]:not([data-slot="button"]):not([role="tab"]):not(:where([data-unskin], [data-unskin] *)):visited {
   color: var(--lms-link-text);
 }
 :where(main, [data-slot="page-canvas"])
-  a[href]:not([data-slot="button"]):not([role="tab"]):not([data-unskin]):hover {
+  a[href]:not([data-slot="button"]):not([role="tab"]):not(:where([data-unskin], [data-unskin] *)):hover {
   text-decoration-color: var(--lms-primary);
   text-decoration-line: underline;
 }
@@ -90,31 +90,31 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
    This paints semantic toggles; native checkmarks remain browser controlled. */
 :where([role="switch"][aria-checked="true"],
   [role="checkbox"][aria-checked="true"],
-  [data-slot="switch"][data-state="checked"]):not([data-unskin]) {
+  [data-slot="switch"][data-state="checked"]):not(:where([data-unskin], [data-unskin] *)) {
   accent-color: var(--lms-primary);
   border-color: var(--lms-primary);
 }
 :where(input[type="checkbox"], input[type="radio"],
-  [role="checkbox"], [role="radio"], [role="switch"]):not([data-unskin]) {
+  [role="checkbox"], [role="radio"], [role="switch"]):not(:where([data-unskin], [data-unskin] *)) {
   accent-color: var(--lms-primary);
   transition: border-color var(--lms-micro-fast) var(--lms-micro-ease),
     background-color var(--lms-micro-fast) var(--lms-micro-ease),
     box-shadow var(--lms-micro-fast) var(--lms-micro-ease);
 }
 :where([aria-pressed="true"]:not([data-slot="button"]),
-  [role="tab"][aria-selected="true"]):not([data-unskin]) {
+  [role="tab"][aria-selected="true"]):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-primary-text);
 }
 
 /* Legacy: components___form.scss:57-60 and
    components___variables.scss:28 — muted placeholder #a9a7ae. */
-:where(input:not([type="checkbox"]):not([type="radio"]), textarea):not([data-unskin])::placeholder {
+:where(input:not([type="checkbox"]):not([type="radio"]), textarea):not(:where([data-unskin], [data-unskin] *))::placeholder {
   color: #a9a7ae;
   opacity: 1;
 }
 /* The legacy sources do not specify UA autofill colour: limit the fix to
    inherited ink without suppressing the existing focus halo. */
-:where(input:not([type="checkbox"]):not([type="radio"]), textarea):not([data-unskin]):-webkit-autofill {
+:where(input:not([type="checkbox"]):not([type="radio"]), textarea):not(:where([data-unskin], [data-unskin] *)):-webkit-autofill {
   -webkit-text-fill-color: var(--lms-form-ink);
   caret-color: var(--lms-form-ink);
 }
@@ -134,11 +134,16 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   background-color: var(--lms-micro-selected) !important;
 }
 :where([data-slot="menu"], [data-slot="dropdown"])
-  [role="menuitem"]:is([aria-selected="true"], [data-state="checked"]),
-:where([data-slot="menu"], [data-slot="dropdown"])
-  [role="option"][aria-selected="true"] {
+  [role="menuitem"]:is([aria-selected="true"], [data-state="checked"]) {
   color: var(--lms-primary-text);
   background-color: var(--lms-micro-selected);
+}
+/* Legacy: components___antddesign.scss:134-137 — selected SELECT options
+   use full teal with white ink, unlike navigation/menu selected tint. */
+:where([data-slot="menu"], [data-slot="dropdown"])
+  [role="option"][aria-selected="true"] {
+  color: var(--lms-white);
+  background-color: var(--lms-primary);
 }
 
 /* Legacy: old-lms-shell.css:56 header shadow (1px 3px, 3.5%).
@@ -153,7 +158,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
    components___antddesign.scss:7-13 uses a page-panel entrance. The opener's
    state remains controlled by native details / the existing overlay component. */
 @media (prefers-reduced-motion: no-preference) {
-  [data-slot="dropdown-root"][open] > [data-slot="dropdown"]:not([data-unskin]) {
+  [data-slot="dropdown-root"][open] > [data-slot="dropdown"]:not(:where([data-unskin], [data-unskin] *)) {
     animation: lms-micro-dropdown-enter 250ms cubic-bezier(0.2, 0, 0, 1) both;
   }
 }
@@ -169,4 +174,20 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   [data-slot="dropdown-root"][open] > [data-slot="dropdown"] {
     animation: none !important;
   }
+}
+
+/* Legacy: components___notification-drawer.scss:38-41,196-203 — mobile
+   notification actions disable the browser's tap flash. Extend that same
+   invisible tap highlight to semantic controls; keep native focus visible. */
+:where(a[href], button, summary, [role="button"], [role="tab"],
+  [role="switch"], [role="menuitem"]):not(:where([data-unskin], [data-unskin] *)) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Legacy: components___common.scss:226-228 — checked switch track is teal.
+   Apply only to switches whose checked semantics are explicit; avoid painting
+   the checkbox/radio wrapper as a filled track. */
+:where([role="switch"][aria-checked="true"],
+  [data-slot="switch"][data-state="checked"]):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-primary);
 }
