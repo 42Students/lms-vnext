@@ -27,9 +27,9 @@ export function FormField({ id, label, required = false, helper, error, children
         ].filter(Boolean))].join(" ") || undefined,
       })
     : rendered;
-  return <div data-slot="form-field" className="min-w-0 space-y-[6px]">
+  return <div data-slot="form-field" className="min-w-0 space-y-[6px] text-[13px]">
     <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-      {label}{required ? <span aria-hidden="true"> *</span> : null}
+      {label}{required ? <span aria-hidden="true" className="text-[var(--lms-error)]"> *</span> : null}
       {required ? <span className="sr-only">required</span> : null}
     </label>
     {associated}
