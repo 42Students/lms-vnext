@@ -52,7 +52,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
     style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px", "--lms-visual-center": visualCenter } as CSSProperties}
     className={cx("fixed left-1/2 top-[var(--lms-visual-center)] m-0 h-auto max-h-[calc(var(--lms-visual-height)_-_3rem)] w-[calc(100%_-_2rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-0 text-foreground shadow-[var(--lms-elevation-4)] backdrop:bg-[#1e363f]/10", widthClass, className)}>
     <div className="flex max-h-[calc(var(--lms-visual-height)_-_3rem)] min-h-0 flex-col overflow-hidden">
-      <div className="flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] bg-surface px-4 py-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-[var(--lms-canvas-padding)]">
+      <div data-slot="dialog-header" className="flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] bg-surface px-4 py-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-[var(--lms-canvas-padding)]">
         <div className="min-w-0">
           <h2 id={titleId} className="m-0 break-words text-[var(--lms-font-lg)] font-semibold leading-[1.35] text-[var(--lms-heading)]">{title}</h2>
           {description ? <p id={descriptionId} className="mt-[var(--lms-space-1)] text-[13px] leading-5 text-[var(--lms-body-text)]">{description}</p> : null}
