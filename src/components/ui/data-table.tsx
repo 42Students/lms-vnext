@@ -99,7 +99,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
             className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] sm:sticky sm:top-0 sm:z-10 sm:bg-[var(--lms-table-header)] sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
         </thead>
         <tbody className="block space-y-[var(--lms-space-3)] sm:table-row-group sm:space-y-0">
-          {prepared.map(item=><tr key={item.key}
+          {prepared.map(item=><tr key={item.key} data-slot="data-table-row"
             className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:table-row sm:overflow-visible sm:rounded-none sm:border-0 sm:p-0 sm:transition-colors sm:duration-[var(--lms-motion-fast)] sm:hover:bg-[var(--lms-table-hover)] focus-within:border-[var(--lms-primary)] sm:focus-within:border-[var(--lms-canvas-border)] sm:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none">
             {columns.map(col=>{
               const phoneVisible=visibleOnPhone.has(col.key);
