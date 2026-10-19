@@ -53,7 +53,11 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
         "notification" in record &&
         (record as { notification: unknown }).notification &&
         typeof (record as { notification: unknown }).notification === "object" &&
-        "readAt" in ((record as { notification: Record<string, unknown> }).notification));
+        "readAt" in ((record as { notification: Record<string, unknown> }).notification) &&
+        (() => {
+          const date = (record as {notification:{readAt:unknown}}).notification.readAt;
+          return date === null || typeof date === "string";
+        })());
       if (!valid) return;
       setGeneral(records.filter(record =>
         (record as {notification:{readAt:unknown}}).notification.readAt === null).length);
