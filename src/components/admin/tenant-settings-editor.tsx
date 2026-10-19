@@ -93,7 +93,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </ConfirmDialog>
   {results.length>0?<div role="status" className="space-y-2">
    <h3 className="font-semibold">Save results</h3>
-   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] text-sm focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">{results.map(row=><li key={row.key} className="rounded border border-border p-2">
+   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 space-y-1 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] text-sm focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">{results.map(row=><li key={row.key} className="rounded-[var(--lms-control-radius,9px)] border border-border p-2">
     <strong>{row.key}</strong> — {row.status}: {row.message}</li>)}</ul>
   </div>:null}
  </section>;
