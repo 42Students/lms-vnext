@@ -9,11 +9,11 @@ export function PublicJoinPreviewRetry({scope,token}:{
  const root=scope==="COMPANY"?"/company-join/":"/college-join/";
  return <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 items-center px-4 py-8 sm:py-12`}>
   <Card as="section" role="alert" className="w-full">
-   <h1 className="text-xl font-semibold text-foreground">We couldn&apos;t load this page</h1>
+   <h1 className="text-[30px] font-semibold leading-[1.3] text-[#172033]">We couldn&apos;t load this page</h1>
    <p className="text-sm text-body">Check your connection and try again. Your invitation was not used.
     If the problem continues, ask the placement cell for help.</p>
    <Link href={root+encodeURIComponent(token)}
-    className="mt-4 inline-flex min-h-11 items-center rounded-md border border-primary bg-primary px-5 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry</Link>
+    className="mt-4 inline-flex min-h-11 items-center rounded-[9px] border border-primary bg-primary px-5 text-sm font-semibold text-primary-foreground md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry</Link>
   </Card>
  </main>;
 }
