@@ -92,7 +92,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <section
         role="status"
         aria-label="Settings scope"
-        className="- -subtle text-sm leading-6 text-body border-t border-border pt-5"
+        className="-subtle text-sm leading-6 text-body border-t border-border pt-5"
       >
         <p className="font-semibold text-foreground">
           {selectedCollegeName
@@ -124,16 +124,16 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <Link href="/admin/settings/auth"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Authentication and privileged access checklist →
       </Link>
 
       <form className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
-          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+          <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground"/>
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
-          <Select name="section" defaultValue={parsed.section} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="section" defaultValue={parsed.section} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </Select>
         </label>
@@ -149,7 +149,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
           >
             {section.title}
           </a>

@@ -59,17 +59,17 @@ export default async function TenantDirectory({searchParams}:{
   <form className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold text-body">College
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+     className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Organization
     <Select name="organizationId" defaultValue={data.query.organizationId}
-     className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+     className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
      <option value="">All permitted</option>
      {data.organizations.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
     </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">College status
-    <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+    <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
    </label>
