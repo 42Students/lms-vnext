@@ -44,7 +44,7 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Clear selection</button>
    <button type="button" disabled={!valid.length} onClick={()=>void copy()}
     className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Copy selected</button>
-   <a href={downloadHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Export filtered page CSV</a>
+   <a href={downloadHref} className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm">Export filtered page CSV</a>
   </div>
   <label className="flex min-h-10 items-center gap-2 text-sm">
    <input type="checkbox" checked={rows.length>0&&valid.length===rows.length}

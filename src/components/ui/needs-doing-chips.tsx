@@ -1,0 +1,52 @@
+"use client";
+
+import Link from "next/link";
+import { cx } from "@/lib/class-names";
+import { isSafeInternalHref } from "@/lib/safe-internal-href";
+
+export type NeedsDoingChip = {
+  key: string;
+  label: string;
+  count?: number;
+  tone?: "neutral" | "info" | "warning" | "error";
+  href?: string;
+  disabled?: boolean;
+};
+export type NeedsDoingChipsProps = {
+  items: readonly NeedsDoingChip[];
+  selectedKey?: string;
+  onSelect?: (key: string) => void;
+  label?: string;
+  className?: string;
+};
+
+const tones = {
+  neutral: "border-[var(--lms-canvas-border)] bg-white text-[var(--lms-body-text)]",
+  info: "border-[var(--lms-primary)]/25 bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
+  warning: "border-[var(--lms-warning-text)]/20 bg-[var(--lms-warning-subtle)] text-[var(--lms-warning-text)]",
+  error: "border-[var(--lms-error-text)]/20 bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
+} as const;
+
+/** The old LMS's compact "Needs doing:" chips: genuine links or quick filters, never inert buttons. */
+export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs doing:", className }: NeedsDoingChipsProps) {
+  if (!items.length) return null;
+  const base = "inline-flex min-h-8 max-w-full items-center gap-1.5 rounded-full border px-3 py-1 text-[12px] font-semibold leading-[18px] transition-colors duration-[var(--lms-motion-fast)] hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+  return (
+    <div data-slot="needs-doing-chips" role="group" aria-label={label.replace(/:$/, "")} className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]", className)}>
+      <span className="mr-1 text-[13px] font-semibold text-[var(--lms-neutral-500)]">{label}</span>
+      {items.map(item => {
+        const count = typeof item.count === "number" && Number.isFinite(item.count) ? Math.max(0, Math.trunc(item.count)) : null;
+        const selected = selectedKey === item.key;
+        const classes = cx(base, tones[item.tone ?? "neutral"], selected && "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]");
+        const content = <>{item.label}{count !== null ? <span className="tabular-nums">{count}</span> : null}</>;
+        if (item.href && !item.disabled && isSafeInternalHref(item.href)) {
+          return <Link key={item.key} href={item.href} aria-current={selected ? "page" : undefined} className={classes}>{content}</Link>;
+        }
+        if (onSelect) {
+          return <button key={item.key} type="button" disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</button>;
+        }
+        return <span key={item.key} aria-disabled={item.disabled || undefined} className={classes}>{content}</span>;
+      })}
+    </div>
+  );
+}

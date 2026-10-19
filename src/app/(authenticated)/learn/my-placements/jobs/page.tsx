@@ -64,7 +64,7 @@ export default async function LearnerPlacementJobsPage() {
     <div className="min-w-0 space-y-6">
 
       <Link href="/learn/my-placements/rules?from=drives"
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         Review placement rules and preparation →
       </Link>
       <Suspense fallback={<p className="text-sm text-body">Loading drive filters…</p>}>

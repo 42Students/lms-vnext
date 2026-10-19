@@ -15,8 +15,8 @@ export function PageLoading({ label, variant, count = 3 }: PageLoadingProps) {
   }, [label, variant, count]);
   return <section data-slot="page-loading" className="min-w-0 space-y-[var(--lms-space-4)]">
     <Skeleton variant={variant} count={count} label={label} />
-    {slow ? <div role="status" aria-live="polite" className="space-y-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-[var(--lms-space-4)]">
-      <p className="text-[13px] leading-5 text-[var(--lms-body-text)]">This is taking longer than expected. Please try again.</p>
+    {slow ? <div role="status" aria-live="polite" className="space-y-[var(--lms-space-3)] rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-[var(--lms-space-4)]">
+      <p className="m-0 text-[13px] leading-5 text-[var(--lms-body-text)]">This is taking longer than expected. Please try again.</p>
       <Button variant="secondary" onClick={() => window.location.reload()}>Try again</Button>
     </div> : null}
   </section>;

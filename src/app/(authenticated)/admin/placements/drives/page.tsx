@@ -26,7 +26,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
-   action={<Link href="/admin/placements/drives" className="text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
+   action={<Link href="/admin/placements/drives" className="text-primary-text">Clear filters</Link>}/>
  </div>;
  // Keep an unavailable college reporting backend from crashing the entire
  // Super Admin drive directory; preserve the validated filter on Retry.
@@ -41,7 +41,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     ?"Your account cannot manage drives in this college."
     :"This college's drives could not be loaded. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminDriveDirectoryHref(parsed.data)}
-    className="font-semibold text-[var(--lms-teal-deep)] underline">
+    className="font-semibold text-primary-text underline">
     {loaded.denied?"Back to dashboard":"Retry loading drives"}
    </Link>}
   />
@@ -65,16 +65,16 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    cell:row=><span className="tabular-nums">{row.metrics.submittedApplications}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",
    cell:row=><Link href={"/admin/placements/jobs/"+encodeURIComponent(row.job.id)}
-    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
     Open drive →</Link>},
  ];
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="All drives"
    description="Review and open every persisted non-archived drive in the selected college." />
   <div className="flex flex-wrap gap-3">
-   <Link href="/admin/placements" className="text-sm font-semibold text-[var(--lms-teal-deep)]">← Placement overview</Link>
-   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Look up a student&apos;s placement status →</Link>
-    <Link href="/admin/placements/new" className="text-sm font-semibold text-[var(--lms-teal-deep)]">Create drive →</Link>
+   <Link href="/admin/placements" className="text-sm font-semibold text-primary-text">← Placement overview</Link>
+   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Look up a student&apos;s placement status →</Link>
+    <Link href="/admin/placements/new" className="text-sm font-semibold text-primary-text">Create drive →</Link>
   </div>
   <form action="/admin/placements/drives" method="get"
    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
@@ -96,7 +96,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     </select>
    </label>
    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover">Filter</button>
-   <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-[var(--lms-teal-deep)]">Clear all</Link>
+   <Link href="/admin/placements/drives" className="min-h-11 inline-flex items-center text-primary-text">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
   <p role="status" className="text-sm text-muted-foreground">{data.total} matching drives · Page {data.page} of {data.totalPages}</p>

@@ -10,7 +10,7 @@ export default function LearnerNotificationsError({
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-xl border border-border bg-surface p-8 text-center">
+    <section role="alert" className="py-8 text-center">
       <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         Unable to load notifications
       </h1>
@@ -19,7 +19,7 @@ export default function LearnerNotificationsError({
       </p>
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Button onClick={reset}>Retry</Button>
-        <Link href="/learn" className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        <Link href="/learn" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
           Learner Home
         </Link>
       </div>

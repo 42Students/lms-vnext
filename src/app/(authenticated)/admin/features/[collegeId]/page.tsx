@@ -130,7 +130,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           </div>
           <Link
             href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
           >
             Open learner access trace →
           </Link>
@@ -138,14 +138,14 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         View audited college module changes →
       </Link>
       <section className="grid gap-3 md:grid-cols-3">
         {modules.map((decision) => (
           <article
             key={decision.module}
-            className="rounded-xl border border-border bg-surface p-5"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
           >
             <h2 className="m-0 text-sm font-semibold text-foreground">
               {decision.label}
@@ -213,7 +213,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 sm:min-h-9"/>
         </label>
         <Button type="submit" className="min-h-11 sm:min-h-9">Filter overrides</Button>
-        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Reset</Link>
+        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Reset</Link>
       </form>
 
       <section className="min-w-0 space-y-3">
@@ -306,7 +306,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page > 1 ? (
               <Link
                 href={pageHref(result.page - 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 ← Previous
               </Link>
@@ -314,7 +314,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page < result.totalPages ? (
               <Link
                 href={pageHref(result.page + 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 Next →
               </Link>

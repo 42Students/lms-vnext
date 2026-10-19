@@ -66,7 +66,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       colleges={data.items.map(row=>({id:row.id,name:row.name,assigned:Boolean(row.assignment),
         canAssign:can(context,"project-template.assign",{collegeId:row.id,organizationId:row.organizationId})}))}/>
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-      {data.items.map(row => <article key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+      {data.items.map(row => <article key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <h2 className="break-words text-base font-semibold text-foreground">{row.name}</h2>
         <p className="text-xs text-muted-foreground">{row.code}</p>
         <StatusBadge tone={row.assignment ? "success" : "neutral"}>{row.assignment ? "Assigned" : "Not assigned"}</StatusBadge>

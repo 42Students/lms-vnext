@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
@@ -6,7 +10,7 @@ import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-follow
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type LeadChoice={id:string;name:string;companyName:string|null};
-const field="min-h-11 w-full rounded-md border border-border bg-background px-3 py-2 text-base text-foreground sm:text-sm";
+const field="min-h-11 w-full";
 export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const router=useRouter();
  const [open,setOpen]=useState(false);
@@ -82,38 +86,38 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
   }catch{setError("Could not save the follow-up");}
  }
  return <>
-  <button type="button" onClick={()=>void show()}
+  <Button variant="ghost" type="button" onClick={()=>void show()}
    className="block min-h-11 w-full rounded px-2 py-2 text-left text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">
    Follow-up
-  </button>
+  </Button>
   {toast?<p role="status" className="px-2 py-1 text-xs text-body">{toast}</p>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)dismiss();}} title="New follow-up"
    description="Choose a recruiter and when to follow up (IST).">
     <form className="space-y-3" onSubmit={event=>{event.preventDefault();void save();}}>
      <label className="grid gap-1 text-sm font-semibold text-body">Recruiter
-      <select value={leadId} onChange={event=>{setLeadId(event.target.value);setError("");}}
+      <Select value={leadId} onChange={event=>{setLeadId(event.target.value);setError("");}}
        disabled={saving||loading} className={field} required>
        <option value="">{loading?"Loading recruiters…":"Choose a recruiter"}</option>
        {leads.map(lead=><option key={lead.id} value={lead.id}>
         {lead.name}{lead.companyName?" · "+lead.companyName:""}
        </option>)}
-      </select>
+      </Select>
      </label>
      <label className="grid gap-1 text-sm font-semibold text-body">When (IST)
-      <input type="datetime-local" required value={when} onChange={event=>{setWhen(event.target.value);setError("");}}
+      <Input type="datetime-local" required value={when} onChange={event=>{setWhen(event.target.value);setError("");}}
        disabled={saving} className={field}/>
      </label>
      <label className="grid gap-1 text-sm font-semibold text-body">Note (optional)
-      <textarea rows={3} maxLength={500} value={note} onChange={event=>setNote(event.target.value)}
+      <Textarea rows={3} maxLength={500} value={note} onChange={event=>setNote(event.target.value)}
        disabled={saving} className={field}/>
      </label>
      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
      <div className="flex justify-end gap-2">
-      <button type="button" disabled={saving} onClick={dismiss}
-       className="min-h-11 rounded-md border border-border px-4 text-sm">Cancel</button>
-      <button type="submit" disabled={saving||loading} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
+      <Button variant="secondary" type="button" disabled={saving} onClick={dismiss}
+       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Cancel</Button>
+      <Button variant="primary" type="submit" disabled={saving||loading} className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
        {saving?"Adding…":"Add"}
-      </button>
+      </Button>
      </div>
     </form>
   </Dialog>

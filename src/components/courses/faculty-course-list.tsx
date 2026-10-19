@@ -62,7 +62,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
   return (
     <div className="min-w-0 max-w-full space-y-5">
       <div className="flex flex-wrap items-center gap-3 text-sm text-body" role="status">
-        <details className="relative rounded-lg border border-border bg-surface px-3 py-2">
+        <details className="relative rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
           <summary className="flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{scopeCount} Teaching assignment(s)</summary>
           <ScrollCue axis="y" label="Teaching assignments" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {assignmentChoices.map(item=><li key={item.deliveryId}>
@@ -72,7 +72,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
             </li>)}
           </ul></ScrollCue>
         </details>
-        <details className="rounded-lg border border-border bg-surface px-3 py-2">
+        <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
           <summary className="flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{sections.length} Section(s)</summary>
           <ScrollCue axis="y" label="Teaching Sections" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {sections.map(section=><li key={section.id}>{section.name} · {section.count} teaching assignment(s)</li>)}
@@ -180,7 +180,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
 
           <div className="mt-auto pt-5">
             <div className="grid grid-cols-3 gap-2">
-              <div className="rounded-lg bg-[var(--lms-neutral-50)] p-2.5">
+              <div className="rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)] p-2.5">
                 <p className="m-0 text-lg font-semibold text-foreground">
                   {workspace.summary.contents}
                 </p>
@@ -188,7 +188,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
                   Content
                 </p>
               </div>
-              <div className="rounded-lg bg-[var(--lms-neutral-50)] p-2.5">
+              <div className="rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)] p-2.5">
                 <p className="m-0 text-lg font-semibold text-foreground">
                   {workspace.summary.assignments}
                 </p>
@@ -196,7 +196,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
                   Assignments
                 </p>
               </div>
-              <div className="rounded-lg bg-[var(--lms-neutral-50)] p-2.5">
+              <div className="rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)] p-2.5">
                 <p className="m-0 text-lg font-semibold text-foreground">
                   {workspace.summary.quizzes}
                 </p>

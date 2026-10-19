@@ -8,7 +8,7 @@ export default function LearnerProjectsError({
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-xl border border-border bg-surface px-5 py-10 text-center sm:px-8">
+    <section role="alert" className="px-3 py-10 text-center sm:px-6">
       <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Projects could not be loaded</h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         Check your connection, then try again. Your project data has not been changed.

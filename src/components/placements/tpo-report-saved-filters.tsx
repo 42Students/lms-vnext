@@ -1,5 +1,11 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {useEffect,useState} from "react";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {useRouter,useSearchParams} from "next/navigation";
 type SavedView={name:string;seasonId:string;jobId:string;batchId?:string;branchId?:string;sort?:string;outcome?:string;q?:string;group?:string;state?:string;days?:string;companyId?:string;workMode?:string;payCategory?:string};
 const keyFor=(path:string,collegeId:string,userId:string)=>"lms.tpo.report-view."+collegeId+"."+userId+"."+path.replace(/[^a-z0-9/-]/gi,"");
@@ -50,26 +56,26 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   if(!picked)return;
   if(persist(views.filter(v=>v.name!==picked))){setPicked("");setMessage("Saved filter removed.");}
  }
- return <details className="min-w-0 rounded-xl border border-border bg-surface p-4">
+ return <details className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <summary className="cursor-pointer text-sm font-semibold">Saved filters ({views.length}/12)</summary>
   <p className="mt-2 text-xs text-muted-foreground">Save this report&apos;s active filters in this browser for your account. Nothing is sent to other users or devices.</p>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Name this view
-    <input value={name} onChange={e=>setName(e.target.value)} maxLength={50}
-     className="min-h-10 rounded border border-border px-2 text-sm" placeholder="e.g. Current season"/>
+    <Input value={name} onChange={e=>setName(e.target.value)} maxLength={50}
+     className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-2 text-sm" placeholder="e.g. Current season"/>
    </label>
-   <button type="button" onClick={save} disabled={!name.trim()} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Save current</button>
+   <Button variant="secondary" type="button" onClick={save} disabled={!name.trim()} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Save current</Button>
   </div>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Choose saved view
-    <select value={picked} onChange={e=>setPicked(e.target.value)}
-     className="min-h-10 rounded border border-border px-2 text-sm">
+    <Select value={picked} onChange={e=>setPicked(e.target.value)}
+     className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-2 text-sm">
      <option value="">Select view</option>
      {views.map(v=><option key={v.name} value={v.name}>{v.name}</option>)}
-    </select>
+    </Select>
    </label>
-   <button type="button" disabled={!picked} onClick={apply} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Apply</button>
-   <button type="button" disabled={!picked} onClick={remove} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Delete</button>
+   <Button variant="secondary" type="button" disabled={!picked} onClick={apply} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Apply</Button>
+   <Button variant="secondary" type="button" disabled={!picked} onClick={remove} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Delete</Button>
   </div>
   {message?<p role="status" className="mt-2 text-xs text-body">{message}</p>:null}
  </details>;
