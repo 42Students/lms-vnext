@@ -25,7 +25,7 @@ export default async function SuperAdminRetentionPage(){
    description="Applications withdrawn or rejected with no recorded application updates for at least 180 days."/>
   <nav><Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href="/admin/placements">← Placements</Link></nav>
   <p role="status" className="text-sm text-body">{report.rows.length} candidates for retention review{report.truncated?" (showing first 200)":""}; cutoff {fmt(new Date(report.cutoff))}.</p>
-  <p className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+  <p className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
    This is a review-only report, not an automated deletion or proof of legal retention eligibility. Account for offers, disputes and local retention policy before removing anything.
   </p>
   <DataTable columns={columns} rows={report.rows} getRowKey={row=>row.id}
