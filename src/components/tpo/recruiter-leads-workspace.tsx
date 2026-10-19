@@ -708,7 +708,7 @@ export function RecruiterLeadsWorkspace({
             {filterChips.length?<div role="group" aria-label="Active recruiter filters"
               className="flex flex-wrap gap-2">
               {filterChips.map(chip=><button type="button" key={chip.key}
-                className="rounded-[9px]-[9px]-full border border-border bg-primary-subtle px-3 py-1 text-xs text-on-primary"
+                className="rounded-[9px]-full border border-border bg-primary-subtle px-3 py-1 text-xs text-on-primary"
                 title={"Clear "+chip.label+" filter"}
                 onClick={()=>updateFilter(chip.key,"ALL")}>
                 {chip.label}: {chip.value} ×
@@ -936,7 +936,7 @@ export function RecruiterLeadsWorkspace({
                     </div>},
                     {key:"Communication",header:"Communication",mobilePriority:"action",cell:company=>
                       <select aria-label={"Communication for "+company.name}
-                        className="min-h-11 rounded-[9px]-[9px] border border-border bg-surface px-2 text-base"
+                        className="min-h-11 rounded-[9px] border border-border bg-surface px-2 text-base"
                         value={communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
                           rows.filter(row=>company.people.some(person=>person.id===row.id)))}
                         disabled={!communicationReady}

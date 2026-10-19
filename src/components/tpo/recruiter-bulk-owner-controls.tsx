@@ -235,7 +235,7 @@ export function RecruiterBulkOwnerControls({
               type="button"
               onClick={() => void submit()}
               disabled={!canSubmit}
-              className="min-h-10 rounded-md bg-primary px-4 font-[650] text-on-primary disabled:opacity-50"
+              className="min-h-10 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50"
             >
               {busy ? "Assigning…" : reviewOpen&&reviewSignature===currentSignature ? "Confirm assignment" : "Review and confirm assignment"}
             </button>
