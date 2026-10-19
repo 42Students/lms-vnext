@@ -107,3 +107,68 @@ grep -rnE 'rounded-\[[^"]+\]-\[' src --include='*.tsx'
 - No runtime, tests, app launch, screenshot diff, or CI. Section J remains separately pending.
 
 **Strict decision: B1 ☐, B2 ☐.** Both are **unticked** because matching a subset of styling rows does not meet all four checklist conditions.
+
+
+## 2026-10-19 continuation — 100 new chat-13 commits
+
+**Scope synced:** At start, `chatgpt/chat-13-b` was fast-forwarded from `2220b5141877` to then-current `main` `df7de72e7f63`. The subsequent 100 commits were confirmed with a compare from that merge base; later concurrent mainline merges may change ahead/behind counts. **No CI or app execution.**
+
+### Updated B1 measured-value and state proof
+
+| Item/state | Legacy file:line and exact value | Current vNext file:line and effective value | Result |
+| --- | --- | --- | --- |
+| Header default | `old-lms-shell.css:56`: 68px, gap18, pad 0 20, 1px #e7ecf2 bottom, 0 1px 3px rgba(26,45,72,.035) | `topbar.module.css:12-25`, `src/app/globals.css:321,331`: corresponding values | Matched source values |
+| Tablet layout | `old-lms-shell.css:67-71`: 768–1199px, gap10, pad14, search grid min180, organization 170–190 | `topbar.module.css:62-68,446-450`: same breakpoint and grid, org trigger 170–190 | Matched declarations; runtime unresolved |
+| Phone layout | `old-lms-shell.css:73-85`: 767px boundary, 58px min header, safe-area, New38, avatar40/36 | `topbar.module.css:69-86`: same dimensions; `:452-455` hides header org chooser, leaving account-menu chooser | Matched most geometry; focus and menu still unverified on a phone |
+| Header organization selector default | `old-lms-shell.css:61-63`: #334155, 12px/600, max260, selector min-height38, border #e7ecf2/radius9, no shadow | `organization-switcher.tsx:46-65`, `topbar.module.css:415-444`: authorized `Button` + popover, 38px/min and corresponding values | Source values matched; old LMS switcher position/context menu shape still differ |
+| Header org hover/pressed/focus | `old-lms-shell.css:63` + generic `legacy-styles/components___button.scss` hover/focus states | `topbar.module.css:429-435`: neutral hover, pressed fill, teal visible focus | Not fully verified against precise original trigger SCSS |
+| Org popover default | `legacy-styles/components___dropdown.scss:96-126`: max 280px, 6px radius, shadow 9px 11px 28px rgba(0,0,0,.1), mobile 14px | `topbar.module.css:437-455`: same desktop width/radius/shadow; phone header trigger hidden | Surface values matched, open/close animation and phone access need integration proof |
+| Org chooser focus and activation | `old-lms-shell.css:63`: native AntD 38px control, disabled and focus defaults in `legacy-styles` | `organization-switcher.tsx:28-66`: focus into chooser, Escape, outside click, ArrowDown and focus-out; `topbar.module.css:457-477` styles native select | Interaction source improved; no browser/no-regression proof |
+| Avatar and account menu default | `old-lms-shell.css:64-66`: 42/38px; `legacy-styles/components___dropdown.scss:96-126` dropdown 280px/radius6/shadow/padding | `topbar.module.css:48-53`, `account-menu.tsx:105-129`: `Button` avatar and logout, same dropdown shell tokens | Geometry matched; image and account-menu content remain distinct |
+| Account menu disabled/loading | `legacy-styles/components___button.scss:83-88`: disabled/inactive visual | `account-menu.tsx:125-128`: shared ghost `Button` disabled + aria-busy pending | Full legacy state parity not proven |
+| Command search input | `old-lms-shell-spec.md:15-17`: 291×36, search pale #f8fafc; `old-lms-shell.css:58`: Ctrl-K muted | `command-search.tsx:123-138`: shared `Input` combobox; `topbar.module.css:29-34,484-493` restores field sizing | Default source values matched; command result behavior not fully proven |
+
+### Updated B2 notification and palette comparison
+
+| Item/state | Legacy source file:line | vNext source file:line | Result |
+| --- | --- | --- | --- |
+| Desktop popover | `legacy-styles/components___notification-drawer.scss:113-124`: white/radius12/1px #e5e9f0; max420, max-height520; layered shadow | `topbar.module.css:322-342`: scoped TPO Drawer skin 420px, 12px, shadow; HR/learner adapters `:103-108` | Surface declaration closer; modal vs dropdown anchoring still different |
+| Drawer header | `notification-drawer.scss:153-168`: padding16×20, neutral50, 18px/600 title | `topbar.module.css:343-358`: same dimensions and color roles | CSS match; exact browser cascade unverified |
+| Drawer body | `notification-drawer.scss:170-184`: scroll region, hidden scrollbar, 12px vertical, list inset12 | `topbar.module.css:360-372`: same design on TPO shared Drawer body | CSS match; ScrollCue inner structure needs visual verification |
+| Row default | `notification-drawer.scss:186-204`: gap6/radius8, padding12×16, two-state border | `tpo-bell-panel.tsx:103-113`, `topbar.module.css:381-393`: row layout, 8px, spacing, hover/active/focus | Matched parts, check exact border alpha and portal variants |
+| Title/snippet | `notification-drawer.scss:233-248`: 14px/600/1.4 title, 14px/1.5 snippet with 2-line clamp | `tpo-bell-panel.tsx:107-110`: exact title/snippet typography and clamp | TPO matched declarations; other portal markup differs |
+| Empty/loading/error | `notification-drawer.scss:272-321`: centered 32×20, gap12, 14px muted | `tpo-bell-panel.tsx:102-117`, `topbar.module.css:374-379` | **Still differs**: inline messages versus full legacy centered state cards |
+| Desktop animation | `notification-drawer.scss:125-147`: enter translateY(-8px) 200ms ease-out | `topbar.module.css:322-342` has no equivalent animation on shared `Drawer` | **Missing** |
+| Mobile drawer | `notification-drawer.scss:400-445`: full width, safe areas, 44px close | `topbar.module.css:396-413`: full-width compact TPO drawer with safe-area header; shared Drawer has 44px close | CSS largely matches; native dialog anchoring not proven |
+| Command input keyboard | `old-lms-shell.css:58`, `legacy-styles/components___dropdown.scss:157-184`: Ctrl-K and search dropdown | `command-search.tsx:66-88,123-174`: search combobox ArrowUp/Down/Home/End, typing, Backspace/Escape | VNext behavior implemented; precise old behavior not exhaustively sourced |
+| Grouping/mark all/read receipt | `notification-drawer.scss:180-269,323-355`: grouped list, mark-all footer | `tpo-bell-panel.tsx:20-79,103-117`: server mark-read, mark-all, ungrouped recent list | **Mismatch:** grouping and shared footer composition |
+
+### Fresh scoped grep-equivalent results (after 100 commits)
+
+Connected GitHub source retrieval is **not** a shell checkout. Two GitHub fetch batches inspected all **17 files**: 11 `.ts/.tsx` files in `src/components/shell/topbar`, plus `app-shell.tsx`, `admin-scope-switcher.tsx`, `membership-switcher.tsx`, `tpo-bell-panel.tsx`, `hr-recruiter-bell.tsx`, `learner-notification-bell.tsx`. The equivalents to these exact grep patterns returned:
+
+| Required grep command (scope is the 17 listed files, not whole src) | Source-scan hits | Proof / limitation |
+| --- | ---: | --- |
+| `grep -rnE '<button([ >])' [17-file scope]` | 0 | Header avatar, org chooser, TPO and learner bell triggers converted to shared `Button` |
+| `grep -rnE '<input([ >])' [17-file scope]` | 0 | Header search converted to shared `Input` |
+| `grep -rnE '<select([ >])' [17-file scope]` | 0 | All selectors are shared `Select` |
+| `grep -rnE '<textarea([ >])' [17-file scope]` | 0 | None needed in header scope |
+| `grep -rn 'fixed inset-0' [17-file scope]` | 0 | Shared Drawer uses its own overlay; other dialogs may be outside this scope |
+| `grep -rn 'role="dialog"' [17-file scope]` | 9 textual matches | Includes 6 selector strings in account menu; JSX still uses hand-rolled account/org/learner dialogs, so **strict overlay coverage fails** |
+| `grep -rnE '#[0-9a-fA-F]{3,8}' src/components/shell/topbar/topbar.module.css` | 51 | Existing legacy hex literals still outside globals/shared UI, **strict hardcoded-color gate fails** |
+
+**Full-repository `grep`/zero-instance proof was not executed**: source was available only via the connected GitHub API. Do not elevate the scoped zero counts to all of `src`. No build, TypeScript compiler, browser, CI, runtime or screenshot validation occurred.
+
+### First-third Super Admin shared-component continuation
+
+- College creation: `src/components/admin/college-create-form.tsx:92-175`, shared Input/Select/Button, pending field lock, ARIA busy/help association, shared Button loading.
+- Bulk college import: `src/components/admin/college-bulk-import.tsx`, expanded panel association, pending form lock, CSV validation/help, spinner and result region. No business/API semantics rewritten.
+- College edit: `src/components/admin/college-edit-dialog.tsx`, shared dialog/buttons/inputs now disable while pending with named autofill and shared loading.
+- Academic first-third: `src/components/academics/academics-overview.tsx:68-380`, four shared teal code labels, four `DataTable` captions, and explicitly labelled periods/programs sections.
+
+### Strict tick outcome — unchanged
+
+- [ ] **B1 top bar** (missing: whole-`src` coverage and all-portal Messages/unread provenance, old LMS states and mobile browser proof).
+- [ ] **B1 account/org switcher** (missing: rendered placement, legacy full state matrix, shared overlay coverage).
+- [ ] **B2 notifications drawer** (missing: grouping, exact empty/loading/error, desktop dropdown behavior, unified portal coverage).
+- [ ] **B2 command palette** (missing: complete original-result SCSS/action reference, responsive and regressions proof).
