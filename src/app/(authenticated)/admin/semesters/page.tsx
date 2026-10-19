@@ -82,25 +82,25 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <form method="get" action="/admin/semesters" className="flex flex-wrap items-end gap-3">
         <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Semester or program
           <Input name="q" type="search" defaultValue={data.query.q} maxLength={100}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            className="w-full" />
         </label>
         <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">Program
           <Select name="programId" defaultValue={data.query.programId ?? ""}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="w-full">
             <option value="">All programs</option>
             {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
         <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Status
           <Select name="status" defaultValue={data.query.status}
-            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="w-full">
             <option value="ALL">All statuses</option>
             <option value="ACTIVE">Active</option>
             <option value="INACTIVE">Inactive</option>
           </Select>
         </label>
         <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
-          <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+          <Select name="pageSize" defaultValue={data.query.pageSize} className="w-full">
             {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
           </Select>
         </label>
@@ -120,7 +120,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       ...(data.query.q?{q:data.query.q}:{}),
       ...(data.query.programId?{programId:data.query.programId}:{}),
       ...(data.query.status!=="ALL"?{status:data.query.status}:{})
-    }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+    }).toString()} className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-3.5 text-[14px] font-[650] text-primary-text hover:bg-primary-subtle">
       Export semesters.csv
     </a>
     <section aria-label="Semesters" className="min-w-0 space-y-3">
