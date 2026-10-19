@@ -142,7 +142,7 @@ export default async function SuperAdminPeoplePage({
         actions={<PersonOnboardDialog collegeId={collegeId} />}
       />
       <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
-      <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-4">
+      <form method="get" className="grid gap-3 sm:grid-cols-4">
        <label className="grid gap-1 text-sm font-semibold">Search contacts
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-11 rounded border border-border bg-background px-3"/>
        </label>

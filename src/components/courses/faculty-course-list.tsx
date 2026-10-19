@@ -80,7 +80,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
         </details>
       </div>
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
-        className="space-y-3 rounded-xl border border-border bg-surface p-4">
+        className="space-y-3">
         <FacultyCourseFilterAutoSubmit />
         <div className="grid gap-3 md:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Search courses
