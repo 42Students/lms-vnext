@@ -343,8 +343,9 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
  * legible. Legacy light theme ink/surface: components___variables.scss:10-13,
  * 24-32. This dark opt-in has no old LMS counterpart. */
 :root[data-tracker-theme="dark"] ::selection {
-  color: var(--lms-foreground);
-  background-color: var(--lms-primary-subtle);
+  /* The legacy-skin selector uses !important. Preserve legible tracker ink. */
+  color: var(--lms-foreground) !important;
+  background-color: var(--lms-primary-subtle) !important;
 }
 :root[data-tracker-theme="dark"] :is(input, textarea):-webkit-autofill {
   -webkit-text-fill-color: var(--lms-foreground);
@@ -395,6 +396,24 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 }
 @media (prefers-reduced-motion: reduce) {
   [data-slot="tabs"] :is([role="tab"], nav > a)::after {
+    transition: none !important;
+  }
+}
+
+/* Legacy: components___common.scss:141-147 — 200ms ease box-shadow on
+   .ln-card-hvr; legacy only applies this treatment to opted-in hover cards.
+   Restrict to explicit interactive card semantics so static page sections
+   remain flat per the old LMS single-canvas design. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)) {
+    transition: box-shadow 200ms ease;
+  }
+  [data-slot="card"]:is([role="button"], .ln-card-hvr):not(:where([data-unskin], [data-unskin] *)):hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="card"]:is([role="button"], .ln-card-hvr) {
     transition: none !important;
   }
 }
