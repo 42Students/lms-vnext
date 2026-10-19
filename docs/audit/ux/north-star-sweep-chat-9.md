@@ -274,3 +274,23 @@ Strict TypeScript correctness, responsive browser rendering and screenshot parit
 **Non-functional scope guarantee:** no changed navigation destinations, permissions, queries, API calls, validation schemas, visible labels, form state, confirmation flow, domain mutations, or content order. No edits to `src/components/ui/**`, `src/components/shell/**`, `src/app/globals.css` or shared layout. Changes were guarded against the source before each commit.
 
 **Verification outstanding:** no app startup, TypeScript compilation, tests, lint, CI, browser screenshot comparison, accessibility/device check or runtime behavior validation were performed, per lane instructions. The source-level visual audit is not a verified pixel-perfect or strict TypeScript build result. At ledger time the branch was 19 commits ahead and 0 behind moving `main`.
+
+
+### Fifth batch: additional project and module-rule surface parity — 2026-10-19
+
+**10 further file-level source commits**, following the fourth sweep's 32 commits; this continuation therefore has **42 individual styling commits** plus audit/integration commits. All were pushed to the lane branch with the `[chat-9]` tag. Remaining Super Admin template-directory links, version comparison links and source previews, learner membership-rule history, college Projects action touch targets, and template-resource/sprint/task fieldsets now use semantic legacy color, control-height and canvas-radius tokens. This batch also replaces literal workspace/dashboard tile radii with the shared card radius and retains independent learner rule notice and module editor cards.
+
+Files edited in this fifth batch:
+
+- `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- `src/app/(authenticated)/admin/projects/page.tsx`
+- `src/app/(authenticated)/college/projects/page.tsx`
+- `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
+- `src/components/projects/super-admin-template-resource-editor.tsx`
+- `src/components/projects/super-admin-template-plan-editor.tsx`
+- `src/components/projects/project-admin-workspace-list.tsx`
+- `src/components/admin/admin-dashboard-actions.tsx`
+- `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
+
+**Scope preserved:** no user-visible copy or page-body section order changed; no API, request, state, auth, validation or routing logic changed. The shared UI kit and shell remain under their own lanes. Only source edits were performed. As instructed, no local code execution, tests, typecheck, lint, CI, runtime or screenshots were performed; exact old-LMS parity remains unverified. At ledger time, the lane was **30 commits ahead / 0 behind `main`**, with 25 changed files in the diff; merged upstream commits may include many earlier changes.
