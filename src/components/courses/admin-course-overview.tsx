@@ -513,12 +513,12 @@ export function AdminCourseOverview({
          </label>:null}
          <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
           Export CSV
          </a>
-         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded border border-border px-3 text-sm"
+         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm"
           href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses",courseBasePath)}>Refresh</Link>:null}
-         <Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded border border-border px-3 text-sm" href={courseBasePath}>Clear</Link>
+         <Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm" href={courseBasePath}>Clear</Link>
         </form>:null}
         {catalogue&&catalogue.total>1000?<p className="text-xs text-muted-foreground">
          Export CSV includes up to the first 1,000 matching courses. Narrow filters to export a smaller set.
