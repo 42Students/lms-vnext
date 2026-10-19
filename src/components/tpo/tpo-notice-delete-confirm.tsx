@@ -14,10 +14,10 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
  },[open]);
  function dismiss(){setOpen(false);trigger.current?.focus();}
  return <div className="mt-4">
-  <button ref={trigger} type="button" onClick={()=>setOpen(true)}
+  <Button variant="secondary" ref={trigger} type="button" onClick={()=>setOpen(true)}
    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
    Delete
-  </button>
+  </Button>
   {open?<div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <section role="alertdialog" aria-modal="true" aria-labelledby={"delete-title-"+id}
     aria-describedby={"delete-desc-"+id}
@@ -32,14 +32,14 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
      onSubmit={event=>{if(pending.current)event.preventDefault();else pending.current=true;}}>
      <input type="hidden" name="expectedVersion" value={version}/>
      <input type="hidden" name="action" value="DELETE"/>
-     <button ref={confirmButton} type="submit"
+     <Button variant="primary" ref={confirmButton} type="submit"
       className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
       Delete announcement
-     </button>
-     <button type="button" onClick={dismiss}
+     </Button>
+     <Button variant="secondary" type="button" onClick={dismiss}
       className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground">
       Cancel
-     </button>
+     </Button>
     </form>
    </section>
   </div>:null}
