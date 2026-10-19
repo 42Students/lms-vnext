@@ -81,7 +81,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
        value={overrides[row.line]??""} disabled={busy} onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
        <option value="">Do not match this row</option>
        {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
-      </Select
+      </Select>
       <label className="flex items-center gap-2 text-sm">
        <Checkbox checked={skips.includes(row.line)} disabled={busy}
         onChange={e=>{setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line));if(e.target.checked)setOverrides(p=>({...p,[row.line]:""}));}}/> Skip row
