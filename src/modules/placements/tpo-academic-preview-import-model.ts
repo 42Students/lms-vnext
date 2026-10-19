@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {mapTpoImportHeaders} from "./tpo-import-header-aliases";
 export const tpoAcademicPreviewRowSchema=z.object({
  studentCode:z.string().uuid(),
  cgpa:z.coerce.number().min(0).max(10),
@@ -34,16 +35,18 @@ export function parseTpoAcademicImportCsv(csv: string) {
  if (lines.length < 2) throw new Error("CSV needs a header and at least one student row.");
  if (lines.length > 201) throw new Error("Maximum 200 data rows.");
  const clean = (v: string) => v.trim().replace(/^"|"$/g, "");
- const header = lines[0]!.split(",").map(value => clean(value).toLowerCase().replace(/[^a-z0-9]/g, ""));
- const lookup = (aliases: string[], label: string) => {
-   const indexes = aliases.flatMap(alias => header.map((value, index) => value === alias ? index : -1))
-      .filter(index => index >= 0);
-   if (indexes.length !== 1) throw new Error("Expected one " + label + " column.");
-   return indexes[0]!;
+ const rawHeaders=lines[0]!.split(",").map(clean);
+ const mapped=mapTpoImportHeaders(rawHeaders,["studentCode","cgpa","activeBacklogs"]);
+ if(mapped.duplicates.length)throw new Error("Duplicate import headers: "+mapped.duplicates.join(", "));
+ const lookup=(field:"studentCode"|"cgpa"|"activeBacklogs",label:string)=>{
+  const index=mapped.fields.indexOf(field);
+  if(index<0)throw new Error("Expected one "+label+" column.");
+  return index;
  };
- const idColumn = lookup(["studentcode","studentid","learnerid","membershipid"], "student ID");
- const cgpaColumn = lookup(["cgpa","gpa","gradepointaverage"], "CGPA");
- const backlogColumn = lookup(["activebacklogs","activebacklog","currentbacklogs"], "active backlogs");
+ const idColumn=lookup("studentCode","student ID");
+ const cgpaColumn=lookup("cgpa","CGPA");
+ const backlogColumn=lookup("activeBacklogs","active backlogs");
+ const header=rawHeaders;
  if (new Set([idColumn, cgpaColumn, backlogColumn]).size !== 3)
    throw new Error("Use separate student ID, CGPA and active backlog columns.");
  const seen = new Set<string>();

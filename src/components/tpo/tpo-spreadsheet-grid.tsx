@@ -8,7 +8,7 @@ import {useEffect,useRef,useState,type CSSProperties,type ReactNode} from "react
 import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
 
-export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;mobilePrimaryKeys?:readonly string[];storageKey?:string;
+export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection,showColumnChooser=true}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;mobilePrimaryKeys?:readonly string[];storageKey?:string;showColumnChooser?:boolean;
  selection?:{selected:readonly string[];onChange:(ids:string[])=>void;allIds?:readonly string[]};
  openPrimary?:{columnKey:string;onOpen:(row:Row)=>void;ariaLabel:(row:Row)=>string}
 }){
@@ -111,7 +111,7 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
   router.replace(pathname+(next.size?"?"+next.toString():""));
  }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
-  <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
+  {showColumnChooser?<TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>:null}
   {rows.length===0?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3">No matching records.</p>:<>
    <div className="hidden md:block"><Table scrollLabel="TPO spreadsheet columns" className="w-full text-left text-sm"><caption className="sr-only">Current page TPO spreadsheet records</caption>
     <thead className="bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-700)]"><tr>{selection?<th scope="col" className="px-3 py-2"><Checkbox aria-label="Select all filtered students" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)}>

@@ -8,7 +8,7 @@ import {updateTpoGridQuery} from "@/modules/placements/tpo-grid-model";
 import {activeTpoGridFilterCount,invalidTpoGridFilterValue,resolvedTpoGridFilterValue} from "@/modules/placements/tpo-grid-filter-state";
 import {clearTpoGridFilters} from "@/modules/placements/tpo-grid-filter-reset";
 export type TpoFilterField={key:string;label:string;urlKey?:string;allValue?:string;options:readonly {value:string;label:string}[]};
-export function TpoGridFilterPanel({fields,mobileSheet=false}:{fields:readonly TpoFilterField[];mobileSheet?:boolean}){
+export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter students"}:{fields:readonly TpoFilterField[];mobileSheet?:boolean;title?:string}){
  const router=useRouter(),pathname=usePathname(),query=useSearchParams();
  const [sheetOpen,setSheetOpen]=useState(false);
  const activeCount=activeTpoGridFilterCount(new URLSearchParams(query.toString()),fields);
@@ -24,12 +24,12 @@ export function TpoGridFilterPanel({fields,mobileSheet=false}:{fields:readonly T
    return [{key,label:field.label+": "+(chosen?.label??"Unknown filter"),field}];
  });
  const content=<>
-  <div className="flex flex-wrap gap-2" role="group" aria-label="Active student filters">
+  <div className="flex flex-wrap gap-2" role="group" aria-label="Active grid filters">
    {chips.map(chip=><Button variant="secondary" key={chip.key} type="button" onClick={()=>update(chip.field,"")}
     className="rounded-full text-xs"
     aria-label={"Remove "+chip.label}>{chip.label} ×</Button>)}
   </div>
-  <h2 className={mobileSheet?"hidden font-semibold md:block":"font-semibold"}>Filter students</h2>
+  <h2 className={mobileSheet?"hidden font-semibold md:block":"font-semibold"}>{title}</h2>
   <p role="status" className="text-xs text-muted-foreground">{activeCount} active {activeCount===1?"filter":"filters"}</p>
   {fields.map(field=><label key={field.key} className="block text-sm">{field.label}
    <Select className="mt-1 text-base sm:text-sm" value={resolvedTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)} onChange={event=>update(field,event.target.value)}>
@@ -46,10 +46,10 @@ export function TpoGridFilterPanel({fields,mobileSheet=false}:{fields:readonly T
   <Button variant="secondary" type="button" aria-expanded={sheetOpen} aria-controls="tpo-grid-student-filters"
    onClick={()=>setSheetOpen(true)}
    className="md:hidden">
-   Filter students ({activeCount})
+   {title} ({activeCount})
   </Button>
-  <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title="Filter students">
-   <div id="tpo-grid-student-filters" aria-label="Filter students" className={wrapper}>{content}</div>
+  <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title={title}>
+   <div id="tpo-grid-student-filters" aria-label={title} className={wrapper}>{content}</div>
   </BottomSheet>
   <aside aria-label="Grid filters" className={wrapper+" hidden md:block"}>{content}</aside>
  </div>:<aside aria-label="Grid filters" className={wrapper}>{content}</aside>;

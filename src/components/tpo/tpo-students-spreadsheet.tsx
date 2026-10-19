@@ -17,7 +17,9 @@ import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
-import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
+import type {TpoFilterField} from "./tpo-grid-filter-panel";
+import {GridWorkspace} from "./grid/grid-workspace";
+import {TpoStudentSavedViews} from "./tpo-student-saved-views";
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
@@ -84,7 +86,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"journey",label:"Journey",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"email",label:"Email (export only)",read:row=>row.email,exportOnly:true},
 ];
-export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,afterCollegeAvailable}:{rows:readonly TpoStudentRow[];programs:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[];
+export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,afterCollegeAvailable,canManageViews=false}:{rows:readonly TpoStudentRow[];programs:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[];canManageViews?:boolean;
  afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
@@ -209,8 +211,12 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
    </Select>
   </label>
-  <TpoGridFilterPanel fields={filters} mobileSheet/>
-  <TpoSpreadsheetGrid mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+   selection={{selected:noteSelection,onChange:setNoteSelection}}
+   filters={filters} rollOf={row=>row.rollNumber??row.registrationNumber}
+   filterTitle="Filter students" exportName="tpo-students" xlsxHref={xlsxHref}
+   savedViews={canManageViews?<TpoStudentSavedViews/>:undefined}>
+  <TpoSpreadsheetGrid showColumnChooser={false} mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
@@ -228,6 +234,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
       aria-label={"Change participation for "+row.displayName} className="underline text-link px-0">Change participation</Link>
    </div>}/>
+  </GridWorkspace>
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
     recordedOutcome={afterCollege[active.membershipId]?.outcome??null}
     onNavigate={open} onClose={()=>open(null)} />:null}
