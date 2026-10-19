@@ -1,11 +1,14 @@
 import type { ComponentPropsWithRef } from "react";
 import { cx } from "@/lib/class-names";
 
-export type TableProps = ComponentPropsWithRef<"table">;
+export type TableProps = ComponentPropsWithRef<"table"> & {
+  /** Optional for read-only audit tables; ordinary tables remain plain white. */
+  striped?: boolean;
+};
 
 /** Hairline row table for simple static collections; use DataTable for mobile row details. */
-export function Table({ className, children, ...props }: TableProps) {
+export function Table({ className, children, striped = false, ...props }: TableProps) {
   return <div data-slot="table" className="min-w-0 overflow-x-auto rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-white">
-    <table {...props} className={cx("w-full border-collapse text-left text-[13px] leading-5 tabular-nums [&_thead]:bg-[var(--lms-table-header)] [&_th]:border-b [&_th]:border-[var(--lms-canvas-border)] [&_th]:px-[var(--lms-space-4)] [&_th]:py-[11px] [&_th]:text-[12px] [&_th]:leading-[18px] [&_th]:font-semibold [&_th]:text-[var(--lms-neutral-400)] [&_td]:border-b [&_td]:border-[var(--lms-canvas-border)] [&_td]:px-[var(--lms-space-4)] [&_td]:py-[10px] [&_td]:align-middle [&_tbody_tr:last-child_td]:border-b-0 [&_tbody_tr:hover]:bg-[rgba(38,186,199,0.045)] [&_tbody_tr:focus-within]:bg-[var(--lms-primary-subtle)]", className)}>{children}</table>
+    <table {...props} className={cx(striped && "[&_tbody_tr:nth-child(odd)]:bg-[var(--lms-table-header)]", "w-full border-collapse text-left text-[13px] leading-5 tabular-nums [&_thead]:bg-[var(--lms-table-header)] [&_th]:border-b [&_th]:border-[var(--lms-canvas-border)] [&_th]:px-[var(--lms-space-4)] [&_th]:py-[11px] [&_th]:text-[12px] [&_th]:leading-[18px] [&_th]:font-semibold [&_th]:text-[var(--lms-neutral-400)] [&_td]:border-b [&_td]:border-[var(--lms-canvas-border)] [&_td]:px-[var(--lms-space-4)] [&_td]:py-[10px] [&_td]:align-middle [&_tbody_tr:last-child_td]:border-b-0 [&_tbody_tr:hover]:bg-[rgba(38,186,199,0.045)] [&_tbody_tr:focus-within]:bg-[var(--lms-primary-subtle)]", className)}>{children}</table>
   </div>;
 }
