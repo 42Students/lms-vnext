@@ -55,7 +55,7 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
   {(!release||release.status!=="SHIPPED")?<button type="button"
    className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link"
    onClick={()=>{if(open)requestClose();else setOpen(true);}}>{release?"Edit release":"Add release"}</button>:null}
-  {open?<div className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
+  {open?<div className="space-y-3 border-t border-border pt-3">
    <p className="text-sm font-semibold">{release?"Edit release":"New release"}</p>
    <label className="block text-sm font-semibold">Title
     <input data-slot="input" className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" maxLength={200}

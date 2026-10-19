@@ -40,7 +40,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  }
  const targets=sprints.filter(s=>s.status!=="COMPLETED");
  const returnable=tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status));
- return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section className="space-y-3 border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h2 className="text-lg font-semibold">Product backlog</h2>
     <p className="mt-1 text-sm text-body">{backlog.length} backlog tasks</p>
@@ -75,7 +75,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         router.refresh();
       }catch{setError("Could not add backlog task");}
       finally{setBusy(false);}
-    }} className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-2">
+    }} className="grid gap-3 border-t border-border pt-3 sm:grid-cols-2">
       <label className="text-sm font-semibold">Title<input data-slot="input" required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
