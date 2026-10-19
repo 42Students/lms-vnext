@@ -87,8 +87,8 @@ export function FacultyAttendanceScheduleEditor({
     finally{setBusy(false);setConfirmOpen(false);}
   }
   return <section aria-label="Faculty attendance session scheduling"
-    className="space-y-3 rounded-xl border border-border bg-surface p-4">
-    <h2 className="font-semibold text-foreground">Schedule an attendance session</h2>
+    className="space-y-3 border-t border-border pt-4">
+    <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Schedule an attendance session</h2>
     <p className="text-xs text-muted-foreground">
       Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
       Only sessions you scheduled and have not marked for attendance can be rescheduled.

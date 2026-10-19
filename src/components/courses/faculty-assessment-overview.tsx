@@ -297,7 +297,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-body disabled:opacity-50"
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9"
           >
             Previous
           </button>
@@ -306,7 +306,7 @@ export function FacultyAssessmentOverview({
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-body disabled:opacity-50"
+            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9"
           >
             Next
           </button>

@@ -99,11 +99,11 @@ function FacultyContentOrderEditorInner({
   }
 
   return (
-    <section className="mt-3 rounded-lg border border-border bg-surface p-4">
+    <section className="mt-3 border-t border-border pt-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <p className="m-0 text-sm font-semibold text-foreground">
+            <p className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
               Section content order
             </p>
             {!enabled ? (
@@ -138,7 +138,7 @@ function FacultyContentOrderEditorInner({
           return (
             <li
               key={id}
-              className="flex items-center gap-3 rounded-md bg-surface-subtle px-3 py-2"
+              className="flex items-center gap-3 rounded-[var(--lms-control-radius)] bg-surface-subtle px-3 py-2"
             >
               <span className="w-6 text-xs font-semibold text-muted-foreground">
                 {index + 1}.

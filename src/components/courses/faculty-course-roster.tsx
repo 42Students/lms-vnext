@@ -147,7 +147,7 @@ export function FacultyCourseRoster({
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
               Class list
             </p>
-            <h2 className="mt-1 text-lg font-semibold text-foreground">
+            <h2 className="mt-1 text-lg font-semibold text-[var(--lms-heading)]">
               {sectionName}
             </h2>
           </div>

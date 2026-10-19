@@ -11,7 +11,7 @@ export function SuperAdminLegacyGroupTabs(){
   if(!group)return null;
   return <nav aria-label={group.title}
     className="w-full min-w-0 overflow-x-auto border-b border-border">
-    <h2 className="pt-3 text-base font-semibold text-foreground">{group.title}</h2>
+    <h2 className="pt-3 text-base font-semibold text-[var(--lms-heading)]">{group.title}</h2>
     <div className="flex min-w-max items-center gap-1 py-2 sm:gap-2">
       {group.tabs.map(tab=><Link key={tab.href} href={tab.href}
         aria-current={superAdminLegacyTabActive(pathname,tab.href)?"page":undefined}
