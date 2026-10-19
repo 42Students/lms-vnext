@@ -4,9 +4,14 @@ import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {applicantStage} from "@/modules/placements/tpo-applicant-pipeline-model";
 import {tpoGridTimeLabel} from "@/modules/placements/tpo-grid-time-label";
 import {TpoApplicantReviewDrawer} from "@/components/placements/tpo-applicant-review-drawer";
-import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
-import type {TpoFilterField} from "./tpo-grid-filter-panel";
-import {GridWorkspace} from "./grid/grid-workspace";
+import dynamic from "next/dynamic";
+import type { TpoGrid } from "./grid/tpo-grid";
+
+const TpoGridClient = dynamic(
+  () => import("./grid/tpo-grid").then(module => module.TpoGrid),
+  { ssr: false },
+) as unknown as typeof TpoGrid;
+import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 
 type Row={
  id:string;student:string|null;role:string;rollNumber:string|null;email:string|null;phone:string|null;batchName:string|null;branchName:string|null;cgpaHundredths:number|null;activeBacklogs:number|null;pastBacklogs:number|null;tenthPctBasisPoints:number|null;twelfthPctBasisPoints:number|null;lastRound:string|null;lastResult:string|null;applicationStatus:string;screeningStatus:string|null;
@@ -48,9 +53,8 @@ const filters:TpoFilterField[]=[
   {value:"LAST_7_DAYS",label:"Last 7 days"},{value:"LAST_30_DAYS",label:"Last 30 days"}]},
 ];
 export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly Row[];jobId:string;jobStatus:string}){
- return <GridWorkspace rows={rows} columns={columns} rowKey={row=>row.id}
-  filters={filters} filterTitle="Filter applicants" exportName="tpo-drive-applications">
-  <TpoSpreadsheetGrid showColumnChooser={false} rows={rows} columns={columns} rowKey={row=>row.id}
+ return <div className="space-y-3"><TpoGridFilterPanel fields={filters} mobileSheet/>
+  <TpoGridClient rows={rows} columns={columns} rowKey={row=>row.id}
    mobileActionsCollapsible storageKey={"tpo-drive-applicant-grid:"+jobId}
    rowActions={row=><div className="space-y-1">
     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
