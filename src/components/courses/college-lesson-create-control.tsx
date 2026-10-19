@@ -1,4 +1,7 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 import {useRouter} from "next/navigation";
@@ -70,9 +73,9 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <h2 className="font-semibold text-foreground">Lessons</h2>
-   <Button variant="primary" type="button" onClick={()=>{setOpen(value=>!value);setError("");}}
+   <Button type="button" onClick={()=>{setOpen(value=>!value);setError("");}}
     disabled={!options.length||busy}
-    >
+    className="min-h-11">
     Create New Lesson
    </Button>
   </div>
@@ -81,13 +84,13 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
   </p>:null}
   {open&&chosen?<div className="grid gap-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Course
-    <select className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"
+    <Select className="min-h-11"
      value={chosen.offeringId} disabled={busy}
      onChange={event=>{setOfferingId(event.target.value);setError("");}}>
      {options.map(item=><option key={item.offeringId} value={item.offeringId}>
       {item.courseCode} · {item.courseName} · {item.cohortName} · {item.periodName}
      </option>)}
-    </select>
+    </Select>
    </label>
    <p className="text-xs text-muted-foreground">
     {chosen.pathId||pathOverrides[chosen.offeringId]?
@@ -95,25 +98,25 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
      "An active Learning Path will be created for this Course Offering before the Lesson."}
    </p>
    <label className="grid gap-1 text-sm font-semibold text-body">Lesson Name
-    <input value={name} onChange={event=>setName(event.target.value)} maxLength={255}
-     className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" required/>
+    <Input value={name} onChange={event=>setName(event.target.value)} maxLength={255}
+     className="min-h-11" required/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Description (optional)
-    <textarea value={description} onChange={event=>setDescription(event.target.value)}
+    <Textarea value={description} onChange={event=>setDescription(event.target.value)}
      maxLength={5000} rows={3}
      className="rounded-md border border-border bg-surface p-3 text-foreground"/>
    </label>
    <div className="flex flex-wrap gap-2">
-    <Button variant="primary" type="button" disabled={busy||!name.trim()} onClick={()=>void create(false)}
-     >
+    <Button type="button" disabled={busy||!name.trim()} onClick={()=>void create(false)}
+     className="min-h-11">
      {busy?"Saving…":"Create Lesson"}
     </Button>
-    <Button variant="secondary" type="button" disabled={busy||!name.trim()} onClick={()=>void create(true)}
-     className="text-primary-text">
+    <Button type="button" disabled={busy||!name.trim()} onClick={()=>void create(true)}
+     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
      Create Lesson & Add Another
     </Button>
-    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
-     >
+    <Button type="button" disabled={busy} onClick={()=>setOpen(false)}
+     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-body">
      Cancel
     </Button>
    </div>
