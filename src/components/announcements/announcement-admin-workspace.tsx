@@ -1,5 +1,6 @@
 "use client";
 import {Select} from "@/components/ui/select";
+import {EmptyState} from "@/components/ui/empty-state";
 
 
 import { useMemo, useState, useTransition } from "react";
@@ -262,13 +263,13 @@ export function AnnouncementAdminWorkspace({
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Announcements</h2>
         {items.length === 0 ? (
-          <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">{emptyMessage}</p>
+          <EmptyState title="No announcements" description={emptyMessage}/>
         ) : (
           items.map((item) => {
             const targetLabel = targetLabels.get(`${item.receiverType}:${item.receiverId}`) ?? item.receiverId;
             const safeLink = safeAnnouncementLink(item.message);
             return (
-              <article key={item.id} className="rounded-xl border border-border bg-surface p-5">
+              <article key={item.id} className="border-t border-border py-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
