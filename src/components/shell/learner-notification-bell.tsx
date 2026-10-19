@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {PopoverPanel} from "@/components/ui/popover";
+import {Drawer} from "@/components/ui/drawer";
 import style from "./topbar/topbar.module.css";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
@@ -16,6 +17,7 @@ export function LearnerNotificationBell(){
  const [items,setItems]=useState<Row[]>([]);
  const [due,setDue]=useState<Due[]>([]);
  const [open,setOpen]=useState(false);
+ const [mobile,setMobile]=useState(false);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
  const [everLoaded,setEverLoaded]=useState(false);
@@ -53,13 +55,14 @@ export function LearnerNotificationBell(){
  },[refresh]);
  useEffect(()=>{
   function clickOutside(event:PointerEvent){
+   if(mobile)return;
    if(root.current&&!root.current.contains(event.target as Node))setOpen(false);
   }
   document.addEventListener("pointerdown",clickOutside);
   return ()=>document.removeEventListener("pointerdown",clickOutside);
- },[]);
+ },[mobile]);
  useEffect(()=>{
-  if(!open)return;
+  if(!open||mobile)return;
   const escape=(event:KeyboardEvent)=>{
    if(event.key!=="Escape")return;
    event.preventDefault();
@@ -68,10 +71,16 @@ export function LearnerNotificationBell(){
   };
   document.addEventListener("keydown",escape);
   return ()=>document.removeEventListener("keydown",escape);
- },[open]);
+ },[open,mobile]);
+ useEffect(()=>{
+  const mq=window.matchMedia("(max-width:767px)");
+  const update=()=>setMobile(mq.matches);
+  update();mq.addEventListener("change",update);
+  return ()=>mq.removeEventListener("change",update);
+ },[]);
  return <div className="relative shrink-0" ref={root}>
   <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" unread":"Notifications, no unread items"}
-    aria-haspopup="dialog" aria-expanded={open} aria-controls={open?"lms-learner-notifications":undefined}
+    aria-haspopup="dialog" aria-expanded={open} aria-controls={open?(mobile?"lms-learner-mobile-notifications":"lms-learner-notifications"):undefined}
     onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
     className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
     <span aria-hidden="true">🔔</span>
