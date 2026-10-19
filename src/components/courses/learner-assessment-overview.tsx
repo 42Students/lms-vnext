@@ -282,8 +282,8 @@ export function LearnerAssessmentOverview({
           <button key={quick.value} type="button" aria-pressed={stateFilter === quick.value}
             onClick={() => { setStateFilter(value => value === quick.value ? "ALL" : quick.value); setPage(1); }}
             className={stateFilter === quick.value
-              ? "min-h-11 rounded-lg border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
-              : "min-h-11 rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-body"}>
+              ? "min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
+              : "min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body"}>
             {LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label} ({quick.count})
           </button>
         ))}
@@ -408,7 +408,7 @@ export function LearnerAssessmentOverview({
           />
         ) : null}
         {kind==="ASSIGNMENT" ? (
-        <div className="space-y-3" aria-label="Assignment list">
+        <div className="divide-y divide-border border-y border-border" aria-label="Assignment list">
           {paged.map((item) => {
             const state =
               item.kind === "ASSIGNMENT"
@@ -422,7 +422,7 @@ export function LearnerAssessmentOverview({
             return (
               <article
                 key={`${item.deliveryId}-${item.id}`}
-                className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5"
+                className="min-w-0 py-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-0">

@@ -30,7 +30,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     <PageHeader eyebrow="Mentor · Projects" title="Project activity"
       description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
       actions={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>} />
-    {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+    {!data.enabled ? <div role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
       <form action="/mentor/activity" method="get" className={mentorActivityFormLayout}>
@@ -104,7 +104,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
       {data.items.length === 0 ? <EmptyState title="No recorded activity"
         description="No persisted events match your assigned projects. Missing events do not imply no work occurred." />
         : <ol className="grid gap-3">{data.items.map(event =>
-          <li key={event.id} className="rounded-xl border border-border bg-surface p-4">
+          <li key={event.id} className="py-4">
             <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
               <p className="min-w-0 break-words text-sm font-semibold text-foreground">{event.label}</p>
               <span className="text-xs text-muted-foreground">{mentorActivityImportanceLabel(event.importance)}</span>

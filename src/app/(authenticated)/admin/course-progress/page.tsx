@@ -29,12 +29,22 @@ export default async function SuperAdminCourseProgressPage({
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its course progress." />
   </div>;
-  const [data,filters] = await Promise.all([listCollegeCourseProgress(context, parsed),getSuperAdminLearningFilterOptions(context)]);
+  const [dataResult,filtersResult] = await Promise.allSettled([
+    listCollegeCourseProgress(context, parsed),
+    getSuperAdminLearningFilterOptions(context),
+  ]);
+  if (dataResult.status === "rejected") return <div className="min-w-0 space-y-5">
+    <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
+    <ErrorState title="Course progress unavailable" description="Recorded progress could not be loaded. Your filters have not changed."
+      action={<Link href={adminLearningHref("PROGRESS", parsed)} className="font-semibold text-primary-text">Retry loading course progress</Link>} />
+  </div>;
+  const data = dataResult.value;
+  const filters = filtersResult.status === "fulfilled" ? filtersResult.value : { courses: [], cohorts: [] };
   const summary = adminProgressStats(data.items);
   return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress"
       description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners." />
-    <p className="rounded-md border border-border bg-surface p-3 text-sm text-body">
+    <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
     </p>
     <a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
@@ -53,7 +63,7 @@ export default async function SuperAdminCourseProgressPage({
       <Button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)]-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</Button>
     </form>
     {filtersResult.status==="rejected"?<p role="status"
-      className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+      className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
       Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
     </p>:null}
     <Link className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text" href="/admin/course-progress">Clear filters</Link>
@@ -62,7 +72,7 @@ export default async function SuperAdminCourseProgressPage({
       {" "}{summary.completedContentRecords} completed rows. Learner counts are per-offering, not additive.
     </p>
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-      {data.items.map(item => <article key={item.offeringId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+      {data.items.map(item => <article key={item.offeringId} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words font-semibold text-foreground">{item.courseName} ({item.courseCode})</h2>
           <StatusBadge tone={item.offeringStatus === "ACTIVE" ? "success" : "neutral"}>{item.offeringStatus}</StatusBadge>
@@ -87,9 +97,9 @@ export default async function SuperAdminCourseProgressPage({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page - 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link> : null}
+          className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page + 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Next</Link> : null}
+          className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-primary-text">Next</Link> : null}
       </div>
     </nav>
     <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>

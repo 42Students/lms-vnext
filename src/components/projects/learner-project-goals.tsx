@@ -2,7 +2,7 @@ import type { LearnerProjectGoalSummary } from "@/modules/projects/learner-proje
 export function LearnerProjectGoals({overview}: {overview:LearnerProjectGoalSummary}) {
   const hasContent=Boolean(overview.goal || overview.description || overview.deliverables.length || overview.definitionOfDone.length || overview.personas.length);
   return (
-    <section aria-label="Project goals and deliverables" className="rounded-xl border border-border bg-surface p-5">
+    <section aria-label="Project goals and deliverables" className="border-b border-border pb-5">
       <h2 className="text-lg font-semibold text-foreground">About this project</h2>
       {!hasContent ? (
         <p className="mt-2 text-sm text-muted-foreground">No authored goal or deliverables have been recorded for this Project.</p>

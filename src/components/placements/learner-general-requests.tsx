@@ -1,5 +1,9 @@
 "use client";
 import {useEffect,useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {tpoGeneralRequestInputSchema} from "@/modules/placements/tpo-general-request-model";
@@ -9,7 +13,7 @@ const kinds:readonly [Kind,string][]=[
  ["OFF_CAMPUS_OFFER","Off-campus offer"],["REGISTRATION_CHANGE","Registration change"],
  ["ABSENCE_DISPUTE","Absence dispute"],["OFFER_ACCEPTANCE_DISPUTE","Externally reported acceptance"],["CORRECTION_WITH_PROOF","Correction with proof"],
  ["PLACEMENT_AFTER_PLACEMENT","Placement after placement"]];
-const box="min-h-11 rounded border border-border bg-surface p-2";
+const box="min-h-11 sm:min-h-9";
 export function LearnerGeneralRequests({
  initialKind="OFF_CAMPUS_OFFER",initialApplicationId="",initialRoundId="",initialOfferId="",
 }:{initialKind?:Kind;initialApplicationId?:string;initialRoundId?:string;initialOfferId?:string}){
@@ -49,44 +53,43 @@ export function LearnerGeneralRequests({
    });
   }catch{setError("The request could not be sent. Your entered details are still here; please retry.");}
  }
- return <section aria-label="Other placement requests" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Other placement requests" className="space-y-3 border-b border-border pb-5">
   <h2 className="text-lg font-semibold">Other placement requests</h2>
   <p className="text-sm">Tell your placement cell about an off-campus offer, registration change, disputed absence, record correction or a request to apply after placement.</p>
-  <label className="grid gap-1 text-sm">Request kind<select className={box} disabled={pending} value={kind}
+  <label className="grid gap-1 text-sm">Request kind<Select className={box} disabled={pending} value={kind}
    onChange={e=>{setKind(e.target.value as Kind);setTarget("");setAux("");setProofUrl("");}}>
    {kinds.map(([id,name])=><option key={id} value={id}>{name}</option>)}
-  </select></label>
+  </Select></label>
   {kind==="REGISTRATION_CHANGE"?<label className="grid gap-1 text-sm">New choice
-   <select className={box} value={target||"HIGHER_STUDIES"} onChange={e=>setTarget(e.target.value)}>
+   <Select className={box} value={target||"HIGHER_STUDIES"} onChange={e=>setTarget(e.target.value)}>
     {["HIGHER_STUDIES","PLACEMENTS","NOT_INTERESTED","ENTREPRENEURSHIP","COMPETITIVE_EXAMS"].map(key=>
      <option key={key} value={key}>{key.replaceAll("_"," ").toLowerCase()}</option>)}
-   </select>
+   </Select>
   </label>:
    <label className="grid gap-1 text-sm">{kind==="OFF_CAMPUS_OFFER"?"Company name":
     kind==="ABSENCE_DISPUTE"?"Application ID":kind==="OFFER_ACCEPTANCE_DISPUTE"?"Offer ID":kind==="CORRECTION_WITH_PROOF"?"Record field":"Requested drive ID"}
-    <input className={box} maxLength={kind==="OFF_CAMPUS_OFFER"?150:kind==="CORRECTION_WITH_PROOF"?140:200} value={target} onChange={e=>setTarget(e.target.value)}/>
+    <Input className={box} maxLength={kind==="OFF_CAMPUS_OFFER"?150:kind==="CORRECTION_WITH_PROOF"?140:200} value={target} onChange={e=>setTarget(e.target.value)}/>
    </label>}
   {kind!=="REGISTRATION_CHANGE"&&kind!=="OFFER_ACCEPTANCE_DISPUTE"?<label className="grid gap-1 text-sm">
    {kind==="OFF_CAMPUS_OFFER"?"Annual CTC in LPA":
     kind==="ABSENCE_DISPUTE"?"Round ID":kind==="CORRECTION_WITH_PROOF"?"Corrected value":"Justification"}
-   <input className={box} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
+   <Input className={box} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
   </label>:target==="PLACEMENTS"?<label className="flex items-start gap-2 text-sm">
    <input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>
    I request placement registration and consent to the placement rules.
   </label>:null}
   {["OFF_CAMPUS_OFFER","ABSENCE_DISPUTE","CORRECTION_WITH_PROOF"].includes(kind)?<label className="grid gap-1 text-sm">Proof link (HTTPS)
-   <input className={box} type="url" placeholder="https://..." maxLength={2000} value={proofUrl} onChange={e=>setProofUrl(e.target.value)}/>
+   <Input className={box} type="url" placeholder="https://..." maxLength={2000} value={proofUrl} onChange={e=>setProofUrl(e.target.value)}/>
   </label>:null}
   <label className="grid gap-1 text-sm">Why are you requesting this?
-   <textarea className={box} rows={3} maxLength={2000} value={reason} onChange={e=>setReason(e.target.value)}/>
+   <Textarea className={box} rows={3} maxLength={2000} value={reason} onChange={e=>setReason(e.target.value)}/>
   </label>
-  <button type="button" disabled={pending} onClick={()=>void submit()}
-   className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">{pending?"Sending…":"Send request"}</button>
+  <Button type="button" disabled={pending} onClick={()=>void submit()}>{pending?"Sending…":"Send request"}</Button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <h3 className="font-semibold">Request history</h3>
   {!rows.length?<p role="status" className="text-sm">No other placement requests recorded yet.</p>:
-   <ul className="space-y-2">{rows.map(row=><li key={row.id} className="rounded border border-border p-3 text-sm">
+   <ul className="space-y-2">{rows.map(row=><li key={row.id} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
     <strong>{row.kind.replaceAll("_"," ")}</strong> · {row.status.replaceAll("_"," ")}
     <p className="break-words">{row.reason}</p>
     {row.decisionNote?<p>Placement cell: {row.decisionNote}</p>:null}

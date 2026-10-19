@@ -38,7 +38,7 @@ export default async function SuperAdminElectivesPage({
       description="Choose a college in the header above to see its electives." /> :
     <>
       {options ? <CollegeSlotManager options={options} /> : null}
-      <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
+      <form className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <label className="grid gap-1 text-sm font-semibold text-body">Search
           <Input name="q" defaultValue={data.query.q} placeholder="Slot or program"
             className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
