@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState,type ReactNode} from "react";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
@@ -8,7 +9,7 @@ export function TpoNoticeComposerDialog({children,mode="NEW"}:{children:ReactNod
  const title=mode==="EDIT"?"Edit announcement":"New announcement";
  return <>
   <Button type="button" onClick={()=>setOpen(true)}
-   className="min-h-11 sm:min-h-9">
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary">
    {title}
   </Button>
   <Dialog open={open} onOpenChange={setOpen} title={title}>
