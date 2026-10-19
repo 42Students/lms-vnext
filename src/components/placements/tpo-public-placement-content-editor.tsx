@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState} from "react";
 import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,
@@ -61,7 +62,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
    <legend className="font-semibold">Numbers to show</legend>
    <p className="text-xs text-muted-foreground">Choose the public numbers and their order. Small or unavailable values stay hidden.</p>
    {ALL.map(key=><label key={key} className="flex min-h-11 md:min-h-9 items-center gap-2 text-sm">
-    <input type="checkbox" checked={metricKeys.includes(key)} disabled={!initial.ready||busy}
+    <Checkbox checked={metricKeys.includes(key)} disabled={!initial.ready||busy}
      onChange={()=>toggle(key)}/>{PUBLIC_METRIC_LABELS[key]}
    </label>)}
   </fieldset>
