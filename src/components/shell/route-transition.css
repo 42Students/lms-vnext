@@ -10,6 +10,12 @@
  max-width:100%;
  margin-top:0;
  box-sizing:border-box;
+ transition:opacity 220ms cubic-bezier(.2,.8,.2,1),transform 260ms cubic-bezier(.2,.8,.2,1);
+}
+.lms-shell-route-content[data-route-transitioning="true"] {
+ opacity:.78;
+ transform:translateY(6px) scale(.998);
+ will-change:opacity,transform;
 }
 @media (prefers-reduced-motion:no-preference) {
  .lms-shell-route-content {animation:lms-route-slide-in 250ms ease-out;}
