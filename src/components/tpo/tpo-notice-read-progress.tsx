@@ -47,7 +47,7 @@ export function TpoNoticeReadProgress({id}:{id:string}){
     className="min-h-11 sm:min-h-9"
     onClick={()=>void remind()}>{busy?"Sending…":"Remind them"}</Button>:null}
    {reminder?<p role="status">{reminder}</p>:null}
-   {data.unread.length?<Disclosure title="Who hasn\u0027t read">
+   {data.unread.length?<Disclosure title="Who hasn't read">
     <ul className="max-h-48 overflow-auto">{data.unread.map((name,index)=>
      <li key={index} className="break-words py-0.5">{name}</li>)}</ul>
    </Disclosure>:null}
