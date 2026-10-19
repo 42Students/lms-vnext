@@ -41,7 +41,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <Link href={collegeContactsTabHref(filter,"STUDENT")} aria-current={filter.tab==="STUDENT"?"page":undefined}
      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border px-3 py-2 text-sm">Student contacts</Link>
   </nav>
-  {filter.membershipId&&<div role="status" className="flex flex-wrap items-center gap-3 rounded-lg border bg-surface p-3 text-sm">
+  {filter.membershipId&&<div role="status" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius,9px)] border bg-surface p-3 text-sm">
    <span>Showing the bookmarked contact record only.</span>
    <Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline">Show matching contact directory</Link>
   </div>}
@@ -53,11 +53,11 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
         defaultValue={filter.q} placeholder="Search contacts"
         className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
     </label>}>
-  <form id="college-contacts-filters" action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 rounded-lg border bg-surface p-4">
+  <form id="college-contacts-filters" action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius,9px)] border bg-surface p-4">
    <input type="hidden" name="tab" value={filter.tab}/>
    {filter.membershipId&&<input type="hidden" name="membershipId" value={filter.membershipId}/>}
 
-   <details className="min-w-0 flex-auto basis-full rounded-md border border-border bg-surface p-3" open={activeCollegeContactFilterCount(filter)>0}>
+   <details className="min-w-0 flex-auto basis-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3" open={activeCollegeContactFilterCount(filter)>0}>
     <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
     <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
    <label className="min-w-0 flex-1 basis-32 text-sm">Name begins with
@@ -198,7 +198,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <section aria-label="Contacts" className="space-y-3">
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
    <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
-   {results.items.length===0?<div role="status" className="space-y-2 rounded-lg border p-4 text-sm"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters in this tab</Link></div>:
+   {results.items.length===0?<div role="status" className="space-y-2 rounded-[var(--lms-control-radius,9px)] border p-4 text-sm"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters in this tab</Link></div>:
     <DataTable rows={results.items} getRowKey={contact=>contact.membershipId}
       caption="Contacts" empty={<div role="status"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center underline">Clear filters in this tab</Link></div>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
       columns={[
