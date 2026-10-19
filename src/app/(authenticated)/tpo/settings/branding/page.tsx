@@ -222,7 +222,7 @@ export default async function TpoPlacementBrandingPage() {
 
       {communication.ready?<TpoEmailSignatureEditor initial={communication.emailSignature} version={communication.version}/>:
        <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm">Email signature settings are not available in this database.</p>}
-      <section className="border-t border-border bg-surface-subtle pt-4 text-sm leading-6 text-body">
+      <section className="border-t border-border pt-4 text-sm leading-6 text-body">
         <h2 className="m-0 text-sm font-semibold text-foreground">
           Source and scope
         </h2>
