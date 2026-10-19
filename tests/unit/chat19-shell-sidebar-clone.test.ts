@@ -27,12 +27,15 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
 
   it("keeps mobile drawer controls accessible and its scroll surface padded", () => {
     const mobile = read("src/components/shell/mobile-navigation.tsx");
-    expect(mobile).toContain('import { Button } from "@/components/ui/button"');
-    expect(mobile).toContain('aria-modal="true"');
-    expect(mobile).toContain('data-slot="mobile-sidebar-scroll"');
-    expect(mobile).toContain("overflow-y-auto px-3 pt-2");
-    expect(css()).toContain("-webkit-overflow-scrolling:touch");
-    expect(css()).toContain('data-slot="mobile-sidebar-scroll"');
+    expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');
+    expect(mobile).toContain('import {Button} from "@/components/ui/button"');
+    expect(mobile).toContain('side="left"');
+    expect(mobile).toContain('headerLeading={<ShellLogoMark />}');
+    expect(mobile).toContain('!px-3 !pt-2 !pb-[calc(24px+env(safe-area-inset-bottom,0px))]');
+    expect(css()).toContain('.lms-mobile-sidebar[data-slot="drawer"]');
+    expect(css()).toContain("width:82vw");
+    expect(css()).toContain("max-width:300px");
+    expect(css()).toContain('-webkit-overflow-scrolling:touch');
   });
 
   it("maps every sidebar destination to a real glyph or existing image", () => {
