@@ -29,13 +29,13 @@ export function LearnerRoadmapItemDialog({
             {caption ?? kind} · {progress.replaceAll("_", " ").toLowerCase()}
             {dueText ? " · Due " + dueText : ""}
           </span>
-          <span className="block truncate text-sm font-semibold text-foreground">{title}</span>
+          <span className="block break-words text-sm font-semibold text-foreground">{title}</span>
         </span>
         <span className="shrink-0 text-sm font-semibold text-primary-text">Open ›</span>
       </Button>
       <Dialog open={open} onOpenChange={setOpen} title={kind + ": " + title}
         description={caption ?? kind}
-        footer={<Button variant="secondary" onClick={() => setOpen(false)}>Close</Button>}>
+        footer={<Button variant="secondary" className="min-h-11 md:min-h-9" onClick={() => setOpen(false)}>Close</Button>}>
         {open ? <div className="min-w-0">{children}</div> : null}
       </Dialog>
     </div>
