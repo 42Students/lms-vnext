@@ -359,3 +359,5 @@ src/app/(authenticated)/admin/people/unassigned/loading.tsx
 - Three additional `[chat-6]` source commits brought college module lock, learner module lock, and descendant academic scope lock controls onto shared `Checkbox` without changing acknowledgement requirements, inherited policy behavior, confirmation or authorization.
 - Files: `src/components/admin/college-feature-rule-editor.tsx`, `src/components/admin/student-rule-editor.tsx`, `src/components/admin/descendant-feature-rule-editor.tsx`.
 - Static re-fetch found paired `Button`/`Select` tags in all three, no remaining native checkbox tags, and no tests/TypeScript/CI/runtime invoked. This continuation totals **20 source file commits plus two ledger updates**, on the lane branch only.
+
+- Follow-up syntax fix: restored the leading `"use client";` directive before the new Checkbox import in `super-admin-interview-operations.tsx` (commit `c91b1c6`), then re-read the edited source. Updated continuation count: **21 source commits across 20 source files**, plus ledger updates. Multiline `import {` statements in the membership/onboard dialogs are distinct imports, not duplicates.
