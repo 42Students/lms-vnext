@@ -1,6 +1,7 @@
 "use client";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -230,8 +231,7 @@ export function LearnerAssessmentOverview({
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm font-semibold text-body">
           <Badge  tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
-          <details className="min-w-0 rounded-lg border border-border px-3 py-1">
-            <summary className="cursor-pointer text-primary-text">{submittedQuizzes.length} Submitted</summary>
+          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0 rounded-lg border border-border px-3 py-1">
             {submittedQuizzes.length>0 ? (
               <>
                 <ul role="region" aria-label="Submitted quizzes, scroll for more" tabIndex={0}
@@ -243,7 +243,7 @@ export function LearnerAssessmentOverview({
                 </p>:null}
               </>
             ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
-          </details>
+          </Disclosure>
         </section>
       ) : (<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Metric

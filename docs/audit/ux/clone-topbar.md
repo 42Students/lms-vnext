@@ -172,3 +172,56 @@ Connected GitHub source retrieval is **not** a shell checkout. Two GitHub fetch 
 - [ ] **B1 account/org switcher** (missing: rendered placement, legacy full state matrix, shared overlay coverage).
 - [ ] **B2 notifications drawer** (missing: grouping, exact empty/loading/error, desktop dropdown behavior, unified portal coverage).
 - [ ] **B2 command palette** (missing: complete original-result SCSS/action reference, responsive and regressions proof).
+
+
+## Bounded continuation — 2026-10-19, chat-13
+
+**Starting sync:** merged `main` at `d915bd67b208` into this lane before editing. No CI, TypeScript compiler, browser session, screenshot comparison or full-repository shell grep was run. Every source claim below is limited to the named fetched files; visual verification remains section J.
+
+### B2 notification value/state delta — source references
+
+| Property / state | Legacy evidence | vNext evidence after this turn | Strict result |
+| --- | --- | --- | --- |
+| Repeated overrides | One notification rule group in `docs/design/legacy-styles/components___notification-drawer.scss:113-147` | Removed duplicate topbar notification/switcher declarations in `src/components/shell/topbar/topbar.module.css` immediately above `:322` | Duplicate removed; browser-computed cascade unverified |
+| Panel entry | Opacity 0→1, translateY(-8px)→0, 200ms ease-out — `components___notification-drawer.scss:125-147` | `topbar.module.css:436-443`, desktop only, reduced motion guarded | CSS values match; native dialog placement still differs |
+| Backdrop entry | 150ms ease-out, rgba(0,0,0,.08) — `components___notification-drawer.scss:64-109` | `topbar.module.css:435,445-450` | Color and animation values matched for TPO modal; DOM/portal differs |
+| Reduced motion | Panel/backdrop animations disabled when reduced — `components___notification-drawer.scss:125-147` | `topbar.module.css:452-457` | Matched scoped declaration |
+| Loading | Centered, padding 32px 20px, 14px, gap12 — `components___notification-drawer.scss:272-291` | `topbar.module.css:464-468`; `src/components/tpo/tpo-bell-panel.tsx:113` | Matched layout values for TPO; other portals and progress icon unresolved |
+| Empty | 32px 20px, 36px icon, explanatory body — `components___notification-drawer.scss:301-321` | `topbar.module.css:464-468`; `tpo-bell-panel.tsx:114` | **Missing** legacy empty icon and portal-wide state parity |
+| Error | Centered 32px 20px, muted 14px — `components___notification-drawer.scss:293-299` | `topbar.module.css:480`, `tpo-bell-panel.tsx:129` | TPO centered/error role, but error color differs from old muted text |
+| Notification day grouping | Nested list/item roles, 12px list inset, 6px gap — `components___notification-drawer.scss:180-190` | IST dates grouped, nested `ul[role=list]` with matching closing tags — `tpo-bell-panel.tsx:21-30,115-127` | New grouping functional source; exact old grouping labels **unverified** |
+| Notification footer | 12px 20px, light neutral background, top border — `components___notification-drawer.scss:323-356` | Shared `Drawer.footer` `tpo-bell-panel.tsx:110-112`, CSS `topbar.module.css:471-473` | Structural/spacing match for TPO; role consistency still missing |
+| Footer loading/action states | Mark-all action and minimum 44px — `components___notification-drawer.scss:323-356` | TPO refresh and mark-all use shared `Button.loading`, navigation dismisses drawer — `tpo-bell-panel.tsx:110-112` | Source improvement; rendered state not proven |
+| Mobile panel | 100% width, safe-area top/bottom, 44px close — `components___notification-drawer.scss:400-445` | `topbar.module.css:396-413,471-473`, shared Drawer close from `src/components/ui/drawer.tsx` | Rules checked; screenshot/touch/keyboard proof still missing |
+
+### B2 command results state delta
+
+| State | Legacy reference | vNext source | Result |
+| --- | --- | --- | --- |
+| Search hint | `docs/design/old-lms-shell.css:56-60` — Ctrl K | `command-search.tsx:123-138` | Matched label |
+| Learner results fetching | Legacy loading state not specified in command result SCSS `legacy-styles/components___dropdown.scss:155-184` | `command-search.tsx:24,35-53,179-180` explicit loading/loaded/error | **Cannot tick without legacy state source** |
+| TPO async record lookup | Legacy command palette suggestions not enumerated in old SCSS | `command-search.tsx:181-212` suppress false “no matches” while TPO lookup is pending | Improved; no exact baseline |
+| No matching commands | Legacy command palette empty wording/style absent from reference | `command-search.tsx:209-213`, `role=status` | Accessible but unmatched reference |
+
+### Strict scoped source counts / syntax review
+
+From connected GitHub source reads of the current `chatgpt/chat-13-b` branch, **not a repository-wide command execution**:
+
+| Scoped equivalent command | Count | Notes |
+| --- | ---: | --- |
+| `grep -E '<button([ >])|<input([ >])' src/components/shell/topbar/{account-menu,command-search,legacy-topbar,organization-switcher}.tsx src/components/tpo/tpo-bell-panel.tsx` | 0 | Shared `Button`/`Input` remain; not a full-`src` claim |
+| `grep -E '</Select([^>]|$)|</Button([^>]|$)' [changed TSX files]` | 0 | Checked changed JSX names and closing pairs |
+| `grep -E 'rounded-\\[[^"]+\\]-\\[' [changed TSX files]` | 0 observed in scoped source review | Full-repository scan not run |
+| `grep -E '#[0-9a-fA-F]{3,8}' src/components/shell/topbar/topbar.module.css` | Nonzero | Old values intentionally remain hard-coded in component CSS, failing strict shared-token gate |
+| `grep -E 'role="dialog"|<Drawer' [topbar/notification files]` | Nonzero | Hand-rolled account/org/learner overlay and modal TPO bell remain |
+
+**Source-only JSX review:** The changed TPO list has exactly two nested `<ul></ul>` pairs and two `<li></li>` pairs, each constructed inside its respective map; the edited shared `<Button></Button>` pairs and CSS curly braces balanced. No parsed TSX/typecheck or runtime proof.
+
+### Work queue for next bounded turn
+
+- [ ] **B1 top bar:** inspect all portal message destinations/count API provenance; shared token/hard-coded-color cleanup and real tablet/phone review.
+- [ ] **B1 account/org switcher:** `src/components/shell/topbar/account-menu.tsx` + `organization-switcher.tsx`: replace hand-rolled popovers only where a shared nonmodal primitive supports the old UX, then measure all open/hover/focus/disabled states.
+- [ ] **B2 notification drawer:** next file **`src/components/shell/learner-notification-bell.tsx`**; currently a custom dialog with role-specific list and partially incompatible mobile styling. Follow with recruiter bell and TPO desktop anchor positioning.
+- [ ] **B2 command palette:** `src/components/shell/topbar/command-search.tsx`; find complete old result reference or keep unticked, and perform mobile/keyboard regression checks.
+
+**Strict tick outcome remains:** B1 top bar ☐; B1 account/org switcher ☐; B2 notification drawer ☐; B2 command palette ☐. Properties fixed here do not waive the strict coverage, responsive, state, and regression gates.

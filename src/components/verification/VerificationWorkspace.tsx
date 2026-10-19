@@ -2,6 +2,8 @@
 import { PageHeader } from "@/components/ui/page-header";
 import {useMemo,useState} from "react";
 import {Button} from "@/components/ui/button";
+import {Tabs} from "@/components/ui/tabs";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -45,13 +47,21 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
         ? collegeVerificationLegacyCopy.subtitle
         : "Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided."}
   />
-  <nav aria-label="Verification status" className="flex flex-wrap gap-2">
-   {(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>
-    <Button variant={tab===t?"primary":"secondary"} type="button" key={t} aria-pressed={tab===t} onClick={()=>onTabChange?onTabChange(t):setTab(t)}
-     className="min-h-[var(--lms-control-height)] ">
-     {t==="SENT_BACK"?"Sent back":t==="WAITING"?"Waiting":"Verified"}{showTabCounts?` (${counts[t]})`:""}
-    </Button>)}
-  </nav>
+  <Tabs
+   ariaLabel="Verification status"
+   value={tab}
+   renderPanel={false}
+   controlledOnly
+   onValueChange={next=>{
+    const selectedTab=next as VerificationTab;
+    if(onTabChange)onTabChange(selectedTab);else setTab(selectedTab);
+   }}
+   items={(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>({
+    value:t,
+    label:t==="SENT_BACK"?"Sent back":t==="WAITING"?"Waiting":"Verified",
+    count:showTabCounts?counts[t]:undefined,
+   }))}
+  />
   <div className="flex flex-wrap gap-2">
    {!disableLocalSearch&&<label className="min-w-0 flex-1 text-sm">Search learners
     <Input aria-label="Search learners" className="mt-1 w-full"
@@ -79,7 +89,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
-     <p className="mt-1 text-xs font-semibold text-primary-text">{verificationQueueCardPresentation(row.status).state}</p>
+     <StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>{verificationQueueCardPresentation(row.status).state}</StatusBadge>
      {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
      {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
