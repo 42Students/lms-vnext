@@ -62,7 +62,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    {valid>0?<p role="status" className="text-sm">{valid} colleges ready</p>:null}
    {(error||validation)?<p role="alert" className="text-sm text-error">{error||validation}</p>:null}
    <div className="flex flex-wrap gap-2">
-    <Button type="button" disabled={busy||!valid} onClick={()=>{confirmedVersionRef.current=versionRef.current;setConfirmImport(true);}}
+    <Button type="button" loading={busy} disabled={busy||!valid} onClick={()=>{confirmedVersionRef.current=versionRef.current;setConfirmImport(true);}}
      >
      {busy?"Importing…":"Import colleges"}</Button>
     <Button type="button" variant="secondary" disabled={busy}
