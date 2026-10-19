@@ -102,6 +102,20 @@ export function Dropdown({ trigger, children, label, align = "start", mobileShee
     }} className="inline-flex min-h-9 cursor-pointer list-none items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">{trigger}</summary>
     <div ref={panelRef} data-slot="dropdown"
       className={cx("z-40 min-w-[100px] max-w-[calc(100vw_-_1.5rem)] overflow-y-auto overscroll-contain border border-[var(--lms-canvas-border)] bg-white text-[14px] leading-5 text-[var(--lms-body-text)] shadow-[var(--lms-dropdown-shadow)]", mobileSheet ? "fixed inset-x-0 bottom-0 max-h-[70dvh] w-full rounded-t-[12px] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:absolute sm:inset-x-auto sm:bottom-auto sm:top-[calc(100%_+_5px)] sm:max-h-72 sm:w-72 sm:rounded-[6px] sm:p-3" : "absolute top-[calc(100%_+_5px)] max-h-[min(32rem,calc(100dvh_-_2rem))] rounded-[6px] px-6 py-4", align === "end" ? "right-0" : "left-0")}
+      onKeyDown={event => {
+        if (event.target instanceof Element && event.target.closest("input, select, textarea, [contenteditable=true]")) return;
+        if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+        const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
+          '[role="menuitem"]:not([aria-disabled="true"]):not(:disabled), a[href]:not([aria-disabled="true"]), button:not(:disabled)',
+        )).filter(item => item.getClientRects().length > 0);
+        if (!items.length) return;
+        const index = items.indexOf(document.activeElement as HTMLElement);
+        const target = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1 :
+          event.key === "ArrowUp" ? (index < 0 ? items.length - 1 : (index - 1 + items.length) % items.length) :
+          (index + 1) % items.length;
+        event.preventDefault();
+        items[target]?.focus();
+      }}
       onClick={event => {
         const item = event.target instanceof Element ? event.target.closest('[role="menuitem"], a[href]') : null;
         if (!item || item.matches('[aria-disabled="true"], :disabled') || !rootRef.current) return;
