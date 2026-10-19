@@ -58,9 +58,9 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     className="mt-2 block w-full rounded-[9px] border border-border p-3 text-foreground"/>
   </label>
   <button type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
-   className="min-h-11 md:min-h-9 rounded border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Checking…":"Preview matching results"}</button>
-  {preview?<div className="space-y-4 rounded-lg border border-border bg-surface-subtle p-4">
+  {preview?<div className="space-y-4 rounded-lg border border-border bg-muted p-4">
    <h3 className="font-semibold">Import preview</h3>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
    <div tabIndex={0} role="group" aria-label="Imported round preview, scroll for more rows" className="max-h-44 min-h-0 overflow-auto overscroll-contain rounded border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
@@ -72,7 +72,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 rounded border border-border bg-surface p-3 sm:grid-cols-2">
      <p className="text-sm">Row {row.line}: {row.identity||"No ID"} · {row.reason}</p>
      <div className="flex flex-wrap gap-2">
-      <select aria-label={"Match row "+row.line} className="min-h-11 md:min-h-9 flex-1 rounded border border-border bg-surface p-2 text-sm"
+      <select aria-label={"Match row "+row.line} className="min-h-11 md:min-h-9 flex-1 rounded-[9px] border border-border bg-surface p-2 text-sm"
        value={overrides[row.line]??""} disabled={busy} onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
        <option value="">Do not match this row</option>
        {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
@@ -108,7 +108,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </fieldset>
    <button type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
     (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
+    className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
     {busy?"Staging…":"Confirm and stage results"}</button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}

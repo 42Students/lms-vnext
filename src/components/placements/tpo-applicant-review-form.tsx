@@ -71,7 +71,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
         {["Did not meet criteria","Application incomplete","Company screening decision","Other"].map(preset=>
           <button type="button" key={preset} disabled={pending||saved}
             onClick={()=>{setInternalReason(preset==="Other"?"":preset);setReviewed(false);}}
-            className="min-h-11 md:min-h-9 rounded border border-border px-3 text-primary-text">{preset}</button>)}
+            className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-primary-text">{preset}</button>)}
       </div>
       <label className="block text-sm">Internal not-selected reason (not shown to the learner)
         <textarea value={internalReason} maxLength={500} rows={2}
