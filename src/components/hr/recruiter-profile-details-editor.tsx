@@ -78,7 +78,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
      <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
       value={form[key]} disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?160:100}
       onChange={e=>update(key,e.target.value)}
-      className="w-full"/>
+      className="min-h-11 min-[768px]:min-h-9 w-full"/>
     </label>)}
   </div>
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}

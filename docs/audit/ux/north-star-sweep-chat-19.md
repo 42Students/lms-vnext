@@ -6,8 +6,8 @@ Scope: **sidebar shell/rail first**, followed by **style-token-only** updates ac
 
 | Legacy contract | Implementation and evidence |
 |---|---|
-| Collapsed icon rail 96px; expand 256px on pointer hover or keyboard focus | `sidebar-legacy.css`, `app-shell.tsx`: desktop aside fixed at 96px, 256px `:hover/:focus-within`, `width .15s cubic-bezier(.2,0,0,1)` |
-| Content pushes right rather than overlay | `.lms-shell-page` 96px left padding → 256px under `.lms-desktop-sidebar:is(:hover,:focus-within) ~ .lms-shell-page`, matching rail transition |
+| Collapsed icon rail 96px; expand 256px on pointer hover or keyboard focus | `sidebar-legacy.css`, `app-shell.tsx`: desktop relative non-shrinking flex rail at 96px, then 256px `:hover/:focus-within`, `width .15s cubic-bezier(.2,0,0,1)` |
+| Content pushes right rather than overlay | `.lms-shell-frame` flex siblings: the rail width changes 96→256px while `.lms-shell-page` flexes; no duplicate 96/256px left padding |
 | White panel, hairline #f1f4f9 border, hidden scrollbar, no shadow | `sidebar-legacy.css`, nav viewport remains wheel/touch/keyboard scrollable |
 | Group headings visible expanded only, 22px dividers collapsed | `SHELL_SECTION_LABELS`, `TPO_SECTION_LABELS`, `lms-nav-heading` CSS |
 | Every item has real icon (no initials) | 61 registered navigation hrefs have explicit `SHELL_NAV_ICON_KEYS`; existing learner SVG assets retained; other items use typed inlined SVG paths; no uninstalled lucide-react import |
@@ -15,7 +15,7 @@ Scope: **sidebar shell/rail first**, followed by **style-token-only** updates ac
 | 15px labels expanded; active #eff8fa with 3px #26bac7 inset and #1a95a1 text; hover rgba(38,186,199,.07) | `sidebar-legacy.css`, accessible named links with `aria-current`, `aria-label` and focus ring |
 | Count badges float onto icon collapsed and become trailing badges expanded | `lms-sidebar-badge` CSS and existing guarded TPO counter API / badges |
 | Faculty and TPO should not mingle in the same list | `scopedShellNavigation` selects active teacher/TPO group on multi-role paths without removing either role's underlying permissions or routes |
-| Keep phone drawer rather than use desktop expansion on phones | CSS breakpoint 768px, existing focus trap, Escape, focus return, overlay/drawer, 16rem width and visible labels |
+| Keep phone drawer rather than use desktop expansion on phones | CSS breakpoint 768px, existing focus trap, Escape, focus return, overlay/drawer, 82vw width capped at 300px and visible labels |
 
 Source test: `tests/unit/chat19-north-star-legacy-sidebar.test.ts`.
 
@@ -175,7 +175,7 @@ Source baseline: `docs/orchestrator/queues/master-queue.md` OWNER GOAL and the e
 | Collapsed rail 6rem / 96px | `width:96px;min-width:96px` | Matched |
 | Expanded rail 16rem / 256px on hover | `:is(:hover,:focus-within){width:256px}` | Matched; also keyboard focus |
 | `width .15s cubic-bezier(.2,0,0,1)` | Same width/opacity timing and easing | Matched |
-| Real content push rather than overlay | Adjacent `.lms-shell-page` left padding 96 → 256px using same easing | Matched intent |
+| Real content push rather than overlay | Relative flex sibling rail grows 96→256px and naturally pushes `.lms-shell-page` without padding | Matched intent |
 | White sidebar, `#f1f4f9` right border | `#fff`, 1px `#f1f4f9` | Matched |
 | Nav item min-height 44px, margin-bottom 6px, padding 10px 12px, radius 8px | Same CSS values | Matched |
 | Text 15px / 20px, icon 24px box, 20px glyph, opacity .55 | Same CSS values | Matched |
@@ -187,7 +187,7 @@ Source baseline: `docs/orchestrator/queues/master-queue.md` OWNER GOAL and the e
 | Collapsed badge `top:4px;left:50%;margin-left:5px;scale(.72)`; expanded badge inline | Same selectors and values | Matched |
 | TPO hover scrollbar thin, 4px thumb rgba(107,114,128,.28) | TPO-only scroll selector on expanded rail | Matched, includes keyboard focus |
 | Header 38×36px logomark | `ShellLogoMark` 38×36 inline SVG in desktop shell and mobile drawer | Matched size and supplied logo SVG |
-| Desktop hidden below 768px, touch drawer at 256px max | `md:flex` desktop, separate focus-trapped 16rem touch drawer | Matched behaviour |
+| Desktop hidden below 768px, touch drawer at 256px max | `md:flex` desktop, separate native-dialog drawer at 82vw/max300px | Matched behaviour |
 | Different portal rows kept in different account menus | `scopedShellNavigation` now filters *all* rows from other account portals, including a stray single-row role | Corrected |
 
 **Icon identity corrections:** Built route-to-glyph mappings cover all 61 literal sidebar navigation routes. The previous generic briefcase icon is now a Solution-style icon for recruiting/placement flows; Bank, Appstore, Partition, Apartment, and UsergroupAdd icon families are distinct, following the names in `docs/audit/legacy-copy-B.md`. Existing learner icon image paths were cross-checked against the 12 actual files under `public/assets/images/common/`. SVGs are faithful *style-family approximations* of the original Ant Design outlines, not claims of identical upstream path data.
@@ -211,3 +211,37 @@ Every literal `href` in `shell-model.ts` currently resolves through `SHELL_NAV_I
 - Verified the mapping by source enumeration: **61 / 61 literal navigation routes** resolve an icon key. The only keys outside the 24 official outlined families are `clipboard`, `checklist`, `table` and `briefcase`; all six associated learner/faculty routes supply existing `/assets/images/common/*.svg` images instead. Those static image files exist in the public assets tree.
 - The desktop and mobile logo remains the original copied 38×36px three-color mark. Image-backed navigation uses eager, non-draggable SVG images to avoid missing or drag-ghost icons during rail expansion.
 - These are upstream public SVG path shapes, but exact parity with the particular historic Ant Design **package version** and browser antialiasing still requires a visual capture. No TypeScript tests, runtime tests, CI, browser, or application run was performed.
+
+### Replacement lane: production small footer counter (source-complete, screenshot-open)
+
+The original `lms2-fe/prod-2026/src/components/MobileFooter/MobileFooter.jsx:104-110`
+renders an Ant Design `<Badge size="small">` around the 24px notification icon.
+Unlike the app's **teal navigation accent**, the standard AntD count indicator
+uses the error/red token. The newer vNext clone previously placed a 16px teal
+badge against the entire link; that did not match the legacy icon geometry.
+`learner-faculty-mobile-footer.tsx:97-103` now wraps bell and badge together,
+and `legacy-mobile-footer.css:75-101` matches the AntD small indicator.
+The unread-count calculation itself remains intentionally vNext-specific.
+
+| State/property | Legacy source | Current vNext file:line | Source result |
+|---|---|---|---|
+| Count attached to bell, not 44px tap link | prod-2026 `MobileFooter.jsx:104-110`: `Badge` contains 24×24 `Image` | `learner-faculty-mobile-footer.tsx:97-103` wraps image + badge | Match structure |
+| Small height and minimum width | AntD v5 Badge `indicatorHeightSM=14` | `legacy-mobile-footer.css:89-90`: 14×14px | Match token |
+| Count font and line height | AntD v5 Badge `textFontSizeSM=12`, line-height 14 | `legacy-mobile-footer.css:96-98`: 12px/14px | Match token |
+| Indicator fill | AntD default `colorError=#ff4d4f`; old Badge has no explicit color override at `MobileFooter.jsx:106` | `legacy-mobile-footer.css:93`: #ff4d4f | Default match; final computed theme open |
+| Icon-relative transform | AntD count is attached to the 24px image wrapper | `legacy-mobile-footer.css:75-88`: wrapper relative, badge top/right0 translated 50%/-50% | Semantic placement match; exact pixels unverified |
+| Empty/zero | Old Badge does not show `count=0` absent `showZero` | `learner-faculty-mobile-footer.tsx:100` renders count only when >0 | Same visual behavior |
+| Overflow | Old `overflowCount={99}` plus display 99+ | `learner-faculty-mobile-footer.tsx:101` 99+ above 99 | Same display state |
+| Active, pressed and focus | prod-2026 `mobileFooter.scss:1-40`: active opacity 1; 44px target; scale(.93) pressed | `legacy-mobile-footer.css:36-45,68-73`: same | Source match |
+| Phone safe area | `components___antddesign.scss:912-936`: 64px + bottom env safe-area | `legacy-mobile-footer.css:6-25`: same | Source match |
+| Tablet/desktop | Legacy `d-md-none` at ≥768px | `legacy-mobile-footer.css:5-6`: hidden by default, shown ≤767px | Source match |
+
+Source-only grep-equivalent check of the edited footer files:
+`<(button|select|input|textarea)([\\s>])` → **0** occurrences in
+`learner-faculty-mobile-footer.tsx` and `legacy-mobile-footer.css`.
+`tests/unit/chat19-legacy-mobile-footer.test.ts` now asserts the precise
+active selector, token dimensions, badge position, and accessibility name;
+it was **not run**. The whole B4 category is still unticked because the
+original thin route progress bar is absent and browser/complete-tree proof
+is still missing. This source-complete footer is not a visual-certification
+claim.

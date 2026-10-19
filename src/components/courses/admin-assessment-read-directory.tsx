@@ -101,7 +101,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
         </Link>
       </article>)}
     </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}
-    <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
       <span className="text-xs text-muted-foreground">25 per page</span>
       <Pagination page={data.page} pageCount={data.totalPages}
         hrefForPage={page => adminAssessmentHref(data.kind, { ...data.query, page })}

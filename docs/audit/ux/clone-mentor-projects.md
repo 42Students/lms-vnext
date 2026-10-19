@@ -1,6 +1,6 @@
 # Mentor, Projects and Tracker — UI clone audit (chat-8)
 
-Reference baseline: `origin/main` at `1fae38d2c433f5b5b0a90a22be12754ab28796e0` (2026-10-19). Owned areas: `src/app/(authenticated)/mentor/**`, `src/app/(authenticated)/tracker/**`, `src/components/projects/**`. Shared UI, global skin and auth/layout shell are **not** owned by this lane.
+Reference baseline: `origin/main` at `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` (2026-10-19). Owned areas: `src/app/(authenticated)/mentor/**`, `src/app/(authenticated)/tracker/**`, `src/components/projects/**`. Shared UI, global skin and auth/layout shell are **not** owned by this lane.
 
 ## Work queue (repository-tree inventory, not a runtime grep)
 
@@ -204,7 +204,7 @@ The previous branch head (4dd132d) was **0 ahead / 1,623 behind main**. It was s
 
 | Property / state | Legacy value and source | vNext source before script | Intended after application | Status |
 |---|---|---|---|---|
-| Desktop action minimum height | 36px, docs/design/old-lms-shell-spec.md:22-24 | Heading action Links in mentor/projects/[projectId]/board-review/page.tsx:36-39: min-h-11 = 44px | min-h-11 md:min-h-9 = 36px from 768px | Pending apply |
+| Desktop action minimum height | 36px, docs/design/old-lms-shell-spec.md:22-24 | Heading action Links in mentor/projects/[projectId]/board-review/page.tsx:36-39: min-h-11 = 44px | min-h-11 md:min-h-9, plus md:py-0 for bordered py-2 links, gives 36px from 768px | Pending apply |
 | Phone action touch minimum | 44px, docs/design/legacy-styles/components___listing-page-header.scss:130-159 | min-h-11 = 44px | Keep min-h-11 through 767px | Source-level match only |
 | Phone/desktop breakpoint | max-width 767px, components___listing-page-header.scss:9,130-132 | Some heading Links omit a breakpoint or use sm:min-h-9 (640px) | md:min-h-9 (768px) | Pending apply |
 | Shared page title | 30px/600/#172033 on desktop, docs/design/old-lms-shell-spec.md:26-28 | Shared src/components/ui/page-header.tsx:30-35, already used by surveyed routes | No lane-owned change; shared owner chat-17/chat-9 | Shared dependency |
@@ -219,3 +219,17 @@ Remote GitHub file reads covered the **40** listed Mentor and Tracker page.tsx r
 - [ ] Project-detail action rows with existing min-h-11 sm:min-h-9 (missing: codemod apply, coverage count and phone/tablet render). On src/app/(authenticated)/mentor/projects/[projectId]/page.tsx:75-123 multiple button-shaped links shrink at 640px even though the reference mobile breakpoint extends through 767px. Script scripts/codemods/chat8-project-link-breakpoints.cjs safely changes only static, rounded, painted Link classes from sm:min-h-9 to md:min-h-9 across the owned directories; underlined inline links and dynamic classes are untouched. Dry-run then --apply; report skips separately.
 - [ ] Standalone disabled-state navigation action in src/app/(authenticated)/mentor/page.tsx:30-33 (missing: end-to-end visual/sizing confirmation). Corrected its painted Link min-height to 44px below 768px and 36px at 768px onward, per docs/design/old-lms-shell-spec.md:22-24 and components___listing-page-header.scss:130-159. The existing href, text, focus classes and activation behaviour remain unchanged. Source-level class proof is present; this alone is not full-page parity or a reason to tick the page.
 - [ ] Index-level judgement-pattern coverage (missing: local rg proof). GitHub code search for rounded-full, border-b-2 and aria-pressed on main surfaced no hits under these owned paths in the returned sets; this is a bounded index result, not an exhaustive filesystem grep or proof of responsive behaviour.
+
+- [ ] Desktop painted-link box-sizing proof (missing: run codemods and computed-style render): a bordered Link with 14px/20px text plus py-2 (16px) and a 1px border on each edge is 38px tall, even with min-height 36px. Both scoped height codemods now add md:py-0 only when bordered Link classes already contain py-2, preserving the 44px phone target while allowing an actual 36px desktop box. Reference: docs/design/old-lms-shell-spec.md:22-24. Do not assert pixel parity without render verification.
+
+### Project confirmation overlay migration (source-driven)
+
+- [ ] Native confirmation sweep (missing: apply AST codemod, grep zero native confirmation call sites, visual default/focus/cancel/loading/mobile proof). Repo-scoped indexed search of window.confirm found these remaining owned Files: mentor-sprint-delete-control.tsx:11-12, mentor-delivery-lock-control.tsx:15, super-admin-template-archive-control.tsx:12, workspace-brief-editor.tsx:23, super-admin-template-rollback-control.tsx:15-17, college-project-summary-editor.tsx:16. All six have async action handlers and should preserve their messages and pending guards.
+- [ ] Shared dialog style parity (missing: verified values for backdrop/radius/padding/focus/animation and phone behavior from the shared Dialog owner). The codemod scripts/codemods/chat8-project-confirmations.cjs uses the existing shared useConfirmFlow hook (src/components/ui/use-confirm-flow.tsx:1-29) for those six cases, replacing native window.confirm without rewriting the mutation or cancel path. It is scoped to source-matched project TSX and skips ambiguous shapes; preview first, then --apply and record its returned counts.
+- [ ] Full college project summary editor confirmation (missing: screenshot and complete page property table). src/components/projects/college-project-summary-editor-full.tsx now calls await askConfirm("Save workspace summary changes?") from useConfirmFlow and renders its dialog once inside the existing root section. Source diff retains the previous prompt, async guard and save body while removing the browser-native confirm. Static source was re-read after change; no runtime test was performed.
+
+| Confirmation state | Old behavior / source | vNext implementation | Status |
+|---|---|---|---|
+| Cancel | Native confirm returns false; save does not start, original college editor source reviewed before the edit (exact pre-edit line not claimed) | useConfirmFlow resolves false on close or cancel, src/components/ui/use-confirm-flow.tsx:11-19 | Source-level behavior match; runtime pending |
+| Confirm | Native confirm returns true; existing mutation proceeds | useConfirmFlow resolves true then the same awaited save path runs | Source-level behavior match; runtime pending |
+| Modal appearance, focus, phone | Old-LMS modal and AntD overlay visuals owned by shared UI lane; docs/design/legacy-styles/components___antddesign.scss | Shared ConfirmDialog and Dialog, not browser-native alert | Await style parity proof |

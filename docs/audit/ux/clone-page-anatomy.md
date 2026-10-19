@@ -438,3 +438,64 @@ Each line below means a connector fetch *after the write* confirmed **0** litera
 - [ ] **E6 parent** remains open: all-portal card-in-card inventory; retained separately meaningful object tiles need a global exception ledger.
 
 **Next exact file:** `src/components/projects/class-team-workspace-creator.tsx` — distinguish individual team-selection cards from redundant preflight/status wrappers, then `src/components/projects/project-template-view.tsx`; resume global dynamic-heading and breadcrumb inventory when a worktree grep is available.
+
+## Next bounded chat-9 E6/B6 batch — Projects and Super Admin, 2026-10-19
+
+**Scope:** 14 fully source-inspected Projects TSX components, all committed to `chatgpt/chat-9-b`; `main` was at `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` and the lane began 0 commits behind. Existing content, copy, request handlers, permissions, form data, navigation routes and controls were not intentionally changed. Legacy references are the measured `docs/design/old-lms-shell-spec.md:18-20`, `old-lms-pages.md:5-13`, and `legacy-styles/components___variables.scss:30-42, 133-140, 148-159`.
+
+### Work queue — completed files (file-scoped, not category sign-off)
+
+| File (prefix: `src/components/projects/`) | Current source evidence, file:line | E6 classification / change | B6 static responsive evidence |
+| --- | --- | --- | --- |
+| [x] `class-team-workspace-creator.tsx` | `class-team-workspace-creator.tsx:162-164, 212-215, 233-234, 266` | Status/preflight/outcome use hairlines; scroll focus retained; editable team fieldsets/cards kept | 768px form fields; 992px team-preview cards |
+| [x] `project-template-view.tsx` | `project-template-view.tsx:77, 93, 145-150` | Read-only releases/sprints/tasks/resources list rows use divide-y+border-y; no article cards | 992px section grid; rows wrap |
+| [x] `project-list.tsx` | `project-list.tsx:76-81, 131` | Separate clickable project cards remain; nested metric panel becomes hairline strip | 425px metric columns; 992px two tiles; 1366px three |
+| [x] `super-admin-template-resource-editor.tsx` | `super-admin-template-resource-editor.tsx:50, 64-78` | Resource-specific editable fieldsets retained; no extra page wrapper | 768px two-column resource form |
+| [x] `super-admin-template-plan-editor.tsx` | `super-admin-template-plan-editor.tsx:160-163, 214-217` | Sprint and task fieldsets retained as independently editable objects | 768px two-column input grids |
+| [x] `super-admin-template-overview-editor.tsx` | `super-admin-template-overview-editor.tsx:53, 58-75` | Ordinary form labels remain on canvas; no separate panel | 768px two-column editor |
+| [x] `super-admin-template-create-form.tsx` | `super-admin-template-create-form.tsx:39, 55, 66, 101` | Overview/resource sections flattened from rounded cards to border-y hairlines | 768px two-column fields; 44px controls remain shared |
+| [x] `super-admin-template-college-bulk.tsx` | `super-admin-template-college-bulk.tsx:48, 59-65` | Selectable college cards flattened to border-b rows, labels remain functional | 768px two-column options; 44px targets; long names wrap |
+| [x] `project-admin-submissions-page.tsx` | `project-admin-submissions-page.tsx:168-176, 241` | Four summary cards are genuinely separate metrics; read-only detail rows remain hairline | 768px two metric columns; 1366px four; details three at 768 |
+| [x] `project-admin-at-risk-page.tsx` | `project-admin-at-risk-page.tsx:81-101, 145` | Three filter bucket links are genuinely separate interactive targets; results remain divide-y | 768px three bucket columns + detail columns |
+| [x] `project-create-control.tsx` | `project-create-control.tsx:331-342` | Roster section became border-b; scrollable selection region and live controls unchanged | 44px roster rows with wrapping; narrow phone safe |
+| [x] `admin-readiness-workspace-picker.tsx` | `admin-readiness-workspace-picker.tsx:20-27, 30-39` | Bordered fieldset is a distinct bounded scroll/listbox control, not a page subcard | 44px radio labels; min-width0/wrapping; paginator wraps |
+| [x] `project-template-controls.tsx` | `project-template-controls.tsx:200` | Native 3-field template form responsive breakpoint aligned | 992px three fields; single below |
+| [x] `project-admin-collection-controls.tsx` | `project-admin-collection-controls.tsx:210-243` | Pagination links preserve disabled routes; shared radius and focus styles, no enclosing card | 44px targets below 768px /36px at desktop, flex wrap |
+
+### Value-by-value source table
+
+| Property and state | Exact legacy property, file:line | Current vNext property, file:line | Result / deliberate exception |
+| --- | --- | --- | --- |
+| Outer page canvas default | `old-lms-shell-spec.md:18-20`: one `#fff` 12px-radius, 1px `#e5e9f0` border, padding24px, no shadow, on shell `#f1f4f9` | Authenticated `layout.tsx:147-156` + `ui/page-canvas.tsx:13-23`; scoped 14 components: **0** `<PageCanvas` and **0** `<main` | Matches existing shared outer surface; independent workspaces do not create another |
+| Ordinary content panels default | `old-lms-pages.md:5,13`: ordinary content separated by whitespace and hairline borders, no presentation-only card-in-card | `class-team-workspace-creator.tsx:162-163,212,266`; `super-admin-template-create-form.tsx:55,101`; `project-create-control.tsx:331` | Decorative card wrappers changed to `border-b`/`border-y`, color token `border-border` (`#e5e9f0`) |
+| Read-only list rows | `old-lms-pages.md:9-10`: tables/list rows directly on canvas, hairline row dividers | `project-template-view.tsx:145-150`: `divide-y divide-border border-y border-border`, no `rounded-lg border bg-muted` per article | Matches list treatment |
+| Distinct object card radius/border | `variables.scss:30,134`: 1px neutral200 `#e5e9f0`, radius12px; `old-lms-pages.md:13` allows genuine object tiles | `project-list.tsx:81`, `project-admin-submissions-page.tsx:176`, `project-admin-at-risk-page.tsx:87-92` | Cards retained only for independently selectable projects, metric tiles and bucket filters |
+| Team-specific editable object | `old-lms-pages.md:13`: genuinely separate objects may be individually bordered; `variables.scss:30` neutral200 | `class-team-workspace-creator.tsx:233-261`: group-specific card, reassign/swap selects | Explicit E6 exception: each group separately editable; no card-in-card |
+| Semantic grouped form fieldsets | `variables.scss:30,134`: hairline border, radius12px for distinct surfaces; `old-lms-pages.md:13` true object sections retained | `super-admin-template-resource-editor.tsx:50` resource fields; `super-admin-template-plan-editor.tsx:160-203,214+` sprint/task objects | E6 justified exception; no redundant outer card around the form |
+| Scroll-region boundary | `old-lms-pages.md:10`: bordered data area; `variables.scss:30` neutral200 | `admin-readiness-workspace-picker.tsx:20-29`: one bordered max-h64 scrollable selection control; `class-team-workspace-creator.tsx:215` no second border surrounding DataTable | Picker border is control boundary, not a page section card |
+| Metrics inside object card | `old-lms-pages.md:5,13`: read-only figures as thin internal separators, not another card | `project-list.tsx:130-155`: inner `bg-muted rounded` metric card replaced with `border-y divide-y` on phone and `divide-x` at 425px | Nested metric card removed |
+| Phone/tablet breakpoint | `legacy-styles/components___variables.scss:148,155-156`: phone max767, desktop layout starts 768; tablet grid alternative 992; large 1366 | Resource/plan/overview/create editor forms use `md:grid-cols-2`; team preview/template view use `min-[992px]`; project list uses 992/1366 | Matches legacy breakpoint tokens for scoped elements; source rule trace, not rendered proof |
+| Narrow phone metric strip | `variables.scss:153`: 425px distinct threshold and `148`: 767px phone | `project-list.tsx:131`: one stacked column below425, three columns and `divide-x` from425 | Avoids 320/390 metric squeeze, keeps content |
+| Phone tap area | `variables.scss:140`: touch target44px; `legacy-styles/components___learn-layout.scss:362-370` minimum44px | `super-admin-template-college-bulk.tsx:61`, `project-create-control.tsx:342`, `admin-readiness-workspace-picker.tsx:22`, `project-admin-collection-controls.tsx:221,235` | 44px minimum, text wrap on narrow screens; pager shrinks to 36px at >=768 |
+| Interactive states | `legacy-styles/components___learn-layout.scss:361-383`: focus/hover semantics and 150ms back affordance; `variables.scss:10` interactive teal `#26bac7` | Existing shared inputs/Buttons and form handlers unchanged; `project-admin-collection-controls.tsx:221-239` gains `focus-visible:outline-2`, retained `aria-disabled` and hover | Source-level semantic and state retention; visual test pending |
+
+### Scoped grep-equivalent proof (connector reads, not a local worktree command)
+
+- **14/14** changed files were fetched after final pushes and compared to corresponding current-main versions. Native heading pattern `/<h1(?:\\s|>)/g`: **0 matches** across the 14; explicit `<PageCanvas` and `<main` tag pattern: **0 matches**.
+- In all 14 files, counts of opening and closing `section`, `fieldset`, `form`, `label`, `div`, `article`, `Link`, and `Button` tags are **unchanged versus main**. No opening/closing tag migration was required.
+- Scoped original early mobile form rule `/sm:grid-cols-/g`: **0 instances** in these 14 files after changes (all identified grids move to legacy 768/992/1366 breakpoints). Existing independent `sm:` control behaviors outside those grids were not swept.
+- E6 exception inventory: true clickable workspace/project cards, four summary metric tiles, three filter-bucket links, separate editable team cards, sprint/task/resource fieldsets, bounded radio picker control. Ordinary panels, read-only template rows, roster selector and metric subcards are flattened. Interactive content and state transitions preserved at the source level.
+
+### Static responsive rule proof, not browser snapshots
+
+| Width | Effective layout in scoped components | Legacy source logic |
+| --- | --- | --- |
+| 320px, 390px | Single-column forms, creator/team preview, workspace tiles, template rows; ProjectList metric strip stacks, list/radio targets at least44px | `variables.scss:148` max767 and `:153` 425 transition |
+| 425px–767px | ProjectList metric strip three columns with dividers; editable forms still single column; selectable college rows still single column | `variables.scss:153,148` |
+| 768px–991px | Form grids and college/bucket choices expand at 768; long text wraps; team previews stay one column | `variables.scss:155` 768, `:149` 991 |
+| 992px–1199px | ProjectList/team/template two columns; template creation form remains two columns, project metrics continue one or two as specified | `variables.scss:156,151` |
+| >=1366px | ProjectList/workspace listing three columns and submissions metrics four columns | `variables.scss:158` |
+
+**Strict category status:** B5 page canvas/header/breadcrumb universal coverage **[ ]**; B6 actual viewport and all-portal overflow/hover validation **[ ]**; E6 repository-wide remaining nested-card inventory **[ ]**. This batch is *file-scoped source completion* only, not a declaration of whole-area pixel parity. GitHub connector does not provide a checked-out worktree; no compiler, test runner, CI, browser, screenshot, actual recursive grep, or pixel measurements were executed.
+
+**Next exact file:** `src/components/projects/project-admin-readiness-page.tsx` — classify its summary `Metric` presentation in the workspaces table and retained status states; then `src/components/projects/project-admin-audit-page.tsx`, and the remaining Super Admin last-third delegated components.
