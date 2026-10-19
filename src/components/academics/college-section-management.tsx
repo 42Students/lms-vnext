@@ -1,3 +1,5 @@
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 "use client";
 
 import { useState, useTransition, type FormEvent } from "react";
@@ -107,20 +109,20 @@ export function CollegeClassCreate({ cohorts, periods }: {
           </select>
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class name
-          <input required maxLength={255} value={name} onChange={event => setName(event.target.value)}
+          <Input required maxLength={255} value={name} onChange={event => setName(event.target.value)}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class code (optional; generated from name)
-          <input maxLength={64} value={code} onChange={event => setCode(event.target.value)}
+          <Input maxLength={64} value={code} onChange={event => setCode(event.target.value)}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Capacity (required, 1–200)
-          <input required type="number" min={1} max={200} step={1} value={capacity}
+          <Input required type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body sm:col-span-2 lg:col-span-5">Description (optional)
-          <textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
+          <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
             className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-foreground" />
         </label>
         <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
@@ -190,20 +192,20 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
           Batch and academic period are immutable. Name and code changes require no dependent records.
         </p>
         <label className="grid gap-1 text-sm font-medium text-body">Class name
-          <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
+          <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Class code
-          <input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
+          <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Capacity (blank means unlimited)
-          <input type="number" min={1} max={10000} step={1} value={capacity}
+          <Input type="number" min={1} max={10000} step={1} value={capacity}
             onChange={e => setCapacity(e.target.value)}
             className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Description
-          <textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
+          <Textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
             className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-foreground" />
         </label>
         <p className="text-xs text-muted-foreground">Active learner enrollments: {row.activeLearners}.</p>
