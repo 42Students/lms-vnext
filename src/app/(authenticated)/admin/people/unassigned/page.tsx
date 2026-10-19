@@ -55,17 +55,17 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
     <PageHeader eyebrow="Super Admin · Global identities" title="Users without college memberships"
       description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." />
     <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Users & Roles</Link>
-    <form method="get" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Name<Input type="search" name="q" maxLength={100}
-        defaultValue={data.query.q} className="min-w-0 text-base" /></label>
+        defaultValue={data.query.q} className="min-w-0 text-base sm:text-sm" /></label>
       <label className="grid gap-1 text-sm font-semibold text-body">Platform status<Select name="platformStatus" defaultValue={data.query.platformStatus}
-        className="min-w-0 text-base">{statuses.map(status => <option key={status}>{status}</option>)}</Select></label>
+        className="min-w-0 text-base sm:text-sm">{statuses.map(status => <option key={status}>{status}</option>)}</Select></label>
       <label className="grid gap-1 text-sm font-semibold text-body">System role<Select name="role" defaultValue={data.query.role}
-        className="min-w-0 text-base">{roles.map(role => <option key={role}>{role}</option>)}</Select></label>
+        className="min-w-0 text-base sm:text-sm">{roles.map(role => <option key={role}>{role}</option>)}</Select></label>
       <Button type="submit" variant="primary" className="self-end">Filter</Button>
     </form>
     <p className="text-xs text-muted-foreground">{data.total} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
-    {data.items.length ? <div className="grid gap-3 md:grid-cols-2">{data.items.map(row => <article key={row.id}
+    {data.items.length ? <div className="divide-y divide-border border-y border-border">{data.items.map(row => <article key={row.id}
       className="min-w-0 border-b border-border py-4">
       <h2 className="break-words text-base font-semibold text-foreground">{row.displayName ?? "Unnamed user"}</h2>
       <div className="flex flex-wrap gap-2"><StatusBadge tone={row.platformStatus === "ACTIVE" ? "success" : "neutral"}>{row.platformStatus}</StatusBadge>
