@@ -7,7 +7,7 @@ import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {EmptyState} from "@/components/ui/empty-state";
 export default async function SuperAdminRetentionPage(){
  const context=await getCurrentRequestContext();
- if(!context.adminScope?.collegeId)return <div className="space-y-5"><PageHeader eyebrow="Super Admin · Placements" title="Data retention report"/>
+ if(!context.adminScope?.collegeId)return <div className="space-y-5"><PageHeader title="Data retention report"/>
   <EmptyState title="Select a college" description="Choose a college to review candidate retention candidates."/></div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
  const report=await getSuperAdminPlacementRetentionReport(context);
@@ -21,7 +21,7 @@ export default async function SuperAdminRetentionPage(){
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Review →</Link>},
  ];
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Placements" title="Data retention report"
+  <PageHeader title="Data retention report"
    description="Applications withdrawn or rejected with no recorded application updates for at least 180 days."/>
   <nav><Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/admin/placements">← Placements</Link></nav>
   <p role="status" className="text-sm text-body">{report.rows.length} candidates for retention review{report.truncated?" (showing first 200)":""}; cutoff {fmt(new Date(report.cutoff))}.</p>
