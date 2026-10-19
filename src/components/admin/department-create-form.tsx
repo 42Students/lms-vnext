@@ -52,7 +52,7 @@ export function DepartmentCreateForm({
     <form
       onSubmit={submit}
       aria-label={DEPARTMENT_COPY.createCardTitle}
-      className="flex flex-wrap items-end gap-3"
+      className="flex flex-wrap items-end gap-3 print:hidden"
     >
       <h2 className="m-0 w-full text-base font-semibold text-foreground">{DEPARTMENT_COPY.createCardTitle}</h2>
       <div className="min-w-48 flex-1">
@@ -63,7 +63,7 @@ export function DepartmentCreateForm({
           {DEPARTMENT_COPY.nameLabel}
         </label>
         <Input
-          id="department-name"
+          className="min-h-11 md:min-h-9" id="department-name"
           value={name}
           onChange={(event) => setName(event.target.value)}
           required
@@ -71,7 +71,7 @@ export function DepartmentCreateForm({
           placeholder={DEPARTMENT_COPY.namePlaceholder}
         />
       </div>
-      <Button type="submit" disabled={pending || !name.trim()}>
+      <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending || !name.trim()}>
         {pending ? "Creating…" : DEPARTMENT_COPY.createButton}
       </Button>
       {notice ? <p role="status" className="m-0 w-full text-sm text-body">{notice}</p> : null}
