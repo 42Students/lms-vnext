@@ -29,7 +29,7 @@ export function BottomSheet({ open, onOpenChange, title, description, children, 
   return (
     <dialog data-slot="bottom-sheet" ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
       onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
-      onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
+      onClose={() => { if (open) onOpenChange(false); if (opener.current?.isConnected) opener.current.focus(); }}
       onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
       style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px", "--lms-visual-bottom": viewportBottom ?? "0px", "--lms-visual-center": visualCenter } as CSSProperties}
       className="fixed inset-x-0 bottom-[var(--lms-visual-bottom)] top-auto m-0 max-h-[var(--lms-visual-height)] min-h-0 w-full max-w-none rounded-t-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-0 text-foreground shadow-[var(--lms-elevation-4)] backdrop:bg-[#1e363f]/10 md:inset-auto md:left-1/2 md:top-[var(--lms-visual-center)] md:w-[min(36rem,calc(100%_-_2rem))] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--lms-canvas-radius)]">
