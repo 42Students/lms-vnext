@@ -83,6 +83,12 @@ export function HrRecruiterBell(){
  }
 
  const unread=state?.unread??0;
+ const panelFooter=<>   <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
+    {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
+      variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
+   </div>
+   {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}</>;
  const panelBody=<>
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
@@ -94,12 +100,7 @@ export function HrRecruiterBell(){
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
       <span className="flex-1">{item.label}</span><span className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</span>
      </Link></li>)}</ul></ScrollCue>}
-   <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
-    {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
-      variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
-   </div>
-   {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
+
 </>;
  return <div ref={rootRef} className="relative">
   <Button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
@@ -108,7 +109,7 @@ export function HrRecruiterBell(){
    variant="secondary" className="relative">
    Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
   </Button>
-  {open ? (mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer}>
+  {open ? (mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} footer={panelFooter}>
    {panelBody}
   </Drawer> : <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}>
    <div className={style.hrNotificationHeader}>
@@ -116,6 +117,7 @@ export function HrRecruiterBell(){
     <Button variant="ghost" size="sm" type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}>Close</Button>
    </div>
    <div className={style.hrNotificationBody}>{panelBody}</div>
+   <div className={style.hrNotificationFooter}>{panelFooter}</div>
   </PopoverPanel>) : null}
  </div>;
 }
