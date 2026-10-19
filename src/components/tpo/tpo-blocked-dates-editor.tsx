@@ -1,6 +1,7 @@
 "use client";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {filterTpoBlockedDates,tpoBlockedDatesEmptyMessage} from "@/modules/placements/tpo-blocked-date-filter-model";
@@ -37,29 +38,29 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
    onSubmit={e=>{e.preventDefault();if(!validRange||busy)return;
     void request("/api/placements/tpo/settings/blocked-dates","POST",{startDay,endDay,reason:reason.trim()||"Blocked"});}}>
    <label className="text-sm">From
-    <input type="date" required min={today} value={startDay} disabled={busy}
+    <Input type="date" required min={today} value={startDay} disabled={busy}
      onChange={e=>{setStartDay(e.target.value);if(endDay&&endDay<e.target.value)setEndDay(e.target.value);}}
-     className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2"/></label>
+     className="mt-1 min-h-11 sm:min-h-9 w-full"/></label>
    <label className="text-sm">Until
-    <input type="date" required min={startDay||today} value={endDay} disabled={busy}
+    <Input type="date" required min={startDay||today} value={endDay} disabled={busy}
      onChange={e=>setEndDay(e.target.value)}
-     className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2"/></label>
+     className="mt-1 min-h-11 sm:min-h-9 w-full"/></label>
    <label className="text-sm">Label (optional)
-    <input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
-     placeholder="Blocked" className="mt-1 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/></label>
+    <Input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
+     placeholder="Blocked" className="mt-1 min-h-11 sm:min-h-9 w-full"/></label>
    {reason.trim().length>0&&reason.trim().length<3?<p role="alert" className="self-end text-xs text-error">Use at least 3 characters for a label, or leave it blank.</p>:null}
    <button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
     disabled={busy||!validRange||(reason.trim().length>0&&reason.trim().length<3)}>Block dates</button>
   </form>
   <div className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Filter by month
-      <input type="month" value={month} onChange={e=>setMonth(e.target.value)}
-        className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/>
+      <Input type="month" value={month} onChange={e=>setMonth(e.target.value)}
+        className="min-h-11 sm:min-h-9 w-full"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search reasons
-      <input type="search" maxLength={100} value={search} onChange={e=>setSearch(e.target.value)}
+      <Input type="search" maxLength={100} value={search} onChange={e=>setSearch(e.target.value)}
         placeholder="Reason or YYYY-MM-DD"
-        className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"/>
+        className="min-h-11 sm:min-h-9 w-full"/>
     </label>
   </div>
   <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked days across {ranges.length} displayed ranges · Maximum 90 days per range</p>
