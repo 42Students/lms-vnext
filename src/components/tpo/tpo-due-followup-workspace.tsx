@@ -164,8 +164,8 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
               <Textarea rows={2} maxLength={500} className={"mt-1 " + field}
                 value={createNote} disabled={pending} onChange={(event) => setCreateNote(event.target.value)} />
             </label>
-            <Button variant="secondary" type="button" disabled={pending || !leadId || !dueLocal}
-              onClick={() => setConfirmCreate(true)} variant="primary" className={action}>
+            <Button variant="primary" type="button" disabled={pending || !leadId || !dueLocal}
+              onClick={() => setConfirmCreate(true)} className={action}>
               {pending ? "Saving..." : "Review and confirm follow-up"}
             </Button>
           </div>
@@ -232,8 +232,8 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                         onChange={(event) => setDoneNote(event.target.value)}
                         className={"mt-1 " + field} rows={2} />
                     </label>
-                    <Button variant="secondary" type="button" onClick={() => setConfirmComplete(row)}
-                      disabled={pending || !doneNote.trim()} variant="primary" className={action}>
+                    <Button variant="primary" type="button" onClick={() => setConfirmComplete(row)}
+                      disabled={pending || !doneNote.trim()} className={action}>
                       {pending ? "Recording..." : "Review and confirm Done"}
                     </Button>
                   </div>
