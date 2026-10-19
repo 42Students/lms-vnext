@@ -12,12 +12,16 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { joinGroup } from "@/modules/groups/service";
 
 const uuid = z.string().uuid();
-const fieldStyle = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base sm:text-sm text-foreground";
 const base = (id: string) => "/college/electives/" + encodeURIComponent(id) + "/allocate";
 
 async function scopedSlot(slotId: string) {
@@ -161,25 +165,25 @@ export default async function CollegeElectiveAllocatePage({
     </p>}
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="grid min-w-0 sm:min-w-52 flex-1 gap-1 text-sm font-semibold">Class/Section
-        <select name="section" className={fieldStyle} defaultValue={input.section ?? ""}>
+        <Select name="section" defaultValue={input.section ?? ""}>
           <option value="">All sections</option>
           {allSections.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
-        </select>
+        </Select>
       </label>
       <label className="grid min-w-0 sm:min-w-52 flex-1 gap-1 text-sm font-semibold">Name, roll number or learner ID
-        <input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
-          className={fieldStyle} placeholder="Search eligible students" />
+        <Input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
+          placeholder="Search eligible students" />
       </label>
-      <button className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Search</button>
+      <Button variant="primary" type="submit">Search</Button>
     </form>
     <form action={allocate} className="space-y-4 border-b border-border pb-4">
       <label className="grid gap-1 text-sm font-semibold">Allocate selected to…
-        <select name="offeringGroup" required className={fieldStyle}>
+        <Select name="offeringGroup" required>
           <option value="">Choose elective offering</option>
           {offerings.map(o => <option key={o.id} value={o.groupId}>
             {o.name} · {o.enrolled}/{o.seats ?? "unlimited"} seats
           </option>)}
-        </select>
+        </Select>
       </label>
       {offerings.length === 0 && <p className="text-sm text-muted-foreground">
         Add a course offering to this slot before allocating learners.</p>}
@@ -193,7 +197,7 @@ export default async function CollegeElectiveAllocatePage({
           columns={[
             { key: "select", header: "Select", mobilePriority: "action", cell: student =>
               <label className="flex min-h-11 min-w-11 items-center justify-center">
-                <input type="checkbox"
+                <Checkbox
                   aria-label={"Select " + (student.name ?? student.rollNumber ?? "student") + " for allocation"}
                   name="membershipId" value={student.membershipId} />
               </label> },
@@ -206,13 +210,12 @@ export default async function CollegeElectiveAllocatePage({
       <p className="text-xs text-muted-foreground">
         Showing up to 500 matching active learners. Filter by section or search for a smaller list.</p>
       <label className="grid gap-1 text-sm font-semibold">Or paste roll numbers / learner membership IDs
-        <textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}
+        <Textarea name="identifiers" rows={3} maxLength={12000} 
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>
-      <button type="submit" disabled={!offerings.length}
-        className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+      <Button variant="primary" type="submit" disabled={!offerings.length}>
         Allocate selected to…
-      </button>
+      </Button>
     </form>
   </main>;
 }
