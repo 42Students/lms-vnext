@@ -54,7 +54,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
   </form>
   <p className="text-sm text-muted-foreground">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
   <p className="text-sm text-muted-foreground">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
-  <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+  <div className="grid gap-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto]">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Find job type
       <Input type="search" value={search} maxLength={100} onChange={event=>setSearch(event.target.value)}
         className="min-h-11 min-[768px]:min-h-9 w-full"
