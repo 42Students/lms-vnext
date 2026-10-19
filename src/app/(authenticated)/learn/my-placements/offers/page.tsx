@@ -1,3 +1,7 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { learnerOffersQueryHasInvalidFields } from "@/modules/placements/learner-offers-query-feedback-model";
 import {learnerOfferStatusTabLabel} from "@/modules/placements/learner-offer-status-label-model";
@@ -102,6 +106,8 @@ export default async function LearnerOffersPage({
         ← Applications
       </Link>
 
+      <PageHeader title="My offers" description="Your official placement offers and recorded joining outcomes." />
+
       {conflictingDeadlines ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">
         The due-soon and historical expiry filters cannot be combined. Showing the selected expiry state instead.
       </p> : null}
@@ -116,37 +122,37 @@ export default async function LearnerOffersPage({
         </p>
       ) : null}
       <form method="GET" action="/learn/my-placements/offers" className="flex min-w-0 flex-wrap items-end gap-3">
-        {view !== "all" ? <input type="hidden" name="status" value={view} /> : null}
-        {dueOnly ? <input type="hidden" name="due" value="1" /> : null}
-        {order !== "priority" ? <input type="hidden" name="sort" value={order} /> : null}
-        {kind !== "all" ? <input type="hidden" name="kind" value={kind} /> : null}
-        {joiningFilter!=="all"?<input type="hidden" name="joining" value={joiningFilter}/>:null}
-        {expiry!=="all"?<input type="hidden" name="expiry" value={expiry}/>:null}
+        {view !== "all" ? <Input type="hidden" name="status" value={view} /> : null}
+        {dueOnly ? <Input type="hidden" name="due" value="1" /> : null}
+        {order !== "priority" ? <Input type="hidden" name="sort" value={order} /> : null}
+        {kind !== "all" ? <Input type="hidden" name="kind" value={kind} /> : null}
+        {joiningFilter!=="all"?<Input type="hidden" name="joining" value={joiningFilter}/>:null}
+        {expiry!=="all"?<Input type="hidden" name="expiry" value={expiry}/>:null}
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
           Search my offers
-          <input name="q" type="search" maxLength={80} defaultValue={searchTerm}
-            placeholder="Employer or role" className="min-h-11 sm:min-h-9 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          <Input name="q" type="search" maxLength={80} defaultValue={searchTerm}
+            placeholder="Employer or role" className="min-h-11 min-w-0" />
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Search</button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Search</Button>
         {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
           className="inline-flex min-h-11 sm:min-h-9 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/offers" className="flex flex-wrap items-end gap-3">
-        {view!=="all"?<input type="hidden" name="status" value={view}/>:null}
-        {searchTerm?<input type="hidden" name="q" value={searchTerm}/>:null}
-        {dueOnly?<input type="hidden" name="due" value="1"/>:null}
-        {kind!=="all"?<input type="hidden" name="kind" value={kind}/>:null}
-        {joiningFilter!=="all"?<input type="hidden" name="joining" value={joiningFilter}/>:null}
-        {expiry!=="all"?<input type="hidden" name="expiry" value={expiry}/>:null}
+        {view!=="all"?<Input type="hidden" name="status" value={view}/>:null}
+        {searchTerm?<Input type="hidden" name="q" value={searchTerm}/>:null}
+        {dueOnly?<Input type="hidden" name="due" value="1"/>:null}
+        {kind!=="all"?<Input type="hidden" name="kind" value={kind}/>:null}
+        {joiningFilter!=="all"?<Input type="hidden" name="joining" value={joiningFilter}/>:null}
+        {expiry!=="all"?<Input type="hidden" name="expiry" value={expiry}/>:null}
         <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
           Sort my offers
-          <select name="sort" defaultValue={order} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          <Select name="sort" defaultValue={order} className="min-h-11">
             <option value="priority">Needs response first</option>
             <option value="newest">Newest issued</option>
             <option value="company">Company A–Z</option>
-          </select>
+          </Select>
         </label>
-        <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Apply sort</button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Apply sort</Button>
       </form>
       {hasActiveFacets ? (
         <Link href={learnerOfferClearFiltersHref(view)}
