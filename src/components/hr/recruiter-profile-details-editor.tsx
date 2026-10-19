@@ -84,9 +84,9 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
   {dirty?<p role="status" className="text-sm font-semibold">Unsaved changes</p>:null}
   <Button type="submit" loading={busy} disabled={busy||!dirty}
-   >
+    className="min-h-11 min-[768px]:min-h-9">
    {busy?"Saving…":"Save changes"}</Button>
-  {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm">{feedback}</p>:null}
+  {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className={feedback==="Profile saved"?"text-sm text-success":"text-sm text-error"}>{feedback}</p>:null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"
    onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
