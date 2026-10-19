@@ -1175,3 +1175,21 @@ body {
     min-width: var(--lms-touch-target);
   }
 }
+
+/* Form-grid layout uses the old $ssm:767px and $smd:991px cutoffs.
+   Avoid Tailwind lg=1024px, which misses the legacy 992px tablet transition. */
+[data-slot="form-grid"][data-gap="sm"] { gap: var(--lms-space-2); }
+[data-slot="form-grid"][data-gap="md"] { gap: var(--lms-space-4); }
+[data-slot="form-grid"][data-gap="lg"] { gap: var(--lms-space-5); }
+@media (min-width: 768px) {
+  [data-slot="form-grid"][data-columns="2"],
+  [data-slot="form-grid"][data-columns="3"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 992px) {
+  [data-slot="form-grid"][data-columns="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+[data-slot="form-grid"] > * { min-width: 0; }
