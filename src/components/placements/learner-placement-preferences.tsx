@@ -358,7 +358,7 @@ export function LearnerPlacementPreferences({
         </div>
       </div>
       <div className="border-t border-border py-4">
-        <Button
+        <Button className="max-md:min-h-11"
           size="sm"
           disabled={
             pending ||
