@@ -35,6 +35,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Tabs } from "@/components/ui/tabs";
+import { Pagination } from "@/components/ui/pagination";
 import {Textarea} from "@/components/ui/textarea";
 
 const PAGE_SIZE = 20;
@@ -353,19 +354,12 @@ export function LearnerApplicationsBrowse({
       ) : <LearnerPlacementJourney items={paged} scheduledRounds={scheduledRounds} />}
 
       {totalPages>1 ? (
-        <nav aria-label="Application results pages" className="flex items-center justify-between gap-3">
-          <Button variant="secondary" type="button" disabled={page<=1}
-            onClick={() => updateQuery({page:String(page-1)})}
-            className="min-h-9 px-4">
-            Previous
-          </Button>
-          <span className="text-sm tabular-nums text-body">Page {page} of {totalPages}</span>
-          <Button variant="secondary" type="button" disabled={page>=totalPages}
-            onClick={() => updateQuery({page:String(page+1)})}
-            className="min-h-9 px-4">
-            Next
-          </Button>
-        </nav>
+        <Pagination label="Application results pages" page={page} pageCount={totalPages}
+          scroll={false}
+          hrefForPage={target=>{
+            const query=updateLearnerApplicationUrl(params.toString(),{page:String(target)});
+            return query?pathname+"?"+query:pathname;
+          }}/>
       ) : null}
 
       <Drawer open={selected!==null}

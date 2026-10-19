@@ -21,9 +21,9 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
  const data=query&&ctx.adminScope?.collegeId?await lookupCollegeStudentPlacement(ctx,query):null;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Student placement lookup"
-   actions={<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Analytics</Link>}/>
+   actions={<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Analytics</Link>}/>
   <form action="/admin/placements/student-lookup" role="search" className="min-w-0 border-b border-border pb-4">
-   <label className="grid max-w-xl gap-2 text-sm font-semibold">Name, roll number or email
+   <label className="grid max-w-xl gap-2 text-sm font-semibold text-body">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
       placeholder="Find one student in this college"
       className="w-full"/>
@@ -39,7 +39,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
   {data&&!data.students.length?<EmptyState title="No matching college students." description="Name, roll number or email" />:null}
   {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-3 border-b border-border py-5 last:border-0">
    <div className="flex flex-wrap items-center justify-between gap-2">
-    <div><h2 className="font-semibold">{person.name??person.roll??"Student"}</h2>
+    <div><h2 className="font-semibold text-[var(--lms-heading)]">{person.name??person.roll??"Student"}</h2>
      <p className="text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p></div>
     <StatusBadge tone={person.placed?"success":"neutral"}>{person.placed?"Joined (confirmed)":"No confirmed joining recorded"}</StatusBadge>
    </div>
