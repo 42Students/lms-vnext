@@ -29,7 +29,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} />
-    <form action={base} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2 xl:grid-cols-3 print:hidden">
+    <form action={base} className="grid gap-3 border-b border-border pb-5 md:grid-cols-2 xl:grid-cols-3 print:hidden">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment title
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />

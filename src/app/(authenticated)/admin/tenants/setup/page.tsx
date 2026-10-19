@@ -100,7 +100,7 @@ export default async function SuperAdminTenantSetup({
       {value:"LAUNCH",label:"2. Launch setup",href:tabLink("LAUNCH")},
     ]}/>
   {tab==="STRUCTURE"?<>
-   <section aria-label="Create organization and college" className="grid min-w-0 gap-4 lg:grid-cols-2">
+   <section aria-label="Create organization and college" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
      <h2 className="font-semibold text-foreground">Create an organization</h2>
      {orgCreate?<OrganizationCreateForm/>:
@@ -112,7 +112,7 @@ export default async function SuperAdminTenantSetup({
       <Alert tone="warning">No authorized active organization is available. Create one or change the Super Admin scope.</Alert>}
     </div>
    </section>
-   <section aria-label="Existing organizations and colleges" className="grid min-w-0 gap-4 lg:grid-cols-2">
+   <section aria-label="Existing organizations and colleges" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
       <h2 className="font-semibold">Organizations</h2>

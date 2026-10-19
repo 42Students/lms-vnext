@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "./project-workspace-readiness.module.css";
 import Link from "next/link";
 import { ProjectArchiveControl } from "@/components/projects/project-archive-control";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -87,10 +88,10 @@ export function ProjectAdminWorkspaceList({
       {key:"progress",header:"Progress",mobilePriority:"secondary",cell:item=>{
         const progress=safeProjectProgressPercent(item.progressPercent);
         return progress===null ? <span className="text-sm text-muted-foreground">Progress unavailable</span> :
-        <div className="flex items-center gap-2">
-          <MetricBar role="progressbar" className="w-24"
+        <div className={styles.inlineCell}>
+          <MetricBar role="progressbar" className={styles.inlineTrack}
             label={item.title+" progress"} value={progress} maximum={100} unit="percent" />
-          <span className="tabular-nums">{progress}%</span>
+          <span className={styles.inlinePercent}>{progress}%</span>
         </div>;
       }},
       {key:"members",header:"Members",mobilePriority:"secondary",cell:item=>item.memberCount},

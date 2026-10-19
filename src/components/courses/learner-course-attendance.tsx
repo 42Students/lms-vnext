@@ -257,9 +257,10 @@ export function LearnerCourseAttendance({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-end gap-2">
+          <div className="flex w-full flex-wrap items-end gap-2 md:w-auto">
             <Button
               size="sm"
+              className="min-h-11 min-w-11 md:min-h-9 md:min-w-9"
               variant="secondary"
               aria-label="Previous month"
               onClick={() => navigateMonth(shiftMonth(month,-1))}
@@ -295,11 +296,11 @@ export function LearnerCourseAttendance({
                     navigateMonth(new Date(year,monthIndex,1));
                   }
                 }}
-                className="mt-1.5 min-h-9"
+                className="mt-1.5 min-h-11 md:min-h-9"
               />
             </label>
             {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),currentMonth) ? (
-              <Button size="sm" variant="secondary"
+              <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9"
                 onClick={() => {
                   const [year,nextMonth]=currentMonth.split("-").map(Number);
                   navigateMonth(new Date(year,nextMonth-1,1));
@@ -309,6 +310,7 @@ export function LearnerCourseAttendance({
             ) : null}
             <Button
               size="sm"
+              className="min-h-11 min-w-11 md:min-h-9 md:min-w-9"
               variant="secondary"
               aria-label="Next month"
               onClick={() => navigateMonth(shiftMonth(month,1))}
@@ -319,12 +321,12 @@ export function LearnerCourseAttendance({
         </div>
       </section>
 
-      <section aria-label="Attendance this month" className="border-b border-border py-4 sm:py-5">
+      <section aria-label="Attendance this month" className="border-b border-border py-4 md:py-5">
         <h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
         <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
         <p className="mt-2 text-xs font-semibold text-muted-foreground">Attendance threshold</p>
         <p className="mt-2 text-sm text-body">{summary.heldSessions===0?"No classes held yet in this period.":thresholdDetail}</p>
-        <dl className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-3 text-sm">
+        <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-border pt-3 text-sm md:gap-3">
           <div><dt className="text-muted-foreground">Present</dt><dd className="font-semibold">{summary.present}</dd></div>
           <div><dt className="text-muted-foreground">Absent</dt><dd className="font-semibold">{summary.absent}</dd></div>
           <div><dt className="text-muted-foreground">Held</dt><dd className="font-semibold">{summary.heldSessions}</dd></div>
@@ -332,7 +334,7 @@ export function LearnerCourseAttendance({
         {summary.unmarkedSessions>0?<p className="mt-3 text-xs text-muted-foreground">{summary.unmarkedSessions} held class(es) are not marked yet and do not affect this percentage.</p>:null}
       </section>
       <section aria-label="Attendance History" className="space-y-1">
-        <h3 className="font-semibold">Attendance History</h3>
+        <h3 className="font-semibold text-foreground">Attendance History</h3>
         <p className="text-sm text-muted-foreground">Review each scheduled class and your status for it.</p>
       </section>
       {records.length === 0 ? (

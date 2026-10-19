@@ -7,6 +7,7 @@ import {useState} from "react";
 import type {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
 import {DataTable} from "@/components/ui/data-table";
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "./college-learner-progress-report.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
 import {EmptyState} from "@/components/ui/empty-state";
 
@@ -83,9 +84,9 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
      {key:"student",header:"Student",mobilePriority:"primary" as const,cell:(row)=><strong className="break-words text-foreground">{row.name}</strong>},
      {key:"roll",header:"Roll number",mobilePriority:"secondary" as const,cell:(row)=>row.rollNumber??"—"},
      {key:"progress",header:"Progress",mobilePriority:"secondary" as const,
-      cell:(row)=><div className="flex flex-wrap items-center gap-2">
-       <MetricBar label={row.name+" progress"} role="progressbar" value={row.progress} maximum={100} unit="percent" className="w-24" />
-       <span className="tabular-nums">{row.progress}%</span>
+      cell:(row)=><div className={styles.progressCell}>
+       <MetricBar label={row.name+" progress"} role="progressbar" value={row.progress} maximum={100} unit="percent" className={styles.progressTrack} />
+       <span className={styles.progressValue}>{row.progress}%</span>
       </div>},
      {key:"videos",header:"Videos",mobilePriority:"secondary" as const,cell:(row)=>row.videoDone+"/"+report.totalVideos},
      {key:"assignments",header:"Assignments",mobilePriority:"secondary" as const,cell:(row)=>row.assignmentDone+"/"+report.totalAssignments},

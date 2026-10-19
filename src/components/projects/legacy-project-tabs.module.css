@@ -1,0 +1,20 @@
+/*
+ * Scoped project-section tabs: legacy common.scss:359-416,443-508.
+ * 13px / 600 / 16px, 20px gap (40px at >=1600px), 3px teal ink
+ * and 200ms underline motion are inherited from shared Tabs.
+ * The current global Tabs skin paints active/hover text #1a95a1,
+ * while the legacy .ant-tabs-tab-active and hover are #26bac7.
+ * Override only that paint; leave hit areas, scroll, focus, nav and DOM
+ * entirely owned by the shared Tabs component.
+ */
+.legacy :is(nav > a[aria-current="page"], [role="tab"][aria-selected="true"]) {
+  color: var(--lms-primary) !important;
+}
+.legacy :is(nav > a:not([aria-current]):hover, [role="tab"][aria-selected="false"]:hover) {
+  color: var(--lms-primary) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .legacy :is(nav > a, [role="tab"]) {
+    transition: none;
+  }
+}

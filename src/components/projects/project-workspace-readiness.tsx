@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "./project-workspace-readiness.module.css";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireProjectManageAccess} from "@/modules/projects/access";
 import {getProjectReadiness} from "@/modules/projects/readiness-service";
@@ -70,11 +71,11 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         {name:"Tasks",done:readiness.execution.tasks.done,total:readiness.execution.tasks.total},
         {name:"Sprints",done:readiness.execution.sprints.completed,total:readiness.execution.sprints.total},
         {name:"Releases",done:readiness.execution.releases.shipped,total:readiness.execution.releases.total},
-      ]).map(item=><div key={item.name} className="mt-3 space-y-1">
-       <div className="flex justify-between text-xs font-semibold">
-        <span>{item.name}</span><span>{item.done}/{item.total}</span>
+      ]).map(item=><div key={item.name} className={styles.progress}>
+       <div className={styles.label}>
+        <span>{item.name}</span><span className={styles.amount}>{item.done}/{item.total}</span>
        </div>
-       <MetricBar role="progressbar" label={item.name+" completed"}
+       <MetricBar className={styles.track} role="progressbar" label={item.name+" completed"}
         value={item.done} maximum={item.total||1} />
       </div>)}
     </section>

@@ -296,7 +296,7 @@ export function QuizAttemptControl({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h3 className="text-base font-semibold text-foreground">Review quiz</h3>
           <p className="text-sm text-body">You didn&apos;t attempt this quiz. The answer key has been released.</p></div>
-        <Button size="sm" variant="secondary" onClick={()=>setMissedReview(null)}>Close review</Button>
+        <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>setMissedReview(null)}>Close review</Button>
       </div>
       <ol className="space-y-3">
         {missedReview.questions.map((question,index)=><li key={question.id} className="rounded-[var(--lms-control-radius)] border border-border p-3">
@@ -352,14 +352,14 @@ export function QuizAttemptControl({
           <Disclosure title="Questions" className="mt-2 lg:hidden [&>summary]:text-primary-text">
             <ol className="mt-2 flex flex-wrap gap-2">
               {quiz.questions.map((question,index)=><li key={question.id}>
-                <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle sm:min-h-9"
+                <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle md:min-h-9"
                   href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</a>
               </li>)}
             </ol>
           </Disclosure>
           <ol className="mt-2 hidden flex-wrap gap-2 lg:flex">
             {quiz.questions.map((question,index)=><li key={question.id}>
-              <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle sm:min-h-9"
+              <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle md:min-h-9"
                 href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</a>
             </li>)}
           </ol>
@@ -402,7 +402,7 @@ export function QuizAttemptControl({
                       return (
                         <label
                           key={option.id}
-                          className="flex cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2.5 text-sm text-body transition hover:border-primary hover:bg-primary-subtle"
+                          className="flex min-h-11 min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2.5 text-sm text-body transition-colors hover:border-primary hover:bg-primary-subtle focus-within:border-primary focus-within:ring-2 focus-within:ring-[var(--lms-focus-ring)] motion-reduce:transition-none"
                         >
                           <ChoiceControl
                             name={`quiz-${quizId}-${question.id}`}
