@@ -322,3 +322,15 @@ After fast-forwarding `chatgpt/chat-3-b` to current `main` (main commit `a98732e
 - **Super Admin academics and people:** removed an accidental stray `-` utility class in section summary grid, aligned people-directory desktop link heights, and corrected the faculty-assignment create action's mobile touch target while keeping white-on-teal primary style.
 - **Syntax-preserving approach:** each edit was scoped to literal presentation class attributes and verified to preserve the ordered JSX closing-tag sequence. No JSX structure, data logic, routes, services, query parsing, copy or feature behavior was changed.
 - **Execution boundary:** did **not** run the app, TypeScript compiler, tests, lint, CI or pixel comparison per owner direction. Actual old-LMS visual parity still requires the final screenshot check by the orchestrator.
+
+## Incremental canvas/controls follow-on — 2026-10-19 (chat-3)
+
+Rebased the active lane context onto current `main` with a branch-only, two-parent merge (`dc96255b`): 74 main-side changed paths and 21 lane-side paths since their common base had no overlap. Retained all lane commits without updating `main`.
+
+Five further `[chat-3]` commits covered **23 presentation files** linked to the faculty and Super Admin academic/people surfaces:
+
+- **Faculty:** removed a nested outline from the in-course metadata strip; flattened attendance grid's outer card while retaining a hairline table boundary; resolved a contradictory foreground utility on the primary assessment-results action; standardized roster media corner radius.
+- **Super Admin academic directories:** flattened redundant batch/class no-scope status cards and batch roster guidance; normalized faculty registration, teaching-assignment, departments, semesters, and academics links to 44px mobile/36px desktop treatment and keyboard focus affordances.
+- **Connected academic portal:** normalized electives, lecture halls, batch promotion, academic setup steps, student directory shortcuts and semester-mapping warning strip; converted repeated elective/batch-preview tiles to canvas-aligned separated rows where appropriate.
+- **Shared read surfaces within lane scope:** normalized desktop navigation links, recruiter-account disabled action placeholders, and removed stale radius fallbacks while retaining original copy, routes, query handling, sections and form behavior.
+- All edits changed literal presentational class names only. The ordered JSX closing-tag sequences were checked against their originals before each commit, including full `</Select>` closures. No app run, typecheck, lint, tests, CI or screenshot comparison, per the lane instruction.

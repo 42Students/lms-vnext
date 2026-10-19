@@ -52,7 +52,7 @@ export function TpoDriveRequestActions({requestId,status}:{
         {option.label}</button>)}
     </div>
     {action?<div role="group" aria-label={actions.find(x=>x.value===action)?.label}
-      className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+      className="space-y-2 border-t border-border pt-4">
       <p className="text-sm font-semibold">{actions.find(x=>x.value===action)?.label}</p>
       <p className="text-sm text-body">{action==="APPROVE_LATER"?
         "This creates a draft. No students are told until you publish.":
@@ -66,7 +66,7 @@ export function TpoDriveRequestActions({requestId,status}:{
       <p className="text-xs text-body">The recruiter is notified in the app. Email delivery is not enabled.</p>
       <div className="flex gap-2">
         <button type="button" onClick={()=>void runGuarded(submit)} disabled={busy||guardedPending||reason.trim().length<3}
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm text-on-primary disabled:opacity-50">
+          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm text-primary-foreground disabled:opacity-50">
           {busy?"Saving…":"Confirm"}</button>
         <button type="button" disabled={busy} onClick={()=>setAction(null)}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Cancel</button>
