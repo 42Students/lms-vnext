@@ -54,7 +54,7 @@ export function CollegeGroupDetailWrites({
     (b.waitlistPosition??Number.MAX_SAFE_INTEGER)||a.membershipId.localeCompare(b.membershipId));
   const front=ordered[0];
   return <section aria-label="Group rule and waitlist actions" className="space-y-5">
-    <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5">
+    <div className="space-y-3 border-b border-border pb-4">
       <h2 className="text-lg font-semibold text-foreground">Waitlist review</h2>
       <p className="mt-1 text-sm text-body">Only the first waitlisted learner can be promoted. Locked members and full groups cannot be overridden.</p>
       {ordered.length===0?<p className="mt-2 text-sm text-muted-foreground">No waitlisted learners recorded.</p>:
@@ -63,7 +63,7 @@ export function CollegeGroupDetailWrites({
           <span className="text-sm text-body">{member.displayName||"Unnamed learner"} · Position {member.waitlistPosition??"not recorded"}{member.isLocked?" · Locked":""}</span>
           <Button variant="secondary" type="button" disabled={busy||groupStatus!=="ACTIVE"||!hasSpace||
             front?.membershipId!==member.membershipId||member.isLocked}
-            className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50"
+            
             onClick={()=>{void submit({
               action:"PROMOTE_WAITLIST",memberId:member.membershipId,
               expectedMemberVersion:member.version,expectedGroupVersion:groupVersion,confirm:true,
