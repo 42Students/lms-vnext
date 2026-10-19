@@ -33,47 +33,32 @@ Baseline: `42Students/lms-vnext` main `d915bd67b20838f496d2a5b25b4365e748a35dd5`
 
 - [ ] E8 HR AG Grid wiring (missing: both shared components, legacy-grid source, full value table, grep coverage and responsive proof).
 
-**No authentic repository-wide grep was run.** Two direct source reads showed the requested consumer names; the two dynamic client imports have since replaced both. The original checklist lacked E8, so the category entry was added to the lane branch. GitHub indexed search for `ag-grid-react`, `themeQuartz`, `TpoGrid.jsx.txt`, `gridExport.js.txt`, `viewMemory.js.txt` and `legacy-grid` returned zero hits; current main and lane tree listings showed zero paths under `docs/design/legacy-grid/`. Direct source reads confirmed the two named spreadsheet consumers are migrated; this does not certify that all source patterns have zero exceptions.
+Next check after merging origin/main: `src/components/tpo/grid/tpo-grid.tsx`, then `src/components/tpo/grid-workspace.tsx` or whichever path chat-12 actually exports. Do not mark done for absence.
 
-Required future shell commands (not executed):
+## Bounded continuation — 2026-10-19
 
-```bash
-grep -Rnl 'TpoSpreadsheetGrid' src --include='*.tsx'
-grep -Rnl 'ag-grid-react\|ag-grid-community' package.json package-lock.json src --include='*.tsx'
-grep -Rnl 'themeQuartz\|ModuleRegistry.registerModules' src --include='*.tsx'
-grep -RnlE '<table([[:space:]]|>)' src/components/tpo --include='*.tsx'
-grep -Rnl 'grid/tpo-grid' src/components/tpo --include='*.tsx'
-```
+Branch fast-forwarded from b1d0962 to then-current main b275ca0 BEFORE changes. Subsequent main activity may advance further. No CI/test/runtime execution.
 
-## Responsive and regression proof
+### Additional source evidence and status
 
-- Phone: inherited cards, capped primary fields, optional details/actions disclosures, touch-sized selection. No AG Grid instance to screenshot.
-- Tablet: `md` breakpoint switches to scrollable Table; sticky 48px checkbox column. Old Quartz tablet behavior unavailable.
-- Desktop: per-column width/pin controls persist under storageKey, external filter panel remains, sort applied only to explicitly opted-in numeric/date fields.
-- No CI, tests, app execution, or local screenshot comparison was performed by chat-14, per owner's development-only rule.
-- **Safety**: vNext server responses, scope restrictions, URL filters, export permission checks, Row action callbacks, and existing saved-view APIs were not moved into the client adapter.
-- **Main integration**: `main` has advanced independently and the lane has diverged; do not force-update or fake-rebase the lane, which would risk losing its unmerged UI commits. A normal conflict-aware merge/rebase in a checked-out worktree remains needed.
+| Property | Legacy file:line | vNext file:line and observation | Result |
+|---|---|---|---|
+| AG Grid engine | lms2-fe/src/components/tpo/grid/TpoGrid.jsx:2-4 imports ag-grid-react, AllCommunityModule, themeQuartz | src/components/tpo/grid/tpo-grid.tsx:1-12 is still fallback to TpoSpreadsheetGrid. package.json lookup on branch returned no ag-grid-community or ag-grid-react declaration | OPEN: chat-14 engine blocked; package untouched |
+| Students sheet | GridWorkspace.jsx:396-457 toolbar | src/components/tpo/tpo-students-spreadsheet.tsx:214-237 has GridWorkspace around TpoGrid; /tpo/students/page.tsx:963 passes canManageViews=manageAllowed | Partially wired |
+| Applicant sheet | GridWorkspace.jsx:396-457 | src/components/tpo/tpo-applications-spreadsheet.tsx:51-62 wraps existing review drawer and row links | Partially wired |
+| Company sheet | GridWorkspace.jsx:396-457 | src/components/tpo/tpo-companies-spreadsheet.tsx:17-78 with local column preference; tpo/companies/page.tsx renders it within existing authorized pagination and export | Partially wired, DataTable fallback |
+| Company URL keys | legacy grid's local layout | src/modules/placements/tpo-company-url-validation.ts:3-9 forbids columns query; grid/grid-workspace.tsx:18-20,62-111 stores column preference locally | Preserves strict server guard |
+| Student saved views | GridWorkspace.jsx:410-438,518-525 | tpo-student-saved-views.tsx:31-72 embedded mode loads existing views on open; permissions checked in parent page | API retained, memory descriptions incomplete |
+| Page-scoped act bar | GridWorkspace.jsx:458-494 | grid/grid-workspace.tsx:212 onward selects authorized shown page, offers Copy and Clear, optional act slot | Functional, pending pixel checks |
+| Roll paste | legacy ui/rollParser.js:3-18 | grid/grid-workspace.tsx:132-155 handles numbered lists, roll aliases, case-folded matching, ambiguous duplicates fail-closed | Functional variation |
+| Zero result recovery | GridWorkspace.jsx:461-471 | grid/grid-workspace.tsx:84-100 and below count strip have Clear search and filters | Functional partial |
+| Website external link | legacy-styles/components___common.scss:69-74 | tpo-companies-spreadsheet.tsx:50-58 and tpo-safe-company-url.ts:1-11 allow only credential-free http(s), new-tab disclosed | Safe, style not fully verified |
 
-## Exact completion blockers, in order
+### Unticked items and blockers
 
-1. Land the requested `docs/design/legacy-grid/*.txt` files in the accessible repository and the real AG Grid 36.2 package/lock declarations (owned by the party supplying the baseline; chat-14 did **not** change `package.json`).
-2. Read the exact legacy `tpoGridTheme`, `TpoGrid`, export, memory, header-filter, choice-editor and saved-view sources and build an `AgGridReact` implementation in `grid/tpo-grid.tsx`.
-3. Register `AllCommunityModule` once, map controlled row selection, selection pruning, column state, numeric/date-only sort, clipboard/export callbacks, option editors, and saved views without widening server permissions.
-4. Resolve branch divergence against origin/main without discarding parallel lane edits; run the required greps in the checked-out repository, and record real counts.
-5. Provide the complete, value-by-value legacy/vNext state table (default, hover, selected, focus, disabled, loading, empty, responsive). Only then tick E8.
+- [ ] AG Grid themeQuartz parity. TpoGrid is a wrapper to the old TpoSpreadsheetGrid. The user says packages are installed, but the connected package.json currently declares neither package. Per instructions, package.json was NOT changed.
+- [ ] Duplicate Columns selector: the old spreadsheet fallback renders a chooser even while GridWorkspace provides a toolbar chooser. Needs chat-14 component seam to suppress one.
+- [ ] Wire remaining Drives, batches and roster page grids while keeping server permissions, query guards and actions.
+- [ ] Exact responsive, hover/focus/loading/export/selection checks and valid JSX proof. No grep or screenshot was run; do not fabricate counts. Source reads are not grep coverage.
 
-## Continuation: fallback hardening (2026-10-19)
-
-The AG Grid source remains unavailable and the package manifest does not declare either `ag-grid-community` or `ag-grid-react`. E8 is **[ ]**. This turn deliberately did not create unresolved imports, fabricate Quartz theme parameters, claim native AG Grid grid state, or run CI.
-
-| Incremental contract | vNext evidence | Limit |
-|---|---|---|
-| Explicit engine identity | src/components/tpo/grid/tpo-grid.tsx:12 | `TpoGrid` still delegates to shared Table |
-| Pinned checkbox separation | src/components/tpo/tpo-spreadsheet-grid.tsx:62 | 48px offset, no browser scroll proof |
-| Safe clipboard fallback | src/components/tpo/tpo-spreadsheet-grid.tsx:160 | Browser clipboard permissions not executed |
-| Deduplicated filtered selection | src/components/tpo/tpo-spreadsheet-grid.tsx:68 | Backend still owns authorized/filter-scoped `allIds` |
-| Selection anchor cleanup | src/components/tpo/tpo-spreadsheet-grid.tsx:94 | No interactive keyboard test |
-| Versioned data-free layout | src/components/tpo/tpo-spreadsheet-grid.tsx:50 | Sanitized `:layout-v3` storage on manual resize/pin; legacy `:layout-v2` restored when no valid v3 record, no AG Grid column API |
-| v3 restore | src/components/tpo/tpo-spreadsheet-grid.tsx:104 | Saves widths/pins; URL column chooser remains source of visibility |
-
-Source inspection was performed through GitHub file reads; **no** runtime, exhaustive repository grep, visual state matrix, or AG Grid integration evidence exists. Future continuation: `src/components/tpo/grid/tpo-grid.tsx` when upstream legacy-grid and declared AG Grid dependencies become available; otherwise work E1–E5 coverage.
+**Next file:** src/components/tpo/recruiter-leads-workspace.tsx after confirming current Engage/Drives sheet routing; then src/app/(authenticated)/tpo/batches/[batchId]/page.tsx for eligibility and roster sheets.
