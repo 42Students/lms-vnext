@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 "use client";
 import { BoardColumn } from "@/components/ui/board-column";
 import {useEffect,useMemo,useState} from "react";
@@ -76,7 +77,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-link underline">Back to project</Link>
-    <h1 className="mt-2 text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Task Allocation</h1>
+    <PageHeader title="Task Allocation" />
     <p className="mt-1 text-sm text-body">{unassigned} needs assigning · {filtered.length} matching tasks</p>
     <p className="mt-1 text-xs text-muted-foreground">Auto-assign acts on eligible tasks across the project, not only filtered cards.</p>
     {previousAssignees.length>0?<p role="status" className="mt-1 text-xs text-warning-text">
