@@ -6,6 +6,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
@@ -61,7 +62,7 @@ export default async function HrRoundsEditorPage({params}:{
    </p>:null}
    {rounds.map(round=><article key={round.id} className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
-     <span className="text-sm text-body">{round.kind} · {round.status}</span></div>
+     <span className="flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge>{round.status}</StatusBadge></span></div>
     {round.editable?<form action={endpoint} method="post" className="grid gap-3 sm:grid-cols-2">
       <input type="hidden" name="action" value="UPDATE"/><input type="hidden" name="roundId" value={round.id}/>
       <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
