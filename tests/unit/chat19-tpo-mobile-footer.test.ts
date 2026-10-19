@@ -23,6 +23,18 @@ describe("chat-19 TPO five-icon mobile footer",()=>{
     expect(source).toContain('href:"/tpo/placements"');
     expect(source).toContain('onClick={()=>setMoreOpen(open=>!open)}');
   });
+  it("closes More on browser route commits or tablet/desktop resize",()=>{
+    const source=footer();
+    expect(source).toContain('import { useEffect, useState } from "react"');
+    expect(source).toContain("useEffect(()=>{setMoreOpen(false);},[pathname]);");
+    expect(source).toContain('window.matchMedia("(min-width: 768px)")');
+    expect(source).toContain('media?.addEventListener("change",closeOnTablet)');
+    expect(source).toContain('media?.removeEventListener("change",closeOnTablet)');
+    expect(source).toContain('window.addEventListener("resize",closeOnTablet)');
+    expect(source).toContain('window.removeEventListener("resize",closeOnTablet)');
+    expect(source).toContain('onClick={()=>setMoreOpen(false)}');
+    expect(source).toContain('className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 md:hidden"');
+  });
   it("keeps shared buttons, valid opening/closing tags and icon-label contents",()=>{
     const source=footer();
     expect(source).toContain('import { Button } from "@/components/ui/button"');
