@@ -85,7 +85,7 @@ export default async function SuperAdminFeaturesPage({
           action={
             <Link
               href="/admin/features"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
             >
               Clear filters
             </Link>
