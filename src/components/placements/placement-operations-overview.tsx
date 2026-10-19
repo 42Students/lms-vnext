@@ -8,7 +8,7 @@ import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operati
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
 function Metric({ label, value, description }: { label: string; value: number; description: string }) {
-  return <section className="rounded-xl border border-border bg-surface p-4">
+  return <section className="border-b border-border pb-6">
     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{label}</p>
     <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
     <p className="mt-1 text-xs leading-5 text-body">{description}</p>

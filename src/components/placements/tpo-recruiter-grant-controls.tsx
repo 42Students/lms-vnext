@@ -147,12 +147,12 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
   <label className="text-xs">{ended?"Give access again":"Extend access"}
    <select value={months} disabled={busy}
     onChange={e=>setMonths(Number(e.target.value) as 3|6|12)}
-    className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface px-2">
+    className="ml-2 min-h-11 md:min-h-9 rounded-[9px] border border-border bg-surface px-2">
     <option value={3}>3 months</option><option value={6}>6 months</option><option value={12}>12 months</option>
    </select>
   </label>
   <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-   className="min-h-11 md:min-h-9 rounded border border-border px-3 text-xs text-[var(--lms-teal-deep)] disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-xs text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Saving…":ended?"Give access again":"Extend"}
   </button>
   {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
