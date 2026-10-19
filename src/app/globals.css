@@ -1105,3 +1105,10 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [role="dialog"][aria-modal="false"] [data-slot="scroll-cue"] [role="region"]::-webkit-scrollbar {
   display: none;
 }
+
+/* The tracker dark override must also win over native disabled-control selectors. */
+:root[data-tracker-theme="dark"] :is([data-slot="input"], [data-slot="select"], [data-slot="textarea"]):disabled {
+  background: var(--lms-neutral-50);
+  color: var(--lms-neutral-400);
+  border-color: var(--lms-border);
+}
