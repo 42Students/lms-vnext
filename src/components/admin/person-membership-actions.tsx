@@ -308,6 +308,7 @@ export function PersonMembershipActions({
           <>
             <Button
               variant="secondary"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               disabled={lifecyclePending}
               onClick={() => setSuspendOpen(false)}
             >
@@ -315,6 +316,7 @@ export function PersonMembershipActions({
             </Button>
             <Button
               variant="danger"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               loading={lifecyclePending}
               disabled={
                 lifecyclePending ||
