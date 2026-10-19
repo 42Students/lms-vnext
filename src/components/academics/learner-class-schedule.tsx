@@ -1,5 +1,5 @@
-import { StatTile } from "@/components/ui/stat-tile";
 "use client";
+import { StatTile } from "@/components/ui/stat-tile";
 import { Input } from "@/components/ui/input";
 
 import Link from "next/link";
