@@ -42,6 +42,9 @@
   --lms-warning-subtle: rgba(217, 119, 6, 0.1);
   --lms-error: #ef4444;
   --lms-error-subtle: rgba(239, 68, 68, 0.1);
+  --lms-success-text: #065f46;
+  --lms-warning-text: #92400e;
+  --lms-error-text: #b91c1c;
   --lms-info: #26bac7;
   --lms-info-subtle: #eff8fa;
 
@@ -856,6 +859,14 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="textarea"]:not(:disabled):focus-visible {
   border-color: #26bac7;
   box-shadow: 0 0 0 2px rgba(38,186,199,.15);
+}
+/* Invalid controls keep the old LMS red halo even after the shared teal-focus rule. */
+[data-slot="input"][aria-invalid="true"]:not(:disabled):focus-visible,
+[data-slot="select"][aria-invalid="true"]:not(:disabled):focus-visible,
+[data-slot="textarea"][aria-invalid="true"]:not(:disabled):focus-visible {
+  border-color: var(--lms-error);
+  outline-color: var(--lms-error);
+  box-shadow: 0 0 0 2px rgba(239,68,68,.2);
 }
 
 /* Menu dropdowns and search popovers are different old LMS overlay types:
