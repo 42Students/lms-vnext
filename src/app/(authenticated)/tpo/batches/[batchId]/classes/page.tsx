@@ -11,7 +11,7 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
  return <div className="space-y-5">
   <PageHeader eyebrow="TPO · Batches" title={"Classes · "+data.batch.name}
    description="Class decisions are inherited by students without a direct eligibility override."/>
-  <Link href="/tpo/batches" className="font-semibold text-link underline">← All batches</Link>
+  <Link href="/tpo/batches" className="font-semibold text-link underline lms-inline-link">← All batches</Link>
   <TpoBatchWorkspaceTabs batchId={batchId} active="classes"/>
   {!data.ready?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm">Batch lifecycle storage is unavailable. Decisions cannot be saved.</p>:null}
   {data.finished?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm">This batch is finished. Eligibility decisions are read-only.</p>:null}
