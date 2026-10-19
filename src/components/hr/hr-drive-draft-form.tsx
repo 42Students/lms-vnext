@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
@@ -288,14 +289,14 @@ export function HrDriveDraftForm({
           </label>
           <label className="grid gap-1 text-sm text-body">
             Employment type
-            <Select value={draft.employmentType}
+            <Select className="w-full" value={draft.employmentType}
               onChange={(event) => setDraft((current) => ({ ...current, employmentType: event.target.value as HrDriveDraft["employmentType"] }))}>
               {selectOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </Select>
           </label>
           <label className="grid gap-1 text-sm text-body">
             Mode
-            <Select value={draft.driveMode??"ON_CAMPUS"}
+            <Select className="w-full" value={draft.driveMode??"ON_CAMPUS"}
               onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as "ON_CAMPUS"|"OFF_CAMPUS",
                 ...(event.target.value==="ON_CAMPUS"?{externalApplicationUrl:""}:{})}))}>
               <option value="ON_CAMPUS">On campus</option>
@@ -313,7 +314,7 @@ export function HrDriveDraftForm({
           </label>:null}
           <label className="grid gap-1 text-sm text-body">
             Work mode
-            <Select value={draft.workMode}
+            <Select className="w-full" value={draft.workMode}
               onChange={(event) => setDraft((current) => ({ ...current, workMode: event.target.value as HrDriveDraft["workMode"] }))}>
               {workModes.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </Select>
@@ -416,7 +417,7 @@ export function HrDriveDraftForm({
             <div key={index} className="grid min-w-0 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[10rem_minmax(0,1fr)_auto]">
               <label className="grid gap-1 text-sm text-body">
                 Kind
-                <Select value={round.kind}
+                <Select className="w-full" value={round.kind}
                   onChange={(event) => setDraft((current) => ({
                     ...current, rounds: current.rounds.map((item, i) => i === index
                       ? { ...item, kind: event.target.value as HrDriveDraft["rounds"][number]["kind"] } : item),
