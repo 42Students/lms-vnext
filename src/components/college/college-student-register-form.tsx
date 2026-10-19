@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
@@ -80,28 +81,28 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       <input maxLength={128} value={rollNumber} onChange={e=>setRoll(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Program
-      <select required value={programId} onChange={e=>{setProgramId(e.target.value);setCohortId("");setSectionId("");}} className={field}>
+      <Select required value={programId} onChange={e=>{setProgramId(e.target.value);setCohortId("");setSectionId("");}} className={field}>
         <option value="">Choose program</option>
         {choices.programs.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Batch
-      <select required value={cohortId} onChange={e=>{setCohortId(e.target.value);setSectionId("");}} className={field}>
+      <Select required value={cohortId} onChange={e=>{setCohortId(e.target.value);setSectionId("");}} className={field}>
         <option value="">Choose batch</option>
         {choices.batches.filter(p=>p.programId===programId).map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Class/Section
-      <select value={sectionId} onChange={e=>setSectionId(e.target.value)} className={field}>
+      <Select value={sectionId} onChange={e=>setSectionId(e.target.value)} className={field}>
         <option value="">Assign class later</option>
         {choices.classes.filter(p=>p.cohortId===cohortId).map(p=>
           <option key={p.id} value={p.id}>{p.name} · {p.capacity??"Unlimited"} seats</option>)}
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Gender
-      <select value={gender} onChange={e=>setGender(e.target.value as typeof gender)} className={field}>
+      <Select value={gender} onChange={e=>setGender(e.target.value as typeof gender)} className={field}>
         {["","Male","Female","Other","Prefer not to say"].map(g=><option key={g} value={g}>{g||"Not specified"}</option>)}
-      </select>
+      </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Date of Birth
       <input type="date" value={dateOfBirth} onChange={e=>setDob(e.target.value)} className={field}/>
