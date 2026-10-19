@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 "use client";
 import {useMemo,useState} from "react";
 import {Button} from "@/components/ui/button";
@@ -36,14 +37,14 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   [row.learnerName,row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
  ),sort,preserveServerOrder),[rows,tab,kind,query,sort,preserveServerOrder]);
  return <section className="min-w-0 space-y-4" aria-label="Profile verification workspace">
-  <header className="space-y-2">
-   <h1 className="text-xl font-semibold">{legacyTpoCopy?"Verification":"Profile verification"}</h1>
-   <p className="text-sm text-muted-foreground">{legacyTpoCopy
-    ? "Check students\u0027 education and identity against their documents. Verified marks are what eligibility uses."
-    : legacyCollegeCopy
-    ? collegeVerificationLegacyCopy.subtitle
-    : "Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided."}</p>
-  </header>
+  <PageHeader
+    title={legacyTpoCopy ? "Verification" : "Profile verification"}
+    description={legacyTpoCopy
+      ? "Check students' education and identity against their documents. Verified marks are what eligibility uses."
+      : legacyCollegeCopy
+        ? collegeVerificationLegacyCopy.subtitle
+        : "Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided."}
+  />
   <nav aria-label="Verification status" className="flex flex-wrap gap-2">
    {(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>
     <Button variant={tab===t?"primary":"secondary"} type="button" key={t} aria-pressed={tab===t} onClick={()=>onTabChange?onTabChange(t):setTab(t)}
