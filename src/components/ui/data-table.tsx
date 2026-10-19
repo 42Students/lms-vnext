@@ -34,7 +34,7 @@ export type DataTableProps<Row> = {
 export { isSafeInternalHref as isSafeDataTableHref } from "@/lib/safe-internal-href";
 
 export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref }: DataTableProps<Row>) {
-  if(rows.length===0) return <div className="rounded-[10px] border border-[var(--lms-canvas-border)] bg-white p-4 sm:p-6">{empty}</div>;
+  if(rows.length===0) return <div className="rounded-[10px] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-6">{empty}</div>;
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
     columns.find(col=>col.mobilePriority===undefined || col.mobilePriority==="secondary");
   const actions=columns.filter(col=>col.mobilePriority==="action");
