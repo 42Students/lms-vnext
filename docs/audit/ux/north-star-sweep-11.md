@@ -13,7 +13,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 ## Follow-on execution
 
 - Fast-forwarded `chatgpt/chat-11-b` to `main` (`7e3ab610`) before edits; the historical chat-11 sweep was already merged.
-- **154 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 82 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
+- **172 cumulative source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 90 distinct scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
 - Eliminated duplicate filters/form shell cards in TPO blocked dates and Super Admin module filters, plus redundant section padding in settings and public placements. Preserved distinct metric/tenant/setup cards and status notices.
 - Replaced residual literal 9px, generic `rounded-md`, and legacy `--radius` control overrides with the canonical `--lms-control-radius`, without changing inputs' values, forms, labels or handlers. Fixed inconsistent tap targets on tenant setup tabs.
 - Removed invalid standalone `-`/`-subtle` utility tokens in tenant domains, college sign-in, logo upload, college setup checklist, and tenant settings scope.
@@ -23,7 +23,9 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 
 ## Updated source paths
 
+- `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
 - `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
 - `src/app/(authenticated)/admin/course-progress/page.tsx`
 - `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
 - `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
@@ -34,6 +36,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - `src/app/(authenticated)/admin/module-access/page.tsx`
 - `src/app/(authenticated)/admin/settings/auth/page.tsx`
 - `src/app/(authenticated)/admin/settings/page.tsx`
+- `src/app/(authenticated)/admin/tenants/create/page.tsx`
 - `src/app/(authenticated)/admin/tenants/page.tsx`
 - `src/app/(authenticated)/admin/tenants/setup/page.tsx`
 - `src/app/(authenticated)/tpo/settings/branding/page.tsx`
@@ -41,16 +44,20 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
 - `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
 - `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- `src/app/(authenticated)/tpo/settings/rules/page.tsx`
+- `src/app/(authenticated)/tpo/settings/season/page.tsx`
 - `src/app/(authenticated)/tpo/settings/see/page.tsx`
 - `src/app/(authenticated)/tpo/settings/team/page.tsx`
 - `src/app/(authenticated)/tpo/settings/templates/page.tsx`
 - `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
+- `src/components/admin/academic-directory-refresh.tsx`
 - `src/components/admin/academic-module-scope-inventory.tsx`
 - `src/components/admin/academic-setup-steps.tsx`
 - `src/components/admin/college-admin-lifecycle-action.tsx`
 - `src/components/admin/college-at-glance-panel.tsx`
 - `src/components/admin/college-branding-form.tsx`
 - `src/components/admin/college-branding-preview.tsx`
+- `src/components/admin/college-closing-quizzes-card.tsx`
 - `src/components/admin/college-create-form.tsx`
 - `src/components/admin/college-dashboard-cards.tsx`
 - `src/components/admin/college-dashboard-section-failure.tsx`
@@ -60,6 +67,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - `src/components/admin/college-signin-method-form.tsx`
 - `src/components/admin/descendant-feature-rule-editor.tsx`
 - `src/components/admin/managed-college-subdomain.tsx`
+- `src/components/admin/tenant-directory-csv-control.tsx`
 - `src/components/admin/tenant-domain-manager.tsx`
 - `src/components/admin/tenant-settings-editor.tsx`
 - `src/components/admin/tenant-settings-other-keys.tsx`
@@ -260,6 +268,38 @@ Then **30 `[chat-11]` source commits** were pushed exclusively to `chatgpt/chat-
 - `src/components/tpo/tpo-notice-delete-confirm.tsx`
 - `src/components/tpo/tpo-notice-undo-toast.tsx`
 - `src/components/tpo/tpo-public-join-link-card.tsx`
+
+## Seventh pass — latest main merge and tenant/TPO finishing controls (2026-10-19)
+
+First merged `origin/main` `f7dd3e81786a` into the lane through merge commit `244ee2c56c70`. Of 45 changed paths in the previous lane, only three overlapped newer main: `tpo-team-away-form.tsx`, `tpo-team-forms.tsx`, and `tpo-team-handover.tsx`. The merge retained main's updated shared-component structure, including the reply composer `Checkbox`, and reapplied only the old-LMS control-height / form-skin changes; the other 42 lane-only files remained intact. No force-push or push to `main` was made.
+
+Then **18 `[chat-11]` source commits** were pushed to `chatgpt/chat-11-b`, changing **18 scoped TSX paths**, including **8 previously unlisted sources**. The aggregate is now **172 cumulative continuation source commits in 90 distinct files**.
+
+- TPO settings: legacy control/canvas radius fallbacks in rules, seasons, and recruiter-visibility objects; shared button presentation in read-progress reminders and team message/ask actions; responsive announcement and refresh controls
+- Super Admin tenant setup: consistent desktop/phone heights for tenant directory and create/setup links, persisted readiness filters/alerts and college overview destinations; scoped verification alert cards now use the shared canvas radius
+- Shared but lane-scoped admin pieces: academic-directory refresh, quizzes-closing links, filtered tenant CSV export, college sign-in save action, and settings filter/result notes
+- Re-read every source touched by this batch, including each modified `Button`, `Select`, `Textarea` and native JSX closing tag; two self-closing `Textarea` tags were checked explicitly. No malformed or truncated JSX closing tags found in this limited textual inspection. **No TypeScript compilation, tests, application execution, CI or browser visual diff was run.**
+
+### Seventh-pass changed source paths
+
+- `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- `src/app/(authenticated)/admin/settings/page.tsx`
+- `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- `src/app/(authenticated)/admin/tenants/page.tsx`
+- `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- `src/app/(authenticated)/tpo/settings/rules/page.tsx`
+- `src/app/(authenticated)/tpo/settings/season/page.tsx`
+- `src/app/(authenticated)/tpo/settings/see/page.tsx`
+- `src/components/admin/academic-directory-refresh.tsx`
+- `src/components/admin/college-closing-quizzes-card.tsx`
+- `src/components/admin/college-signin-method-form.tsx`
+- `src/components/admin/tenant-directory-csv-control.tsx`
+- `src/components/tpo/tpo-notice-read-progress.tsx`
+- `src/components/tpo/tpo-notification-refresh.tsx`
+- `src/components/tpo/tpo-team-ask-panel.tsx`
+- `src/components/tpo/tpo-team-message-actions.tsx`
 
 ## Remaining verification and ownership boundaries
 
