@@ -1,4 +1,8 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 import {
   useMemo,
@@ -85,8 +89,6 @@ function formatWhen(
   }).format(new Date(value));
 }
 
-const inputClass =
-  "min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
 
 export function RecruiterResultControls({
   rounds,focusApplicantId,
@@ -409,29 +411,29 @@ export function RecruiterResultControls({
                   <span className="text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</span>
                   {([
                     ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
-                  ] as const).map(([outcome,label])=><button key={outcome} type="button"
+                  ] as const).map(([outcome,label])=><Button variant="primary" key={outcome} type="button"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
                     disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
-                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-40">
+                   >
                     {label}
-                  </button>)}
-                  <button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
-                    onClick={undoDraftOutcome} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-40">
+                  </Button>)}
+                  <Button variant="primary" type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
+                    onClick={undoDraftOutcome}>
                     Undo draft
-                  </button>
-                  <button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
-                    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50"
+                  </Button>
+                  <Button variant="primary" type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
+                   
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
-                  </button>
-                  <button type="button" disabled={bulkPending!==null||pendingKey!==null}
-                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50"
+                  </Button>
+                  <Button variant="primary" type="button" disabled={bulkPending!==null||pendingKey!==null}
+                   
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
                         []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}));}}>
                     {(selected[round.id]??[]).length?"Clear selection":"Select all eligible"}
-                  </button>
+                  </Button>
                 </div>:null}
                 <p className="mt-1 text-sm text-body">
                   {humanize(round.kind)} ·{" "}
@@ -499,7 +501,7 @@ export function RecruiterResultControls({
                         >
                           <div>
                             {canStage&&!applied?<label className="mb-2 flex items-center gap-2 text-xs text-body">
-                              <input type="checkbox" checked={(selected[round.id]??[]).includes(participant.applicationId)}
+                              <Checkbox checked={(selected[round.id]??[]).includes(participant.applicationId)}
                                 onFocus={()=>setActiveRoundId(round.id)}
                                 onChange={event=>setSelected(old=>{
                                   const current=old[round.id]??[];
@@ -553,11 +555,9 @@ export function RecruiterResultControls({
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Outcome
                                 </span>
-                                <select
+                                <Select
                                   aria-label="Outcome"
-                                  className={
-                                    inputClass
-                                  }
+                                 
                                   value={
                                     draft.outcome
                                   }
@@ -592,18 +592,16 @@ export function RecruiterResultControls({
                                   <option value="ABSENT">
                                     Absent
                                   </option>
-                                </select>
+                                </Select>
                               </label>
 
                               <label>
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Score %
                                 </span>
-                                <input
+                                <Input
                                   aria-label="Score %"
-                                  className={
-                                    inputClass
-                                  }
+                                 
                                   type="number"
                                   min="0"
                                   max="100"
@@ -638,11 +636,9 @@ export function RecruiterResultControls({
                                   <span className="mb-1 block text-xs font-semibold text-body">
                                     Waitlist rank
                                   </span>
-                                  <input
+                                  <Input
                                     aria-label="Waitlist rank"
-                                    className={
-                                      inputClass
-                                    }
+                                   
                                     type="number"
                                     min="1"
                                     max="100000"
@@ -676,11 +672,9 @@ export function RecruiterResultControls({
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Reason category
                                 </span>
-                                <select
+                                <Select
                                   aria-label="Reason category"
-                                  className={
-                                    inputClass
-                                  }
+                                 
                                   value={
                                     draft.reasonCategory
                                   }
@@ -718,16 +712,16 @@ export function RecruiterResultControls({
                                   <option value="OTHER">
                                     Other
                                   </option>
-                                </select>
+                                </Select>
                               </label>
 
                               <label className="lg:col-span-2">
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Candidate message
                                 </span>
-                                <textarea
+                                <Textarea
                                   aria-label="Candidate message"
-                                  className="min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]"
+                                 
                                   value={
                                     draft.candidateMessage
                                   }
