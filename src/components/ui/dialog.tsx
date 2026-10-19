@@ -18,14 +18,16 @@ export type DialogProps = {
   className?: string;
   bodyClassName?: string;
   role?: "dialog" | "alertdialog";
+  /** Route-selected detail dialogs use the URL as their back-stack owner. */
+  historyMode?: "marker" | "route";
 };
 
-export function Dialog({ open, onOpenChange, title, description, children, footer, dismissible = true, className, bodyClassName, role = "dialog" }: DialogProps) {
+export function Dialog({ open, onOpenChange, title, description, children, footer, dismissible = true, className, bodyClassName, role = "dialog", historyMode = "marker" }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLElement | null>(null);
   const titleId = useId();
   const descriptionId = useId();
-  const { availableHeight, viewportTop } = useOverlayWebview({ open, dismissible, onDismiss: () => onOpenChange(false) });
+  const { availableHeight, viewportTop } = useOverlayWebview({ open, dismissible, historyMode, onDismiss: () => onOpenChange(false) });
   const visualCenter = availableHeight && viewportTop
     ? `${Number.parseFloat(viewportTop) + Number.parseFloat(availableHeight) / 2}px` : "50dvh";
 
