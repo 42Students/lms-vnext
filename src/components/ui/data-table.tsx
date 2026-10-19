@@ -35,7 +35,7 @@ export type DataTableProps<Row> = {
 export { isSafeInternalHref as isSafeDataTableHref } from "@/lib/safe-internal-href";
 
 export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className }: DataTableProps<Row>) {
-  if(rows.length===0) return <div data-slot="data-table" className={cx("rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:p-[var(--lms-canvas-padding)]", className)}>{empty}</div>;
+  if(rows.length===0) return <div data-slot="data-table" aria-label={caption} className={cx("rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] sm:p-[var(--lms-canvas-padding)]", className)}>{empty}</div>;
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
     columns.find(col=>col.mobilePriority===undefined || col.mobilePriority==="secondary");
   const actions=columns.filter(col=>col.mobilePriority==="action");
