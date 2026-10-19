@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import type {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
 import {DataTable} from "@/components/ui/data-table";
@@ -29,7 +31,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
   <form action="/college/course-progress" method="get" className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Class
     <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
-     className="min-h-11 rounded-md border border-border bg-surface px-3">
+     className="min-h-11">
      <option value="">Select Class</option>
      {[...sections].map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </Select>
@@ -37,7 +39,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Course
     <Select value={offeringId} onChange={event=>setOfferingId(event.target.value)}
      name="offeringId" disabled={!sectionId}
-     className="min-h-11 rounded-md border border-border bg-surface px-3">
+     className="min-h-11">
      <option value="">Select Course</option>
      {courses.map(item=><option key={item.offeringId} value={item.offeringId}>
       {item.courseCode} · {item.courseName}
@@ -45,8 +47,8 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     </Select>
    </label>
    <input type="hidden" name="deliveryId" value={deliveryId}/>
-   <Button variant="primary" type="submit" disabled={!deliveryId}
-    >
+   <Button type="submit" disabled={!deliveryId}
+    className="min-h-11">
     Show progress
    </Button>
    <Link href="/college/course-progress"
