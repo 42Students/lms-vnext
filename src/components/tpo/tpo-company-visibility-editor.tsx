@@ -1,4 +1,5 @@
 "use client";
+import {Button} from "@/components/ui/button";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
@@ -47,8 +48,8 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
         onChange={event=>setValues(current=>({...current,[key]:event.target.checked}))}/>
     </label>)}
   </details>
-  <button type="button" disabled={busy} onClick={()=>void save()}
-   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">{busy?"Saving…":"Save"}</button>
+  <Button type="button" disabled={busy} onClick={()=>void save()}
+   >{busy?"Saving…":"Save"}</Button>
   {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message} onDismiss={()=>setMessage("")}/>:null}
  </section>;
 }
