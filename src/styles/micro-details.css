@@ -146,13 +146,13 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   background-color: var(--lms-primary);
 }
 
-/* Legacy: old-lms-shell.css:56 header shadow (1px 3px, 3.5%).
-   Paint shadow only on existing sticky header surfaces, never make them sticky. */
-:where([data-slot="page-canvas"], main)
-  :where(thead.sticky, [data-slot="table-header"][data-sticky="true"],
-    [data-slot="data-table"] thead[data-sticky="true"]) {
-  box-shadow: 0 1px 3px rgba(26, 45, 72, 0.035);
-}
+/* Source correction: old-lms-shell.css:56 is specifically the
+   .tpo-shell-header.ln-head (top bar), NOT a table thead.
+   Never transfer that 0 1px 3px navy shadow to table cells:
+   it would create a visual discrepancy without a legacy table rule.
+   The top bar belongs to chat-13; preserve that lane's styles.
+   Existing table heading borders and sticky position remain intact.
+   No shadow or layout override is applied here. */
 
 /* Legacy: components___variables.scss:253-259 normal 250ms material easing;
    components___antddesign.scss:7-13 uses a page-panel entrance. The opener's
@@ -288,12 +288,11 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   :where(.ln-table-no-hover) :where(tbody tr:hover, tbody tr:hover > td) {
   background-color: var(--lms-white) !important;
 }
-/* Legacy: old-lms-shell.css:56 (0 1px 3px 3.5% navy); only shadow already
-   sticky table cells. No position:sticky or stacking-order changes. */
-:where([data-slot="table"], [data-slot="data-table"])
-  :where(thead th.sticky, thead th[data-sticky="true"]) {
-  box-shadow: 0 1px 3px rgba(26, 45, 72, 0.035);
-}
+/* Source correction: the copied legacy components___common.scss:697-714
+   and components___tables.scss:1-24 specify table borders/padding,
+   but no sticky-table shadow matching old-lms-shell.css:56.
+   That value belongs exclusively to the top bar.
+   Keep DataTable's existing responsive sticky headers unchanged. */
 
 /* I — measured notification-overlay entry, not inferred generic modal
  * geometry. Legacy: components___notification-drawer.scss:83-102
