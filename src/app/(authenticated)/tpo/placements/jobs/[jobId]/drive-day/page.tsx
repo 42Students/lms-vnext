@@ -6,6 +6,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { PlacementDriveDayOverview } from "@/components/placements/placement-drive-day-overview";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default async function DriveDayForOneDrive({
   params,
@@ -47,7 +48,7 @@ export default async function DriveDayForOneDrive({
           </article>;
         })}
       </section>
-    ) : <p className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">No rounds planned for this drive day yet.</p>}
+    ) : <EmptyState title="No rounds planned for this drive day yet."/>}
     <PlacementDriveDayOverview driveDay={drive} />
   </div>;
 }

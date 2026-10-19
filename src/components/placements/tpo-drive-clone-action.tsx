@@ -5,6 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 /** TPO-drives-26 / GR-04 / GR-35: cloning is an explicit, guarded draft mutation. */
 export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;label?:string}){
@@ -38,7 +39,7 @@ export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;l
     >
     {pending?"Creating draft…":label}
    </Button>
-   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
+   {error?<InlineNotice tone="error" message={error}/>:null}
   </div>
   <ConfirmDialog open={open} onOpenChange={setOpen} title="Run this drive again as a new draft?"
    description="Dates, candidates, rounds, results, offers and external links are cleared. Package details and eligibility rules are copied; review old batches and passing years before publishing."
