@@ -25,7 +25,7 @@ export default async function LearnerApplicationCompanyPage({
       <Link
         href={"/learn/my-placements/applications?applicationId=" +
           encodeURIComponent(company.applicationId)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
+        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline"
       >
         ← Back to application
       </Link>
