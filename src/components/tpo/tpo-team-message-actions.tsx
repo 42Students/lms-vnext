@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -37,14 +36,14 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
      onChange={event=>setDraft(event.target.value)} className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
    </label>
    {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-   <Button variant="primary" type="submit" disabled={busy||!draft.trim()} className="min-h-10 rounded-[var(--lms-control-radius)] bg-primary px-3 text-xs text-on-primary">{busy?"Saving…":"Save edit"}</Button>
+   <Button variant="primary" type="submit" disabled={busy||!draft.trim()} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-xs text-on-primary">{busy?"Saving…":"Save edit"}</Button>
    <Button variant="ghost" type="button" disabled={busy} onClick={()=>setMode(null)} className="ml-2 min-h-10 text-xs underline">Cancel</Button>
   </form>:null}
   {mode==="DELETE"?<div role="alertdialog" aria-modal="false" aria-label="Delete this message?"
    className="w-full space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-xs">
    <p>Delete this message? Other team members will see Message removed.</p>
    {error?<p role="alert" className="text-error">{error}</p>:null}
-   <Button variant="danger" type="button" disabled={busy} className="min-h-10 rounded-[var(--lms-control-radius)] bg-primary px-3 text-on-primary"
+   <Button variant="danger" type="button" disabled={busy} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-error px-3 text-on-primary"
     onClick={()=>void submit("DELETE")}>{busy?"Removing…":"Delete message"}</Button>
    <Button variant="ghost" type="button" disabled={busy} onClick={()=>setMode(null)} className="ml-2 min-h-10 underline">Cancel</Button>
   </div>:null}
