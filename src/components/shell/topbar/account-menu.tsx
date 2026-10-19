@@ -123,7 +123,7 @@ export function TopbarAccountMenu({
           <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
       </> : null}
       <hr className={style.menuDivider}/>
-      <Button variant="ghost" type="button" disabled={pending} aria-busy={pending}
+      <Button variant="ghost" type="button" disabled={pending} loading={pending} aria-busy={pending}
         className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
         <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
       </Button>
