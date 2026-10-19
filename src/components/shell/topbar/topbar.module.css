@@ -537,3 +537,5 @@
 @media (max-width:767px) { .hrNotificationDrawer [data-slot="drawer-footer"] { padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px)); border-top:1px solid #e5e9f0; background:#fafbfc; } }
 
 @media (max-width:767px) { .hrNotificationDrawer [data-slot="drawer-header"] { padding:calc(16px + env(safe-area-inset-top,0px)) 20px 16px; border-bottom:1px solid #e5e9f0; background:#fafbfc; } .hrNotificationDrawer [data-slot="drawer-header"] h2 { font-size:18px; font-weight:600; line-height:1.3; letter-spacing:-.02em; } }
+
+.hrNotificationBody [role="status"],.hrNotificationBody [role="alert"] { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px 20px; margin:0; text-align:center; font-size:14px; line-height:1.5; }
