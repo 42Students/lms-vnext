@@ -4,7 +4,6 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {Textarea} from "@/components/ui/textarea";
-import {Button} from "@/components/ui/button";
 type Props={threadId:string;messageId:string;body:string;expectedBodyHash:string;canEdit:boolean};
 export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,canEdit}:Props){
  const router=useRouter(),pending=useRef(false);
