@@ -6,6 +6,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
+import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
 import { LearnerClassSchedule,type LearnerScheduleEvent }
   from "@/components/academics/learner-class-schedule";
 import {
@@ -90,11 +91,11 @@ export default async function FacultyCalendarPage({
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </p>:null}
       <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className="mt-4 rounded-[var(--lms-control-radius)]">
-        <CalendarGrid variant="hairline" className="min-w-[44rem]">
-          {names.map(name=><div key={name} className="bg-surface-subtle p-2 text-center text-xs font-semibold">{name}</div>)}
+        <CalendarGrid variant="hairline" className={"min-w-[44rem] "+calendarStyles.calendarHairline}>
+          {names.map((name,index)=><div key={name} className={"bg-surface-subtle p-2 text-center text-xs font-semibold "+(index===0?calendarStyles.calendarSunday:"")}>{name}</div>)}
           {grid.days.map(day=><section key={day.key}
             aria-label={day.key+" IST"} className={"min-h-28 p-2 "+(day.inMonth?"bg-surface":"bg-surface-subtle")}>
-            <time dateTime={day.key} className="text-xs font-semibold text-foreground">
+            <time dateTime={day.key} className={"text-xs font-semibold text-foreground "+(new Date(day.key+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:"")}>
               {Number(day.key.slice(8))}
             </time>
             <div className="mt-2 space-y-2">
