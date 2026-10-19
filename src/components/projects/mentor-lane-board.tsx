@@ -38,6 +38,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null),
  [visibleLimit,setVisibleLimit]=useState(150);
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
+ const [dragging,setDragging]=useState(false);
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
   if(!undo)return;
@@ -185,10 +186,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   {error?<Alert tone="error">{error}</Alert>:null}
   {undo?<Button variant="ghost" type="button" disabled={busy} 
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
-  <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0}
+  <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
     className={styles.scrollRegion}><div className={styles.track}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
     className={[styles.lane, lane.id==="BACKLOG"?styles.backlogLane:"", lanes.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
+    data-can-drop={!readOnly&&!busy&&editable.includes(lane.id as typeof editable[number])}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
     <h2 className={styles.header}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h2>
@@ -197,7 +199,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
        editable.includes(task.status as typeof editable[number]);
      return <li key={task.id} draggable={canMove}
-      onDragStart={e=>e.dataTransfer.setData("text/plain",task.id)}
+      onDragStart={e=>{e.dataTransfer.setData("text/plain",task.id);setDragging(true);}}
+       onDragEnd={()=>setDragging(false)}
       className={"space-y-2 border p-3 text-sm "+styles.card}>
       <Button variant="ghost" type="button" onClick={()=>setSelected(task.id)}
         className="min-h-11 text-left">{task.title}</Button>
