@@ -260,7 +260,7 @@ export function AddProjectMemberControl({
           </label>
           {role === "MENTOR" ? (
             <label className="flex items-center gap-2 text-sm font-semibold text-body">
-              <input
+              <input data-slot="input"
                 type="checkbox"
                 checked={isPrimary}
                 onChange={(event) =>
