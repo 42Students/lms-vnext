@@ -9,7 +9,6 @@ import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
 
 import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
-import {companyDriveCsv} from "@/modules/placements/tpo-company-drive-export-model";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 
