@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Radio } from "@/components/ui/radio";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {useMemo,useState} from "react";
 type Workspace={id:string;title:string;status:string};
 export function AdminReadinessWorkspacePicker({items,selected,action}:{
@@ -24,7 +25,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
     <Radio name="workspaceId" value={item.id} checked={choice===item.id}
       onChange={()=>setChoice(item.id)}/>
     <span className="min-w-0 flex-1 break-words">{item.title}</span>
-    <span className="text-xs text-muted-foreground">{item.status}</span>
+    <StatusBadge tone={item.status==="ACTIVE"||item.status==="COMPLETED"?"success":item.status==="PLANNED"?"info":"neutral"} className="shrink-0">{item.status}</StatusBadge>
    </label>)}
    {!rows.length?<p className="p-3 text-sm text-muted-foreground">No matching workspaces.</p>:null}
   </fieldset>

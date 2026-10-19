@@ -117,7 +117,10 @@ export function ProjectAdminWorkspaceList({
                 {item.templateTitle ? "Template: " + item.templateTitle : "No template — attach one"}
               </p>
               <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
-                {item.title}
+                <Link href={basePath+"/"+encodeURIComponent(item.id)}
+                  className="rounded-sm hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  {item.title}
+                </Link>
               </h2>
             </div>
             <StatusBadge

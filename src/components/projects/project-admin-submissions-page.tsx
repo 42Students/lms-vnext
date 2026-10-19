@@ -150,7 +150,7 @@ export async function ProjectAdminSubmissionsPage({
           getRowKey={row=>row.id}
           columns={[
             {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:row=>row.title},
-            {key:"status",header:"Status",mobilePriority:"secondary",cell:row=>row.status},
+            {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="PLANNED"?"info":"neutral"}>{row.status}</StatusBadge>},
             {key:"progress",header:"Progress",mobilePriority:"secondary",cell:row=>row.progressPercent+"%"},
             {key:"inactive",header:"Inactive",mobilePriority:"secondary",cell:row=>
               (projectAdminElapsedDays(row.updatedAt,renderedAt)===null?"—":projectAdminElapsedDays(row.updatedAt,renderedAt)+" days")},

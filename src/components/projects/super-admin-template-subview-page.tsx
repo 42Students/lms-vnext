@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Pagination } from "@/components/ui/pagination";
 import { DataTable } from "@/components/ui/data-table";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
@@ -678,13 +679,12 @@ export async function SuperAdminTemplateSubviewPage({
                 </article>
               );
             })}
-            {historyPaging ? <nav aria-label="Template version pages" className="flex flex-wrap items-center gap-4 text-sm">
-              <span className="text-muted-foreground">Page {historyPaging.page} of {historyPaging.totalPages} · 25 per page</span>
-              {historyPaging.page > 1 ? <Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text"
-                href={templateVersionHistoryHref(templateId, historyPaging.page - 1)}>Previous</Link> : null}
-              {historyPaging.page < historyPaging.totalPages ? <Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text"
-                href={templateVersionHistoryHref(templateId, historyPaging.page + 1)}>Next</Link> : null}
-            </nav> : null}
+            {historyPaging ? <div className="flex min-w-0 flex-wrap items-center gap-3">
+              <span className="text-xs text-muted-foreground">25 versions per page</span>
+              <Pagination label="Template version pages" page={historyPaging.page}
+                pageCount={historyPaging.totalPages}
+                hrefForPage={page=>templateVersionHistoryHref(templateId,page)}/>
+            </div> : null}
           </section>
         )
       ) : null}
