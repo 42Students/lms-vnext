@@ -192,6 +192,7 @@
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:focus-visible { outline: 2px solid var(--lms-primary); outline-offset: 2px; }
 [data-slot="toast-action"] button { min-height: 44px; }
 [data-slot="toast-action"] :is(a, button):focus-visible { outline: 2px solid var(--lms-primary); outline-offset: 2px; }
+@media (max-width: 420px) { [data-slot="toast-action"] { flex-direction: column; align-items: stretch; } [data-slot="toast-action"] > div:last-child { width: 100%; } }
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
