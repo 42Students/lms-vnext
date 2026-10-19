@@ -112,7 +112,10 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
 
    {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
    {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style.topbarNotificationState}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="space-y-0">
-    {displayedItems.slice(0,20).map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[8px] text-sm">
+    {groupedItems.map((group,index)=><li key={group.day+"-"+index} className="list-none">
+    <p className="px-3 pb-2 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.day}</p>
+    <ul role="list" aria-label={"Notifications for "+group.day} className="space-y-0">
+    {group.items.map(item=><li key={item.id} className="mb-1.5 overflow-hidden rounded-[8px] text-sm">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
       className="w-full min-h-11 flex-col items-start justify-start gap-1 rounded-[8px] border border-border bg-surface px-4 py-3 text-left hover:bg-[var(--lms-neutral-50)]">
      <span className="block text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-notification-unread,#ff7576)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
@@ -122,7 +125,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      </time>
      <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
      </Button>
-    </li>)}</ul>:null}
+    </li>)}</ul></li>)}</ul>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </Drawer>
  </div>;
