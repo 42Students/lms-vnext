@@ -200,7 +200,7 @@ export function AdminProgramDirectory({
             {filtered.length ? (
               <a
                 href={csvHref} download="programs.csv"
-                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-[14px] font-[650] text-foreground hover:border-primary hover:bg-primary-subtle"
+                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-[650] text-foreground hover:border-primary hover:bg-primary-subtle"
               >Export CSV</a>
             ) : <Button variant="secondary" disabled>Export CSV</Button>}
             <Button variant="secondary" onClick={() => router.refresh()}>Refresh</Button>
