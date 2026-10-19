@@ -42,7 +42,7 @@ export function TpoPrepPercentageEditor({initial,version}:{initial:number;versio
   </label>
   <p className="text-xs text-muted-foreground">This threshold is applied to learner course-progress records when the selected preparation courses have published content. Unavailable records are not treated as a failed learner.</p>
   <button type="button" disabled={busy||percent===saved||!Number.isInteger(percent)||percent<0||percent>100}
-   onClick={()=>void save()} className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save changes</button>
+   onClick={()=>void save()} className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save changes</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;

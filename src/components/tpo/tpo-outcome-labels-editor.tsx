@@ -83,7 +83,7 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
   </div>
   <p className="text-xs text-muted-foreground">{labels.length}/30 labels. Changing a mapping affects how future student choices are grouped; existing recorded outcomes are not silently rewritten.</p>
   <button type="button" onClick={()=>void save()} disabled={busy||!dirty||invalid>=0}
-   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save changes</button>
+   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save changes</button>
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
   {notice?<p role="status" className="text-sm text-success-text">{notice}</p>:null}
  </section>;
