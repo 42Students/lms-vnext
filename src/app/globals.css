@@ -1167,3 +1167,15 @@ body {
   [data-slot="form-grid"][data-columns="3"] { grid-template-columns: repeat(3, minmax(0,1fr)); }
 }
 [data-slot="form-grid"] > * { min-width: 0; }
+
+
+/* old-lms-shell-spec.md:23-24: 9px radius, 36px desktop shell buttons. */
+[data-slot="button-group"] > [data-slot="button"] {
+  border-radius: 0;
+  min-width: 0;
+}
+[data-slot="button-group"] > [data-slot="button"] + [data-slot="button"] { margin-left: -1px; }
+[data-slot="button-group"] > [data-slot="button"]:first-child { border-radius: var(--lms-control-radius) 0 0 var(--lms-control-radius); }
+[data-slot="button-group"] > [data-slot="button"]:last-child { border-radius: 0 var(--lms-control-radius) var(--lms-control-radius) 0; }
+[data-slot="button-group"] > [data-slot="button"]:only-child { border-radius: var(--lms-control-radius); }
+[data-slot="button-group"] > [data-slot="button"]:focus-visible { position: relative; z-index: 1; }
