@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
 import { Drawer } from "@/components/ui/drawer";
 import { PopoverPanel } from "@/components/ui/popover";
 import style from "@/components/shell/topbar/topbar.module.css";
