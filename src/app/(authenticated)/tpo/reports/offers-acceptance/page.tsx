@@ -88,7 +88,7 @@ export default async function TpoOffersAcceptanceReportPage({
         ].map(([label, value]) => (
           <div
             key={label}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
           >
             <p className="text-xs font-semibold uppercase text-body">
               {label}
