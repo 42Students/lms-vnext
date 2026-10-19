@@ -72,24 +72,24 @@ export default async function SuperAdminLectureHallsPage({
       <form action="/admin/lecture-halls" method="get" className="flex flex-wrap items-end gap-3">
         <label className="grid gap-1 text-sm font-semibold">Room name
           <Input type="search" name="q" maxLength={100} defaultValue={query.q}
-            placeholder="Search halls" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+            placeholder="Search halls" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Status
-          <Select name="status" defaultValue={query.status} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <Select name="status" defaultValue={query.status} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Department
           <Select name="departmentId" defaultValue={query.departmentId ?? ""}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="">All departments</option>
             {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Room type
           <Select name="roomType" defaultValue={query.roomType}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             <option value="ALL">All types</option>
             <option value="CLASSROOM">Classroom</option><option value="LECTURE_HALL">Lecture Hall</option>
             <option value="LAB">Laboratory</option><option value="SEMINAR_HALL">Seminar Hall</option>
@@ -99,15 +99,15 @@ export default async function SuperAdminLectureHallsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold">Rows per page
           <Select name="pageSize" defaultValue={query.pageSize}
-            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
             {[10,25,50,100].map(size => <option key={size} value={size}>{size}</option>)}
           </Select>
         </label>
         <Button type="submit">Search</Button>
-        <Link href="/admin/lecture-halls" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-[var(--lms-teal-deep)]">Clear</Link>
       </form>
       <div className="flex flex-wrap gap-2">
-        <a href={csvHref} download className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export CSV</a>
+        <a href={csvHref} download className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Export CSV</a>
         <form action="/admin/lecture-halls" method="get">
           {Object.entries(query).map(([name,value]) =>
             value !== undefined && value !== ""

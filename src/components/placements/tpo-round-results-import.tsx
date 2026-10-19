@@ -60,7 +60,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   <label className="block text-sm font-semibold text-body">Company results file
    <Input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}
-    className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border p-3 text-foreground"/>
+    className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground md:min-h-9"/>
   </label>
   <button type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
@@ -69,7 +69,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    <h3 className="font-semibold">Import preview</h3>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
    <div tabIndex={0} role="group" aria-label="Imported round preview, scroll for more rows" className="max-h-44 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-    {preview.matched.map(row=><p key={row.line} className="border-b border-border px-2 py-1 text-sm">
+    {preview.matched.map(row=><p key={row.line} className="border-b border-border px-2 py-2 text-sm last:border-b-0">
      Row {row.line}: {row.name} · {row.outcome} {row.status?"· existing "+row.status:""}</p>)}
    </div>
    {preview.unmatched.length?<div className="space-y-2">
