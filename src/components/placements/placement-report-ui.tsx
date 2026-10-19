@@ -55,7 +55,7 @@ export function ReportFilters({
   return (
     <section
       aria-label="Report filters"
-      className="grid gap-4 rounded-xl border border-border bg-surface p-4 lg:grid-cols-2"
+      className="grid gap-4 lg:grid-cols-2 border-b border-border pb-6"
     >
       <form action={path} method="get" className="flex flex-wrap items-end gap-3">
         <label className="min-w-48 flex-1 text-sm font-semibold text-body">
@@ -80,7 +80,7 @@ export function ReportFilters({
         <button
           type="submit"
           disabled={workspace.seasons.length === 0}
-          className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50"
+          className="min-h-11 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50"
         >
           Apply season
         </button>
@@ -113,7 +113,7 @@ export function ReportFilters({
         <button
           type="submit"
           disabled={workspace.noSeason}
-          className="min-h-11 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50"
+          className="min-h-11 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50"
         >
           Apply drive
         </button>
@@ -136,7 +136,7 @@ export function ReportScopeNote({
   return (
     <section
       aria-label="Reporting methodology"
-      className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+      className="rounded-xl border border-border bg-muted p-4 text-sm leading-6 text-body"
     >
       <p className="font-semibold text-foreground">Reporting methodology</p>
       <p className="mt-1">{note}</p>
@@ -232,7 +232,7 @@ export function ReportNavigation({
 
   const m=workspace.report.metrics;
   return (<>
-    <p role="status" className="rounded-md border border-border bg-surface-subtle p-3 text-sm font-semibold">
+    <p role="status" className="rounded-md border border-border bg-muted p-3 text-sm font-semibold">
      For the filters below: {reportNumber(m.studentsPlaced)} students placed · {reportNumber(m.offers)} offers ·
      {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
     </p>
@@ -242,7 +242,7 @@ export function ReportNavigation({
         <Link
           key={link.href}
           href={reportHref(link.href, workspace)}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
+          className="inline-flex min-h-10 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
         >
           {link.label}
         </Link>
@@ -280,7 +280,7 @@ export function ReportCsvLink({
   return (
     <a
       href={`/api/placements/reports?${params.toString()}`}
-      className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover"
+      className="inline-flex min-h-10 items-center justify-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover"
     >
       Export CSV
     </a>

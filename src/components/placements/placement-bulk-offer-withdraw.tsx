@@ -132,7 +132,7 @@ export function PlacementBulkOfferWithdraw({
               maxLength={1000}
               rows={2}
               disabled={busy}
-              className="mt-2 block w-full rounded-md border border-border bg-surface p-3 text-sm font-normal text-foreground"
+              className="mt-2 block w-full rounded-[9px] border border-border bg-surface p-3 text-sm font-normal text-foreground"
             />
           </label>
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
