@@ -4,6 +4,8 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 import {parseRecruiterPrivateReviewReceipt,isConfirmedRecruiterPrivateReview,
  type RecruiterPrivateReviewReceipt} from "@/modules/placements/recruiter-private-rating-receipt-model";
 type Review=RecruiterPrivateReviewReceipt;
@@ -74,7 +76,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   <label className="grid gap-1 text-sm text-body">Your rating
    <Select value={rating===null?"":String(rating)} disabled={!ready||pending}
     onChange={event=>setRating(event.target.value===""?null:Number(event.target.value))}
-   >
+    className="w-full">
     <option value="">Not rated</option>
     {[1,2,3,4,5].map(value=><option key={value} value={value}>{value} / 5</option>)}
    </Select>
@@ -82,7 +84,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   <label className="grid gap-1 text-sm text-body">Your note
    <Textarea value={note} maxLength={1000} rows={3} disabled={!ready||pending}
     onChange={event=>setNote(event.target.value)}
-   />
+    className="w-full"/>
   </label>
   <p className="text-xs text-muted-foreground">{note.length}/1000 characters</p>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
