@@ -398,3 +398,31 @@ Started with an up-to-date `chatgpt/chat-14-b` tracking `origin/main`. All edits
 
 ### Source verification limits
 Checked the JSX opening/closing tag names, completed `</Button>` / `</Select>` and common DOM tag pairs across all changed files in this continuation, including intentionally self-closing controls. These are **source-only** checks, not TypeScript parsing or runtime validation. No application code, typecheck, tests, lint, build, CI, browser or visual snapshot comparison was run.
+
+## Old-LMS list anatomy: cross-portal source sweep — 2026-10-19
+
+Owner request: use `docs/design/old-lms-pages.md` §§3–6 as the source for tabs, list tables, chips, toolbar, pagination and semantic badge styling. Started by checking that `chatgpt/chat-14-b` tracked `origin/main`, then committed each target with the `[chat-14]` prefix; no pushes to `main`.
+
+### Shared components
+- `tabs.tsx`: horizontal orientation and opt-in `controlledOnly` tab strip for client-filter views rendered in a separate page-owned content section. Existing navigation-mode and inline-panel usage retain defaults.
+- `table.tsx`: content-width scrolling and hairline legacy table treatment.
+- `data-table.tsx`: identifies row surfaces consistently for shared responsive skinning.
+- `badge.tsx` and `status-badge.tsx`: semantic legacy-pill variant, preserving tone/HTML attributes.
+- `needs-doing-chips.tsx`, `list-toolbar.tsx`, `filter-bar.tsx`, `pagination.tsx`: selected/active data attributes for styling, shared filters/counts, and static accessible current-page presentation.
+
+### Raw table and tab migrations
+- `src/app/(authenticated)/tpo/students/page.tsx` and `students/requests/page.tsx`: replaced ordinary native HTML tables with `Table`, preserving rows, headings, responsive visibility and link/actions.
+- `src/components/attendance/admin-attendance-workspace.tsx` and `faculty-attendance-workspace.tsx`: replaced ordinary attendance month table shell and its redundant scroll wrapper with shared `Table`; sticky day cells and attendance interactions retained.
+- Replaced URL-backed pill navigation with shared `Tabs`: mentor delivery history and team history; learner offers, placement preparation and assessment results; TPO audit categories.
+- Replaced client state tablists with shared `Tabs controlledOnly`: TPO eligibility import preview and recruiter Engage views. Existing state changes and URL transitions retained.
+
+### Badges and quick-count pills
+Replaced simple hand-rolled static `rounded-full` span pills with the shared `Badge` across admin Projects templates, HR Home/company, TPO outcome/companies/drive-day/team/notices/home, learner profile/placement rules/announcements, course listings/overviews/workspaces and assessment overviews, mentor lane board and learner board task counts. Dynamic notification dots, progress bars and genuinely interactive buttons were not converted to static badges.
+
+### Shared pagination sweep
+Replaced the independent Previous/Next markup with `Pagination` in mentor activity, review queue, reports, task reviews/history, delivery history, sprint progress, team coverage, and the nine Projects mentor detail views (board review, risk/readiness, resource directory, review overview/completeness, team history/meetings, activity history and release timeline). Also migrated faculty live classes, HR drives/company team roster, TPO audit actors/follow-ups. Existing server-side page URL builders and current filter values remain unchanged.
+
+### Scope qualifications and static verification
+Source searches covered the repository's `<table`, `role="tablist"`, `rounded-full` and pagination patterns, with actual DOM/tag matches inspected before edit. Intentional non-static exceptions: the interactive recruiter import preview uses local-state Previous/Next, the TPO spreadsheet-like grid is a specialized editable grid, and progress bars/avatar indicators/notification dots are not status pills. Other complex controls across the app may require separate DOM and runtime parity checks; this source pass does not certify that every portal has pixel-equivalent output.
+
+The changed TSX files were checked for JSX closing-tag presence and pairing of shared `Badge`, `Table`, `Select`, `Tabs` and `Pagination` markup by source inspection. **No app runtime, tests, CI, build, lint, typecheck or browser screenshot comparison was performed**, per owner directive.
