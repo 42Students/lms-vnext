@@ -122,6 +122,7 @@ export function CollegeCreateForm({
         </label>
         <Input
           id="college-name"
+          disabled={pending}
           value={name}
           onChange={(event) => setName(event.target.value)}
           required
