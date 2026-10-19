@@ -513,15 +513,9 @@ export default async function HrPlacementJobPage({
             </Link>
           </div>
           <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
-          <nav aria-label="Applicant stage" className="flex flex-wrap gap-2">
-            {HR_RECRUITER_STAGES.map(({value:stage,label}) => (
-              <Link key={stage} href={`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}
-                aria-current={filters.stage === stage ? "page" : undefined}
-                className={`inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm ${filters.stage === stage ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
-                {label} ({stageCounts[stage]})
-              </Link>
-            ))}
-          </nav>
+          <Tabs renderPanel={false} ariaLabel="Applicant stage" value={filters.stage}
+            items={HR_RECRUITER_STAGES.map(({value:stage,label})=>({value:stage,label,count:stageCounts[stage],
+              href:`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}))}/>
           <p className="text-xs text-muted-foreground">These milestones reflect only applicants the placement cell has shared. A candidate may appear in multiple historical stages; unshared or privately rejected applicants remain hidden.</p>
           {applicants.rows.length ? <div className="grid gap-3 md:grid-cols-2">
             {applicants.rows.map(applicant => (
