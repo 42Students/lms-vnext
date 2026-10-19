@@ -37,7 +37,7 @@ export default async function RecruiterDriveProposalHistory({
     href={"/hr/drives/proposals?collegeId="+grant.collegeId}>{grant.collegeName}</Link>)}
   </section>:data.status==="NO_ACCESS"?<p role="status">No active recruiter college access.</p>:<>
    <form action="/hr/drives/proposals" method="get" className="flex flex-wrap items-end gap-3">
-    <input type="hidden" name="collegeId" value={data.collegeId??""}/>
+    <Input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-48 flex-1 text-sm text-body">Search by role title
      <Input name="q" maxLength={100} defaultValue={input.data.q}
        className="mt-1 w-full" placeholder="Role title" />
