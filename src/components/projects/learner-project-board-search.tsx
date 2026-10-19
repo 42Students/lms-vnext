@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
@@ -81,13 +82,9 @@ export function LearnerProjectBoardSearch({
   );
   return (
     <section aria-label="Project Board filters" className="border-b border-border pb-5">
-      <details>
-        <summary className="flex min-h-9 cursor-pointer items-center justify-between gap-2 text-sm font-semibold text-foreground">
-          <span>Filters</span>
-          <span className="text-muted-foreground">{activeCount} active</span>
-        </summary>
+      <Disclosure title={<span className="flex min-w-0 flex-1 items-center justify-between gap-2 text-sm font-semibold text-foreground"><span>Filters</span><span className="text-muted-foreground">{activeCount} active</span></span>} className="[&>summary]:min-h-9">
         {form}
-      </details>
+      </Disclosure>
 
       <div className="space-y-3 border-t border-[var(--lms-canvas-border)] pt-3">
         <NeedsDoingChips label="Task counts by status:" selectedKey={status}

@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
@@ -59,8 +60,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <input type="hidden" name="tab" value={filter.tab}/>
    {filter.membershipId&&<input type="hidden" name="membershipId" value={filter.membershipId}/>}
 
-   <details className="min-w-0 flex-auto basis-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" open={activeCollegeContactFilterCount(filter)>0}>
-    <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
+   <Disclosure title="Advanced filters" defaultOpen={activeCollegeContactFilterCount(filter)>0} className="min-w-0 flex-auto basis-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 [&>summary]:text-foreground">
     <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
    <label className="min-w-0 flex-1 basis-32 text-sm">Name begins with
     <Select name="initial" defaultValue={filter.initial??""} className="mt-1 w-full">
@@ -183,7 +183,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     </Select>
    </label>
     </div>
-   </details>
+   </Disclosure>
    <Button variant="secondary" type="submit" className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold">Search contacts</Button>
    <Link href={clearedCollegeContactsHref(filter.tab)}
     className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 text-sm">Clear filters</Link>
