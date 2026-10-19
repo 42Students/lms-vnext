@@ -78,4 +78,12 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(css).toContain("scrollbar-width:thin;");
  expect(css).toContain("width:4px;");
 });
+ it("mounts the copied 38x36 logo on desktop and mobile",()=>{
+ const shell=read("src/components/shell/app-shell.tsx");
+ const mobile=read("src/components/shell/mobile-navigation.tsx");
+ const icons=read("src/components/shell/shell-nav-icons.tsx");
+ expect(shell).toContain("<ShellLogoMark />");
+ expect(mobile).toContain("<ShellLogoMark />");
+ expect(icons).toContain('width="38" height="36"');
+});
 });
