@@ -28,11 +28,11 @@ export function TpoTeamFollowControls({threadId,following,muted,ready}:{
  }
  return <section className="flex flex-wrap items-center gap-2" aria-label="Conversation preferences">
   <Button type="button" variant="secondary" disabled={busy||!ready} onClick={()=>void change(state.following?"UNFOLLOW":"FOLLOW")}
-   className="min-h-11 sm:min-h-9">
+   className="min-h-9">
    {state.following?"Stop following":"Follow"}
   </Button>
   <Button type="button" variant="secondary" disabled={busy||!ready} onClick={()=>void change(state.muted?"UNMUTE":"MUTE")}
-   className="min-h-11 sm:min-h-9">
+   className="min-h-9">
    {state.muted?"Unmute":"Mute"}
   </Button>
   {!ready?<p role="status" className="text-xs text-muted-foreground">

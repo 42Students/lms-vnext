@@ -108,9 +108,9 @@ export default async function SuperAdminLessonsPage({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page - 1 })}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-[14px] font-semibold text-primary-text sm:min-h-9">Previous</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text sm:min-h-9">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page + 1 })}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-[14px] font-semibold text-primary-text sm:min-h-9">Next</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text sm:min-h-9">Next</Link> : null}
       </div>
     </nav>
     <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>

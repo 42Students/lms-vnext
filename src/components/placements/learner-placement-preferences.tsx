@@ -159,7 +159,7 @@ export function LearnerPlacementPreferences({
 
   return (
     <section id="placement-job-preferences" className="scroll-mt-24 border-b border-border pb-5">
-      <div className="border-b border-border px-5 py-4">
+      <div className="border-b border-border py-4">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Opportunity preferences
         </h2>
@@ -167,7 +167,7 @@ export function LearnerPlacementPreferences({
           Tell the placement workspace what kinds of roles should surface first for you.
         </p>
       </div>
-      <div className="grid gap-4 p-5 lg:grid-cols-2">
+      <div className="grid gap-4 py-5 lg:grid-cols-2">
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Preferred role titles
@@ -358,7 +358,7 @@ export function LearnerPlacementPreferences({
           </label>
         </div>
       </div>
-      <div className="border-t border-border px-5 py-4">
+      <div className="border-t border-border py-4">
         <Button
           size="sm"
           disabled={

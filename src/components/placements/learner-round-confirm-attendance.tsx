@@ -22,7 +22,7 @@ export function LearnerRoundConfirmAttendance({applicationId,roundId,confirmed}:
     });
     setConfirmed(true);router.refresh();
    }catch{setError("Attendance confirmation could not be saved. Try again.");}
-  })} className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">
+  })} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
    {pending?"Confirming…":"Confirm I'll attend"}
   </button>
   {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
