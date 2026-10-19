@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SummaryStrip } from "@/components/ui/summary-strip";
+import { StatTile } from "@/components/ui/stat-tile";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
@@ -17,28 +18,23 @@ type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 const formatWhen=learnerDashboardDateLabel;
 
 function Metric({
-  label,
-  value,
-  href,
-  detail,
+  label, value, href, detail,
 }: {
   label: string;
   value: number | null;
   href: string;
   detail: string;
 }) {
-  const metric=learnerDashboardMetricView(value,label,detail);
+  const metric = learnerDashboardMetricView(value, label, detail);
   return (
-    <Link
-      href={href}
-      aria-label={metric.ariaLabel}
-      className="group rounded-xl border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
-    >
-      <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 break-words text-2xl font-bold tabular-nums text-foreground sm:text-3xl">{metric.display}</p>
-      <p className="mt-2 text-xs leading-5 text-body group-hover:text-primary-text">{metric.detail} →</p>
+    <Link href={href} aria-label={metric.ariaLabel}
+      className="group block rounded-[var(--lms-radius-card)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <StatTile label={label} value={metric.display}
+        className="h-full p-4 sm:p-4 transition-colors group-hover:border-[var(--lms-primary)] group-hover:bg-[var(--lms-primary-subtle)]">
+        <span className="mt-2 block text-xs leading-5 text-[var(--lms-body-text)] group-hover:text-[var(--lms-primary-text)]">
+          {metric.detail} →
+        </span>
+      </StatTile>
     </Link>
   );
 }
