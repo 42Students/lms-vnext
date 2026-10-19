@@ -360,10 +360,12 @@ export function LearnerQuizAttempt() {
   if (review || !attemptable) {
     return (
       <section className="min-w-0 space-y-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <PageHeader eyebrow="Quiz review" title={quiz.quiz.title} />
-            <p className="mt-2 text-sm text-body">
+        <PageHeader
+          title={quiz.quiz.title}
+          description="Quiz review"
+          actions={<Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 text-primary-text sm:min-h-9">← Back</Button>}
+        />
+        <p className="mt-2 text-sm text-body">
               {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
                 ? learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
                 : latestAttempt
@@ -373,10 +375,7 @@ export function LearnerQuizAttempt() {
                 : duePassed || quiz.quiz.status === "CLOSED"
                   ? "Not attempted before this quiz closed."
                   : "No attempt is available to review."}
-            </p>
-          </div>
-          <Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)]">← Back</Button>
-        </div>
+        </p>
         {deadlineMissing && !latestAttempt ? (
           <p role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
             Unavailable · Quiz deadline is not configured. Ask your faculty to set a due date.
