@@ -224,3 +224,14 @@
   border-color:#e5e9f0;
   box-shadow:0 1px 3px rgba(0,0,0,.04);
 }
+
+.recruiterBell > div > section li a:active,
+.learnerBell > div > section li a:active {
+  background:rgba(0,0,0,.06);
+  box-shadow:none;
+}
+.recruiterBell > div > section li a:focus-visible,
+.learnerBell > div > section li a:focus-visible {
+  outline:1px solid #6b7280;
+  outline-offset:1px;
+}
