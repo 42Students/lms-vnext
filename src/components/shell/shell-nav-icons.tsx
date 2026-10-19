@@ -1,4 +1,5 @@
 import type {ShellNavIconName} from "./shell-model";
+import {legacyAntPaths} from "./legacy-ant-paths";
 
 /** Inline, stroke-based icons: lucide-react is not installed in lms-vnext.
  * Using SVG instead of initial-letter boxes preserves the legacy icon rail. */
@@ -47,6 +48,11 @@ const paths:Record<ShellNavIconName,string>={
 
 };
 export function ShellNavGlyph({name}:{name:ShellNavIconName}){
+ const legacy=legacyAntPaths[name];
+ if(legacy)return <svg aria-hidden="true" focusable="false" viewBox="64 64 896 896"
+   width="20" height="20" fill="currentColor" className="h-5 w-5">
+  {legacy.map((d,i)=><path key={i} d={d}/>)}
+ </svg>;
  return <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"
    width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8"
    strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">

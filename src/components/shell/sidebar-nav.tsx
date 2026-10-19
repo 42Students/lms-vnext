@@ -104,7 +104,8 @@ export function SidebarNav({
      <span className="lms-sidebar-item-icon" aria-hidden="true">
       {item.icon?
        <Image src={active?item.activeIcon??item.icon:item.icon}
-        alt="" width={20} height={20} className="h-5 w-5 object-contain"/>:
+        alt="" width={20} height={20} loading="eager" draggable={false}
+        className="h-5 w-5 object-contain"/>:
        <ShellNavGlyph name={shellNavIconKey(item)}/>}
      </span>
      <span className="lms-nav-label">{item.label}</span>
