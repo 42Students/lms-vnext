@@ -134,6 +134,27 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain("scrollbar-width:none");
   expect(css).toContain("transform:scale(.72)");
  });
+ it("matches all measured sidebar link, heading, badge and logo values from the old CSS",()=>{
+  const css=source("src/components/shell/sidebar-legacy.css");
+  const shell=source("src/components/shell/app-shell.tsx");
+  const mobile=source("src/components/shell/mobile-navigation.tsx");
+  const glyphs=source("src/components/shell/shell-nav-icons.tsx");
+  for(const value of ["min-height:44px","margin-bottom:6px","padding:10px 12px",
+   "border-radius:8px","width:24px","height:24px","opacity:.55",
+   "font-size:15px","line-height:20px","letter-spacing:.105em",
+   "margin:7px 12px 4px","width:22px","top:4px","left:50%",
+   "margin-left:5px","transform:scale(.72)","outline-offset:-2px"]) {
+   expect(css,value).toContain(value);
+  }
+  expect(css).toContain("border-right:1px solid #f1f4f9");
+  expect(css).toContain("outline:2px solid rgba(38,186,199,.45)");
+  expect(shell).toContain("<ShellLogoMark />");
+  expect(mobile).toContain("<ShellLogoMark />");
+  expect(glyphs).toContain('width="38" height="36"');
+  expect(mobile).toContain('role="dialog"');
+  expect(mobile).toContain('aria-modal="true"');
+  expect(mobile).toContain("onNavigate={() => setOpen(false)}");
+ });
  it("uses the legacy thin TPO scrollbar only on expanded rails",()=>{
   const css=source("src/components/shell/sidebar-legacy.css");
   const nav=source("src/components/shell/sidebar-nav.tsx");
