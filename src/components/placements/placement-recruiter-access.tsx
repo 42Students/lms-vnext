@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 
 export type RecruiterRelationshipChoice = {
@@ -175,9 +177,9 @@ export function PlacementRecruiterAccess({
           <span className="mb-1 block text-xs font-semibold text-body">
             Employer relationship
           </span>
-          <select
+          <Select
             aria-label="Employer relationship"
-            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)]"
+            className="min-h-9 w-full"
             value={relationshipId}
             onChange={(event) =>
               setRelationshipId(
@@ -203,17 +205,17 @@ export function PlacementRecruiterAccess({
                 </option>
               ))
             )}
-          </select>
+          </Select>
         </label>
 
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
             Recruiter email
           </span>
-          <input
+          <Input
             aria-label="Recruiter email"
             type="email"
-            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)]"
+            className="min-h-9 w-full"
             value={email}
             onChange={(event) =>
               setEmail(event.target.value)
@@ -227,9 +229,9 @@ export function PlacementRecruiterAccess({
           <span className="mb-1 block text-xs font-semibold text-body">
             Title
           </span>
-          <input
+          <Input
             aria-label="Recruiter title"
-            className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)]"
+            className="min-h-9 w-full"
             value={title}
             onChange={(event) =>
               setTitle(event.target.value)
