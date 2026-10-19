@@ -251,13 +251,6 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 2px;
 }
-/* Legacy: pages___admin-list-pages.scss:106 explicitly clears scrollbar
-   track paint on tables. Tabs use the same transparent track via
-   scrollbar-color at :249. Match WebKit as well as Firefox. */
-:where([data-slot="table"], [data-slot="data-table"], [data-slot="tabs"])
-  [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-track {
-  background-color: transparent;
-}
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
@@ -458,4 +451,12 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
     > td:not(:where(.ln-table-no-hover, .ln-table-no-hover *)) {
     background: none !important;
   }
+}
+
+/* Legacy: pages___admin-list-pages.scss:106 explicitly clears scrollbar
+   track paint on tables. Tabs use the same transparent track via
+   scrollbar-color at :249. Match WebKit as well as Firefox. */
+:where([data-slot="table"], [data-slot="data-table"], [data-slot="tabs"])
+  [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-track {
+  background-color: transparent;
 }
