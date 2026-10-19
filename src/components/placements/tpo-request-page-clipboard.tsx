@@ -1,3 +1,4 @@
+import { Checkbox } from "@/components/ui/checkbox";
 "use client";
 import {useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
@@ -78,7 +79,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
    <details className="min-w-0 max-w-full rounded border border-border p-2 text-sm">
     <summary className="inline-flex min-h-11 cursor-pointer items-center rounded font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Choose columns</summary>
     <div className="mt-2 flex flex-wrap gap-3">{options.map(option=><label key={option.key} className="flex min-h-11 items-center gap-2">
-      <input type="checkbox" checked={visible.includes(option.key)}
+      <Checkbox checked={visible.includes(option.key)}
        disabled={visible.length===1&&visible.includes(option.key)}
        onChange={e=>setVisible(keys=>e.target.checked?[...keys,option.key]:keys.filter(key=>key!==option.key))}/>
       {option.label}
@@ -92,13 +93,13 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
    getRowKey={row=>row.id}
    empty={<p role="status" className="text-sm text-body">No requests on this page.</p>}
    columns={[
-    {key:"selection",header:<input type="checkbox"
+    {key:"selection",header:<Checkbox
       aria-label="Select all request rows"
       checked={rows.length>0&&selectedRows.length===rows.length}
       onChange={event=>setSelected(event.target.checked?rows.map(row=>row.id):[])}/>,
      mobilePriority:"action" as const,
      cell:row=><label className="inline-flex min-h-11 items-center gap-2">
-      <input type="checkbox" checked={selected.includes(row.id)}
+      <Checkbox checked={selected.includes(row.id)}
        aria-label={"Select request from "+row.student}
        onChange={event=>setSelected(ids=>event.target.checked
         ?[...new Set([...ids,row.id])]:ids.filter(id=>id!==row.id))}/>
@@ -115,7 +116,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
    ]}
   />
   <label className="flex min-h-11 items-center gap-2 text-sm">
-   <input type="checkbox" checked={rows.length>0&&selectedRows.length===rows.length}
+   <Checkbox checked={rows.length>0&&selectedRows.length===rows.length}
     onChange={event=>setSelected(event.target.checked?rows.map(row=>row.id):[])}/>
    Select visible page
   </label>
