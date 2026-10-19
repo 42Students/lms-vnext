@@ -265,7 +265,7 @@ export function LearnerPlacementOffers({
         </p>
       </div>
 
-      <Button type="button" onClick={downloadOwnOffers}
+      <Button className="max-sm:min-h-11" type="button" onClick={downloadOwnOffers}
         >
         Export displayed offers CSV
       </Button>
@@ -279,18 +279,18 @@ export function LearnerPlacementOffers({
           <article
             key={item.offerId}
             id={learnerOfferAnchor(item.offerId) ?? undefined}
-            className="scroll-mt-24 rounded-xl border border-border bg-surface p-5"
+            className="scroll-mt-24 min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none sm:p-6"
           >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
+                <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   {item.companyName}
                 </p>
-                <h3 className="mt-1 text-lg font-semibold text-foreground">
+                <h3 className="mt-1 break-words text-lg font-semibold text-foreground">
                   {item.kind === "LOI" ? "Letter of intent · " : ""}
                   {item.roleTitle}
                 </h3>
-                <p className="mt-1 text-sm text-body">
+                <p className="mt-1 break-words text-sm text-body">
                   {item.jobTitle}
                   {formatMoney(
                     item.annualCtcInr,
@@ -364,7 +364,7 @@ export function LearnerPlacementOffers({
                 Link to this offer
               </Link>
             ) : null}
-            <div className="mt-4 grid gap-2 text-sm text-body sm:grid-cols-3">
+            <div className="mt-4 grid min-w-0 gap-2 break-words text-sm text-body sm:grid-cols-3">
               <p className="m-0">
                 <span className="font-semibold text-foreground">
                   Issued:
@@ -411,7 +411,7 @@ export function LearnerPlacementOffers({
                 Offer deadline extension requested. Your placement team has not approved it yet.
                 {" "}
                 <Link href="/learn/my-placements/support?status=PENDING&type=OFFER_EXTENSION"
-                  className="text-primary-text underline">Review pending request</Link>
+                  className="inline-flex min-h-11 items-center text-primary-text underline sm:min-h-9">Review pending request</Link>
               </p>
             ) : null}
             {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="INVALID" ? (
@@ -431,7 +431,7 @@ export function LearnerPlacementOffers({
 
             {learnerOfferResponseTiming(item,snapshotNowIso).canRespond ? (
               <div className="mt-4 flex flex-wrap gap-2">
-                <Button
+                <Button className="max-sm:min-h-11"
                   size="sm"
                   disabled={
                     pendingId !== null
@@ -443,7 +443,7 @@ export function LearnerPlacementOffers({
                     ? "Saving…"
                     : "Accept offer"}
                 </Button>
-                <Button
+                <Button className="max-sm:min-h-11"
                   size="sm"
                   variant="secondary"
                   disabled={
@@ -454,7 +454,7 @@ export function LearnerPlacementOffers({
                   Decline offer
                 </Button>
                 {extensionsAvailable && item.expiresAt && !pendingExtensions.has(item.offerId) ? (
-                  <Button size="sm" variant="secondary" disabled={pendingId!==null}
+                  <Button className="max-sm:min-h-11" size="sm" variant="secondary" disabled={pendingId!==null}
                     onClick={()=>{
                       setExtensionOffer(item);
                       setExtensionAt(learnerOfferExtensionLocalDefault(item.expiresAt!));
@@ -500,10 +500,10 @@ export function LearnerPlacementOffers({
         title="Request an offer deadline extension"
         description="This sends an in-app request to your placement team; it does not change or accept the offer."
         footer={<>
-          <Button variant="secondary" disabled={pendingId!==null} onClick={()=>setExtensionOffer(null)}>
+          <Button className="max-sm:min-h-11" variant="secondary" disabled={pendingId!==null} onClick={()=>setExtensionOffer(null)}>
             Keep current deadline
           </Button>
-          <Button disabled={pendingId!==null} onClick={()=>void requestExtension()}>
+          <Button className="max-sm:min-h-11" disabled={pendingId!==null} onClick={()=>void requestExtension()}>
             {pendingId!==null?"Submitting…":"Confirm extension request"}
           </Button>
         </>}>
@@ -538,10 +538,10 @@ export function LearnerPlacementOffers({
         title={declineOffer?"Decline "+declineOffer.companyName+"\u0027s offer?":"Decline offer?"}
         description="Declining is recorded as an official response and cannot be undone from the Learner workspace."
         footer={<>
-          <Button variant="secondary" disabled={pendingId !== null} onClick={() => setDeclineOffer(null)}>
+          <Button className="max-sm:min-h-11" variant="secondary" disabled={pendingId !== null} onClick={() => setDeclineOffer(null)}>
             Keep offer pending
           </Button>
-          <Button disabled={pendingId !== null || declineReason.length > 2000}
+          <Button className="max-sm:min-h-11" disabled={pendingId !== null || declineReason.length > 2000}
             onClick={() => { if (declineOffer) void respond(declineOffer.offerId, "DECLINE"); }}>
             {pendingId !== null ? "Saving…" : "Decline offer"}
           </Button>
@@ -570,9 +570,9 @@ export function LearnerPlacementOffers({
         description="Review the recorded offer terms. Acceptance is only submitted after you confirm."
         footer={
           <>
-            <Button variant="secondary" disabled={pendingId !== null}
+            <Button className="max-sm:min-h-11" variant="secondary" disabled={pendingId !== null}
               onClick={dismissAccept}>Keep offer pending</Button>
-            <Button disabled={!preview?.canConfirm || !acceptImpact || acceptImpactBusy || Boolean(acceptImpactError) || acceptImpact.blockedByAnotherAcceptedOffer || pendingId !== null}
+            <Button className="max-sm:min-h-11" disabled={!preview?.canConfirm || !acceptImpact || acceptImpactBusy || Boolean(acceptImpactError) || acceptImpact.blockedByAnotherAcceptedOffer || pendingId !== null}
               onClick={() => { if (preview?.canConfirm) void respond(preview.offerId, "ACCEPT"); }}>
               {pendingId !== null ? "Saving…" : "Yes, accept"}
             </Button>
@@ -588,7 +588,7 @@ export function LearnerPlacementOffers({
             <p>Response deadline: {formatWhen(preview.expiresAt) ?? "No expiry specified"}</p>
             {acceptImpactBusy?<p role="status" className="text-sm text-body">Checking the applications and offers this acceptance would change…</p>:null}
             {acceptImpactError?<p role="alert" className="text-sm text-error">{acceptImpactError}
-              <button type="button" onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}} className="ml-2 font-semibold underline">Retry impact preview</button>
+              <Button className="max-sm:min-h-11" type="button" variant="link" onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}}>Retry impact preview</Button>
             </p>:null}
             {acceptImpact?<div className="space-y-2 rounded-lg border border-border bg-surface-subtle p-3">
               <h3 className="font-semibold text-foreground">What accepting this offer changes</h3>
