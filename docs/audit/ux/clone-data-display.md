@@ -531,3 +531,29 @@ grep -nE 'min-h-11|rounded-\[8px\]|leading-\[42px\]|md:min-h-9' src/components/u
 **STRICT TICK STATUS:** E1–E5 and E8 remain **[ ]** because these are narrow file-level proofs, not complete repo-wide grep, fully enumerated legacy hover/loading/disabled/error/empty computed states, or side-by-side viewport verification. E8 also remains blocked by undeclared AG Grid dependencies and unavailable legacy TpoGrid source.
 
 **Next exact E2/E4 file after these completed files:** `src/components/academics/learner-class-schedule.tsx` for the day-grid pressed controls and schedule view switch (preserve layout classes and date selection).
+
+
+### 2026-10-19 chat-14 — calendar pressed-day cell source closure
+
+One remaining page-level native `<button>` in `src/components/academics/learner-class-schedule.tsx` rendered the 42-day calendar cells. It is now a shared Button, **not a FilterChip**: a calendar-day cell needs its existing square grid layout, date label, and three tiny event dots rather than compact tag geometry.
+
+| Property/state | Before/legacy reference | After/source proof | Static result |
+|---|---|---|---|
+| Day cell geometry | `src/components/academics/learner-class-schedule.module.css:186-197`: `display:block`, min-height **96px**, 8px padding, no border/radius, left-aligned | `learner-class-schedule.tsx:639-645`: shared ghost Button, original `styles.monthDay`, additional `!block !w-full !min-h-[96px] !justify-start` to retain grid tile size | Source values preserved, CSS computed precedence unverified |
+| Active/selected | `learner-class-schedule.module.css:200-203`: selected day teal inset outline/fill, `aria-pressed=true` | `learner-class-schedule.tsx:642-644`: original `aria-pressed={selected}` and day class unchanged | Active semantics retained |
+| Keyboard/focus | Legacy native button focus and `module.css:199` teal focus-visible outline | Shared Button remains a native keyboard-operable button; existing `styles.monthDay` focus rule retained | Semantic match, actual focus paint untested |
+| Day labels/dots | Three small urgency-coded marks, class count, day number | `learner-class-schedule.tsx:645-654` content and day agenda callback untouched | Unchanged |
+| Phone/tablet breakpoint | Legacy phone actionable targets at least 44px (`components___antddesign.scss:1081-1100`) | Shared day Button retains 96px min-height; calendar grid breakpoint and monthKeys unchanged | Meets phone target; day width/overflow browser proof still needed |
+| Loading/empty/error | Existing calendar and agenda logic handles empty month days and schedule events | Both original count + conditional dots untouched; selected agenda still displayed below | Existing state logic unchanged |
+
+**Whole-file re-fetch/grep-equivalent:** `src/components/academics/learner-class-schedule.tsx` has **8 opening and 8 closing `<Button>` tags**, **zero raw `<button>` opening or closing tags**, and three `aria-pressed` sites, with no broken JSX tag names in the converted cell. This count was determined from full GitHub source text and is not the result of running shell grep.
+
+Reproduce (not executed here):
+```sh
+grep -nE '<button([ >])|</button>|<Button([ >])|</Button>|aria-pressed=' src/components/academics/learner-class-schedule.tsx
+grep -nA20 '^\.monthDay' src/components/academics/learner-class-schedule.module.css
+```
+
+E4 and the general buttons category remain **unticked** under STRICT TICK RULE: source-scoped conversion is not a repo-wide census, and side-by-side phone/tablet/desktop pointer/focus/active computed styles are not verified. No code execution, TS typecheck, unit test, CI or browser screenshot took place.
+
+**Next exact file:** `src/components/tpo/grid/grid-selection.ts` (E8: selection visible versus authorized and hidden-filter behavior). Existing AG Grid manifest dependency blockage remains documented in `clone-sheets.md`.
