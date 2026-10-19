@@ -184,8 +184,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <Input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
-              className="min-w-0 w-full basis-full sm:min-w-48 sm:basis-auto sm:flex-1"/>
-            <Button type="submit" variant="secondary" className="min-h-11 sm:min-h-9">Search</Button>
+              className="min-w-0 w-full basis-full md:min-w-48 md:basis-auto md:flex-1"/>
+            <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Search</Button>
           </form>
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
             {" · Displaying "+teamPageResult.first+"–"+teamPageResult.last}

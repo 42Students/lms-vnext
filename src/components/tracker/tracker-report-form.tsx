@@ -218,10 +218,10 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           <Input aria-label="Find similar issues by keyword" type="search" value={similarQuery}
             onChange={event=>{setSimilarQuery(event.target.value);setSimilarSearched(false);setSimilarError("");}}
             maxLength={100} placeholder="e.g. Quiz submission"
-            className={field+" min-w-0 w-full basis-full sm:min-w-48 sm:basis-auto sm:flex-1"}/>
+            className={field+" min-w-0 w-full basis-full md:min-w-48 md:basis-auto md:flex-1"}/>
           <Button type="button" onClick={()=>void checkSimilar()}
             disabled={similarLoading||similarQuery.trim().length<3}
-            variant="secondary" className="min-h-11 sm:min-h-9">
+            variant="secondary" className="min-h-11 md:min-h-9">
             {similarLoading?"Searching…":"Find similar issues"}
           </Button>
         </div>
@@ -240,7 +240,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       {error && <p role="alert" className="text-sm text-error">{error}</p>}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
-        <Button disabled={pending} loading={pending} type="submit" className="min-h-11 sm:min-h-9">
+        <Button disabled={pending} loading={pending} type="submit" className="min-h-11 md:min-h-9">
           {pending ? "Reporting…" : "Report issue"}
         </Button>
       </div>
