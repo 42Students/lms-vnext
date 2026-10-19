@@ -820,17 +820,9 @@ export default async function HrPlacementJobPage({
             {inlineResults ? inlineResults.round.kind === "TALK"
               ? <p className="text-sm text-muted-foreground">Informational rounds do not record candidate outcomes.</p>
               : <>
-                <nav aria-label="Filter results" className="flex flex-wrap gap-2">
-                  {outcomeOptions.map(option => (
-                    <Link key={option.value} href={hrInlineRoundResultsHref(workspace.job.id,inlineResults.round.id,option.value)}
-                      aria-current={filters.outcome === option.value ? "page" : undefined}
-                      className={filters.outcome === option.value
-                        ? "border-b-[3px] border-primary px-3 py-2 text-xs font-semibold text-primary-text"
-                        : "border-b-[3px] border-transparent px-3 py-2 text-xs text-body hover:text-primary-text"}>
-                      {option.label} ({option.count})
-                    </Link>
-                  ))}
-                </nav>
+                <Tabs renderPanel={false} ariaLabel="Filter results" value={filters.outcome}
+                items={outcomeOptions.map(option=>({value:option.value,label:option.label,count:option.count,
+                  href:hrInlineRoundResultsHref(workspace.job.id,inlineResults.round.id,option.value)}))}/>
                 {inlineResults.rows.length
                   ? <div className="grid gap-3 md:grid-cols-2">
                       {inlineResults.rows.map(candidate => (
