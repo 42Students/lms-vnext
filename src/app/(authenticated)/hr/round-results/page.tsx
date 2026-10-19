@@ -1,5 +1,6 @@
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -62,9 +63,12 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="border-b border-border pb-4 sm:pb-5">
       <h2 className="font-semibold text-foreground">Choose round</h2>
-      <Tabs renderPanel={false} ariaLabel="Hiring rounds" value={selectedRound?.id??""}
-        items={rounds.map(round=>({value:round.id,label:round.sequence+". "+round.name,
-          href:recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id})}))}/>
+      <Tabs ariaLabel="Hiring rounds" className="mt-3" renderPanel={false}
+         value={selectedRound?.id??""}
+         items={rounds.map(round=>({
+           value:round.id, label:round.sequence+". "+round.name,
+           href:recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id}),
+         }))} />
     </section>
     {results?<section className="space-y-4 border-b border-border pb-4 sm:pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
