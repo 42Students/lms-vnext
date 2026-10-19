@@ -69,8 +69,8 @@ export default async function CollegeBatchStudentsPage({
   return <main className="min-w-0 overflow-x-clip space-y-5">
     <PageHeader eyebrow="College Admin · Batches" title={"Students · " + batch.name}
       description={batch.program + " · Search the batch roster and move students to another class."}
-      actions={<Link href="/college/batches" className="font-semibold text-[var(--lms-teal-deep)]">Back to batches</Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      actions={<Link href="/college/batches" className="font-semibold text-link">Back to batches</Link>} />
+    <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="grid flex-1 gap-1 text-sm font-semibold">Name, roll or email
         <input type="search" name="q" defaultValue={q} maxLength={100}
           className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base sm:text-sm" />
@@ -83,7 +83,7 @@ export default async function CollegeBatchStudentsPage({
             {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
         </select>
       </label>
-      <button className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground">Search</button>
+      <button className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Search</button>
     </form>
     <section aria-label="Students in this batch" className="min-w-0 space-y-3">
       <p className="text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
