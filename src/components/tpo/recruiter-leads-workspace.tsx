@@ -860,7 +860,7 @@ export function RecruiterLeadsWorkspace({
           ):null}
           {view !== "companies" ? (
             <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
+              {view==="board"?<div className="flex flex-wrap gap-2">
                 <button type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","csv")}>Export CSV</button>
                 <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
                   onClick={()=>exportRows("selected","csv")}>Export selected ({visible.filter(row=>selectedIds.includes(row.id)).length})</button>
