@@ -4,6 +4,6 @@ export type OtpInputProps = Omit<ComponentPropsWithRef<"input">,"type"|"inputMod
 /** One-time-code field keeps mobile OS autofill and paste intact. */
 export function OtpInput({digits=6,error=false,...props}:OtpInputProps) {
   return <Input {...props} data-slot="otp-input" type="text" inputMode="numeric" autoComplete="one-time-code"
-    pattern="[0-9]*" maxLength={digits} error={error}
+    pattern="[0-9]*" minLength={props.minLength??digits} maxLength={digits} error={error}
     className={["tabular-nums tracking-[0.3em] text-center",props.className].filter(Boolean).join(" ")} />;
 }
