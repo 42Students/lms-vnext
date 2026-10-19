@@ -511,13 +511,13 @@ export default async function HrCalendarPage({
                   name="date"
                   defaultValue={anchor}
                   required
-                  className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-base sm:text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
+                  className="min-h-9 rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
                 />
               </label>
 
               <button
                 type="submit"
-                className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
+                className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text"
               >
                 Go to date
               </button>
