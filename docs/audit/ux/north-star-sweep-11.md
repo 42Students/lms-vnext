@@ -13,7 +13,7 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 ## Follow-on execution
 
 - Fast-forwarded `chatgpt/chat-11-b` to `main` (`7e3ab610`) before edits; the historical chat-11 sweep was already merged.
-- **33 new source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 33 scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
+- **54 new source commits** were pushed directly to `chatgpt/chat-11-b`, all tagged `[chat-11]`, updating 41 scoped files. Subsequent changes on `main` may require ordinary orchestrator merge/conflict review.
 - Eliminated duplicate filters/form shell cards in TPO blocked dates and Super Admin module filters, plus redundant section padding in settings and public placements. Preserved distinct metric/tenant/setup cards and status notices.
 - Replaced residual literal 9px, generic `rounded-md`, and legacy `--radius` control overrides with the canonical `--lms-control-radius`, without changing inputs' values, forms, labels or handlers. Fixed inconsistent tap targets on tenant setup tabs.
 - Removed invalid standalone `-`/`-subtle` utility tokens in tenant domains, college sign-in, logo upload, college setup checklist, and tenant settings scope.
@@ -34,10 +34,14 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - `src/app/(authenticated)/admin/module-access/page.tsx`
 - `src/app/(authenticated)/admin/settings/auth/page.tsx`
 - `src/app/(authenticated)/admin/settings/page.tsx`
+- `src/app/(authenticated)/admin/tenants/page.tsx`
 - `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- `src/app/(authenticated)/tpo/settings/branding/page.tsx`
 - `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
 - `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
 - `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- `src/components/admin/college-at-glance-panel.tsx`
+- `src/components/admin/college-create-form.tsx`
 - `src/components/admin/college-logo-uploader.tsx`
 - `src/components/admin/college-setup-checklist.tsx`
 - `src/components/admin/college-signin-method-form.tsx`
@@ -51,11 +55,23 @@ The page canvas stays white on #f1f4f9, with #e5e9f0 hairlines and shared 12px c
 - `src/components/tpo/tpo-after-college-editor.tsx`
 - `src/components/tpo/tpo-blocked-dates-editor.tsx`
 - `src/components/tpo/tpo-communication-settings-editors.tsx`
+- `src/components/tpo/tpo-custom-job-type-placed.tsx`
+- `src/components/tpo/tpo-custom-job-type-rename.tsx`
 - `src/components/tpo/tpo-job-types-editor.tsx`
 - `src/components/tpo/tpo-my-notification-preferences-editor.tsx`
 - `src/components/tpo/tpo-optional-emails-editor.tsx`
+- `src/components/tpo/tpo-prep-percentage-editor.tsx`
 - `src/components/tpo/tpo-prep-readiness-editor.tsx`
 - `src/components/tpo/tpo-public-join-link-card.tsx`
+- `src/components/tpo/tpo-trusted-domain-editor.tsx`
+
+## Continuation after initial 33 source commits
+
+- Eight Super Admin filter screens now defer input/select borders, radii, backgrounds and typography to shared `Input` and `Select` rather than overriding their old-LMS styling; responsive mobile touch height remains in place.
+- Corrected the invalid standalone grid utility in `CollegeCreateForm`, switched the college address-detail inputs to the shared `Input`, and removed a redundant TPO branding source-panel fill.
+- Completed a second control pass through trusted recruiter domains, custom job-type rename and counts-as-placed toggles, preparation readiness percentages, college at-a-glance metrics, and individual/bulk after-college editing. Their control radii are semantic and mobile interactive targets are at least 44px with legacy-sized desktop controls.
+- Existing repeated metrics, item cards, distinct placement-range tiles, college preview mockups and object evidence regions remain separate by design and were not flattened.
+- The orchestrator has concurrently merged earlier chat-11 changes into `main` while this lane continued. Current branch divergence is **not** a failed push and no force update was attempted. The final owner merge should reconcile the remaining branch-side commits with the latest main.
 
 ## Remaining verification and ownership boundaries
 
