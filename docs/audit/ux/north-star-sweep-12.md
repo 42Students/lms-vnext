@@ -128,3 +128,13 @@ After the initial sweep and its merge into main, fast-forwarded `chatgpt/chat-12
 - Preserved semantic pill styles, independent dialog/panel content, grouped tables, checkbox/touch targets not explicitly targeted, conditional renders, and all interaction/state behavior.
 - Applied source-level assertions on each changed token occurrence, examined closings for truncated `</Select` tags, and avoided bracket/cast edits. **No TypeScript compiler, tests, CI, dev server, browser/pixel diff or runtime execution**. Compile and visual parity remain unverified.
 - Branch relation at tracker write: **ahead `30`**, **behind `0`** relative to current `main`; main may continue advancing concurrently, so use regular merge/reconciliation, never force-update.
+
+### Fourth-pass completion — batch/roster and first-third fallback details
+
+- **18 additional verified source commits** after the 30-commit checkpoint, for **48 unique source files changed** since the latest fast-forward (plus this tracker). All commit prefixes are `[chat-12]` and branch is `chatgpt/chat-12-b` only.
+- Batch/class eligibility, lifecycle controls and CSV eligibility import; student spreadsheet export, bulk debarment, preparation assignment, bulk profile verification, clipboard actions, and whole-view bulk action panel now use the canonical control-radius and canvas-radius tokens. Kept independent panels and checkbox/touch rows rather than flattening meaningful content areas.
+- First-third TPO error fallbacks for batch list, batch-student eligibility grid, batch-history, students, company listing/detail, individual student history and team now use shared retry styling where native buttons existed and the canvas-radius token on bordered error panels. No failure wording or behavior was changed.
+- Team asks action controls and confirmation panel normalized, preserving stateful confirmation and role guards.
+- Read `docs/design/legacy-styles/README.md`, `components___button.scss`, `components___form.scss`, `components___listing-page-header.scss` along with NORTH STAR and extracted exact old TPO shell rules. Preferred measured 36px/9px TPO control rules where broader legacy SCSS variants differ by module.
+- Source-only replacements with exact occurrence checks; `<Button>` opening/closing counts verified for newly converted fallbacks; no truncated `</Select` introduced. No compiler, tests, CI, application execution, browser or visual comparison was run. Strict TypeScript compile and pixel parity require the orchestrator's final check.
+- Branch comparison immediately before tracker write: ahead `49`, behind `436` relative to `main`. Other lanes may advance concurrently. Do not force-update.
