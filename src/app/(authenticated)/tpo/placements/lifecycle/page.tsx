@@ -1,5 +1,6 @@
 import { Dropdown } from "@/components/ui/dropdown";
 import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions";
@@ -222,14 +223,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm md:min-h-9"
        href="/tpo/placements/lifecycle?view=REQUESTS">Waiting for your review</Link>
     </nav>
-    <nav aria-label="Drive status tabs" className="flex flex-wrap gap-1 border-b border-border">
-      {([["REQUESTS","Requests",data.needsReviewCount],["LIVE","Live",data.statusCounts.live],["DRAFT","Drafts",data.statusCounts.drafts],["CLOSED","Closed",data.statusCounts.closed],["ALL","All jobs",data.statusCounts.all]] as const).map(([view,label,total])=>
-        <Link key={view} href={{pathname:"/tpo/placements/lifecycle",query:{view,search:"",page:1}}}
-          aria-current={data.view===view?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary "+(data.view===view?"border-primary text-[var(--lms-teal-deep)]":"border-transparent text-body hover:border-border hover:text-foreground")}>
-          {label}<span className={"rounded-full px-2 py-0.5 tabular-nums "+(view==="REQUESTS"&&total>0?"bg-warning-subtle text-[var(--lms-gold-accent)]":"bg-muted text-body")}>{total}</span>
-        </Link>)}
-    </nav>
+    <Tabs ariaLabel="Drive status tabs" renderPanel={false} value={data.view}
+       items={([["REQUESTS","Requests",data.needsReviewCount],["LIVE","Live",data.statusCounts.live],["DRAFT","Drafts",data.statusCounts.drafts],["CLOSED","Closed",data.statusCounts.closed],["ALL","All jobs",data.statusCounts.all]] as const).map(([view,label,count])=>({
+         value:view,label,count,href:"/tpo/placements/lifecycle?view="+encodeURIComponent(view)+"&search=&page=1",
+       }))} />
     {data.view==="REQUESTS" ? (!data.requestsAvailable ?
       <EmptyState title={TPO_REQUESTS_COPY.tab} description={TPO_REQUESTS_COPY.unavailable}/> :
       <section aria-label="Recruiter drive requests" className="space-y-3">
