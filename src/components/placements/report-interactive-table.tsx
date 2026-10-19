@@ -66,11 +66,11 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
    <div data-report-toolbar className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold">Search table
      <Input type="search" maxLength={100} value={search} onChange={e=>{setSearch(e.target.value);setLimit(100);}}
-      className="min-h-11" placeholder="Search shown report rows"/>
+      className="min-h-11 md:min-h-9" placeholder="Search shown report rows"/>
     </label>
     <label className="grid gap-1 text-xs font-semibold">Rows shown
      <Select value={limit} onChange={e=>setLimit(Number(e.target.value))}
-      className="min-h-11">
+      className="min-h-11 md:min-h-9">
       {[25,50,100,500,1000].map(n=><option key={n} value={n}>{n}</option>)}
       {![25,50,100,500,1000].includes(limit)?<option value={limit}>{limit}</option>:null}
      </Select>
@@ -81,14 +81,14 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
         const disclosure=event.currentTarget.closest("details");
         disclosure?.removeAttribute("open");
         disclosure?.querySelector("summary")?.focus();
-      }} size="sm">
+      }} size="sm" className="min-h-11 md:min-h-9 print:hidden">
        Close filters
       </Button>
       {headings.map((heading,index)=><label key={index} className="grid gap-1 text-xs font-semibold">
        {heading}
        <Input type="search" maxLength={100} value={columnFilters[index]??""}
         onChange={event=>{setColumnFilters(current=>({...current,[index]:event.target.value}));setLimit(100);}}
-        />
+        className="min-h-11 md:min-h-9" />
       </label>)}
      </div>
     </Dropdown>
@@ -99,7 +99,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
         const disclosure=event.currentTarget.closest("details");
         disclosure?.removeAttribute("open");
         disclosure?.querySelector("summary")?.focus();
-      }} size="sm">
+      }} size="sm" className="min-h-11 md:min-h-9 print:hidden">
        Close columns
       </Button>
       {headings.map((heading,index)=><label key={index} className="flex items-center gap-2 text-xs">
@@ -109,10 +109,10 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
        {heading}</label>)}
      </fieldset>
     </Dropdown>
-    <Button variant="secondary" type="button" onClick={()=>void copy()} disabled={showing.length===0} aria-label={"Copy "+showing.length+" shown report rows"} size="sm">Copy shown</Button>
-    <Button variant="secondary" type="button" onClick={saveCsv} disabled={showing.length===0} aria-label={"Export "+showing.length+" shown report rows as CSV"} size="sm">Export shown CSV</Button>
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>void copy()} disabled={showing.length===0} aria-label={"Copy "+showing.length+" shown report rows"} size="sm">Copy shown</Button>
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={saveCsv} disabled={showing.length===0} aria-label={"Export "+showing.length+" shown report rows as CSV"} size="sm">Export shown CSV</Button>
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);setMessage("");}}
-     size="sm">Reset view</Button>
+     size="sm" className="min-h-11 md:min-h-9 print:hidden">Reset view</Button>
    </div>
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
@@ -122,13 +122,13 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
      <Select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));
        setDescending(false);
-     }} className="min-w-0">
+     }} className="min-h-11 min-w-0 md:min-h-9">
       <option value="">Original order</option>
       {displayedColumns.map(col=><option key={col.index} value={col.index}>{col.heading}</option>)}
      </Select>
     </label>
     <Button variant="secondary" type="button" disabled={sort===null} aria-label="Descending order" aria-pressed={descending}
-     onClick={()=>setDescending(value=>!value)} >
+     onClick={()=>setDescending(value=>!value)} className="min-h-11 md:min-h-9 print:hidden">
      {descending?"Descending":"Ascending"}
     </Button>
    </div>
@@ -141,13 +141,13 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       key:String(col.index),
       mobilePriority:position===0?"primary" as const:"secondary" as const,
       mobileLabel:col.heading,
-      header:<Button variant="ghost" type="button"
+      header:<><span className="hidden print:inline">{col.heading}</span><Button variant="ghost" type="button"
        onClick={()=>{if(sort===col.index)setDescending(!descending);else{setSort(col.index);setDescending(false);}}}
        aria-pressed={sort===col.index}
        aria-label={"Sort "+col.heading+(sort===col.index?(descending?" descending":" ascending"):"")}
-       className={"justify-start text-left underline-offset-4 hover:underline "+(sort===col.index?"text-[var(--lms-primary-text)] underline":"text-foreground")}>
+       className={"justify-start text-left underline-offset-4 hover:underline print:hidden "+(sort===col.index?"text-[var(--lms-primary-text)] underline":"text-foreground")}>
        {col.heading} {sort===col.index?(descending?"↓":"↑"):""}
-      </Button>,
+      </Button></>,
       cell:(row:(typeof visibleRows)[number])=>{
         const value=row.cells[col.index];
         return value===null||value===undefined||value===""?"—":value;
@@ -155,7 +155,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     }))}
    />
    {ordered.length>limit?<Button variant="secondary" type="button" onClick={()=>setLimit(n=>Math.min(ordered.length,n+500))}
-    size="sm">Show 500 more</Button>:null}
+    size="sm" className="min-h-11 md:min-h-9 print:hidden">Show 500 more</Button>:null}
    {message?<p role="status" aria-live="polite" className="text-xs text-body">{message}</p>:null}
   </>}
  </section>;

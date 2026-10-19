@@ -1,5 +1,6 @@
 "use client";
 import { Tabs } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {FileUpload} from "@/components/ui/file-upload";
@@ -90,7 +91,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  }
  return <section className="min-w-0 space-y-3 border-t border-border pt-4">
   <h2 className="font-semibold">Import eligibility</h2>
-  <Button variant="secondary" type="button" disabled={busy} onClick={()=>setImportOpen(true)}
+  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>setImportOpen(true)}
    >
    Import eligibility decisions
   </Button>
@@ -98,30 +99,30 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     dismissible={!busy}><div className="space-y-3">
    <div className="flex items-center justify-between gap-3">
     <h3 className="font-semibold">Import eligibility</h3>
-    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setImportOpen(false)}
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>setImportOpen(false)}
      >Close</Button>
    </div>
   <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
   <div className="space-y-2">
-   <FileUpload ref={fileInput} label="Choose or drop eligibility CSV" maxBytes={1_500_000}
+   <FileUpload ref={fileInput} className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Choose or drop eligibility CSV" maxBytes={1_500_000}
       accept=".csv,text/csv" disabled={busy} onFiles={files=>void chooseFile(files?.[0]??null)}/>
    {chosenName?<p className="text-xs text-muted-foreground">Selected: {chosenName}</p>:null}
    <p className="text-xs text-muted-foreground">For Excel files, use Save As → CSV (UTF-8) before import.</p>
-   <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Download a template</a>
+   <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Download a template</a>
   </div>
-  <label className="block text-sm">CSV contents
+  <label className="block text-sm print:hidden">CSV contents
    <Textarea className="mt-1 min-h-32 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");}} disabled={busy} maxLength={1500000}/>
   </label>
-  <Button variant="secondary" type="button" disabled={busy} onClick={()=>void previewChanges()} >{busy?"Working…":"Preview import"}</Button>
+  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void previewChanges()} >{busy?"Working…":"Preview import"}</Button>
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
    {unresolved>0?<p role="alert" className="text-sm text-warning-text">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
-   <Tabs ariaLabel="Import preview filters" renderPanel={false} controlledOnly
+   <div className="print:hidden"><Tabs ariaLabel="Import preview filters" renderPanel={false} controlledOnly
     value={previewTab} onValueChange={next=>{setPreviewTab(next as "ALL"|"MATCHED"|"UNUSABLE");setPreviewPage(1);}}
     items={[{value:"ALL",label:"All",count:preview.preview.length},
       {value:"MATCHED",label:"Matched",count:preview.ready},
-      {value:"UNUSABLE",label:"Can't use",count:preview.skipped}]} />
+      {value:"UNUSABLE",label:"Can't use",count:preview.skipped}]} /></div>
    <DataTable<{row:Preview["preview"][number];i:number}> caption="Eligibility import preview rows"
     rows={preview.preview.map((row,i)=>({row,i}))
      .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
@@ -137,32 +138,32 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
       <StatusBadge tone={row.status==="matched"?(row.currentStatus===row.proposedStatus?"neutral":"success"):"warning"}>{row.status==="matched"&&row.currentStatus===row.proposedStatus?"No change":row.status==="matched"?"Matched":"Can't use"}</StatusBadge>
       {row.reason?<span className="ml-2 text-xs text-body">{row.reason}</span>:null}</>},
      {key:"include",header:"Include",mobilePriority:"action",cell:({row,i})=>row.status==="unusable"?
-      <Button variant="secondary" size="sm" type="button" disabled={busy||skippedByUser.includes(i)}
+      <Button variant="secondary" size="sm" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy||skippedByUser.includes(i)}
        onClick={()=>setSkippedByUser(current=>current.includes(i)?current:[...current,i])}>
        {skippedByUser.includes(i)?"Row skipped":"Skip row"}</Button>:
-      <label className="inline-flex items-center gap-1 text-sm">
+      <label className="inline-flex min-h-11 items-center gap-1 text-sm print:hidden">
        <Checkbox checked={!skippedByUser.includes(i)} disabled={busy}
         onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])}/>Include
       </label>},
     ]}/>
-   <nav aria-label="Import preview pages" className="flex flex-wrap items-center gap-3 text-xs">
+   <nav aria-label="Import preview pages" className="flex flex-wrap items-center gap-3 text-xs print:hidden">
     <Button variant="secondary" type="button" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} >Previous</Button>
     <span>Page {previewPage} of {Math.max(1,Math.ceil(preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length/8))}</span>
     <Button variant="secondary" type="button" disabled={busy||previewPage*8>=preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length} onClick={()=>setPreviewPage(p=>p+1)} >Next</Button>
    </nav>
-   <div className="flex flex-wrap gap-2">
-    <Button variant="secondary" type="button" disabled={busy} onClick={()=>fileInput.current?.click()} >Choose another file</Button>
-    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setDiscardPending(true)} >Discard review</Button>
+   <div className="flex flex-wrap gap-2 print:hidden">
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>fileInput.current?.click()} >Choose another file</Button>
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>setDiscardPending(true)} >Discard review</Button>
    </div>
-   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void copyPreview()} >Copy preview outcomes CSV</Button>
-   <label className="flex items-start gap-2 text-sm text-body">
+   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void copyPreview()} >Copy preview outcomes CSV</Button>
+   <label className="flex min-h-11 items-start gap-2 text-sm text-body print:hidden">
      <Checkbox className="mt-1 h-4 w-4 accent-primary"
        checked={acknowledged} disabled={busy}
        onChange={event=>setAcknowledged(event.target.checked)}/>
      I reviewed the matched learners and understand that applying these decisions will be audited.
      Unusable rows must be explicitly skipped before the matched decisions can be saved.
    </label>
-   <Button variant="primary" type="button" disabled={busy||preview.ready===0||unresolved>0||!acknowledged} onClick={()=>void commit()}
+   <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy||preview.ready===0||unresolved>0||!acknowledged} onClick={()=>void commit()}
     >Confirm matched decisions</Button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
