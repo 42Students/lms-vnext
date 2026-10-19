@@ -65,7 +65,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
  }
  const dirty=rating!==saved.rating||note!==saved.note;
  return <form onSubmit={event=>void save(event)}
-  className="mt-5 space-y-3 rounded-lg border border-border bg-surface-secondary p-4">
+  className="mt-5 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
   <h4 className="font-semibold text-foreground">Your private rating</h4>
   <p className="text-xs text-body">Only you can read or change this rating and note.</p>
   <label className="grid gap-1 text-sm text-body">Your rating

@@ -25,7 +25,7 @@ type Props = {
 };
 type Sprint = ProjectTemplateBlueprint["sprints"][number];
 type Task = ProjectTemplateBlueprint["tasks"][number];
-const field = "mt-1 min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const field = "mt-1 w-full";
 const label = "block text-xs font-semibold text-body";
 
 export function SuperAdminTemplatePlanEditor(props: Props) {
@@ -158,7 +158,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             }],
           }))}>Add release</Button>
         {draft.sprints.map((sprint, index) => <fieldset key={index}
-          className="grid gap-3 rounded-lg border border-border p-3">
+          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
           <legend className="px-1 text-sm font-semibold">Sprint {index + 1}</legend>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className={label}>Key (optional)
@@ -212,7 +212,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             href={"/admin/projects/templates/" + props.templateId + "/sprints"}>Add sprints first</Link>.
         </p> : null}
         {draft.tasks.map((task, index) => <fieldset key={index}
-          className="grid gap-3 rounded-lg border border-border p-3">
+          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
           <legend className="px-1 text-sm font-semibold">Task {index + 1}</legend>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className={label}>Key (optional)

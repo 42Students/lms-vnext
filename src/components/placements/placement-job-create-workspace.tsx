@@ -102,7 +102,7 @@ export async function PlacementJobCreateWorkspace({
         <summary className="min-h-11 cursor-pointer text-sm font-semibold text-foreground md:min-h-9">Clone a past drive</summary>
         <p className="my-2 text-xs text-body">Shows up to 20 recent completed drives. Cloning makes a new draft; dates, learners, rounds, outcomes, offers and external links are never carried over.</p>
         <ul className="grid gap-2 sm:grid-cols-2">
-          {pastDrives.map(job=><li key={job.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border p-3">
+          {pastDrives.map(job=><li key={job.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-3">
             <span className="text-sm font-semibold">{job.title} · {job.status==="CANCELLED"?"Cancelled":"Closed"}</span>
             <TpoDriveCloneAction jobId={job.id} label="Clone drive"/>
           </li>)}

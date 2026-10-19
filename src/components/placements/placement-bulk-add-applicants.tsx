@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import type { BulkDriveResult } from "@/modules/placements/bulk-drive-model";
 
@@ -109,57 +111,57 @@ export function PlacementBulkAddApplicants({
       </div>
 
       {roles.length === 0 ? (
-        <p className="rounded-md border border-border bg-muted p-4 text-sm text-body">
+        <p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 text-sm text-body">
           No active role options are available. Add an active role before using bulk addition.
         </p>
       ) : (
         <>
           <label className="block max-w-md text-sm font-semibold text-foreground">
             Apply learners to role
-            <select
+            <Select
               value={roleOptionId}
               onChange={(event) => setRoleOptionId(event.target.value)}
               disabled={busy}
-              className="mt-2 min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground md:min-h-9"
+              className="mt-2 min-h-11 w-full md:min-h-9"
             >
               {roles.map((role) => (
                 <option key={role.id} value={role.id}>{role.title}</option>
               ))}
-            </select>
+            </Select>
           </label>
 
           <div className="flex flex-wrap items-end gap-2">
             <label className="flex-1 text-sm font-semibold text-foreground">
               Find learners by name
-              <input
+              <Input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 maxLength={80}
                 disabled={busy}
                 placeholder="Search names"
-                className="mt-2 min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground md:min-h-9"
+                className="mt-2 min-h-11 w-full md:min-h-9"
               />
             </label>
             <button
               type="button"
               onClick={() => void load(1)}
               disabled={busy}
-              className="min-h-11 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50 md:min-h-9"
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50 md:min-h-9"
             >
               Search
             </button>
           </div>
 
           {candidates.learners.length === 0 ? (
-            <p className="rounded-md border border-border bg-muted p-4 text-sm text-body">
+            <p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 text-sm text-body">
               No active learners match this roster filter. Nothing has been selected or added.
             </p>
           ) : (
-            <div className="space-y-2">
+            <div className="divide-y divide-border border-y border-border">
               {candidates.learners.map((candidate) => (
                 <label
                   key={candidate.membershipId}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-border bg-muted px-3 py-2"
+                  className="flex min-h-11 cursor-pointer items-center gap-3 px-3 py-2 hover:bg-primary-subtle"
                 >
                   <input
                     type="checkbox"
@@ -183,7 +185,7 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || candidates.page === 1}
                 onClick={() => void load(candidates.page - 1)}
-                className="min-h-11 rounded-[9px] border border-border px-3 font-medium text-foreground disabled:opacity-50 md:min-h-9"
+                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-medium text-foreground disabled:opacity-50 md:min-h-9"
               >
                 Previous
               </button>
@@ -191,14 +193,14 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || !candidates.hasMore}
                 onClick={() => void load(candidates.page + 1)}
-                className="min-h-11 rounded-[9px] border border-border px-3 font-medium text-foreground disabled:opacity-50 md:min-h-9"
+                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-medium text-foreground disabled:opacity-50 md:min-h-9"
               >
                 Next
               </button>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-muted p-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-3">
             <span className="text-sm font-semibold text-foreground">
               {selected.size} / 200 selected
             </span>
@@ -207,7 +209,7 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || selected.size === 0}
                 onClick={() => setSelected(new Map())}
-                className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-sm font-medium text-foreground disabled:opacity-50 md:min-h-9"
+                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-medium text-foreground disabled:opacity-50 md:min-h-9"
               >
                 Clear
               </button>
@@ -215,7 +217,7 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || selected.size === 0 || !roleOptionId}
                 onClick={() => void submit()}
-                className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50 md:min-h-9"
+                className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50 md:min-h-9"
               >
                 {busy ? "Working..." : "Review and confirm Add-to-Drive"}
               </button>
@@ -229,7 +231,7 @@ export function PlacementBulkAddApplicants({
       {results.length > 0 ? (
         <div aria-live="polite" className="space-y-2">
           <h3 className="font-semibold text-foreground">Results for each selected learner</h3>
-          <ul className="divide-y divide-border rounded-md border border-border">
+          <ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border">
             {results.map((row) => (
               <li key={row.membershipId} className="flex flex-wrap gap-2 px-3 py-2 text-sm">
                 <span className="font-medium text-foreground">{row.name}</span>

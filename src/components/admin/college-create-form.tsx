@@ -144,7 +144,7 @@ export function CollegeCreateForm({
         />
       </div>
       <div className="space-y-3 lg:col-span-4">
-       <details className="rounded-[var(--lms-control-radius)] border border-border p-3">
+       <details className="rounded-[var(--lms-control-radius,9px)] border border-border p-3">
         <summary className="cursor-pointer text-sm font-semibold">Address details (optional)</summary>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
          {([
@@ -153,8 +153,8 @@ export function CollegeCreateForm({
           ["Landmark",landmark,setLandmark,255],["Pin Code",postalCode,setPostalCode,32],
           ["Country",country,setCountry,128],
          ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-1 text-xs font-semibold">
-          {label}<input value={value} onChange={e=>setter(e.target.value)} maxLength={maxLength}
-           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm"/>
+          {label}<Input value={value} onChange={e=>setter(e.target.value)} maxLength={maxLength}
+           className="min-h-11 sm:min-h-9 w-full"/>
          </label>)}
         </div>
        </details>

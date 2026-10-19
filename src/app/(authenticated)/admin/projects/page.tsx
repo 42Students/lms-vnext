@@ -36,7 +36,7 @@ export default async function SuperAdminProjectsPage({
       <PageHeader eyebrow="Super Admin" title="Project workspaces" />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
-        action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)] underline">Back to dashboard</Link>}
+        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}
       />
     </div>;
   }
@@ -69,7 +69,7 @@ export default async function SuperAdminProjectsPage({
         description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>}
+        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>}
       />
     </div>;
   }
@@ -116,7 +116,7 @@ export default async function SuperAdminProjectsPage({
       <ErrorState title="Project workspaces unavailable"
         description="The workspace list could not be loaded. Your search and filters were not changed."
         action={<Link href={"/admin/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Retry loading workspaces</Link>}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading workspaces</Link>}
       />
     </div>;
   }
@@ -147,8 +147,8 @@ export default async function SuperAdminProjectsPage({
         }
       />
 
-      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/admin/projects/workspaces/new">Create workspace</Link>
-        <Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
+      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
+        <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
 
       {!templatesResult.ok && (
         <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">

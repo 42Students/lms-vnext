@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {roundApplyPreviewCsv,roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-model";
@@ -40,9 +41,9 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
   <h2 className="font-semibold text-foreground">Apply results for the whole round</h2>
   <p className="text-sm text-body">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
   <button type="button" disabled={busy} onClick={()=>void load()}
-   className="min-h-11 md:min-h-9 rounded-[9px] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Working…":"Preview applying round results"}</button>
-  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-lg border border-border bg-muted p-4">
+  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-muted p-4">
    <h3 className="font-semibold">Consequence preview</h3>
    <p className="text-sm">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
    <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
@@ -51,7 +52,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     <div><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
     <div><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
    </dl>
-   <div className="max-h-60 overflow-y-auto rounded border border-border p-2">
+   <div className="max-h-60 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border p-2">
     {preview.rows.map(r=><div key={r.resultId} className="flex justify-between gap-2 border-b border-border px-2 py-2 text-sm">
      <span>{r.student}</span><span>{r.outcome} → {r.destination} · {r.status}</span>
     </div>)}
@@ -59,16 +60,16 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    <p className="text-xs text-body">{preview.skippedUnrecordedNote}</p>
    <button type="button" onClick={()=>downloadRoundCsv(
     roundApplyPreviewCsv(preview.rows),"round-"+roundId+"-apply-preview.csv")}
-    className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
     Export consequence preview (CSV)
    </button>
    {!preview.ready?<p role="alert" className="text-sm text-foreground">Complete this evaluation round before applying results.</p>:null}
    <div className="flex flex-wrap gap-3">
-    <button type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
-     className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
-     Confirm and apply {preview.staged} result(s)</button>
+    <Button variant="primary" type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
+     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+     Confirm and apply {preview.staged} result(s)</Button>
     <button type="button" disabled={busy} onClick={()=>setPreview(null)}
-     className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4 text-sm">Not yet</button>
+     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Not yet</button>
    </div>
   </div>:null}
   {report?<div role="status" className="space-y-2 text-sm">
@@ -76,11 +77,11 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    <div className="max-h-44 overflow-y-auto">{report.results.map(x=><p key={x.resultId}>
     {x.student}: {x.status} ({x.outcome}) {x.reason?"· "+x.reason:""}
    </p>)}</div>
-   <button type="button" className="mr-3 min-h-11 md:min-h-9 rounded-[9px] border border-border px-4"
+   <button type="button" className="mr-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4"
     onClick={()=>downloadRoundCsv(roundApplyReportCsv(report.results),"round-"+roundId+"-apply-results.csv")}>
     Export results (CSV)
    </button>
-   <button type="button" className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4" onClick={()=>{if(!navigator.clipboard){setError("Clipboard is unavailable. Use Export results (CSV).");return;}void navigator.clipboard.writeText(
+   <button type="button" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4" onClick={()=>{if(!navigator.clipboard){setError("Clipboard is unavailable. Use Export results (CSV).");return;}void navigator.clipboard.writeText(
     ["Learner\tResult state\tOutcome\tReason",...report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].map(value=>value.replaceAll("\t"," ").replaceAll("\n"," ")).join("\t"))].join("\n")
    ).catch(()=>setError("Copy failed. Use Export results (CSV)."));}}>Copy results</button>
   </div>:null}

@@ -152,7 +152,7 @@ export default async function SuperAdminTenantSetup({
      {label:"Sign-in",href:"/signin",description:"Review login methods and account access."},
      {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
     ].map(card=><Link key={card.label} href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
-     className="min-w-0 rounded-[8px] border border-border bg-surface p-4 hover:border-primary">
+     className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 hover:border-primary">
      <h3 className="font-semibold text-primary-text">{card.label}</h3>
      <p className="mt-2 text-sm text-body">{card.description}</p>
     </Link>)}
@@ -163,7 +163,7 @@ export default async function SuperAdminTenantSetup({
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="text-sm font-semibold text-primary-text underline">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-3 sm:grid-cols-2">
-     {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 rounded-[8px] border border-border bg-surface p-4">
+     {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-foreground">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>

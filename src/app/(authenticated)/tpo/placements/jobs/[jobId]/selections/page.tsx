@@ -27,7 +27,7 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
   {!data.storageReady?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 text-sm text-body">
     <strong>Selections are not available yet.</strong> {data.pendingMessage}
     No selections can be recorded or released until the migration is registered.
-  </div>:data.job.status!=="PUBLISHED"?<p role="status" className="rounded border border-border p-5 text-sm">
+  </div>:data.job.status!=="PUBLISHED"?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm">
     Selections can be recorded and released only on a published drive.
   </p>:<div className="space-y-6"><TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections} roleOptions={data.roleOptions}/>
     <TpoSelectionImport jobId={jobId} candidates={data.candidates}/></div>}

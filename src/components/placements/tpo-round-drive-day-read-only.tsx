@@ -91,7 +91,7 @@ export function TpoRoundDriveDayReadOnly({
               "/tpo/placements/jobs/" +
               encodeURIComponent(data.job.id)
             }
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-muted"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-muted"
           >
             ← Back to job Drive Day
           </Link>
@@ -99,13 +99,13 @@ export function TpoRoundDriveDayReadOnly({
       />
 
       <nav aria-label="Round operational actions" className="flex flex-wrap gap-3">
-        <Link href={destinations.results} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
-        <Link href={destinations.schedule} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
+        <Link href={destinations.results} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
+        <Link href={destinations.schedule} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
       </nav>
       <p className="text-sm text-body">
         <a
           href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 font-[650] text-on-primary hover:bg-primary-hover text-primary-foreground"
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] hover:bg-primary-hover text-primary-foreground"
         >
           Export round attendance (CSV)
         </a>
@@ -195,7 +195,7 @@ export function TpoRoundDriveDayReadOnly({
           {summary.map(([label, count]) => (
             <div
               key={label}
-              className="rounded-xl border border-border bg-surface p-4"
+              className="border-b border-border px-1 py-4"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {label}
@@ -238,7 +238,7 @@ export function TpoRoundDriveDayReadOnly({
         aria-label="Round applicant roster"
         className="overflow-hidden border-t border-border"
       >
-        <div className="border-b border-border p-5">
+        <div className="border-b border-border py-4">
           <h2 className="text-base font-semibold text-foreground">
             Applicants in this round
           </h2>

@@ -53,7 +53,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
    </section>
    <section className="space-y-3">
     <h2 className="font-semibold text-foreground">Time blocks ({slots.items.length})</h2>
-    {slots.items.map(slot=><article key={slot.id} className="space-y-3 rounded-xl border border-border bg-surface p-4">
+    {slots.items.map(slot=><article key={slot.id} className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
      <p className="font-semibold text-foreground">{when(slot.startAt)} – {when(slot.endAt)}</p>
      <p className="text-sm text-body">
       {slot.status==="OFFERED"?"Waiting for the placement cell":

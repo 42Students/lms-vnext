@@ -364,7 +364,7 @@ export function RecruiterResultControls({
         if(outcome){event.preventDefault();draftSelectedOutcome(activeRoundId,outcome);}
       }}>
       {rounds.length === 0 ? (
-        <p className="m-0 border-y border-border py-5 text-sm text-muted-foreground">
+        <p className="m-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 text-sm text-muted-foreground">
           The placement team has not configured any rounds yet.
         </p>
       ) : (
@@ -380,7 +380,7 @@ export function RecruiterResultControls({
           return (
             <article
               key={round.id}
-              className="rounded-xl border border-border bg-surface"
+              className="rounded-[var(--lms-radius-card)] border border-border bg-surface"
             >
               <div className="border-b border-border px-5 py-4">
                 <div className="flex flex-wrap items-center gap-2">

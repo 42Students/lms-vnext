@@ -1,6 +1,9 @@
 "use client";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {superAdminPublishedDriveEditFeedback} from "@/modules/placements/super-admin-published-drive-edit-feedback";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -46,37 +49,34 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
    }
   });
  }
- const cls="min-h-10 w-full rounded border border-border bg-surface p-2";
- return <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
+ const cls="w-full";
+ return <section className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold">Edit published drive</h2>
   <p className="text-xs text-body">Edits apply to future applicants. Existing applications and offer decisions remain unchanged.</p>
-  {!open?<button type="button" onClick={()=>setOpen(true)}
-   className="min-h-10 rounded-[9px] border border-border px-4 font-semibold text-primary-text">
-   Edit published drive</button>:
+  {!open?<Button type="button" variant="secondary" onClick={()=>setOpen(true)}>
+   Edit published drive</Button>:
    <form className="grid gap-3 sm:grid-cols-2" onSubmit={e=>void save(e)}>
-    <label className="grid gap-1 text-sm">Title<input name="title" required minLength={3} maxLength={100}
+    <label className="grid gap-1 text-sm">Title<Input name="title" required minLength={3} maxLength={100}
      defaultValue={job.title} className={cls}/></label>
-    <label className="grid gap-1 text-sm">Application deadline (IST)<input type="datetime-local" required
+    <label className="grid gap-1 text-sm">Application deadline (IST)<Input type="datetime-local" required
      name="deadline" defaultValue={istLocal(job.applicationDeadline)} className={cls}/></label>
-    <label className="grid gap-1 text-sm sm:col-span-2">Description<textarea name="description"
+    <label className="grid gap-1 text-sm sm:col-span-2">Description<Textarea name="description"
      maxLength={15000} defaultValue={job.description} rows={4} className={cls}/></label>
-    <label className="grid gap-1 text-sm sm:col-span-2">Locations (comma-separated)<input name="locations"
+    <label className="grid gap-1 text-sm sm:col-span-2">Locations (comma-separated)<Input name="locations"
      defaultValue={job.locations.join(", ")} className={cls}/></label>
-    <label className="grid gap-1 text-sm">Openings<input name="openings" type="number" min={1}
+    <label className="grid gap-1 text-sm">Openings<Input name="openings" type="number" min={1}
      defaultValue={job.openings??""} className={cls}/></label>
-    <label className="grid gap-1 text-sm">Minimum annual CTC (INR)<input name="minimumAnnualCtcInr"
+    <label className="grid gap-1 text-sm">Minimum annual CTC (INR)<Input name="minimumAnnualCtcInr"
      type="number" min={0} defaultValue={job.minCtc??""} className={cls}/></label>
-    <label className="grid gap-1 text-sm">Maximum annual CTC (INR)<input name="maximumAnnualCtcInr"
+    <label className="grid gap-1 text-sm">Maximum annual CTC (INR)<Input name="maximumAnnualCtcInr"
      type="number" min={0} defaultValue={job.maxCtc??""} className={cls}/></label>
     <label className="grid gap-1 text-sm sm:col-span-2">Reason for edit
-     <textarea name="reason" required minLength={10} maxLength={1000} rows={2} className={cls}/></label>
+     <Textarea name="reason" required minLength={10} maxLength={1000} rows={2} className={cls}/></label>
     {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
     <div className="flex flex-wrap gap-3 sm:col-span-2">
-     <button type="submit" disabled={pending}
-      className="min-h-10 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-on-primary disabled:opacity-50 text-[var(--lms-on-primary)]">
-      {pending?"Saving…":"Review and save published changes"}</button>
-     <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-      className="min-h-10 rounded-[9px] border border-border px-4">Cancel</button>
+     <Button type="submit" disabled={pending}>
+      {pending?"Saving…":"Review and save published changes"}</Button>
+     <Button type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
     </div>
    </form>}
  </section>;

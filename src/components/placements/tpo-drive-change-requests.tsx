@@ -43,18 +43,18 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    <div className="grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-sm">Request type
      <Select value={mode} onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
-      className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
     <label className="grid gap-1 text-sm">Field
      <Select value={field} onChange={e=>setField(e.target.value as typeof field)}
-      className="min-h-11 md:min-h-9 rounded border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
    </div>
    <label className="grid gap-1 text-sm">Change or question
     <Textarea value={value} onChange={e=>setValue(e.target.value)} minLength={2} maxLength={2000} rows={3}
-     className="rounded border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
+     className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
    <label className="grid gap-1 text-sm">Why is this needed?
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={1000} rows={2}
-     className="rounded border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
+     className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
    <Button type="button" disabled={busy||value.trim().length<2||reason.trim().length<3}
     onClick={()=>void send({action:"CREATE",field,mode,proposedValue:value.trim(),reason:reason.trim()})}
     variant="primary">
@@ -62,24 +62,24 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   </section>
   <section className="space-y-3">
    <h2 className="text-lg font-semibold">Change requests · {requests.length}</h2>
-   {!requests.length?<p role="status" className="rounded border border-border p-5 text-sm">No change requests for this drive.</p>:requests.map(item=>
-    <article key={item.id} className="space-y-3 rounded-xl border border-border bg-surface p-5">
+   {!requests.length?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm">No change requests for this drive.</p>:requests.map(item=>
+    <article key={item.id} className="space-y-3 border-b border-border py-5">
      <div className="flex flex-wrap items-center justify-between gap-3">
       <h3 className="font-semibold">{item.field.replaceAll("_"," ")} · {item.mode.toLowerCase()}</h3>
-      <strong className="rounded border border-border px-2 py-1 text-xs">{item.status.replaceAll("_"," ")}</strong>
+      <strong className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">{item.status.replaceAll("_"," ")}</strong>
      </div>
      <p className="whitespace-pre-wrap text-sm">{item.proposedValue}</p>
      <p className="text-sm text-body">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
-     {item.decisionNote?<p className="rounded border border-border bg-muted p-3 text-sm">
+     {item.decisionNote?<p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">
       Decision: {item.decisionNote}</p>:null}
      <div className="space-y-2 border-t border-border pt-3">
       <h4 className="text-sm font-semibold">Discussion</h4>
-      {item.messages.map(message=><p key={message.id} className="rounded border border-border bg-muted p-3 text-sm">
+      {item.messages.map(message=><p key={message.id} className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
       <label className="grid gap-1 text-sm">Reply or decision explanation
        <Textarea maxLength={2000} value={notes[item.id]??""} onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
-        rows={2} className="rounded border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
+        rows={2} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/></label>
       <div className="flex flex-wrap gap-2">
        <Button type="button" disabled={busy||!(notes[item.id]??"").trim()}
         onClick={()=>void send({action:"COMMENT",requestId:item.id,body:(notes[item.id]??"").trim()})}

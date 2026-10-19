@@ -80,7 +80,7 @@ export function ReportFilters({
         <button
           type="submit"
           disabled={workspace.seasons.length === 0}
-          className="min-h-11 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50 md:min-h-9"
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50 md:min-h-9"
         >
           Apply season
         </button>
@@ -113,7 +113,7 @@ export function ReportFilters({
         <button
           type="submit"
           disabled={workspace.noSeason}
-          className="min-h-11 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50 md:min-h-9"
+          className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle disabled:opacity-50 md:min-h-9"
         >
           Apply drive
         </button>
@@ -179,12 +179,12 @@ export function ReportMetrics({
   return (
     <section
       aria-label="Placement headline metrics"
-      className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+      className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4"
     >
       {cards.map((card) => (
         <div
           key={card.label}
-          className="rounded-xl border border-border bg-surface p-4"
+          className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0"
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-body">
             {card.label}
@@ -232,7 +232,7 @@ export function ReportNavigation({
 
   const m=workspace.report.metrics;
   return (<>
-    <p role="status" className="rounded-md border border-border bg-muted p-3 text-sm font-semibold">
+    <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm font-semibold">
      For the filters below: {reportNumber(m.studentsPlaced)} students placed · {reportNumber(m.offers)} offers ·
      {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
     </p>
@@ -242,7 +242,7 @@ export function ReportNavigation({
         <Link
           key={link.href}
           href={reportHref(link.href, workspace)}
-          className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle md:min-h-9"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle md:min-h-9"
         >
           {link.label}
         </Link>
@@ -280,7 +280,7 @@ export function ReportCsvLink({
   return (
     <a
       href={`/api/placements/reports?${params.toString()}`}
-      className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover md:min-h-9"
+      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-primary-foreground hover:border-primary-hover hover:bg-primary-hover md:min-h-9"
     >
       Export CSV
     </a>

@@ -13,13 +13,13 @@ export default async function MembershipAuditPage({params}:{params:Promise<{memb
    description={"Recorded events for this exact membership in the selected college: "+data.membership.collegeName}/>
   <Link href={"/admin/people/directory/"+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Membership profile</Link>
   <p role="status" className="text-sm text-body">Showing latest {data.events.length} recorded events. This is not an authentication-session or cross-college activity audit.</p>
-  <ol className="space-y-3">{data.events.map(event=><li key={event.id} className="rounded-lg border border-border bg-surface p-4">
+  <ol className="divide-y divide-border border-y border-border">{data.events.map(event=><li key={event.id} className="py-4">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="text-sm font-semibold">{event.summary}</h2>
      <time className="text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>{date.format(event.occurredAt)} IST</time>
     </div>
     <p className="mt-2 text-xs text-muted-foreground">{event.module} · {event.eventType} · {event.importance}</p>
    </li>)}</ol>
-  {!data.events.length?<p role="status" className="rounded-[9px] border border-border p-4">No matching membership activity events have been recorded.</p>:null}
+  {!data.events.length?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4">No matching membership activity events have been recorded.</p>:null}
  </div>;
 }

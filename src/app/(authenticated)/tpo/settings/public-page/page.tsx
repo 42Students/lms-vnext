@@ -29,7 +29,7 @@ export default async function PublicPlacementSettingsPage({
  return <div className="space-y-6">
   <TpoSettingsNav active="public-page"/>
   <section className="border-t border-border pt-5">
-   <h1 className="m-0 text-[26px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)] sm:text-[30px]">Public placements</h1>
+   <h1 className="m-0 text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Public placements</h1>
    <p className="mt-2 text-sm text-body">{view.label}</p>
    {updated==="1"?<p role="status" className="mt-2 text-sm">{view.enabled?"Your placements page is live":"Your placements page is off"}</p>:null}
    <p className="mt-2 text-sm text-body">
@@ -54,7 +54,7 @@ export default async function PublicPlacementSettingsPage({
     {published?<p className="text-xs text-muted-foreground">Published as of {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(published.publishedAt))}.</p>:null}
     {published&&content.about?<p className="whitespace-pre-wrap text-sm text-body">{content.about}</p>:null}
     <div className="grid gap-3 sm:grid-cols-2">
-     {content.metricKeys.map(key=><div key={key} className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-3">
+     {content.metricKeys.map(key=><div key={key} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
       <p className="text-xs text-muted-foreground">{PUBLIC_METRIC_LABELS[key]}</p>
       <p className="mt-1 font-semibold">{formatPublicPlacementMetric(key,{
        population:published?.population??null,placed:published?.placed??null,

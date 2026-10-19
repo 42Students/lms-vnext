@@ -1,5 +1,6 @@
 "use client";
 import {Component,type ReactNode} from "react";
+import {Button} from "@/components/ui/button";
 type Props={children:ReactNode};
 type State={failed:boolean};
 /** GR-70: contain a client render crash to the selected operational card. */
@@ -8,10 +9,9 @@ export class PlacementPanelErrorBoundary extends Component<Props,State>{
  static getDerivedStateFromError():State{return {failed:true};}
  render(){
   if(this.state.failed)return <section role="alert"
-   className="rounded-xl border border-border bg-surface p-5">
+   className="border-l-2 border-error bg-error-subtle px-4 py-3">
    <p className="font-semibold">Could not load this right now. Try again.</p>
-   <button type="button" onClick={()=>this.setState({failed:false})}
-    className="mt-3 min-h-11 rounded border border-border px-4 font-semibold focus-visible:ring-2 focus-visible:ring-primary">Retry this card</button>
+   <Button type="button" variant="secondary" className="mt-3" onClick={()=>this.setState({failed:false})}>Retry this card</Button>
   </section>;
   return this.props.children;
  }

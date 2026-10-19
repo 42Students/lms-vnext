@@ -87,7 +87,7 @@ export default async function HrMessagesPage({searchParams}:{
          </li>)}
        </ol>
      </section>)}
-   </div>:<p role="status" className="border-y border-border py-5 text-sm text-body">
+   </div>:<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm text-body">
      No matching notifications for this employer and college.</p>}
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground">

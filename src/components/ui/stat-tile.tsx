@@ -19,12 +19,12 @@ export function StatTile({ label, value, detail, href, className }: StatTileProp
     : value;
   const content = (
     <>
-      <p className="m-0 text-[13px] font-medium leading-5 text-[#54505d]">{label}</p>
+      <p className="m-0 text-[13px] font-medium leading-5 text-[var(--lms-body-text)]">{label}</p>
       <p className="mt-2 break-words text-2xl font-semibold leading-8 tabular-nums text-[var(--lms-heading)] lg:text-3xl lg:leading-9">{displayValue}</p>
-      {detail ? <p className="mt-2 text-sm leading-6 text-body">{detail}</p> : null}
+      {detail ? <p className="mt-2 text-[13px] leading-5 text-[var(--lms-body-text)]">{detail}</p> : null}
     </>
   );
-  const classes = cx("block min-w-0 rounded-[12px] border border-[#e5e9f0] bg-surface p-4 shadow-none sm:p-6", safeHref ? "min-h-11 transition-colors duration-[var(--lms-motion-fast)] hover:border-[#26bac7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#26bac7] motion-reduce:transition-none" : "", className);
+  const classes = cx("block min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] shadow-none sm:p-[var(--lms-canvas-padding)]", safeHref ? "min-h-11 transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none" : "", className);
   return safeHref ? <Link href={safeHref} className={classes} data-slot="stat-tile">{content}</Link> :
     <section className={classes} data-slot="stat-tile">{content}</section>;
 }

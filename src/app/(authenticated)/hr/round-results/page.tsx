@@ -27,7 +27,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
      description="Choose one of your employer's authorized published or closed hiring drives. Private college applications are never listed." />
     {jobs.length?<section className="grid gap-3 sm:grid-cols-2">{jobs.map(item=>
      <Link key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
-       className="rounded-lg border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        <span className="block font-semibold text-foreground">{item.job.title}</span>
        <span className="mt-1 block text-sm text-body">{item.collegeName} · {item.job.status}</span>
      </Link>)}</section>:<EmptyState title="No hiring drives" description="There are no authorized drives available for round review."/>}
@@ -80,7 +80,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
           className={query.data.outcome===filter?"inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]":"inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
           {filter.replaceAll("_"," ")} ({countValues[filter]})</Link>)}</nav>
        {results.rows.length?<div className="grid gap-3 md:grid-cols-2">
-         {results.rows.map(row=><article key={row.key} className="min-w-0 rounded-lg border border-border bg-surface-secondary p-4">
+         {results.rows.map(row=><article key={row.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
            <h3 className="break-words font-semibold text-foreground">{row.name}</h3>
            <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{row.outcome??"NOT RECORDED"}</StatusBadge>
               {row.outcome?<StatusBadge>{row.status}</StatusBadge>:null}</div>

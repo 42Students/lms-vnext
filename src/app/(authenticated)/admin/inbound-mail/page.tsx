@@ -25,7 +25,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    <div role="alert" className="rounded-xl border border-border p-5">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-[var(--lms-teal-deep)]">Reset</Link></div></div>;
  const data=await listInboundMailForAdmin(context,parsed.data);
  if(!data.available)return <div className="space-y-6">{header}
-  <div role="status" className="space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-6">
+  <div role="status" className="space-y-3 border-b border-border pb-5">
    <p>Inbound mail storage has not been registered or deployed. The inbox is unavailable; this is not a zero-message result.</p>
    <Link href="/admin/inbound-mail" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Retry</Link>
   </div></div>;
@@ -52,15 +52,15 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    </Link>})}</nav>
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-0 flex-1 text-sm">Search
-    <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-h-9 w-full min-w-0 rounded-[9px] border border-border px-3" placeholder="Sender, subject or message body"/></label>
+    <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-w-0" placeholder="Sender, subject or message body"/></label>
    <label className="min-w-0 flex-1 basis-48 text-sm">Recipient inbox
-    <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-h-9 w-full min-w-0 rounded-[9px] border border-border px-3" placeholder="inbox@example.edu"/></label>
+    <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-w-0" placeholder="inbox@example.edu"/></label>
    <label className="text-sm">Status
-    <Select name="status" defaultValue={parsed.data.status} className="mt-1 min-h-9 w-full rounded-[9px] border border-border px-3">
+    <Select name="status" defaultValue={parsed.data.status} className="mt-1 w-full">
      <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
     </Select></label>
    <Button type="submit">Filter</Button>
-   <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm">Clear</Link>
+   <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Clear</Link>
   </form>
   <InboundMailList rows={data.items.map(x=>({
    id:x.id,receivedAt:x.receivedAt.toISOString(),fromAddress:x.fromAddress,
@@ -69,9 +69,9 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <nav aria-label="Inbox pages" className="flex flex-wrap justify-between gap-3 text-sm">
    <span>{data.total===null?"Page "+data.page:data.total+" matching messages · Page "+data.page+" of "+totalPages}</span><div className="flex flex-wrap gap-3">
    {pageNumbers.map(n=><Link key={n} href={next(n)} aria-current={n===data.page?"page":undefined}
-     className={n===data.page?"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[9px] border border-[var(--lms-button-primary)] bg-[var(--lms-primary-subtle)] px-3 py-2 text-[var(--lms-primary-text)]":"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[9px] border border-border px-3 py-2"}>{n}</Link>)}
-   {data.page>1?<Link className="inline-flex min-h-9 items-center rounded-[9px] border px-3" href={next(data.page-1)}>Previous</Link>:null}
-   {data.hasMore?<Link className="inline-flex min-h-9 items-center rounded-[9px] border px-3" href={next(data.page+1)}>Next</Link>:null}
+     className={n===data.page?"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-primary-subtle)] px-3 py-2 text-[var(--lms-primary-text)]":"inline-flex min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2"}>{n}</Link>)}
+   {data.page>1?<Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3" href={next(data.page-1)}>Previous</Link>:null}
+   {data.hasMore?<Link className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3" href={next(data.page+1)}>Next</Link>:null}
    </div>
   </nav>
  </div>;

@@ -2,6 +2,9 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-proposal-history-model";
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
@@ -27,27 +30,25 @@ export default async function RecruiterDriveProposalHistory({
    <Link href="/hr/drives" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drives</Link>
    <Link href="/hr/drives/new" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Draft another proposal</Link>
   </nav>
-  {data.status==="CHOOSE_COLLEGE"?<section className="space-y-3 border-b border-border pb-4">
+  {data.status==="CHOOSE_COLLEGE"?<section className="space-y-3">
    <h2 className="font-semibold">Choose a college</h2>
    {data.choices.map(grant=><Link key={grant.id}
     className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9"
     href={"/hr/drives/proposals?collegeId="+grant.collegeId}>{grant.collegeName}</Link>)}
   </section>:data.status==="NO_ACCESS"?<p role="status">No active recruiter college access.</p>:<>
-   <form action="/hr/drives/proposals" method="get" className="flex flex-wrap gap-3 border-b border-border pb-4">
+   <form action="/hr/drives/proposals" method="get" className="flex flex-wrap items-end gap-3">
     <input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-48 flex-1 text-sm text-body">Search by role title
-     <input name="q" maxLength={100} defaultValue={input.data.q}
-       className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-       placeholder="Role title"/>
+     <Input name="q" maxLength={100} defaultValue={input.data.q}
+       className="mt-1 w-full" placeholder="Role title" />
     </label>
     <label className="text-sm text-body">Order
-      <select name="sort" defaultValue={input.data.sort}
-        className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <Select name="sort" defaultValue={input.data.sort} className="mt-1">
         <option value="LATEST">Most recent</option>
         <option value="OLDEST">Oldest first</option>
-      </select>
+      </Select>
     </label>
-    <button type="submit" className="self-end min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Search</button>
+    <Button type="submit" variant="secondary" className="self-end">Search</Button>
    </form>
    {data.items.length?<Link
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
@@ -61,7 +62,7 @@ export default async function RecruiterDriveProposalHistory({
    </p>
    {data.items.length?<ol className="divide-y divide-border border-y border-border">
     {data.items.map(row=><li key={row.id}
-     className="py-4">
+     className="p-4">
      <Link href={"/hr/conversations/"+row.threadId}
       className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{row.title}</Link>
      <p className="mt-2 text-xs text-muted-foreground">
@@ -74,7 +75,7 @@ export default async function RecruiterDriveProposalHistory({
      </p>
      <p className="mt-2 text-xs text-body">No approval or drive publication is implied.</p>
     </li>)}
-   </ol>:<p role="status" className="border-y border-border py-5 text-sm text-body">
+   </ol>:<p role="status" className="py-5 text-sm text-body">
     No persisted drive proposals for this college. Draft a proposal to start a discussion.
    </p>}
    <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-3">

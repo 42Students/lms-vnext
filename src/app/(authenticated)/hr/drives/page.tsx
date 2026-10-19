@@ -57,7 +57,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" description="Choose an authorized college to open its hiring drives." />
     {grants.length === 0 ? <EmptyState title="No active college access" description="Your placement-cell relationship must be active before any drives are visible." /> :
     <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
-      className="rounded-xl border border-border bg-surface p-5 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{grant.collegeName}</Link>)}</section>}</div>;
+      className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{grant.collegeName}</Link>)}</section>}</div>;
   const returnTo=recruiterDrivesHref({...query.data,collegeId:selectedCollege});
   const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
   const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
@@ -112,19 +112,19 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)}/>
     {grants.length > 1 ? <nav aria-label="College" className="flex flex-wrap gap-2">{grants.map(grant =>
       <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
-        className={selectedCollege === grant.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-body hover:border-primary hover:text-primary-text"}>{grant.collegeName}</Link>)}</nav> : null}
+        className={selectedCollege === grant.collegeId ? "rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-body"}>{grant.collegeName}</Link>)}</nav> : null}
     {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
-      className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 sm:p-5">
       <h2 className="font-semibold text-foreground">Deadline attention</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         {attention.soon.map(item=><Link key={"soon:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-          className="rounded-lg border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           <span className="block font-semibold">{item.job.title}</span>
           <span className="mt-1 block text-xs text-body">Due within 7 days · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
         </Link>)}
         {attention.past.map(item=><Link key={"past:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-          className="rounded-lg border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           <span className="block font-semibold">{item.job.title}</span>
           <span className="mt-1 block text-xs text-body">Recorded deadline passed · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
         </Link>)}
@@ -176,7 +176,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         const draft=req.draft&&typeof req.draft==="object"?req.draft:{};
         const title=typeof draft.title==="string"?draft.title:"Drive request";
         const editable=req.status==="REQUEST"||req.status==="SENT_BACK";
-        return <li key={req.id} className="rounded-lg border border-border bg-surface p-4">
+        return <li key={req.id} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <p className="font-semibold text-foreground">{title}</p>
           <p className="mt-1 text-sm text-body">{requestStageLabel(req.status)}</p>
           {req.status==="SENT_BACK"?<p className="mt-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
@@ -202,12 +202,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       })}</ul>
     </section>:null}
     {query.data.view==="WAITING" && requestView.length===0
-      ? <div className="py-5">
+      ? <div className="space-y-2">
           <EmptyState title="No Sent for review drives" description="Choose another drive stage to see more."/>
           <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View all drives</Link>
         </div>
       : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0
-        ? <div className="py-5">
+        ? <div className="space-y-2">
           {totals.all===0
            ? <EmptyState title="You have no drives yet" description="Request a drive and the placement cell will review it."/>
            : query.data.q

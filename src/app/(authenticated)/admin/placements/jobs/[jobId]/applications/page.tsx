@@ -40,27 +40,27 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <PageHeader eyebrow="Super Admin · Placements" title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Drive overview</Link>} />
-    <form method="get" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
+    <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
-        <Input name="q" defaultValue={query.q} maxLength={100} className="min-h-9 rounded-[9px] border border-border px-2" />
+        <Input name="q" defaultValue={query.q} maxLength={100} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2" />
       </label>
       <label className="grid gap-1 text-sm">Application
-        <Select name="status" defaultValue={query.status} className="min-h-9 rounded-[9px] border border-border px-2">
+        <Select name="status" defaultValue={query.status} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Screening
-        <Select name="screening" defaultValue={query.screening} className="min-h-9 rounded-[9px] border border-border px-2">
+        <Select name="screening" defaultValue={query.screening} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Source
-        <Select name="source" defaultValue={query.source} className="min-h-9 rounded-[9px] border border-border px-2">
+        <Select name="source" defaultValue={query.source} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Department
-        <Select name="departmentId" defaultValue={query.departmentId??""} className="min-h-9 rounded-[9px] border border-border px-2">
+        <Select name="departmentId" defaultValue={query.departmentId??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
           <option value="">All departments</option>
           {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
             <option value={query.departmentId}>Selected department</option>}
@@ -68,7 +68,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Program
-        <Select name="programId" defaultValue={query.programId??""} className="min-h-9 rounded-[9px] border border-border px-2">
+        <Select name="programId" defaultValue={query.programId??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
           <option value="">All programs</option>
           {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
             <option value={query.programId}>Selected program</option>}
@@ -76,7 +76,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         </Select>
       </label>
       <label className="grid gap-1 text-sm">Batch
-        <Select name="cohortId" defaultValue={query.cohortId??""} className="min-h-9 rounded-[9px] border border-border px-2">
+        <Select name="cohortId" defaultValue={query.cohortId??""} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2">
           <option value="">All batches</option>
           {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
             <option value={query.cohortId}>Selected batch</option>}
@@ -85,12 +85,12 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       </label>
       <Button type="submit" className="self-end">Filter</Button>
     </form>
-    <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2">
+    <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2 border-b border-border">
       {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
         <Link key={stage} href={adminHref(jobId,{...query,stage,page:1})}
           aria-current={query.stage===stage?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 rounded-[9px] border px-3 text-sm font-semibold "+
-            (query.stage===stage?"border-primary bg-primary-subtle text-[var(--lms-teal-deep)]":"border-border text-body")}>
+          className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-sm font-semibold sm:min-h-9 "+
+            (query.stage===stage?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
           {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
           <span className="tabular-nums">{stage==="ALL"?
             Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):
@@ -103,7 +103,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
-      <p role="status" className="rounded border border-border bg-surface p-5 text-sm">
+      <p role="status" className="border-b border-border py-4 text-sm">
         Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
       </p>
       <DataTable<(typeof data.items)[number]> rows={data.items} getRowKey={row=>row.id}

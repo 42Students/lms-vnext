@@ -74,10 +74,10 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
      </label>:null}
     {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
     {sent?<button type="button" disabled={busy}
-      className="min-h-11 rounded-[9px] md:min-h-9 border border-border px-4 text-sm text-primary-text disabled:opacity-50"
+      className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-9 border border-border px-4 text-sm text-primary-text disabled:opacity-50"
       onClick={()=>void submit("send-code")}>Send a new code</button>:null}
     <button type="submit" disabled={busy}
-     className="min-h-11 rounded-[9px] md:min-h-9 bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-9 bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
       {sent?PUBLIC_RECRUIT_COPY.submit:PUBLIC_RECRUIT_COPY.send}
     </button>
    </form>}

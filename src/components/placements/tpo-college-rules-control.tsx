@@ -2,6 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {TPO_RULE_LIMITS,tpoRuleBoundsValid} from "@/modules/placements/tpo-rule-limits";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
 type Rules = {
   countsAsPlacedAt: string;
@@ -80,33 +83,33 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         {dirty?<p role="status" className="sm:col-span-2 text-sm text-[var(--lms-gold-accent)]">Unsaved changes</p>:null}
         <label className="grid gap-1 text-sm font-semibold text-body">
           A student counts as placed when the offer is
-          <select value={form.countsAsPlacedAt} disabled={busy}
+          <Select value={form.countsAsPlacedAt} disabled={busy}
             onChange={(event) => setForm((current) => ({ ...current, countsAsPlacedAt: event.target.value }))}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3">
+            className="min-h-11 md:min-h-9">
             <option value="OFFER_RELEASED">released</option>
             <option value="OFFER_ACCEPTED">accepted</option>
-          </select>
+          </Select>
         </label>
         {(["maxHeldOffers", "upliftPct", "minResponseHours"] as const).map((key) => (
           <label key={key} className="grid gap-1 text-sm font-semibold text-body">
             {key === "maxHeldOffers" ? "Maximum held offers" : key === "upliftPct" ? "Offer uplift %" : "Minimum response hours"}
-            <input type="number" min={TPO_RULE_LIMITS[key].min} max={TPO_RULE_LIMITS[key].max} step={1}
+            <Input type="number" min={TPO_RULE_LIMITS[key].min} max={TPO_RULE_LIMITS[key].max} step={1}
               value={form[key]} disabled={busy}
               onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3" />
+              className="min-h-11 md:min-h-9" />
           </label>
         ))}
       </div>
-      <section role="status" className="mt-4 -subtle text-sm text-body border-t border-border pt-5">
+      <section role="status" className="mt-4 text-sm text-body border-t border-border pt-5">
         <p>A student may hold {Number.isFinite(held)?held:0} offers (released or accepted) before the next rule applies.</p>
         <p className="mt-1">After that, another offer needs a CTC at least {form.upliftPct}% higher than their best offer, or a Dream drive. Internships never count.</p>
         <p className="mt-2 font-semibold">For example</p>
         <p>A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p>
       </section>
-      <button type="button" disabled={busy} onClick={() => void save()}
-        className="mt-4 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60">
+      <Button type="button" disabled={busy} onClick={() => void save()}
+        className="mt-4 min-h-11 md:min-h-9">
         {busy ? "Saving..." : "Review and confirm rules"}
-      </button>
+      </Button>
       {error ? <p role="alert" className="mt-2 text-sm text-error">{error}</p> : null}
     </section>
   );
