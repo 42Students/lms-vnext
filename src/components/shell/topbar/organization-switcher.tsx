@@ -59,11 +59,10 @@ export function TopbarOrganizationSwitcher({
       <span className={style.orgName}>{organizationName}</span>
       <ChevronIcon/>
     </Button>
-    {open?<div id="lms-topbar-org-switcher" role="dialog" aria-label={"Switch workspace from "+organizationName}
-      aria-modal={false} className={style.orgPopover}>
+    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+organizationName} className={style.orgPopover}>
       <p className={style.accountSectionHeading}>Switch workspace</p>
       {choices?<AdminScopeSwitcher choices={choices} scope={scope}/>:
         <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
-    </div>:null}
+    </PopoverPanel>:null}
   </div>;
 }
