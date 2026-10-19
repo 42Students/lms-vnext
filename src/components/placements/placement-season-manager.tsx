@@ -174,7 +174,7 @@ export function PlacementSeasonManager({
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
+    <section className="- border-t border-border pt-5">
       <div className="border-b border-border px-5 py-4">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Placement season

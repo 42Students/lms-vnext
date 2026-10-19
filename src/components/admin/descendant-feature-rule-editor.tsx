@@ -37,7 +37,7 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
  }
  return <div className="mt-4 flex flex-wrap items-end gap-3">
   <label className="grid min-w-48 flex-1 gap-1 text-sm">Academic scope
-   <select className="min-h-11 rounded border border-border bg-surface px-3" value={scopeKey}
+   <select className="min-h-11 rounded border border-border bg-surface px-3 text-foreground" value={scopeKey}
     onChange={e=>{setScopeKey(e.target.value);setStored(undefined);setMessage("");}}>
     <option value="">Select Department, Program, Batch or Class</option>
     {scopes.map(item=><option key={item.scopeType+":"+item.scopeId} value={item.scopeType+":"+item.scopeId}>
@@ -46,14 +46,14 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
    </select>
   </label>
   <label className="grid gap-1 text-sm">Module
-   <select className="min-h-11 rounded border border-border bg-surface px-3" value={module}
+   <select className="min-h-11 rounded border border-border bg-surface px-3 text-foreground" value={module}
     onChange={e=>{setModule(e.target.value as "projects"|"placements"|"electives");setStored(undefined);}}>
     <option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
    </select>
   </label>
   <button className="min-h-11 rounded border border-border px-3 text-sm" disabled={!scope||busy} onClick={()=>void recheck()}>Recheck</button>
   {stored!==undefined&&<><label className="grid gap-1 text-sm">Stored rule
-   <select value={choice} className="min-h-11 rounded border border-border px-3" onChange={e=>setChoice(e.target.value)}>
+   <select value={choice} className="min-h-11 rounded border border-border px-3 text-foreground" onChange={e=>setChoice(e.target.value)}>
     <option value="INHERIT">Inherit</option><option value="ON">On</option><option value="OFF">Off</option>
    </select></label>
    <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={locked} disabled={choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock</label>
