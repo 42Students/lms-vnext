@@ -210,14 +210,14 @@ export default async function RecruiterCompanyReportsPage({
       >
         <Link
           href={`${companyBase}&tab=company`}
-          className="px-3 py-3 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="border-b-[3px] border-transparent px-3 py-3 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Company
         </Link>
 
         <Link
           href={`${companyBase}&tab=team`}
-          className="px-3 py-3 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="border-b-[3px] border-transparent px-3 py-3 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Team
         </Link>
