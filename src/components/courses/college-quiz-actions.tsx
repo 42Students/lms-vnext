@@ -1,5 +1,9 @@
 "use client";
 
+import { DateInput } from "@/components/ui/date-input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {CollegeQuizQuestionsEditor} from "./college-quiz-questions-editor";
@@ -85,24 +89,24 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
   {editing?<div className="grid gap-2 rounded border border-border p-3">
    <label className="grid gap-1 text-xs font-semibold">Quiz title
-    <input required maxLength={255} value={title} disabled={busy}
+    <Input required maxLength={255} value={title} disabled={busy}
      onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
    <label className="grid gap-1 text-xs font-semibold">Description
-    <textarea maxLength={10000} rows={3} value={description} disabled={busy}
+    <Textarea maxLength={10000} rows={3} value={description} disabled={busy}
      onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/>
    </label>
    {quiz.status==="DRAFT"?<label className="grid gap-1 text-xs font-semibold">Maximum attempts
-    <input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
+    <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
      onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-10 rounded border border-border px-2"/>
    </label>:null}
    <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
-    <input type="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
+    <DateInput mode="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
      className="min-h-10 rounded border border-border px-2"/></label>
    {quiz.status==="DRAFT"?<div className="grid gap-2 text-xs font-semibold">
-    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleQuestions}
+    <label className="flex items-center gap-2"><Checkbox checked={shuffleQuestions}
      disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>
      Shuffle question order per learner</label>
-    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleOptions}
+    <label className="flex items-center gap-2"><Checkbox checked={shuffleOptions}
      disabled={busy} onChange={e=>setShuffleOptions(e.target.checked)}/>
      Shuffle answer options per learner</label>
    </div>:null}
