@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
+import calendarStyles from "./legacy-calendar-theme.module.css";
 
 import Link from "next/link";
 import {useSearchParams} from "next/navigation";
@@ -222,9 +223,9 @@ export function LearnerCareerCalendar({
 
       {calendarDays.length ? (
         <section className="hidden overflow-x-auto rounded-xl border border-border bg-surface p-3 md:block" aria-label={view + " calendar grid"}>
-          <CalendarGrid className="min-w-[38rem]">
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label) => (
-              <p key={label} className="py-2 text-center text-xs font-semibold uppercase text-muted-foreground">
+          <CalendarGrid variant="hairline" className={"min-w-[38rem] "+calendarStyles.calendarHairline}>
+            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label, index) => (
+              <p key={label} className={"py-2 text-center text-xs font-semibold uppercase text-muted-foreground "+calendarStyles.calendarWeekday+" "+(index===6?calendarStyles.calendarSunday:"")}>
                 {label}
               </p>
             ))}
@@ -237,8 +238,9 @@ export function LearnerCareerCalendar({
                   type="button"
                   key={day}
                   aria-label={`${prettyDay(day)}: ${dayEvents.length} events`}
+                  aria-current={day===todayAnchor?"date":undefined}
                   onClick={() => { changeCalendar({date:day,view:"day"}); }}
-                  className={`min-h-24 rounded-[var(--lms-control-radius)] border border-border p-2 text-left transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] ${outside ? "opacity-50" : ""}`}
+                  className={`min-h-24 border p-2 text-left transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] ${calendarStyles.calendarDay} ${day===todayAnchor?calendarStyles.calendarCurrentDay:""} ${new Date(day+"T12:00:00Z").getUTCDay()===0?calendarStyles.calendarSunday:""} ${outside ? "opacity-50" : ""}`}
                 >
                   <span className="block text-xs font-semibold text-foreground">{day.slice(-2)}</span>
                   <span className="mt-2 block text-xs text-body">
