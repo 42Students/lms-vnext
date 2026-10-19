@@ -58,7 +58,7 @@ export function SuperAdminFacultyAssignmentCreate({
  return <section aria-label="Create teaching assignment" className="space-y-3">
    <Button variant="secondary" type="button" disabled={!available.length||!faculty.length||pending}
     onClick={()=>setOpen(value=>!value)} aria-expanded={open}
-    >
+    className="min-h-11 sm:min-h-9">
     Create teaching assignment
    </Button>
    {!available.length?<p role="status" className="text-sm text-body">
@@ -108,11 +108,11 @@ export function SuperAdminFacultyAssignmentCreate({
     </p>:null}
     {error?<p role="alert" className="sm:col-span-2 text-sm text-error">{error}</p>:null}
     <div className="flex flex-wrap gap-2 sm:col-span-2">
-      <Button variant="primary" type="submit" disabled={pending} >
+      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 sm:min-h-9">
        {pending?"Assigning…":"Assign faculty"}
       </Button>
       <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-       >Cancel</Button>
+       className="min-h-11 sm:min-h-9">Cancel</Button>
     </div>
    </form>:null}
  </section>;
@@ -148,7 +148,7 @@ export function SuperAdminTeachingRoleEdit({
   });
  }
  return <div className="min-w-0 space-y-2">
-   <Button variant="secondary" type="button" 
+   <Button variant="secondary" size="sm" type="button" className="min-h-9"
      aria-expanded={open} disabled={pending}
      onClick={()=>{setRole(initialRole);setNotice("");setOpen(v=>!v);}}>
       Edit role
@@ -163,8 +163,7 @@ export function SuperAdminTeachingRoleEdit({
        </Select>
       </label>
       <Button variant="primary" type="button" disabled={pending||role===initialRole}
-       onClick={()=>void save()}
-       >
+       onClick={()=>void save()} className="min-h-11 sm:min-h-9">
        {pending?"Saving…":"Save role"}
       </Button>
     </div>:null}
