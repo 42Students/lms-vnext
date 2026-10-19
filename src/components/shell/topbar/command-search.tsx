@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {Button} from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ShellNavItem } from "../shell-model";
@@ -108,7 +109,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
     className={mobileOpen ? style.searchOpen : ""}>
     <div className={style.search}>
       <div className={style.searchBox}>
-        <button type="button" aria-label="Open command search"
+        <Button variant="ghost" size="sm" type="button" aria-label="Open command search"
           onClick={() => {
             setOpen(true);
             setMobileOpen(true);
@@ -116,7 +117,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           }}
           className="inline-flex shrink-0 items-center justify-center text-body">
           <SearchIcon />
-        </button>
+        </Button>
         <label className="sr-only" htmlFor="lms-topbar-command-search">Search workspace</label>
         <input id="lms-topbar-command-search" ref={input} type="search" value={query}
           autoComplete="off" role="combobox" aria-haspopup="listbox"
