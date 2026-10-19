@@ -477,3 +477,60 @@ git grep -nE 'aria-modal|data-closing|prefers-reduced-motion' -- src/components/
 | Menu keyboard disabled ancestry | No canonical behavior in old SCSS | `menu.tsx:15-16`, `popover.tsx:47-55`, `dropdown.tsx:122,132`: excludes aria-disabled ancestry | Source functionality complete; browser unverified |
 
 **Strict category status: F1 [ ], F2 [ ].** Even the 87-file indexed JSX scan is not a checkout-wide grep; the viewport comparison tables above prove source breakpoints only. No application, CI or screenshot execution.
+
+
+## Chat-16 continuation: toast lifetime and notification consumer states (2026-10-19)
+
+Source-only review after fast-forwarding `chatgpt/chat-16-b` to the latest `main`. No application or CI execution; the table is a property-level audit, not a claim of full screenshot parity.
+
+| Property / state | Old LMS file:line + exact reference | vNext file:line + present value | Result |
+| --- | --- | --- | --- |
+| Toast surface shadow | Closest comparable notification panel `docs/design/legacy-styles/components___notification-drawer.scss:113-121`: `0 4px 24px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04)` | `src/components/ui/legacy-overlays.css:233-242` same toast shadow token | Closest notification match; **not a canonical legacy toast** |
+| Toast maximum desktop width | Notification panel `components___notification-drawer.scss:113-126`: max 420px | `src/components/ui/toast.tsx:71`: max 420px and 16px right inset from 640px | 420px cap matches; anchoring is toast-specific |
+| Toast phone gutters | No toast-specific gutter rule in bundled legacy SCSS (notification panel uses viewport-24 maximum) | `toast.tsx:71`: 16px each side, max width `100vw-32px` | Source value reviewed, **not old toast value proven** |
+| Dismiss button minimum | Notification trigger `components___notification-drawer.scss:21,27-49`: 44px | `toast.tsx:80-82`, `legacy-overlays.css:244-247`: 44px | Match touch target |
+| Dismiss hover / active | Notification trigger `components___notification-drawer.scss:18-19,41-49`: `rgba(0,0,0,.035)` / `.06` | `legacy-overlays.css:244-245` same states | Match related neutral action |
+| Toast entry animation | Notification popup `components___notification-drawer.scss:124-139`: 200ms ease-out, translateY(-8px) | `legacy-overlays.css:343-369`: `lms-legacy-popup-enter` 200ms ease-out, -8px | Match comparable popup entry |
+| Toast status vs error semantics | SCSS does not prescribe live-region accessibility | `toast.tsx:72`: role=status for informational; role=alert for errors. `ToastAction` also now uses role=alert for actionable errors | Source semantics checked, no visual equivalence asserted |
+| Toast informational timeout | No canonical branded toast lifetime found in the provided old-LMS SCSS | `toast.tsx:156-164`: 4.5–15s proportional reading time; no automatic timeout for error | **Legacy timing unknown; preserve established vNext rule** |
+| Toast pause/resume | Legacy styles cannot specify background-tab elapsed timing | `toast.tsx:92-182`: remaining time decremented by real elapsed interval when hover, focus or visibility hides timers; resumes **remaining** time; clears on eviction/dismiss | Source behavior corrected; needs hover/visibility integration test |
+| Toast scroll and visual viewport | Related legacy notification mobile safe-area handling `components___notification-drawer.scss:399-490` | `toast.tsx:54-72,184-201`: actual visual viewport, safe-area top/bottom, scrollable stack | Source verified; exact legacy toast responsive variant not found |
+| HR bell phone touch | Legacy `components___notification-drawer.scss:21`: 44px target | `src/components/hr/hr-recruiter-bell.tsx:110-118`: 44px through 767px, then 36px topbar icon | Mobile numeric match; desktop icon intentionally distinct |
+| TPO bell phone touch | Same 44px trigger target | `src/components/tpo/tpo-bell-panel.tsx:136-139`: compact 44px through 767px, desktop 36px | Mobile numeric match; desktop icon intentionally distinct |
+| Header account popup desktop | `docs/design/legacy-styles/components___dropdown.scss:96-112`: white, 6px, shadow `9px 11px 28px rgba(0,0,0,.1)`, padding 16/24, min-height 150px, profile width280px | `src/components/shell/topbar/topbar.module.css:51-55`: same dimensions and shadow | Match checked style values; header-owned file not modified |
+| Header account popup phone | `components___dropdown.scss:117-128`: width viewport-24px, 12px side insets, 14px radius, padding16px at max767px | `topbar.module.css:141-142` same | Static breakpoint match; browser overlay placement pending |
+| Header menu loading/error/separator | Legacy profile visual SCSS does not give complete menu-state rules | `src/components/shell/topbar/account-menu.tsx:44-134`: keyboard navigation, disabled/loading signout, 1px divider, error role=alert, outside click/Escape | Source coverage inspected; full old state equivalence **not claimed** |
+| Date/time picker popup dismissal | Old LMS `components___form.scss:63-95` defines the analogous searchable popup geometry, not a date calendar keyboard algorithm | `src/components/ui/date-input.tsx:148-257`: Escape from trigger/popup and focus leaving its root now dismiss; existing date/time/month options untouched | Source keyboard semantics checked; no unsupported date-geometry equivalence |
+| Nested action menu keyboard | No legacy SCSS native event algorithm | `src/components/ui/dropdown.tsx:127-147`: do not handle already-consumed Arrow/Home/End key from nested Menu/Listbox | Source regression fix; verify with browser keyboard |
+| TPO undo action | No old LMS toast action timing source | `src/components/tpo/tpo-notice-undo-toast.tsx`: uses existing 30-second inline actionable info notice and 44px phone button | Existing consumer reviewed; different from timed status stack |
+
+### Responsive source matrix (not browser screenshots)
+
+| Width / state | Toast | Header bell and account menu | Date/time/month popup |
+| --- | --- | --- | --- |
+| 375px | 16px side insets, width343px, 44px close, safe-area bounded scroll | HR/TPO bells min44; header profile menu viewport-24 and 14px radius | 44px phone calendar trigger, 19rem/viewport-32 max panel, Escape/blur close |
+| 640px | right aligned 420px cap | HR/TPO min44 to 767; mobile Drawer still selected by JS breakpoint | 44px trigger, calendar grid scroll and outside pointer closure |
+| 767px | right aligned 420px cap | HR/TPO 44px, full-width mobile notification Drawer | 44px trigger; popup width bounded by viewport |
+| 768px | right aligned 420px cap | compact bell 36px, desktop notification PopoverPanel and 280px account dropdown | desktop 36px date trigger; same PopoverPanel keyboard close |
+| 1024px | max420px, right16px | compact bell36px, account width280px, notifications PopoverPanel max420px | anchored popover, keyboard/focus dismissal |
+| Hover/focus/doc hidden | Timed toast remaining countdown is paused; errors stay until dismissal | Hover/active and focus selectors already exist in topbar styles | Focus leaving popup or Escape dismisses |
+| Error/empty/loading | Error toast role=alert, persistent; informational role=status | Recruiter bell: ErrorState, EmptyState, Skeleton; TPO: role=alert/status for error/loading | Invalid/disabled input disables panel; selections remain caller-owned |
+
+### Coverage provenance — not a checkout grep
+
+GitHub default-branch index searches made this turn: `"ToastAction"` yielded **2** `src/` files (shared `toast.tsx` and `tpo-notice-undo-toast.tsx`); `"ToastStack"` **1**; `"showToast"` **79** source paths (call-site surface, not exhaustive API count); `"notification-popover"` **3** source paths; `"fixed inset-0"` **1** source path (`src/app/company-share/[token]/page.tsx`, watermark exemption); `role="dialog"` **5** source paths (shared Popover, CSS/observer strings); `role="alertdialog"` **4** source paths (TPO shared caller/CSS). Counts are bounded GitHub search results, not local or guaranteed-complete grep.
+
+**Local commands required before strict checkbox completion:** `git grep -nE 'fixed inset-0|<dialog|role="dialog"|role="alertdialog"' -- src` plus browser checks at 375/640/767/768/1024px and runtime hover/focus/document-hidden transitions. No code, typecheck, lint or CI was executed in this lane.
+
+### Completed files in this continuation (source work)
+
+- [x] `src/components/ui/toast.tsx` — real remaining-time pause/resume, persistent error handling, error/action role; JSX pairs reviewed.
+- [x] `src/components/ui/date-input.tsx` — popover Escape/blur closure from input or trigger, preserving month/time/date content and paired tags.
+- [x] `src/components/hr/hr-recruiter-bell.tsx` — 44px notification trigger through 767px and existing shared Drawer/PopoverPanel intact.
+- [x] `src/components/tpo/tpo-bell-panel.tsx` — compact bell phone minimum44px, shared Drawer/PopoverPanel untouched.
+- [x] `src/components/ui/dropdown.tsx` — respects nested `defaultPrevented` keyboard event.
+- [x] `src/components/shell/topbar/account-menu.tsx` — **reviewed only**, not modified; header ownership retained.
+
+**STRICT CHECKPOINT: F1 [ ], F2 [ ].** Complete numerical overlap on selected rows is not full parity. Legacy toast-specific lifetime and exit policy, exhaustive checkout grep, all consumer states and physical responsive/focus results remain unavailable.
+
+**Next:** `src/components/ui/menu.tsx` and `src/components/ui/popover.tsx` — remaining contextual menu divider/icon states and popover exit-path verification; then client-side browser proof by orchestrator.
