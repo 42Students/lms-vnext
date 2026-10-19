@@ -48,24 +48,24 @@ export function LearnerPlacementRegistration({registration}:Props) {
       setError(cause instanceof Error?cause.message:LEARNER_REGISTRATION_COPY.failure);
     } finally {setBusy(false);}
   }
-  return <section id="registration" aria-label="Registration" className="space-y-3 border-b border-border pb-6">
+  return <section id="registration" aria-label="Registration" className="min-w-0 space-y-3 border-b border-border pb-6">
     <h2 className="font-semibold">{LEARNER_REGISTRATION_COPY.title}</h2>
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
-      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 min-w-0 items-start gap-3 rounded-lg border border-border p-3 transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none">
         <Radio name="sp-choice" checked={choice===item.value}
           onChange={()=>{setChoice(item.value);setConsent(false);}} className="mt-1" />
-        <span><span className="block font-semibold">{item.label}</span>
-          <span className="block text-sm text-muted-foreground">{item.hint}</span></span>
+        <span className="min-w-0"><span className="block break-words font-semibold">{item.label}</span>
+          <span className="block break-words text-sm text-muted-foreground">{item.hint}</span></span>
       </label>)}
-      {choice==="PLACEMENTS"?<label className="flex gap-2 text-sm">
+      {choice==="PLACEMENTS"?<label className="flex min-h-11 min-w-0 items-start gap-2 py-2 text-sm">
         <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
         <span>{LEARNER_REGISTRATION_COPY.consent}</span>
       </label>:null}
     </fieldset>
     {registration.stage==="OPEN"?<>
       {registration.deadline?<p className="text-sm">{LEARNER_REGISTRATION_COPY.deadline} {new Date(registration.deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})}.</p>:null}
-      <Button type="button" disabled={busy} onClick={()=>void submit()}>
+      <Button className="max-md:min-h-11" type="button" disabled={busy} onClick={()=>void submit()}>
         {busy?"Saving…":registration.choice?LEARNER_REGISTRATION_COPY.update:LEARNER_REGISTRATION_COPY.register}
       </Button>
     </>:<p className="text-sm" role="status">{registration.stage==="NOT_INVITED"?
