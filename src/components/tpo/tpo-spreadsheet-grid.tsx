@@ -152,15 +152,15 @@ export function TpoSpreadsheetGrid<Row>({
        .then(()=>setClipboardMessage("Visible grid rows copied as TSV."))
        .catch(()=>setClipboardMessage("Clipboard unavailable. Use Export CSV instead."));
     }}><Table scrollLabel="TPO spreadsheet columns" className="w-full text-left text-sm"><caption className="sr-only">Current page TPO spreadsheet records</caption>
-    <thead className="bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-700)]"><tr>{selection?<th scope="col" className="sticky left-0 z-30 w-12 min-w-12 bg-[var(--lms-table-header)] px-2 py-2"><Checkbox aria-label="Select all filtered students" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)}>
-     {col.sortKind?<button type="button" aria-label={"Sort "+col.label}
+    <thead className="bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-700)]"><tr>{selection?<th scope="col" className="sticky left-0 z-30 w-12 min-w-12 bg-[var(--lms-table-header)] px-2 py-2"><Checkbox aria-label="Select all filtered students" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)} aria-sort={sort?.key===col.key?(sort.direction==="asc"?"ascending":"descending"):undefined}>
+     {col.sortKind?<Button variant="ghost" type="button" aria-label={"Sort "+col.label}
       aria-pressed={sort?.key===col.key}
       className="inline-flex min-h-9 items-center gap-1 font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary"
       onClick={()=>setSort(previous=>previous?.key===col.key
         ? previous.direction==="asc"?{key:col.key,direction:"desc"}:null
         : {key:col.key,direction:"asc"})}>
       {col.label}<span aria-hidden="true">{sort?.key===col.key?(sort.direction==="asc"?"↑":"↓"):"↕"}</span>
-     </button>:<span>{col.label}</span>}
+     </Button>:<span>{col.label}</span>}
      {viewKey?<div className="mt-1 flex flex-wrap gap-2 text-xs font-normal">
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.max(100,colWidth(col.key)-40)})}
        disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="min-h-11 min-w-11">−</Button>
