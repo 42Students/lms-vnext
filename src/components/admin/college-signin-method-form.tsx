@@ -54,16 +54,17 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
  }
  return <section aria-label="College sign-in methods" className="space-y-4 border-t border-border pt-5">
   <h2 className="font-semibold text-foreground">Sign-in method</h2>
-  <fieldset disabled={!ready||saving} className="grid gap-3">
+  <fieldset disabled={!ready||saving} className="grid gap-3 print:hidden">
    <legend className="sr-only">Sign-in method</legend>
-   {choices.map(choice=><label key={choice.value} className={"flex min-h-14 items-center gap-3 rounded-[var(--lms-control-radius)] border p-3 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(!ready||saving?"cursor-not-allowed opacity-60 ":"cursor-pointer ")+(selection===choice.value?"border-primary bg-primary-subtle":!ready||saving?"border-border bg-surface":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
+   {choices.map(choice=><label key={choice.value} className={"flex min-h-14 items-center gap-3 rounded-[var(--lms-control-radius)] border p-3 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] "+(!ready||saving?"cursor-not-allowed opacity-60 ":"cursor-pointer ")+(selection===choice.value?"border-primary bg-primary-subtle":!ready||saving?"border-border bg-surface":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
     <Radio className="size-5" name="signin-method" value={choice.value}
      checked={selection===choice.value} onChange={()=>setSelection(choice.value)}/>
     <span><strong className="block text-sm">{choice.label}</strong><span className="text-xs text-muted-foreground">{choice.hint}</span></span>
    </label>)}
   </fieldset>
+  <p className="hidden text-sm print:block">Saved sign-in method: {choices.find(choice=>choice.value===savedMethod)?.label??savedMethod}</p>
   <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>setConfirmOpen(true)}
-   className="min-h-11 md:min-h-9" loading={saving}>
+   className="min-h-11 md:min-h-9 print:hidden" loading={saving}>
    {saving?"Saving…":"Save sign-in settings"}
   </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} onConfirm={()=>void save()}/>
