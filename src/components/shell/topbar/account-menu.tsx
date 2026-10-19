@@ -80,7 +80,11 @@ export function TopbarAccountMenu({
     });
   }
 
-  return <div className="relative shrink-0" ref={root}>
+  return <div className="relative shrink-0" ref={root}
+    onBlur={event => {
+      const next = event.relatedTarget;
+      if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
+    }}>
     <button type="button" ref={trigger} className={style.avatar}
       aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
