@@ -25,8 +25,8 @@ export function sortTpoGridRows<Row>(
   };
   const direction = sort.direction === "asc" ? 1 : -1;
   return rows.map((row, index) => ({ row, index })).sort((a, b) => {
-    const av = compare(column.read(a.row));
-    const bv = compare(column.read(b.row));
+    const av = compare(column.sortValue ? column.sortValue(a.row) : column.read(a.row));
+    const bv = compare(column.sortValue ? column.sortValue(b.row) : column.read(b.row));
     if (av === null || bv === null) return av === bv ? a.index - b.index : av === null ? 1 : -1;
     return direction * (av - bv) || a.index - b.index;
   }).map(item => item.row);
