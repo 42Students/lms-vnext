@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {CollegeArchivedLessonRestore} from "./college-archived-lesson-restore";
 import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./college-lesson-visibility-controls";
@@ -526,8 +527,8 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
               </select>
             </label>
           ) : null}
-          <button type="submit"
-            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
+          <Button variant="primary" type="submit"
+            >Filter</Button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Clear
           </Link>
@@ -655,7 +656,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
               <input type="number" name="page" min={1} max={data.totalPages} defaultValue={data.query.page}
                 className="ml-2 w-20 rounded border border-border bg-surface p-2 text-foreground"/>
             </label>
-            <button type="submit" className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Go</button>
+            <Button variant="secondary" type="submit" className="text-primary-text">Go</Button>
           </form>:null}
           {data.query.page > 1 ? <Link
             href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page - 1 })}
