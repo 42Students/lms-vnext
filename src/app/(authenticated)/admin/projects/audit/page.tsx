@@ -25,7 +25,7 @@ export default async function SuperAdminProjectAuditPage({
       <PageHeader eyebrow="Super Admin Projects" title="Project audit" />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
-        action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)] underline">Back to dashboard</Link>}
+        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}
       />
     </div>;
   }
