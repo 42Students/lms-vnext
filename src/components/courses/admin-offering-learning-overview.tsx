@@ -69,7 +69,7 @@ function ContentCard({
   ];
 
   return (
-    <article className="border-b border-border py-4">
+    <article className="rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">
@@ -148,7 +148,7 @@ function AssignmentCard({
   ];
 
   return (
-    <article className="border-b border-border py-4">
+    <article className="rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">
@@ -216,7 +216,7 @@ function QuizCard({
   ];
 
   return (
-    <article className="border-b border-border py-4">
+    <article className="rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">
@@ -381,7 +381,7 @@ export function AdminOfferingLearningOverview({
             />
           </div>
         </div>
-        <div className="mt-4 border-l-2 border-border bg-surface-subtle px-3 py-2 text-xs leading-5 text-muted-foreground">
+        <div className="mt-4 rounded-[var(--lms-control-radius)] bg-surface-subtle px-3 py-2 text-xs leading-5 text-muted-foreground">
           Items created here are shared across
           every active Section Delivery in this
           Offering. Faculty can add separate
@@ -395,7 +395,7 @@ export function AdminOfferingLearningOverview({
         <p className="mt-1 text-sm text-muted-foreground">Recorded shared learning items only. Visibility and publication are separate controls.</p>
         <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {summarizeCollegeCourseContents(workspace.lessons).map(item=>(
-            <div key={item.key} className="min-w-0 border-b border-border py-3">
+            <div key={item.key} className="min-w-0 rounded-xl border border-border p-3">
               <dt className="break-words text-xs text-muted-foreground">{item.label}</dt>
               <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{item.count}</dd>
             </div>
@@ -435,7 +435,7 @@ export function AdminOfferingLearningOverview({
                 <section
                   id={"lesson-"+lesson.id}
                   key={lesson.id}
-                  className="border-y border-border bg-surface-subtle px-4 py-4"
+                  className="rounded-xl border border-border bg-surface-subtle p-4 sm:p-5"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
