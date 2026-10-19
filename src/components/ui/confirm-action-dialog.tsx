@@ -15,6 +15,6 @@ export function ConfirmActionDialog({ open, title, consequence, onCancel, onConf
       <Button variant="secondary" autoFocus disabled={pending} onClick={onCancel}>Cancel</Button>
       <Button variant="danger" loading={pending} disabled={pending} onClick={onConfirm}>{pending ? "Working…" : confirmLabel}</Button>
     </>}>
-    {undoHint ? <p className="m-0 text-[13px] leading-5 text-[var(--lms-body-text)]">{undoHint}</p> : null}
+    {undoHint ? <p className="m-0 max-w-prose break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{undoHint}</p> : null}
   </Dialog>;
 }
