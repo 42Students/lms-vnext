@@ -12,6 +12,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { parseAdminDirectorySearchParams } from "@/modules/colleges/admin-directory-query-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -95,10 +96,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         <OrganizationCreateForm />
       </section> : null}
       <h2 className="text-lg font-semibold text-foreground">Existing Organizations</h2>
-      {canCreate?<details className="border-t border-border pt-4">
-       <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">
-        Archived organizations · {archived.length} shown
-       </summary>
+      {canCreate?<Disclosure title={`Archived organizations · ${archived.length} shown`} className="border-t border-border pt-4">
        <p className="mt-2 text-xs text-muted-foreground">Restoring an organization does not restore archived colleges. Only the first 200 records in your safety scope are shown.</p>
        <ul className="mt-3 divide-y divide-border border-y border-border">
         {archived.map(organization=><li key={organization.id}
@@ -108,7 +106,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         </li>)}
        </ul>
        {!archived.length?<p role="status" className="mt-3 text-sm text-body">No archived organizations in this scope.</p>:null}
-      </details>:null}
+      </Disclosure>:null}
       <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
        <label className="flex min-w-48 flex-1 flex-col gap-1 text-sm font-semibold text-body">Search organizations
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
