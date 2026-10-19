@@ -157,7 +157,7 @@ export function TpoAcademicImportWorkspace() {
         </label>
         <button type="button" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
           onClick={() => setConfirmOpen(true)}
-          className="min-h-11 rounded-md bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+          className="min-h-11 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
           Confirm import
         </button>
       </div>}

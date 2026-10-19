@@ -43,7 +43,7 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
     </select>
    </label>
    <button type="button" onClick={review} disabled={busy||finished||!changed}
-    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50">
+    className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save"}
    </button>
   </div>
