@@ -1,4 +1,5 @@
 "use client";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -163,8 +164,7 @@ export function TpoBulkRoundResultRecorder({
               <Button variant="secondary" type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
                 className="font-semibold text-[var(--lms-link-text)]">Clear selection</Button>
             </div>
-            <details className="rounded-[var(--lms-control-radius)] border border-border p-3">
-              <summary className="cursor-pointer text-sm font-semibold">Paste application IDs from a spreadsheet</summary>
+            <Disclosure title="Paste application IDs from a spreadsheet" className="rounded-[var(--lms-control-radius)] border border-border p-3">
               <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
               <Textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
                 className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"/>
@@ -174,7 +174,7 @@ export function TpoBulkRoundResultRecorder({
                   if(resolved.error){setError(resolved.error);return;}
                   setError(null);setSelected(resolved.ids);
                 }}>Select matching learners</Button>
-            </details>
+            </Disclosure>
             <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-52 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
               {visible.map((row) => (
                 <label key={row.applicationId} className="flex min-h-11 items-center gap-3 px-2 text-sm text-body hover:bg-muted md:min-h-9">
