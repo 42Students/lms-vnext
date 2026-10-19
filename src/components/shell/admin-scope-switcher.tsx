@@ -34,6 +34,7 @@ export function AdminScopeSwitcher({
   const [pending, startTransition] = useTransition();
 
   function switchScope(value: string) {
+    if (pending || value === selectedValue(scope)) return;
     setError(null);
 
     startTransition(async () => {
