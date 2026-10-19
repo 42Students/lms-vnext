@@ -79,7 +79,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   finally{setPending(false);}
  }
  return <div className="relative min-w-0">
-  <button type="button" aria-label={"Notifications, "+unread+" new"} aria-expanded={open} onClick={()=>changeOpen(!open)}
+  <button type="button" aria-label={"Notifications, "+unread+" new"} aria-haspopup="dialog" aria-expanded={open} onClick={()=>changeOpen(!open)}
    className={compact
     ? "relative inline-flex h-9 w-9 min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"}>
