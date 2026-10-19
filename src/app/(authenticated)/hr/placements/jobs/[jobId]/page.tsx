@@ -351,7 +351,7 @@ export default async function HrPlacementJobPage({
                 {driveOverview.deadlineState==="DUE_SOON"?"Applications close soon":driveOverview.deadlineState==="PASSED"?"Application deadline passed":driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
-          <section aria-label="What students see" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+          <section aria-label="What students see" className="border-b border-border pb-4 sm:pb-5">
             <h3 className="font-semibold text-foreground">What students see</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Student-facing draft facts are shown for reference. Exact publication and application access are controlled by the placement cell.
@@ -378,7 +378,7 @@ export default async function HrPlacementJobPage({
             </dl>
           </section>
           <section aria-labelledby="recruiter-shared-funnel-title"
-            className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
+            className="border-b border-border pb-4 sm:pb-5">
             <h3 id="recruiter-shared-funnel-title" className="font-semibold text-foreground">Hiring pipeline</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
@@ -642,7 +642,7 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xl font-bold text-foreground">{item.value}</p>
             </div>)}
           </div>
-          <section className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+          <section className="space-y-2 border-b border-border pb-4 sm:pb-5">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
             {driveOverview.readOnly ? <p role="status" className="text-sm text-body">
               This drive is finished, so a selection list can no longer be sent.
@@ -657,7 +657,7 @@ export default async function HrPlacementJobPage({
                 status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status),
               href:"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}))}/>
           {(filters.offerState==="ALL"||["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState))?
-            <section aria-label="Placement-cell selection history" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+            <section aria-label="Placement-cell selection history" className="space-y-3 border-b border-border pb-4 sm:pb-5">
               <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
               <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
               {selectionRows.length ? <HrJobSelectionGrid

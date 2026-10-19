@@ -117,6 +117,28 @@ Source inventory taken from the recursively enumerated Git trees recorded in `do
 
 These are **source corrections**, not STRICT TICK RULE parity claims.
 
+## Bounded-turn batch notes
+
+- `src/app/(authenticated)/hr/notifications/page.tsx:43-52`: replaced its hand-coded selected-college filled pills with shared `NeedsDoingChips` (`selectedKey=result.collegeId`, same grant labels and URLs), retaining the separate unread-only toggle. Matched anatomy reference `docs/design/old-lms-pages.md:6-8`; strict visual check remains open.
+- `src/app/(authenticated)/hr/activity/page.tsx:36-40`: same selected-college quick-filter treatment, retaining existing kind Tabs and GET form. Reference `docs/design/old-lms-pages.md:6-8`; strict visual check remains open.
+- Codemod authored but **not executed**: `scripts/codemods/chat18-secondary-page-eyebrows.cjs` removes static `PageHeader eyebrow="..."` props in 16 explicitly scoped HR-secondary/tracker route files. Pattern: unwanted extra identity subtitle in shared PageHeader; matching reference `docs/design/old-lms-pages.md:4-6`. Run `node scripts/codemods/chat18-secondary-page-eyebrows.cjs --dry-run`, inspect report, then without `--dry-run`; the orchestrator runs its typecheck and commits generated files.
+- Connector source scans (not command-line grep): among 8 examined secondary HR/tracker source pages, missing `Tabs`/ `StatusBadge` import bindings were corrected; 8 selected secondary files still contain native hidden inputs only (remaining counts: HR activity 2, conversations 6, notifications 2, company 2, company/reports 1; do not hand-migrate, orchestrator raw-control codemod owns them). No aggregate coverage claim.
+
+## Tracker and notification judgement-case patch notes
+
+| Surface | Legacy reference | Source change | Result |
+| --- | --- | --- | --- |
+| Tracker issue rows | `old-lms-pages.md:9-11` (tables with hairline row separators, no nested cards) | `src/app/(authenticated)/tracker/issues/page.tsx`: one `divide-y` list, no per-issue Card wrapper; responsive flex layout unchanged | Source treatment matched; viewport proof open |
+| Tracker issue status and severity pills | `old-lms-pages.md:10`; `legacy-styles/components___antddesign.scss:123-136` (coloured status treatments) | `tracker/issues/page.tsx`: status `CLOSED` success, `NEW/READY_FOR_RETEST` warning, others info; `BLOCKER/CRITICAL` error, `MAJOR` warning | Semantics mapped; exact palette delegated to StatusBadge owner |
+| Tracker finding quick filters | `old-lms-pages.md:6-8` (count chips) | `tracker/audit-findings/page.tsx`: FINDING_STATUSES links migrated to shared `NeedsDoingChips`, counts and destinations preserved | Source structure matched; visual proof open |
+| Tracker detail screenshot metadata and activity | `old-lms-pages.md:9-11` (hairline list separators) | `tracker/issues/[publicId]/page.tsx`: replaced repeated nested-card look with bordered `divide-y` lists | Source match; viewport proof open |
+| Tracker live log entries | `old-lms-pages.md:9-11` (continuous canvas, row separators) | `src/components/tracker/tracker-live-logs-explorer.tsx`: `ol` uses `divide-y`, log rows use `py-4` | Source match; default/hover/focus comparison open |
+| Known error list rows | `old-lms-pages.md:9-11` (one white continuous canvas, hairline row separators) | `src/components/tracker/known-errors-workspace.tsx`: changed known-error article wrappers to `py-5` and parent to `divide-y`; retained nested mute form controls | Source match; responsive and visual proof open |
+| Recruiter notification loading | `legacy-styles/components___notification-drawer.scss:146-174` (drawer body states) | `src/components/hr/recruiter-notification-bell.tsx` announces loading in Drawer, not a blank state | Source match; test and mobile proof open |
+| Notification action height | `old-lms-shell-spec.md:12-18` (36px desktop buttons), `old-lms-shell.css:73-85` (mobile compact icon actions) | `src/components/hr/hr-notification-read-button.tsx` `min-h-11 sm:min-h-9` | 44px phone / 36px desktop declared; computed style proof open |
+
+No edits to shared UI primitives or the global skin. No compiler, runtime, grep, CI, screenshot or accessibility tooling was run in this lane.
+
 ## Value-by-value and state proof (all visual closure boxes remain open)
 
 | Element/property/state | Legacy reference | vNext source | Status |
@@ -148,4 +170,4 @@ Count: **unverified**. This lane cannot run repository code, grep, CI, visual co
 
 ## Next file
 
-`src/app/(authenticated)/hr/notifications/page.tsx` — replace bespoke selected-college pills with the shared quick-filter component; then inspect notification row spacing and bell source.
+`src/app/(authenticated)/tracker/logs/page.tsx` — audit logs/known-error toolbar and list states, then `src/components/tracker/known-errors-workspace.tsx`.

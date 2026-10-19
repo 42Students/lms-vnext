@@ -21,6 +21,7 @@ import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-d
 import { learnerBoardTaskSelectionNotice } from "@/modules/projects/learner-board-selection-notice-model";
 import Link from "next/link";
 import {ErrorState} from "@/components/ui/error-state";
+import { PageHeader } from "@/components/ui/page-header";
 import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
 import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardStatusSchema, learnerBoardSprintSchema, learnerBoardReleaseSchema } from "@/modules/projects/learner-project-board-model";
 import { requireProjectReadAccess } from "@/modules/projects/access";
@@ -78,6 +79,7 @@ export default async function LearnerProjectPage({
   ].some(Boolean);
   if (invalidBoardFilters) {
     return <div className="min-w-0 space-y-6">
+      <PageHeader title="Project board" />
       <LearnerProjectTabs projectId={projectId}/>
       <ErrorState title="Invalid Board filters"
         description="One or more Board filters are no longer valid. Clear filters to see current tasks."
@@ -132,6 +134,7 @@ export default async function LearnerProjectPage({
 
   return (
     <div className="min-w-0 space-y-6">
+      {activeSection === "audit" ? <PageHeader title={workspace.project.title} /> : null}
       <LearnerProjectTabs projectId={projectId} />
       {activeSection === "overview" ? (
         <Link href={"/learn/projects/" + encodeURIComponent(projectId) + "?tab=delivery"}

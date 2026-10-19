@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
 import {facultyCourseTabHref} from "@/modules/courses/faculty-course-navigation";
@@ -245,7 +246,7 @@ function AssignmentItem({
 
       <Link
         href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
-        className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+        className="mt-3 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]"
       >
         Assignment Report
       </Link>
@@ -339,7 +340,7 @@ function QuizItem({
 
       <Link
         href={`/teacher/report/quiz/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
-        className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+        className="mt-3 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]"
       >
         Quiz Report
       </Link>
@@ -378,36 +379,39 @@ export function FacultyCourseWorkspace({
     workspace;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <PageHeader
         eyebrow="Faculty · Course"
         title={course.courseName}
         description={`${course.courseCode} · ${course.sectionName} · ${course.academicPeriodName}`}
-      />
-
-      {view !== "BLUEPRINT" ? (
-        <>
+        actions={view !== "BLUEPRINT" ? (
       <nav aria-label="Overview actions" className="flex flex-wrap gap-3">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]"
         >
           Section reports hub
         </Link>
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]"
         >
           Current Section students
         </Link>
       </nav>
+        ) : undefined}
+      />
+
+      {view !== "BLUEPRINT" ? (
+        <>
+
       <FacultyCourseHomeSignals
         signals={homeSignals}
         deliveryId={course.deliveryId}
       />
 
-      <section aria-label="In this Course" className="flex flex-wrap items-center gap-3 border-b border-border pb-4">
-        <Badge  tone="neutral">
+      <section aria-label="In this Course" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+        <Badge tone="neutral">
           {course.credits===null?"Credits not configured":course.credits+" Credits"}
         </Badge>
         <span className="text-sm text-body">
@@ -451,7 +455,7 @@ export function FacultyCourseWorkspace({
         </div>
       </section>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-5">
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")}
           className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Lessons" value={summary.lessons}
@@ -516,21 +520,17 @@ export function FacultyCourseWorkspace({
             </div>
           </section>
 
-          <nav aria-label="Blueprint content filters" className="flex flex-wrap gap-2">
-            {([
-              ["ALL","All"],["LECTURES","Lectures"],["RESOURCES","Resources"],
-              ["ASSESSMENTS","Assessments"],["LIVE","Live sessions"],
-            ] as const).map(([value,label])=><Link key={value}
-              href={facultyCourseTabHref(course.deliveryId,"blueprint")+
-                (value==="ALL"?"":"?filter="+value)}
-              aria-current={contentFilter===value?"page":undefined}
-              className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold "+
-                (contentFilter===value?"border-primary bg-primary-subtle text-primary-text":
-                "border-border bg-surface text-body")}>
-              {label}
-            </Link>)}
-          </nav>
-          {selectedLessonId?<nav aria-label="Lesson navigation" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+          <Tabs ariaLabel="Blueprint content filters" value={contentFilter} renderPanel={false}
+            items={([
+              ["ALL", "All"], ["LECTURES", "Lectures"], ["RESOURCES", "Resources"],
+              ["ASSESSMENTS", "Assessments"], ["LIVE", "Live sessions"],
+            ] as const).map(([value, label]) => ({
+              value,
+              label,
+              href: facultyCourseTabHref(course.deliveryId, "blueprint") +
+                (value === "ALL" ? "" : "?filter=" + value),
+            }))} />
+          {selectedLessonId?<nav aria-label="Lesson navigation" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
             <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline">
               Back to Blueprint
             </Link>
@@ -605,7 +605,7 @@ export function FacultyCourseWorkspace({
                             </p>
                           ) : null}
                         </div>
-                        <Badge  tone="neutral">
+                        <Badge tone="neutral">
                           {itemCount} items · Expand lesson
                         </Badge>
                       </summary>
@@ -614,13 +614,13 @@ export function FacultyCourseWorkspace({
                         className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
                         View lesson details →
                       </Link>:<div className="mb-3 flex flex-wrap gap-2 text-xs">
-                        <Badge  tone="neutral">
+                        <Badge tone="neutral">
                           {lesson.contents.length} content
                         </Badge>
-                        <Badge  tone="neutral">
+                        <Badge tone="neutral">
                           {lesson.assignments.length} assignments
                         </Badge>
-                        <Badge  tone="neutral">
+                        <Badge tone="neutral">
                           {lesson.quizzes.length} quizzes
                         </Badge>
                       </div>}

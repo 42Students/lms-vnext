@@ -168,6 +168,40 @@ function formatDateTime(value: Date | null) {
   }).format(value);
 }
 
+/** The same project title, mentor subtitle and status badge above every mentor detail tab. */
+export function ProjectWorkspaceHeader({workspace,mode}: {
+  workspace: Workspace;
+  mode: "LEARNER" | "MENTOR" | "ADMIN";
+}) {
+  return (
+    <PageHeader
+            title={workspace.project.title}
+            description={mode==="MENTOR"
+              ? [workspace.project.courseLabel??"Course not linked",
+                 "Mentor: "+(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName
+                   ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")
+              : (workspace.project.summary ?? undefined)}
+            actions={
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusBadge
+                  tone={tone(workspace.project.status)}
+                >
+                  {label(workspace.project.status)}
+                </StatusBadge>
+                {mode === "ADMIN" ? (
+                  <ProjectArchiveControl
+                    projectId={workspace.project.id}
+                    projectTitle={workspace.project.title}
+                    status={workspace.project.status}
+                    expectedUpdatedAt={workspace.project.updatedAt.toISOString()}
+                  />
+                ) : null}
+              </div>
+            }
+          />
+  );
+}
+
 export function ProjectWorkspace({
   workspace,
   backHref,
@@ -179,6 +213,7 @@ export function ProjectWorkspace({
   sectionQuerySuffix = "",
   riskReason = null,
   readOnlyOverride = false,
+  hidePageHeader = false,
 }: {
   workspace: Workspace;
   backHref: string;
@@ -190,6 +225,7 @@ export function ProjectWorkspace({
   sectionQuerySuffix?: string;
   riskReason?: string | null;
   readOnlyOverride?: boolean;
+  hidePageHeader?: boolean;
 }) {
   const { readiness } = workspace;
   const authoredBrief=parseWorkspaceBrief(workspace.project.authoredBrief);
@@ -286,31 +322,7 @@ export function ProjectWorkspace({
           }))} />
       ) : null}
 
-      <PageHeader
-        title={workspace.project.title}
-        description={mode==="MENTOR"
-          ? [workspace.project.courseLabel??"Course not linked",
-             "Mentor: "+(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName
-               ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")
-          : (workspace.project.summary ?? undefined)}
-        actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <StatusBadge
-              tone={tone(workspace.project.status)}
-            >
-              {label(workspace.project.status)}
-            </StatusBadge>
-            {mode === "ADMIN" ? (
-              <ProjectArchiveControl
-                projectId={workspace.project.id}
-                projectTitle={workspace.project.title}
-                status={workspace.project.status}
-                expectedUpdatedAt={workspace.project.updatedAt.toISOString()}
-              />
-            ) : null}
-          </div>
-        }
-      />
+      {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} /> : null}
 
       {mode === "ADMIN" && riskReason ? (
         <section role="status" className="rounded-xl border border-warning-border bg-surface p-4 text-sm">

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -33,30 +34,32 @@ export default async function HrMessagesPage({searchParams}:{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(d);
  return <div className="min-w-0 max-w-full space-y-6">
-  <PageHeader eyebrow="Recruiter" title="Notifications"
+  <PageHeader title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."
    actions={<Link href="/hr/conversations" className="inline-flex min-h-9 max-sm:min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      Open recruiter conversations
    </Link>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
-   {result.choices.map(grant=><Link key={grant.id}
-    href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
-    className="block rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 sm:min-h-9">{grant.collegeName}</Link>)}
-  </section>:<>
-   {result.choices.length>1?<NeedsDoingChips label="College:"
-     selectedKey={result.collegeId}
+   <NeedsDoingChips label="Authorized colleges:"
      items={result.choices.map(grant=>({
        key:grant.collegeId,label:grant.collegeName,
        href:"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId),
-     }))}/> : null}
-   <Tabs renderPanel={false} ariaLabel="Inbox filters" value={query.data.unreadOnly}
-     items={[
-       {value:"false",label:"Show all",href:"/hr/notifications?collegeId="+
-         encodeURIComponent(result.collegeId)+"&unreadOnly=false&q="+encodeURIComponent(query.data.q)},
-       {value:"true",label:"Unread only",href:"/hr/notifications?collegeId="+
-         encodeURIComponent(result.collegeId)+"&unreadOnly=true&q="+encodeURIComponent(query.data.q)},
-     ]}/>
+     }))}/>
+  </section>:<>
+   <nav aria-label="Inbox filters" className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)]">
+    {result.choices.length>1?<NeedsDoingChips label="College notifications:"
+     selectedKey={result.collegeId}
+     items={result.choices.map(grant=>({
+      key:grant.collegeId,label:grant.collegeName,
+      href:"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId),
+     }))}/>:null}
+    <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
+      (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
+     className={"inline-flex min-h-11 items-center border-b-[3px] px-3 py-2 text-sm font-semibold transition-colors duration-150 sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+(query.data.unreadOnly==="true"?"border-primary text-primary-text":"border-transparent text-body hover:border-primary hover:bg-primary-subtle")}>
+     {query.data.unreadOnly==="true"?"Show all":"Unread only"}
+    </Link>
+   </nav>
    <form action="/hr/notifications" method="get" className="flex flex-wrap gap-2">
      <input type="hidden" name="collegeId" value={result.collegeId} />
      <input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
@@ -85,7 +88,7 @@ export default async function HrMessagesPage({searchParams}:{
          <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
        </div>
        <ol className="mt-3 divide-y divide-border">{group.items.map(row=>
-         <li key={row.id} className="rounded-[8px] px-4 py-3 transition-colors duration-200 hover:bg-[var(--lms-neutral-50)]">
+         <li key={row.id} className="rounded-[var(--lms-control-radius)] px-4 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
            <div className="flex flex-wrap justify-between gap-2">
              <span className="text-sm text-body">{row.label}{row.unread?<StatusBadge tone="info" className="ml-2">Unread</StatusBadge>:null}</span>
              <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
@@ -95,8 +98,8 @@ export default async function HrMessagesPage({searchParams}:{
          </li>)}
        </ol>
      </section>)}
-   </div>:<p role="status" className="border-y border-border py-5 text-sm text-body">
-     No matching notifications for this employer and college.</p>}
+   </div>:<EmptyState title="No matching notifications"
+     description="No matching notifications for this employer and college."/>}
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground">
        {result.first?result.first+"–"+result.last:"No rows on this page"}

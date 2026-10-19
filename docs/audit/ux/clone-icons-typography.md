@@ -73,3 +73,22 @@ Branch was fast-forwarded to the then-current main before this sweep. Directory 
 **Action and ownership:** A5/A6/A7 remain unticked. Full family and active/hover/disabled/focus states across every portal, font icon aliases, avatar fallbacks, favicon format and tab-title format require owner coordination. Icon and link source checks above are not responsive proof. The main browser/topbar shell is chat-13/chat-19 owned, so no edits were made to shell or src/components/ui.
 
 **Exact next A5–A7 file:** src/components/tpo/tpo-company-memory-workspace.tsx, then corresponding company/recruiter activity avatar and outbound link states.
+
+
+## chat-12 continuation — company and Team avatar/link pass (2026-10-19)
+
+| Visual element | Legacy evidence | vNext source evidence | Result |
+|---|---|---|---|
+| Person avatar shape | docs/design/legacy-styles/components___dropdown.scss:59-71 — notification person image 38px × 38px, 10px radius | src/components/tpo/tpo-company-memory-workspace.tsx:294-314 uses shared Avatar at explicit 38×38px, 10px radius with name-only placeholder; src/app/(authenticated)/tpo/team/page.tsx:101-109 uses same sizing | Value aligned for *these rows*; old People-avatar source not proven |
+| Profile avatar | docs/design/legacy-styles/components___header.scss:129-159 — ring wrap 52px, photo 45px, circular | src/components/shell/topbar/topbar.module.css:53-58 — 42px outer, 38px inner | Mismatch still open (chat-13 owns shared shell) |
+| Company People links | components___common.scss:69-74 — teal (#26bac7) and underline on hover | tpo-company-memory-workspace.tsx:297-303 — text-link, lms-inline-link, focus-visible outline | Focus added, visited state unverified |
+| Company Documents links | same SCSS | tpo-company-memory-workspace.tsx Documents section — text-link underline, keyboard focus | Partial, no visual screenshots |
+| Company drive role links | same SCSS | src/components/tpo/tpo-company-memory-drive-grid.tsx:29-36 — teal with hover underline and keyboard outline | Source match on text state, browser proof open |
+| Team workload links | same SCSS | src/app/(authenticated)/tpo/team/page.tsx People metric links — text-link, underline, lms-inline-link and focus outline | Partial |
+| Team sort and conversation links | same SCSS | src/app/(authenticated)/tpo/team/page.tsx:90-95 and conversation link — visible keyboard focus | Partial |
+| Student history and participation links | same SCSS | src/components/tpo/tpo-students-spreadsheet.tsx:237-242 — text-link, lms-inline-link, focus-visible | Partial |
+| Company directory links, outbound URLs | same SCSS, old external-link treatment still incomplete | src/components/tpo/tpo-companies-spreadsheet.tsx:44-74 — teal, focus-visible; only verified safe http(s) websites open with rel=noopener noreferrer | Partial |
+
+**Identity/privacy:** The company and Team data surfaces do not supply verified profile-photo URLs. Avatar uses name initials; it does not fabricate a photo, infer one from email, or access a different tenant. No shared UI avatar implementation was changed.
+
+**Unclosed A5–A7:** Full multi-portal icon family source-instance inventory, header/avatar photo states, visited links, exact external-link indicator, mobile/tablet screenshots, logo/wordmark/tab-title, and zero-mismatch source grep. These checkpoints remain **[ ]** per STRICT TICK RULE, regardless of the focused fixes above. Original 46/46 common SVG asset inventory remains the only complete asset-name coverage claim.

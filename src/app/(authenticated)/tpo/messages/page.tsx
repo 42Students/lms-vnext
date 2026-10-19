@@ -249,7 +249,7 @@ export default async function TpoMessagesPage({
         ))}
       </section>
 
-      {isRecruiterInbox ? <nav aria-label="Recruiter inbox filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
+      {isRecruiterInbox ? <nav aria-label="Recruiter inbox filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
         {([
           ["ALL","All",summary.total],
           ["REPLY","Reply",summary.reply],

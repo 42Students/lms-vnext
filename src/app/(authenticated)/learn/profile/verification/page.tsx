@@ -21,7 +21,7 @@ export default async function LearnerVerificationPage() {
     SENT_BACK: "Needs a change", VERIFIED: "Verified", UPDATE_PENDING: "Verified · update waiting",
   } as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/profile" className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Profile</Link>
+    <Link href="/learn/profile" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text">← Profile</Link>
     <LearnerVerificationLiveRefresh />
     <PageHeader title="Profile verification"
       description="Your own Education and Identity review status. A saved detail does not mean it is verified." />
@@ -37,7 +37,7 @@ export default async function LearnerVerificationPage() {
     </section>
     <div className="grid min-w-0 gap-4 sm:grid-cols-2">{details.map(item => {
       const row = status[item.key];
-      return <section key={item.key} className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5">
+      return <section key={item.key} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">{item.heading}</h2>
         <p className="mt-2 text-sm font-semibold text-body">{row.status==="NOT_SUBMITTED"&&row.missing.length===0?
           "Ready to send":label[row.status]}</p>
@@ -74,7 +74,7 @@ export default async function LearnerVerificationPage() {
           key={item.section+":"+row.version} section={item.section}
           expectedVersion={row.version}/> : null}
         {row.canResubmit ? <LearnerVerificationSubmit key={item.section+":"+row.version} section={item.section as "EDUCATION"|"IDENTITY"} expectedVersion={row.version} status={row.status} /> : null}
-        <Link href={item.edit} className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review {item.heading.toLowerCase()} details</Link>
+        <Link href={item.edit} className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review {item.heading.toLowerCase()} details</Link>
       </section>;
     })}</div>
   </div>;
