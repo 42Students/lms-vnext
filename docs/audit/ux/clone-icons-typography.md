@@ -122,3 +122,17 @@ The following two files were checked against the legacy page anatomy and link/to
 **Scoped JSX/asset grep equivalents (full GitHub-fetched file content):** batch Students, batch keyboard-actions, and batch saved-views files each have 0 literal raw button/input/select/textarea tags, 0 six-digit hex colours, 0 inline SVGs and 0 nested canvas cards. Batch Students Link opening/closing tags = 6/6, Badge opening/closing = 3/3, 8 focus-visible outlines. Keyboard action Button opening/closing = 4/4 and missing Checkbox import has been repaired. Saved-view Button opening/closing = 6/6. No image sources or user photos were invented.
 
 **Global status:** A5/A6/A7 remain **[ ]**. The shared DataTable renders a mobile/desktop transition at 640px; old LMS mobile boundary is 768px. Topbar avatar 42/38px vs old header's 52/45px is independently still open. No live responsive screenshot or full-repo link/icon inventory was performed, so this appendix is not a global tick.
+
+
+## chat-12 replacement — company AG sheet and academic template links (2026-10-19)
+
+| Element | Legacy source/value | vNext source/value | Result |
+|---|---|---|---|
+| Company external website action | `docs/design/legacy-styles/components___common.scss:68-75`: teal link; underline on hover | `src/components/tpo/tpo-companies-spreadsheet.tsx:61-67`: text-link, lms-inline-link, underline, teal focus-visible ring; disclosure via accessible new-tab label and ↗ indicator | Source style aligned, visited/raster still open |
+| Company directory open action | `old-lms-pages.md:9-10`: compact table with row links and actions | `tpo-companies-spreadsheet.tsx:53-74`: named accessible Quartz cell button opens original companyHref through router, row action Create drive remains Link | Source interaction retained, live keyboard proof open |
+| Company drives open action | Legacy `lms2-fe/src/components/tpo/grid/TpoGrid.jsx:14-28`: native grid action and compact row | `src/components/tpo/tpo-company-memory-drive-grid.tsx:61-69`: native grid primary role button with name-based aria-label, original drive route via router | Source action retained, native rendered proof open |
+| Academic import template download | `components___common.scss:68-75`: teal link and hover underline; `old-lms-shell.css:27-32`: 44px interactive target | `src/components/tpo/tpo-academic-import-workspace.tsx:119-124`: download template anchor, min-h-11, text-link, lms-inline-link, underline and focus-visible outline | Source matched, responsive click test open |
+
+**Source scan:** the company directory, company drives and academic import workspace each contain **0** literal raw form control tags, inline SVG or six-digit color literals. Company directory JSX Link open/close **1/1**, curly braces **40/40**. Company drives JSX curly braces **35/35**. Academic import Button, Dialog, label and section counts are listed in clone-sheets.md. Native AG Grid rows use the existing `TpoGrid` with a phone fallback at `md` (768px); app-wide icon/visited hover, topbar avatar dimension and actual browser responsive proof remain **unverified**.
+
+**A5 / A6 / A7 remain [ ]** under strict tick rule; no claims of repo-wide zero mismatches or pixel-level screenshot verification. Next visual sweep is `src/components/tpo/recruiter-leads-workspace.tsx`, working only in chat-12-owned source and not `src/components/ui/*`.
