@@ -27,7 +27,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  if(!query.success)return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Projects" title="Templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
-   action={<Link href="/admin/projects/templates" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>}/>
+   action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!can(context,"project-template.read"))
@@ -36,7 +36,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    <PageHeader eyebrow="Super Admin · Projects" title="Project templates"/>
    <ErrorState title="Project templates access denied"
     description="This account cannot read the global project template catalogue. Check the active Super Admin session."
-    action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)]">Return to dashboard</Link>}/>
+    action={<Link href="/dashboard" className="font-semibold text-primary-text">Return to dashboard</Link>}/>
   </div>;
  let data:Awaited<ReturnType<typeof listSuperAdminTemplateDirectory>>;
  try {
@@ -47,14 +47,14 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    <PageHeader eyebrow="Super Admin · Projects" title="Project templates"/>
    <ErrorState title="Project templates unavailable"
     description="The template catalogue could not be loaded. Your search and status filters are unchanged; try again."
-    action={<Link href={templateDirectoryHref(query.data)} className="font-semibold text-[var(--lms-teal-deep)]">Retry loading templates</Link>}/>
+    action={<Link href={templateDirectoryHref(query.data)} className="font-semibold text-primary-text">Retry loading templates</Link>}/>
   </div>;
  }
  return <div className="min-w-0 space-y-5">
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
-   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-primary bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover">New template →</Link>:undefined}/>
+   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">New template →</Link>:undefined}/>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
@@ -86,7 +86,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
     <div className="mt-3 flex flex-wrap items-center gap-3">
       <Link href={`/admin/projects/templates/${encodeURIComponent(item.id)}`}
-       className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)]">Inspect template →</Link>
+       className="inline-flex min-h-11 items-center font-semibold text-primary-text">Inspect template →</Link>
       {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
         templateId={item.id} title={item.title} status={item.status}/>:null}
     </div>
