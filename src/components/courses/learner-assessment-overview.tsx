@@ -197,7 +197,7 @@ export function LearnerAssessmentOverview({
   if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
     return <div role="alert" className="rounded-lg border border-border bg-surface p-4">
       <p>Couldn&apos;t load your class, so quizzes can&apos;t be shown.</p>
-      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
+      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
     </div>;
   }
   if (items.length === 0) {
@@ -221,7 +221,7 @@ export function LearnerAssessmentOverview({
     <div className="space-y-5">
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm font-semibold text-body">
-          <Badge  tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
+          <Badge tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
           <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0 rounded-lg border border-border px-3 py-1">
             {submittedQuizzes.length>0 ? (
               <>
@@ -236,7 +236,7 @@ export function LearnerAssessmentOverview({
             ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
           </Disclosure>
         </section>
-      ) : (<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      ) : (<div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
         <StatTile
           label={
             kind === "ASSIGNMENT"
@@ -276,7 +276,7 @@ export function LearnerAssessmentOverview({
           setPage(1);
         }}
       />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
           <Input type="search" value={search} maxLength={100}
@@ -374,7 +374,7 @@ export function LearnerAssessmentOverview({
                   <StatusBadge tone={quizOverviewActionState(item,currentNowMs).tone}>
                     {quizOverviewActionState(item,currentNowMs).label}
                   </StatusBadge>
-                  <span className="block text-xs text-muted-foreground sm:hidden">
+                  <span className="block text-xs text-muted-foreground md:hidden">
                     {learnerQuizMobileState(item,currentNowMs).detail}
                   </span>
                 </span>},
@@ -387,9 +387,9 @@ export function LearnerAssessmentOverview({
                   const state=quizOverviewActionState(item,currentNowMs);
                   return <div className="flex flex-wrap gap-2">
                     <Link href={`/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review?"&review=true":""}`}
-                      className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">{state.action}</Link>
+                      className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">{state.action}</Link>
                     <Link href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
-                      className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Attempt history</Link>
+                      className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Attempt history</Link>
                   </div>;
                 }},
             ]}
@@ -449,7 +449,7 @@ export function LearnerAssessmentOverview({
                           : "No deadline"}
                     </p>
                     {item.kind === "ASSIGNMENT" ? (
-                      <p className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body sm:hidden"
+                      <p className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body md:hidden"
                         role="status">
                         {learnerAssignmentMobileState(item,currentNowMs).label}
                         {" · "}{learnerAssignmentMobileState(item,currentNowMs).detail}
@@ -457,7 +457,7 @@ export function LearnerAssessmentOverview({
                     ) : null}
                     {item.kind === "QUIZ" ? (
                       <p role="status"
-                        className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body sm:hidden">
+                        className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body md:hidden">
                         {learnerQuizMobileState(item,currentNowMs).label}
                         {" · "}{learnerQuizMobileState(item,currentNowMs).detail}
                       </p>
@@ -469,7 +469,7 @@ export function LearnerAssessmentOverview({
                     ) : null}
                   </div>
 
-                  <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:items-end">
+                  <div className="flex w-full flex-col items-stretch gap-2 md:w-auto md:items-end">
                     <span className="text-xs font-semibold text-muted-foreground">
                       {item.kind ===
                       "ASSIGNMENT"
@@ -484,14 +484,14 @@ export function LearnerAssessmentOverview({
                             `${item.deliveryId}:${item.id}`,
                           )
                         }
-                        className="min-h-11 w-full sm:w-auto"
+                        className="min-h-11 w-full md:w-auto"
                       >
                         {state.action}
                       </Button>
                     ) : (
                       <Link
                         href={href}
-                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
+                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover md:w-auto"
                       >
                         {state.action}
                       </Link>
@@ -499,7 +499,7 @@ export function LearnerAssessmentOverview({
                     {item.kind === "QUIZ" ? (
                       <Link
                         href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-11 sm:min-h-9 sm:w-auto"
+                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center text-xs font-semibold text-primary-text underline md:min-h-9 md:w-auto"
                       >
                         Attempt history
                       </Link>
@@ -532,12 +532,12 @@ export function LearnerAssessmentOverview({
             <>
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
-              className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text sm:w-auto"
+              className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text md:w-auto"
             >
               Open in Learning Path
             </Link>
             <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
-              className="mt-2 inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:underline sm:ml-2 sm:mt-0 sm:w-auto">
+              className="mt-2 inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:underline md:ml-2 md:mt-0 md:w-auto">
               Full assignment details
             </Link>
             </>
@@ -546,7 +546,7 @@ export function LearnerAssessmentOverview({
       >
         {selectedAssignment ? (
           <div className="space-y-5">
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 md:grid-cols-2">
               <div className="rounded-lg border border-border bg-surface-subtle p-4">
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                   Due

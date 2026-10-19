@@ -84,38 +84,38 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
         className="space-y-3">
         <FacultyCourseFilterAutoSubmit />
         <div className="grid gap-3 md:grid-cols-4">
-          <label className="grid gap-1 text-sm font-semibold text-body">Search courses
+          <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Search courses
             <Input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Course, code, Section or academic period"
-              className="text-base sm:text-sm" />
+              className="text-base md:text-sm" />
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">Academic period
+          <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Academic period
             <Select name="period" defaultValue={query.period}
-              className="text-base sm:text-sm">
+              className="text-base md:text-sm">
               <option value="">All assigned periods</option>
               {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">Section
+          <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Section
             <Select name="section" defaultValue={query.section}
-              className="text-base sm:text-sm">
+              className="text-base md:text-sm">
               <option value="">All sections ({sections.length})</option>
               {sections.map(section=><option key={section.id} value={section.id}>
                 {section.name} ({section.count})
               </option>)}
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-semibold text-body">Teaching role
+          <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Teaching role
             <Select name="role" defaultValue={query.role}
-              className="text-base sm:text-sm">
+              className="text-base md:text-sm">
               <option value="">All assigned roles</option>
               {COURSE_TEACHING_ROLES.map(role => <option key={role} value={role}>{role.replaceAll("_"," ")}</option>)}
             </Select>
           </label>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" variant="primary" className="min-h-11 sm:min-h-[var(--lms-control-height)]">Apply filters</Button>
-          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Clear filters</Link>
+          <Button type="submit" variant="primary" className="min-h-11 md:min-h-[var(--lms-control-height)]">Apply filters</Button>
+          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
           </p>

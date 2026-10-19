@@ -1276,3 +1276,25 @@ This list distinguishes completed **source migration** from STRICT F3/F4/F5 cate
 - [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
 
 **Next exact source:** `src/components/placements/tpo-sequential-request-review.tsx`, then `src/components/placements/tpo-recruiter-grant-controls.tsx`. Continue with remaining `src/components/placements/tpo-*.tsx` bespoke roles, then apply shared F3/F4/F5 components across other portals. Keep full route-state inventory unchanged until full grep and responsive proof. This batch used no app execution, TS build, CI, or tests.
+
+
+## Chat-5 supplemental 14 components (50 distinct source files) — 2026-10-19
+
+The following 14 sources were converted after the 36-source listing above. `clone-states.md` contains separate value, fetched-content grep and static responsive evidence. **Source migrated ≠ strict F3/F4/F5 tick**; the strict tick stays open because exact legacy geometry/focus color values and full responsive/browser parity are not proven.
+
+- [ ] `src/components/placements/tpo-sequential-request-review.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-public-placement-toggle.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-company-lifecycle-editor.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-round-result-recorder.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-request-page-clipboard.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-recruiter-grant-controls.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-college-rules-control.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-outside-participants-editor.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-company-person-editor.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-season-controls.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-public-placement-content-editor.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-report-presentation.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+- [ ] `src/components/placements/tpo-report-record-links.tsx` — source migrated and re-fetched; strict F3/F5 parity and full grep still OPEN
+
+**Next exact file:** `src/components/placements/tpo-report-saved-filters.tsx`, then other remaining `src/components/placements/tpo-*.tsx` alerts/empty states and cross-portal route-state inventory. Keep the 1,041-path original route inventory unticked until its actual counts are reverified.

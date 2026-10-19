@@ -1,4 +1,5 @@
 "use client";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Textarea } from "@/components/ui/textarea";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -9,10 +10,11 @@ export function MentorDeliveryLockControl({projectId,submissionId,status,lockedA
 }){
  const router=useRouter(),[reason,setReason]=useState(""),[busy,setBusy]=useState(false),
  [error,setError]=useState(""),[open,setOpen]=useState(false);
+ const {askConfirm,dialog}=useConfirmFlow();
  if(lockedAt||!["SUBMITTED","APPROVED"].includes(status))return null;
  async function lock(){
   if(!reason.trim()||busy)return;
-  if(!window.confirm("Lock final delivery? Learners cannot revise a locked submission until it is reopened."))return;
+  if(!(await askConfirm("Lock final delivery? Learners cannot revise a locked submission until it is reopened.")))return;
   setBusy(true);setError("");
   try{
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/submissions/"+
@@ -35,5 +37,6 @@ export function MentorDeliveryLockControl({projectId,submissionId,status,lockedA
       {busy?"Locking…":"Confirm lock"}</Button>
    </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+   {dialog}
  </section>;
 }

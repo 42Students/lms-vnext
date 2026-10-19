@@ -2,6 +2,7 @@ import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Card } from "@/components/ui/card";
+import {HrRecruiterDrivesGrid,type HrRecruiterDriveSheetRow} from "@/components/placements/hr-recruiter-drives-grid";
 import { cx } from "@/lib/class-names";
 import type { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 
@@ -26,13 +27,15 @@ function deadlineRelative(deadline:Date|null,now:Date):string{
 }
 
 export function RecruiterPlacementPortfolio({
-  jobs, returnTo, counts, now, unansweredRequests={},
+  jobs, returnTo, counts, now, unansweredRequests={}, sheetScopeKey,
 }: {
   jobs: RecruiterJobs;
   returnTo?: string;
   counts?:Record<string,{sharedApplicants:number;offers:number}>;
   unansweredRequests?:Record<string,number>;
   now:Date;
+  /** When provided, the desktop drive list uses the shared legacy AG Grid sheet. */
+  sheetScopeKey?:string;
 }) {
   if (jobs.length === 0) {
     return (
@@ -43,9 +46,56 @@ export function RecruiterPlacementPortfolio({
     );
   }
 
+  const sortedJobs=[...jobs].sort((a,b)=>
+    Number((unansweredRequests[b.job.id]??0)>0)-Number((unansweredRequests[a.job.id]??0)>0));
+  const sheetRows:HrRecruiterDriveSheetRow[]=sheetScopeKey?sortedJobs.map(item=>{
+    const job=item.job;
+    const id=job.id;
+    const requests=unansweredRequests[id]??0;
+    const sharedApplicants=counts?.[id]?.sharedApplicants??0;
+    return {
+      id,
+      title:job.title,
+      company:item.companyName,
+      college:item.collegeName,
+      jobType:job.employmentType.toLowerCase().replaceAll("_"," "),
+      pay:job.minimumAnnualCtcInr!=null||job.maximumAnnualCtcInr!=null
+        ? "CTC: "+[job.minimumAnnualCtcInr,job.maximumAnnualCtcInr]
+          .filter(value=>value!=null).map(value=>"₹"+new Intl.NumberFormat("en-IN").format(value!)).join("–")
+        : "CTC not specified",
+      sharedApplicants,
+      offers:counts?.[id]?.offers??0,
+      applicantsHref:"/recruiter/drives/"+encodeURIComponent(id)+"?tab=applicants"+
+        (returnTo?"&returnTo="+encodeURIComponent(returnTo):""),
+      offersHref:"/recruiter/drives/"+encodeURIComponent(id)+"?tab=offers"+
+        (returnTo?"&returnTo="+encodeURIComponent(returnTo):""),
+      requestsHref:"/recruiter/drives/"+encodeURIComponent(id)+"?tab=requests"+
+        (returnTo?"&returnTo="+encodeURIComponent(returnTo):""),
+      deadlineLabel:job.applicationDeadline?
+        new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(job.applicationDeadline):
+        "Not recorded",
+      status:job.status==="PUBLISHED"?"Live":job.status==="CLOSED"?"Completed":job.status,
+      nextStep:requests>0?"The placement cell asked for a change. Answer the open request.":
+        job.status==="CLOSED"?"Hire again with a new request.":
+        sharedApplicants===0?"Wait for the placement cell to share the applicant list.":
+        job.applicationDeadline&&job.applicationDeadline<now?
+          "Review shared applicants and hiring rounds after the deadline.":
+          "Review shared applicants and prepare the next hiring step.",
+      openHref:"/recruiter/drives/"+id+(returnTo?"?returnTo="+encodeURIComponent(returnTo):""),
+      hireAgainHref:"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(id),
+      hireAgainLabel:job.status==="CLOSED"?"Hire again":"Hire again with changes",
+      messagesHref:"/recruiter/drives/"+encodeURIComponent(id)+"/messages",
+      unansweredRequests:requests,
+    };
+  }):[];
+
   return (
-    <div className="grid gap-4">
-      {[...jobs].sort((a,b)=>Number((unansweredRequests[b.job.id]??0)>0)-Number((unansweredRequests[a.job.id]??0)>0)).map((item) => (
+    <>
+      {sheetScopeKey?<div className="hidden min-w-0 md:block">
+        <HrRecruiterDrivesGrid rows={sheetRows} scopeKey={sheetScopeKey}/>
+      </div>:null}
+      <div className={sheetScopeKey?"grid gap-4 md:hidden":"grid gap-4"}>
+      {sortedJobs.map((item) => (
         <Card as="article"
           key={item.job.id}
           className={cx("rounded-[var(--lms-radius-card)] border p-5", (unansweredRequests[item.job.id]??0)>0 ? "border-warning bg-[var(--lms-warning-subtle)]" : "border-border bg-surface")}
@@ -142,6 +192,7 @@ export function RecruiterPlacementPortfolio({
           </nav>
         </Card>
       ))}
-    </div>
+      </div>
+    </>
   );
 }
