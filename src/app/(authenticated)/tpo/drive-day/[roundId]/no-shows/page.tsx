@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { buildTpoNoShowReport } from "@/modules/placements/tpo-no-show-model";
@@ -87,16 +89,16 @@ export default async function TpoNoShowReportPage({
         ))}
       </section>
       {data.round.status !== "COMPLETED" ? (
-        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
+        <Alert tone="warning">
           This round is {data.round.status.replaceAll("_", " ")}. The report is a current
           snapshot, not a finalized attendance register.
-        </p>
+        </Alert>
       ) : null}
       {report.awaitingMarkCount > 0 || report.unknownCount > 0 ? (
-        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
+        <Alert tone="warning">
           {report.awaitingMarkCount} waiting/unmarked and {report.unknownCount} unknown
           attendance entries are excluded from no-show totals. No absence is inferred.
-        </p>
+        </Alert>
       ) : null}
       <section className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
@@ -109,10 +111,7 @@ export default async function TpoNoShowReportPage({
           caption="Explicitly absent learners"
           rows={report.explicitAbsences}
           getRowKey={(item) => item.applicationId}
-          empty={<p role="status" className="text-sm text-body">
-            No learner is currently marked ABSENT in this round. This does not mean all
-            learners attended; check the waiting/unmarked count above.
-          </p>}
+          empty={<EmptyState title="No learner is currently marked ABSENT in this round." description="This does not mean all learners attended; check the waiting/unmarked count above."/>}
           columns={[
             {key:"learner",header:"Learner",mobileLabel:"Learner",mobilePriority:"primary",cell:(item)=>item.displayName},
             {key:"roll",header:"Roll number",mobileLabel:"Roll number",mobilePriority:"secondary",cell:(item)=>item.rollNumber??"Not recorded"},
