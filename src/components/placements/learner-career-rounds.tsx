@@ -89,7 +89,7 @@ export function LearnerCareerRounds({
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid min-w-0 gap-4">
       {filtered.map((round) => {
         const schedule = round.exception ?? round;
         const meetingUrl = safeHref(schedule.meetingUrl);
@@ -104,9 +104,9 @@ export function LearnerCareerRounds({
             data-focused={highlightedKey===round.applicationId+":"+round.roundId?"true":undefined}
             aria-current={highlightedKey===round.applicationId+":"+round.roundId?"true":undefined}
             className={highlightedKey===round.applicationId+":"+round.roundId
-              ? "min-w-0 scroll-mt-24 rounded-xl border-2 border-primary bg-primary-subtle p-4 sm:p-5"
-              : "min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5"}>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              ? "min-w-0 scroll-mt-24 rounded-xl border-2 border-primary bg-primary-subtle p-4 md:p-6"
+              : "min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6"}>
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">{round.companyName}</p>
                 <h2 className="mt-1 break-words text-lg font-semibold text-foreground">{round.roleTitle}</h2>
@@ -128,7 +128,7 @@ export function LearnerCareerRounds({
                 </StatusBadge> : null}
               </div>
             </div>
-            <div className="mt-4 grid gap-2 text-sm text-body sm:grid-cols-2">
+            <div className="mt-4 grid gap-2 text-sm text-body md:grid-cols-2">
               <p className="m-0"><span className="font-semibold text-foreground">When:</span> {formatWhen(schedule.scheduledAt)}</p>
               <p className="m-0"><span className="font-semibold text-foreground">Where:</span> {schedule.mode === "VIRTUAL" ? "Online" : schedule.venue || "Venue pending"}</p>
             </div>
@@ -138,14 +138,14 @@ export function LearnerCareerRounds({
                 <Button
                   type="button" variant="ghost"
                   onClick={() => onSelect(round)}
-                  className="min-h-11 w-full justify-start !text-[var(--lms-primary-text)] underline sm:w-auto"
+                  className="min-h-11 w-full justify-start !text-[var(--lms-primary-text)] underline md:w-auto"
                 >
                   Round details
                 </Button>
               ) : null}
-              {meetingUrl ? <a href={meetingUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary-text">Open meeting ↗</a> : null}
-              {assessmentLink ? <a href={assessmentLink} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary-text">Open employer assessment ↗</a> : null}
-              <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(round.applicationId)} className="text-sm font-semibold text-primary-text">View application</Link>
+              {meetingUrl ? <a href={meetingUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open meeting ↗</a> : null}
+              {assessmentLink ? <a href={assessmentLink} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open employer assessment ↗</a> : null}
+              <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(round.applicationId)} className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">View application</Link>
             </div>
             {kind === "ASSESSMENT" ? (
               <p className="mt-3 text-sm text-body" role="note">
