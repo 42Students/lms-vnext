@@ -148,8 +148,7 @@
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])
     :not([type="file"]):not([type="range"]):not([type="color"])
     :not([type="button"]):not([type="submit"]):not([type="reset"])
-    :not([type="image"]), select, textarea)[aria-invalid="true"]
-  :not(:where([data-unskin], [data-unskin] *)) {
+    :not([type="image"]), select, textarea)[aria-invalid="true"]:not(:where([data-unskin], [data-unskin] *)) {
   border-color: var(--lms-error) !important;
   background-color: rgba(239, 68, 68, 0.06) !important;
 }
@@ -158,8 +157,7 @@
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])
     :not([type="file"]):not([type="range"]):not([type="color"])
     :not([type="button"]):not([type="submit"]):not([type="reset"])
-    :not([type="image"]), select, textarea)[aria-invalid="true"]
-  :not(:where([data-unskin], [data-unskin] *)):focus-visible {
+    :not([type="image"]), select, textarea)[aria-invalid="true"]:not(:where([data-unskin], [data-unskin] *)):focus-visible {
   border-color: var(--lms-error) !important;
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
 }
