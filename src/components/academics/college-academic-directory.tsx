@@ -219,8 +219,8 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           <div className="flex items-end gap-2">
             <Button variant="primary" type="submit" >
               Filter
-            </Button>
-            <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+            </button>
+            <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">
               Clear
             </Link>
           </div>
@@ -241,7 +241,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                 : "No cohorts match these filters. Batch membership or progression is not inferred from other records."
               : "No records exist on this page. Select an earlier page."}
            </p>
-           <Link href={path} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-[var(--lms-link-text)]">Clear filters and view all {title.toLowerCase()}</Link>
+           <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link">Clear filters and view all {title.toLowerCase()}</Link>
           </div>
         ) : (
           <>{data.kind === "SEMESTERS" ? (
