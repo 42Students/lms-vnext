@@ -984,7 +984,16 @@ export function RecruiterLeadsWorkspace({
               )}
             </section>
           ) : view === "table" ? (
-            <div className="space-y-3">
+            <GridWorkspace rows={sortedVisible} columns={RECRUITER_GRID_COLUMNS}
+              rowKey={lead=>lead.id} selection={{selected:selectedIds,onChange:setSelectedIds}}
+              columnKeys={visibleColumns}
+              onColumnKeysChange={keys=>changeVisibleColumns(normalizeEngageColumns(
+               keys.filter(key=>ENGAGE_COLUMNS.includes(key as EngageColumn))))}
+              searchMode="hidden" exportName="recruiter-leads"
+              savedViews={<RecruiterSavedViewControls columns={visibleColumns}/>}
+              onExportCsv={selected=>exportRows(selected?"selected":"shown","csv")}
+              onExportXlsx={selected=>exportRows(selected?"selected":"shown","xlsx")}
+              onCopyRows={()=>void copyRows()}>
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
                 sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}/>
               <label className="inline-flex min-h-11 items-center gap-2 text-sm">
@@ -1047,7 +1056,7 @@ export function RecruiterLeadsWorkspace({
                    .filter(column=>column.key==="Select"||visibleColumns.includes(column.key as EngageColumn))}/>
               </div>
 
-            </div>
+            </GridWorkspace>
           ) : (
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
