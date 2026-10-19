@@ -46,7 +46,7 @@ export default async function LearnerCalendarPage({searchParams}:{
     <div className="min-w-0 space-y-6">
       <PageHeader title="Class Schedule" actions={(
         <Link href="/learn/attendance/calendar"
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
           Attendance calendar →
         </Link>
       )} />
