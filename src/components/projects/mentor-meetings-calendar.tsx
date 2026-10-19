@@ -30,7 +30,7 @@ function MeetingRow({
   const status = mentorMeetingDisplayStatus(meeting, now);
   const href = safeMentorMeetingJoinUrl(meeting, now);
   return (
-    <article className="border-b border-border py-4 last:border-b-0">
+    <article className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] last:border-b-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="m-0 break-words font-semibold text-foreground">{meeting.title}</h3>
@@ -106,7 +106,7 @@ export function MentorMeetingsCalendar({
             No past meetings yet.
           </p>}
       {past.length > PAST_PREVIEW ? (
-        <button type="button" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-medium text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        <button type="button" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9"
           onClick={() => setExpanded(value => !value)}
           aria-expanded={expanded}>
           {expanded ? "Show fewer" : "Show all " + past.length + " past meetings"}
