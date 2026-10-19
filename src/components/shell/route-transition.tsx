@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import "./route-transition.css";
 
@@ -9,6 +9,7 @@ import "./route-transition.css";
  * the same key so a filter or pagination update never remounts its form. */
 export function RouteTransition({children}:{children:ReactNode}) {
  const pathname=usePathname();
- return <div key={pathname} data-slot="route-content"
+ const [leaving,setLeaving]=useState(false);
+ return <div key={pathname} data-slot="route-content" data-route-transitioning={leaving?"true":undefined}
    className="lms-shell-route-content">{children}</div>;
 }
