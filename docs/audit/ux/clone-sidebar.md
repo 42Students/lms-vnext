@@ -57,8 +57,8 @@ Source parse of `shell-model.ts:45-86,122-320`: **63 declared navigation rows / 
 | Property / state | Old LMS file:line and value | vNext file:line and value | Status |
 |---|---|---|---|
 | Sidebar footer geometry | `old-lms-shell.css:22`: z2, margin-top auto, 25px 16px | `app-shell.tsx:86-99`, `sidebar-legacy.css:235` | Geometry match; copy unverified |
-| TPO bottom mobile footer | No comparable values in `old-lms-shell.css:1-101` | `src/components/tpo/tpo-mobile-footer.tsx:14-47`, shell re-export | Open: no exact reference |
-| Top route progress bar | No matched timing/colour spec in `old-lms-shell.css:1-101` nor matched `nprogress` in the indexed legacy sources | No dedicated progress bar added | Open: do not fabricate |
+| TPO bottom mobile footer | No comparable TPO-specific footer markup in original legacy sources; shared 64px + safe-area `.ln-footer` at `components___antddesign.scss:912-936` | `src/components/tpo/tpo-mobile-footer.tsx:27-49`, `legacy-mobile-footer.css:27-34` matches shared shell styling, retains TPO link content | Shared skin matched, **TPO-specific visual contents unverified** |
+| Top route progress bar | No top strip specified in `old-lms-shell.css:1-101`; original `lms2-fe/src/pages/_app.js:1-34` has no route event progress | `route-progress.tsx:14-69`, `route-progress.css:7-26`: *new accessible indeterminate adapter* using legacy teal #26bac7 | Implemented; **not a historic pixel match** |
 | Full-page loader | `legacy-styles/components___common.scss:1008-1019` fixed fullscreen z999, rgba(255,255,255,.99) | Route-specific skeleton/loading components | Open: not equivalent |
 | Learner page entrance | `legacy-styles/components___learn-layout.scss:49-69` opacity 0→1, translateY(8→0), 250ms ease-out | `route-transition.css:4-7,20-24`, `route-transition.tsx:11-12,39-40` learner-only | CSS values source-match |
 | Learner route exit | `legacy-styles/components___learn-layout.scss:71-86` 220ms opacity, 260ms transform, .78 opacity, translateY(6px) scale(.998) | `route-transition.css:15-24`, `route-transition.tsx:12-38` capture-phase Link intent | CSS source-match; browser/back states unverified |
@@ -101,7 +101,7 @@ Every edited sidebar-related JSX opening and closing tag has been source reviewe
 3. Find authoritative old top progress-bar and TPO mobile footer behavior; align `src/components/shell/route-transition.tsx` and loading/page exit states. Leave B4 unticked until values and states are proven.
 4. HR pages are owned by chat-15; only sweep HR files explicitly unowned in their queue, without overwriting chat-15 work.
 
-**Next file:** `src/components/shell/route-transition.tsx` (route completion/back-forward/recovery behavior, then review missing progress-bar reference).
+**Historic handoff superseded:** route-transition has been updated; see latest continuation below.
 
 
 ## 2026-10-19 continued turn: evidence and current exceptions
@@ -118,7 +118,7 @@ Every edited sidebar-related JSX opening and closing tag has been source reviewe
 
 **STRICT TICK RULE outcome:** B3 and B4 remain **unticked**. The source comparisons and scoped counts above are useful progress but do not substitute for the checklist's command-level `grep` output and unmatched footer/loading values. Do not report a visual clone without the later browser pass.
 
-**Next file:** `src/components/shell/sidebar-legacy.css` — resolve remaining geometry/scroll discrepancies after a checkout-based grep; then `src/components/tpo/tpo-mobile-footer.tsx` for historical footer metrics when a source is found.
+**Historic handoff superseded:** 40-file shell import scan completed later; see latest continuation below.
 
 
 ## Lane 19 owner sprint: original mobile footer and route-entry evidence
@@ -165,7 +165,7 @@ A repeatable complete-tree `git grep` ledger is committed as `scripts/audit/chat
 
 **STRICT OUTCOME:** B3 and B4 remain `[ ]`. B3 still needs executable complete-tree coverage counts and any uncovered sidebar states. B4 still needs complete-tree grep counts, the exact fullscreen loader treatment, and a historical or measured source for TPO footer-specific states. These are not represented as passes.
 
-**Next file:** `src/components/shell/sidebar-legacy.css` (remaining B3 strict coverage and mobile geometry), then `src/components/tpo/tpo-mobile-footer.tsx` (TPO footer reference/state closure). The HR route inventory is owned by chat-15 in `docs/audit/ux/clone-hr.md`; do not overwrite it without an explicitly unclaimed path.
+**Historic handoff superseded:** mobile footer and route progress source were updated later. Only the four unclaimed HR grid adapters were audited under `clone-chat19-hr-unclaimed.md`.
 
 
 ## Chat-19 continuation: 40-file shell import check and route progress adapter
