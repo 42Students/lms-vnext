@@ -20,15 +20,15 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
  const base="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
  const facts=[["Current status",data.offer.status],["Issued",data.offer.issued.slice(0,10)],["Response",data.offer.responded?.slice(0,10)??"Not recorded"],["Expiry",data.offer.expires?.slice(0,10)??"Not recorded"],["Joining",data.joining??"Not applicable"]] as const;
  return <div className="min-w-0 space-y-6">
-  <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9" href={base+"/offers"}>← Offer register</Link>
+  <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden" href={base+"/offers"}>← Offer register</Link>
   <PageHeader eyebrow="TPO · Offer evidence" title={data.candidate.name+" · "+data.offer.role}
    description="Persisted offer and joining events. Recorded internal reasons are disclosed only within authorized college scope."/>
-  <section aria-label="Current offer facts" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-5">
+  <section aria-label="Current offer facts" className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-5 print:overflow-visible">
    {facts.map(([name,value])=><div key={name} className="border-b border-border p-4 last:border-b-0 sm:border-r sm:last:border-r-0 xl:border-b-0">
     <p className="text-xs text-muted-foreground">{name}</p><p className="mt-2 break-words font-semibold">{value}</p>
    </div>)}
   </section>
-  <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9" href={"/tpo/students/"+encodeURIComponent(data.candidate.membershipId)+"/history"}>Learner placement history →</Link>
+  <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden" href={"/tpo/students/"+encodeURIComponent(data.candidate.membershipId)+"/history"}>Learner placement history →</Link>
   <section aria-label="Offer status and joining history" className="border-b border-border pb-6">
    <h2 className="font-semibold">Recorded transitions</h2>
    {data.events.length===0?<EmptyState title="No persisted status or joining history events were found; absence is not evidence of a decision."/>:
