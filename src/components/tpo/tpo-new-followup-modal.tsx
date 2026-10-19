@@ -8,11 +8,13 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 import {Dialog} from "@/components/ui/dialog";
+import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type LeadChoice={id:string;name:string;companyName:string|null};
 const field="min-h-9 w-full";
 export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const router=useRouter();
+ const {showToast}=useToast();
  const [open,setOpen]=useState(false);
  const [confirmLeave,setConfirmLeave]=useState(false);
  const [pendingHref,setPendingHref]=useState<string|null>(null);
@@ -23,7 +25,6 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const [loading,setLoading]=useState(false);
  const {pending:saving,run}=useGuardedAction({timeoutMs:30000});
  const [error,setError]=useState("");
- const [toast,setToast]=useState("");
  const hasDraft=open&&Boolean(leadId||when||note.trim());
  useEffect(()=>{
   if(!hasDraft)return;
@@ -51,7 +52,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  }
  async function show(){
   if(loading||saving)return;
-  setOpen(true);setLoading(true);setError("");setToast("");
+  setOpen(true);setLoading(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/leads?collegeId="+encodeURIComponent(collegeId),{
     cache:"no-store",credentials:"same-origin",
@@ -80,7 +81,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
    const result=await response.json() as {followup?:{id:string}};
    if(!result.followup?.id)throw Error("Could not save the follow-up");
    setOpen(false);setLeadId("");setWhen("");setNote("");
-   setToast("Follow-up added. It shows on the calendar.");
+   showToast({tone:"success",title:"Follow-up added",description:"It shows on the calendar."});
    router.refresh();
    });
   }catch{setError("Could not save the follow-up");}
@@ -90,7 +91,6 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
    className="block min-h-11 w-full rounded px-2 py-2 text-left text-sm text-[var(--lms-teal-deep)] hover:bg-primary-subtle">
    Follow-up
   </Button>
-  {toast?<p role="status" className="px-2 py-1 text-xs text-body">{toast}</p>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)dismiss();}} title="New follow-up"
    description="Choose a recruiter and when to follow up (IST).">
     <form className="space-y-3" onSubmit={event=>{event.preventDefault();void save();}}>
