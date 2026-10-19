@@ -748,3 +748,32 @@ Source JSX pair examples: learner course error pages `Alert` opens/closes 1/1 ea
 **STRICT TICKS: H1–H6 remain [ ]**. These 24 **source-corrected** paths still require inherited shared Button/StatusBadge/Table/Alert visual-values complete comparison and route-level phone/tablet rendered states, which this lane cannot run. No unverified line is marked as a full pixel-parity closure; the orchestrator's checklist section J and shared component lanes remain the bottleneck. Source probes are scoped and not falsely presented as full 247-path zero.
 
 **Next exact unticked file:** `src/app/(authenticated)/learn/attendance/calendar/error.tsx`, then `src/app/(authenticated)/learn/calendar/page.tsx` for the learner week/class schedule control and calendar responsive parity.
+
+## 2026-10-20 chat-7 continuation — learner calendar error pages and Super Admin directories (batch 8)
+
+**5 additional files updated, pushed, then complete-source fetched and scanned.** This is a *source/style migration*, not a UI screenshot or executed test. `PageHeader` remains outside an `Alert` in both learner calendar errors, so the old single page canvas and one-line header structure do not get absorbed into a colored banner. In admin pages the shared page head, tabs and directory bodies are unchanged; only local judgement cases were touched.
+
+| Scope/file | Source change | Error/empty/loading and responsive proof |
+| --- | --- | --- |
+| `src/app/(authenticated)/learn/attendance/calendar/error.tsx` | Removed wrapper `role=alert` from page header; actual failed-read sentence now shared `Alert tone=error`. Retry `Button` 44px phone / 36px tablet. | Existing route-specific error copy and `reset` callback preserved. `min-h-11 md:min-h-9`, `Alert` 1/1, `PageHeader` 1. |
+| `src/app/(authenticated)/learn/calendar/error.tsx` | Same shared `PageHeader` followed by `Alert tone=error`, compact wrap-aware Retry row. | Existing calendar refresh failure text and handler unchanged; `Alert` 1/1, button 1/1, 768px breakpoint. |
+| `src/app/(authenticated)/admin/lessons/page.tsx` | Nine `sm:` replaced with `md:` in form filters, list actions and pagination; field labels inherit 13px semibold `text-xs`. Invalid-filter and retry `ErrorState` links gain 44px mobile/36px desktop and hover token. Separate partial-filter and lesson-picker failures now `Alert tone=warning` instead of handmade bordered `p`. | Forms retained (1 open/1 close); PageHeader 4 conditional states; Alert 2/2; Button 1/1. Existing `EmptyState`, `ErrorState`, CSV export, bulk visibility, paging and optimistic admin operations retained. |
+| `src/app/(authenticated)/admin/course-progress/page.tsx` | Two form labels use 13px/600 font role; partial-filter warning now shared `Alert`; invalid `ErrorState` Clear action gains touch size/focus hover. | Existing adminScope permissions, read-only progress calculations, exported CSV link, flat record list, paging and empty states untouched. Form 1/1, Alert 1/1, 11 `md:` classes. |
+| `src/app/(authenticated)/admin/courses/page.tsx` | Existing shared PageHeader and Tabs unchanged; invalid course-query `ErrorState` Clear filters action gets 44px phone/36px tablet and teal hover token. | No outer card introduced. Existing unselected-college `EmptyState`, section tabs, duplicated course copy semantics preserved. |
+
+### Exact legacy-property and state values
+
+| Property/required state | Old LMS authority | Current source/value | Source comparison |
+| --- | --- | --- | --- |
+| One page title outside banner | `docs/design/old-lms-pages.md:7-10`: one row title, same white 12px canvas; separate slim inline notices | Calendar error routes now shared `PageHeader` sibling before semantic `Alert tone=error`, Super Admin `PageHeader` already shared | Layout arrangement MATCH in source |
+| Default text color / warning and error | `legacy-styles/components___variables.scss:20-32,63-78`: foreground #1a1d21, warning #d97706, error #ef4444, info teal #26bac7 | `src/components/ui/alert.tsx:6-19` shared `tone=error` / `tone=warning` and tokens rather than page-local `bg-warning-subtle` | Semantic color routing MATCH; exact rendered banner geometry still shared-owner |
+| Form label | `legacy-styles/components___form.scss:107-111`: 13px/600/line16; shared Input font14/line20 | Lesson and course-progress filter labels `text-xs font-semibold text-body`, shared `Input`/`Select` handle focus/error/disabled | Source MATCH font role, actual browser states OPEN |
+| Phone hit target | `legacy-styles/components___learn-layout.scss:361-383`: 44px back link/phone action | Retry/Clear filter/export/next buttons `min-h-11` (44px) below768; `md:min-h-9` (36px) at/above768 | Named controls MATCH source height |
+| Breakpoint | `legacy-styles/components___learn-layout.scss:34,379,419,450`: `max-width:767px` mobile | Admin lessons 9 `sm` migrated to 768px `md`, no new 640px rules; existing progress 768px | Source BREAKPOINT MATCH, no viewport run |
+| Focus, hover, disabled, loading | `legacy-styles/components___form.scss:23-28,123-138` keyboard focus visible; `components___button.scss:20-85` hover/disabled; `old-lms-pages.md:7-10` empty/error | Shared `Alert`, `Button`, `ErrorState`, `EmptyState` own token states; error links use `hover:text-primary-hover`; loading/error copy and retry functions kept | Component reuse proved; exact computed hover/focus/disabled **OPEN** |
+
+**Scoped source grep:** For the exact **five paths** in the table, complete fetched text scanned with `/<(button|input|select|textarea|table)(?=[\\s>])/g`, `/#[a-f0-9]{6}\\b/gi`, `/fixed inset-0|role="dialog"/g`, and `/\\bsm:/g`: 0 matches for every probe. `/\\bmd:/g`: 26 occurrences (1+1+12+11+1). Shared `Alert` opens/closes 1/1 in each calendar error and 2/2 in Admin lessons, 1/1 in course-progress; admin courses uses shared `ErrorState` no new Alert. Admin lessons/course-progress form tags 1/1. No `h1` bypasses the shared PageHeader.
+
+**STRICT TICK STATUS:** H1–H6 remain `[ ]` pending complete 247-path inventory/strict shared hover/disabled/focus computed-value comparison and orchestrator side-by-side phone/tablet screenshots per checklist J; source probes and legacy file tables alone are not a pixel-perfect runtime certificate. No local `rg`, JS/TS execution, browser session, tests or CI were performed.
+
+**Next exact unticked file:** `src/app/(authenticated)/learn/calendar/page.tsx` (class schedule links, calendar visual state/layout and service-driven states), followed by `src/app/(authenticated)/learn/attendance/page.tsx`.
