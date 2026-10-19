@@ -9,6 +9,8 @@ import type { AdminScopeChoices } from "@/modules/admin-scope/service";
 import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
+import Link from "next/link";
+import {ShellLogoMark} from "./shell-nav-icons";
 import { LegacyTopbar } from "./topbar/legacy-topbar";
 import { RouteAnnouncer } from "./route-announcer";
 import {ShellWidgetBoundary} from "./shell-widget-boundary";
@@ -95,7 +97,7 @@ export async function AppShell({
         </div>
       </aside>
 
-      <div className="min-h-dvh lg:pl-64">
+      <div className="lms-shell-page min-h-dvh">
         <LegacyTopbar
           navigation={navigation}
           roleLabel={getShellRoleLabel(context)}
