@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import "./legacy-mobile-footer.css";
 
+type NotificationInboxRow = { notification: { readAt: string | null } };
+
 type FooterLink = {
   href: string;
   label: string;
@@ -40,11 +42,11 @@ export function LearnerFacultyMobileFooter() {
   useEffect(() => {
     if (!learner) return;
     let active = true;
-    void apiFetch<{notifications?: Array<{notification?: {readAt?: string | null}}>} >(
+    void apiFetch<{ notifications?: NotificationInboxRow[] }>(
       "/api/notifications?limit=40", { cache: "no-store" },
     ).then(response => {
       if (!active || !Array.isArray(response.notifications)) return;
-      setUnread(response.notifications.filter(row => row.notification?.readAt === null).length);
+      setUnread(response.notifications.filter(row => row.notification.readAt === null).length);
     }).catch(() => { /* A failed count must not prevent mobile navigation. */ });
     return () => { active = false; };
   }, [learner]);
