@@ -36,20 +36,20 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
   {(["domains","aliases"] as const).map(kind=>{
    const entries=kind==="domains"?domains:aliases;
    return <div key={kind} className="space-y-2">
-    <h3 className="font-semibold">{kind==="domains"?"Domains":"Other names"}</h3>
+    <h3 className="font-semibold text-foreground">{kind==="domains"?"Domains":"Other names"}</h3>
     <form className="flex flex-wrap gap-2" onSubmit={e=>void add(e,kind)}>
      <Input name="value" aria-label={kind==="domains"?"Company domain or email":"Company other name"}
       maxLength={kind==="domains"?253:160} required disabled={pending}
       placeholder={kind==="domains"?"company.com or name@company.com":"e.g. TCS"}
       className="min-w-0 flex-1"/>
      <Button type="submit" disabled={pending}
-      className="min-h-9">Add</Button>
+      className="min-h-11 sm:min-h-9">Add</Button>
     </form>
     <ul className="space-y-1">{entries.map(value=><li key={value} className="flex items-center justify-between gap-2">
      <span className="break-all">{value}</span>
      <Button type="button" variant="secondary" disabled={pending||(kind==="domains"&&domains.length<=1)}
       onClick={()=>void mutate(kind,"REMOVE",value)}
-      className="min-h-9">Remove</Button>
+      className="min-h-11 sm:min-h-9">Remove</Button>
     </li>)}</ul>
    </div>;
   })}
