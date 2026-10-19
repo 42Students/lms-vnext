@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {collegeHiringAnalyticsHref} from "@/modules/placements/college-hiring-analytics-model";
@@ -30,22 +31,22 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
     <input type="hidden" name="jobId" value={selectedJobId??""}/>
     <label className="grid gap-1 text-sm">Department
-     <select name="departmentId" defaultValue={q.departmentId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+     <Select name="departmentId" defaultValue={q.departmentId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
       <option value="">All departments</option>
       {data.filters.departments.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-sm">Program
-     <select name="programId" defaultValue={q.programId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+     <Select name="programId" defaultValue={q.programId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
       <option value="">All programs</option>
       {data.filters.programs.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-sm">Batch
-     <select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+     <Select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
       <option value="">All batches</option>
       {data.filters.cohorts.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-sm">Applied from
      <input type="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
