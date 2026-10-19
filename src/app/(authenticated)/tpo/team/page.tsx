@@ -127,7 +127,7 @@ export default async function TpoTeamPage({searchParams}:{
          <dd className="font-semibold">
           {label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":
            <Link href={href} title={"Open "+label.toLowerCase()+" records"}
-            className="text-link underline underline-offset-2">{count}</Link>}
+            className="text-link underline underline-offset-2 lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{count}</Link>}
          </dd>
         </div>)}
        </dl>:null}
