@@ -66,4 +66,9 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(css).toContain("left:50%;");
  expect(css).toContain("margin-left:auto;");
 });
+ it("uses the legacy 2px focus ring inset by 2px",()=>{
+ expect(legacy()).toContain("outline-offset: -2px; outline: rgba(38, 186, 199, 0.45) solid 2px");
+ expect(sidebar()).toContain("outline:2px solid rgba(38,186,199,.45);");
+ expect(sidebar()).toContain("outline-offset:-2px;");
+});
 });
