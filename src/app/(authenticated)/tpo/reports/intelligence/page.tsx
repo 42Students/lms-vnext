@@ -69,7 +69,7 @@ export default async function TpoPerformanceIntelligencePage({
         description="Observed applications and offer decisions by employer, plus explicitly defined annual CTC measures."
         actions={
           <a href={csvHref}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">
             Export intelligence CSV
           </a>
         }
