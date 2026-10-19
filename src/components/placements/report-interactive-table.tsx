@@ -4,6 +4,7 @@ import {useMemo,useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
 import { Dropdown } from "@/components/ui/dropdown";
 import {Button} from "@/components/ui/button";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -130,10 +131,10 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       {displayedColumns.map(col=><option key={col.index} value={col.index}>{col.heading}</option>)}
      </Select>
     </label>
-    <Button variant="secondary" type="button" disabled={sort===null} aria-label="Descending order" aria-pressed={descending}
+    <FilterChip type="button" disabled={sort===null} aria-label="Descending order" aria-pressed={descending}
      onClick={()=>setDescending(value=>!value)} className="min-h-11 md:min-h-9 print:hidden">
      {descending?"Descending":"Ascending"}
-    </Button>
+    </FilterChip>
    </div>
    <DataTable
     caption={title}
@@ -142,6 +143,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     empty={<p role="status" className="text-sm text-body">No matching report rows. Clear filters to view other records.</p>}
     columns={displayedColumns.map((col,position)=>({
       key:String(col.index),
+      sortDirection:sort===col.index?(descending?"descending" as const:"ascending" as const):"none" as const,
       mobilePriority:position===0?"primary" as const:"secondary" as const,
       mobileLabel:col.heading,
       header:<><span className="hidden print:inline">{col.heading}</span><Button variant="ghost" type="button"
