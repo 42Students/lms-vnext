@@ -30,7 +30,7 @@ export default async function FacultyLearnerGradebookPage({
     <PageHeader eyebrow="Faculty · Published learner scores"
       title={data.learner.displayName||data.learner.email||"Unnamed learner"}
       description={data.delivery.courseName+" · "+data.delivery.sectionName}/>
-    <section className="rounded-xl border border-border bg-surface p-4" aria-label="Recorded score totals">
+    <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4" aria-label="Recorded score totals">
       <div className="grid gap-3 sm:grid-cols-3">
         <p className="text-sm text-body">Published scores: {data.learner.gradedCount}/{data.learner.publishedAssessments}</p>
         <p className="text-sm text-body">Recorded points: {data.learner.earned===null?
@@ -49,7 +49,7 @@ export default async function FacultyLearnerGradebookPage({
           description="There are no published assignment or quiz result records for this Section."/>:
         <ul className="grid gap-3">
           {data.assessments.map(item=><li key={item.kind+":"+item.assessmentId}
-            className="rounded-xl border border-border bg-surface p-4">
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <p className="text-xs font-semibold text-muted-foreground">{item.kind==="QUIZ"?"Quiz":"Assignment"}</p>
             <h3 className="mt-1 break-words font-semibold text-foreground">{item.title}</h3>
             <p className="mt-2 text-sm text-body">{item.status==="UNKNOWN"?
