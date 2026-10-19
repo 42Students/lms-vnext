@@ -152,7 +152,7 @@ export default async function TpoTeamPage({searchParams}:{
       {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":key==="TOPICS"?"Topics":key==="DECISIONS"?"Decisions":key==="ASKS"?"Asks":"@ Me"} ({conversationCounts[key]})
      </Link>)}
     </nav>:null}
-    <Link href="/tpo/team/everyone" className="mt-3 block rounded-[var(--radius)]-lg border border-border bg-surface-secondary p-4 font-semibold text-link">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
+    <Link href="/tpo/team/everyone" className="mt-3 block rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4 font-semibold text-link">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
     {conversations?.status==="READY"?<TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
       member=>member.membershipId!==context.membership?.id&&
       (member.roles.includes("TPO")||member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN")))
@@ -178,7 +178,7 @@ export default async function TpoTeamPage({searchParams}:{
         {conversations?.status==="READY"&&conversations.asksReady&&row.openAsks>0?<p className="mt-1 text-xs text-body">{row.openAsks} open {row.openAsks===1?"ask":"asks"}{row.asksForMe>0?" · "+row.asksForMe+" assigned to you":""}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Last activity · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.lastActivityAt)} IST</p>
        </li>)}</ul>:
-       <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-link underline">Clear filters</Link>:null}</div>}
+       <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 items-center font-semibold text-link underline">Clear filters</Link>:null}</div>}
     {conversations?.status==="READY" && (conversations.page>1||conversations.hasMore)?
      <nav aria-label="Team conversation pages" className="mt-4 flex flex-wrap items-center gap-3">
       <span className="text-sm text-body">Page {conversations.page}</span>
@@ -189,7 +189,7 @@ export default async function TpoTeamPage({searchParams}:{
        href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
         ...(search?{q:search}:{}),page:String(conversations.page+1)}).toString()}>Show older</Link>:null}
      </nav>:null}
-    <Link href="/tpo/messages" className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-link">
+    <Link href="/tpo/messages" className="mt-3 inline-flex min-h-9 items-center text-link">
       Open existing recruiter communications
     </Link>
   </section>}

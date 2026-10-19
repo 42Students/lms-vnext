@@ -66,7 +66,7 @@ export default async function MentorReviewOverviewPage({
   </Link>
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
  </div>
- <section className="rounded-xl border border-border bg-surface p-5">
+ <section className="border-b border-border pb-5">
  <h2 className="font-semibold">Recorded review coverage on this page</h2>
  <p className="mt-2 text-sm text-body">{data.counts.reviewed} reviewed version{data.counts.reviewed===1?"":"s"};
  {" "}{data.counts.withFeedback} with written feedback.</p>
@@ -77,8 +77,8 @@ export default async function MentorReviewOverviewPage({
  <p className="text-sm text-body">{data.total} registered delivery version{data.total===1?"":"s"}</p>
  {data.items.length===0?<EmptyState title="No registered final delivery"
  description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history."/>
- :<ol className="grid gap-3">{data.items.map(item=>
- <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+ :<ol className="divide-y divide-border">{data.items.map(item=>
+ <li key={item.id} className="py-4">
  <div className="flex flex-wrap items-center justify-between gap-3">
  <h2 className="font-semibold">Delivery version {item.version}</h2>
  <span className="text-xs font-semibold text-body">{item.status}</span></div>

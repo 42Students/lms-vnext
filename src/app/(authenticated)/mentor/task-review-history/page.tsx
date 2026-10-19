@@ -38,7 +38,7 @@ export default async function MentorTaskReviewHistoryPage({
         Pending task reviews
       </Link>} />
     {!data.enabled ? <section role="status"
-      className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Reviewed task history is unavailable.
     </section> : <>
       <form action="/mentor/task-review-history" method="get"
@@ -91,8 +91,8 @@ export default async function MentorTaskReviewHistoryPage({
       </div>
       {data.items.length===0 ? <EmptyState title="No reviewed task submissions"
         description="No registered approved or changes-requested task versions match this filter and your current project assignments. Unmigrated history is not inferred." />
-      : <ol className="grid gap-3">{data.items.map(item=>
-        <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+      : <ol className="divide-y divide-border">{data.items.map(item=>
+        <li key={item.id} className="py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold text-foreground">{item.taskTitle}</h2>
             <span className="text-sm font-semibold text-body">{taskReviewDecisionLabel(item.status)}</span>
