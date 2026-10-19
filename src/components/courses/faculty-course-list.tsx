@@ -114,7 +114,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           </label>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" variant="primary">Apply filters</Button>
+          <Button type="submit" variant="primary" className="min-h-11 sm:min-h-[var(--lms-control-height)]">Apply filters</Button>
           <Link href="/teacher/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
