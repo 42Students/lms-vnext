@@ -54,9 +54,9 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">College name or code
-        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="min-h-11 rounded-md border border-border bg-surface px-3" /></label>
+        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="w-full" /></label>
       <label className="grid gap-1 text-sm font-semibold text-body">Availability
-        <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3">
+        <Select name="status" defaultValue={data.query.status} className="w-full">
           {statuses.map(status => <option key={status}>{status}</option>)}
         </Select></label>
       <Button className="self-end" type="submit">Filter</Button>
