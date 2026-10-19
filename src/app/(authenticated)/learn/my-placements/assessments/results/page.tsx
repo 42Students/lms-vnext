@@ -60,14 +60,14 @@ export default async function LearnerAssessmentResultsPage({
       />
       <Tabs ariaLabel="Filter published assessment results" renderPanel={false} value={view} items={views.map(option=>({value:option.id,label:option.label,count:results.counts[option.id],href:href(option.id)}))}/>
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        {view!=="all" ? <input type="hidden" name="view" value={view}/> : null}
+        {view!=="all" ? <Input type="hidden" name="view" value={view}/> : null}
         <label className="min-w-0 flex-1 text-xs font-semibold text-body">
           Search published results
           <Input type="search" name="q" defaultValue={q} maxLength={100}
             placeholder="Company, role or round"
-            className="mt-1 min-h-9 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+            className="mt-1 min-h-11"/>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" className="min-h-11">
           Search
         </Button>
         {q?<Link href={href(view,1,"")}
