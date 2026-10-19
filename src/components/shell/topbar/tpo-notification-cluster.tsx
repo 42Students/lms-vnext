@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import { TpoBellPanel } from "@/components/tpo/tpo-bell-panel";
 import { tpoHeaderSnapshotSchema, type TpoHeaderSnapshot } from
@@ -11,6 +11,7 @@ import style from "./topbar.module.css";
 
 export function TpoNotificationCluster() {
   const [state, setState] = useState<{ value: TpoHeaderSnapshot; revision: number } | null>(null);
+  const refreshInFlight = useRef(false);
 
   const refresh = useCallback(async () => {
     if (document.visibilityState === "hidden") return;
