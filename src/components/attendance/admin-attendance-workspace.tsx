@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import { ADMIN_ATTENDANCE_COPY } from "@/modules/attendance/admin-attendance-copy";
 import {AdminAttendanceParentContactEditor} from "./admin-attendance-parent-contact-editor";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -398,8 +399,8 @@ export function AdminAttendanceWorkspace({
           View attendance
         </Button>
         <label className="flex items-center gap-2 text-sm text-body md:col-span-2 xl:col-span-3">
-          <input
-            type="checkbox"
+          <Checkbox
+            
             checked={showAllCourses}
             onChange={(event) => {
               setShowAllCourses(event.target.checked);
