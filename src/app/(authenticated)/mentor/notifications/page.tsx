@@ -170,7 +170,7 @@ export default async function MentorNotificationsPage({
         baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
         confirmMarkAll /> : null}
       {inbox?.cursor.invalid
-        ? <div role="alert" className="rounded-[var(--lms-radius-lg)] border border-border bg-surface p-4 text-sm text-foreground">
+        ? <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm text-foreground">
             The notification page link is invalid.{" "}
             <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
               className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
