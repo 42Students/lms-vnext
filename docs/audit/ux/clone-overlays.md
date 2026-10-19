@@ -292,3 +292,59 @@ These do **not** satisfy the strict branch-wide zero-hand-rolled-overlay proof. 
 | Popover phone/tablet width | `components___notification-drawer.scss:23,113-126,395-493`: 767px mobile drawer, notification desktop 420px max | Generic shared popup is nonmodal; phone bell consumers use native Drawer and desktop uses PopoverPanel; `popover.tsx` itself defines no breakpoint | Source-specific consumer paths are documented, but no runtime/viewport proof |
 
 **Next file to resolve:** `src/components/ui/toast.tsx`; look for an actual legacy toast/message-specific duration and presentation reference before changing its persistence/timeout semantics. Following that, audit `src/components/ui/confirm-action-dialog.tsx` against `components___antddesign.scss:899-906`. F1/F2 remain unticked.
+
+
+## Chat-16 next batch: Toast + Confirm — source completion (2026-10-19)
+
+**Lane sync:** merged `origin/main` at `0744985a` into `chatgpt/chat-16-b` via history-preserving commit `7ed131e0`; main tree plus previously reviewed lane-owned overlay blobs and a de-duplicated TPO bell. Never pushed `main`. No app, TypeScript typecheck, lint, tests, CI or runtime viewport comparison performed.
+
+### Checked value-by-value table
+
+| Element / state | Old-LMS authoritative source | Current vNext source | Result and limitation |
+| --- | --- | --- | --- |
+| Confirm content padding | `docs/design/legacy-styles/components___antddesign.scss:899-906`: `15px 15px 5px 15px` | `src/components/ui/confirm-action-dialog.tsx:14` attaches confirm-scoped class; `src/components/ui/legacy-overlays.css:394-396` sets `padding:15px 15px 5px` on confirm content wrapper | Numeric match on confirm variant; shared dialog untouched |
+| Confirm footer gap after body | `components___antddesign.scss:902-905`: `margin-top:21px` | `legacy-overlays.css:401-405`: `margin-top:21px`, footer border/padding removed only on confirm | Numeric match |
+| Mobile modal horizontal cap | `components___antddesign.scss:1038-1041`: viewport minus 32px | `src/components/ui/dialog.tsx:43-45`: `w-[calc(100%_-_2rem)]`; `max-w-[36rem]` desktop guard | Width cap match on phone; exact default max width not legacy-proved |
+| Mobile modal content height | `components___antddesign.scss:1057-1061`: viewport minus 48px | `src/components/ui/dialog.tsx:43-45`: `max-h-[calc(var(--lms-visual-height)_-_3rem)]` | Numeric 48px match, with dynamic keyboard/viewport aware CSS variable |
+| Mobile modal radius | `components___antddesign.scss:1057-1061`: `12px` | `src/components/ui/dialog.tsx:43-45`: token `var(--lms-canvas-radius)` | Token equality requires resolved browser/computed-style check; **not claimed matched** |
+| Mobile confirm action gap | `components___antddesign.scss:1064-1072`: `gap:8px` | `legacy-overlays.css:407-410`: `gap:8px` | Numeric match |
+| Mobile confirm touch minimum | `components___antddesign.scss:1064-1072`: min button height 44px | `legacy-overlays.css:411-413`: `min-height:44px` | Numeric match |
+| Confirm accessible semantics | Old legacy SCSS supplies styles, not keyboard/focus procedure | `confirm-action-dialog.tsx:12-20`: shared native `Dialog` `role="alertdialog"`; cancel auto-focus; dismiss disabled while pending, action disabled/loading during pending | Source behavior covered, parity unproven in browser |
+| Toast stack panel elevation | Closest related legacy notification `components___notification-drawer.scss:113-121`: `0 4px 24px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04)` | `legacy-overlays.css:233-243`: `--lms-toast-shadow` same value; white surface, 12px corners | Matches closest notification surface, **not an exact old toast design** |
+| Toast stack maximum width | Closest notification `components___notification-drawer.scss:114-121`: `max-width: min(420px,100vw - 24px)` | `toast.tsx:71`, `legacy-overlays.css:235-238`: fixed explicit width and cap of `min(420px,100vw - 32px)` | 420px maximum matches; mobile gutters deliberately differ by 8px total; **not exact toast parity** |
+| Toast close button target | `components___notification-drawer.scss:21,27-49`: 44px minimum touch | `toast.tsx:80-82` + `legacy-overlays.css:244-247`: 44px minimum and icon label with focus ring | Source numeric match |
+| Toast close hover/active | `components___notification-drawer.scss:18-19,39-49`: black at .035/.06 opacity | `legacy-overlays.css:244-245` | Numeric match for the related neutral action |
+| Toast description body font | No canonical legacy toast body type found in bundled SCSS | `toast.tsx:77-78`: 13px, line-height 20px | Existing vNext styling preserved; no parity claim |
+| Toast success/info lifetime | **No legacy `ant-message` / `ant-notification` or branded toast duration identified in supplied SCSS** | `toast.tsx:137-143`: clamp(2500+70ms per char, 4500ms, 15000ms) | **Unproven**; retain vNext policy rather than invent old timing |
+| Toast error persistence | No canonical legacy toast policy identified | `toast.tsx:17-21,137-143`: error toasts not in limited timed queue, no auto-expiry | Source functionality preserved; legacy behavior unknown |
+| Toast pause while reading | No explicit old SCSS timing behavior | `toast.tsx:63-69,107-129,146-159`: hover/focus/hidden pause, resume on visibility | Source functionality preserved; browser interaction not run |
+| Toast scrollbar/keyboard clearance | Related legacy notifications support mobile safe areas; no identical toast scroll rule | `toast.tsx:54-60,71`: actual visual viewport, bottom safe area, bounded height, overscroll and focus cue | Source behavior reviewed; requires runtime small-screen proof |
+
+### Responsive and state matrix — source inspection only
+
+| Width / mode | Confirm variant | Toast stack | Verified level |
+| --- | --- | --- | --- |
+| 375px mobile | `Dialog` viewport-32 width cap (nominal 343px), 48px viewport-height clearance, confirm inner 15/15/5, footer 8px gap and min44 actions | Nominal 343px width, inset16px each side, 44px dismiss, visual-viewport bottom+safe area | Static expression checks only, not physical screenshot |
+| 640px narrow tablet | Confirm still within `max-width:767px` gap/touch controls | `sm:` right-aligned stack with max420px; distinct from notification drawer's 767px cutoff | Static responsive boundary, not legacy toast breakpoint equivalence |
+| 767px | Confirm still mobile 8px/44px footer, browser top-layer dialog | 420px right-aligned cap, viewport insets and scrolling | Source checks only |
+| 768px | Confirmation no longer receives mobile-only footer size override (shared desktop button styles); width still max36rem | Same 420px max, desktop right-aligned | Source checks only |
+| 1024px desktop | Native modal/focus and nonpending close; 21px confirm footer spacing remains scoped | Right-edge stack, timed statuses and persistent error feedback | Source checks only |
+| Reduced motion | Shared Dialog closes immediately when `matchMedia(prefers-reduced-motion: reduce)` is true (`src/components/ui/use-overlay-exit.ts:25-36`) | Existing CSS suppresses entrance animations (`legacy-overlays.css:376-384`); content still dismissible | Code-path inspected; not tested in a browser |
+| Pending/disabled | Confirm disables cancel, confirm and backdrop/Escape dismissal by passing `dismissible={!pending}` | Error toasts remain dismissible independent of timed status stack | Source branch inspected; runtime not executed |
+
+### Search / grep provenance
+
+- **GitHub indexed default-branch search only**: `"fixed inset-0"` returned one `src/` file (`src/app/company-share/[token]/page.tsx`, previously confirmed as noninteractive watermark); `"role=\\"alertdialog\\""` returned the shared confirm and three TPO Dialog consumers; `"role=\\"dialog\\""` returned shared Popover and selector literals/CSS. `"<dialog"` returned **88** `src/` matches including imports and strings, so this last result cannot distinguish JSX from imports or prove zero raw dialogs.
+- **Branch HEAD direct file-content checks**: fetched `src/components/ui/toast.tsx`, `src/components/ui/confirm-action-dialog.tsx`, `src/components/ui/legacy-overlays.css` after edits. Verified `<Dialog>` / `</Dialog>`, both `Button` closures, `ToastContext.Provider` pair, toast `<section>` closures, and scoped CSS selectors by inspection. All edited TSX shares a complete return tree.
+- **Still required checkout grep**: `git grep -n 'fixed inset-0' -- src`, `git grep -n '<dialog' -- src`, `git grep -n 'role="alertdialog"' -- src`, `git grep -n 'data-slot="toast-stack"' -- src` and follow up every actual raw JSX match, including dynamic class compositions. Indexed GitHub search is not equivalent.
+- **Still required actual device proof**: 375/640/767/768/1024px, long toast strings, multiple persistent errors, focus recovery, keyboard overlay while resizing visualViewport, pending confirm, 44px targets and reduced-motion close. The supplied legacy files do not provide a canonical toast duration/exit policy.
+
+### File-level completion for this batch (source stage)
+
+- [x] `src/components/ui/toast.tsx` — responsive fixed-width cap, persistence/read-time/keyboard/safe-area source sweep; native JSX closures re-read; legacy timing **still unproven**.
+- [x] `src/components/ui/confirm-action-dialog.tsx` — confirmation-only legacy geometry hook, pending and role/focus source sweep; paired JSX re-read.
+- [x] `src/components/ui/legacy-overlays.css` — exact confirm 15/15/5 + 21px + mobile 8px/44px, no changes to unrelated dialogs or sheets.
+
+**CATEGORY GATES remain: F1 [ ], F2 [ ].** A source-edited file is not full parity unless all values, real viewport behavior, and checkout grep pass the STRICT TICK RULE.
+
+**Next source file:** `src/components/ui/overlay-close-icon.tsx` and `src/components/ui/use-overlay-exit.ts` (confirm/drawer glyph, reduced-motion exit), then continue F1 consumer audit for raw native modal declarations.

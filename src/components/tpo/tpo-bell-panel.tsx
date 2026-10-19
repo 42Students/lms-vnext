@@ -13,33 +13,6 @@ import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-mo
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
 export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{initialUnread:number;items:readonly BellItem[];revision?:number;compact?:boolean}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
- const [mobile,setMobile]=useState(false);
- const root=useRef<HTMLDivElement>(null);
- const trigger=useRef<HTMLButtonElement>(null);
- const [allReadRevision,setAllReadRevision]=useState<number|null>(null);
- const [readIds,setReadIds]=useState<string[]>([]);
- const [latest,setLatest]=useState<{items:BellItem[];unread:number}|null>(null);
- const [refreshing,setRefreshing]=useState(false);
- useEffect(()=>{
-  const media=window.matchMedia("(max-width: 767px)");
-  const update=()=>setMobile(media.matches);
-  update();
-  media.addEventListener("change",update);
-  return ()=>media.removeEventListener("change",update);
- },[]);
- useEffect(()=>{
-  if(!open||mobile)return;
-  const onPointer=(event:PointerEvent)=>{
-   if(root.current&&event.target instanceof Node&&!root.current.contains(event.target))setOpen(false);
-  };
-  const onKey=(event:globalThis.KeyboardEvent)=>{
-   if(event.defaultPrevented||event.key!=="Escape")return;
-   event.preventDefault();setOpen(false);trigger.current?.focus();
-  };
-  document.addEventListener("pointerdown",onPointer);
-  document.addEventListener("keydown",onKey);
-  return ()=>{document.removeEventListener("pointerdown",onPointer);document.removeEventListener("keydown",onKey);};
- },[open,mobile]);
  const refreshInFlight=useRef(false);
  const root=useRef<HTMLDivElement>(null);
  const trigger=useRef<HTMLButtonElement>(null);
@@ -170,7 +143,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
       <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>
     </svg>
     {unread>0?<span aria-hidden="true"
-      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-surface bg-[var(--lms-topbar-unread)] px-0.5 text-[10px] font-bold leading-none text-white">
+      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-surface bg-[var(--lms-notification-unread,#ff7576)] px-0.5 text-[10px] font-bold leading-none text-white">
       {unread>99?"99+":unread}
     </span>:null}
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
