@@ -38,7 +38,7 @@ export default async function MentorTaskReviewsPage({
     age:raw.age,version:raw.version,order:raw.order,
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid task review filters</h1>
+    <PageHeader title="Invalid task review filters" />
     <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Clear filters
     </Link>
