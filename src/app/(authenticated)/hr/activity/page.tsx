@@ -28,7 +28,7 @@ export default async function HrJobActivityPage({searchParams}:{
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    {result.choices.map(grant=><Link key={grant.id}
     href={"/hr/activity?collegeId="+encodeURIComponent(grant.collegeId)}
-    className="block rounded-[var(--radius)] border border-border px-3 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11">{grant.collegeName}</Link>)}
+    className="block rounded-[var(--radius)] border border-border px-3 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
    {result.choices.length>1?<nav aria-label="College activity filter" className="flex flex-wrap gap-2">
     {result.choices.map(grant=><Link key={grant.id}
@@ -40,8 +40,8 @@ export default async function HrJobActivityPage({searchParams}:{
      <input type="hidden" name="kind" value={input.data.kind}/>
      <label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</label>
      <input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
-       placeholder="Search hiring drive titles" className="min-h-11 min-w-48 flex-1 rounded-[var(--radius)] border border-border bg-surface px-3 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
-     <button type="submit" className="min-h-11 rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Search</button>
+       placeholder="Search hiring drive titles" className="min-h-9 min-w-48 flex-1 rounded-[var(--radius)] border border-border bg-surface px-3 text-base sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
+     <button type="submit" className="min-h-9 rounded-[var(--radius)] border border-border px-4 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Search</button>
    </form>
    <nav aria-label="Hiring activity event type" className="flex flex-wrap gap-2">
      {HR_ACTIVITY_FILTER_KINDS.map(kind=><Link key={kind}
@@ -60,7 +60,7 @@ export default async function HrJobActivityPage({searchParams}:{
      No visible publication or closure activity at this college.</p>}
    <div className="flex justify-end">
      <Link href={"/api/placements/recruiter/activity/export?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)}
-       className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+       className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
        Export activity CSV
      </Link>
    </div>
