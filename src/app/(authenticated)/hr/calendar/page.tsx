@@ -419,7 +419,7 @@ export default async function HrCalendarPage({
                 {HR_CALENDAR_CATEGORIES.map(option=><Link key={option}
                   href={calendarHref(anchor,view,option)}
                   aria-current={category===option?"page":undefined}
-                  className={category===option ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
+                  className={category===option ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
                   {option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
                     option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds"}
                 </Link>)}
@@ -443,8 +443,8 @@ export default async function HrCalendarPage({
                     }
                     className={
                       view === option
-                        ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold capitalize text-foreground"
-                        : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold capitalize text-body hover:text-primary-text"
+                        ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold capitalize text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                        : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold capitalize text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                     }
                   >
                     {option}
