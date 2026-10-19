@@ -456,12 +456,12 @@ export default async function HrPlacementJobPage({
         ))}
         <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
           aria-current={requestsTab?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className={requestsTab ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text"}>
           Requests{requestData?" ("+requestData.requests.length+")":""}
         </Link>
         <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}
           aria-current={discussionTab?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className={discussionTab ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text"}>
           Discussion
         </Link>
         <Link href={hrDriveMessagesHref(workspace.job.id)}
