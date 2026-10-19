@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -149,10 +150,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content");}
   finally{setBusy(false);}
  }
- return <section className="space-y-3 rounded border border-border bg-surface p-4">
+ return <section className="space-y-3 border-b border-border pb-5">
   <div className="flex flex-wrap items-center gap-3">
-   <h2 className="font-semibold">{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
-   <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
+   <h2 className="font-semibold text-foreground">{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
+   <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9" disabled={!lessons.length
     onClick={fresh}>{text}</Button>
   </div>
   {!lessons.length&&<p className="text-sm">Create a course offering, learning path and lesson before adding content.</p>}
@@ -231,11 +232,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    <label className="grid gap-1 text-sm font-semibold">Search Existing Content
     <Input type="search" maxLength={100} value={listQuery} onChange={event=>setListQuery(event.target.value)}
      placeholder="Content title, Lesson or Course code"
-     className="min-h-10 max-w-2xl rounded border border-border bg-background p-2"/>
+     className="min-h-11 w-full max-w-2xl md:min-h-9"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold">Lesson
     <Select value={listLessonId} onChange={event=>{setListLessonId(event.target.value);setListSectionId("");}}
-     className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
+     className="min-h-11 w-full max-w-2xl md:min-h-9">
      <option value="">All Lessons</option>
      {lessons.map(row=><option key={row.id} value={row.id}>{row.courseCode} · {row.name}</option>)}
     </Select>
@@ -243,7 +244,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    <label className="grid gap-1 text-sm font-semibold">Section
     <Select value={listSections.some(row=>row.deliveryId===listSectionId)?listSectionId:""}
      onChange={e=>setListSectionId(e.target.value)}
-     className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
+     className="min-h-11 w-full max-w-2xl md:min-h-9">
      <option value="">Showing every section&apos;s content together</option>
      {listSections.map(row=><option key={row.deliveryId} value={row.deliveryId}>
       {row.sectionName} ({row.sectionCode})</option>)}
@@ -260,12 +261,12 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
         ((deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"Section")+" ("+
          (deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionCode??"")+")"):"One section":"All sections taking this course"})</span></span>
     <div className="flex gap-2">
-     {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
+     {item.externalUrl&&<a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
       {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}</a>}
      <label className="flex items-center gap-1 text-xs">Order
       <Input type="number" min={1} max={10001} value={orderDraft[item.id]??String(item.sequence+1)}
        onChange={e=>setOrderDraft(old=>({...old,[item.id]:e.target.value}))}
-       className="w-16 rounded border border-border bg-background p-1"/>
+       className="min-h-11 w-20 md:min-h-9"/>
      </label>
      <Button type="button" variant="link" disabled={busy} onClick={()=>void saveOrder(item)}>Save order</Button>
      {kind==="RESOURCE"&&materialsEnabled?<Button type="button" className="underline"
@@ -282,7 +283,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        deliveryId={item.deliveryId} editable/>:null}
    </li>)}</ul>
   </div>}
-  {error&&<p role="alert" className="text-sm text-error">{error}</p>}
-  {message&&<p role="status" className="text-sm">{message}</p>}
+  {error&&<Alert tone="error">{error}</Alert>}
+  {message&&<Alert tone="success">{message}</Alert>}
  </section>;
 }
