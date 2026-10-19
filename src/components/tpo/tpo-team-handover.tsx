@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Select } from "@/components/ui/select";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -9,14 +10,15 @@ export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
  sourceMembershipId:string;sourceName:string;members:Member[];
 }){
  const router=useRouter(),pending=useRef(false);
+ const {askConfirm,dialog}=useConfirmFlow();
  const [target,setTarget]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[message,setMessage]=useState("");
  const successor=members.find(member=>member.membershipId===target);
  async function handover(){
   if(pending.current||!successor||sourceMembershipId===target)return;
-  if(!window.confirm("Hand over "+sourceName+"'s placement work to "+successor.displayName+
+  if(!(await askConfirm("Hand over "+sourceName+"'s placement work to "+successor.displayName+
    "? Drives, companies, recruiter leads and follow-ups will be reassigned. "+
-   "This does not remove team access or transfer private asks."))return;
+   "This does not remove team access or transfer private asks.")))return;
   pending.current=true;setBusy(true);setError("");setMessage("");
   try{
    const result=await apiFetch<{counts:{drives:number;companies:number;recruiterLeads:number;followups:number};roleRevoked:false}>(
@@ -47,5 +49,6 @@ export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
   </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {dialog}
  </section>;
 }

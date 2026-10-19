@@ -1,13 +1,15 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label:string;version:string;value:boolean|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const {askConfirm,dialog}=useConfirmFlow();
  async function update(next:boolean){
   if(busy||next===value)return;
-  if(!window.confirm("Change what counts as placed? Offers from "+label+
-   " may change placement numbers once the drive and report consumers are connected."))return;
+  if(!(await askConfirm("Change what counts as placed? Offers from "+label+
+   " may change placement numbers once the drive and report consumers are connected.")))return;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/settings/job-types/"+encodeURIComponent(id)+"/placed",{
@@ -25,11 +27,12 @@ export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label
   <p className="text-xs text-muted-foreground">Counts as placed</p>
   <div className="flex gap-2">
    <Button variant={value===true?"primary":"secondary"} type="button" disabled={busy} aria-pressed={value===true} onClick={()=>void update(true)}
-    className="min-h-11 px-3 sm:min-h-9">Yes</Button>
+    className="min-h-11 px-3 min-[768px]:min-h-9">Yes</Button>
    <Button variant={value===false?"primary":"secondary"} type="button" disabled={busy} aria-pressed={value===false} onClick={()=>void update(false)}
-    className="min-h-11 px-3 sm:min-h-9">No</Button>
+    className="min-h-11 px-3 min-[768px]:min-h-9">No</Button>
   </div>
   {value===null?<p className="text-xs text-muted-foreground">Not decided</p>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  {dialog}
  </div>;
 }

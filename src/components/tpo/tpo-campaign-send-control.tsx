@@ -42,7 +42,7 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
    The system rechecks every contact before attempting delivery.
   </p>}
   <Button variant="primary" type="button" disabled={!ready||busy||recipients===0}
-   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
+   className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
    onClick={()=>setConfirmOpen(true)}>{busy?"Sending…":"Send campaign"}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
     title={"Send to up to "+recipients+" selected recruiter emails?"}
@@ -52,6 +52,6 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
    {outcome.sent} accepted by provider · {outcome.failed} failed · {outcome.skipped} skipped.
    Provider acceptance does not prove delivery.
   </p>:null}
-  {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
 }

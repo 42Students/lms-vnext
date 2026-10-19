@@ -162,23 +162,24 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
       <Dialog open={open} onOpenChange={next=>{if(!next)close();}}
          title="Import recruiter leads" dismissible={!busy}
          description="Review every imported row before creating any recruiter leads.">
-          <section className="space-y-4">
+          <section className="min-w-0 space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p id="recruiter-import-help" className="mt-2 text-sm text-body">
+                <p id="recruiter-import-help" className="text-sm text-body">
                   Upload CSV or Excel (.xlsx), with the required headings:
                   name, email, phone, companyName, designation, source.
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
                 </p>
               </div>
-              <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={close} disabled={busy}>
+              <Button variant="secondary" type="button" className="min-h-11 shrink-0 md:min-h-9 print:hidden" onClick={close} disabled={busy}>
                 Close
               </Button>
             </div>
+            <p aria-label="Recruiter import steps" className="border-b border-border pb-3 text-xs text-muted-foreground">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p>
             <a
               download="recruiter-leads-template.csv"
               href={"data:text/csv;charset=utf-8," + encodeURIComponent(template)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden"
+              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden"
             >
               Download CSV template
             </a>
@@ -193,7 +194,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   {previewStatus==="checking"?" Checking for existing recruiters…":previewStatus==="ready"?" Existing contacts checked in this college.":" Existing recruiter check is required before import."}
                   {preview.ignoredHeaders.length? " Ignored columns: "+preview.ignoredHeaders.join(", ")+".":""}
                 </p>
-                <p className="text-sm text-body">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
+                <p className="text-sm text-body" role="status">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
                 <div className="flex flex-wrap gap-2 print:hidden">
                   <Button className="min-h-11 md:min-h-9" type="button" variant="secondary" disabled={busy||Boolean(result)}
                     onClick={()=>{setReviewReady(false);
@@ -221,12 +222,12 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"status",header:"Validation",mobilePriority:"secondary",cell:item=><span>
                         <StatusBadge tone={item.error?"error":existingNumbers.has(item.row)?"info":skipRows.includes(item.row)?"warning":"success"}>{item.error??(existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}</StatusBadge>
                         {existing.find(entry=>entry.row===item.row)?
-                          <Link className="ml-2 inline-flex min-h-11 items-center text-primary-text underline" href={"/tpo/recruiters/"+existing.find(entry=>entry.row===item.row)!.leadId}>Open</Link>:null}
+                          <Link className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={"/tpo/recruiters/"+encodeURIComponent(existing.find(entry=>entry.row===item.row)!.leadId)}>Open</Link>:null}
                       </span>},
-                      {key:"include",header:"Include",mobilePriority:"action",cell:item=><Checkbox aria-label={"Include row "+item.row}
+                      {key:"include",header:"Include",mobilePriority:"action",cell:item=><label className="inline-flex min-h-11 items-center gap-2 text-sm"><Checkbox aria-label={"Include row "+item.row}
                         disabled={!item.lead||existingNumbers.has(item.row)||busy||Boolean(result)}
                         checked={Boolean(item.lead)&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)}
-                        onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/>},
+                        onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/> Include</label>},
                     ]}/>
                 </ScrollCue>
                 {reviewReady&&!result ? <p role="status" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body">
@@ -278,7 +279,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="created"?"success":item.status==="duplicate"?"info":item.status==="invalid"?"error":"warning"}>{item.status}</StatusBadge>},
                       {key:"details",header:"Details",mobilePriority:"secondary",cell:item=>item.leadId?
                         <Link href={"/tpo/recruiters/"+encodeURIComponent(item.leadId)}
-                          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+                          className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                           Open created lead
                         </Link>:(item.reason??"—")},
                     ]}/>

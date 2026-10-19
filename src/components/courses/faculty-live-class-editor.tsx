@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {useMemo,useState} from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import {facultyLiveEditorCommand} from "@/modules/courses/faculty-live-editor-command";
@@ -103,38 +104,38 @@ export function FacultyLiveClassEditor({
       Enter meeting times in IST (Asia/Kolkata), regardless of your device time zone.
       Each confirmed write is scoped to your assigned Section. HTTPS links only.
     </p>
-    <div className="grid gap-3 sm:grid-cols-2">
-      <label className="grid gap-1 text-sm">Action
+    <div className="grid gap-3 md:grid-cols-2">
+      <label className="grid gap-1 text-[13px] font-semibold">Action
         <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
-          className="text-base sm:text-sm">
+          className="text-base md:text-sm">
           <option value="CREATE">Schedule</option><option value="EDIT">Reschedule / edit</option>
           <option value="CANCEL">Cancel</option>
         </Select>
       </label>
       {action==="CREATE"?
-        <label className="grid gap-1 text-sm">Lesson
+        <label className="grid gap-1 text-[13px] font-semibold">Lesson
           <Select value={lessonId} onChange={e=>setLessonId(e.target.value)}
-            className="text-base sm:text-sm">
+            className="text-base md:text-sm">
             {choices.map(x=><option key={x.id} value={x.id}>
               {x.title} · Section {x.deliveryId.slice(0,8)}
             </option>)}
           </Select>
         </label> :
-        <label className="grid gap-1 text-sm">Published session
+        <label className="grid gap-1 text-[13px] font-semibold">Published session
           <Select value={selectedId} onChange={e=>preloadSession(e.target.value)}
-            className="text-base sm:text-sm">
+            className="text-base md:text-sm">
             {sessions.map(x=><option key={x.id} value={x.id}>{facultyLiveSessionOption(x)}</option>)}
           </Select>
         </label>}
       {action!=="CANCEL"&&<>
-        <label className="grid gap-1 text-sm">Title
+        <label className="grid gap-1 text-[13px] font-semibold">Title
           <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={160}
-            required className="text-base sm:text-sm" />
+            required className="text-base md:text-sm" />
         </label>
-        <label className="grid gap-1 text-sm">HTTPS meeting link
+        <label className="grid gap-1 text-[13px] font-semibold">HTTPS meeting link
           <Input type="url" value={meetingUrl} onChange={e=>setMeetingUrl(e.target.value)}
             placeholder="https://..." required
-            className="text-base sm:text-sm" />
+            className="text-base md:text-sm" />
         </label>
         <FacultyIstQuarterHourPicker label="Start" value={startsAt} onChange={setStartsAt}/>
         <FacultyIstQuarterHourPicker label="End" value={endsAt} onChange={setEndsAt}/>
@@ -145,13 +146,11 @@ export function FacultyLiveClassEditor({
     </p>:null}
     {action!=="CANCEL"&&(startsAt&&facultyIstQuarterHourIssue(startsAt)||
       endsAt&&facultyIstQuarterHourIssue(endsAt))?
-      <p role="alert" className="text-xs text-warning">
-        Select quarter-hour start and end times before saving.
-      </p>:null}
+      <Alert tone="warning">Select quarter-hour start and end times before saving.</Alert>:null}
     {!ready?<p className="text-sm text-muted-foreground">
       {action==="CREATE"?"No registered lessons are available to schedule.":"No editable published session is available on this page."}
     </p>:null}
-    <Button type="button" disabled={!ready||pending} onClick={()=>void save()} variant={action==="CANCEL"?"danger":"primary"}>
+    <Button type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]" loading={pending} disabled={!ready||pending} onClick={()=>void save()} variant={action==="CANCEL"?"danger":"primary"}>
       {pending?"Saving…":"Confirm "+(action==="CREATE"?"schedule":action==="EDIT"?"edit":"cancel")}
     </Button>
     <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
@@ -159,7 +158,7 @@ export function FacultyLiveClassEditor({
       confirmLabel={"Confirm "+(action==="CREATE"?"schedule":action==="EDIT"?"edit":"cancel")}
       confirmVariant={action==="CANCEL"?"danger":"primary"} pending={pending}
       onConfirm={()=>void save(true)} />
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-    {success?<p role="status" className="text-sm font-semibold text-foreground">{success}</p>:null}
+    {error?<Alert tone="error">{error}</Alert>:null}
+    {success?<Alert tone="success">{success}</Alert>:null}
   </section>;
 }

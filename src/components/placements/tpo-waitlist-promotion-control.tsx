@@ -1,5 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -32,12 +35,12 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
    {preview.freeSeats===null?"No fixed openings recorded":preview.freeSeats+" available seat(s)"}
    {" · "}{preview.activeOffers} active issued/accepted offers.
   </p>
-  {!preview.storageReady?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
-   Waitlist promotion storage is not registered yet. No promotion can be released.</p>:null}
+  {!preview.storageReady?<Alert tone="warning">
+   Waitlist promotion storage is not registered yet. No promotion can be released.</Alert>:null}
   <p className="text-sm text-body">{preview.rows.filter(row=>row.canPromote).length} waitlisted learner(s) currently pass preliminary checks; {preview.rows.filter(row=>!row.canPromote).length} have a blocking reason. The next eligible rank is shown below.</p>
   <DataTable<(typeof preview.rows)[number]> caption="Applied waitlist results"
    rows={preview.rows} getRowKey={row=>row.applicationId}
-   empty={<p role="status">No applied waitlist results in the final round.</p>}
+   empty={<EmptyState title="No applied waitlist results in the final round."/>}
    columns={[
     {key:"rank",header:"Rank",mobilePriority:"secondary",cell:row=>row.rank},
     {key:"student",header:"Student",mobilePriority:"primary",cell:row=><strong>{row.name}</strong>},
@@ -61,9 +64,9 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     title={preview.next?"Verify and release one offer to "+preview.next.name+" (waitlist rank "+preview.next.rank+")?":"Verify and release one offer?"}
     description="This issues a real offer and records the seat."
     confirmLabel="Verify and release next offer" onConfirm={()=>void promote()}/>
-  {success?<p role="status">{success}</p>:null}
+  {success?<InlineNotice tone="success" message={success}/>:null}
   <Button variant="secondary" type="button" disabled={busy} onClick={()=>router.refresh()}
     className="min-h-11 md:min-h-9 px-3">Refresh waitlist and seats</Button>
-  {error?<p role="alert" className="text-foreground">{error} Refresh the preview before retrying.</p>:null}
+  {error?<InlineNotice tone="error" message={error+" Refresh the preview before retrying."}/>:null}
  </section>;
 }

@@ -1,4 +1,5 @@
 "use client";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
@@ -9,11 +10,12 @@ import {collegeProjectStatusChangeAllowed} from "@/modules/projects/college-proj
 type Project={id:string;title:string;summary:string|null;status:string};
 export function CollegeProjectSummaryEditor({project}:{project:Project}){
  const router=useRouter(),[open,setOpen]=useState(false),[busy,setBusy]=useState(false);
+ const {askConfirm,dialog}=useConfirmFlow();
  const [title,setTitle]=useState(project.title),[summary,setSummary]=useState(project.summary??""),
   [status,setStatus]=useState(project.status),[error,setError]=useState(""),[success,setSuccess]=useState("");
  async function save(){
   if(busy||!title.trim())return;
-  if(!window.confirm("Save workspace summary changes?"))return;
+  if(!(await askConfirm("Save workspace summary changes?")))return;
   setBusy(true);setError("");setSuccess("");
   try{
    const res=await fetch("/api/projects/"+encodeURIComponent(project.id),{
@@ -53,5 +55,6 @@ export function CollegeProjectSummaryEditor({project}:{project:Project}){
   </div>}
   {error&&<p role="alert" className="mt-2 text-error">{error}</p>}
   {success&&<p role="status" className="mt-2">{success}</p>}
+   {dialog}
  </section>;
 }

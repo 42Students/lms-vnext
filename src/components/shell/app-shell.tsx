@@ -52,6 +52,7 @@ export async function AppShell({
   const tpoVerificationEnabled=hasMembershipRole(context,"TPO")
     ?await getTpoShellVerificationAccess(context):false;
   const navigation=getShellNavigation(context,learnerAccess,tpoVerificationEnabled);
+   const homeHref=navigation[0]?.href??"/dashboard";
   const currentMembership = context.membership
     ? memberships.find(
         (membership) => membership.id === context.membership?.id,
@@ -76,14 +77,14 @@ export async function AppShell({
         <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-link focus:outline-2 focus:outline-[var(--lms-primary)]">Skip to content</a>
       <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar relative z-20 hidden h-screen shrink-0 flex-col md:flex">
         <div className="lms-sidebar-logo-row flex h-20 shrink-0 items-center justify-center border-b border-[var(--lms-sidebar-border)] px-2">
-          <Link href="/dashboard" aria-label="42Students LMS home"
+          <Link href={homeHref} aria-label="42Students LMS home"
             className="lms-sidebar-brand-link inline-flex h-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
             <span className="lms-sidebar-brand-mark"><ShellLogoMark /></span>
              <span className="lms-sidebar-brand-wordmark"><ShellLogoWordmark /></span>
           </Link>
         </div>
         <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4">
-          <ShellWidgetBoundary name="Sidebar navigation" fallbackHref="/dashboard"><SidebarNav items={navigation} /></ShellWidgetBoundary>
+          <ShellWidgetBoundary name="Sidebar navigation" fallbackHref={homeHref}><SidebarNav items={navigation} /></ShellWidgetBoundary>
         </div>
         <div className="lms-sidebar-role-details border-t border-[var(--lms-sidebar-border)] px-4 py-[25px]">
           <p className="m-0 text-xs font-semibold text-muted-foreground">

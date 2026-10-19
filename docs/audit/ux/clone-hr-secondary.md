@@ -248,3 +248,51 @@ Integration: the prior head `abca757a` was an ancestor of `main` `12ee0a58` (Git
 **STRICT TICK counts unchanged: 10/87 files closed** (non-rendering); 77 rendered files remain open pending measured legacy hover/focus/disabled, full coverage grep and phone/tablet/browser proofs. No additional visual file was ticked merely because an import or a visual class was repaired. All changes remained inside the secondary lane's owned files; no shared UI, CSS skin, shell or chat-15 HR primary page was edited.
 
 Next unticked file: `src/app/(authenticated)/hr/calendar/page.tsx` (mobile week/month/agenda and loaded calendar theme), then `src/app/(authenticated)/hr/conversations/page.tsx` (message list and filter states).
+
+
+## Chat-18 continuation: calendar, tracker errors and responsive secondary search (2026-10-19)
+
+The prior branch was contained in main (GitHub compare: 0 ahead, 978 behind). It was fast-forwarded with an expected-head lease to main 68d52934. Existing chat-18 work was preserved.
+
+### Exact source-value and responsive proof for this batch
+
+| Property and state | Legacy source + value | vNext source + value | Result |
+| --- | --- | --- | --- |
+| Calendar separator | legacy-styles/components___variables.scss:275 = #dddddd52 | legacy-calendar-theme.module.css:7-11 uses #dddddd52; hr/calendar/page.tsx:520 uses hairline variant and CSS module | Declared paint matches |
+| Weekday/day white surface | old-lms-pages.md:4-6 white continuous canvas, plus legacy calendar variables | legacy-calendar-theme.module.css:12-17 = #fff; hr/calendar/page.tsx:532,556 applies weekday/day classes | Source match |
+| Day corner | old calendar flat hairline grid from variables.scss:275 | legacy-calendar-theme.module.css:13-17 radius 0!important; removed per-day rounded and muted background | Source match |
+| Sunday | legacy-styles/components___variables.scss:273 = #ff7576 | legacy-calendar-theme.module.css:18-21 and calendar/page.tsx:532,567 = #ff7576 | Exact token match |
+| Current day | legacy-styles/components___variables.scss:272 = #26bac7 | legacy-calendar-theme.module.css:22-25; calendar/page.tsx:557 applies inset 2px teal ring to current day | Exact token match |
+| Calendar phone and tablet | old-lms-shell.css:73 uses max-width 767px mobile breakpoint | hr/calendar/page.tsx:496-520: md:hidden stacked mobile, md:grid 7-column desktop, md:overflow-x-auto and 56rem min width for tablet | Source breakpoint proof only |
+| Mobile toolbar search | legacy-styles/components___listing-page-header.scss:131-164 gives full-width search and 44px mobile touch height | hr/activity/page.tsx:47-53, hr/notifications/page.tsx:63-69, hr/company/page.tsx:181-188, hr/conversations/page.tsx:148-160, tracker-report-form.tsx:217-225: basis-full below 768px; 44px actions | Matches declared breakpoint/size, computed state open |
+| Desktop toolbar controls | old-lms-shell-spec.md:25-27: 36px | same search files use md:min-h-9 (36px) and md:basis-auto at 768px+; Button appearance inherited from chat-17 | Matches local declaration |
+| Error one-canvas hierarchy | old-lms-pages.md:4-6 one page head above one canvas, no separate full-screen takeover | Seven tracker error.tsx files now pass insideShell to GracefulErrorBoundary; hr/conversations/error.tsx renders PageHeader before ErrorState | Source anatomy match; inherited styles unverified |
+| Preserved interactions | legacy page actions remain inside head/content canvas | Query params, calendar date navigation and IST formatting, recruiter reply state and retry callback preserved; no new wrapper canvas | Source-only check |
+
+### Exhaustive scoped source-pattern scan (87 of 87 files)
+
+All 87 queue files were fetched from the chat-18 branch source and checked in batches for these literal source patterns. This is a GitHub-file source-equivalent search, NOT a shell grep, compiler or browser run.
+
+| Read-only pattern | Count | Explanation |
+| --- | ---: | --- |
+| Opening raw button/input/select/textarea/table tags | 1 | tracker/audit-findings/page.tsx:99 is input type=hidden name=view; deliberately exempt as nonvisual |
+| Six-digit literal hex colours in TSX | 0 | All 87 queue files |
+| Own h1 tags | 0 | Shared PageHeader used |
+| Hand-coded border-b-2 tab instances | 0 | Shared Tabs or existing legacy primitives used |
+| fixed inset-0 or role=dialog literal | 1 textual; 0 authored overlays | recruiter-conversation-live-refresh.tsx:15 is a querySelector string inspecting an existing dialog; no overlay generated |
+
+Reproducible repository shell command (not executed here):
+    node scripts/codemods/chat18-source-audit.cjs
+    grep -rnE '<(button|select|input|textarea|table)([ >])|#[0-9a-fA-F]{6}|fixed inset-0' 'src/app/(authenticated)/hr' 'src/app/(authenticated)/recruiter' 'src/app/(authenticated)/tracker' src/components/hr src/components/tracker
+
+The tracker route-error repeated pattern is represented by scripts/codemods/chat18-tracker-error-inside-shell.cjs, with all seven transformed pages committed atomically. The three HR search bars are represented by scripts/codemods/chat18-responsive-search.cjs; both scripts are idempotent and were NOT executed. Additional unique judgement fixes were made in the HR conversation, calendar, and tracker-report components.
+
+### Scope and source re-read verification
+
+17 TSX files touched: hr/calendar/page.tsx; hr/calendar/error.tsx; hr/activity/page.tsx; hr/notifications/page.tsx; hr/company/page.tsx; hr/conversations/page.tsx; hr/conversations/error.tsx; hr/conversations/[threadId]/page.tsx; components/hr/recruiter-conversation-reply-form.tsx; components/tracker/tracker-report-form.tsx; and seven tracker error files named in the tracker error codemod.
+
+Read back the most complex eight files after the mutations: paired div/section/ol/li/Button/Link/Card/CalendarGrid tags checked for balanced opening/closing, zero duplicate named imports. Missing redundant EmptyState import was removed from conversation detail; unused Alert removed from calendar error and recruiter composer. This is NOT TypeScript strict compile or runtime proof.
+
+STRICT TICK RULE: 10/87 existing non-rendering ticks remain; **77 visual items stay open**. The exact shared component computed values (hover, active, keyboard focus, disabled, error/loading) and side-by-side real phone/tablet/desktop visual comparison were not available in this lane. No new visual item is falsely ticked on source-only evidence. No shared UI, global skin, or chat-15 primary HR pages were edited.
+
+Next unticked file: src/app/(authenticated)/hr/calendar/page.tsx — measured phone 375px / tablet 768px / desktop 1280px calendar states, followed by src/app/(authenticated)/hr/conversations/page.tsx.

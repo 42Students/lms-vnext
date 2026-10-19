@@ -6,6 +6,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {useToast} from "@/components/ui/toast";
 
@@ -74,7 +75,7 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
       <Button variant="secondary" type="button" disabled={pending||guardedPending} onClick={()=>open("REJECT")}
         >Reject</Button>
     </div>
-    {!mode&&error?<p role="alert" className="text-error">{error}</p>:null}
+    {!mode&&error?<InlineNotice tone="error" message={error}/>:null}
     <Dialog open={mode!==null} onOpenChange={value=>{if(!value&&!pending)setMode(null);}}
       title={mode==="APPROVE"?"Approve this request?":"Reject this request"}
       description={mode==="APPROVE"?impact(requestType):
@@ -100,7 +101,7 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
         <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
           disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
       </label>:null}
-      {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
+      {error?<InlineNotice tone="error" message={error}/>:null}
     </Dialog>
   </div>;
 }

@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import {useEffect,useState} from "react";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import Link from "next/link";
@@ -54,6 +55,6 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
       }
       setHasDraft(false);setConfirmDiscard(false);setError("");
     }}/>
-   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+   {error?<InlineNotice tone="error" message={error}/>:null}
  </Alert>;
 }

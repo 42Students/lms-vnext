@@ -13,7 +13,7 @@ export default async function LearnerAcademicRecordPage(){
   <PageHeader title="Academic record" description="Your college-recorded current program enrollment."/>
   <section className="border-t border-border pt-5">
    <h2 className="text-base font-semibold text-foreground">Current academic enrollment</h2>
-   {record.enrollment?<dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+   {record.enrollment?<dl className="mt-4 grid gap-4 text-sm md:grid-cols-2">
     {([
       ["Learner",record.title],["Program",record.enrollment.program],
       ["Program code",record.enrollment.programCode],["Batch / cohort",record.enrollment.cohort],

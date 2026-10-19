@@ -7,6 +7,7 @@ import {useState} from "react";
 import type {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
 import {DataTable} from "@/components/ui/data-table";
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "./college-learner-progress-report.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
 import {EmptyState} from "@/components/ui/empty-state";
 
@@ -29,7 +30,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     See measured completion for a class and course, then focus on the students furthest behind.
    </p>
   </div>
-  <form action="/college/course-progress" method="get" className="flex flex-wrap items-end gap-3">
+  <form action="/college/course-progress" method="get" className="flex flex-wrap items-end gap-3 print:hidden">
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Class
     <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
      className="min-h-11 md:min-h-9">
@@ -53,7 +54,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     Show progress
    </Button>
    <Link href="/college/course-progress"
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
     Clear
    </Link>
   </form>
@@ -71,7 +72,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
    <Link prefetch={false} download
     href={"/api/courses/college/learner-progress/export?"+
      new URLSearchParams({offeringId:report.chosen.offeringId,deliveryId:report.chosen.deliveryId}).toString()}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
     Export per-learner CSV
    </Link>
    <DataTable
@@ -83,9 +84,9 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
      {key:"student",header:"Student",mobilePriority:"primary" as const,cell:(row)=><strong className="break-words text-foreground">{row.name}</strong>},
      {key:"roll",header:"Roll number",mobilePriority:"secondary" as const,cell:(row)=>row.rollNumber??"—"},
      {key:"progress",header:"Progress",mobilePriority:"secondary" as const,
-      cell:(row)=><div className="flex flex-wrap items-center gap-2">
-       <MetricBar label={row.name+" progress"} role="progressbar" value={row.progress} maximum={100} unit="percent" className="w-24" />
-       <span className="tabular-nums">{row.progress}%</span>
+      cell:(row)=><div className={styles.progressCell}>
+       <MetricBar label={row.name+" progress"} role="progressbar" value={row.progress} maximum={100} unit="percent" className={styles.progressTrack} />
+       <span className={styles.progressValue}>{row.progress}%</span>
       </div>},
      {key:"videos",header:"Videos",mobilePriority:"secondary" as const,cell:(row)=>row.videoDone+"/"+report.totalVideos},
      {key:"assignments",header:"Assignments",mobilePriority:"secondary" as const,cell:(row)=>row.assignmentDone+"/"+report.totalAssignments},

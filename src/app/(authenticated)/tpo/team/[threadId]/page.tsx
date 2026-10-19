@@ -35,9 +35,9 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const result=await readTpoInternalConversation(context,parsed.data,parsedPage.data);
  if(result.status==="NOT_FOUND")notFound();
  if(result.status==="NOT_REGISTERED")return <div className="space-y-4">
-   <PageHeader eyebrow="TPO · Team" title="Conversations unavailable"/>
+   <PageHeader title="Conversations unavailable"/>
    <p role="status">Private messaging tables are not registered.</p>
-   <Link href="/tpo/team" className="text-link lms-inline-link">Back to team</Link>
+   <Link href="/tpo/team" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link lms-inline-link">Back to team</Link>
  </div>;
  const preferences=await getTpoTeamThreadPreferences(context,parsed.data);
  const asks=await listTpoTeamAsks(context,parsed.data).catch(()=>({status:"FAILED" as const,items:[]}));
@@ -53,9 +53,9 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const serverNow=new Date();
  return <div className="space-y-5">
   <TpoLiveRefresh intervalMs={30000}/>
-  <PageHeader eyebrow="TPO · Team" title={result.thread.topic}
+  <PageHeader title={result.thread.topic}
    description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}/>
-  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-9 sm:min-h-9 items-center text-link lms-inline-link">All conversations</Link>
+  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link lms-inline-link">All conversations</Link>
   <TpoTeamOpenRead threadId={result.thread.id}/>
   <TpoTeamRename threadId={result.thread.id} currentTopic={result.thread.topic}/>
   <TpoTeamThreadDetails threadId={result.thread.id} topic={result.thread.topic}
@@ -71,12 +71,11 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    recipientName={result.thread.counterpartName}
    items={asks.items.map(ask=>({...ask,dueAt:ask.dueAt?.toISOString()??null}))}
    highlightAskId={highlightAskId} serverNowMs={serverNow.getTime()}/>:asks.status==="FAILED"?
-   <p role="alert" className="text-sm text-danger">Could not load team asks. Other messages are still available.</p>:null}
+   <p role="alert" className="text-sm text-error">Could not load team asks. Other messages are still available.</p>:null}
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
-   <Button variant="secondary" type="submit"
-    >
+   <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9">
     Mark this conversation&apos;s alerts as read
    </Button>
   </form>
@@ -123,12 +122,12 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <span className="text-body">Page {result.page} of {result.pages}</span>
    {result.page < result.pages ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page+1)}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
+    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
     Older messages
    </Link> : null}
    {result.page > 1 ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page-1)}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
+    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
     Newer messages
    </Link> : null}
   </nav>

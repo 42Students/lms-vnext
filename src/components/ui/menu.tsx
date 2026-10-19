@@ -13,7 +13,7 @@ export function Menu({ className, onKeyDown, children, ...props }: MenuProps) {
     // Leave caret navigation inside embedded search fields untouched.
     if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
     const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('[role="menuitem"]:not(:disabled):not([aria-disabled="true"]), a[href]:not([aria-disabled="true"])'))
-      .filter(item => item.getClientRects().length > 0 && !item.closest("[hidden], [inert]"));
+      .filter(item => item.getClientRects().length > 0 && !item.closest("[hidden], [inert], [aria-disabled=\"true\"]"));
     const current = items.indexOf(document.activeElement as HTMLElement);
     if (items.length === 0 && event.key !== "Escape") return;
     let target = current;

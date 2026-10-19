@@ -4,6 +4,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {TpoBulkDriveReminder} from "./tpo-bulk-drive-reminder";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 type Action="CLOSE"|"CANCEL";
@@ -128,7 +129,7 @@ export function TpoDriveActOnPanel(){
      <Button variant="secondary" type="button" onClick={()=>void copyFailed()} >Copy failed</Button>
     </div>:null}
    </div>:null}
-   {notice?<p role="status" className="text-sm">{notice}</p>:null}
+   {notice?<InlineNotice tone="info" message={notice}/>:null}
   </div>:null}
   <ConfirmDialog open={confirmRetry!==null}
     onOpenChange={next=>{if(!next&&!pending)setConfirmRetry(null);}}

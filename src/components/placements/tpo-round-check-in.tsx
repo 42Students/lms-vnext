@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -52,7 +53,7 @@ export function TpoRoundCheckIn({
           Mark no-show
         </Button>
       ) : null}
-      {error ? <p role="alert" className="w-full text-xs text-error">{error}</p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
     </div>
   );
 }
