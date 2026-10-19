@@ -11,8 +11,8 @@ import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invali
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {Banner} from "@/components/ui/banner";
-import {EmptyState} from "@/components/ui/empty-state";
+import {Tabs} from "@/components/ui/tabs";
+import {Pagination} from "@/components/ui/pagination";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -45,10 +45,11 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">← Back to drive</Link>
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
    actions={<a href={csvHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Export filtered CSV</a>}/>
-  <Banner tone="warning">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</Banner>
-  <nav aria-label="Offer status" className="flex flex-wrap gap-1 border-b border-border">{tabs.map(([value,label,count])=>
-   <Link key={value} href={root+"/offers?status="+value+searchSuffix} aria-current={data.status===value?"page":undefined}
-    className={"inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold md:min-h-9 "+(data.status===value?"border-primary text-[var(--lms-teal-deep)]":"border-transparent text-body hover:border-border hover:text-foreground")}>{label} ({count})</Link>)}</nav>
+  <p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm text-body">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</p>
+  <Tabs ariaLabel="Offer status" renderPanel={false} value={data.status}
+    items={tabs.map(([value,label,count])=>({
+      value,label,count,href:root+"/offers?status="+value+searchSuffix,
+    }))}/>
   <form method="get" action={root+"/offers"} className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <input type="hidden" name="status" value={data.status}/>
    <label className="grid gap-1 text-sm font-semibold text-body">Joining outcome
@@ -105,11 +106,8 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     <Link className="text-[var(--lms-teal-deep)]" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
     {row.status==="ACCEPTED"?<Link className="text-[var(--lms-teal-deep)]" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
    </article>)}</section>}
-  <nav aria-label="Offer register pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-   <span className="text-body">Page {data.page} of {data.totalPages}</span>
-   <div className="flex gap-4">{data.page>1?<Link href={root+"/offers?status="+data.status+"&page="+(data.page-1)+searchSuffix} className="font-semibold text-[var(--lms-teal-deep)]">← Previous</Link>:null}
-    {data.page<data.totalPages?<Link href={root+"/offers?status="+data.status+"&page="+(data.page+1)+searchSuffix} className="font-semibold text-[var(--lms-teal-deep)]">Next →</Link>:null}</div>
-  </nav>
+  <Pagination label="Offer register pages" page={data.page} pageCount={data.totalPages}
+    hrefForPage={target=>root+"/offers?status="+data.status+"&page="+target+searchSuffix}/>
   <p className="text-xs text-muted-foreground">The CSV includes up to 5,000 matching offer versions, with a truncation row, formula-neutralized fields, learner email, phone and academic identifiers. Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
  </div>;
 }
