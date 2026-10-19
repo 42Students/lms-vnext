@@ -53,7 +53,43 @@
 @media (max-width: 991px) {
   .tpoCommandBar { min-width: 0; }
 }
+/*
+ * Mobile TPO view switch and three-way navigation:
+ * lms2-fe@prod-2026/_tpo-calendar.scss:349-385.
+ */
 @media (max-width: 767px) {
   .tpoCommandBar { padding: 13px; }
   .tpoMonthFrame { padding-inline: 13px; }
+  .tpoViewSwitch {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+  .tpoViewSwitch > a {
+    display: flex;
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .tpoNavigationRow {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    gap: 10px;
+  }
+  .tpoNavigationRow > a {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+  }
+  .tpoNavigationRow > span {
+    order: -1;
+    grid-column: 1 / -1;
+    margin-left: 0;
+  }
 }
