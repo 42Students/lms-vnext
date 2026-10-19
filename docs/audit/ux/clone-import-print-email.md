@@ -797,3 +797,78 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 **Responsive source proof:** all locally sized visible controls use `min-h-11` (44px) through 767px; where present, `md:min-h-9` lowers the minimum to 36px beginning 768px. Flex-wrapped filter strips remain multi-row on narrow screens; the roster's telephone/email links no longer shrink prematurely at 640px. `print:hidden` excludes controls; static report data remains, and the department sort header has a separate print-only label. Printed paginated rosters/results are not guaranteed to include every record. This is *not* a screenshot/device/actual print verification.
 
 **G4/G5 still [ ]**: old-LMS all-state value tables, global raw-control grep, print/PDF/certificate/offer-letter/receipt and provider-hosted email fixtures, browser screenshots and TypeScript proof are outstanding.
+
+## G4 staging and G5 email source proof — chat-6
+
+**Completed source files (not strict parity ticks):**
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx` — bulk round staging result preview, 25-learner review, warnings, per-learner CSV download, paper suppression of selection controls; preserved existing input, API and confirmation semantics. Fixed missing semantic error tone and detached download anchor only after click; URL revocation deferred.
+- [x] `src/app/(authenticated)/tpo/settings/templates/page.tsx` — read-only example email subjects and draft bodies now have static, complete, line-break-preserving **print-only** text, while interactive text controls and sidebar return navigation are suppressed on paper; all template words unchanged.
+- [x] `src/components/tpo/tpo-communication-settings-editors.tsx` — specifically **TPO email signature editor** keeps editable textarea on screen, but prints an identified static signature preview without input/character counter/save button. SMS cap and recruiter-duration editors in the same file were not redesigned.
+- [ ] **Next exact file:** `src/components/tpo/tpo-campaign-compose.tsx` — check message preview body, validation/error/loading values, 44px actions, printable draft/text without changing outbound delivery.
+
+### Legacy-to-vNext property tables
+
+Checked legacy references: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` = **44px** targets for phone max-width 767px; `docs/design/ui-clone-checklist.md:46-47` = **36px** desktop action height, radius **9px**, font **14px/650**. `docs/design/legacy-styles/components___accessibility.scss:18-21` = **2px** teal focus outline / **3px** offset. `docs/design/old-lms-pages.md:9` = table/divider/badge rules. These references are not provider-hosted email HTML or paper PDF templates.
+
+#### `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+
+| State/property | Exact old LMS file:line value | vNext source file:line value | Result |
+|---|---|---|---|
+| Phone hit minimum | `pages___admin-list-pages.scss:8,193-214` 44px until 767px | `src/components/placements/tpo-bulk-round-result-recorder.tsx:159, 163, 165, 171, 180, 198, 234, 251, 279`: `min-h-11` where editable action exists | Source token comparison only |
+| Tablet/desktop action | `ui-clone-checklist.md:46-47`: 36px/9px/14px 650 | `src/components/placements/tpo-bulk-round-result-recorder.tsx:159, 163, 165, 171, 180, 198, 234, 251, 279`: `md:min-h-9` where locally overridden | Source token; no computed CSS |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px | Shared controls inherit focus; template return link `src/components/placements/tpo-bulk-round-result-recorder.tsx:not present` uses 3px | Explicit link can match; shared Button 2px inherited offset is an open discrepancy |
+| Error/result/empty | `old-lms-pages.md:9` compact hairline/status states | `src/components/placements/tpo-bulk-round-result-recorder.tsx:261` alerts; `:146, 237, 263` statuses; `:not present` DataTable if used | Source-level only; exact legacy state pixels absent |
+| Paper/template output | No old-LMS print/email HTML reference checked in | `src/components/placements/tpo-bulk-round-result-recorder.tsx:152, 192, 206, 218, 230, 251, 279` 7 print-hidden modifiers; `:not present` static paper blocks | G5 historical parity unproven; actual print not rendered |
+| Existing workflow | Original legacy email/CSV result output unavailable | Existing shared Button/Select/Textarea/Checkbox drive reviewed CSV import and result rows; no table in this component, per-learner outcomes render as a structured list. Download is client Blob, and print hides all editable fields, with static preview and outcome summary remaining. | Business logic and copy preserved; no runtime test |
+
+#### `src/app/(authenticated)/tpo/settings/templates/page.tsx`
+
+| State/property | Exact old LMS file:line value | vNext source file:line value | Result |
+|---|---|---|---|
+| Phone hit minimum | `pages___admin-list-pages.scss:8,193-214` 44px until 767px | `src/app/(authenticated)/tpo/settings/templates/page.tsx:19, 25`: `min-h-11` where editable action exists | Source token comparison only |
+| Tablet/desktop action | `ui-clone-checklist.md:46-47`: 36px/9px/14px 650 | `src/app/(authenticated)/tpo/settings/templates/page.tsx:19, 25`: `md:min-h-9` where locally overridden | Source token; no computed CSS |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px | Shared controls inherit focus; template return link `src/app/(authenticated)/tpo/settings/templates/page.tsx:25` uses 3px | Explicit link can match; shared Button 2px inherited offset is an open discrepancy |
+| Error/result/empty | `old-lms-pages.md:9` compact hairline/status states | `src/app/(authenticated)/tpo/settings/templates/page.tsx:not present` alerts; `:not present` statuses; `:not present` DataTable if used | Source-level only; exact legacy state pixels absent |
+| Paper/template output | No old-LMS print/email HTML reference checked in | `src/app/(authenticated)/tpo/settings/templates/page.tsx:14, 19, 21, 25` 4 print-hidden modifiers; `:20, 22` static paper blocks | G5 historical parity unproven; actual print not rendered |
+| Existing workflow | Original legacy email/CSV result output unavailable | Text examples are sourced from `TPO_MANUAL_MESSAGE_TEMPLATES`; no email/SMS is sent. Static paper subject and body are derived from the same `item` with `whitespace-pre-wrap`, so long draft text is no longer dependent on a five-row textarea print viewport. | Business logic and copy preserved; no runtime test |
+
+#### `src/components/tpo/tpo-communication-settings-editors.tsx`
+
+| State/property | Exact old LMS file:line value | vNext source file:line value | Result |
+|---|---|---|---|
+| Phone hit minimum | `pages___admin-list-pages.scss:8,193-214` 44px until 767px | `src/components/tpo/tpo-communication-settings-editors.tsx:45, 49, 88, 120, 126`: `min-h-11` where editable action exists | Source token comparison only |
+| Tablet/desktop action | `ui-clone-checklist.md:46-47`: 36px/9px/14px 650 | `src/components/tpo/tpo-communication-settings-editors.tsx:88`: `md:min-h-9` where locally overridden | Source token; no computed CSS |
+| Keyboard focus | `components___accessibility.scss:18-21` 2px teal / 3px | Shared controls inherit focus; template return link `src/components/tpo/tpo-communication-settings-editors.tsx:not present` uses 3px | Explicit link can match; shared Button 2px inherited offset is an open discrepancy |
+| Error/result/empty | `old-lms-pages.md:9` compact hairline/status states | `src/components/tpo/tpo-communication-settings-editors.tsx:50, 89, 127` alerts; `:51, 90, 128` statuses; `:not present` DataTable if used | Source-level only; exact legacy state pixels absent |
+| Paper/template output | No old-LMS print/email HTML reference checked in | `src/components/tpo/tpo-communication-settings-editors.tsx:75, 81, 86, 88` 4 print-hidden modifiers; `:74` static paper blocks | G5 historical parity unproven; actual print not rendered |
+| Existing workflow | Original legacy email/CSV result output unavailable | Editor signature text is re-used verbatim in the on-screen preview `whitespace-pre-line`; the printed static preview is the same existing visual text. The actual outbound provider template and mail client appearance are not changed. | Business logic and copy preserved; no runtime test |
+
+### Scoped whole-file grep counts
+
+| Path | Raw lowercase button/input/select/textarea/table | Hex literals | Shared Button opening/closing |
+|---|---|---:|---:|
+| `src/components/placements/tpo-bulk-round-result-recorder.tsx` | 0/0/0/0/0 | 0 | 5/5 |
+| `src/app/(authenticated)/tpo/settings/templates/page.tsx` | 0/0/0/0/0 | 0 | 0/0 |
+| `src/components/tpo/tpo-communication-settings-editors.tsx` | 0/0/0/0/0 | 0 | 3/3 |
+
+Counts above are from full GitHub file reads and show **0 raw button/select/textarea/table controls**, no source-literal hex colors and equal shared Button opening/closing tags. `G4` and `G5` remain `[ ]`; no run of application, TypeScript compiler, tests, CI, responsive device or print PDF happened.
+
+Checkout reproduction (not executed):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+  src/components/placements/tpo-bulk-round-result-recorder.tsx \
+  'src/app/(authenticated)/tpo/settings/templates/page.tsx' \
+  src/components/tpo/tpo-communication-settings-editors.tsx
+```
+
+### G5 actual email and print ownership boundary
+
+| Property | Current actual source/value | Why parity stays open |
+|---|---|---|
+| OTP mail payload | `src/modules/notifications/zeptomail-email.ts:4-6,18-31,85-117`: POST to ZeptoMail template endpoint `https://api.zeptomail.in/v1.1/email/template`, external `template_key` and merge values `otp, learnerName, email, mobile, expiryMinutes` | The **HTML template itself is hosted outside this repository**; cannot inspect actual header, footer, fonts or button states by changing this provider. Existing HTML-sensitive display-name escaping is retained. |
+| Recruiter invitation | `src/modules/placements/tpo-recruiter-invite-email-delivery.ts:9-17,31-41`: verified opt-in template key and provider send with scoped variables | The provider-hosted invitation visual is not locally available. No unverified template send was attempted. |
+| Paper baseline | `src/app/(authenticated)/authenticated-print.css:1-80`: authenticated shell/sidebar removal, controls hidden, DataTable header repetition, page overflow and break-inside rules | This baseline explicitly notes absence of original print template values; therefore no equivalence to historical certificate, offer letter, receipt, PDF or email rendering can be claimed. |
+| Print-only example drafts | `src/app/(authenticated)/tpo/settings/templates/page.tsx:15-26`: subject/body now static in `print:block` paragraphs, editor controls `print:hidden` | Helps avoid truncation in a browser print, but is **not** a reconstructed provider-hosted email template. |
+| Email signature paper preview | `src/components/tpo/tpo-communication-settings-editors.tsx:74-100`: existing signature preview and hidden editable controls | Same limitations. |
+
+**Responsive source proof:** 0–767px `min-h-11` = 44px for locally sized controls and 768px+ `md:min-h-9` = 36px; wide disclosure/table containers retain existing flex wrapping. Print-only draft paragraphs use `whitespace-pre-wrap` to maintain line breaks; no measured paper margins, font metrics, clipping or real email-client snapshots were available. G4/G5 strict ticks remain open pending exact legacy assets and whole-repo checks.
