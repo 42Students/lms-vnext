@@ -258,3 +258,7 @@ Synced lane fast-forward against origin/main `46cd0161a0e289e7da68e615359589b03e
 - [ ] Re-check current main codemod raw-control findings before citing the old 90-file count; the earlier scan is historical evidence, not proof at the newly synced revision.
 
 No CI, typecheck, tests, local app or browser checks were executed. Source control-only changes used exact opening/closing JSX pairs where applicable. Next: `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` selection/offer sheet accessibility and row actions, followed by `src/app/(authenticated)/hr/drives/page.tsx` export and list toolbar.
+
+## 2026-10-19 continuation — SMARTER PLAN codemod
+
+- [ ] HR/recruiter PageHeader role-label judgement case: `scripts/codemods/chat15-hr-header-eyebrows.cjs` targets static `eyebrow="Recruiter"` / `"Employer Recruiter"` only in the HR/recruiter route trees; dry-run: `node scripts/codemods/chat15-hr-header-eyebrows.cjs`; apply: `node scripts/codemods/chat15-hr-header-eyebrows.cjs --apply`. **Script committed but not run**; orchestrator owns local run and source/captured style verification. Keep dynamic eyebrow/description expressions unchanged.
