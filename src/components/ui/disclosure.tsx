@@ -4,7 +4,8 @@ import { cx } from "@/lib/class-names";
 /** Semantic keyboard disclosure. Native details handles Enter/Space and
  * reduces motion to the shared opacity-only fade in globals.css. */
 export function Disclosure({ title, children, className, defaultOpen = false }: {
-  title: string;
+  /** Rich summaries retain count/metadata without hand-rolled details. */
+  title: ReactNode;
   children: ReactNode;
   className?: string;
   defaultOpen?: boolean;
