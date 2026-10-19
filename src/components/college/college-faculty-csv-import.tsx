@@ -73,7 +73,7 @@ export function CollegeFacultyCsvImport(){
         <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);
-        }} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono text-xs"/>
+        }} className="font-mono text-xs"/>
       </label>
       <Button variant="primary" type="button" disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}
         >
