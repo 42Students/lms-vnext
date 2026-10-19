@@ -101,9 +101,9 @@ export function TopbarAccountMenu({
       <hr className={style.menuDivider}/>
       <button type="button" disabled={pending}
         className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
-        <span className="ml-auto text-[#94a3b8]"><ChevronIcon /></span>
+        <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
       </button>
-      {error ? <p role="alert" className="px-2 pt-2 text-xs text-[#b91c1c]">{error}</p> : null}
+      {error ? <p role="alert" className="px-2 pt-2 text-xs text-error">{error}</p> : null}
     </div> : null}
   </div>;
 }
