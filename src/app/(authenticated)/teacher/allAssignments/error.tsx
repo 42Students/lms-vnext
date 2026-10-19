@@ -11,7 +11,7 @@ export default function FacultyAssignmentsOverviewError({
 }) {
   return (
     <section className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
-      <h1 className="text-lg font-semibold text-foreground">Assignments could not be loaded</h1>
+      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Assignments could not be loaded</h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         This is a loading problem, not an empty list. Try again to load your teaching assignments.
       </p>
