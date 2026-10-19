@@ -51,7 +51,7 @@ export default async function MentorTeamCoveragePage({
     <PageHeader eyebrow="Mentor · Projects" title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
       actions={<Link href="/mentor/projects"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0">
         Projects
       </Link>} />
     {!data.enabled

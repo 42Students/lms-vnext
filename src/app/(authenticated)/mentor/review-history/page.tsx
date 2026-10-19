@@ -43,7 +43,7 @@ export default async function MentorReviewHistoryPage({
     <PageHeader eyebrow="Mentor · Delivery" title="Delivery review history"
       description="Recorded final-delivery review decisions for projects currently assigned to you."
       actions={<Link href="/mentor/reviews"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0">
         Pending reviews
       </Link>} />
     {!data.enabled ?
