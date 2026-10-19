@@ -65,7 +65,7 @@ Status: `Adjusted — pushed` means a route/component's styling was changed on t
 | `src/components/placements/tpo-report-record-links.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Cross-portal scope — no further edits |
 | `src/components/placements/tpo-report-saved-filters.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Cross-portal scope — no further edits |
 | `src/components/placements/tpo-request-bulk-decision.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Adjusted — pushed |
-| `src/components/placements/tpo-request-decision-control.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Reviewed — inherited shared skin |
+| `src/components/placements/tpo-request-decision-control.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Adjusted — pushed |
 | `src/components/placements/tpo-request-page-clipboard.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Cross-portal scope — no further edits |
 | `src/components/placements/tpo-round-apply-control.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Adjusted — pushed |
 | `src/components/placements/tpo-round-calendar-control.tsx` | Drive lifecycle and cross-cutting | Raw control styles, borders, form fields, tiles; reuse shared tokens | Adjusted — pushed |
@@ -138,3 +138,12 @@ Status: `Adjusted — pushed` means a route/component's styling was changed on t
 | Additional TPO-only component | Group | Source-level sweep target | Status |
 |---|---|---|---|
 | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx` | Jobs and drive detail | Shared control tokens and standalone section hairlines | Adjusted — pushed |
+
+## Third source verification pass — 2026-10-19, chat-5
+
+- Started with a fast-forward of `chatgpt/chat-5-b` to the then-current `main` at `6222f78a4a19084be6529aa802810ee98193c1d2` (no history rewrite); changes remained exclusively on the lane branch.
+- Reinspected the ledger's 103 listed route/component surfaces against the measured shell and legacy SCSS. Normalized leftover bare `rounded`, `rounded-md`, `rounded-lg` and `rounded-[9px]` classes to `var(--lms-control-radius)` or `var(--lms-canvas-radius)` according to purpose; retained true pill and distinct summary-panel shapes.
+- Removed nested tiles from the drive About view's excluded-learner and eligibility-rule rows, request-detail subcards in the drives lifecycle list, and clone-past-drive list rows; used hairline dividers instead. Kept section order, data, copy, actions and state machines unchanged.
+- Replaced the lone raw amber request-count palette with the semantic warning skin, preserved white primary text, aligned sequential request-review and report-presentation control heights to 44px mobile / 36px desktop, and matched the legacy light dropdown shadow on drive workspace navigation.
+- Extended matching radius tokens across placements create/edit, bulk, offers, day overview, employer and recruiter access workspaces plus TPO-specific form, round, selection and interview widgets. Source verification yielded no remaining legacy raw-radius or fixed-palette hits in directly owned TPO drives/jobs/rounds/waitlist/offers/joining routes. Shared reporting, notification and first-third TPO utilities assigned to other portal lanes retain their existing scope boundaries.
+- No dev server, runtime code, typecheck, tests, CI, browser screenshots or visual pixel-diff were run. Pixel-perfect parity remains unconfirmed until an orchestrator-run screenshot comparison.
