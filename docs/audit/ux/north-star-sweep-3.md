@@ -291,7 +291,12 @@ Continue legacy-shell skin in the attendance portion of Super Admin academic ope
 ## Follow-on portal: Super Admin recruiter accounts
 The `/admin/recruiters` route in the original 211-file inventory is a compatibility export of `../hr/page`; therefore the actual UI is implemented in the files below. Include these to fulfill the explicitly owned recruiter directory surface without changing any HR/recruiter portal routes.
 
-- [ ] `src/app/(authenticated)/admin/hr/page.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-hr-account-dialog.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/app/(authenticated)/admin/hr/page.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-hr-account-dialog.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+
+### Recruiter and people-directory verification notes
+- `/admin/recruiters` reexports `/admin/hr/page.tsx`; the live Super Admin account list, form and drawer were inspected through their real imported components. Updated three presentation sources and left the existing dialog on shared styles.
+- Second-pass people directory: flattened GET filter forms, repeated user tiles, and membership summary border cards to preserve the one-canvas page hierarchy; kept platform-wide block security controls visually distinct.
+- No behavioural changes, copy edits, service changes or test/CI execution.
