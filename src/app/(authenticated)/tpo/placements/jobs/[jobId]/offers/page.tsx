@@ -12,6 +12,7 @@ import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
+import {Badge} from "@/components/ui/badge";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -89,7 +90,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm">No offers match this filter.</p>:
    <section aria-label="Recorded offers" className="grid gap-3">{data.rows.map(row=><article key={row.id} className="border-b border-border py-4">
-    <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><strong className="text-sm">{row.status}</strong></div>
+    <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><Badge tone={row.status==="ACCEPTED"?"success":row.status==="DECLINED"||row.status==="WITHDRAWN"?"error":row.status==="EXPIRED"?"warning":"info"}>{row.status}</Badge></div>
     <p className="mt-2 text-xs text-body">Fixed: {row.fixedLpa===null?"Not recorded":row.fixedLpa+" LPA"} · Variable: {row.variableLpa===null?"Not recorded":row.variableLpa+" LPA"} · Joining bonus: {row.joiningBonusLpa===null?"Not recorded":row.joiningBonusLpa+" LPA"} · Bond: {row.bondMonths===null?"Not recorded":row.bondMonths+" months"}</p>
     {row.acceptanceChannel?<p className="mt-1 text-xs text-body">
       Acceptance evidence: {row.acceptanceChannel}
