@@ -60,7 +60,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
   {!report?<p className="text-sm text-muted-foreground">
    Select a Class and Course to see each enrolled learner’s progress.
   </p>:<>
-   <div className="grid gap-3 sm:grid-cols-4" aria-label="Class course progress summary">
+   <div className="grid gap-3 sm:grid-cols-4" role="group" aria-label="Class course progress summary">
     {[
      ["Average completion",report.averageCompletion+"%"],
      ["Students",String(report.students)],
