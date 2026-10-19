@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Tabs } from "@/components/ui/tabs";
 
 export const learnerCourseTabs = [
   { label: "Overview", path: "home" },
@@ -10,33 +10,16 @@ export const learnerCourseTabs = [
 export function LearnerCourseTabs({
   deliveryId,
   activeTab,
-  persistentQuery="",
+  persistentQuery = "",
 }: {
   deliveryId: string;
   activeTab: string;
-  persistentQuery?:string;
+  persistentQuery?: string;
 }) {
-  return (
-    <nav aria-label="Course workspace" className="overflow-x-auto border-b border-border">
-      <div className="flex min-w-max gap-1">
-        {learnerCourseTabs.map((tab) => {
-          const active = tab.path === activeTab;
-          return (
-            <Link
-              key={tab.path}
-              href={`/learn/courses/${encodeURIComponent(deliveryId)}/${tab.path}${persistentQuery?"?"+persistentQuery:""}`}
-              aria-current={active ? "page" : undefined}
-              className={
-                active
-                  ? "border-b-[3px] border-primary px-4 py-2.5 text-[13px] font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
-                  : "border-b-[3px] border-transparent px-4 py-2.5 text-[13px] font-semibold text-body transition-colors hover:border-border hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
-              }
-            >
-              {tab.label}
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
-  );
+  return <Tabs ariaLabel="Course workspace" value={activeTab} renderPanel={false}
+    items={learnerCourseTabs.map(tab => ({
+      value: tab.path,
+      label: tab.label,
+      href: `/learn/courses/${encodeURIComponent(deliveryId)}/${tab.path}${persistentQuery ? "?" + persistentQuery : ""}`,
+    }))} />;
 }

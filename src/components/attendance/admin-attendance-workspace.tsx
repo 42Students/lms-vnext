@@ -493,9 +493,8 @@ export function AdminAttendanceWorkspace({
             </div>
           </section>
 
-          <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-              <ScrollCue axis="x" label="College attendance monthly grid" className="min-w-0">
-            <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
+          <section className="min-w-0">
+            <Table scrollLabel="College attendance monthly grid" className="min-w-[56rem] text-sm">
               <caption className="sr-only">College attendance for every calendar day of the selected month. Cross means no scheduled class.</caption>
               <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
                 <tr>
@@ -602,8 +601,7 @@ export function AdminAttendanceWorkspace({
                   },
                 )}
               </tbody>
-            </table>
-              </ScrollCue>
+            </Table>
           </section>
 
           <p className="text-xs leading-5 text-muted-foreground">
