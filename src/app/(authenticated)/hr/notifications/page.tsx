@@ -39,13 +39,13 @@ export default async function HrMessagesPage({searchParams}:{
     href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
     className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
-   <nav aria-label="Inbox filters" className="flex flex-wrap gap-2">
+   <nav aria-label="Inbox filters" className="flex flex-wrap gap-3 border-b border-[#e5e9f0]">
     {result.choices.length>1?result.choices.map(grant=><Link key={grant.id}
      href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
-     className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary"}>{grant.collegeName}</Link>):null}
+     className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center border-b-[3px] border-[#26bac7] px-3 py-2 text-sm font-semibold text-[#1a95a1]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-body hover:text-[#1a95a1]"}>{grant.collegeName}</Link>):null}
     <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
       (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
-     className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-sm text-primary-text hover:border-[#26bac7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      {query.data.unreadOnly==="true"?"Show all":"Unread only"}
     </Link>
    </nav>
@@ -77,7 +77,7 @@ export default async function HrMessagesPage({searchParams}:{
          <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
        </div>
        <ol className="mt-3 divide-y divide-border">{group.items.map(row=>
-         <li key={row.id} className="py-3">
+         <li key={row.id} className="rounded-[8px] px-2 py-3 transition-colors hover:bg-[#fafbfc]">
            <div className="flex flex-wrap justify-between gap-2">
              <span className="text-sm text-body">{row.label}{row.unread?<span className="ml-2 inline-flex rounded-full bg-[#eff8fa] px-2 py-0.5 text-xs font-semibold text-[#1a95a1]">Unread</span>:null}</span>
              <span className="text-xs text-muted-foreground">{time(row.createdAt)} IST</span>
