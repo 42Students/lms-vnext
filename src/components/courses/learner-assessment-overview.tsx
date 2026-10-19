@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
@@ -234,7 +235,7 @@ export function LearnerAssessmentOverview({
     <div className="space-y-5">
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm font-semibold text-body">
-          <span className="rounded-full border border-border px-3 py-1">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</span>
+          <Badge  tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
           <details className="min-w-0 rounded-lg border border-border px-3 py-1">
             <summary className="cursor-pointer text-primary-text">{submittedQuizzes.length} Submitted</summary>
             {submittedQuizzes.length>0 ? (
