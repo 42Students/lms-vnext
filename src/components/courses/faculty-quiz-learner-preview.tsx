@@ -1,5 +1,6 @@
 "use client";
 
+import { ChoiceInput } from "@/components/ui/choice-input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
@@ -52,7 +53,7 @@ export function FacultyQuizLearnerPreview({quizId,deliveryId}:{
     <legend className="font-semibold text-sm">Question {i+1} · {q.points} points</legend>
     <p className="whitespace-pre-wrap break-words text-sm">{q.prompt}</p>
     {q.options.map(o=><label key={o.id} className="flex gap-2 text-sm">
-     <input type={q.type==="SINGLE_CHOICE"?"radio":"checkbox"} disabled name={"preview-"+q.id}/>
+     <ChoiceInput type={q.type==="SINGLE_CHOICE"?"radio":"checkbox"} disabled name={"preview-"+q.id}/>
      <span>{o.text}</span>
      {answers&&o.correct?<span className="text-success">(Correct)</span>:null}
     </label>)}
