@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -136,10 +137,12 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         </div>
       ) : null}
 
-      <Tabs renderPanel={false} ariaLabel="Company and team sections" value={tab}
-        items={[{value:"company",label:"Company",href:base+"&tab=company"},
+      <Tabs ariaLabel="Company and team sections" renderPanel={false} value={tab}
+        items={[
+          {value:"company",label:"Company",href:base+"&tab=company"},
           {value:"team",label:"Team",href:base+"&tab=team"},
-          {value:"reports",label:"Reports",href:"/hr/company/reports?collegeId="+encodeURIComponent(result.grant.collegeId)}]}/>
+          {value:"reports",label:"Reports",href:"/hr/company/reports?collegeId="+encodeURIComponent(result.grant.collegeId)},
+        ]} />
 
       {tab === "company" ? (
         <section className="border-b border-border pb-5">
