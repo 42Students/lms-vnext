@@ -96,7 +96,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
           <span className="font-semibold text-foreground">
             {request.proposerParty==="COMPANY"?"You asked":"Placement cell asked"} · {request.field.replaceAll("_"," ")}
           </span>
-          <span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">{request.status}</span>
+          <span className="ml-2 rounded-full border border-border px-2 py-0.5 text-xs">{request.status}</span>
           <p className="mt-1 break-words text-body">{request.reason}</p>
           {request.decisionNote?<p className="mt-2 break-words text-body">
             <strong>Placement-cell response:</strong> {request.decisionNote}
