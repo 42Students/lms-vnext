@@ -656,13 +656,13 @@ export function FacultyAttendanceWorkspace({
                 ["Active days", monthDays.filter(day=>day.sessions.length>0).length],
                 ["Upcoming", monthSummary.upcomingSessions],
               ].map(([label, value]) => (
-                <div key={label} className="rounded-lg bg-surface-subtle p-3">
+                <div key={label} className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3">
                   <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
                   <dd className="mt-1 text-xl font-semibold text-foreground">{value}</dd>
                 </div>
               ))}
             </dl>
-            <section aria-label="Attendance threshold guidance" className="mt-5 rounded-lg border border-border bg-surface-subtle p-4">
+            <section aria-label="Attendance threshold guidance" className="mt-5 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
               <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
                 College attendance guidance: {attendanceRisk.threshold}%
               </h3>
@@ -680,14 +680,14 @@ export function FacultyAttendanceWorkspace({
                     const summary = monthSummary.learners.find((row) => row.membershipId === membershipId);
                     return (
                       <li key={membershipId} className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setSelectedLearnerId(membershipId)}
                           aria-label={`Inspect monthly attendance for ${learner ? learnerName(learner) : membershipId}`}
                           className="text-left text-sm font-semibold text-primary-text hover:underline"
                         >
                           {learner ? learnerName(learner) : "Learner"} · {summary?.percentage ?? "—"}%
-                        </button>
+                        </Button>
                       </li>
                     );
                   })}
@@ -741,14 +741,14 @@ export function FacultyAttendanceWorkspace({
                   {allLearners.map((learner) => (
                     <tr key={learner.membershipId}>
                       <td className="sticky left-0 z-10 bg-surface px-3 py-3">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setSelectedLearnerId(learner.membershipId)}
                           aria-label={`View attendance details for ${learnerName(learner)}`}
                           className="m-0 text-left font-semibold text-primary-text hover:underline focus-visible:rounded focus-visible:outline-2 focus-visible:outline-primary"
                         >
                           {learnerName(learner)}
-                        </button>
+                        </Button>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {[
                             learner.rollNumber
@@ -862,7 +862,7 @@ export function FacultyAttendanceWorkspace({
                   </p>:null}
                 </div>
                 {selectedSession ? (
-                  <div className="rounded-lg bg-surface-subtle p-3 text-sm text-body">
+                  <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-sm text-body">
                     <p className="m-0 font-semibold text-foreground">
                       {selectedSession.title}
                     </p>
@@ -1128,7 +1128,7 @@ export function FacultyAttendanceWorkspace({
                 ["Marked", learnerDetail.marked],
                 ["Attendance", learnerDetail.attendedPercent === null ? "—" : learnerDetail.attendedPercent + "%"],
               ].map(([label, value]) => (
-                <div key={label} className="rounded-lg border border-border bg-surface-subtle p-3">
+                <div key={label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
                   <p className="text-xs text-muted-foreground">{label}</p>
                   <p className="mt-1 text-xl font-semibold text-foreground">{value}</p>
                 </div>
@@ -1148,7 +1148,7 @@ export function FacultyAttendanceWorkspace({
                       now: clock,
                     }) === "OPEN";
                   return (
-                    <li key={session.id} className="rounded-lg border border-border p-4">
+                    <li key={session.id} className="rounded-[var(--lms-control-radius)] border border-border p-4">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <strong className="text-sm text-foreground">{session.title}</strong>
                         <StatusBadge tone={session.code === "P" ? "success" : session.code === "A" ? "error" : session.code === "—" ? "warning" : "neutral"}>
