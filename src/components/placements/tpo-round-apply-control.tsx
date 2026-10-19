@@ -43,17 +43,17 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
   <button type="button" disabled={busy} onClick={()=>void load()}
    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
    {busy?"Working…":"Preview applying round results"}</button>
-  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-muted p-4">
+  {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
    <h3 className="font-semibold">Consequence preview</h3>
    <p className="text-sm">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
-   <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
-    <div><dt>Cleared → {preview.destinations.PASS}</dt><dd className="font-semibold">{preview.outcomes.PASS}</dd></div>
-    <div><dt>Not cleared</dt><dd className="font-semibold">{preview.outcomes.FAIL}</dd></div>
-    <div><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
-    <div><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
+   <dl className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface text-sm sm:grid-cols-4">
+    <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Cleared → {preview.destinations.PASS}</dt><dd className="font-semibold">{preview.outcomes.PASS}</dd></div>
+    <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Not cleared</dt><dd className="font-semibold">{preview.outcomes.FAIL}</dd></div>
+    <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
+    <div className="p-3"><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
    </dl>
-   <div className="max-h-60 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border p-2">
-    {preview.rows.map(r=><div key={r.resultId} className="flex justify-between gap-2 border-b border-border px-2 py-2 text-sm">
+   <div className="max-h-60 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border px-2">
+    {preview.rows.map(r=><div key={r.resultId} className="flex justify-between gap-2 border-b border-border px-2 py-2 text-sm last:border-b-0">
      <span>{r.student}</span><span>{r.outcome} → {r.destination} · {r.status}</span>
     </div>)}
    </div>

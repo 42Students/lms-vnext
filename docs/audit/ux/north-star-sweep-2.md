@@ -135,3 +135,45 @@ This continuation changes **24 production TSX files** (24 lane commits) plus the
 - [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`: shared checkbox, select and buttons; canonical radius
 
 **JSX source verification:** all 18 TSX files re-read after push. Complete `</Select>`, `</Button>`, `</Textarea>` syntax checked; all `<Select>` and `<Button>` counts match closing counts and every referenced shared-control import is present. Old native closing tags not left after replacement. No application, tests, typecheck, CI, or screenshots run per lane instruction; owner must still perform complete compile and screenshot parity verification.
+
+## TPO settings and people page canvas continuation (2026-10-19)
+
+- Merged latest main `10ac677d5ab403f3c037d559c3321ac55c6cffa6` into lane branch, merge commit `4a9d92488efe7385a2c32d3c77f8a2a9eab833e2`. Retained 24 nonoverlapping lane files, kept main versions of 4 overlapping files pending independent review.
+- [x] `/tpo/settings/notifications`: link radius token and flat KPI metric rows
+- [x] `/tpo/settings/notices`: communication warning radius token
+- [x] `/tpo/settings/branding`: remove nested branding field card, radius token for logo and placeholders
+- [x] `/tpo/settings/season`: seasons shown as hairline sections rather than secondary cards
+- [x] `/tpo/settings/see`: metrics and permission fields flattened into the single canvas
+- [x] `/tpo/settings/rules`: border-separated policy details, canonical action radii
+- [x] `/tpo/settings/trusted`: canonical controls and unobtrusive status section
+- [x] `/tpo/settings/team`: canonical navigation control radius
+- [x] `/tpo/settings/public-page`: metric keys displayed as flat divided sections
+- [x] `/tpo/team`: canonical navigation, filters and conversation link radii
+- [x] `/tpo/team/[threadId]`: canonical chat bubble/canvas radii and whitespace
+- [x] `/tpo/team/everyone`: flat conversation list and inherited page canvas
+- [x] `/tpo/profile`: remove redundant outer profile card
+- [x] `/tpo/follow-ups`: flatten filter/empty-result containers
+- [x] `/tpo/messages`: flat KPI metrics and conversation filter section
+- [x] `/tpo/announcements`: shared `Checkbox` for pinned/notification targeting choices, white-on-teal selected tab, outlined secondary actions, hairline announcement rows
+- [x] `/tpo/notifications`: flat status/empty-state treatment
+
+**Validation:** 17 production TSX pages committed and individually re-read from `chatgpt/chat-2-b`. JSX closing-tag source checks found no truncated `</Select>`, `</Button>` or `</Textarea>`; original actions, routes, field names and messages retained. No runtime, compiler, tests, CI or screenshots were performed. Full React/TSX compile and visual acceptance remain the owner's integration step.
+
+## TPO reporting page continuation — North Star source review (2026-10-19)
+
+The reporting routes below now inherit the white page canvas instead of wrapping metrics, controls and grids in nested white cards. Existing page copy, filter names, URLs, query semantics and export behavior are preserved. Shared `Input`, `Select` and `Button` components replace native visible controls where applicable; hidden native inputs remain untouched.
+
+- [x] `/tpo/reports`: report gallery navigation, search and group controls, border-divided report cards
+- [x] `/tpo/reports/accreditation`: batch selector and scoped export, hairline-separated panels
+- [x] `/tpo/reports/after-college`: shared selectors/Filter action, flat filter toolbar
+- [x] `/tpo/reports/by-company`: shared search/select/Apply controls; dividers for KPI and drill-down
+- [x] `/tpo/reports/branch-season`: shared season selector and outlined button, flat summary statistics
+- [x] `/tpo/reports/ctc`: flat metric rows
+- [x] `/tpo/reports/failure-reasons`: flat failure metrics and source-scope notes
+- [x] `/tpo/reports/intelligence`: remove redundant nested summary cards
+- [x] `/tpo/reports/joining-status`: flat summary metrics
+- [x] `/tpo/reports/offers-acceptance`: flat status breakdown
+- [x] `/tpo/reports/leads`: shared company filter and action; divided recruiter engagement summaries
+- [x] `/tpo/reports/placement-summary`: shared company/work-mode/pay-category filters and Apply action; flat placement statistics
+
+**Source inspection only:** every TSX closing tag in the changed sections was re-read after push, especially full `</Select>` and `</Button>`; the next final source scan checks imports and pair counts across this full continuation. No application execution, CI, lint, TypeScript compiler, unit tests or screenshot checks. Owner verification is still needed.

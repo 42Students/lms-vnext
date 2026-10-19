@@ -58,7 +58,7 @@ export default async function TpoProfilePage() {
 
       <section
         aria-label="Your TPO profile"
-        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:p-6"
+        className="border-t border-border pt-5 sm:pt-6"
       >
         <h2 className="text-lg font-semibold text-foreground">
           Account details

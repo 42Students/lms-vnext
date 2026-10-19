@@ -1,3 +1,5 @@
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -40,18 +42,18 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
   {!data.available?<p role="status" className="rounded border border-border p-4">
     After-college outcomes storage is unavailable. This page does not infer destinations.
    </p>:<>
-   <form method="get" className="flex flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border border-border p-4">
+   <form method="get" className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
     <label className="grid gap-1 text-sm">Batch
-     <select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+     <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
       <option value="">All current batches</option>
       {batches.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-     </select></label>
+     </Select></label>
     <label className="grid gap-1 text-sm">Branch
-     <select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
+     <Select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border p-2">
       <option value="">All branches</option>
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
-     </select></label>
-    <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-white">Filter</button>
+     </Select></label>
+    <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-white">Filter</Button>
     <Link href="/tpo/reports/after-college" className="text-link underline">Clear</Link>
     <a href={"/api/placements/tpo/reports/after-college?"+query.toString()}
       className="text-link underline">Download CSV</a>
