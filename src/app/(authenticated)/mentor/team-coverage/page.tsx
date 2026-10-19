@@ -40,7 +40,7 @@ export default async function MentorTeamCoveragePage({
     page:first(raw.page) ?? undefined,
   });
   if (duplicated || !parsed.success) return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid team coverage filters" />
+    <PageHeader title={"Invalid team coverage filters"} />
     <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
   </section>;
 
