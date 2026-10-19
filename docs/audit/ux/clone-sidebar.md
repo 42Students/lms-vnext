@@ -2,8 +2,8 @@
 
 Owner: chat-19. Source: `docs/design/ui-clone-checklist.md:8-18`, `docs/design/old-lms-shell.css`, `docs/design/old-lms-shell-spec.md` and `docs/design/legacy-styles/`. The owner runs runtime/CI and screenshot comparison later; **none was run here**.
 
-- [ ] **B3 Sidebar** (missing: full-repository grep count and browser icon-artwork/expanded layout verification, especially at tablet widths. Current values and source-only responsive proof below.)
-- [ ] **B4 Footer, progress and route transitions** (missing: reference values for an old top route progress line and TPO mobile footer, source-level proof of all portal loading states, and full-repository coverage grep. The learner route entrance/exit declarations are now implemented.)
+- [ ] **B3 Sidebar** (missing: command-level full-repository grep proof and exact historical icon/artwork equivalence; browser icon/hover/tablet verification is deferred to checklist J. See refreshed source-value and import evidence below.)
+- [ ] **B4 Footer, progress and route transitions** (missing: authoritative old top route progress and TPO mobile footer visual values, exact full-page loader behavior, and command-level repository grep counts. Learner entrance/exit CSS values now match their provided legacy source.)
 
 ## B3 value proof (legacy → vNext)
 
@@ -40,10 +40,10 @@ All file:line references are repository-relative. An explicitly different implem
 | Group dividers | `old-lms-shell.css:49-53` collapsed hairline | `sidebar-legacy.css:205-227` 1px #f1f4f9 | Source match |
 | TPO expanded scrollbar | `old-lms-shell.css:41-43` thin/4px rgba(107,114,128,.28) | `sidebar-legacy.css:240-256` same | Source match |
 | Desktop breakpoint | `old-lms-shell.css:23` hidden through 767px | `app-shell.tsx:75` md:flex from 768px | Source match |
-| Mobile width | `legacy-styles/components___antddesign.scss:305-308` 82%, max300 | `mobile-navigation.tsx:96` min(82vw,300px) | Viewport-relative equivalence, browser proof open |
-| Mobile header | `legacy-styles/components___antddesign.scss:314-325` safe-area, 52px, 10px/16px/4px | `mobile-navigation.tsx:97-112` same explicit values | Source match |
-| Mobile body | `legacy-styles/components___antddesign.scss:348-359` top8, left/right12, bottom24+safe area | `mobile-navigation.tsx:114`, `sidebar-legacy.css:187-194` same | Source match |
-| Mobile scroll | `legacy-styles/components___antddesign.scss:354-359` y-auto, x-hidden, touch inertia, hidden thumb | `mobile-navigation.tsx:114`, `sidebar-legacy.css:189-194` same | Source match |
+| Mobile width | `legacy-styles/components___antddesign.scss:305-308` 82%, max300 | `sidebar-legacy.css:187-196` 82vw max300 on shared Drawer at 0–767px; `mobile-navigation.tsx:33-36` | Width values source-match; viewport visuals deferred |
+| Mobile header | `legacy-styles/components___antddesign.scss:314-325` safe-area, 52px, 10px/16px/4px | `sidebar-legacy.css:198-212`; shared `drawer.tsx:49-54` | Source values match mobile overrides |
+| Mobile body | `legacy-styles/components___antddesign.scss:348-359` top8, left/right12, bottom24+safe area | `mobile-navigation.tsx:35` shared Drawer viewport classes `!pt-2 !px-3 !pb-[calc(24px+env(...))]` | Source match |
+| Mobile scroll | `legacy-styles/components___antddesign.scss:354-359` y-auto, x-hidden, touch inertia, hidden thumb | `drawer.tsx:55`, `scroll-cue.tsx:61-69`, `sidebar-legacy.css:213-219` | Source rules match |
 | Reduced motion | `legacy-styles/components___learn-layout.scss:577-585` disables transitions | `sidebar-legacy.css:258-261` disables rail motion | Comparable intent; page motion below |
 
 ### Icon coverage
@@ -58,11 +58,11 @@ Source parse of `shell-model.ts:45-86,122-320`: **63 declared navigation rows / 
 | TPO bottom mobile footer | No comparable values in `old-lms-shell.css:1-101` | `src/components/tpo/tpo-mobile-footer.tsx:14-47`, shell re-export | Open: no exact reference |
 | Top route progress bar | No matched timing/colour spec in `old-lms-shell.css:1-101` nor matched `nprogress` in the indexed legacy sources | No dedicated progress bar added | Open: do not fabricate |
 | Full-page loader | `legacy-styles/components___common.scss:1008-1019` fixed fullscreen z999, rgba(255,255,255,.99) | Route-specific skeleton/loading components | Open: not equivalent |
-| Page entrance | `legacy-styles/components___learn-layout.scss:49-69` opacity 0→1, translateY(8→0), 250ms ease-out | `route-transition.css:4-7,20-22`, `route-transition.tsx:36-37` | CSS values match |
-| Route exit | `legacy-styles/components___learn-layout.scss:71-86` 220ms opacity, 260ms transform, .78 opacity, translateY(6px) scale(.998) | `route-transition.css:13-19`, `route-transition.tsx:12-35` | CSS values match; click/back/browser states unverified |
-| Reduced motion | `legacy-styles/components___learn-layout.scss:577-585` disables transition | `route-transition.css:23-26` disables animation/transition/transform | Source match |
+| Learner page entrance | `legacy-styles/components___learn-layout.scss:49-69` opacity 0→1, translateY(8→0), 250ms ease-out | `route-transition.css:4-7,20-24`, `route-transition.tsx:11-12,39-40` learner-only | CSS values source-match |
+| Learner route exit | `legacy-styles/components___learn-layout.scss:71-86` 220ms opacity, 260ms transform, .78 opacity, translateY(6px) scale(.998) | `route-transition.css:15-24`, `route-transition.tsx:12-38` capture-phase Link intent | CSS source-match; browser/back states unverified |
+| Reduced motion | `legacy-styles/components___learn-layout.scss:577-585` disables transitions | `route-transition.css:26-29` disables animation/transition/transform | Source match |
 | Shell isolation | Old `learn-page-wrapper` is below header (`learn-layout.scss:60-69`) | `app-shell.tsx:102-122` places RouteTransition **inside main** only | Source structural match |
-| Query-only navigation | Old filter/page query handling not measured in provided CSS | `route-transition.tsx:9,23,36` keys by pathname only | Behavior preserved intentionally; not a parity claim |
+| Query-only navigation | Old filter/page query handling not measured in provided CSS | `route-transition.tsx:9,25,39` keys by pathname only | Behavior preserved; not a legacy parity claim |
 
 ## Coverage proof and unverified full-repository commands
 
@@ -100,3 +100,20 @@ Every edited sidebar-related JSX opening and closing tag has been source reviewe
 4. HR pages are owned by chat-15; only sweep HR files explicitly unowned in their queue, without overwriting chat-15 work.
 
 **Next file:** `src/components/shell/route-transition.tsx` (route completion/back-forward/recovery behavior, then review missing progress-bar reference).
+
+
+## 2026-10-19 continued turn: evidence and current exceptions
+
+**Main synchronization:** fast-forwarded branch `chatgpt/chat-19-b` to origin/main commit `55a3efe0a5917631ab26e17e158a29f6e5282e25` before editing. Later pushes use only the lane branch.
+
+**Import verification (source tree, not a build):** GitHub tree at main SHA `55a3efe0a5917631ab26e17e158a29f6e5282e25` listed 15,670 repository entries. All **36** `src/components/shell/**/*.ts(x)` or CSS files were read, and **135 relative or `@/` imports** resolved to entries in that tree; **0 missing**. Forty-seven bare-package imports were identified but not dependency-compiled. `shell-nav-icons.tsx:3` explicitly imports `legacyAntPaths` from `./legacy-ant-paths`; the named module exports it.
+
+**Scoped source scans (all 36 shell source/style files, equivalent regex checks, not actual `grep` runs):** raw `<button`, `<input`, `<select`, `<textarea` tags = **0**; `lms-desktop-sidebar|fl-d-panel-l|lms-sidebar-item` text hits = **50**. The 60 literal colour codes include exact legacy-brand SVG paths and shared topbar CSS owned by chat-13; they are not a finding of 60 unapproved colours. GitHub indexed code search on main returned **2** files for `lms-desktop-sidebar` (app-shell, sidebar-legacy.css), **1** for `fl-d-panel-l` (sidebar-legacy.css comment), and **2** for `lms-sidebar-item` (sidebar-nav.tsx, sidebar-legacy.css); indexed discovery is not a complete local working-tree grep.
+
+**Mobile breakpoint proof:** at ≤767px, `app-shell.tsx:75` hides desktop rail; `mobile-navigation.tsx:33-36` uses the shared native-dialog Drawer; `sidebar-legacy.css:187-225` forces legacy 82vw max300 width, header 52px + top safe area, 10/16/4/10px header insets, 44px close target and hidden, touch-inertial scroll; `mobile-navigation.tsx:35` restores 8px top, 12px horizontal, 24px + safe-area bottom padding. At ≥768px, `app-shell.tsx:75` shows 96px rail and `sidebar-legacy.css:6-25` expands on hover/focus to 256px by flex push; the same applies at tablet 768–1199px. Actual viewport screenshot parity is deferred to J.
+
+**B4 source status:** `old-lms-shell.css:1-101` defines no top progress strip. Indexed legacy SCSS searches for `nprogress`, `progressbar`, and `progress-bar` returned 0 hits. The known full-page loader remains `components___common.scss:1008-1019` (fixed white .99, z-index 999), which is different from current route-local skeletons. Do **not** invent a loader colour, progress timing, spinner or unsupported equivalence. `src/components/tpo/tpo-mobile-footer.tsx` now visibly marks the More parent active when a More destination is current; its exact historical TPO footer values remain unproven.
+
+**STRICT TICK RULE outcome:** B3 and B4 remain **unticked**. The source comparisons and scoped counts above are useful progress but do not substitute for the checklist's command-level `grep` output and unmatched footer/loading values. Do not report a visual clone without the later browser pass.
+
+**Next file:** `src/components/shell/sidebar-legacy.css` — resolve remaining geometry/scroll discrepancies after a checkout-based grep; then `src/components/tpo/tpo-mobile-footer.tsx` for historical footer metrics when a source is found.
