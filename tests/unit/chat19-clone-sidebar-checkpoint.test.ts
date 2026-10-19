@@ -23,4 +23,9 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(css).toContain("padding-left:256px;");
  expect(css).toContain("~ .lms-shell-page");
 });
+ it("keeps the legacy white panel and light border",()=>{
+ expect(legacy()).toContain("background: rgb(255, 255, 255); border-right: 1px solid rgb(241, 244, 249)");
+ expect(sidebar()).toContain("background:#fff;");
+ expect(sidebar()).toContain("border-right:1px solid #f1f4f9;");
+});
 });
