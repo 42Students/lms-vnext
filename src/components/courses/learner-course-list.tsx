@@ -223,7 +223,7 @@ export function LearnerCourseList({
                   }}
                   className={
                     effectiveTypeFilter === value
-                      ? "min-w-0 rounded-[var(--lms-control-radius)] bg-surface px-2 py-2 text-sm font-semibold text-primary-text shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
+                      ? "min-w-0 rounded-[var(--lms-control-radius)] bg-surface px-2 py-2 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
                       : "min-w-0 rounded-[var(--lms-control-radius)] px-2 py-2 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
                   }
                 >
