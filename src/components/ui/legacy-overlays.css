@@ -69,6 +69,11 @@
   line-height: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
 }
+[data-slot="info-popover"] [role="tooltip"] > [aria-hidden="true"] {
+  width: 10px;
+  height: 10px;
+  background: #1a1d21;
+}
 [data-slot="dropdown"] {
   box-shadow: 9px 11px 28px rgba(0, 0, 0, .1);
   border-radius: 6px;
