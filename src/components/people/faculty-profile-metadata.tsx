@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
@@ -29,28 +30,28 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   catch(error){setError(error instanceof Error?error.message:"Invalid metadata");}
  }
  return <form id={facultyProfileAnchor("metadata")} aria-label="Additional metadata" onSubmit={submit}
-  className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
+  className="space-y-4 border-b border-border pb-5">
   <h2 className="text-lg font-semibold text-foreground">Additional metadata</h2>
   <p className="text-sm text-muted-foreground">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>
   {rows.length>5?<label className="block text-sm text-body">Find metadata
-    <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-     className="mt-1 w-full rounded-md border border-border bg-background p-3"/>
+    <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
+     className="mt-1 min-h-11 sm:min-h-9 w-full"/>
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
     <Button variant="secondary" type="button" className="px-2 py-1" onClick={()=>setSearch("")}>Clear Metadata search</Button>
    </div>:null}
   {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No metadata fields match. Clear the search to view all.</p>:null}
-  {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_2fr_auto] sm:items-end">
+  {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-3 rounded-[var(--lms-canvas-radius,12px)] border border-border p-3 sm:grid-cols-[1fr_2fr_auto] sm:items-end">
    <label className="min-w-0 text-sm font-semibold text-body">Field {index+1}
-    <input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
+    <Input className="mt-1.5 min-h-11 sm:min-h-9 w-full min-w-0"
      maxLength={120} required disabled={pending} value={row.key} onChange={event=>edit(row.id,"key",event.target.value)}/>
    </label>
    <label className="min-w-0 text-sm font-semibold text-body">Value
-    <input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
+    <Input className="mt-1.5 min-h-11 sm:min-h-9 w-full min-w-0"
      maxLength={5000} disabled={pending} value={row.value} onChange={event=>edit(row.id,"value",event.target.value)}/>
    </label>
-   <Button variant="secondary" type="button" disabled={pending} className="min-h-9 px-3"
+   <Button variant="secondary" type="button" disabled={pending} className="min-h-11 sm:min-h-9 px-3"
     onClick={async()=>{if(!(await askConfirm("Remove metadata field "+row.key+" from this unsaved draft?")))return;
      setRows(current=>removeFacultyMetadataDraftEntry(current,row.id));setDirty(true);}}>
     Remove draft
@@ -68,7 +69,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
     if(!(await askConfirm("Discard unsaved metadata edits?")))return;
     setRows(restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));setDirty(false);setError(null);
    }} className="min-h-11 px-4">Discard unsaved metadata</Button>:null}
-   <Button variant="primary" type="submit" disabled={pending||!dirty||Boolean(issue)} className="min-h-9 px-4">
+   <Button variant="primary" type="submit" disabled={pending||!dirty||Boolean(issue)} className="min-h-11 sm:min-h-9 px-4">
     {pending?"Saving…":"Save metadata"}
    </Button>
   </div>
