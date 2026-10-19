@@ -104,7 +104,7 @@ export function LearnerNotificationBell(){
         className="block min-h-11 rounded-[8px] border border-border bg-surface px-4 py-3 text-sm text-body hover:bg-[var(--lms-neutral-50)]">
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
-       <span className="mt-1 block line-clamp-2">{row.notification.body}</span>
+       <span className="mt-1 block line-clamp-2 leading-[1.5] text-muted-foreground">{row.notification.body}</span>
       </Link>
      </li>;
     })}
