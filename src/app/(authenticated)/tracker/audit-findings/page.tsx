@@ -32,7 +32,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Reset filters</Link>}/>
  </div>;
  if(!independentAuditFindingsReady())return <div className="space-y-5">{header}
-  <p role="status" className="rounded-xl border border-border bg-surface p-5">
+  <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
    Audit findings are temporarily unavailable. Please contact your platform administrator to complete setup.
    Bug reports are not substituted for independent audit findings.
   </p></div>;
