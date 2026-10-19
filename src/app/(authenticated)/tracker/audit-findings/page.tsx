@@ -52,8 +52,8 @@ export default async function IndependentFindingsPage({searchParams}:{
     <p className="mt-1 max-w-md break-words text-body">{item.title}</p>
    </div>},
   {key:"area",header:"Area / Kind",mobilePriority:"secondary",cell:item=><span>{item.area} · {item.kind}</span>},
-  {key:"severity",header:"Severity",mobilePriority:"secondary",cell:item=><StatusBadge>{item.severity}</StatusBadge>},
-  {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge>{item.status.replaceAll("_"," ")}</StatusBadge>},
+  {key:"severity",header:"Severity",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.severity==="CRITICAL"?"error":item.severity==="HIGH"?"warning":"neutral"}>{item.severity}</StatusBadge>},
+  {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="VERIFIED"||item.status==="RELEASED_PROD"?"success":item.status==="NEW"||item.status==="NEEDS_INFO"?"warning":"info"}>{item.status.replaceAll("_"," ")}</StatusBadge>},
   {key:"assigned",header:"Assigned",mobilePriority:"secondary",cell:item=>item.assignee??"Unassigned"},
   {key:"reported",header:"Reported",mobilePriority:"secondary",cell:item=><span>{item.foundBy??"Unknown"} · {item.foundAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.foundAt):"Date not recorded"}</span>},
  ];
