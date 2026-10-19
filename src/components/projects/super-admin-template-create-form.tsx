@@ -36,7 +36,7 @@ export function SuperAdminTemplateCreateForm(){
  ] as const;
  return <form onSubmit={event=>void submit(event)} className="grid min-w-0 gap-5">
   <p className="m-0 text-sm text-body">The draft starts with one release, one sprint and one task. Review and publish after creation.</p>
-  <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+  <div className="grid min-w-0 gap-4 md:grid-cols-2">
    {fields.map(field=><label key={field.key} className="grid min-w-0 gap-1 text-sm font-semibold text-body">
     {field.label}<Input required={field.required} maxLength={field.limit} disabled={saving}
      value={values[field.key]} onChange={event=>edit(field.key,field.key==="slug"?event.target.value.toLowerCase():event.target.value)}
@@ -52,7 +52,7 @@ export function SuperAdminTemplateCreateForm(){
    <Textarea maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
     className="w-full"/>
   </label>
-  <fieldset className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
+  <fieldset className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-2">
     <legend className="px-2 text-sm font-semibold">Overview and submission</legend>
     {([{key:"courseLabel",label:"Course label"},{key:"phase",label:"Phase"}] as const)
       .map(item=><label key={item.key} className="grid gap-1 text-sm font-semibold">{item.label}
@@ -63,7 +63,7 @@ export function SuperAdminTemplateCreateForm(){
        {key:"definitionOfDone",label:"Definition of done (one per line)"},
        {key:"personas",label:"Personas (one per line)"},
        {key:"submissionInstructions",label:"Submission instructions"}] as const).map(item=>
-      <label key={item.key} className="grid gap-1 text-sm font-semibold sm:col-span-2">
+      <label key={item.key} className="grid gap-1 text-sm font-semibold md:col-span-2">
        {item.label}
        <Textarea value={values[item.key]} onChange={e=>edit(item.key,e.target.value)}
         maxLength={4000} disabled={saving}
@@ -98,7 +98,7 @@ export function SuperAdminTemplateCreateForm(){
   <label className="grid gap-1 text-sm font-semibold text-body">Overview description (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="w-full"/>
   </label>
-  <fieldset className="min-w-0 space-y-3 rounded-lg border border-border p-3">
+  <fieldset className="min-w-0 space-y-3 border-y border-border py-4">
    <legend className="px-2 text-sm font-semibold text-body">Starting resource link (optional)</legend>
    <p className="text-xs text-muted-foreground">Add a public HTTP(S) resource. Both title and URL are required when adding one.</p>
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Resource title
