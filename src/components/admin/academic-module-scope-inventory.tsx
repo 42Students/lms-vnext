@@ -2,6 +2,7 @@
 import {useState} from "react";
 import Link from "next/link";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import {Button} from "@/components/ui/button";
 import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
 /** Preserve active query filters when navigating bounded academic hierarchy pages. */
@@ -45,8 +46,8 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
   <div className="flex flex-wrap items-center justify-between gap-2">
    <h3 className="font-semibold">Academic hierarchy</h3>
    <div className="flex gap-2 text-sm">
-    <button type="button" className="inline-flex min-h-11 sm:min-h-9 items-center underline disabled:opacity-50" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</button>
-    <button type="button" className="inline-flex min-h-11 sm:min-h-9 items-center underline disabled:opacity-50" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</button>
+    <Button type="button" variant="ghost" className="min-h-11 sm:min-h-9 underline" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</Button>
+    <Button type="button" variant="ghost" className="min-h-11 sm:min-h-9 underline" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</Button>
    </div>
   </div>
   <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Effective values trace the configured scope hierarchy and locks; an individual learner still needs active enrollment and participation. Student counts include active learners with current enrollment in this college.</p>
