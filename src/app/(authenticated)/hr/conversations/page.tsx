@@ -132,15 +132,15 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         General conversation preview is temporarily unavailable. Refresh to try again; existing conversations remain accessible.
       </p>:null}
     {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
-      <input name="collegeId" type="hidden" value={result.collegeId}/>
+      <Input name="collegeId" type="hidden" value={result.collegeId}/>
       <Button type="submit">Open general conversation</Button>
     </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
    <form method="get" action="/hr/conversations" className="flex flex-wrap gap-2">
-    <input type="hidden" name="collegeId" value={result.collegeId}/>
-    <input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
-    <input type="hidden" name="scope" value={parsed.data.scope}/>
+    <Input type="hidden" name="collegeId" value={result.collegeId}/>
+    <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
+    <Input type="hidden" name="scope" value={parsed.data.scope}/>
     <label className="text-sm text-body">Order
      <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
@@ -166,8 +166,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      action="/api/placements/recruiter/conversations/acknowledge"
      className="flex flex-wrap items-center gap-3">
      {result.items.filter(row=>row.unread>0).map(row=>
-      <input key={row.id} type="hidden" name="threadId" value={row.id}/>)}
-     <input type="hidden" name="returnTo" value={hrConversationsHref({
+      <Input key={row.id} type="hidden" name="threadId" value={row.id}/>)}
+     <Input type="hidden" name="returnTo" value={hrConversationsHref({
       collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,
       sort:parsed.data.sort,scope:parsed.data.scope,page:result.page,
      })}/>
