@@ -9,11 +9,13 @@ import "./route-transition.css";
  * the same key so a filter or pagination update never remounts its form. */
 export function RouteTransition({children}:{children:ReactNode}) {
  const pathname=usePathname();
+ const learnerRoute=pathname==="/learn"||pathname.startsWith("/learn/");
  const [leaving,setLeaving]=useState(false);
  const recoveryTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  useEffect(()=>{
+  if(!learnerRoute)return;
   const onNavigate=(event:MouseEvent)=>{
-   if(event.button!==0||event.metaKey||event.ctrlKey||event.altKey||event.shiftKey)return;
+   if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.altKey||event.shiftKey)return;
    const target=event.target;
    if(!(target instanceof Element))return;
    const link=target.closest("a[href]");
@@ -25,14 +27,14 @@ export function RouteTransition({children}:{children:ReactNode}) {
    if(recoveryTimer.current!==null)window.clearTimeout(recoveryTimer.current);
    recoveryTimer.current=window.setTimeout(()=>setLeaving(false),3000);
   };
-  document.addEventListener("click",onNavigate,true);
+  document.addEventListener("click",onNavigate);
   return ()=>{
-   document.removeEventListener("click",onNavigate,true);
+   document.removeEventListener("click",onNavigate);
    if(recoveryTimer.current!==null)window.clearTimeout(recoveryTimer.current);
    recoveryTimer.current=null;
   };
- },[pathname]);
+ },[pathname,learnerRoute]);
  useEffect(()=>{setLeaving(false);},[pathname]);
- return <div key={pathname} data-slot="route-content" data-route-transitioning={leaving?"true":undefined}
+ return <div key={pathname} data-slot="route-content" data-route-portal={learnerRoute?"learner":"other"} data-route-transitioning={leaving?"true":undefined}
    className="lms-shell-route-content">{children}</div>;
 }
