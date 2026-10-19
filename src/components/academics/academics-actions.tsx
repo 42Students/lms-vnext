@@ -141,6 +141,7 @@ export function ProgramActions({
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
           size="sm"
+          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={openEdit}
         >
@@ -148,6 +149,7 @@ export function ProgramActions({
         </Button>
         <Button
           size="sm"
+          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
           variant="ghost"
           disabled={programHasLinkedRecords}
           title={programHasLinkedRecords
@@ -815,6 +817,7 @@ export function SectionActions({
         </Link>
         <Button
           size="sm"
+          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={openEdit}
         >
@@ -822,6 +825,7 @@ export function SectionActions({
         </Button>
         <Button
           size="sm"
+          className="min-h-11 sm:min-h-[var(--lms-control-height)]"
           variant="ghost"
           onClick={() => setArchiveOpen(true)}
         >
