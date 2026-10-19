@@ -247,3 +247,14 @@
   line-height:1.5;
   overflow-wrap:anywhere;
 }
+
+@media (max-width:767px) {
+  .recruiterBell > div > section ul,
+  .learnerBell > div > section ul { padding:0; }
+  .recruiterBell > div > section li a,
+  .learnerBell > div > section li a { min-height:44px; padding:16px; }
+  .recruiterBell > div > section > div:first-child,
+  .learnerBell > div > section > div:first-child {
+    padding:12px 16px;
+  }
+}
