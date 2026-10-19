@@ -64,7 +64,7 @@ export async function CollegeRoleDirectoryWorkspace({
         <ErrorState
           title="Invalid directory filters"
           description={collegeRoleDirectoryFilterMessage(error)}
-          action={<Link href={path} className="font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear directory filters</Link>}
+          action={<Link href={path} className="font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear directory filters</Link>}
         />
       </div>
     );
@@ -90,34 +90,34 @@ export async function CollegeRoleDirectoryWorkspace({
             ) : null}
             {kind === "FACULTY" ? (
               <Link href="/college/faculty/import"
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Import faculty CSV
               </Link>
             ) : null}
             {kind === "LEARNER" ? (
               <Link href="/college/students/register"
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Register students
               </Link>
             ) : null}
             {kind==="LEARNER"?<CollegeStudentImportHistory/>:null}
             {kind === "LEARNER" ? (
               <Link href="/college/students/import"
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Import CSV
               </Link>
             ) : null}
             <Link href={"/api/college/roles/export-visible?kind="+kind+"&"+
               new URL(collegeRoleDirectoryExportHref(kind,result.filter),"https://lms.invalid").searchParams.toString()}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Export visible {kind==="FACULTY"?"faculty.csv":"students.csv"}
             </Link>
             <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               Export {kind === "FACULTY" ? "Faculty" : "Learner"} CSV (max 1,000)
             </Link>
             <Link href="/college/people"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               People directory
             </Link>
           </>
@@ -129,11 +129,11 @@ export async function CollegeRoleDirectoryWorkspace({
           [title,result.metrics.registered],
           ["Active",result.metrics.active],
           ["Suspended",result.metrics.suspended],
-        ].map(([label,value])=><div key={label} className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
+        ].map(([label,value])=><div key={label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <p className="text-xs font-semibold text-body">{label}</p>
           <p className="mt-1 text-xl font-bold tabular-nums">{value}</p>
         </div>)}
-        <div className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
+        <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <p className="text-xs font-semibold text-body">Visible now</p>
           <p className="mt-1 text-sm font-semibold text-body">Not tracked</p>
           <p className="mt-1 text-xs text-muted-foreground">Do not infer presence from login or membership status.</p>
@@ -149,7 +149,7 @@ export async function CollegeRoleDirectoryWorkspace({
               maxLength={100}
               defaultValue={result.filter.q}
               placeholder="Search this college"
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm"
             />
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
@@ -157,7 +157,7 @@ export async function CollegeRoleDirectoryWorkspace({
             <select
               name="status"
               defaultValue={result.filter.status}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm"
             >
               <option value="ALL">All statuses</option>
               <option value="ACTIVE">Active</option>
@@ -167,7 +167,7 @@ export async function CollegeRoleDirectoryWorkspace({
           </label>
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class / section
-            <select name="sectionId" defaultValue={result.filter.sectionId??""} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            <select name="sectionId" defaultValue={result.filter.sectionId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All classes</option>
               {selectedDirectoryValueNotListed(result.filter.sectionId,result.sectionOptions.map(row=>row.id)) ?
                 <option value={result.filter.sectionId}>Selected class (outside first 200)</option> : null}
@@ -177,7 +177,7 @@ export async function CollegeRoleDirectoryWorkspace({
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active program
-            <select name="programId" defaultValue={result.filter.programId??""} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            <select name="programId" defaultValue={result.filter.programId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All programs</option>
               {selectedDirectoryValueNotListed(result.filter.programId,result.programOptions.map(row=>row.id)) ?
                 <option value={result.filter.programId}>Selected program (outside first 200)</option> : null}
@@ -188,7 +188,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active batch
             <select name="cohortId" defaultValue={result.filter.cohortId ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All batches</option>
               {selectedDirectoryValueNotListed(result.filter.cohortId,result.cohortOptions.map(c=>c.id)) ?
                 <option value={result.filter.cohortId}>Selected batch (outside first 200)</option> : null}
@@ -203,7 +203,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Department
             <select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All departments</option>
               {selectedDirectoryValueNotListed(result.filter.facultyDepartmentId,result.departmentOptions.map(d=>d.id)) ?
                 <option value={result.filter.facultyDepartmentId}>Selected department (outside first 200)</option> : null}
@@ -216,7 +216,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Employment type
             <select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="">All employment types</option>
               {selectedDirectoryValueNotListed(result.filter.employmentType,result.employmentOptions) ?
                 <option value={result.filter.employmentType}>Selected type (outside first 100)</option> : null}
@@ -226,14 +226,14 @@ export async function CollegeRoleDirectoryWorkspace({
               First 100 distinct types shown.
             </span> : null}
           </label> : null}
-          <details className="min-w-0 basis-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface-subtle p-3"
+          <details className="min-w-0 basis-full rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3"
             open={collegeRoleDirectoryHasActiveFilters(kind,result.filter)}>
             <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
             <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Platform account
             <select name="accountStatus" defaultValue={result.filter.accountStatus}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All accounts</option>
               <option value="ACTIVE">Active accounts</option>
               <option value="DISABLED">Disabled accounts</option>
@@ -242,7 +242,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active enrollment
             <select name="enrollment" defaultValue={result.filter.enrollment}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All learners</option>
               <option value="ACTIVE">Has active program enrollment</option>
               <option value="NONE">No active program enrollment</option>
@@ -254,7 +254,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Roll number coverage
             <select name="rollPresence" defaultValue={result.filter.rollPresence}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All learners</option>
               <option value="PRESENT">Roll recorded</option>
               <option value="MISSING">Roll missing</option>
@@ -263,7 +263,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Registration number coverage
             <select name="registrationPresence" defaultValue={result.filter.registrationPresence}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All learners</option>
               <option value="PRESENT">Registration recorded</option>
               <option value="MISSING">Registration missing</option>
@@ -272,7 +272,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class placement
             <select name="classPresence" defaultValue={result.filter.classPresence}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All learners</option>
               <option value="ASSIGNED">Has active class</option>
               <option value="NONE">No active class</option>
@@ -283,7 +283,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Academic title coverage
             <select name="titlePresence" defaultValue={result.filter.titlePresence}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All faculty</option>
               <option value="PRESENT">Title recorded</option>
               <option value="MISSING">Title missing</option>
@@ -292,7 +292,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Primary department coverage
             <select name="departmentPresence" defaultValue={result.filter.departmentPresence}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All faculty</option>
               <option value="ASSIGNED">Department recorded</option>
               <option value="MISSING">Department missing</option>
@@ -301,7 +301,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Course teaching
             <select name="teaching" defaultValue={result.filter.teaching}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">All faculty</option>
               <option value="ASSIGNED">Has active teaching</option>
               <option value="NONE">No active teaching</option>
@@ -310,7 +310,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active course teaching role
             <select name="teachingRole" defaultValue={result.filter.teachingRole}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="ALL">Any role</option>
               <option value="PRIMARY">Primary</option>
               <option value="CO_TEACHER">Co-teacher</option>
@@ -319,16 +319,16 @@ export async function CollegeRoleDirectoryWorkspace({
           </label> : null}
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Joined from (IST)
-            <input type="date" name="joinedFrom" defaultValue={result.filter.joinedFrom??""} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm" />
+            <input type="date" name="joinedFrom" defaultValue={result.filter.joinedFrom??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm" />
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Joined through (IST)
-            <input type="date" name="joinedThrough" defaultValue={result.filter.joinedThrough??""} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm" />
+            <input type="date" name="joinedThrough" defaultValue={result.filter.joinedThrough??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm" />
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Order
             <select name="sort" defaultValue={result.filter.sort}
-              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="NAME">Name A–Z</option>
               <option value="NAME_DESC">Name Z–A</option>
               <option value="NEWEST">Newest membership</option>
@@ -337,22 +337,22 @@ export async function CollegeRoleDirectoryWorkspace({
           </label>
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Rows per page
-            <select name="pageSize" defaultValue={result.filter.pageSize} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+            <select name="pageSize" defaultValue={result.filter.pageSize} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-base sm:text-sm">
               <option value="10">10</option><option value="25">25</option><option value="50">50</option>
             </select>
           </label>
             </div>
           </details>
-          <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Apply
           </button>
-          <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
             Clear
           </Link>
         </form>
       </section>
 
-      <section aria-label={title + " results"} className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface">
+      <section aria-label={title + " results"} className="rounded-[var(--lms-control-radius)] border border-border bg-surface">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {result.total} matching {kind === "FACULTY" ? "faculty" : "learner"} membership{result.total === 1 ? "" : "s"}
         </p>
@@ -364,16 +364,16 @@ export async function CollegeRoleDirectoryWorkspace({
                 : "No role memberships are recorded in this college."
               : "There are no records on this page. Select an earlier page."}</p>
             {collegeRoleDirectoryHasActiveFilters(kind,result.filter) ?
-              <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear roster filters</Link> : null}
+              <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear roster filters</Link> : null}
           </div>
         ) : (
           <>
           <ul aria-label={title + " mobile records"} className="space-y-3 p-3 md:hidden">
             {result.items.map(item=>(
-              <li key={item.membershipId} className="min-w-0 space-y-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4">
+              <li key={item.membershipId} className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
                 <div className="min-w-0">
                   <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
-                    className="break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{item.name}</Link>
+                    className="break-words font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{item.name}</Link>
                   <p className="mt-1 break-all text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -386,9 +386,9 @@ export async function CollegeRoleDirectoryWorkspace({
                 <p className="text-xs text-muted-foreground">Joined {joinedLabel(item.joinedAt)} IST</p>
                 <div className="flex flex-wrap gap-3 text-sm">
                   <Link href={collegeRoleContactHref(item.membershipId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View contact card</Link>
+                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View contact card</Link>
                   {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Profile verification</Link>:null}
+                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile verification</Link>:null}
                 </div>
                 {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
@@ -412,16 +412,16 @@ export async function CollegeRoleDirectoryWorkspace({
               columns={[
                 {key:"person",header:"Person",mobilePriority:"primary",cell:item=><>
                   <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
-                    className="font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                    className="font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     {item.name}
                   </Link>
                   <p className="mt-1 text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
                   <Link href={collegeRoleContactHref(item.membershipId)}
-                    className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                    className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     View contact card
                   </Link>
                   {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
-                    className="ml-3 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                    className="ml-3 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     Profile verification
                   </Link>:null}
                 </>},
@@ -468,7 +468,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.filter.page > 1 ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page - 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Previous
             </Link>
@@ -476,7 +476,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.filter.page < result.totalPages ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page + 1 })}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Next
             </Link>
