@@ -49,7 +49,7 @@ const paths:Record<ShellNavIconName,string>={
 };
 export function ShellNavGlyph({name}:{name:ShellNavIconName}){
  const legacy=legacyAntPaths[name];
- if(legacy)return <svg aria-hidden="true" focusable="false" viewBox="0 0 1024 1024"
+ if(legacy)return <svg aria-hidden="true" focusable="false" viewBox="64 64 896 896"
    width="20" height="20" fill="currentColor" className="h-5 w-5">
   {legacy.map((d,i)=><path key={i} d={d}/>)}
  </svg>;
