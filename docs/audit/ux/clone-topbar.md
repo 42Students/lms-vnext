@@ -225,3 +225,38 @@ From connected GitHub source reads of the current `chatgpt/chat-13-b` branch, **
 - [ ] **B2 command palette:** `src/components/shell/topbar/command-search.tsx`; find complete old result reference or keep unticked, and perform mobile/keyboard regression checks.
 
 **Strict tick outcome remains:** B1 top bar ☐; B1 account/org switcher ☐; B2 notification drawer ☐; B2 command palette ☐. Properties fixed here do not waive the strict coverage, responsive, state, and regression gates.
+
+
+## Bounded turn — 2026-10-19, learner notification and shared-popover pass
+
+**Base:** fast-forwarded chat-13 to `origin/main` at `55a3efe0a591` before modifying any files. Source checking only; no CI, app launch, TypeScript compiler or browser-computed styles. Audit reflects the current branch after these edits.
+
+| Value / state | Old LMS reference (file:line) | vNext after this turn (file:line) | Comparison |
+| --- | --- | --- | --- |
+| Learner desktop notification panel geometry | `docs/design/legacy-styles/components___notification-drawer.scss:113-124`: border #e5e9f0, 12px radius, 360px minimum/420px maximum width, 520px maximum height, layered shadow | `src/components/shell/topbar/topbar.module.css:482-505` (learner panel rule at end of CSS), shared `PopoverPanel` at `src/components/shell/learner-notification-bell.tsx:81` | CSS values matched; positioning relative to viewport not browser-verified |
+| Learner panel header | `components___notification-drawer.scss:153-168`: 16px 20px, #fafbfc, #e5e9f0 separator | `topbar.module.css` `.learnerNotificationPopover > div:first-child`, `learner-notification-bell.tsx:82-86` | Source values match |
+| Learner row/list | `components___notification-drawer.scss:180-224`: 12px inset, 6px item gap, 8px radius, 12px 16px cell, hover #fafbfc, active rgba(0,0,0,.06), focus neutral-500 | `topbar.module.css` learner list selectors, `learner-notification-bell.tsx:99-119` | Source values matched, due-soon callouts remain intentionally distinct |
+| Learner preview | `components___notification-drawer.scss:233-261`: 14px body, 1.5 line-height, clamp 2, 12px date | `learner-notification-bell.tsx:113-117`: line-clamp-2, 1.5 and dated IST `<time>` | Matched body treatment; exact font inherited and browser validation outstanding |
+| Open/close semantics | Desktop dropdown is nonmodal, mobile drawer — `components___notification-drawer.scss:1-5,400-445` | Shared `PopoverPanel` at `learner-notification-bell.tsx:81,125`, `src/components/ui/popover.tsx:15-21` owns role/dialog/nonmodal semantics, Escape/outside-click remain in learner bell | Hand-rolled JSX overlay removed; mobile still CSS-backed popover, not shared mobile Drawer |
+| Learner loading/error/empty | `components___notification-drawer.scss:272-321` centered, 32px 20px, 14px text, error and empty icon | `learner-notification-bell.tsx:87-94` busy, loading, retry and empty status; `topbar.module.css` `[data-learner-notification-state]` | Centering/padding closer; legacy empty icon still absent, **not matched** |
+| Learner trigger badge | `components___notification-drawer.scss:27-60` min 44px trigger, 16px count, 10px text | `learner-notification-bell.tsx:73-80` 44px trigger, 16px warm-red badge | Source values match; visual states not rendered |
+| Account menu semantic wrapper | `docs/design/legacy-styles/components___dropdown.scss:96-126` nonmodal profile popup, 280px, desktop radius 6px, mobile radius 14px | `src/components/shell/topbar/account-menu.tsx:112-132` now shared `PopoverPanel` and `topbar.module.css:51,140` existing shell | Shared wrapper; content, focus order and all states not fully proven |
+| Org chooser semantic wrapper | `old-lms-shell.css:61-63` selector 38px, border #e7ecf2, radius 9px | `organization-switcher.tsx:53-67` now shared `PopoverPanel`, existing selector CSS `topbar.module.css:355-418` | Source values aligned, tablet/phone rendering unverified |
+
+### Scoped coverage and JSX evidence
+
+Fetched all **17 topbar-related .ts/.tsx files**, covering 11 under `src/components/shell/topbar/` and six shell/bell integration files. This is a source-level equivalent of:
+`grep -rnE '<(button|input|select|textarea)([ >])' [17 fetched files]` → **0**.
+`grep -rn 'role="dialog"' [17 fetched files]` → **6 textual matches** (all in selector string literals within `account-menu.tsx`, not JSX opening tags). Shared `PopoverPanel` owns actual dialog markup.
+All edited `Button`/`PopoverPanel` opening and closing tags were counted after each change. However, this is **not a full-repository grep** and the CSS still contains many literal legacy colors outside `globals.css`/`src/components/ui`; the strict coverage gate is not satisfied.
+
+### Responsive proof and limitations
+
+The old learner notification mobile breakpoint is **767px** (`components___notification-drawer.scss:400-445`). `topbar.module.css` now has a corresponding `max-width:767px` learner panel rule: width 100vw, height constrained to the visual viewport, safe-area top, 44px action targets, and reduced-motion behavior. Tablet panel width is constrained at 768–1199px. This establishes source-rule comparison only; **no rendered phone/tablet proof** is available.
+
+- [ ] **B1 top bar:** full-route Messages destinations/real unread counts and full-repository grep still missing.
+- [ ] **B1 account/org:** shared PopoverPanel achieved; remaining exact SCSS menu states, photo/initials, and rendered responsive/focus proof.
+- [ ] **B2 notifications:** learner panel migrated; recruiter remains a separate renderer, TPO desktop uses native Drawer, mobile shared-Drawer parity and exact empty/error icon unresolved.
+- [ ] **B2 command palette:** legacy search-result state reference and rendered keyboard/mobile no-regression check absent.
+
+**Exact next file:** `src/components/hr/hr-recruiter-bell.tsx` — match notification list/hover/error/empty and migrate remaining custom overlay to shared popover without changing unread provenance. All four strict items remain unticked.
