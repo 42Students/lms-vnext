@@ -36,24 +36,24 @@ export function LearnerVerificationWithdraw({
  }
  return <div className="mt-3 space-y-2">
   {!confirm?<button type="button" onClick={()=>setConfirm(true)}
-   className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
    Withdraw
   </button>:<div role="group" aria-label="Withdraw" className="rounded-lg border border-border p-3">
    <p className="text-sm text-body">Withdraw</p>
    <div className="mt-3 flex flex-wrap gap-3">
     <button type="button" disabled={pending||stale} onClick={withdraw}
-     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+     className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
      Withdraw
     </button>
     <button type="button" disabled={pending} onClick={()=>setConfirm(false)}
-     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+     className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
      Cancel
     </button>
    </div>
   </div>}
   {message?<p role="alert" className="text-sm text-body">{message}</p>:null}
   {stale?<button type="button" onClick={()=>router.refresh()}
-   className="min-h-11 rounded-md border px-3 text-sm font-semibold text-primary-text">
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold text-primary-text">
    Refresh verification status
   </button>:null}
  </div>;
