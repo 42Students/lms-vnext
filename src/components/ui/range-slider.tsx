@@ -18,7 +18,7 @@ export function RangeSlider({ label, className, id, error = false, readOnly, onP
     ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(key);
   return (
     <label data-slot="range-slider"
-      className="flex min-w-0 flex-wrap items-center gap-3 text-[13px] font-semibold leading-4 text-[var(--lms-body-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
+      className="flex min-w-0 flex-wrap items-center gap-3 text-[13px] font-semibold leading-4 text-[var(--lms-body-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:text-[var(--lms-neutral-400)] has-[[aria-readonly=true]]:cursor-default">
       {label ? <span className="min-w-0 break-words">{label}</span> : null}
       <input {...props} id={id} data-slot="range-slider-input" type="range"
         readOnly={readOnly} aria-readonly={readOnly || undefined}
