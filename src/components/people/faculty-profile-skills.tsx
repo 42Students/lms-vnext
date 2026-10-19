@@ -46,11 +46,11 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   <div className="space-y-3">
    {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
     <label className="min-w-0 text-sm font-semibold text-body">Skill {index+1}
-     <input className="mt-1.5 w-full min-w-0 rounded-md border border-border bg-background p-3" value={skill.skill}
+     <input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" value={skill.skill}
       maxLength={120} required disabled={pending} onChange={event=>edit(skill.id,"skill",event.target.value)}/>
     </label>
     <label className="min-w-0 text-sm font-semibold text-body">Proficiency
-     <input className="mt-1.5 w-full min-w-0 rounded-md border border-border bg-background p-3" value={skill.proficiency}
+     <input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" value={skill.proficiency}
       maxLength={64} disabled={pending} onChange={event=>edit(skill.id,"proficiency",event.target.value)}/>
     </label>
     <div className="flex flex-wrap gap-2 sm:col-span-3">
@@ -79,7 +79,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard unsaved skill edits</button>:null}
    {changed&&skillsIssue?<p role="alert" className="text-sm text-error">Review Skills: {skillsIssue}</p>:null}
    <button type="submit" disabled={pending||!changed||Boolean(skillsIssue)}
-    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {pending?"Saving…":"Save skills"}
    </button>
   </div>
