@@ -1,3 +1,4 @@
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -348,45 +349,13 @@ export default async function HrCalendarPage({
         </section>
       ) : (
         <>
-          <section
-            aria-label="Recruiter calendar summary"
-            className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-2 xl:grid-cols-5"
-          >
-            {[
-              [
-                "Hiring rounds",
-                calendar.summary.rounds,
-              ],
-              [
-                "Application deadlines",
-                calendar.summary.deadlines,
-              ],
-              [
-                "All events",
-                eventCount,
-              ],
-              [
-                "Accessible drives",
-                calendar.authorizedJobCount,
-              ],
-              [
-                "Results due",
-                calendar.resultsDue.length,
-              ],
-            ].map(([label, value]) => (
-              <div
-                key={String(label)}
-                className="border-b border-border p-4 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
-              >
-                <p className="text-xs font-semibold text-muted-foreground">
-                  {label}
-                </p>
-                <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-                  {value}
-                </p>
-              </div>
-            ))}
-          </section>
+          <SummaryStrip label="Recruiter calendar summary" steps={[
+            {label:"Hiring rounds",value:calendar.summary.rounds},
+            {label:"Application deadlines",value:calendar.summary.deadlines},
+            {label:"All events",value:eventCount},
+            {label:"Accessible drives",value:calendar.authorizedJobCount},
+            {label:"Results due",value:calendar.resultsDue.length},
+          ]} />
 
           <section className="border-b border-border pb-4 sm:pb-5">
             <h2 className="text-base font-semibold text-foreground">Results due in this period</h2>
