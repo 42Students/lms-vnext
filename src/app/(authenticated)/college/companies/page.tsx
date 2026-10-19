@@ -38,7 +38,7 @@ export default async function CollegeCompaniesPage({
 
   const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
   return <div className="min-w-0 overflow-x-clip space-y-6">
-    <PageHeader eyebrow="Placements" title="Companies" description="Maintain each recruiting company once and reuse it across drives." />
+    <PageHeader title="Companies" description="Maintain each recruiting company once and reuse it across drives." />
     <CollegeCompanyCreate collegeId={collegeId}/>
     <a href={"/api/college/companies/export?"+exportParams.toString()} className="font-semibold text-link underline">Export CSV</a>
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
