@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import weekStyles from "./tpo-week-hour-calendar.module.css";
 import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
@@ -195,11 +197,11 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       <Button variant="secondary" type="button" onClick={()=>setMove(null)}
         className="mt-3 min-h-11 md:min-h-9 px-4">Close</Button>
   </Dialog>:null}
-  {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
+  {!slot&&message?<InlineNotice tone="error" message={message}/>:null}
   {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next&&!saving)cancelDraft();}} dismissible={!saving} title="New recruiter follow-up" className="max-w-md">
    <div className="space-y-3">
-    {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning px-3 py-2 text-sm text-[var(--lms-gold-accent)]">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
-    {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
+    {slot&&blocked.has(slot.slice(0,10))?<Alert tone="warning">This day is blocked for placement scheduling. Choose another date if possible.</Alert>:null}
+    {!blockedDatesAvailable?<Alert tone="warning">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</Alert>:null}
     <label className="grid gap-1 text-sm">Date and time (IST)
      <Input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3"/></label>
@@ -214,7 +216,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     <label className="grid gap-1 text-sm">Note (optional)
      <Textarea value={note} maxLength={500} onChange={e=>setNote(e.target.value)}
       className="rounded-[var(--lms-control-radius)] border border-border p-2"/></label>
-    {message?<p role="alert" className="text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
+    {message?<InlineNotice tone="error" message={message}/>:null}
     <div className="flex justify-end gap-2">
      <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}
       className="min-h-11 md:min-h-9 px-4">Cancel</Button>
