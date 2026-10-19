@@ -113,9 +113,12 @@ export function TpoAcademicImportWorkspace() {
         Nothing is saved until you review the matches and confirm import.
         A roll number alone cannot identify a membership in this vNext workflow.
       </p>
+      <p aria-label="Import with preview steps" className="text-xs text-muted-foreground">
+        Choose file or paste rows → Preview matched and unmatched records → Confirm selected import.
+      </p>
       <a download="academic-import-template.csv"
         href="data:text/csv;charset=utf-8,studentCode%2Ccgpa%2CactiveBacklogs%0A"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+        className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Download a template
       </a>
       <FileUpload label="Drop a CSV file here, or click to choose" accept=".csv,text/csv" maxBytes={200_000}
@@ -152,7 +155,7 @@ export function TpoAcademicImportWorkspace() {
             {key:"backlogs",header:"Backlogs",mobilePriority:"secondary",cell:row=><span>{row.oldBacklogs??"—"} → {row.activeBacklogs}</span>},
             {key:"result",header:"Result",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.match==="WILL_UPDATE"?"success":"warning"}>{row.match==="WILL_UPDATE"?"Will update":"Can't match"}</StatusBadge>},
           ]}/>
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex min-h-11 items-center gap-2 text-sm">
           <Checkbox checked={preview.filter(row => row.match === "WILL_UPDATE")
             .every(row => !excluded.includes(row.studentCode))}
             onChange={event => setExcluded(event.target.checked
