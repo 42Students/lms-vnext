@@ -1,0 +1,105 @@
+/*
+ * Source: 42Students/lms2-fe@prod-2026/src/styles/components/_learn-projects.scss
+ * Desktop lane geometry lines 3953-3993; lane/card paint lines 4159-4184,4193-4259,
+ * 4299-4335; mobile snap lines 5662-5697.
+ * Scope these styles to project boards only; do not modify shared BoardColumn.
+ */
+.track {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: max-content;
+  min-width: 100%;
+}
+.lane {
+  flex: 0 0 320px !important;
+  width: 320px !important;
+  min-width: 320px;
+  min-height: 260px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  border: 1px solid rgba(38, 186, 199, .16) !important;
+  border-radius: 20px !important;
+  background: linear-gradient(180deg, rgba(38, 186, 199, .04), #fff 28%) !important;
+  box-shadow: 0 1px 3px rgba(23, 32, 51, .06);
+  transition: border-color 180ms ease-out, box-shadow 180ms ease-out;
+}
+.lane:hover {
+  border-color: rgba(38, 186, 199, .28) !important;
+}
+.backlogLane {
+  flex-basis: 260px !important;
+  width: 260px !important;
+  min-width: 260px;
+}
+.singleLane {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: 640px;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(229, 233, 240, .6);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: min(62vh, 720px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 4px 8px;
+  margin: 0 -4px;
+}
+.card {
+  min-width: 0;
+  border: 1px solid rgba(229, 233, 240, .85) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 3px rgba(23, 32, 51, .06);
+  transition: border-color 180ms ease-out, box-shadow 180ms ease-out;
+}
+.card:hover {
+  border-color: rgba(38, 186, 199, .28) !important;
+}
+.card:focus-within {
+  outline: 2px solid rgba(38, 186, 199, .7);
+  outline-offset: 2px;
+}
+.scrollRegion {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+.scrollRegion::-webkit-scrollbar { display: none; }
+.scrollRegion:focus-visible {
+  outline: 2px solid #26bac7;
+  outline-offset: 2px;
+}
+@media (max-width: 767px) {
+  .track { width: 100%; scroll-snap-type: x proximity; }
+  .scrollRegion { scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+  .lane, .backlogLane {
+    flex: 0 0 82% !important;
+    width: 82% !important;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+  .singleLane {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+  }
+  .body { max-height: 58vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lane, .card { transition: none; }
+}
