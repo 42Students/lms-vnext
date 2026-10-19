@@ -208,3 +208,37 @@ Starting point: `main` at `46cd0161a0e289e7da68e615359589b03ee463e9`. Lane had 0
 While this turn was underway, `main` moved from `46cd0161a0e289e7da68e615359589b03ee463e9` to `55a3efe0a5917631ab26e17e158a29f6e5282e25`. Three same-path upstream edits (`admin-program-directory.tsx`, `faculty-course-tab-navigation.tsx`, `faculty-attendance-workspace.tsx`) had **identical Git blob SHA** on both sides, reflecting commits already picked up by main. The remaining ten lane-only changed files were overlaid onto main's tree and recorded in the two-parent merge commit `5e6d093b7725f88b5240bbf7d2547a52b89153b8`, pushed **only** to `chatgpt/chat-3-b`. This preserves both upstream changes and the lane's prior commit history; it is a **merge sync, not a rebase**. No change to `main` was made by this lane.
 
 Turn total after this audit update: 40 pushed commits (37 UI/code commits, two audit updates, one upstream merge commit); no CI or application execution.
+
+## Turn 3 — Academics overview and section operations (2026-10-19)
+
+Read `docs/orchestrator/queues/master-queue.md` OWNER GOAL, CODEMODS and SMARTER PLAN. Per the SMARTER PLAN, fixed only portal-owned judgement cases and page layouts; **no shared skins/components, raw-control codemods or TypeScript compilation were run**. `docs/audit/ux/parity-report.md` was not available at the beginning of this turn (repository fetch returned not found). Category H stays unchecked.
+
+**Branch baseline:** main `5a2abb4bba7e3bcfcf7523ffde18a0346e3590ed` was 447 commits ahead of the lane; fast-forwarded first. 33 file commits were made in the lane before this audit update; some have already appeared on a newer `main` via the orchestrator. Reconciled same-path Git blobs before final upstream synchronization.
+
+### Changes / evidence by target
+
+- `src/components/academics/academics-overview.tsx`: four DataTable definitions use explicit `mobilePriority="primary"` for each entity identity, `"action"` for management controls, plus `"secondary"` for selected statuses/cohorts. Grouped cohort and section headings with `aria-labelledby`/matching IDs. Kept capacity numerals tabular and changed outer vertical spacing to `var(--lms-space-5)`; all four underlying table data sources and mutations remain intact.
+- `src/components/academics/section-operations.tsx`: four typed `DataTableColumn<Row>[]` structures prioritize identity/actions on phones; mutation buttons wrap and retain their handlers; learner/faculty selectors have explicit accessible names; schedule filter grid has responsive tablet/desktop widths; action buttons have 44px minimum mobile height. Fixed the multiline `as "ADVISOR" | "COORDINATOR"` syntax without changing accepted values.
+- `src/components/academics/academics-create-panel.tsx`: four create forms use 24px outer rhythm and canvas border tokens, with responsive two-column fields at tablet size and touch-sized submit buttons. Form state, validation and API actions unchanged.
+- `src/components/academics/academics-section-page.tsx`: retained shared `PageHeader`, replaced manually styled Back to Academics link with `PageBackLink` (same URL and accessible label); canvas wrapper now uses 24px spacing.
+- `src/components/courses/faculty-course-list.tsx`: changed the hand-written previous/next link row to shared `Pagination` using existing `facultyCourseListHref`; adjusted Apply/Clear filter hit area and secondary outline state while preserving filtering and route params.
+
+### Selected source-level value comparisons (not exhaustive)
+
+| Legacy rule | vNext source-level implementation | Status |
+|---|---|---|
+| `docs/design/legacy-styles/components___variables.scss:120`: `$space-5:24px` | `src/components/academics/academics-overview.tsx` and `academics-create-panel.tsx` use `space-y-[var(--lms-space-5)]` or `gap-[var(--lms-space-5)]` | Verify computed token and exact page placement |
+| `docs/design/legacy-styles/components___variables.scss:30`: `$neutral-200:#e5e9f0` hairline border | `src/components/academics/section-operations.tsx`: `border-[var(--lms-canvas-border)]` | Token value and rendered thickness still require parity report |
+| `docs/design/legacy-styles/components___variables.scss:148-150`: 767px, 991px, 1024px reference breakpoints | Four academics-create forms use `md:grid-cols-2`, section schedule `md:grid-cols-2` and `xl:grid-cols-3` | Must check phone and tablet side by side |
+| `docs/design/legacy-styles/pages___admin-list-pages.scss:9`: minimum touch target 44px | Section edit buttons and academic create submit controls use `min-h-11 sm:min-h-[var(--lms-control-height)]` | Touch sizing matched in markup, interactive states not fully proven |
+| `docs/design/old-lms-pages.md:6`: one white canvas (12px radius, 1px border, 24px padding) | Changes add no new outer canvas; existing forms are separated by hairline dividers | Root canvas still externally owned, no full-value tick |
+| `docs/design/legacy-styles/pages___admin-list-pages.scss:239-241`: 0.875rem tab labels | No tabs added to section operations; existing DataTable styling delegated to `src/components/ui` | Shared widget parity owner; this lane did not change global tabs |
+
+### Source-only regression review (not a CI claim)
+
+After editing, re-fetched and inspected **every changed TSX file**. The five changed files show zero textual `<button>`, `<input>`, `<select>`, `<textarea>`, or `<table>` tags and zero hard-coded hex matches in a bounded source-level check. In `section-operations.tsx`, ten `<Button>` match ten `</Button>` and six `<Select>` match six `</Select>`; in `academics-create-panel.tsx`, four Button pairs and six Select pairs match. All new Table/Pagination/PageHeader/PageBackLink components are self-closing. This is **not** a complete transitive grep, responsive proof, parser/typecheck or render test. No build, CI, unit test or local app execution occurred.
+
+- [ ] Faculty/Teacher Section H (missing: whole-portal transitive greps, full parity-report property table, responsive and visual proof)
+- [ ] Super Admin academics/people/recruiters Section H (missing: full per-state comparisons for scoped and unscoped academics/people screens; linked HR implementation remains another lane's responsibility)
+
+**Exact next file:** `src/components/academics/academics-actions.tsx` — inspect section action link/buttons and all edit/confirmation dialogs for token and responsive judgement cases; then `src/components/courses/faculty-course-workspace.tsx` for dynamic class tabs/pills.
