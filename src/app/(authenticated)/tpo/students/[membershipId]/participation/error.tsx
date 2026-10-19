@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import { Button } from "@/components/ui/button";
 
@@ -10,7 +11,7 @@ export default function TpoParticipationError({
 }) {
   return (
     <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-8 text-center">
-      <h1 className="text-lg font-semibold text-foreground">Could not load participation decision</h1>
+      <PageHeader title={"Could not load participation decision"} />
       <p className="mt-2 text-sm text-body">
         The learner may be outside your college, inactive or missing an unambiguous
         current enrollment. No decision was changed.
