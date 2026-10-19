@@ -41,7 +41,7 @@ export default async function FacultyAssessmentResultsPage({
         </Link>
       </div>} />
     <form method="get" action="/teacher/results"
-      className="flex flex-wrap items-end gap-3">
+      className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           
