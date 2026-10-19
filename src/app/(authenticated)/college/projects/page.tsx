@@ -11,6 +11,7 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
 import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-admin-workspace-page-export";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { ErrorState } from "@/components/ui/error-state";
 import {parseCollegeProjectsQuery,canonicalCollegeProjectsPageHref} from "@/modules/projects/college-projects-query-model";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
@@ -116,14 +117,16 @@ export default async function CollegeProjectsPage({
       <Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
       <Link className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
 
-      <nav aria-label="Workspace display and archive" className="flex min-w-0 flex-wrap items-center gap-3 border-b border-border">
-       <ProjectAdminWorkspacePageExport items={items}/>
-       <Link href={viewHref("cards")} aria-current={query.view==="cards"?"page":undefined} className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-link aria-[current=page]:border-primary aria-[current=page]:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Cards</Link>
-       <Link href={viewHref("table")} aria-current={query.view==="table"?"page":undefined} className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-link aria-[current=page]:border-primary aria-[current=page]:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">List</Link>
-       <Link href="/college/projects?status=ARCHIVED" aria-current={query.status==="ARCHIVED"?"page":undefined} className="inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-body hover:text-link aria-[current=page]:border-primary aria-[current=page]:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Archived workspaces</Link>
-      </nav>
+      <Tabs ariaLabel="Workspace display and archive" renderPanel={false}
+        value={query.status==="ARCHIVED"?"archived":query.view}
+        items={[
+          {value:"cards",label:"Cards",href:viewHref("cards"),count:result.total},
+          {value:"table",label:"List",href:viewHref("table"),count:result.total},
+          {value:"archived",label:"Archived workspaces",href:"/college/projects?status=ARCHIVED"},
+        ]} />
       {!templatesResult.ok && <p role="status" className="border-b border-border pb-3 text-sm text-body">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</p>}
       <ProjectAdminFilters query={query} />
+      <ProjectAdminWorkspacePageExport items={items}/>
 
       <ProjectAdminWorkspaceList
         items={items}
