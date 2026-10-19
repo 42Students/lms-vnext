@@ -218,7 +218,7 @@ export function CollegeBrandingForm({
       <aside
         aria-label="Sign-in preview"
         style={previewStyle}
-        className="h-fit rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
+        className="h-fit space-y-3 border-l border-border pl-4"
       >
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Sign-in preview

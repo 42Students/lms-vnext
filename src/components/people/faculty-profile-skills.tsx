@@ -28,7 +28,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   event.preventDefault();
   if(changed&&!pending&&!skillsIssue)void onSave("skills",rows);
  }
- return <form id={facultyProfileAnchor("skills")} className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:p-6"
+ return <form id={facultyProfileAnchor("skills")} className="space-y-4 border-b border-border pb-5"
    aria-label="Skills" onSubmit={submit}>
   <div>
    <h2 className="font-semibold text-foreground">Skills</h2>
@@ -37,7 +37,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   {rows.length===0?<p className="text-sm text-muted-foreground">No skills added yet.</p>:null}
   {rows.length>5?<label className="block text-sm text-body">Find skill
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-     className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-background p-3"/>
+     className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleSkills.length)}</span>
