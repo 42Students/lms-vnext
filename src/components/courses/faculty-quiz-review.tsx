@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { LoadingState } from "@/components/ui/loading-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -314,22 +316,14 @@ export function FacultyQuizReview({
         </div>
       </div>
 
-      {loading ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          Loading attempts…
-        </p>
-      ) : null}
+      {loading ? <LoadingState label="Loading attempts…" /> : null}
 
       {error ? (
         <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
       ) : null}
 
-      {!loading &&
-      attempts &&
-      attempts.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">
-          No submissions yet
-        </p>
+      {!loading && attempts && attempts.length === 0 ? (
+        <EmptyState title="No submissions yet" description="" />
       ) : null}
 
       {!loading && attempts ? <p className="text-sm font-semibold text-foreground">{attempts.length} submission(s)</p> : null}
