@@ -69,19 +69,34 @@
   border-radius:8px;
  }
  .lms-legacy-mobile-footer-link:focus-visible {outline:2px solid #26bac7;outline-offset:2px;}
+ /* prod-2026 MobileFooter.jsx:104-110 wraps the 24px bell in
+  * AntD <Badge size="small">; position count against the bell, not the
+  * entire 44px tap target. AntD v5 small indicator: 14px / 12px. */
+ .lms-legacy-mobile-footer-icon-wrap {
+  position:relative;
+  display:inline-flex;
+  flex:0 0 24px;
+  width:24px;
+  height:24px;
+  align-items:center;
+  justify-content:center;
+ }
  .lms-legacy-mobile-footer-badge {
   position:absolute;
-  top:-1px;
-  right:-4px;
-  min-width:16px;
-  height:16px;
-  padding:0 3px;
-  border-radius:999px;
-  background:#26bac7;
+  top:0;
+  right:0;
+  transform:translate(50%,-50%);
+  min-width:14px;
+  height:14px;
+  padding:0 2px;
+  border-radius:7px;
+  background:#ff4d4f;
+  box-shadow:0 0 0 1px #fff;
   color:#fff;
-  font-size:10px;
-  line-height:16px;
-  font-weight:700;
+  font-size:12px;
+  line-height:14px;
+  font-weight:400;
   text-align:center;
+  white-space:nowrap;
  }
 }

@@ -1,13 +1,14 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
 import type {EngageColumn} from "@/modules/placements/tpo-recruiter-table-view-model";
 type SavedView={
  id:string;name:string;note:string|null;query_json:Record<string,string>;
  columns_json:EngageColumn[];pinned:boolean;updated_at:string;
 };
-const button="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-semibold disabled:opacity-50";
+const button="min-h-11 max-w-full break-words px-3 text-sm";
 export function RecruiterSavedViewControls({columns}:{columns:readonly EngageColumn[]}){
  const [views,setViews]=useState<SavedView[]>([]);
  const [ready,setReady]=useState<boolean|null>(null);
@@ -82,28 +83,28 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
   a.click();URL.revokeObjectURL(url);
  }
  const active=views.find(view=>view.id===selected);
- return <section aria-label="Saved recruiter views" className="space-y-3 rounded-lg border border-border bg-surface p-4">
+ return <section aria-label="Saved recruiter views" className="min-w-0 space-y-3 border-y border-border py-3">
   <h2 className="font-semibold">Saved views</h2>
   {ready===null?<p role="status" className="text-sm">Loading views…</p>:
    !ready?<p role="status" className="text-sm">Saved views are unavailable until storage is registered.</p>:<>
-   <div className="flex flex-wrap items-center gap-2">
+   <div className="grid min-w-0 grid-cols-1 items-center gap-2 md:grid-cols-2 xl:grid-cols-3">
     <Input aria-label="View name" maxLength={100} placeholder="View name" value={name}
-     onChange={e=>setName(e.target.value)} className="min-h-10 rounded border border-border px-3"/>
+     onChange={e=>setName(e.target.value)} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3"/>
     <Input aria-label="View note" maxLength={500} placeholder="Note (optional)" value={note}
-     onChange={e=>setNote(e.target.value)} className="min-h-10 rounded border border-border px-3"/>
-    <button type="button" disabled={busy||!name.trim()||views.length>=100} className={button}
-     onClick={()=>void apply("CREATE")}>Save current view</button>
+     onChange={e=>setNote(e.target.value)} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3"/>
+    <Button variant="secondary" type="button" disabled={busy||!name.trim()||views.length>=100} className={button}
+     onClick={()=>void apply("CREATE")}>Save current view</Button>
    </div>
    {views.length?<div className="space-y-2">
     <p role="status" className="text-xs text-muted-foreground">{views.length} saved views · {views.filter(view=>view.pinned).length} of 5 pinned</p>
-    {views.some(view=>view.pinned)?<nav aria-label="Pinned recruiter views" className="flex flex-wrap gap-2">
-      {views.filter(view=>view.pinned).map(view=><button key={view.id} type="button"
+    {views.some(view=>view.pinned)?<nav aria-label="Pinned recruiter views" className="flex min-w-0 flex-wrap gap-2">
+      {views.filter(view=>view.pinned).map(view=><Button variant="secondary" key={view.id} type="button"
         className={button} onClick={()=>open(view)} title={view.note??undefined}>
         ★ {view.name}
-      </button>)}
+      </Button>)}
     </nav>:null}
     <label className="block text-sm">Open saved view
-     <Select className="mt-1 min-h-10 w-full max-w-sm rounded-[9px] border border-border px-3"
+     <Select className="mt-1 min-h-11 w-full max-w-sm rounded-[var(--lms-control-radius)] border border-border px-3"
       value={selected} onChange={e=>{
        setSelected(e.target.value);setDeleteReview(null);
        const view=views.find(item=>item.id===e.target.value);
@@ -113,20 +114,20 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
       {views.map(view=><option key={view.id} value={view.id}>{view.pinned?"★ ":""}{view.name}</option>)}
      </Select>
     </label>
-    {active?<div className="flex flex-wrap gap-2">
-     <label className="text-sm">Rename view<Input maxLength={100} className="ml-2 min-h-10 rounded-[9px] border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
-     <label className="text-sm">Note<Input maxLength={500} className="ml-2 min-h-10 rounded-[9px] border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
-     <button type="button" className={button} onClick={()=>open(active)}>Open</button>
-     <button type="button" className={button} disabled={busy||!editingName.trim()} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</button>
-     <button type="button" className={button} disabled={busy||(!active.pinned&&views.filter(view=>view.pinned).length>=5)} onClick={()=>void apply("PIN",active)}>
+    {active?<div className="grid min-w-0 grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+     <label className="min-w-0 text-sm">Rename view<Input maxLength={100} className="ml-2 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
+     <label className="min-w-0 text-sm">Note<Input maxLength={500} className="ml-2 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
+     <Button variant="secondary" type="button" className={button} onClick={()=>open(active)}>Open</Button>
+     <Button variant="secondary" type="button" className={button} disabled={busy||!editingName.trim()} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</Button>
+     <Button variant="secondary" type="button" className={button} disabled={busy||(!active.pinned&&views.filter(view=>view.pinned).length>=5)} onClick={()=>void apply("PIN",active)}>
       {active.pinned?"Unpin":"Pin"}
-     </button>
+     </Button>
      {deleteReview===active.id?<>
        <span role="status" className="text-sm">Delete {active.name}? This view cannot be restored.</span>
-       <button type="button" className={button} disabled={busy} onClick={()=>void apply("DELETE",active)}>Confirm delete</button>
-       <button type="button" className={button} onClick={()=>setDeleteReview(null)}>Cancel</button>
-     </>:<button type="button" className={button} disabled={busy} onClick={()=>setDeleteReview(active.id)}>Delete</button>}
-     <button type="button" className={button} onClick={()=>download(active)}>Download view</button>
+       <Button variant="secondary" type="button" className={button} disabled={busy} onClick={()=>void apply("DELETE",active)}>Confirm delete</Button>
+       <Button variant="secondary" type="button" className={button} onClick={()=>setDeleteReview(null)}>Cancel</Button>
+     </>:<Button variant="secondary" type="button" className={button} disabled={busy} onClick={()=>setDeleteReview(active.id)}>Delete</Button>}
+     <Button variant="secondary" type="button" className={button} onClick={()=>download(active)}>Download view</Button>
      <p className="w-full text-xs text-muted-foreground">{active.note||"No note"}</p>
     </div>:null}
    </div>:<p className="text-sm">No saved recruiter views yet.</p>}

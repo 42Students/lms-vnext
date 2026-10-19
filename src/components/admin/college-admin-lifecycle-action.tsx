@@ -1,6 +1,7 @@
 "use client";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -31,17 +32,17 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to change access");}
  }
  if(status!=="ACTIVE"&&status!=="SUSPENDED")return null;
- if(hasMentorRole&&action==="SUSPEND")return <p className="text-xs text-warning-text">Also assigned to mentoring. Review active project assignments before changing access.</p>;
+ if(hasMentorRole&&action==="SUSPEND")return <Alert tone="warning">Also assigned to mentoring. Review active project assignments before changing access.</Alert>;
  return <div className="min-w-44 space-y-2">
   {action==="SUSPEND"?<label className="grid gap-1 text-xs font-medium text-body">Suspension reason
-   <Input value={reason} maxLength={1000} onChange={event=>setReason(event.target.value)}
-    className="min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)]" placeholder="Reason for suspension"/>
+   <Input value={reason} maxLength={1000} disabled={busy} onChange={event=>setReason(event.target.value)}
+    className="min-h-11 md:min-h-9" placeholder="Reason for suspension"/>
   </label>:null}
-  <Button type="button" variant="secondary" disabled={busy||(action==="SUSPEND"&&reason.trim().length<3)}
-   onClick={()=>setConfirmOpen(true)} className="min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)]">
+  <Button type="button" variant="secondary" loading={busy} disabled={busy||(action==="SUSPEND"&&reason.trim().length<3)}
+   onClick={()=>setConfirmOpen(true)} className="min-h-11 md:min-h-9">
     {busy?"Saving…":action==="SUSPEND"?"Suspend":"Reactivate"}
   </Button>
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title={action==="SUSPEND"?"Suspend administrator access?":"Reactivate administrator access?"}
    description={action==="SUSPEND"?"This administrator will lose college access and be signed out from active devices.":"Restore college access for this administrator?"}

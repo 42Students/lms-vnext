@@ -156,10 +156,10 @@ export function LearnerPlacementJourney({
       <section aria-label="Where your applications stand" className="space-y-3 border-b border-border pb-5">
         <h3 className="text-base font-semibold text-foreground">Where your applications stand</h3>
         <p className="text-sm text-body">Your recorded application and selection progress. Future rounds only appear after your placement team records them.</p>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-3 md:grid-cols-2">
           {items.map(item=>(
             <a key={item.applicationId} href={"#placement-application-"+encodeURIComponent(item.applicationId)}
-              className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3 hover:bg-primary-subtle">
+              className="block min-h-11 min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-[var(--lms-primary)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="min-w-0 break-words text-sm font-semibold text-foreground">{item.companyName} · {item.jobTitle}</span>
                 <StatusBadge tone={item.applicationStatus==="WITHDRAWN"||item.screening.status==="REJECTED"?"error":"info"}>
@@ -184,11 +184,11 @@ export function LearnerPlacementJourney({
           <article
             key={item.applicationId}
             id={"placement-application-"+encodeURIComponent(item.applicationId)}
-            className="scroll-mt-24 min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5"
+            className="scroll-mt-24 min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6"
           >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
-                <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
+                <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   {item.companyName}
                 </p>
                 <h3 className="mt-1 break-words text-lg font-semibold text-foreground">
@@ -235,11 +235,11 @@ export function LearnerPlacementJourney({
                 <p className="mt-1 text-xs text-muted-foreground">The placement cell applied on your behalf. The 48-hour opt-out window starts when the application was recorded. Outside that window, contact the placement team about withdrawal.</p>
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
                   {item.mayStaffOptOut?<Link href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(item.applicationId)}
-                    className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+                    className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
                     Opt out or ask to withdraw
                   </Link>:null}
                   <Link href="/learn/my-placements/placement#requests"
-                    className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+                    className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
                     Contact the placement cell
                   </Link>
                 </div>
@@ -249,7 +249,7 @@ export function LearnerPlacementJourney({
               <aside role="alert" className="mt-4 rounded-lg border border-warning bg-surface p-4">
                 <p className="font-semibold text-foreground">This drive was cancelled</p>
                 <p className="mt-1 text-sm text-body">The placement cell has cancelled this drive. Any published reason will appear in its college notice. Your application history remains available.</p>
-                <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Check placement cell notices</Link>
+                <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Check placement cell notices</Link>
               </aside>
             ) : item.driveStatus === "CLOSED" ? (
               <p role="status" className="mt-4 rounded-lg border border-border p-3 text-sm text-body">This drive has closed. Your recorded application and round results remain available.</p>
@@ -288,7 +288,7 @@ export function LearnerPlacementJourney({
                     </li>
                   ))}
                 </ol>
-                <Link href="/learn/my-placements/schedule" className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View schedule</Link>
+                <Link href="/learn/my-placements/schedule" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View schedule</Link>
               </section>
             ) : null}
 
@@ -304,7 +304,7 @@ export function LearnerPlacementJourney({
                   .map((result) => (
                     <div
                       key={result.resultId}
-                      className="flex flex-col gap-2 rounded-lg border border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                      className="flex min-w-0 flex-col gap-2 border-b border-border py-3 last:border-b-0 md:flex-row md:items-center md:justify-between"
                     >
                       <div>
                         <p className="m-0 text-sm font-semibold text-foreground">
@@ -322,7 +322,7 @@ export function LearnerPlacementJourney({
                           </p>
                         ) : null}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex min-w-0 flex-wrap items-center gap-2">
                         {result.scorePercent !==
                         null ? (
                           <span className="text-xs font-semibold text-muted-foreground">
@@ -345,7 +345,7 @@ export function LearnerPlacementJourney({
                               request:"absence-dispute",applicationId:item.applicationId,
                               roundId:result.roundId,
                             }).toString()+"#requests"}
-                            className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+                            className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
                             Wrong? Tell the placement cell
                           </Link>
                         ) : null}
@@ -367,25 +367,25 @@ export function LearnerPlacementJourney({
                 )}
               </p>
             ) : null}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-surface-subtle p-3">
+            <div className="mt-4 flex min-w-0 flex-wrap items-center justify-between gap-2 border-t border-border bg-surface-subtle p-3">
               <p className="text-xs text-body">
                 Last recorded activity · {formatWhen(learnerApplicationCardActivity(item).at)}
               </p>
               {learnerApplicationCardActivity(item).historyHref ? (
                 <Link href={learnerApplicationCardActivity(item).historyHref!}
-                  className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-4">
+                  className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-4">
                   Saved status history →
                 </Link>
               ):null}
             </div>
             {ownApplicationJobHref(item.jobId) ? <Link
               href={ownApplicationJobHref(item.jobId)!}
-              className="mt-4 mr-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-4 mr-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               View published job and role options →
             </Link> : null}
             <Link
               href={`/learn/my-placements/applications?applicationId=${encodeURIComponent(item.applicationId)}`}
-              className="mt-4 inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto sm:justify-start"
+              className="mt-4 inline-flex min-h-11 md:min-h-9 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline md:w-auto md:justify-start"
             >
               View application details →
             </Link>

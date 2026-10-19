@@ -245,7 +245,7 @@ export function LearnerCourseOverview({
         </p>
       </div>
 
-      {(aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0)?<section id="course-overview-about" className="scroll-mt-32 border-b border-border pb-5">
+      {(aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0)?<section id="course-overview-about" className="scroll-mt-24 border-b border-border pb-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-4xl">
             <h3 className="m-0 text-lg font-semibold text-foreground">
@@ -279,7 +279,7 @@ export function LearnerCourseOverview({
                 <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
                   What you&apos;ll learn
                 </p>
-                <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+                <ul className="mt-2 grid gap-2 md:grid-cols-2">
                   {learningTakeaways.map((takeaway) => (
                     <li
                       key={takeaway}
@@ -330,7 +330,7 @@ export function LearnerCourseOverview({
         </div>
       </section>:null}
 
-      <section id="course-overview-path" aria-label="Learning path preview" className="scroll-mt-32 border-b border-border pb-5">
+      <section id="course-overview-path" aria-label="Learning path preview" className="scroll-mt-24 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="text-base font-semibold text-foreground">Learning path preview</h3>
@@ -340,16 +340,16 @@ export function LearnerCourseOverview({
             </p>
           </div>
           <Link href={`/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9">
             Full learning path →
           </Link>
         </div>
         {pathPreview.lessons.length ? (
-          <ol className="mt-4 grid gap-2 sm:grid-cols-2">
+          <ol className="mt-4 grid gap-2 md:grid-cols-2">
             {pathPreview.lessons.map((lesson)=>(
               <li key={lesson.id} className="rounded-lg border border-border p-3">
                 <Link href={`/learn/courses/${deliveryId}/roadmap?lesson=${encodeURIComponent(lesson.id)}`}
-                  className="block text-sm font-semibold text-primary-text">{lesson.name}</Link>
+                  className="flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9">{lesson.name}</Link>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {lesson.progress===null?"No published trackable items"
                     : `${lesson.completed} of ${lesson.total} items completed · ${lesson.progress}%`}
@@ -366,10 +366,10 @@ export function LearnerCourseOverview({
       </section>
 
       <section id="course-overview-next"
-        className="scroll-mt-32 rounded-xl border border-primary bg-primary-subtle p-4 sm:p-5"
+        className="scroll-mt-24 rounded-xl border border-primary bg-primary-subtle p-4 md:p-5"
         aria-label="Next action"
       >
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
               {learnerCourseHomeActionLabel({
@@ -393,7 +393,7 @@ export function LearnerCourseOverview({
           </div>
           <Link
             href={nextAction?.href ?? `/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:min-h-9"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] md:min-h-9"
           >
             {readOnly
               ? "View Learning Path"
@@ -414,7 +414,7 @@ export function LearnerCourseOverview({
         </section>
       ) : null}
 
-      <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-32 grid gap-4 border-t border-border pt-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-24 grid gap-4 border-t border-border pt-4 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Overall"
           value={progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
@@ -438,7 +438,7 @@ export function LearnerCourseOverview({
       </div>
 
       {unifiedUpdates.length > 0 ? (
-        <section id="course-overview-updates" className="scroll-mt-32 border-b border-border pb-5">
+        <section id="course-overview-updates" className="scroll-mt-24 border-b border-border pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="m-0 text-base font-semibold text-foreground">
@@ -450,18 +450,18 @@ export function LearnerCourseOverview({
             </div>
             <Link
               href={`/learn/courses/${deliveryId}/roadmap`}
-              className="text-sm font-semibold text-primary-text hover:text-primary-hover"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9"
             >
               Learning Path
             </Link>
           </div>
           <nav aria-label="Recent course update categories" className="mt-4 flex flex-wrap gap-2">
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=assessments"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Assessments</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Assessments</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Discussions</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Discussions</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=live-sessions"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Live Sessions</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Live Sessions</Link>
           </nav>
           <div className="mt-4 divide-y divide-border">
             {unifiedUpdates.map((update) => (
@@ -474,7 +474,7 @@ export function LearnerCourseOverview({
                     <p className="mt-1 text-xs text-muted-foreground">{update.detail}</p>
                     {update.body ? <ExpandableCourseUpdate body={update.body} /> : null}
                   </div>
-                  <Link href={update.href} aria-label={`Open ${update.title}`} className="shrink-0 text-primary-text">
+                  <Link href={update.href} aria-label={`Open ${update.title}`} className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:min-w-9">
                     →
                   </Link>
                 </div>
