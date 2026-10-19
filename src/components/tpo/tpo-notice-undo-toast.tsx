@@ -15,7 +15,7 @@ export function TpoNoticeUndoToast({id,version,createdAt}:{
  if(now===null)return <p role="status" className="text-sm text-body">Announcement saved. Undo is available for 30 seconds.</p>;
  const remaining=Math.max(0,30000-(now-new Date(createdAt).getTime()));
  if(!Number.isFinite(remaining)||remaining<=0)return null;
- return <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
+ return <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <p className="text-sm text-body">Announcement saved. Undo send ({Math.ceil(remaining/1000)}s remaining).</p>
   <form action={"/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle"} method="post">
    <input type="hidden" name="expectedVersion" value={version}/>
