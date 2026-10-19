@@ -110,7 +110,7 @@ export function MobileNavigation({
                 </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto py-4 pr-3">
+            <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pt-2 pb-4">
               <SidebarNav
                 items={items}
                 onNavigate={() => setOpen(false)}
