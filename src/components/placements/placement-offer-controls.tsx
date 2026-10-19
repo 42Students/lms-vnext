@@ -320,8 +320,8 @@ export function PlacementOfferControls({
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border px-5 py-4">
+    <section className="border-b border-border pb-6">
+      <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Offers & joining
         </h2>

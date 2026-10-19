@@ -685,7 +685,7 @@ export function PlacementJobCreateForm({
           "Local draft saved at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST — not yet submitted to the server.":
           "Draft form changes are saved locally on this device. Create draft to save them to the server."}
       </p>
-      <nav aria-label="Drive setup review" className="rounded-xl border border-border bg-surface p-5">
+      <nav aria-label="Drive setup review" className="border-b border-border pb-6">
         <h2 className="text-base font-semibold text-foreground">Setup review</h2>
         <ol className="mt-3 grid gap-3 sm:grid-cols-4">
           {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
@@ -703,8 +703,8 @@ export function PlacementJobCreateForm({
           <p>These are warnings, not publication blockers. Review the drive and invite the recruiter before confirming publication.</p>
         </div>
       </nav>
-      <section className="rounded-xl border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
+      <section className="border-b border-border pb-6">
+        <div className="border-b border-border pb-3">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Placement season
           </h2>
@@ -712,7 +712,7 @@ export function PlacementJobCreateForm({
             Every drive belongs to the current operating season. Historical seasons remain read-only.
           </p>
         </div>
-        <div className="p-5">
+        <div className="pt-4">
           {activeSeason ? (
             <>
               <p className="m-0 font-semibold text-foreground">
@@ -733,8 +733,8 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
+      <section className="border-b border-border pb-6">
+        <div className="border-b border-border pb-3">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Employer
           </h2>
@@ -742,7 +742,7 @@ export function PlacementJobCreateForm({
             Reuse college relationship memory or create a canonical employer relationship once.
           </p>
         </div>
-        <div className="grid gap-4 p-5">
+        <div className="grid gap-4 pt-4">
           {companies.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               <Button
@@ -896,8 +896,8 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
+      <section className="border-b border-border pb-6">
+        <div className="border-b border-border pb-3">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Opportunity
           </h2>
@@ -905,7 +905,7 @@ export function PlacementJobCreateForm({
             Create the learner-facing job opportunity and application window.
           </p>
         </div>
-        <div className="grid gap-4 p-5 lg:grid-cols-2">
+        <div className="grid gap-4 pt-4 lg:grid-cols-2">
           <label className="lg:col-span-2">
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Job title
@@ -1117,12 +1117,12 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <section className="rounded-xl border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
+      <section className="border-b border-border pb-6">
+        <div className="border-b border-border pb-3">
           <h2 className="text-base font-semibold">Additional job details</h2>
           <p className="mt-1 text-sm text-body">Responsibilities, dates and preferences are informational. Only the eligibility policy below governs learner eligibility.</p>
         </div>
-        <div className="grid gap-4 p-5 sm:grid-cols-2">
+        <div className="grid gap-4 pt-4 sm:grid-cols-2">
           <fieldset className="sm:col-span-2 grid gap-3 rounded-lg border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Pool drive logistics (optional, staff-reviewed)</legend>
             <label className="grid gap-1 text-sm">Host college
@@ -1188,8 +1188,8 @@ export function PlacementJobCreateForm({
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
       </section>
-      <section className="rounded-xl border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
+      <section className="border-b border-border pb-6">
+        <div className="border-b border-border pb-3">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Eligibility
           </h2>
