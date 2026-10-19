@@ -120,16 +120,17 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         </Button>
         <label className="sr-only" htmlFor="lms-topbar-command-search">Search workspace</label>
         <input id="lms-topbar-command-search" ref={input} type="search" value={query}
-          autoComplete="off" role="combobox" aria-haspopup="listbox"
-          aria-controls="lms-topbar-command-results" aria-expanded={open}
+          autoComplete="off" role="combobox" aria-haspopup="listbox" aria-keyshortcuts="Control+K Meta+K"
+          aria-controls={open ? "lms-topbar-command-results" : undefined} aria-expanded={open}
           placeholder={config.placeholder} className={style.searchInput}
           onFocus={() => { setOpen(true); setMobileOpen(true); }}
           onChange={event => { setQuery(event.target.value); setOpen(true); }}
           onKeyDown={event => {
             if (event.key === "Enter") { event.preventDefault(); submit(); }
-            if (event.key === "ArrowDown" && open) {
-              const first = root.current?.querySelector<HTMLElement>('[role="option"], button[data-tpo-result]');
-              if (first) { event.preventDefault(); first.focus(); }
+            if ((event.key === "ArrowDown" || event.key === "ArrowUp") && open) {
+              const options = root.current?.querySelectorAll<HTMLElement>('[role="option"]');
+              const target = event.key === "ArrowDown" ? options?.[0] : options?.[options.length - 1];
+              if (target) { event.preventDefault(); target.focus(); }
             }
             if (event.key === "Escape") { event.preventDefault(); setOpen(false); setMobileOpen(false); }
           }}/>
@@ -143,6 +144,19 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             input.current?.focus();
             setOpen(false);
             setMobileOpen(false);
+            return;
+          }
+          if (event.key === "Backspace" && !event.ctrlKey && !event.metaKey) {
+            event.preventDefault();
+            setQuery(value => value.slice(0, -1));
+            input.current?.focus();
+            return;
+          }
+          if (!event.ctrlKey && !event.metaKey && !event.altKey &&
+              event.key.length === 1) {
+            event.preventDefault();
+            setQuery(value => (value + event.key).slice(0, 100));
+            input.current?.focus();
             return;
           }
           if (event.defaultPrevented ||

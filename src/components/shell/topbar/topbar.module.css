@@ -32,9 +32,11 @@
 .searchInput::placeholder { color:var(--topbar-placeholder); opacity:1; }
 .searchHint { flex:none; font-family:inherit; font-size:11px; font-weight:500; line-height:1.1; color:var(--topbar-muted); white-space:nowrap; border:1px solid var(--topbar-key-border); border-radius:4px; padding:3px 4px; }
 .searchBox:focus-within { border-color:var(--lms-button-primary); box-shadow: 0 0 0 3px rgba(38,186,199,.13); }
-.dropdown { position:absolute; z-index:60; left:0; top:calc(100% + 8px); width:min(390px,calc(100vw - 24px)); max-height:min(65vh,430px); overflow:auto; overscroll-behavior:contain; border:1px solid var(--lms-header-border); border-radius:var(--lms-canvas-radius); background:var(--lms-white); padding:8px; box-shadow:var(--lms-overlay-shadow); }
-.suggestion { display:flex; align-items:center; min-height:44px; width:100%; padding:8px 10px; gap:8px; border-radius:7px; font-family:inherit; font-size:13px; font-weight:500; line-height:1.45; color:var(--topbar-ink); text-align:left; }
-.suggestion:hover,.suggestion:focus-visible { outline:none; background:var(--lms-primary-subtle); color:var(--lms-primary-text); }
+.dropdown { position:absolute; z-index:60; left:0; top:calc(100% + 8px); width:min(390px,calc(100vw - 24px)); max-height:min(65vh,430px); overflow:auto; overscroll-behavior:contain; border:1px solid #f1f4f9; border-radius:var(--lms-canvas-radius); background:var(--lms-white); padding:8px; box-shadow:var(--lms-overlay-shadow); }
+.suggestion { display:flex; align-items:center; min-height:44px; width:100%; padding:12px 16px; gap:8px; border-radius:8px; font-family:inherit; font-size:14px; font-weight:500; line-height:1.4; color:var(--topbar-ink); text-align:left; }
+.suggestion:hover { background:rgba(0,0,0,.035); color:var(--topbar-ink); }
+.suggestion:active { background:rgba(0,0,0,.06); }
+.suggestion:focus-visible { outline:1px solid #6b7280; outline-offset:1px; background:#fafbfc; color:var(--topbar-ink); }
 .new { display:inline-flex; height:36px; min-height:36px; width:82px; align-items:center; justify-content:center; gap:4px; flex:none; border-radius:var(--lms-control-radius); background:var(--lms-button-primary); color:var(--lms-white); font-family:inherit; font-size:14px; font-weight:650; line-height:1; white-space:nowrap; }
 .new:hover { background:var(--lms-button-primary-hover); color:var(--lms-white); }
 .actions { display:flex; align-items:center; gap:8px; flex:none; }
@@ -153,8 +155,8 @@
 }
 .searchBox [data-slot="button"]:hover { background:transparent; }
 .dropdown [data-slot="button"][role="option"] {
-  width:100%; min-height:44px; justify-content:flex-start; padding:8px 10px;
-  border:0; text-align:left; font-size:13px; font-weight:500;
+  width:100%; min-height:44px; justify-content:flex-start; padding:12px 16px;
+  border:0; text-align:left; font-size:14px; font-weight:500;
 }
 
 /* Exact profile switcher containment inside the legacy 280px menu. */
@@ -185,4 +187,74 @@
 .learnerBell > div > section > div:first-child {
   padding-bottom:16px;
   border-bottom:1px solid var(--lms-canvas-border);
+}
+
+.recruiterBell > div > section > div:first-child,
+.learnerBell > div > section > div:first-child {
+  padding:16px 20px;
+  background:#fafbfc;
+  border-bottom:1px solid #e5e9f0;
+  border-radius:12px 12px 0 0;
+}
+
+.recruiterBell > div > section ul,
+.learnerBell > div > section ul {
+  list-style:none;
+  margin:0;
+  padding:0 12px;
+}
+.recruiterBell > div > section li,
+.learnerBell > div > section li {
+  margin-bottom:6px;
+  overflow:hidden;
+  border-radius:8px;
+}
+
+.recruiterBell > div > section li a,
+.learnerBell > div > section li a {
+  padding:12px 16px;
+  border:1px solid #e5e9f0;
+  border-radius:8px;
+  background:#fff;
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.recruiterBell > div > section li a:hover,
+.learnerBell > div > section li a:hover {
+  background:#fafbfc;
+  border-color:#e5e9f0;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+
+.recruiterBell > div > section li a:active,
+.learnerBell > div > section li a:active {
+  background:rgba(0,0,0,.06);
+  box-shadow:none;
+}
+.recruiterBell > div > section li a:focus-visible,
+.learnerBell > div > section li a:focus-visible {
+  outline:1px solid #6b7280;
+  outline-offset:1px;
+}
+
+.recruiterBell > div > section time,
+.learnerBell > div > section time {
+  font-size:12px;
+  color:#a9a7ae;
+}
+.recruiterBell > div > section li p,
+.learnerBell > div > section li p {
+  font-size:14px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+
+@media (max-width:767px) {
+  .recruiterBell > div > section ul,
+  .learnerBell > div > section ul { padding:0; }
+  .recruiterBell > div > section li a,
+  .learnerBell > div > section li a { min-height:44px; padding:16px; }
+  .recruiterBell > div > section > div:first-child,
+  .learnerBell > div > section > div:first-child {
+    padding:12px 16px;
+  }
 }
