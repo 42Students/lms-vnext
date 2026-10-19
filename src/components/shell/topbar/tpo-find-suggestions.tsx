@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import { SearchIcon } from "./icons";
+import { Button } from "@/components/ui/button";
 import style from "./topbar.module.css";
 import { safeTpoFindResult, type TpoFindResult } from "./tpo-find-model";
 
@@ -48,13 +49,13 @@ export function TpoFindSuggestions({
     {!ready ? <p role="status" className="p-2 text-xs text-muted-foreground">Searching…</p> : null}
     {ready && state.error ? <p role="alert" className="p-2 text-xs text-error">{state.error}</p> : null}
     {ready && !state.error && state.results.map(result =>
-      <button type="button" role="option" aria-selected={false}
+      <Button type="button" variant="ghost" role="option" aria-selected={false}
         data-tpo-result="" key={result.href} className={style.suggestion}
         onClick={() => onOpen(result.href)}>
         <SearchIcon/>
         <span className="min-w-0 flex-1 truncate">{result.label}</span>
         <span className="shrink-0 text-[11px] text-muted-foreground">{result.group}</span>
-      </button>
+      </Button>
     )}
     {ready && !state.error && state.results.length === 0
       ? <p role="status" className="p-2 text-xs text-muted-foreground">No matching records.</p> : null}
