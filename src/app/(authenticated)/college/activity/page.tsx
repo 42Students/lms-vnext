@@ -170,7 +170,7 @@ export default async function CollegeActivityPage({
         </div>
       </form>
     </section>
-    <section className="min-w-0 rounded-xl border border-border bg-surface" aria-label="College activity events">
+    <section className="min-w-0 rounded-[8px] border border-border bg-surface" aria-label="College activity events">
       <DataTable rows={data.items} getRowKey={item=>item.event.id} caption="College activity events"
         columns={[
           {key:"occurred",header:"Occurred (IST)",mobilePriority:"secondary",cell:item=>when(item.event.occurredAt)},
