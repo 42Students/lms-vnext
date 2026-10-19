@@ -9,6 +9,8 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
+import {EmptyState} from "@/components/ui/empty-state";
+import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {hrConversationDetailHref} from "@/modules/placements/hr-conversation-detail-links-model";
 import {recruiterProposalMessageMarker} from "@/modules/placements/hr-proposal-message-marker-model";
@@ -72,9 +74,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <PageHeader title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
   {driveLookupResult && !driveLookupResult.ok?
-    <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
-      Hiring drive details are temporarily unavailable. You can still read and reply to this authorized conversation.
-    </p>:null}
+    <Alert tone="warning">Hiring drive details are temporarily unavailable. You can still read and reply to this authorized conversation.</Alert>:null}
   {matchingDrive?<Link href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
    Open drive: {matchingDrive.job.title}
@@ -85,9 +85,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
   {changeRequestResult && !changeRequestResult.ok?
-    <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
-      Change request updates are temporarily unavailable. Messages remain available; refresh to try again.
-    </p>:null}
+    <Alert tone="warning">Change request updates are temporarily unavailable. Messages remain available; refresh to try again.</Alert>:null}
   {changeRequests?.party==="COMPANY" && changeRequests.requests.length>0?
     <section aria-label="Drive change request updates" className="border-b border-border pb-4">
       <h2 className="text-sm font-semibold text-foreground">Change requests · {changeRequests.requests.length}</h2>
@@ -131,7 +129,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
    </li>)}
   </ol>
-  {!result.messages.length?<EmptyState title="No messages" description="No messages on this page."/>:null}
+  {!result.messages.length?<EmptyState title="No messages on this page" description="No messages on this page."/>:null}
   <RecruiterConversationReplyForm threadId={result.thread.id}/>
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
