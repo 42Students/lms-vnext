@@ -24,6 +24,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    [release,setRelease]=useState(searchParams.get("release")??""),
    [sprint,setSprint]=useState(searchParams.get("sprint")??"");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [dragging,setDragging]=useState(false);
  const [filtersOpen,setFiltersOpen]=useState(false);
  const [assignmentScope,setAssignmentScope]=useState(searchParams.get("assignment")??"");
  const [priority,setPriority]=useState(searchParams.get("priority")??"");
@@ -191,12 +192,13 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   {filtered.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
     {tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters. Use Clear all to see every task."}
   </p>:null}
-  <div role="region" aria-label="Task allocation cards; scroll sideways for more learners" tabIndex={0}
+  <div role="region" aria-label="Task allocation cards; scroll sideways for more learners" tabIndex={0} data-dragging={dragging}
     className={styles.scrollRegion}><div className={styles.track}>
    {groups.map(group=>{
     const cards=filtered.filter(task=>task.assigneeMembershipId===group.membershipId);
     return <BoardColumn key={group.membershipId??"unassigned"} label={group.displayName??"Learner"}
        className={[styles.lane,group.membershipId===null?styles.backlogLane:"",groups.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
+       data-can-drop={!readOnly&&!busy}
       onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,group.membershipId)}>
      <h2 className={styles.header}>
       <span>{group.displayName??"Learner"}</span><span>{cards.length}</span></h2>
@@ -207,7 +209,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
      </p>
      <ul className={styles.body}>{cards.map(task=><li key={task.id}
        draggable={!readOnly&&!busy&&!["DONE","IN_REVIEW"].includes(task.status)}
-       onDragStart={event=>event.dataTransfer.setData("text/plain",task.id)}
+       onDragStart={event=>{event.dataTransfer.setData("text/plain",task.id);setDragging(true);}}
+        onDragEnd={()=>setDragging(false)}
        className={"border p-3 text-sm "+styles.card}>
        <p className="break-words font-semibold">{task.title}</p>
        <p className="mt-1 text-xs text-body">{task.priority} · {task.status}</p>
