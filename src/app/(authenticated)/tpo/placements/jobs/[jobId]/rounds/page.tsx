@@ -53,7 +53,7 @@ export default async function TpoDriveRoundsPage({
         {drive.rounds.map((round) => {
           const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
           const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
-          return <article key={round.id} className="rounded-xl border border-border bg-surface p-5">
+          return <article key={round.id} className="border-b border-border py-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold text-body">Round {round.sequence} · {round.kind}</p>
