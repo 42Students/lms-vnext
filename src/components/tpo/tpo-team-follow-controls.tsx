@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -25,14 +26,14 @@ export function TpoTeamFollowControls({threadId,following,muted,ready}:{
   finally{pending.current=false;setBusy(false);}
  }
  return <section className="flex flex-wrap items-center gap-2" aria-label="Conversation preferences">
-  <button type="button" disabled={busy||!ready} onClick={()=>void change(state.following?"UNFOLLOW":"FOLLOW")}
-   className="min-h-9 sm:min-h-9 rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={busy||!ready} onClick={()=>void change(state.following?"UNFOLLOW":"FOLLOW")}
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
    {state.following?"Stop following":"Follow"}
-  </button>
-  <button type="button" disabled={busy||!ready} onClick={()=>void change(state.muted?"UNMUTE":"MUTE")}
-   className="min-h-9 sm:min-h-9 rounded-[var(--radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+  </Button>
+  <Button variant="secondary" type="button" disabled={busy||!ready} onClick={()=>void change(state.muted?"UNMUTE":"MUTE")}
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
    {state.muted?"Unmute":"Mute"}
-  </button>
+  </Button>
   {!ready?<p role="status" className="text-xs text-muted-foreground">
    Follow and mute controls are unavailable until team preferences are ready.
   </p>:null}
