@@ -165,7 +165,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     </div>:null}
     <div className="flex flex-wrap gap-3">
      <button type="button" disabled={busy||email||reason.trim().length<3||!selectedCount}
-      onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      onClick={()=>void save()} className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</button>
      <button type="button" disabled={busy} onClick={()=>{setDialog(false);setError("");setOutcome(null);}}
       className="min-h-9 rounded-[9px] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Close</button>

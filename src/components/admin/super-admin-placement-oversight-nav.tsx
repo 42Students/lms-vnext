@@ -15,7 +15,7 @@ export function SuperAdminPlacementOversightNav() {
     <nav aria-label="Super Admin placement oversight" className="flex min-w-0 flex-wrap gap-2">
       <NavLinks links={SUPER_ADMIN_PLACEMENT_OVERSIGHT_PRIMARY} />
     </nav>
-    <details className="rounded-md border border-border bg-surface p-3">
+    <details className="rounded-[9px] border border-border bg-surface p-3">
       <summary className="cursor-pointer text-sm font-semibold text-primary-text">More placement reports</summary>
       <nav aria-label="Additional placement reports" className="mt-3 flex flex-wrap gap-2">
         <NavLinks links={SUPER_ADMIN_PLACEMENT_OVERSIGHT_ADDITIONAL} />

@@ -265,7 +265,7 @@ export function LectureHallManager({
       >
         <div className="space-y-3">
           {formError ? (
-            <p role="alert" className="m-0 rounded-md bg-[var(--lms-error-subtle)] p-2 text-sm text-foreground">
+            <p role="alert" className="m-0 rounded-[9px] bg-[var(--lms-error-subtle)] p-2 text-sm text-foreground">
               {formError}
             </p>
           ) : null}

@@ -158,7 +158,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
     <div className="flex flex-wrap gap-3">
      <button type="button" disabled={busy||!start||(Boolean(editing)&&reason.trim().length<3)}
-      onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      onClick={()=>void save()} className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</button>
      <button type="button" disabled={busy} onClick={()=>setShow(false)}
       className="min-h-9 rounded-[9px] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Cancel</button>
