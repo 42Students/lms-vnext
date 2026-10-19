@@ -247,3 +247,48 @@
   outline-offset: 2px;
 }
 .card :global([role="tab"][aria-selected="false"]:hover) { background: #effbfb; color: var(--auth-primary); }
+
+/* The OTP view inherits the same form shell, with larger monospaced digits. */
+.card :global(.login-form[data-step="code"] input[name="code"]),
+.card :global(.login-form[data-step="code"] input[name="secondCode"]) {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: .35em;
+  font-variant-numeric: tabular-nums;
+  padding-left: 16px;
+  padding-right: 12px;
+}
+.card :global(.login-form[data-step="code"] form > div > button:not([type="submit"])) {
+  min-height: 36px;
+  color: var(--auth-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+.card :global(.login-form[data-step="code"] button:disabled:not([type="submit"])) {
+  color: #a9a7ae;
+  cursor: not-allowed;
+}
+.card :global([role="tablist"] + [role="tabpanel"]) {
+  min-width: 0;
+}
+.card :global(label) { min-width: 0; }
+.card :global(label > span:first-child) {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 16px;
+  color: #54505d;
+}
+.card :global(.login-form p[role="status"]),
+.card :global(.login-form div[role="status"]) { line-height: 22px; }
+@media (max-width: 400px) {
+  .card :global(.login-form[data-step="code"] form > div) { row-gap: 8px; }
+  .card :global(.login-form[data-step="code"] input[name="code"]),
+  .card :global(.login-form[data-step="code"] input[name="secondCode"]) {
+    font-size: 16px;
+    letter-spacing: .3em;
+  }
+}
