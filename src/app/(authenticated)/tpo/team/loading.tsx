@@ -1,1 +1,5 @@
-export default function Loading(){return <div aria-busy="true" className="space-y-4"><div className="h-9 w-48 animate-pulse rounded-[var(--lms-control-radius)] bg-surface-secondary"/><div className="h-28 animate-pulse rounded-[var(--lms-canvas-radius)] bg-surface-secondary"/><div className="h-28 animate-pulse rounded-[var(--lms-canvas-radius)] bg-surface-secondary"/></div>;}
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+
+export default function Loading() {
+  return <GracefulPageLoading label="Loading placement team…" shape="directory" />;
+}
