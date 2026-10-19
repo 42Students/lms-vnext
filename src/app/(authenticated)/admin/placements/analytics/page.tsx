@@ -69,7 +69,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Placements" title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
-  <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
+  <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold">Drive or company
     <Input name="q" defaultValue={q.q} maxLength={100} className="min-h-9 min-w-0 rounded-[9px] border border-border bg-surface px-2"/></label>
    {select("jobId","Job",filters.jobs)}
