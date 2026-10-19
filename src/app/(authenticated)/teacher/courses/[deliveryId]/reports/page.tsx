@@ -43,9 +43,9 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  </section></div>
  <form method="get" className="flex flex-wrap items-end gap-3">
  <label className="grid gap-1 text-sm font-semibold">Assessment type
- <select name="kind" defaultValue={data.query.kind} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+ <Select name="kind" defaultValue={data.query.kind} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
  <option value="ALL">All</option><option value="ASSIGNMENT">Assignments</option><option value="QUIZ">Quizzes</option>
- </select></label>
+ </Select></label>
  <Button type="submit" variant="primary">Filter</Button>
  <Link href={facultyReportHubHref({...data.query,kind:"ALL",page:1})} className="inline-flex min-h-9 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
  </form>
