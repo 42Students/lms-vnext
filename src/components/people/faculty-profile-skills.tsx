@@ -48,11 +48,11 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   <div className="space-y-3">
    {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
     <label className="min-w-0 text-sm font-semibold text-body">Skill {index+1}
-     <Input className="mt-1.5 min-h-11 sm:min-h-9 w-full min-w-0" value={skill.skill}
+     <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.skill}
       maxLength={120} required disabled={pending} onChange={event=>edit(skill.id,"skill",event.target.value)}/>
     </label>
     <label className="min-w-0 text-sm font-semibold text-body">Proficiency
-     <Input className="mt-1.5 min-h-11 sm:min-h-9 w-full min-w-0" value={skill.proficiency}
+     <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.proficiency}
       maxLength={64} disabled={pending} onChange={event=>edit(skill.id,"proficiency",event.target.value)}/>
     </label>
     <div className="flex flex-wrap gap-2 sm:col-span-3">
@@ -81,7 +81,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     }} >Discard unsaved skill edits</Button>:null}
    {changed&&skillsIssue?<p role="alert" className="text-sm text-error">Review Skills: {skillsIssue}</p>:null}
    <Button variant="primary" type="submit" disabled={pending||!changed||Boolean(skillsIssue)}
-    className="min-h-11 sm:min-h-9 px-4">
+    className="min-h-11 min-[768px]:min-h-9 px-4">
     {pending?"Saving…":"Save skills"}
    </Button>
   </div>
