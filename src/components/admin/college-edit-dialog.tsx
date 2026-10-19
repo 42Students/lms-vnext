@@ -125,7 +125,7 @@ export function CollegeEditDialog({
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div aria-busy={pending} className="grid gap-4 sm:grid-cols-2">
           {([
            ["Address",addressLine1,setAddressLine1,255],
            ["Address line 2",addressLine2,setAddressLine2,255],
