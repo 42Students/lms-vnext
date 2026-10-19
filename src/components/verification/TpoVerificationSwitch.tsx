@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -21,7 +22,7 @@ export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled
  return <section aria-label="Placement-cell verification setting" className="min-w-0 space-y-2 rounded-lg border p-3">
   <label className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span className="font-medium">The placement cell can verify profiles</span>
-   <input type="checkbox" checked={enabled} disabled={busy}
+   <Checkbox checked={enabled} disabled={busy}
     onChange={event=>void save(event.target.checked)} aria-label="Placement cell can verify profiles"
     className="h-5 w-5"/>
   </label>
