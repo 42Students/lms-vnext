@@ -64,7 +64,7 @@
   --lms-border: var(--lms-neutral-200);
   --lms-sidebar-border: var(--lms-neutral-100);
   --lms-sidebar-active: rgba(38, 186, 199, 0.15);
-  --lms-focus-ring: rgba(38, 186, 199, 0.2);
+  --lms-focus-ring: rgba(38, 186, 199, 0.15);
 
   /*
    * shadcn/ui semantic compatibility.
@@ -89,7 +89,7 @@
   --border: var(--lms-border);
   --input: var(--lms-border);
   --ring: var(--lms-primary);
-  --radius: 0.625rem;
+  --radius: 9px;
 }
 
 @theme inline {
@@ -322,8 +322,8 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
   --lms-space-4: 16px;
   --lms-space-5: 24px;
   --lms-space-6: 32px;
-  --lms-space-7: 40px;
-  --lms-space-8: 48px;
+  --lms-space-7: 48px;
+  --lms-space-8: 64px;
 }
 body {
   font-size: 14px;
@@ -774,4 +774,226 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   [data-slot="pagination"] [aria-disabled="true"],
   [data-slot="dropdown-root"] > summary,
   [data-slot="menu"] [role="menuitem"] { min-height: 44px; }
+}
+
+/*
+ * Legacy final token pass (effective values from the last assignments of
+ * legacy-styles/components___variables.scss plus the live shell measurement).
+ * SCSS's earlier 40/48 spacing aliases are superseded by its later 48/64
+ * declarations. Component-control 9px is the measured TPO shell exception to
+ * the canonical 6px radius used by other older widgets.
+ */
+:root {
+  --lms-radius-sm: 6px;
+  --lms-radius-md: 10px;
+  --lms-radius-lg: 14px;
+  --lms-radius-xl: 20px;
+  --lms-radius-control: 6px;
+  --lms-radius-card: 12px;
+  --lms-radius-feature: 18px;
+  --lms-radius-pill: 999px;
+  --lms-radius-shell-control: 9px;
+  --lms-touch-target: 44px;
+  --lms-leading-tight: 1.25;
+  --lms-leading-snug: 1.4;
+  --lms-leading-normal: 1.6;
+  --lms-font-xs: 12px;
+  --lms-font-sm: 13px;
+  --lms-font-base: 14px;
+  --lms-font-md: 16px;
+  --lms-font-lg: 18px;
+  --lms-font-xl: 20px;
+  --lms-font-2xl: 24px;
+  --lms-font-3xl: 30px;
+  --lms-font-4xl: 36px;
+  --lms-elevation-1: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+  --lms-elevation-2: 0 2px 4px rgba(16,24,40,.04), 0 4px 12px rgba(16,24,40,.06);
+  --lms-elevation-3: 0 4px 8px rgba(16,24,40,.04), 0 12px 24px rgba(16,24,40,.08);
+  --lms-elevation-4: 0 8px 16px rgba(16,24,40,.06), 0 24px 48px rgba(16,24,40,.10);
+  --lms-shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+  --lms-shadow-md: 0 2px 6px rgba(0,0,0,.06);
+  --lms-card-hover-shadow: 0 4px 12px rgba(0,0,0,.08);
+  --lms-dropdown-shadow: 9px 11px 28px rgba(0,0,0,.1);
+  --lms-search-dropdown-shadow: 0 14px 16px rgba(0,0,0,.04);
+  --lms-tooltip-shadow: 0 2px 8px rgba(0,0,0,.2);
+  --lms-toast-shadow: var(--lms-elevation-3);
+  --lms-drawer-shadow: -4px 0 24px rgba(0,0,0,.12);
+  --lms-scrollbar-thumb: #c4c4c4;
+  --lms-scrollbar-track: transparent;
+  --lms-form-bg: #fbfcfd;
+  --lms-control-disabled: #e5e9f0;
+  --lms-outline-width: 2px;
+}
+
+/* Buttons and form controls retain their focus visibility for keyboard users,
+ * including after the legacy focus-reset rule on pointer-only focus. */
+:where(button,input,select,textarea,summary):focus:not(:focus-visible) {
+  outline: none;
+}
+:where([data-slot="button"],[data-slot="dropdown-root"] > summary,[data-slot="menu"] [role="menuitem"]):focus-visible {
+  outline: var(--lms-outline-width) solid rgba(38,186,199,.65);
+  outline-offset: 2px;
+  box-shadow: var(--lms-control-shadow);
+}
+[data-slot="button"]:active:not(:disabled) { transition-duration: 150ms; }
+[data-slot="button"][aria-busy="true"] { cursor: progress; }
+[data-slot="input"]:disabled,
+[data-slot="select"]:disabled,
+[data-slot="textarea"]:disabled {
+  color: #a9a7ae;
+  background: #fafbfc;
+  border-color: #e5e9f0;
+}
+[data-slot="input"]:not(:disabled):focus-visible,
+[data-slot="select"]:not(:disabled):focus-visible,
+[data-slot="textarea"]:not(:disabled):focus-visible {
+  border-color: #26bac7;
+  box-shadow: 0 0 0 2px rgba(38,186,199,.15);
+}
+
+/* Menu dropdowns and search popovers are different old LMS overlay types:
+ * the menu uses the 6px/9px 11px 28px legacy profile dropdown,
+ * search selection uses the separate 12px/0 14px 16px search treatment. */
+[data-slot="dropdown"] {
+  border-radius: 6px;
+  box-shadow: var(--lms-dropdown-shadow);
+}
+[data-slot="menu"] {
+  border-radius: 6px;
+  box-shadow: none;
+}
+[data-slot="dropdown"] [role="menuitem"],
+[data-slot="menu"] [role="menuitem"] {
+  min-height: 44px;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 20px;
+}
+[data-slot="dropdown"] [role="menuitem"]:hover,
+[data-slot="menu"] [role="menuitem"]:hover {
+  background: #d1f1f1;
+  color: #1a95a1;
+}
+[data-slot="dropdown-root"] > summary:hover { background: rgba(38,186,199,.07); }
+
+/* Underline tabs sit directly on the canvas. Never create a card around tabs. */
+[data-slot="tabs"] :is([role="tablist"],nav) {
+  background: transparent;
+  box-shadow: none;
+  gap: 20px;
+}
+[data-slot="tabs"] :is([role="tab"],nav > a,nav > span) {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 16px;
+  padding: 0 0 13px;
+  border-bottom-width: 3px;
+  border-radius: 0;
+}
+[data-slot="tabs"] :is([role="tab"],nav > a):is(:hover,:focus-visible) {
+  background: transparent;
+}
+[data-slot="tabs"] [aria-selected="true"],
+[data-slot="tabs"] [aria-current="page"] {
+  border-bottom-color: #26bac7;
+  color: #1a95a1;
+}
+
+/* Hairline tables and responsive lists preserve the legacy header contrast. */
+[data-slot="data-table"] :is(th,td),
+[data-slot="table"] :is(th,td) { border-bottom-color: #e5e9f0; }
+[data-slot="data-table"] th,
+[data-slot="table"] th {
+  color: #a9a7ae;
+  background: #fafbfc;
+  font-weight: 600;
+}
+[data-slot="data-table"] tbody tr,
+[data-slot="table"] tbody tr {
+  transition: background-color 150ms ease;
+}
+@media (min-width: 640px) {
+  [data-slot="data-table"] td { padding: 10px 16px; }
+}
+[data-slot="status-badge"],
+[data-slot="badge"] {
+  border-radius: var(--lms-radius-pill);
+  min-height: 22px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  white-space: normal;
+}
+
+/* The old LMS notification drawer uses a modest resting drop shadow,
+ * while modal panels use the elevated modal layer; the distinction matters. */
+[data-slot="dialog"],
+[data-slot="bottom-sheet"] { box-shadow: var(--lms-elevation-4); }
+[data-slot="drawer"] { box-shadow: var(--lms-drawer-shadow); }
+[data-slot="drawer"]::backdrop { background: rgba(30,54,63,.1); }
+[data-slot="dialog"] :is(header,footer),
+[data-slot="drawer"] :is(header,footer),
+[data-slot="bottom-sheet"] :is(header,footer) { border-color: #e5e9f0; }
+[data-slot="toast-stack"] > section { box-shadow: var(--lms-toast-shadow); }
+[data-slot="toast-stack"] > section button:hover { background: #eff8fa; }
+[data-slot="filter-bar"] [role="dialog"] { box-shadow: var(--lms-elevation-4); }
+
+/* Legacy tooltip (nonprofile) is dark, compact and close to the anchor. */
+[data-slot="info-popover"] > div {
+  color: #fff;
+  background: #1a1d21;
+  border: 1px solid #1a1d21;
+  border-radius: 8px;
+  padding: 6px 16px;
+  min-height: 27px;
+  font-size: 12px;
+  line-height: 16px;
+  box-shadow: var(--lms-tooltip-shadow);
+}
+
+/* Hidden native scrollbar chrome is intentional. Preserve visible fade cues
+ * for keyboard/touch overflow regions and opt back into thin scrollbar where
+ * the sidebar explicitly requests a hover scrollbar. */
+[data-slot="scroll-cue"] > [role="region"]:focus-visible {
+  outline: 2px solid rgba(38,186,199,.65);
+  outline-offset: 2px;
+}
+[data-slot="scroll-cue"] [data-scroll-fade] { pointer-events: none; }
+.lms-scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--lms-scrollbar-thumb) var(--lms-scrollbar-track);
+}
+.lms-scrollbar-thin::-webkit-scrollbar { display: block; width: 4px; height: 4px; }
+.lms-scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--lms-scrollbar-thumb);
+  border-radius: 999px;
+}
+@media (max-width: 767px) {
+  [data-slot="dropdown-root"] > summary,
+  [data-slot="pagination"] :is(a,[aria-disabled="true"]),
+  [data-slot="menu"] [role="menuitem"] { min-height: var(--lms-touch-target); }
+  [data-slot="page-canvas"] { padding: 16px; }
+}
+:root[data-tracker-theme="dark"] [data-slot="info-popover"] > div {
+  color: #f8fafc;
+  background: #131c2e;
+  border-color: #334155;
+}
+:root[data-tracker-theme="dark"] [data-slot="tabs"] :is([role="tablist"],nav) {
+  background: transparent;
+}
+:root[data-tracker-theme="dark"] [data-slot="data-table"] th,
+:root[data-tracker-theme="dark"] [data-slot="table"] th {
+  background: var(--lms-neutral-100);
+  border-color: var(--lms-border);
+  color: var(--lms-body-text);
+}
+:root[data-tracker-theme="dark"] [data-slot="badge"],
+:root[data-tracker-theme="dark"] [data-slot="status-badge"] {
+  color: var(--lms-body-text);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="tabs"] [role="tab"],
+  [data-slot="data-table"] tbody tr,
+  [data-slot="button"] { transition: none; }
 }
