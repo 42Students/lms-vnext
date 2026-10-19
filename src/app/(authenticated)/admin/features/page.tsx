@@ -85,7 +85,7 @@ export default async function SuperAdminFeaturesPage({
           action={
             <Link
               href="/admin/features"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
             >
               Clear filters
             </Link>
@@ -124,7 +124,7 @@ export default async function SuperAdminFeaturesPage({
         description="Effective college-level access for the three optional modules configured in vNext: Projects, Placements and Electives. Values are resolved using the existing persisted-rule inheritance and source defaults."
       />
 
-      <section aria-label="Feature Controls overview" className="- border-t border-border pt-5">
+      <section aria-label="Feature Controls overview" className="border-t border-border pt-5">
         <p className="text-sm font-semibold">Module availability · {scopeLabel}</p>
         <h2 className="mt-1 text-base font-semibold">Optional modules by college</h2>
         <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
@@ -133,7 +133,7 @@ export default async function SuperAdminFeaturesPage({
           <div><dt>Placements on</dt><dd className="font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
         </dl>
       </section>
-      <section className="- border-t border-border pt-5">
+      <section className="border-t border-border pt-5">
         <form
           action="/admin/features"
           method="get"
@@ -147,41 +147,41 @@ export default async function SuperAdminFeaturesPage({
               maxLength={100}
               defaultValue={result.q}
               placeholder="College name or code"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-base text-foreground"
+              className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-base text-foreground"
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Sort colleges
-            <Select name="sort" defaultValue={result.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="sort" defaultValue={result.sort} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
               <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="CODE">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Explicit college rule for
-            <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
               <option value="">Any college</option><option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored college value
-            <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Any value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">College rule lock
-            <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Any lock</option><option value="LOCKED">Stored locked only</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">College rule presence
-            <Select name="presence" defaultValue={result.presenceFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="presence" defaultValue={result.presenceFilter} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
               <option value="ANY">Any college</option><option value="HAS_RULE">Has stored rule</option><option value="NO_RULE">No stored rule</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored rule last updated
-            <Select name="recent" defaultValue={result.recentFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="recent" defaultValue={result.recentFilter} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Any date</option><option value="7D">Last 7 days</option><option value="30D">Last 30 days</option><option value="90D">Last 90 days</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Search in
-            <Select name="searchField" defaultValue={result.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="searchField" defaultValue={result.searchField} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Name and code</option><option value="NAME">College name</option><option value="CODE">College code</option>
             </Select>
           </label>
@@ -193,7 +193,7 @@ export default async function SuperAdminFeaturesPage({
           </Button>
           <Link
             href="/admin/features"
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
           >
             Clear
           </Link>
@@ -209,7 +209,7 @@ export default async function SuperAdminFeaturesPage({
             q:result.q,page:result.page,sort:result.sort,module:result.moduleFilter??undefined,
             storedState:result.stateFilter,locks:result.lockFilter,presence:result.presenceFilter,
             recent:result.recentFilter,searchField:result.searchField,
-          })} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+          })} className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
             Export current page (CSV)
           </Link>
           <p className="m-0 text-sm text-muted-foreground">
@@ -279,7 +279,7 @@ export default async function SuperAdminFeaturesPage({
                   searchField: result.searchField,
                   page: result.page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 ← Previous
               </Link>
@@ -297,7 +297,7 @@ export default async function SuperAdminFeaturesPage({
                   searchField: result.searchField,
                   page: result.page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
                 Next →
               </Link>
