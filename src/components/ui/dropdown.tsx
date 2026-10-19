@@ -82,7 +82,16 @@ export function Dropdown({ trigger, children, label, align = "start", mobileShee
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [mobileSheet]);
-  return <details ref={rootRef} data-slot="dropdown-root" data-mobile-sheet={mobileSheet || undefined} className={cx("group relative inline-block min-w-0 align-middle", className)} {...props}>
+  return <details ref={rootRef} data-slot="dropdown-root" data-mobile-sheet={mobileSheet || undefined} className={cx("group relative inline-block min-w-0 align-middle", className)} {...props}
+    onPointerDown={event => {
+      props.onPointerDown?.(event);
+      if (event.defaultPrevented || !mobileSheet || window.innerWidth >= 640) return;
+      if (rootRef.current?.open && event.target === rootRef.current) {
+        event.preventDefault();
+        rootRef.current.open = false;
+        rootRef.current.querySelector("summary")?.focus();
+      }
+    }}>
     <summary aria-label={label} onKeyDown={event => {
       if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
       event.preventDefault();
