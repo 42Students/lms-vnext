@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -261,17 +262,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               ))}
             </div>
           )}
-          <nav aria-label="Team roster pages" className="mt-4 flex flex-wrap items-center justify-between gap-3">
-            <span className="text-xs text-muted-foreground">Page {teamPageResult.page} of {Math.max(1,teamPageResult.pages)}</span>
-            <div className="flex flex-wrap gap-2">
-              {teamPageResult.page>1?<Link
-                href={base+"&tab=team&q="+encodeURIComponent(teamQuery.data)+"&teamPage="+(teamPageResult.page-1)}
-                className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
-              {teamPageResult.page<teamPageResult.pages?<Link
-                href={base+"&tab=team&q="+encodeURIComponent(teamQuery.data)+"&teamPage="+(teamPageResult.page+1)}
-                className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
-            </div>
-          </nav>
+          <Pagination label="Team roster pages" page={teamPageResult.page} pageCount={teamPageResult.pages} hrefForPage={page=>base+"&tab=team&q="+encodeURIComponent(teamQuery.data)+"&teamPage="+page}/>
         </section>
       )}
     </div>
