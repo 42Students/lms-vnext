@@ -52,8 +52,8 @@ export default async function HrMessagesPage({searchParams}:{
     </Link>
    </nav>
    <form action="/hr/notifications" method="get" className="flex flex-wrap gap-2">
-     <input type="hidden" name="collegeId" value={result.collegeId} />
-     <input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
+     <Input type="hidden" name="collegeId" value={result.collegeId} />
+     <Input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
      <Input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
        placeholder="Search drive titles" className="min-w-48 flex-1" />
