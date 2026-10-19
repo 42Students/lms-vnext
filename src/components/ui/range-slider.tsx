@@ -3,8 +3,8 @@ import { cx } from "@/lib/class-names";
 export type RangeSliderProps = Omit<ComponentPropsWithRef<"input">,"type"> & { label?: string; error?: boolean };
 /** Native range input with the same teal keyboard/focus and disabled semantics. */
 export function RangeSlider({label,className,id,error=false,...props}:RangeSliderProps) {
-  return <label data-slot="range-slider" className="flex min-w-0 items-center gap-3 text-[13px] font-medium text-[var(--lms-body-text)]">
+  return <label data-slot="range-slider" className="flex min-w-0 flex-wrap items-center gap-3 text-[13px] font-medium text-[var(--lms-body-text)]">
     {label ? <span>{label}</span> : null}
-    <input {...props} id={id} type="range" aria-label={props["aria-label"]??label} aria-invalid={error ? true : props["aria-invalid"]} className={cx("h-9 min-w-0 flex-1 cursor-pointer accent-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:accent-[var(--lms-error)] aria-invalid:focus-visible:outline-[var(--lms-error)]",className)} />
+    <input {...props} id={id} type="range" aria-label={props["aria-label"]??label} aria-invalid={error ? true : props["aria-invalid"]} className={cx("min-h-9 min-w-[120px] flex-1 cursor-pointer max-[767px]:min-h-11 accent-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:accent-[var(--lms-error)] aria-invalid:focus-visible:outline-[var(--lms-error)]",className)} />
   </label>;
 }

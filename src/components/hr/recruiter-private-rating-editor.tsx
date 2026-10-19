@@ -90,7 +90,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
    <Button type="submit" loading={pending} disabled={!ready||!dirty||pending}
     >
     {pending?"Saving…":"Save private review"}</Button>
-   <Button type="button" disabled={!ready||pending||(rating===null&&!note)}
+   <Button type="button" loading={pending} disabled={!ready||pending||(rating===null&&!note)}
     onClick={()=>void save(undefined,true)}
     variant="secondary">
     Clear rating and note</Button>

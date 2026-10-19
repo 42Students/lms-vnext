@@ -20,14 +20,14 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
   const raw=Object.fromEntries(Object.entries(values).filter(([,value])=>value!==undefined));
   const query=collegeCorrectionReadSchema.safeParse(raw);
   if(!query.success) return <div className="space-y-4">
-    <PageHeader eyebrow="College Admin · Attendance" title="Correction windows"/>
+    <PageHeader title="Correction windows"/>
     <ErrorState title="Invalid date range"
       description="Enter both valid IST calendar dates, up to 31 days, without duplicate or unrelated filters."
       action={<Link href="/college/attendance/corrections" className="font-semibold text-link lms-inline-link">Reset filters</Link>}/>
   </div>;
   const data=await getCollegeCorrectionRead(await getCurrentRequestContext(),query.data);
   return <div className="min-w-0 overflow-x-clip space-y-6">
-    <PageHeader eyebrow="College Admin · Attendance" title="Attendance correction windows"
+    <PageHeader title="Attendance correction windows"
       description={"Persisted scheduled sessions and the current college policy for "+data.collegeName+"."}
       actions={<Link href="/college/attendance/settings" className="text-sm font-semibold text-link lms-inline-link">Policy settings</Link>}/>
     <section className="border-t border-border pt-5">

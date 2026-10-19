@@ -525,7 +525,7 @@ export default async function HrPlacementJobPage({
                 {applicant.ugPercentage?<p className="mt-1 text-xs text-body">UG %: {applicant.ugPercentage}</p>:null}
                 {applicant.tenthPercentage?<p className="mt-1 text-xs text-body">10th %: {applicant.tenthPercentage}</p>:null}
                 {applicant.twelfthOrDiplomaPercentage?<p className="mt-1 text-xs text-body">12th / diploma %: {applicant.twelfthOrDiplomaPercentage}</p>:null}
-                <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{applicant.status}</StatusBadge><StatusBadge>{applicant.screening}</StatusBadge></div>
+                <div className="mt-2 flex flex-wrap gap-2"><StatusBadge tone={applicant.status==="SUBMITTED"?"success":"neutral"}>{applicant.status}</StatusBadge><StatusBadge tone={applicant.screening==="VERIFIED"?"success":"info"}>{applicant.screening}</StatusBadge></div>
                 <p className="mt-2 text-xs text-muted-foreground">Applied {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt)}</p>
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&applicant="+applicant.id+returnQuery}
                   className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review applicant</Link>
@@ -668,7 +668,7 @@ export default async function HrPlacementJobPage({
                   { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: item => item.annualCtcInr == null ? "—" :
                     (item.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
                   { key: "status", header: "Status", mobilePriority: "secondary", cell: item =>
-                    <StatusBadge>{item.status === "SELECTED" ? "With the placement cell" :
+                    <StatusBadge tone={item.status==="VERIFIED"?"success":item.status==="REVOKED"?"error":"warning"}>{item.status === "SELECTED" ? "With the placement cell" :
                       item.status === "VERIFIED" ? "Verified, awaiting release" : "Selection cancelled"}</StatusBadge> },
                 ]}
               />
@@ -693,7 +693,7 @@ export default async function HrPlacementJobPage({
               { key: "kind", header: "Type", mobilePriority: "secondary", cell: offer => offer.kind === "LOI" ? "Letter of intent" : "Offer" },
               { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: offer => offer.annualCtcInr == null ? "—" :
                 (offer.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
-              { key: "status", header: "Status", mobilePriority: "secondary", cell: offer => <StatusBadge>{recruiterOfferStatusLabel(offer.status)}</StatusBadge> },
+              { key: "status", header: "Status", mobilePriority: "secondary", cell: offer => <StatusBadge tone={offer.status==="ACCEPTED"?"success":offer.status==="DECLINED"?"error":"info"}>{recruiterOfferStatusLabel(offer.status)}</StatusBadge> },
               { key: "deadline", header: "Reply by", mobilePriority: "secondary", cell: offer => offer.expiresAt ?
                 new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(offer.expiresAt) : "Not set" },
               { key: "joining", header: "Joining", mobilePriority: "secondary", cell: offer =>
@@ -827,8 +827,8 @@ export default async function HrPlacementJobPage({
                         <article key={candidate.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
                           <p className="break-words font-semibold text-foreground">{candidate.name}</p>
                           <div className="mt-2 flex flex-wrap gap-2">
-                            <StatusBadge>{candidate.outcome ?? "UNRECORDED"}</StatusBadge>
-                            <StatusBadge>{candidate.status}</StatusBadge>
+                            <StatusBadge tone={candidate.outcome==="PASS"?"success":candidate.outcome==="FAIL"?"error":candidate.outcome==="HOLD"?"warning":"neutral"}>{candidate.outcome ?? "UNRECORDED"}</StatusBadge>
+                            <StatusBadge tone={candidate.status==="APPLIED"?"success":candidate.status==="STAGED"?"warning":"neutral"}>{candidate.status}</StatusBadge>
                           </div>
                           {candidate.scorePercent != null
                             ? <p className="mt-2 text-sm text-body">Score: {candidate.scorePercent}%</p> : null}

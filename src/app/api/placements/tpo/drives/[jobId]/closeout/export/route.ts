@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoDriveCloseout } from "@/modules/placements/tpo-drive-closeout-service";
@@ -14,7 +15,7 @@ export async function GET(_request: Request, { params }: {
     return new Response("\uFEFF" + tpoDriveCloseoutCsv(data.job.title, data.counts), {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="tpo-drive-closeout.csv"',
+        "Content-Disposition": 'attachment; filename="' + gridExportFilename("tpo-drive-closeout", "csv") + '"',
         "Cache-Control": "private, no-store",
         "X-Content-Type-Options": "nosniff",
         "Vary": "Cookie",

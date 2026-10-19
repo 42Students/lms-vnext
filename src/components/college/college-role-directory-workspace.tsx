@@ -64,7 +64,7 @@ export async function CollegeRoleDirectoryWorkspace({
   } catch (error) {
     return (
       <div className="space-y-5">
-        <PageHeader eyebrow="College Admin · People" title={title} />
+        <PageHeader title={title} />
         <ErrorState
           title="Invalid directory filters"
           description={collegeRoleDirectoryFilterMessage(error)}
@@ -80,7 +80,6 @@ export async function CollegeRoleDirectoryWorkspace({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="College Admin · People"
         title={title}
         description={
           kind === "FACULTY"

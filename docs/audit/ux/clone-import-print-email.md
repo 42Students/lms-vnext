@@ -83,5 +83,37 @@ The user explicitly prohibited executing the app/tests/CI. A full cloned-reposit
 - Hosted email template HTML is not present in the checked-in SCSS. Do not invent email header, footer, buttons or PDF font/margins. G5 stays **[ ]** until legacy print/PDF/certificate/offer-letter/receipt/email artifacts and rendered output are available.
 - Next G5 file: `src/app/(authenticated)/layout.tsx` (review a dedicated scoped print stylesheet integration against shell owner before changing layout or `src/app/globals.css`; do not edit `src/components/ui/*`).
 
+## Continued G4/G5 bounded turn (2026-10-19, latest main `46cd0161a0e289e7da68e615359589b03ee463e9`)
+
+**Source-level coverage only.** This turn fast-forwarded the lane to the current `main` (branch was 1042 commits behind, 0 ahead at start); no app, lint, build, TypeScript or CI execution. Native JSX tags changed in this turn: the selection/round/academic `<ul>…</ul>` previews and recruiter `<nav>…</nav>` filter groups were each replaced in full; the surrounding `Disclosure`/table semantics and handlers remained.
+
+### G4 report and import changes
+- Report filters now inherit shared `Input`, `Select` and `Button` skins without per-page hard-coded colors, radius, borders and focus overrides in:
+  `src/app/(authenticated)/tpo/reports/{page,after-college,by-company,season-pipeline,placement-summary,leads,joining-followups,offers-expiry,placed-branch,accreditation,branch-season,unplaced}.tsx` (each actual route uses its `page.tsx`). Existing 44px phone / 36px larger breakpoint utility heights were retained where already present.
+- Import preview data and actions: `src/components/tpo/tpo-academic-import-preview.tsx`, `src/components/placements/tpo-selection-import.tsx`, and `src/components/placements/tpo-round-results-import.tsx` use shared `DataTable` for previously hand-rolled row lists; row identity, matching, preview and staged action flow are unchanged.
+- `src/components/tpo/recruiter-lead-csv-import.tsx`: row-group hand-rolled primary/secondary pill buttons became controlled `Tabs`, preserving `rowGroup` filtering, with counts supplied from existing current preview and skipped-row state. Responsive horizontal tab scrolling and active underline now inherit the shared Tabs.
+- `src/components/{college/college-student-csv-import.tsx,college/college-faculty-csv-import.tsx,admin/super-admin-faculty-bulk-import.tsx,tpo/tpo-academic-import-preview.tsx}`: legacy-style status pills now use `StatusBadge` semantic tones (valid/imported/created success; invalid/failed error; skipped or unresolved neutral/warning).
+- `src/components/tpo/tpo-batch-eligibility-import.tsx` and `src/app/(authenticated)/tpo/reports/[slug]/page.tsx`: removed inner-card treatment, keeping the one white authenticated canvas.
+
+### G5 print rule ownership
+- Authenticated layout imports `src/app/(authenticated)/authenticated-print.css`, whose rules are scoped to `@media print` and `.lms-shell-frame`, rather than affecting the login/public views. It hides shell chrome, transient controls and report navigation; makes the single canvas printable; repeats table headers; avoids breaking a table row.
+- `src/components/placements/tpo-report-presentation.tsx`: existing report-only print styles moved to that CSS file, retaining the separate fullscreen-mode styling and the report's print-hidden forms/buttons, table hairlines and page-header break behavior.
+- Legacy print/PDF/offer-letter/certificate/receipt source-value coverage remains **not available** in `docs/design/legacy-styles/*.scss`, and hosted ZeptoMail template HTML is still absent; the new paper baseline is NOT claimed to pixel-clone historical printed artifacts.
+
+| G4/G5 property or state | Legacy source file:line | vNext source file:line | Strict parity outcome |
+|---|---|---|---|
+| Reports stay on one white canvas; avoid ordinary nested section cards | `docs/design/old-lms-pages.md:4,12` | `src/app/(authenticated)/layout.tsx:114-128`; `src/app/(authenticated)/tpo/reports/[slug]/page.tsx:24` | Partial; canvas source matched, all reports not visually verified |
+| Report table hairlines / compact rows | `docs/design/old-lms-pages.md:9`; `docs/design/legacy-styles/pages___admin-list-pages.scss:69-111` | `src/components/ui/data-table.tsx:37-53`; `src/app/(authenticated)/authenticated-print.css` | Partial: print row height and all responsive widths not compared |
+| TPO report toolbar search and filters | `docs/design/old-lms-pages.md:8` | `src/app/(authenticated)/tpo/reports/page.tsx:231-249` | Partial: responsive/hover/focus comparisons missing |
+| Counted tabs instead of custom pill toggles | `docs/design/old-lms-pages.md:7` | `src/components/tpo/recruiter-lead-csv-import.tsx:205-214`; `src/components/ui/tabs.tsx:63-100` | Partial: controls reuse shared values; browser focus proof missing |
+| Paper-only authenticated shell | No legacy `@media print` or `@page` in checked-in SCSS | `src/app/(authenticated)/authenticated-print.css`; `src/app/(authenticated)/layout.tsx:1` | **Not provable**; remain unticked |
+| PDF/certificate/offer-letter/receipt/email look | No legacy template HTML/PDF source or hosted email HTML available | `src/modules/courses/faculty-report-pdf.ts:63-90`; `src/modules/messaging/providers.ts:49-56` | **Not provable**; remain unticked |
+
+- [ ] **G4 (missing):** repo-wide source scans over every report/export/import surface, all legacy property-state rows and phone/tablet behavior proofs, side-by-side visual comparison.
+- [ ] **G5 (missing):** legacy print/PDF/certificate/offer-letter/receipt template output, hosted email HTML, exact property-state comparisons, physical print preview and PDF/email browser checks.
+- [ ] **H Super Admin/shared native controls (missing):** full `grep -rlE '<button[ >]' src --include='*.tsx'` verification and exemptions. This turn intentionally followed the owner's codemod direction and did not hand-migrate already shared controls.
+
+**Next file:** `src/components/placements/report-interactive-table.tsx` — validate report export/sort/filter responsive and keyboard states, then reconcile report CSV links and email document-source inventory. Do not tick without every proof field.
+
 ## Next file and unverified work
-**Next:** `src/app/(authenticated)/layout.tsx` — G5 authenticated print integration and a source-backed print checklist; then continue the unsearched native-button work queue. Keep G4/G5 unticked until full value/state/responsive proof exists.
+**Next:** `src/components/placements/report-interactive-table.tsx` — interactive report exports and keyboard/focus/dynamic filtering; then CSV download actions and G5 template evidence.

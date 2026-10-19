@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -18,7 +19,7 @@ export async function GET(request:Request){
   const result=buildHrTeamCsv(searchHrTeam(data.team,q));
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="recruiter-company-team.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiter-company-team", "csv") + '"',
    "Cache-Control":"private, no-store",
    "X-Export-Capped":result.truncated?"true":"false",
   }});

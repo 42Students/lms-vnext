@@ -95,15 +95,15 @@ export default async function TpoUnplacedReportPage({
        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
        <label className="grid gap-1 text-sm">Batch
-        <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-3">
+        <Select name="batchId" defaultValue={batchId??""} className="min-h-11 sm:min-h-9">
          <option value="">All current batches</option>
          {batches.batches.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}
         </Select></label>
        <label className="grid gap-1 text-sm">Branch
-        <Select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-3">
+        <Select name="branchId" defaultValue={branchId??""} className="min-h-11 sm:min-h-9">
          <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
         </Select></label>
-       <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary">Filter</Button>
+       <Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
        {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline lms-inline-link">Clear batch and branch</Link>:null}
        <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
         className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Act on them on Students</Link>

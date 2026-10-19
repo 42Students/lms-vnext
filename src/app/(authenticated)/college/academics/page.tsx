@@ -21,7 +21,6 @@ export default async function CollegeAcademicsPage() {
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
-        eyebrow="College Admin"
         title="Academics"
         description="Programs, academic periods, Cohorts and period-specific Sections for your college."
       />

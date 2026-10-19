@@ -6,6 +6,8 @@ import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import type {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
 import {DataTable} from "@/components/ui/data-table";
+import { MetricBar } from "@/components/ui/metric-bar";
+import { StatTile } from "@/components/ui/stat-tile";
 import {EmptyState} from "@/components/ui/empty-state";
 
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
@@ -51,28 +53,25 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     Show progress
    </Button>
    <Link href="/college/course-progress"
-    className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
     Clear
    </Link>
   </form>
   {!report?<p className="text-sm text-muted-foreground">
    Select a Class and Course to see each enrolled learner’s progress.
   </p>:<>
-   <dl className="grid gap-3 sm:grid-cols-4">
+   <div className="grid gap-3 sm:grid-cols-4" role="group" aria-label="Class course progress summary">
     {[
      ["Average completion",report.averageCompletion+"%"],
      ["Students",String(report.students)],
      ["Not started",String(report.notStarted)],
      ["Items measured",String(report.itemsMeasured)],
-    ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3">
-     <dt className="text-xs text-muted-foreground">{label}</dt>
-     <dd className="mt-1 text-xl font-semibold tabular-nums">{value}</dd>
-    </div>)}
-   </dl>
+    ].map(([label,value])=><StatTile key={label} label={label} value={value} className="p-3 sm:p-3" />)}
+   </div>
    <Link prefetch={false} download
     href={"/api/courses/college/learner-progress/export?"+
      new URLSearchParams({offeringId:report.chosen.offeringId,deliveryId:report.chosen.deliveryId}).toString()}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
     Export per-learner CSV
    </Link>
    <DataTable
@@ -85,7 +84,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
      {key:"roll",header:"Roll number",mobilePriority:"secondary" as const,cell:(row)=>row.rollNumber??"—"},
      {key:"progress",header:"Progress",mobilePriority:"secondary" as const,
       cell:(row)=><div className="flex flex-wrap items-center gap-2">
-       <progress max={100} value={row.progress} className="w-24" aria-label={row.name+" progress"}/>
+       <MetricBar label={row.name+" progress"} role="progressbar" value={row.progress} maximum={100} unit="percent" className="w-24" />
        <span className="tabular-nums">{row.progress}%</span>
       </div>},
      {key:"videos",header:"Videos",mobilePriority:"secondary" as const,cell:(row)=>row.videoDone+"/"+report.totalVideos},

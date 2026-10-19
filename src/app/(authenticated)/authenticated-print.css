@@ -35,4 +35,27 @@
   .lms-shell-frame *, .lms-shell-frame *::before, .lms-shell-frame *::after {
     animation:none !important; transition:none !important;
   }
+
+  /* Preserve the existing TPO presentation report's document-only print behavior. */
+  .lms-shell-frame [data-tpo-presentation-report] {
+    background:white !important;
+    color:var(--lms-heading) !important;
+  }
+  .lms-shell-frame [data-tpo-presentation-report] [data-slot="page-header"] {
+    break-after:avoid;
+  }
+  .lms-shell-frame [data-tpo-presentation-report] form,
+  .lms-shell-frame [data-tpo-presentation-report] button,
+  .lms-shell-frame [data-tpo-presentation-report] select,
+  .lms-shell-frame [data-tpo-presentation-report] input {
+    display:none !important;
+  }
+  .lms-shell-frame [data-tpo-presentation-report] table {
+    width:100%;
+    border-collapse:collapse;
+  }
+  .lms-shell-frame [data-tpo-presentation-report] th,
+  .lms-shell-frame [data-tpo-presentation-report] td {
+    border-bottom:1px solid var(--lms-canvas-border);
+  }
 }

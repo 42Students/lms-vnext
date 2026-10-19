@@ -164,7 +164,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 
 ### 4. `src/components/hr` — 19 TSX files
 
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
+- [ ] `src/components/hr/hr-drive-draft-form.tsx`
 - [ ] `src/components/hr/hr-notification-read-button.tsx`
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
 - [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
@@ -238,4 +238,23 @@ Coverage proof: HR route/component scan is recorded above; recruiter alias, trac
 
 ## Next file
 
-`src/app/(authenticated)/tracker/issues/page.tsx`
+`src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
+
+## chat-15 bounded turn — source-level changes after main sync
+
+Synced lane fast-forward against origin/main `46cd0161a0e289e7da68e615359589b03ee463e9` with no unique commits before starting. The present scoped revisions are **not** a complete STRICT TICK RULE closure; every H checkbox above remains open.
+
+| Visual/behaviour judgement | Old LMS source | Inspected vNext source | Result |
+| --- | --- | --- | --- |
+| One white canvas, embedded compact sheet | `docs/design/old-lms-pages.md:6-12` | `src/app/(authenticated)/hr/company/reports/page.tsx:333-344` | Shared grid fallback wired; visual match unverified |
+| Tab teal underline and tab count | `docs/design/old-lms-pages.md:7-10` | `src/components/ui/tabs.tsx:77-91`; `src/app/(authenticated)/hr/round-results/page.tsx:66-79` | Uses shared tabs; full keyboard/viewport proof pending |
+| Status pills vs inline text | `docs/design/old-lms-pages.md:11-12` | `src/app/(authenticated)/tracker/issues/page.tsx:152-185`, `src/app/(authenticated)/hr/drives/page.tsx:184-188`, `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx:670-697` | Shared `StatusBadge` used; exact legacy palette on every status unverified |
+| Selected college quick filters | `docs/design/old-lms-pages.md:8-9` | `src/components/ui/needs-doing-chips.tsx:31-57` and HR Home/Drives/Company/Conversations pages | Dynamic link classes removed; selected and focus behaviour available, not visually tested |
+| Tracker issue table | `docs/design/old-lms-pages.md:10-12` | `src/app/(authenticated)/tracker/issues/page.tsx:152-190` | Shared `DataTable` preserves issue, reporter, severity, status, environment, location and date plus open action |
+| AG Grid Quartz | `docs/design/ui-clone-checklist.md` E8 | `src/components/tpo/grid/tpo-grid.tsx:12-17` | **Missing native engine**; shared-table fallback explicitly identified |
+
+- [ ] H complete HR, recruiter and tracker portal sweep (missing: 53 recruiter alias files and all tracker/support component value comparisons; exhaustive full-source greps, exact per-state property table, phone/tablet proof, and JSX/runtime verification).
+- [ ] E8 native AG Grid (missing Quartz/source/dependency verification; see `docs/audit/ux/clone-sheets.md`).
+- [ ] Re-check current main codemod raw-control findings before citing the old 90-file count; the earlier scan is historical evidence, not proof at the newly synced revision.
+
+No CI, typecheck, tests, local app or browser checks were executed. Source control-only changes used exact opening/closing JSX pairs where applicable. Next: `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` selection/offer sheet accessibility and row actions, followed by `src/app/(authenticated)/hr/drives/page.tsx` export and list toolbar.

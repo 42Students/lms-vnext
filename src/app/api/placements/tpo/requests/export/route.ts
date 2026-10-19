@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -28,7 +29,7 @@ export async function GET(request:Request){
   const csv=toTpoRequestsPageCsv(rows);
   return new Response("\uFEFF"+csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-requests.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-requests", "csv") + '"',
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Range":"filtered-authorized-view",

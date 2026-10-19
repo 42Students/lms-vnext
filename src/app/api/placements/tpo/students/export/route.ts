@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -64,7 +65,7 @@ export async function GET(request: Request) {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition":
-          'attachment; filename="tpo-students.csv"',
+          'attachment; filename="' + gridExportFilename("tpo-students", "csv") + '"',
         "Cache-Control": "private, no-store, max-age=0",
         "X-Content-Type-Options": "nosniff",
         "X-Placement-Registration-Data":

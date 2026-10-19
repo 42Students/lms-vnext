@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -29,7 +30,7 @@ export async function GET(request:Request){
   const view=paginateCompanyReport(workspace.report.byCompany,parsed.data);
   return new Response("\uFEFF"+tpoVisibleCompanyReportCsv(view.rows),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="tpo-company-report-visible-page.csv"',
+    "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-company-report-visible-page", "csv") + '"',
     "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"},
   });
  }catch(error){return apiErrorResponse(error);}

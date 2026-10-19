@@ -20,7 +20,7 @@ function SignInStylePreview({
     ...(backgroundUrl
       ? {
           backgroundImage:
-            "linear-gradient(rgba(0,0,0,.12),rgba(0,0,0,.12)),url(" +
+            "linear-gradient(color-mix(in srgb, var(--lms-black) 12%, transparent),color-mix(in srgb, var(--lms-black) 12%, transparent)),url(" +
             JSON.stringify(backgroundUrl) +
             ")",
           backgroundSize: "cover",
@@ -139,7 +139,6 @@ export function CollegeBrandingPreview({
       </Link>
 
       <PageHeader
-        eyebrow="Super Admin · Tenant Setup"
         title={branding.college.name + " · Branding preview"}
         description={
           "Read-only college sign-in appearance for " +

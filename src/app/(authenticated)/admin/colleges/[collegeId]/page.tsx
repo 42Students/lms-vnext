@@ -21,7 +21,7 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
   ["Created (IST)",new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.createdAt)],
  ];
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Tenant" title={item.name} description="Read-only tenant identity and setup links in the authorized scope."/>
+  <PageHeader title={item.name} description="Read-only tenant identity and setup links in the authorized scope."/>
   <nav aria-label="College tabs" className="flex flex-wrap items-center gap-3">
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}`}
      aria-current="page" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text">College</Link>

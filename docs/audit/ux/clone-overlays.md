@@ -98,10 +98,38 @@ Source-only JSX opening/closing checks across **12 modified TSX files** in this 
 - [x] Tooltip arrow right `-2px` and close glyph 16px: `src/components/ui/tooltip.tsx:54`, `src/components/ui/overlay-close-icon.tsx:3-8` compared with `components___antddesign.scss:59-64` and `components___common.scss:1068-1075`.
 - [x] Replace interactive TPO request column chooser: `src/components/placements/tpo-request-page-clipboard.tsx` now uses shared `Dropdown` / `Button`; previously duplicated `Checkbox` import removed.
 - [x] Replace recruiter-lead row actions accordion-menu: `src/components/tpo/recruiter-leads-workspace.tsx` now uses shared responsive `Dropdown` with existing child controls preserved.
-- [ ] Check true overlay disclosures vs inline expandable content beginning at `src/components/tpo/tpo-spreadsheet-grid.tsx` (mobile row actions). Do not replace ordinary static `<details>` help/section disclosure just to reduce a grep count.
+- [x] Convert interactive mobile row actions in `src/components/tpo/tpo-spreadsheet-grid.tsx:216-218` to shared responsive `Dropdown`, preserving row-actions subtree and leaving `More student details` as a non-menu disclosure (`:212-214`).
 - [ ] Inspect nonmodal popovers and header account/context menus for legacy menu icons, separators, keyboard focus, disabled/hover/active and phone layouts; check `src/components/shell/topbar/account-menu.tsx` and `src/components/hr/hr-recruiter-bell.tsx` first.
 - [ ] Establish source-backed toast timeout/persistence and global popup exit motion; selected SCSS lacks one shared source for all variants.
 - [ ] Required checkout verification **NOT RUN by owner constraint**: `git grep -n 'fixed inset-0' -- src`, `git grep -n 'role="dialog"' -- src`, `git grep -n 'role="alertdialog"' -- src`, and inventory of `<details>/<summary>` used as menus. The remote default-branch code search returned legacy/indexed matches and is **not** strict zero-coverage proof.
 - [ ] Required viewport verification **NOT RUN**: 375px/767px phone, 768px tablet and desktop sizes; focus trap/recovery, Escape, outside click, Back history, safe areas, exit/reduced-motion, footer alignment, scroll containment and error/disabled/loading states.
 
 F1 and F2 stay **unticked under STRICT TICK RULE** until exact per-state value proof, complete branch-coverage proof and responsive/no-regression evidence are available. No app, CI, lint, typecheck, unit test, or browser was run in this turn.
+
+## Follow-on F1 source comparison — phone and dialog variants
+
+| State/property | Legacy source and exact value | vNext source and effective value | Result |
+| --- | --- | --- | --- |
+| Legacy mobile dialog body | `docs/design/legacy-styles/components___common.scss:1083-1091` — `padding:24px`, vertical scroll, hidden scrollbar | `src/components/ui/dialog.tsx:53` — `p-6` = 24px phone; `sm:p-[var(--lms-canvas-padding)]` desktop; ScrollCue controls scroll | Padding matches the cited modal variant; scrollbar and all modal variants still unverified |
+| Legacy dialog header | `components___common.scss:1093-1103` — 16px 24px and 50px right title clearance | `src/components/ui/legacy-overlays.css:17-27` — 16px 24px, 50px clearance | Match static dimensions, pending real responsive screenshot |
+| Confirmation semantic/disabled | `components___antddesign.scss:899-906` — confirmation buttons block with 21px top margin and modal content 15px 15px 5px | `src/components/ui/confirm-action-dialog.tsx:12-19` — `role="alertdialog"`, pending-disabled actions within generic footer | **Mismatch** in confirmation-specific action spacing; semantics strengthened, no F1 tick |
+| Notification drawer phone header top | `components___notification-drawer.scss:408-414` — `calc(16px + env(safe-area-inset-top))`, touch minimum | `src/components/ui/legacy-overlays.css:66-73` — same top padding and minimum 44px for right drawer | Match base right-drawer mobile header; content variants not all checked |
+| Legacy drawer left phone | `components___antddesign.scss:305-310,335-346` — width 82% max 300px and 44px close target | `src/components/ui/legacy-overlays.css:47-54,78-86` and `src/components/shell/mobile-navigation.tsx` — 82vw/300px and 44px | Match selected navigation variant only |
+| Modal exit | Old bundled SCSS has multiple entrance rules and commented transitions `components___antddesign.scss:1-15`; no unified exit proof | `src/components/ui/use-overlay-exit.ts` plus CSS `lms-legacy-dialog-exit` / drawer exits | **Unproven** animation equivalence; no F1 tick |
+
+These are source observations, **not** a replacement for the strict per-state/property matrix or phone/tablet browser proof.
+
+## Follow-on F2 source comparison — menus, popovers, tooltip and toast
+
+| State/property | Legacy source and exact value | vNext source and effective value | Result |
+| --- | --- | --- | --- |
+| Generic header popup surface | `docs/design/legacy-styles/components___dropdown.scss:96-104` — 6px radius, `9px 11px 28px rgba(0,0,0,.1)` shadow | `src/components/ui/popover.tsx:22`; `src/components/ui/legacy-overlays.css:181-186` — radius 6px, dropdown shadow | Match common menu variant |
+| Menu hover / active | `components___notification-drawer.scss:14-16,39-45` — rgba(0,0,0,.035) / .06 | `src/components/ui/menu.tsx:38`, `src/components/ui/legacy-overlays.css:157-166` — same fills | Match specified base states; nested menu inventories open |
+| Menu separator | `components___notification-drawer.scss:14-24` provides neutral color tokens, **not** a canonical separator margin/height rule | `src/components/ui/menu.tsx:42-44` — 1px neutral line, 6px vertical/8px horizontal; consumers `tpo-topbar-new-menu.tsx`, `tpo-company-memory-workspace.tsx` | Shared separator implemented; **legacy dimensions unverified**, leave F2 open |
+| Mobile drawer/menu scrim | `components___antddesign.scss:143-145` — `rgba(30,54,63,.1)` | `src/components/ui/legacy-overlays.css:116-123` — same `rgba(30,54,63,.1)` on native dropdown-root pseudo-element | Match scrim color; mobile sheet geometry/behavior remains runtime-unverified |
+| Tooltip arrow | `components___antddesign.scss:59-64` — 10px × 10px, right -2px, #1a1d21 | `src/components/ui/tooltip.tsx:54` and `src/components/ui/legacy-overlays.css:108-114` — same values | Match static; placement/focus/hover variants unverified |
+| Toast stack max width | `components___notification-drawer.scss:113-125` — notification popup max 420px viewport minus 24px (**not** a canonical toast spec) | `src/components/ui/toast.tsx:71` — toast stack max `min(420px,100vw - 32px)` | Comparable sizing choice, **not proof of toast-specific legacy parity** |
+| Toast persistence and duration | No common duration/error policy in selected legacy stylesheet | `src/components/ui/toast.tsx:139-141` — timed 4.5–15s, errors persistent | **Unknown legacy equivalence; leave F2 unticked** |
+| Popup keyboard behavior | Legacy has no single documented keyboard matrix for every profile/popover variant | `src/components/ui/dropdown.tsx:86-130`, `src/components/ui/popover.tsx:18-57` handle Escape, dismissal/focus and Arrow/Home/End | Improvement; keyboard/browser equivalence unverified |
+
+The restored clean `Dropdown` was extended with typed `mobileSheet` and `triggerClassName` props, *one* `<details>...</details>` parent and a single child popup; its phone sheet styles and scrim are in the UI component/overlay stylesheet, not duplicated markup. No CI/typecheck/browser run was performed.

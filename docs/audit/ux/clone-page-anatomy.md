@@ -159,3 +159,74 @@ The following are individually fetched and updated on the lane branch, with thei
 - [ ] **Skipped** `src/app/(authenticated)/learn/courses/error.tsx` from automatic plain-text heading replacement because it did not match the safe literal-heading rule. Review manually.
 
 **Next exact file:** `src/components/projects/project-admin-workspace-list.tsx` — classify project workspace cards against E6, then resume remaining admin error-page `<h1>` migration and source-only grep inventory. B5/B6/E6 category ticks remain **open** under the strict rule.
+
+## Work queue — follow-up bounded turn, 2026-10-19 (chat-9)
+
+- **Upstream first:** Current `main` `46cd0161a0e289e7da68e615359589b03ee463e9` contained the entire prior lane branch `de9bdd6`; fast-forwarded `chatgpt/chat-9-b` to it before edits. No commits made to `main`.
+- **Batch:** 39 individual `[chat-9]` code commits on the lane branch: 36 authenticated recovery-page title migrations (shown below), 1 TPO Everyone page-head/back-link migration, 2 Projects admin workspace-list changes. One separate audit commit records the work, bringing this bounded turn to 40 commits total.
+- **No verification overclaims:** no runtime application, CI, test suite, TypeScript compiler, browser screenshot or recursive worktree grep executed. A GitHub code index is insufficient to certify zero remaining `<h1>` sites.
+
+### Value-by-value checks (source inspection; category still open)
+
+| Element and state | Old LMS value (file:line) | vNext result (file:line) | Finding |
+| --- | --- | --- | --- |
+| Canvas background/border/radius/padding | `docs/design/old-lms-shell-spec.md:18-20`, white, 1px `#e5e9f0`, 12px, 24px | `src/components/ui/page-canvas.tsx:13-23`; `src/app/(authenticated)/layout.tsx:147-156` | Shared single canvas retained unchanged; descendant audit still open |
+| Page title/subtitle/actions | `docs/design/old-lms-pages.md:5-6`: title and subtitle inline, actions right; `legacy-styles/components___listing-page-header.scss:26-35,45-49,80-85` | `src/components/ui/page-header.tsx:26-53`; `src/app/(authenticated)/tpo/team/everyone/page.tsx:23-25` | TPO Everyone hand-built header removed, keeping constant title/description |
+| Back link, desktop/mobile | `legacy-styles/components___learn-layout.scss:362-383`: 44px target, muted hover, hide label max 767px | `src/components/ui/page-back-link.tsx:18-29`; `tpo/team/everyone/page.tsx:23-25` | Shared back affordance, destination retained; complete color proof remains open |
+| Workspace grid, phone/tablet/desktop | `legacy-styles/components___variables.scss:148-159`: legacy thresholds 767px, 991px/992px and 1365px/1366px | `src/components/projects/project-admin-workspace-list.tsx:107`: 1 column below 992px, 2 at 992px, 3 at 1366px | Static breakpoint alignment; actual layout screenshots missing |
+| Ordinary inner metric presentation | `docs/design/old-lms-pages.md:5,13`; `old-lms-shell-spec.md:19-20`: hairlines within one surface, only real object tiles remain cards | `project-admin-workspace-list.tsx:134`: removed nested rounded muted metric block, now thin top/bottom and between-column lines | Presentation-only subcard flattened; real independent workspace article card retained |
+| Error title/recovery actions | `old-lms-pages.md:5-6`: title typography follows shared page head | `src/components/ui/page-header.tsx:30-51`, 36 route-specific `error.tsx` callers | Original route-specific copy and retry handlers retained; cross-route visual acceptance unverified |
+
+### Title migration file ledger — 36 further authenticated error routes
+
+**TPO reports/settings/student/drive (18):**
+- `src/app/(authenticated)/tpo/reports/leads/error.tsx`
+- `src/app/(authenticated)/tpo/settings/rules/error.tsx`
+- `src/app/(authenticated)/tpo/settings/season/error.tsx`
+- `src/app/(authenticated)/tpo/settings/trusted/error.tsx`
+- `src/app/(authenticated)/tpo/reports/unplaced/error.tsx`
+- `src/app/(authenticated)/tpo/students/requests/error.tsx`
+- `src/app/(authenticated)/tpo/settings/branding/error.tsx`
+- `src/app/(authenticated)/tpo/settings/recruiters/error.tsx`
+- `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx`
+- `src/app/(authenticated)/tpo/reports/placed-branch/error.tsx`
+- `src/app/(authenticated)/tpo/settings/notifications/error.tsx`
+- `src/app/(authenticated)/tpo/reports/joining-status/error.tsx`
+- `src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx`
+- `src/app/(authenticated)/tpo/reports/placement-summary/error.tsx`
+- `src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx`
+- `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/error.tsx`
+- `src/app/(authenticated)/tpo/students/[membershipId]/history/error.tsx`
+- `src/app/(authenticated)/tpo/students/[membershipId]/participation/error.tsx`
+
+**HR/college/learner (18):**
+- `src/app/(authenticated)/hr/company/reports/error.tsx`
+- `src/app/(authenticated)/learn/projects/error.tsx`
+- `src/app/(authenticated)/learn/notifications/error.tsx`
+- `src/app/(authenticated)/learn/allAssignments/error.tsx`
+- `src/app/(authenticated)/learn/attendance/calendar/error.tsx`
+- `src/app/(authenticated)/learn/allQuizzes/[quizId]/error.tsx`
+- `src/app/(authenticated)/learn/projects/[projectId]/error.tsx`
+- `src/app/(authenticated)/learn/profile/completeness/error.tsx`
+- `src/app/(authenticated)/learn/my-placements/preparation/error.tsx`
+- `src/app/(authenticated)/learn/profile/verification/error.tsx`
+- `src/app/(authenticated)/learn/my-placements/support/error.tsx`
+- `src/app/(authenticated)/learn/my-placements/interviews/error.tsx`
+- `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
+- `src/app/(authenticated)/learn/my-placements/announcements/error.tsx`
+- `src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx`
+- `src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx`
+- `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/error.tsx`
+- `src/app/(authenticated)/college/assignments/error.tsx`
+
+Note: three connector read timeouts occurred on the first attempt for the learner verification/support/interviews pages; each succeeded on the second read and was committed. Source-level spot checks on `tpo/reports/leads/error.tsx`, `learn/allQuizzes/[quizId]/error.tsx`, `tpo/team/everyone/page.tsx`, and the Projects workspace list confirmed expected imports and `<PageHeader />` call sites; there was no executed syntax/type check.
+
+### Strict tick rule — remains unfulfilled
+
+- [ ] **B5 page head, canvas, back links:** static values compared; **missing** exhaustive page/delegated-component coverage grep, breadcrumb value source for all routes, focus/hover proof, no-regression/runtime rendering proof.
+- [ ] **B6 responsive:** desktop/phone breakpoint token alignment on workspace objects; **missing** actual 320/390/767/768/991/1024/1199px visual comparisons for every portal and overflow controls.
+- [ ] **E6 cards:** project workspace card is a valid independent object exception; nested metric panel flattened; **missing** all-portal card-wrapper inventory and exemption review.
+- [ ] **Page-head grep:** indexed `<h1 path:src/app/(authenticated)` returns at most search-limit results, including stale recently converted files. Do **not** report a zero count. Run the full reproducible grep commands in this document when a checkout is available.
+- [ ] **Next exact file:** `src/app/(authenticated)/learn/courses/error.tsx` — replace conditional dynamic `<h1>` with `PageHeader` safely, then audit its title-dependent error state; after that, inventory other JSX expression headings and breadcrumbs in the Super Admin last-third and Projects admin delegated components.
+
+**Category summary:** no top-level B5/B6/E6 ticks added; the ledger is a record of bounded work, not full pixel-level certification.

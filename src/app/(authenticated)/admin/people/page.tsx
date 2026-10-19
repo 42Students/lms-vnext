@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import {
   listCollegePeopleWithRuntime,
 } from "@/modules/people/runtime";
@@ -45,8 +46,11 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
   {
     key: "roles",
     header: "Roles",
-    cell: (person) =>
-      person.membership.roles.join(", ") || "—",
+    cell: (person) => person.membership.roles.length ? (
+      <div className="flex min-w-0 flex-wrap gap-[var(--lms-space-1)]">
+        {person.membership.roles.map(role => <Badge key={role} tone="neutral">{role}</Badge>)}
+      </div>
+    ) : "—",
   },
   {
     key: "status",
@@ -140,10 +144,12 @@ export default async function SuperAdminPeoplePage({
         eyebrow="Super Admin"
         title="People"
         description="Canonical people and memberships inside the selected college safety scope."
-        actions={<PersonOnboardDialog collegeId={collegeId} />}
+        actions={<div className="flex flex-wrap items-center gap-[var(--lms-space-2)]">
+          <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
+          <PersonOnboardDialog collegeId={collegeId} />
+        </div>}
       />
-      <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
-      <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-4">
+      <form method="get" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 xl:grid-cols-4">
        <label className="grid gap-1 text-sm font-semibold">Search contacts
         <Input name="q" defaultValue={q} maxLength={100} placeholder="Search contacts..." className="min-h-9 w-full"/>
        </label>
@@ -158,7 +164,7 @@ export default async function SuperAdminPeoplePage({
         </Select>
        </label>
        <PageSizeSelect name="pageSize" defaultValue={pageSize} options={[10,20,50]} />
-       <Button type="submit">Search</Button>
+       <Button type="submit" className="min-h-11 sm:min-h-[var(--lms-control-height)]">Search</Button>
        <Link href="/admin/people" className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
