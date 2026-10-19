@@ -140,3 +140,15 @@ Synchronized lane branch by clean fast-forward to `main` SHA `3a77aebd651756d5a1
 - [ ] F5 — remaining custom `error.tsx` and inline empty/error fragments require audit; 15 not-found files reviewed, but 403/404/500, session, maintenance and offline computed-style parity remain open.
 
 **Exact next file:** `src/app/(authenticated)/college/courses/offerings/[offeringId]/loading.tsx` — it contains both a screen-reader-only loading label and a distinct layout; preserve its accessibility text and page geometry when converting to the shared skeleton, then continue the remaining route-state work queue.
+
+### Extended sprint, second pass — latest source count
+
+**62 authenticated loading routes** now have `GracefulPageLoading` (including the preserving-geometry `college/courses/offerings/[offeringId]` route, and Mentor Notifications with its existing `PageHeader`). **24 authenticated route error fallbacks** now use shared `Alert` or `ErrorState`, preserving user-visible wording, original heading levels in Alert-wrapped routes, retry button callbacks and existing recovery links. Twelve converted Alerts had conflicting bespoke background/border/padding classes removed so the shared component's tone can control its visuals. The 15 existing authenticated `not-found.tsx` recovery pages were source-reviewed and intentionally unchanged. These numbers replace the interim 58/8 count above; these are **committed source edits, not claims of fully verified parity**.
+
+All converted JSX files were re-fetched and text-inspected for shared-component imports, exact opening/closing tag pairs and stray quotes. No app execution, CI, lint, test, screenshot comparison, codemod application or complete `grep` was performed in this turn. The codemod remains ready for the orchestrator's reviewed local application. `clone-states-work-queue.md` now annotates all 62+24 changed route files without ticking anything. The unmodified route-state inventory contains 1,041 unique paths, of which 996 are authenticated route-state files as of the recorded source-tree census.
+
+- [ ] F3 **OPEN:** warning/info/success/error token visual-value and interaction parity, remaining hand-rolled notices, mobile 767px comparison.
+- [ ] F4 **OPEN:** run the codemod across remaining pulse-only loading routes, verify skipped judgement cases, spinner/motion and mobile values.
+- [ ] F5 **OPEN:** enumerate remaining custom error/empty/403/404/500/session/maintenance/offline components and verify behaviour and visual responsiveness.
+
+**Next exact source file:** `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx` — source currently contains a role=alert section with separate background/border/padding; convert to shared error feedback without changing the watchlist warning or Retry.
