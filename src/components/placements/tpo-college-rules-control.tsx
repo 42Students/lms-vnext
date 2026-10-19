@@ -104,7 +104,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         <p>A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p>
       </section>
       <button type="button" disabled={busy} onClick={() => void save()}
-        className="mt-4 min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60 text-primary-foreground">
+        className="mt-4 min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60 text-primary-foreground">
         {busy ? "Saving..." : "Review and confirm rules"}
       </button>
       {error ? <p role="alert" className="mt-2 text-sm text-error">{error}</p> : null}
