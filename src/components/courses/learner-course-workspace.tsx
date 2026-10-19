@@ -1,6 +1,7 @@
 import { MetricBar } from "@/components/ui/metric-bar";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
 import {learnerAssessmentSubmittedLinkHref} from "@/modules/courses/learner-assessment-submitted-link-model";
@@ -692,22 +693,21 @@ export function LearnerCourseWorkspace({
   return (
     <div className="space-y-5">
       {workspace.stateWarnings.length>0 ? (
-        <aside role="alert" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
-          <p className="font-semibold">Some course state could not be loaded</p>
+        <Alert tone="warning" role="alert" title="Some course state could not be loaded">
           <p className="mt-1">The lesson list is available, but {workspace.stateWarnings.join(", ")} could not be loaded. Your progress has not been changed.</p>
           <LearnerCourseStateRetry/>
-        </aside>
+        </Alert>
       ) : null}
-      {filterNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{filterNotice}</p> : null}
+      {filterNotice ? <Alert tone="warning">{filterNotice}</Alert> : null}
       {focusLessonId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId)
-        ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">
+        ? <Alert tone="error">
             Lesson not found. This lesson is unavailable in your current learning path.
-          </p>
+          </Alert>
         : focusLessonId && focusContentId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId &&
             lesson.items.some(item=>item.id===focusContentId))
-          ? <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">
+          ? <Alert tone="error">
               Content unavailable. This item is not published in the selected lesson.
-            </p>:null}
+            </Alert>:null}
       <div>
         <h2 className="sr-only">Learning Path</h2>
         <p className="m-0 text-sm text-body">
@@ -748,7 +748,7 @@ export function LearnerCourseWorkspace({
         </div>
       </section>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Overall"
           value={measuredProgress === null ? "Not measured" : `${measuredProgress}%`}
@@ -783,7 +783,7 @@ export function LearnerCourseWorkspace({
         }))}
       />
 
-      <details className="rounded-xl border border-border bg-surface sm:hidden">
+      <details className="rounded-xl border border-border bg-surface md:hidden">
         <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">
           Jump to lesson ({mobileOutline.length})
           <span aria-hidden="true">⌄</span>
