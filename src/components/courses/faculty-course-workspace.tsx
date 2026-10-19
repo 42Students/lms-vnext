@@ -384,10 +384,7 @@ export function FacultyCourseWorkspace({
         eyebrow="Faculty · Course"
         title={course.courseName}
         description={`${course.courseCode} · ${course.sectionName} · ${course.academicPeriodName}`}
-      />
-
-      {view !== "BLUEPRINT" ? (
-        <>
+        actions={view !== "BLUEPRINT" ? (
       <nav aria-label="Overview actions" className="flex flex-wrap gap-3">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
@@ -402,6 +399,12 @@ export function FacultyCourseWorkspace({
           Current Section students
         </Link>
       </nav>
+        ) : undefined}
+      />
+
+      {view !== "BLUEPRINT" ? (
+        <>
+
       <FacultyCourseHomeSignals
         signals={homeSignals}
         deliveryId={course.deliveryId}
