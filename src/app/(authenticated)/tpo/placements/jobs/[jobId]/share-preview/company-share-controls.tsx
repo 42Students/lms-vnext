@@ -109,13 +109,13 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    <div className="flex flex-wrap items-end gap-3">
     <label className="text-sm text-body">Expires in days
      <select value={days} onChange={event=>changeExpiry(event.target.value)}
-      className="ml-2 rounded border border-border bg-surface px-2 py-2">
+      className="ml-2 rounded-[9px] border border-border bg-surface px-2 py-2">
       {[1,2,3,4,5,6,7,14,30,60,90].map(day=><option key={day} value={day}>{day}</option>)}
      </select>
     </label>
     <label className="grid gap-1 text-sm">Please shortlist by
      <input type="date" value={shortlistBy} onChange={event=>setShortlistBy(event.target.value)}
-      className="min-h-11 rounded border border-border bg-surface px-2"/>
+      className="min-h-11 rounded-[9px] border border-border bg-surface px-2"/>
     </label>
     <fieldset className="w-full rounded border border-border p-3">
      <legend className="px-1 text-sm font-semibold">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
@@ -129,7 +129,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
       </label>)}</div>
     </fieldset>
     <button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
-     className="min-h-11 rounded bg-primary px-4 font-semibold text-primary-foreground">
+     className="min-h-11 rounded-[9px] bg-primary px-4 font-semibold text-primary-foreground">
      Create expiring link
     </button>
    </div>
@@ -140,7 +140,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    {newUrl?<div className="rounded border border-border p-3">
     <p className="text-xs font-semibold text-body">Copy this URL now. The secret cannot be recovered later.</p>
     <input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
-     className="mt-2 w-full rounded border border-border bg-surface p-2 text-xs"/>
+     className="mt-2 w-full rounded-[9px] border border-border bg-surface p-2 text-xs"/>
     <button type="button" onClick={()=>void copyLink()}
      className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Copy URL</button>
     {copyState==="COPIED"?<p role="status" className="mt-2 text-sm text-body">Copied to clipboard.</p>:null}
