@@ -141,6 +141,6 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </div>
    <p>Stage completed. Use the Apply results preview above to publish progression when the round is completed.</p>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-foreground">{error} Re-preview if the round has changed.</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error} Re-preview if the round has changed.</p>:null}
  </section>;
 }
