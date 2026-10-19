@@ -99,8 +99,8 @@ export function HrRecruiterBell(){
    {!state&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
     state.items.length===0?<EmptyState title={HR_BELL_EMPTY} description={HR_BELL_EMPTY_HELP}/>:
-    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul role="list" aria-label="Recent recruiter notifications" className="space-y-1.5">{state.items.map(item=><li key={item.id}>
-     <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-11 items-start gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm text-body hover:bg-[var(--lms-neutral-50)] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-80"><ul role="list" aria-label="Recent recruiter notifications" className="space-y-[6px] px-3">{state.items.map(item=><li key={item.id}>
+     <Link href={item.href} onClick={()=>setOpen(false)} className="flex min-h-11 items-start gap-2 rounded-lg border border-border bg-surface px-4 py-3 text-sm text-body transition-[background-color,border-color,box-shadow] duration-200 hover:border-border hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-muted focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none">
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--lms-notification-unread,var(--lms-error))]":"mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted"}/>
       <span className="flex-1 text-sm font-semibold leading-[1.4]">{item.label}</span><time dateTime={item.at} className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</time>
      </Link></li>)}</ul></ScrollCue>}
