@@ -58,21 +58,21 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
     <div className="flex flex-wrap items-end gap-2">
       <label className="grid gap-1 text-sm font-semibold">View name
         <Input value={name} onChange={event=>setName(event.target.value)}
-          maxLength={60} placeholder="Name these filters"
+          maxLength={60} className="min-h-11" placeholder="Name these filters"
          />
       </label>
-      <Button variant="secondary" type="button" onClick={save}
+      <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={save}
        >
         Save current filters
       </Button>
     </div>
     {views.length?<ul className="mt-3 flex flex-wrap gap-2">
       {views.map(view=><li key={view.name} className="flex items-center gap-1 rounded-[var(--lms-control-radius)] border border-border">
-        <Button variant="ghost" type="button" onClick={()=>router.push("/tracker/issues"+(view.filters?"?"+view.filters:""))}
+        <Button variant="ghost" type="button" className="min-h-11 md:min-h-9" onClick={()=>router.push("/tracker/issues"+(view.filters?"?"+view.filters:""))}
          >
           {view.name}
         </Button>
-        <Button variant="ghost" className="border-l border-border" type="button" aria-label={"Delete saved view "+view.name}
+        <Button variant="ghost" className="min-h-11 border-l border-border md:min-h-9" type="button" aria-label={"Delete saved view "+view.name}
           onClick={()=>persist(views.filter(item=>item.name!==view.name))}
          >
           Delete

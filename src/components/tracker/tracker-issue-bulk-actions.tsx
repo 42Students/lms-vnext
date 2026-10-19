@@ -57,7 +57,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
   }
   return <section aria-label="Bulk issue status" className="space-y-3 border-b border-border pb-4">
     <div className="flex flex-wrap items-center gap-3">
-      <Button variant="secondary" type="button" disabled={busy} onClick={()=>{setSelecting(v=>!v);setSelected([]);setFailed([]);setNotice("");}}
+      <Button variant="secondary" type="button" disabled={busy} className="min-h-11 md:min-h-9" onClick={()=>{setSelecting(v=>!v);setSelected([]);setFailed([]);setNotice("");}}
        >
         {selecting?"Close selection":"Select issues"}
       </Button>
@@ -65,13 +65,13 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
     </div>
     {selecting?<div className="space-y-3">
       <div className="flex flex-wrap gap-3">
-        <Button variant="ghost" className="underline text-primary-text" type="button" disabled={busy} onClick={()=>setSelected(rows.map(x=>x.publicId))}
+        <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" disabled={busy} onClick={()=>setSelected(rows.map(x=>x.publicId))}
          >Select this page</Button>
-        <Button variant="ghost" className="underline text-primary-text" type="button" disabled={busy} onClick={()=>setSelected([])}
+        <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" disabled={busy} onClick={()=>setSelected([])}
          >Clear selection</Button>
       </div>
       <div role="group" aria-label="Issues on this page" className="grid gap-2 md:grid-cols-2">
-        {rows.map(row=><label key={row.publicId} className="flex min-h-9 items-center gap-2 text-sm">
+        {rows.map(row=><label key={row.publicId} className="flex min-h-11 items-center gap-2 text-sm md:min-h-9">
           <Checkbox checked={selected.includes(row.publicId)} disabled={busy}
             onChange={()=>toggle(row.publicId)}/>
           {row.publicId} <span className="text-muted-foreground">({row.status.toLowerCase().replaceAll("_"," ")})</span>
@@ -84,7 +84,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
             {BUG_STATUSES.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
-        <Button variant="primary" type="button" disabled={busy||selected.length===0} loading={busy} onClick={()=>void apply()}
+        <Button variant="primary" type="button" disabled={busy||selected.length===0} loading={busy} className="min-h-11 md:min-h-9" onClick={()=>void apply()}
          >
           {busy?"Updating…":"Apply to "+selected.length+" selected"}
         </Button>

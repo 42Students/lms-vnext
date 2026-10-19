@@ -38,11 +38,11 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
   return <section className="space-y-3 border-b border-border pb-4">
     <h2 className="font-semibold">Telegram alerts</h2>
     <div className="flex flex-wrap gap-3">
-      <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(true)}
+      <Button variant="secondary" type="button" disabled={pending} className="min-h-11 md:min-h-9" onClick={()=>setOpen(true)
        >
         Daily digest
       </Button>
-      <Button variant="secondary" type="button" disabled={!configured||pending} onClick={()=>setConfirm("TEST")}
+      <Button variant="secondary" type="button" disabled={!configured||pending} className="min-h-11 md:min-h-9" onClick={()=>setConfirm("TEST")
        >
         Send test alert
       </Button>
@@ -59,11 +59,11 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
         <div><dt>Deploy</dt><dd>{deploy??"Not recorded"}</dd></div>
       </dl>
       <div className="mt-3 flex flex-wrap gap-3">
-        <Button variant="secondary" type="button" disabled={!configured||pending} onClick={()=>setConfirm("DIGEST")}
+        <Button variant="secondary" type="button" disabled={!configured||pending} className="min-h-11 md:min-h-9" onClick={()=>setConfirm("DIGEST")
          >
           Send to Telegram now
         </Button>
-        <Button variant="secondary" type="button" onClick={()=>setOpen(false)}
+        <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={()=>setOpen(false)
          >Close</Button>
       </div>
     </Dialog>
