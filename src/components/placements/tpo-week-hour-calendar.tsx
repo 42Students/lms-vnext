@@ -223,6 +223,6 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">{saving?"Saving…":"Add follow-up"}</Button>
     </div>
    </div>
-  </div>:null}
+  </Dialog>:null}
  </section>;
 }
