@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 export function TpoCompanyTrustSwitch({companyId,initialTrusted,updatedAt}:{companyId:string;initialTrusted:boolean;updatedAt:string}){
@@ -30,7 +31,7 @@ export function TpoCompanyTrustSwitch({companyId,initialTrusted,updatedAt}:{comp
  }
  return <div className="mt-4 space-y-2">
   <label className="flex min-h-11 md:min-h-9 items-center gap-3 text-sm font-semibold">
-   <input type="checkbox" checked={trusted} disabled={busy}
+   <Checkbox checked={trusted} disabled={busy}
     onChange={()=>void toggle()} aria-label="Trusted company"/>
    Trusted
   </label>
