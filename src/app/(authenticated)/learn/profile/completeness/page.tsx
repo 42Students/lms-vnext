@@ -29,7 +29,7 @@ export default async function ProfileCompleteness({searchParams}:{
     <Link href="/learn/profile" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
       ← Back to Profile
     </Link>
-    <PageHeader eyebrow="Learner · Profile" title="Profile completion checklist"
+    <PageHeader title="Profile completion checklist"
       description="Read-only coverage of the fields saved to your learner profile." />
     <section className="py-2">
       <h2 className="text-lg font-semibold text-foreground">{readiness.filled} of {readiness.total} sections filled</h2>
