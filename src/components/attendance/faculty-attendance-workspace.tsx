@@ -493,7 +493,7 @@ export function FacultyAttendanceWorkspace({
               {workspace.course.courseCode} ·{" "}
               {workspace.course.sectionName}
             </p>
-            <h1 className="sr-only">Attendance</h1>
+            <h1 className="sr-only text-[30px] font-semibold text-[var(--lms-heading)]">Attendance</h1>
             <p className="mt-2 text-sm text-body">See attendance history and monthly trends in one place.</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {workspace.course.courseName} ·{" "}
@@ -1025,7 +1025,7 @@ export function FacultyAttendanceWorkspace({
                 <label className="mt-4 block space-y-2 text-sm font-semibold text-body">
                   Correction explanation (required)
                   <textarea value={correctionReason} maxLength={500} rows={3}
-                    className="w-full rounded-md border border-border bg-background p-3 text-sm font-normal"
+                    className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal"
                     placeholder="What changed in the recorded attendance?"
                     onChange={event=>setCorrectionReason(event.target.value)}/>
                   <span className="block text-xs font-normal text-muted-foreground">
