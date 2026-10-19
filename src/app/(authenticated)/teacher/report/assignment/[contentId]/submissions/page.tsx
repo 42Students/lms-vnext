@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {Tabs} from "@/components/ui/tabs";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -62,32 +63,19 @@ export default async function FacultyAssignmentSubmissionsPage({
       <Link href={facultySubmissionListHref({...query,q:"",page:1})}
         className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear search</Link>
     </form>
-    <nav aria-label="Submission grading filters" className="flex flex-wrap gap-2">
-      {(["ALL","GRADED","UNGRADED","LATE"] as const).map(filter=>
-        <Link key={filter} href={facultySubmissionListHref({...query,filter,page:1})}
-          aria-current={query.filter===filter?"page":undefined}
-          className={query.filter===filter
-            ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-foreground"
-            : "rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
-          {filter==="ALL"?"All":filter==="GRADED"?"Graded":filter==="UNGRADED"?"Ungraded":"Late"}
-        </Link>)}
-    </nav>
-    <nav aria-label="Grade publication visibility" className="flex flex-wrap gap-2">
-      {(["ALL","PUBLISHED","PRIVATE"] as const).map(mode=>
-        <Link key={mode} href={facultySubmissionListHref({...query,publication:mode,page:1})}
-          aria-current={query.publication===mode?"page":undefined}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-          {mode==="ALL"?"All grades":mode==="PUBLISHED"?"Published grades":"Private grades"}
-        </Link>)}
-    </nav>
-    <nav aria-label="Submission date order" className="flex flex-wrap gap-2">
-      <Link href={facultySubmissionListHref({...query,order:"NEWEST",page:1})}
-        aria-current={query.order==="NEWEST"?"page":undefined}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Newest first</Link>
-      <Link href={facultySubmissionListHref({...query,order:"OLDEST",page:1})}
-        aria-current={query.order==="OLDEST"?"page":undefined}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Oldest first</Link>
-    </nav>
+    <Tabs ariaLabel="Submission grading filters" value={query.filter} renderPanel={false}
+      items={(["ALL","GRADED","UNGRADED","LATE"] as const).map(filter=>({
+       value:filter,label:filter==="ALL"?"All":filter==="GRADED"?"Graded":filter==="UNGRADED"?"Ungraded":"Late",
+       href:facultySubmissionListHref({...query,filter,page:1}),
+      }))}/>
+    <Tabs ariaLabel="Grade publication visibility" value={query.publication} renderPanel={false}
+      items={(["ALL","PUBLISHED","PRIVATE"] as const).map(mode=>({
+       value:mode,label:mode==="ALL"?"All grades":mode==="PUBLISHED"?"Published grades":"Private grades",
+       href:facultySubmissionListHref({...query,publication:mode,page:1}),
+      }))}/>
+    <Tabs ariaLabel="Submission date order" value={query.order} renderPanel={false}
+      items={[{value:"NEWEST",label:"Newest first",href:facultySubmissionListHref({...query,order:"NEWEST",page:1})},
+       {value:"OLDEST",label:"Oldest first",href:facultySubmissionListHref({...query,order:"OLDEST",page:1})}]}/>
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">
         {data.total} matching persisted submission{data.total===1?"":"s"} in this teaching Section
