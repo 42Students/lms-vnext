@@ -1,6 +1,7 @@
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { HrCompanyReportsGrid } from "@/components/hr/hr-company-reports-grid";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -177,33 +178,12 @@ export default async function RecruiterCompanyReportsPage({
         </div>}
       />
 
-      {report.choices.length > 1 ? (
-        <nav
-          aria-label="Choose report college"
-          className="flex flex-wrap gap-2"
-        >
-          {report.choices.map((grant) => (
-            <Link
-              key={grant.id}
-              href={recruiterCompanyReportsHref({
-                collegeId: grant.collegeId,
-              })}
-              aria-current={
-                grant.collegeId === collegeId
-                  ? "page"
-                  : undefined
-              }
-              className={
-                grant.collegeId === collegeId
-                  ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                  : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-              }
-            >
-              {grant.collegeName}
-            </Link>
-          ))}
-        </nav>
-      ) : null}
+      {report.choices.length > 1 ? <NeedsDoingChips label="College:"
+        selectedKey={collegeId}
+        items={report.choices.map(grant=>({
+          key:grant.collegeId,label:grant.collegeName,
+          href:recruiterCompanyReportsHref({collegeId:grant.collegeId}),
+        }))}/> : null}
 
       <Tabs renderPanel={false} ariaLabel="Company sections" value="reports"
         items={[{value:"company",label:"Company",href:`${companyBase}&tab=company`},
