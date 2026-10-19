@@ -273,7 +273,7 @@ export function LearnerAttendanceWorkspace({
 
   return (
     <div className="space-y-5">
-      {urlNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{urlNotice}</p> : null}
+      {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{urlNotice}</p> : null}
       <section className="rounded-xl border border-border bg-surface p-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <label className="w-full max-w-sm text-xs font-semibold text-body">
@@ -430,7 +430,7 @@ export function LearnerAttendanceWorkspace({
       </section>
 
       {recovery !== null ? (
-        <p className="rounded-lg border border-border bg-surface-subtle p-4 text-sm leading-6 text-body" role="note">
+        <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm leading-6 text-body" role="note">
           {recovery === Infinity
             ? "At a 100% threshold, prior non-present marks cannot be offset by future attendance alone."
             : recovery === 0
