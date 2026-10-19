@@ -1,5 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
 import { Drawer } from "@/components/ui/drawer";
 import Link from "next/link";
@@ -54,10 +57,8 @@ export function RecruiterNotificationBell(){
       {data.unread>99?"99+":data.unread}</span>:null}
   </Button>
   <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications">
-   {!data&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:null}
-   {error?<div role="alert" className="mt-3 text-sm text-error">{error}
-    <Button type="button" onClick={()=>void load()} variant="ghost" className="ml-2 underline">Retry</Button>
-   </div>:null}
+   {!data&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:null}
+   {error?<ErrorState title="Notifications unavailable" description={error} action={<Button type="button" onClick={()=>void load()} variant="secondary">Retry</Button>}/>:null}
    {data?.status==="CHOOSE_COLLEGE"?
     <div className="mt-3 space-y-2 text-sm">{data.choices?.map(item=>
      <Button type="button" key={item.collegeId} onClick={()=>{
@@ -66,7 +67,7 @@ export function RecruiterNotificationBell(){
       variant="secondary" className="w-full justify-start text-left">
       {item.collegeName}</Button>)}</div>:null}
    {data?.status==="READY"&&data.rows?.length===0?
-     <p role="status" className="mt-4 text-sm text-muted-foreground">No notifications yet</p>:null}
+     <EmptyState title="No notifications yet" description="New placement notifications will appear here."/>:null}
    {data?.status==="READY"&&data.rows?.length?
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-[50vh]"><ul className="divide-y divide-[var(--lms-canvas-border)]">
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
