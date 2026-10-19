@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import {useMemo,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -88,7 +89,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
-     <p className="mt-1 text-xs font-semibold text-primary-text">{verificationQueueCardPresentation(row.status).state}</p>
+     <StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>{verificationQueueCardPresentation(row.status).state}</StatusBadge>
      {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
      {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
