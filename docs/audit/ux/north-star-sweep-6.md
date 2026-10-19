@@ -304,3 +304,9 @@ src/components/placements/tpo-drive-deadline-form.tsx
 - **First post-merge batch: 10 file commits** ([chat-6]) on `chatgpt/chat-6-b`: `super-admin-course-bulk-visibility`, `admin-offering-learning-page`, `admin-offering-section-preview`, `admin-course-overview`, `super-admin-hr-accounts`, `super-admin-college-company-actions`, `placement-bulk-add-applicants`, `placement-calendar-workspace`, `admin-offering-learning-overview`, `placement-job-create-workspace`.
 - Used shared Button, Select, and Input components, 9px control radius tokens, and correct teal-primary/white-text states; replaced nested canvas-style cards with thin list separators, retaining independent alert/confirm/focus surfaces. Kept routing, business logic, validation, forms and permissions unchanged.
 - Re-read edited shared-control closing tags and checked balanced `<Button>`/`</Button>`, `<Select>`/`</Select>` boundaries. No tests, TypeScript compile, CI or runtime execution.
+
+### Second ten-file batch after f7dd3e8 merge
+
+- Pushed another **10 [chat-6] source commits** after the main merge: `student-rule-editor`, `placement-report-ui`, `placement-recruiter-access`, `placement-employer-relationships`, `placement-bulk-offer-withdraw`, `placement-candidate-evidence-editor`, `placement-season-manager`, `inbound-mail-list`, `person-onboard-dialog`, `lecture-hall-manager`.
+- Replaced duplicated native form styles with shared Button, Input, Select and Textarea where possible, kept existing handler/state, checkbox semantics, destructive confirmation flows, and query/form names; brought report and evidence regions into the one-white-canvas/hairline style.
+- JSX opening/closing tag scans found no truncated tags or malformed hover var suffixes. The bulk-withdrawal Textarea was also manually re-read and confirmed to end with `/>` (the callback arrow in `onChange` can fool a naive tag regular expression). No TypeScript compilation, CI, tests, app execution or screenshots.
