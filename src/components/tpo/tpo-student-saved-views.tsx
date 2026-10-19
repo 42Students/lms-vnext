@@ -67,10 +67,10 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
   if(receipt)router.push(hrefFor(view.query));
  }
  return <section className="space-y-3">
-  <Button variant="secondary" type="button" aria-expanded={open} onClick={()=>{
+  {!embedded?<Button variant="secondary" type="button" aria-expanded={open} onClick={()=>{
    setOpen(v=>!v);if(!open)void load();
-  }} >
-   Saved student views</Button>
+  }}>
+   Saved student views</Button>:null}
   {open?<div className="w-full max-w-4xl space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
    <h2 className="font-semibold">Saved views</h2>
    {pins.length?<div className="flex flex-wrap gap-2"><strong className="w-full text-sm">Pinned</strong>
