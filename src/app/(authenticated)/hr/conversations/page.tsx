@@ -99,7 +99,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    {result.choices.length>1?<nav aria-label="College conversations" className="flex flex-wrap gap-3">
     {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
      aria-current={g.collegeId===result.collegeId?"page":undefined}
-     className={g.collegeId===result.collegeId ? "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle"}>{g.collegeName}</Link>)}
+     className={g.collegeId===result.collegeId ? "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>{g.collegeName}</Link>)}
    </nav>:null}
    <section className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
