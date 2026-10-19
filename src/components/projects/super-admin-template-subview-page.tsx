@@ -174,13 +174,6 @@ export async function SuperAdminTemplateSubviewPage({
         active="templates"
       />
 
-      <Link
-        href="/admin/projects/templates"
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
-      >
-        ← Template catalogue
-      </Link>
-
       <PageHeader
         eyebrow={`Super Admin · Project Template · ${sectionTitle}`}
         title={detail.template.title}
@@ -223,6 +216,11 @@ export async function SuperAdminTemplateSubviewPage({
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active={section}
+        counts={blueprint ? {
+          sprints:sprints.length,
+          tasks:tasks.length,
+          resources:resources.length,
+        } : undefined}
       />
 
       {blueprint && (section === "sprints" || section === "tasks") &&

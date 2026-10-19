@@ -4,9 +4,9 @@ export default function MentorNotificationsLoading(){
     <PageHeader eyebrow="Mentor" title="Notifications"
       description="Loading your notifications and project attention…" />
     <div className="space-y-3">{[0,1,2].map(i=>
-      <div key={i} className="animate-pulse border-b border-border pb-4">
-        <div className="h-5 w-52 rounded bg-muted"/>
-        <div className="mt-3 h-4 w-80 max-w-full rounded bg-muted"/>
+      <div key={i} className="animate-pulse border-b border-[var(--lms-canvas-border)] pb-4">
+        <div className="h-5 w-52 rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-100)]"/>
+        <div className="mt-3 h-4 w-80 max-w-full rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-100)]"/>
       </div>)}</div>
   </div>;
 }

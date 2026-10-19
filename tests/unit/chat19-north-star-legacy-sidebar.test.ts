@@ -26,11 +26,20 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
  it("keeps Faculty and TPO navigation separate for an overlapping multi-role membership",()=>{
   const both=[faculty,tpo,college];
   expect(scopedShellNavigation(both,"/teacher/courses").map(row=>row.href))
-   .toEqual(["/teacher/courses","/college"]);
+   .toEqual(["/teacher/courses"]);
   expect(scopedShellNavigation(both,"/tpo/home").map(row=>row.href))
-   .toEqual(["/tpo/home","/college"]);
+   .toEqual(["/tpo/home"]);
   expect(scopedShellNavigation([faculty,college],"/teacher/courses"))
-   .toEqual([faculty,college]);
+   .toEqual([faculty]);
+ });
+ it("never appends a generic Dashboard or second role to a selected portal",()=>{
+  const entries:ShellNavItem[]=[
+   {href:"/dashboard",label:"Dashboard",shortLabel:"D"},
+   {href:"/hr/home",label:"Today",shortLabel:"T"},
+   {href:"/college",label:"Dashboard · College",shortLabel:"D"},
+  ];
+  expect(scopedShellNavigation(entries,"/hr/home").map(item=>item.href)).toEqual(["/hr/home"]);
+  expect(scopedShellNavigation(entries,"/college").map(item=>item.href)).toEqual(["/college"]);
  });
  it("isolates secondary legacy portals even when they have one menu row",()=>{
   const learner:ShellNavItem={href:"/learn/courses",label:"Courses",shortLabel:"C"};
@@ -68,6 +77,19 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(SHELL_NAV_ICON_KEYS["/tpo/requests"]).toBe("check-circle");
   expect(SHELL_NAV_ICON_KEYS["/tpo/reports"]).toBe("file-text");
   expect(SHELL_NAV_ICON_KEYS["/tpo/settings"]).toBe("wrench");
+  expect(SHELL_NAV_ICON_KEYS["/tpo/placements"]).toBe("solution");
+  expect(SHELL_NAV_ICON_KEYS["/hr/drives"]).toBe("solution");
+  expect(SHELL_NAV_ICON_KEYS["/tpo/recruiters"]).toBe("usergroup-add");
+  expect(SHELL_NAV_ICON_KEYS["/admin/features"]).toBe("appstore");
+  expect(SHELL_NAV_ICON_KEYS["/admin/module-access"]).toBe("partition");
+  expect(SHELL_NAV_ICON_KEYS["/admin/tenants"]).toBe("bank");
+  expect(SHELL_NAV_ICON_KEYS["/tpo/batches"]).toBe("apartment");
+ });
+ it("uses unique stroke glyphs rather than the shared Layers fallback for legacy AntD icon families",()=>{
+  const glyphs=source("src/components/shell/shell-nav-icons.tsx");
+  for(const name of ["solution","usergroup-add","bank","appstore","partition","apartment"]){
+   expect(glyphs).toContain(name+":");
+  }
  });
  it("shows one active workspace for multi-role memberships without mixing all portal rows",()=>{
   const learn:ShellNavItem={href:"/learn/courses",label:"Courses",shortLabel:"C",group:"learning"};
@@ -76,9 +98,9 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   const learnMore:ShellNavItem={href:"/learn/attendance",label:"Attendance",shortLabel:"A",group:"tracking"};
   const combined=[learn,learnMore,faculty,teacherMore,mentor,college];
   expect(scopedShellNavigation(combined,"/teacher/courses").map(item=>item.href))
-   .toEqual(["/teacher/courses","/teacher/calendar","/college"]);
+   .toEqual(["/teacher/courses","/teacher/calendar"]);
   expect(scopedShellNavigation(combined,"/learn/attendance").map(item=>item.href))
-   .toEqual(["/learn/courses","/learn/attendance","/college"]);
+   .toEqual(["/learn/courses","/learn/attendance"]);
   // College Admin's legacy Placement cell access is not a second full TPO account.
   expect(scopedShellNavigation([college,{
    href:"/college/courses",label:"Courses",shortLabel:"C"
@@ -111,6 +133,27 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain("font-size:15px");
   expect(css).toContain("scrollbar-width:none");
   expect(css).toContain("transform:scale(.72)");
+ });
+ it("matches all measured sidebar link, heading, badge and logo values from the old CSS",()=>{
+  const css=source("src/components/shell/sidebar-legacy.css");
+  const shell=source("src/components/shell/app-shell.tsx");
+  const mobile=source("src/components/shell/mobile-navigation.tsx");
+  const glyphs=source("src/components/shell/shell-nav-icons.tsx");
+  for(const value of ["min-height:44px","margin-bottom:6px","padding:10px 12px",
+   "border-radius:8px","width:24px","height:24px","opacity:.55",
+   "font-size:15px","line-height:20px","letter-spacing:.105em",
+   "margin:7px 12px 4px","width:22px","top:4px","left:50%",
+   "margin-left:5px","transform:scale(.72)","outline-offset:-2px"]) {
+   expect(css,value).toContain(value);
+  }
+  expect(css).toContain("border-right:1px solid #f1f4f9");
+  expect(css).toContain("outline:2px solid rgba(38,186,199,.45)");
+  expect(shell).toContain("<ShellLogoMark />");
+  expect(mobile).toContain("<ShellLogoMark />");
+  expect(glyphs).toContain('width="38" height="36"');
+  expect(mobile).toContain('role="dialog"');
+  expect(mobile).toContain('aria-modal="true"');
+  expect(mobile).toContain("onNavigate={() => setOpen(false)}");
  });
  it("uses the legacy thin TPO scrollbar only on expanded rails",()=>{
   const css=source("src/components/shell/sidebar-legacy.css");

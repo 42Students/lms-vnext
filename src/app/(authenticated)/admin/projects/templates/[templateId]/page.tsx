@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
+import { countTemplateBlueprintItems } from "@/modules/projects/template-subview-model";
 import { ProjectTemplateView } from "@/components/projects/project-template-view";
 import { TemplateMetadataEditControl } from "@/components/projects/template-metadata-edit-control";
 import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
@@ -106,6 +107,11 @@ export default async function SuperAdminProjectTemplateDetailPage({
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active="overview"
+        counts={{
+          ...(detail.currentVersion ? countTemplateBlueprintItems(detail.currentVersion.blueprint) : {}),
+          colleges:detail.assignments.length,
+          versions:detail.versions.length,
+        }}
       />
       {detail.currentVersion ? (
         <ProjectTemplateView

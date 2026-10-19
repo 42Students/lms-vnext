@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
@@ -105,7 +106,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
       onDrop={event=>drop(event,lane.id)}
       className="w-64 shrink-0 rounded-xl border border-border bg-surface-subtle p-3">
      <h2 className="flex items-center justify-between font-semibold">
-      <span>{lane.label}</span><span className="rounded-full border border-border px-2 text-sm">{lane.tasks.length}</span>
+      <span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge>
      </h2>
      <ul className="mt-3 space-y-2">{lane.tasks.map(task=>{
       const own=membershipId!==null&&task.assigneeMembershipId===membershipId;

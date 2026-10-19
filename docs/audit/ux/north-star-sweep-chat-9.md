@@ -352,3 +352,61 @@ compiler or browser visual test.
 **Source review:** re-fetched changed TSX files and reviewed `Button`, `Select`, `Link` opening/closing pairs and known truncated-tag patterns. No truncated `</Select>` or other touched JSX closing tag was found. No code execution, build, lint, tests or CI was performed; TS compilation and visual fidelity remain unverified.
 
 **Concurrent integration state:** after this continuation began, `main` advanced rapidly. The last branch comparison read `29` commits ahead and `831` behind `main`. GitHub branch updates here preserve the lane commits without force-pushing; this is *not* a claim of a subsequent merge of those new upstream commits. A conflict-aware merge remains necessary before final integration.
+
+
+## Chat-9 page-head/canvas completion and Super Admin continuation — 2026-10-19
+
+**Upstream integration:** merged the then-current `main` commit `8049636671c97d9e4ef6476e2d41f219ab3d3fa4` into `chatgpt/chat-9-b` using a non-force GitHub merge commit with both parents. Files changed on both sides were reconciled against the upstream source so newer styles and fixes were preserved. The next comparison showed zero commits behind; no changes were pushed to `main`.
+
+**Completed in this continuation:**
+- Verified authenticated layout still owns exactly one white PageCanvas and app-shell gutter placement, with 24px canvas padding enforced despite conflicting small-screen global CSS.
+- Removed the extra Super Admin grouped-tabs heading that duplicated page titles.
+- Moved catalogue return links and creation actions into the right-hand PageHeader actions for Super Admin Project template details, template subviews, college assignment availability, version comparison, new template, workspace creation and readiness.
+- Moved the Settings authentication, Tenant Setup and verification navigation into the page head, retaining existing action destinations and wording.
+- Moved Projects audit refresh and activity actions, readiness override CSV export, and Projects workspace/mentor action links into PageHeader actions.
+- Standardized Project submissions category tabs to 3px teal underline and kept the invalid audit-filter warning a slim legacy notice.
+- Super Admin Students now renders one page-level `Students` heading with its registration and membership actions, while the shared scoped directory renders `Registered Students` as an h2 section heading. Introduced optional `headingMode="section"` while preserving `"page"` as the default for all other scoped-directory callers. The student read-failure case now retains its page heading.
+- Left legacy page content, service calls, routing, role checks, form data and mutations unchanged.
+
+**Static source review:** fetched changed TSX files after editing, reviewed matching JSX closing tags (especially `</Select>`, `</Button>`, `</Link>`, `</section>`, `</div>`) and checked for incomplete closing tags and isolated `as` casts. The touched markup did not show truncated or excess closing tags. This is manual/static review, **not** compile/typecheck, CI, browser or screenshot verification. No code or CI was run, as requested.
+
+**Outstanding visual acceptance:** verify real 320–390px viewport wrapping for long Super Admin labels and the legacy reference screenshots. Other page/portal owners continue to own their individual global control skins, sidebar and top bar. The Super Admin group strip is still rendered by its admin layout ahead of route-specific PageHeader; do not claim full screenshot parity until the app is visually inspected.
+
+
+## Chat-9 fourth pass — shared controls, header/canvas and remaining admin pages (2026-10-19)
+
+**Pull-first integration:** before modifying files, inspected the upstream divergence and reconciled the new `origin/main` commit `0a542bfcf587fd23955883a7a98a33dc011d7023` in a two-parent Git merge commit on `chatgpt/chat-9-b`. New upstream work outside this lane's 17 outstanding blobs was kept from `main`, with chat-9's source-level old-LMS edits retained. No force push or push to `main`. The comparison immediately after the merge confirmed `0 behind`.
+
+**Additional shared-control conversions:**
+- Template resource editor: required and pinned flags now use `Checkbox` rather than raw checkbox inputs.
+- Template metadata edit: immutable-version acknowledgement now uses `Checkbox`.
+- Project resources list: pinned-only filter now uses `Checkbox`.
+- Super Admin person onboarding: mentor and membership-role checkboxes use `Checkbox`.
+- Super Admin recruiter HR dialog: new-company and college-relationship checkboxes use `Checkbox`.
+- Tenant college logo uploader: file picker uses shared `Input` without changing its selected-file callback. Native `type="range"` sliders remain intentionally native since the shared UI package has no slider component; hidden form-state inputs remain native and unstyled.
+
+**Remaining legacy page-head alignment:**
+- Tenant Settings: authentication/privileged-access link relocated from the body into `PageHeader.actions`.
+- Super Admin Programs and Semesters: academic setup and semester–course mapping shortcuts relocated into `PageHeader.actions`.
+- Projects mentor reassignment: back-to-workspaces action moved into `PageHeader.actions`.
+- Projects at-risk: page-scoped CSV export moved into `PageHeader.actions`, while retaining the scope disclaimer below.
+- `PageCanvas` explicitly gives its 24px padding precedence over any caller-supplied inline padding; existing media-query resets cannot shrink the authenticated canvas.
+
+**Static source review:** re-read all newly modified TSX files and inspected `Checkbox`, `Input`, `Select`, `Button`, `Link` and `PageHeader` closing tag names. No incomplete `</Select>`, `</Button>`, `</Link>` or other truncated touched closing tags were detected. Visible raw controls in the previously scanned last-third Super Admin routes have been replaced with shared controls where suitable; hidden inputs and native crop sliders are intentionally exempt. **No runtime execution, build, lint, typecheck, screenshot tests or CI.** Browser visual parity still needs checking.
+
+
+## Chat-9 fifth pass — old-LMS internal-page anatomy (2026-10-19)
+
+**Branch synchronization:** merged `main` commit `3de148112368b7201378f721841a5d4348ec9f6d` into `chatgpt/chat-9-b` before this pass, preserving the seven outstanding lane edits. The branch was 0 commits behind after the merge. No force push and no push to `main`.
+
+**Shared components reused rather than duplicated:**
+- `PageHeader`: keeps 30px/600 title, single-line adjacent grey subtitle and right actions. Its optional `needsDoingItems` slot now renders genuine `NeedsDoingChips` links immediately below the title/action row inside one layout child; parent `space-y` rules cannot split the two pieces.
+- `NeedsDoingChips`: use the legacy `--lms-radius-pill` from `docs/design/legacy-styles/components___variables.scss`.
+- `Tabs`: Super Admin route-group navigation, Project template subviews and Projects workspace/submission display modes all reuse the same teal-underlined shared navigation component. Actual loaded counts are shown on workspace/submission and template section tabs; absent counts are not invented.
+- `ListToolbar`: displays server-grounded filtered total count; actual Projects workspace and submission CSV export controls are passed into its `exportAction` slot without changing export authorization or API behavior.
+- `Banner`: the existing degraded-read and out-of-scope warnings in Projects, readiness and Tenant Settings use the slim pale-yellow shared notice, preserving original text.
+- `DataTable`: already provides the legacy hairline header/row treatment on the same single white authenticated canvas, including Projects workspace table and unsubmitted submissions table; avoided duplicating or nesting page-level canvas wrappers.
+
+**Pages updated:** `/admin/projects`, Projects at-risk, submissions and readiness, Super Admin template detail/subview navigation, route-aware grouped tabs and `/admin/settings`. Existing individual page sections, filter controls, query parameters, counts, backend reads, status labels and permissions are unchanged.
+
+**Source-level verification:** re-fetched the affected TSX files and checked named `Tabs`, `Banner`, `ListToolbar`, `NeedsDoingChips`, `PageHeader` and their closings for truncated or mismatched tag spelling. No known broken closing tags found in the touched markup. As instructed, **no application code, lint, typecheck, tests, build or CI** was executed. Pixel parity remains unverified until the owner runs and visually compares the application.
