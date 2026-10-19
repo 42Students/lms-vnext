@@ -7,6 +7,7 @@ import {
 import { useRouter } from "next/navigation";
 import type { MembershipChoice } from "@/modules/identity/context-service";
 import { Button } from "@/components/ui/button";
+import { Radio } from "@/components/ui/radio";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
@@ -127,7 +128,7 @@ export function MembershipChooser({
           >
             <div>
               <label className="mb-3 flex min-h-11 items-center gap-2 text-sm font-semibold">
-                <input type="radio" name="membership" checked={selectedId===membership.id}
+                <Radio name="membership" checked={selectedId===membership.id}
                   disabled={pending||membership.status!=="ACTIVE"}
                   onChange={()=>setSelectedId(membership.id)} />
                 Select {membership.collegeName}
