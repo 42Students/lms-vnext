@@ -29,7 +29,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="All drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
-   action={<Link href="/admin/placements/drives" className="text-primary-text">Clear filters</Link>}/>
+   action={<Link href="/admin/placements/drives" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
  </div>;
  // Keep an unavailable college reporting backend from crashing the entire
  // Super Admin drive directory; preserve the validated filter on Retry.

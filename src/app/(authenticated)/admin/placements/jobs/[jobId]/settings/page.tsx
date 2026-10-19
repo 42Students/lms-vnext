@@ -24,7 +24,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    <p className="flex flex-wrap items-center gap-2 text-sm text-body">Status: <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{job.status}</StatusBadge></p>
    <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? driveSettingsIstDate(job.applicationDeadline) : "Not configured"}</p>
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
-   <Link href={base} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Open drive controls →</Link>
+   <Link href={base} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open drive controls →</Link>
   </section>
   {job.status==="PUBLISHED"?
     <SuperAdminPublishedDriveEdit job={{

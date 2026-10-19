@@ -1,5 +1,6 @@
 import {notFound} from "next/navigation";
 import Link from "next/link";
+import {EmptyState} from "@/components/ui/empty-state";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {SuperAdminPlacementDetailView} from "@/components/admin/super-admin-placement-detail-view";
 import {getSuperAdminApplicationDetail} from "@/modules/admin-ui/super-admin-application-detail-service";
@@ -23,7 +24,7 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
      <p className="mt-1 text-body">{event.reason}</p>
      <time className="text-xs text-muted-foreground" dateTime={event.changedAt.toISOString()}>
       {event.changedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</time>
-    </li>)}</ol>:<p role="status" className="text-sm text-muted-foreground">No persisted stage transitions recorded yet.</p>}
+    </li>)}</ol>:<EmptyState title="No status history" description="No persisted stage transitions recorded yet."/>}
   </section>
  </div>;
 }
