@@ -1,6 +1,7 @@
 import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
+import { Disclosure } from "@/components/ui/disclosure";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
 import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-model";
 import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
@@ -1015,14 +1016,11 @@ export function ProjectWorkspace({
                                   <p className="whitespace-pre-wrap break-words">{task.approach}</p>
                                 </section>:null}
                                 {showMentorTaskCriteria(mode,task.acceptanceCriteria) ? (
-                                  <details className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2">
-                                    <summary className="min-h-9 cursor-pointer py-1 text-xs font-semibold text-link">
-                                      Acceptance criteria
-                                    </summary>
+                                  <Disclosure title="Acceptance criteria" className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2">
                                     <p className="mt-2 whitespace-pre-wrap break-words text-xs leading-5 text-body">
                                       {learnerTaskCriteriaPreview(task.acceptanceCriteria)}
                                     </p>
-                                  </details>
+                                  </Disclosure>
                                 ) : null}
                                 {mode==="MENTOR" && mentorTaskReviewEvidence(task.status,latestAttempt)==="REVIEW_PENDING" ? (
                                   <p role="status" className="mt-2 text-xs font-semibold text-link">
