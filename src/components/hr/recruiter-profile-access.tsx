@@ -55,7 +55,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
         Open a page for the exact college you select. These links do not change your account-wide active college. Leaving access takes effect immediately and requires a new placement-cell grant to return.
       </p>
       {error ? (
-        <div role="alert" className="mt-3 rounded-[var(--lms-control-radius)] border border-error/30 bg-error/5 p-3 text-sm text-error">
+        <div role="alert" className="mt-3 rounded-[var(--lms-control-radius)] border border-error-border bg-error-subtle p-3 text-sm text-error">
           {error}
         </div>
       ) : null}
@@ -78,7 +78,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
                   className="mt-2 flex flex-wrap gap-3 text-sm">
                   {hrRecruiterGrantLinks(grant.collegeId).map(link=>(
                     <Link key={link.label} href={link.href}
-                      className="inline-flex min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                       {link.label}
                     </Link>
                   ))}
