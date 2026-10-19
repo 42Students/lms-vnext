@@ -34,7 +34,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {GridWorkspace} from "./grid/grid-workspace";
-import {gridExportFilename} from "@/modules/placements/grid-export-filename";
+import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import boardStyles from "./recruiter-board-theme.module.css";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 
@@ -423,7 +423,7 @@ export function RecruiterLeadsWorkspace({
       new Blob([recruiterTableExportCsv(chosen,visibleColumns)],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
-    link.href=url;link.download=gridExportFilename("recruiter-leads-"+view+"-"+selection+(filterChips.length?"-filtered":""),format);
+    link.href=url;link.download=legacyGridExportFilename("recruiter-leads",format);
     document.body.appendChild(link);link.click();link.remove();
     URL.revokeObjectURL(url);
     setExportFeedback(chosen.length+" recruiter leads exported to "+format.toUpperCase());
