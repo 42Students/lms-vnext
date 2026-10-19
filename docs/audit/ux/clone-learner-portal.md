@@ -7,10 +7,10 @@ Scope: `src/app/(authenticated)/learn/**` except `courses/**` (chat-7), learner 
 ## Work queue (GitHub directory inventory and targeted JSX inspection; exhaustive grep is pending)
 - [ ] LRN-01: **source fix delivered** in `my-placements/{applications,jobs,placement,schedule}/page.tsx`: four `PageHeader`s, two preserved destination/action links and schedule shared `Tabs` (4 file commits, 2026-10-19). Existing `scripts/codemods/chat1-learner-page-headings.cjs` authored for repeatable 4-file migration; GitHub edits applied its planned JSX transformations without running Node. Strict tick blocked by computed title values, full markup grep and phone/tablet screenshot proof.
 - [ ] LRN-02: **partial**: Announcements (8) and My offers (5) filter link instances now share exact learner SCSS pill dimensions, active/hover/focus selectors and 767px horizontal scroll rules; applied on 2026-10-19. Dynamic route checks, actual computed values and other placement routes remain. Remaining placement pages `my-placements/{announcements,assessments,calendar,interviews,notification-preferences,offers,preparation,rules,schedule,support}/page.tsx`, main `my-placements/page.tsx`: titles, tab order, filters, links, notices, single canvas.
-- [ ] LRN-03: `src/components/placements/learner-{applications,jobs}-browse.tsx`: **partial**: removed hand-rolled `aria-pressed` controls in these two files; shared `SegmentedControl` uses native radio states with 44px min mobile target and `Tabs` supplies underline for application views. Verify keyboard, routing and remaining components before tick.
-- [ ] LRN-04: **9 learner source files swept in total; three more components source-complete this batch** (`learner-placement-{jobs,offers,alerts}.tsx`), plus `learner-placements-dashboard.tsx` and shared `learner-placements-tabs.tsx` inspection. New batch removes the remaining two raw buttons, fixes three card/empty layouts and matches <=767px responsive rules. Further learner components and live visual/interaction parity remain OPEN; see the value table and exact source counts below.
+- [ ] LRN-03: **source pass completed** in `src/components/placements/learner-{applications,jobs}-browse.tsx`: shared Tabs (application views), SegmentedControl (saved drives, availability, screening), native shared Input/Select, zero raw controls, 767px responsive filters, 44px phone targets and legacy empty states; value/coverage table below. Remains open until rendered phone/tablet, keyboard, dynamic URL and all related learner components are verified.
+- [ ] LRN-04: **source form pass completed** in `learner-placement-academic-evidence.tsx` and `learner-placement-requests.tsx`: 3 number inputs + 1 checkbox + 2 request textareas migrated to shared controls; 3 selects and 4 Buttons retained and mobile heights corrected. `learner-career-calendar.tsx` event details now uses shared Button; its per-day grid button is an explicit layout exception. Prior learner component fixes and additional remaining learners detailed below. Missing: all-files coverage, computed value/interaction proof, side-by-side screenshots.
 - [ ] LRN-05: **partial**: `learn/attendance/page.tsx` and `learn/calendar/page.tsx` now put their existing action link in the same `PageHeader` row (2026-10-19); learner project detail already renders `PageHeader` for audit and invalid-board-filter states, while regular project workspace keeps its own header. `learn/{attendance,calendar,profile,projects,notifications,placements}/page.tsx` plus nested pages, `src/components/attendance/learner-attendance-workspace.tsx`: PageHeader, responsive titles and controls.
-- [ ] LRN-06: `loading.tsx`/`error.tsx`/`not-found.tsx` in learner trees: shared UI, retry, mobile and tablet states.
+- [ ] LRN-06: **source pass** for six learner route error files (attendance, calendar, profile, projects, notifications, my-placements): single-canvas left alignment, preserved retry action, 44px phone targets, no raw controls. Generic parent and nested states already use shared graceful loading/error components. Remains open: exhaustive nested state inventory, rendered loading/retry and phone/tablet proof.
 - [ ] LRN-07: `allAssignments`, `allQuizzes`, `assignments`, `quizzes` potentially overlap chat-7's COURSES ownership. No edits before ownership check.
 
 ## Preliminary value evidence (all OPEN; no strict-tick claim)
@@ -213,3 +213,146 @@ The source-level comparison is documented; **no browser, computed style, screens
 ### Post-sweep branch replay verified
 
 On 2026-10-19, replayed only the **29 paths in this lane's source diff** onto current `main` commit `68d52934a61acdeeda3b4c68804550b86607a5ea` with a force-with-lease ref update followed by scoped [chat-1] file commits. Immediately afterward, GitHub compare reported **29 ahead, 0 behind, 29 changed paths**; no updates to `main`, courses, shared UI, global skin, or shell. Source-level proof only; strict LRN checkboxes remain open.
+
+## Learner dynamic forms and error states — additional chat-1 source audit (2026-10-19)
+
+### Source-completed files
+- `src/components/placements/learner-placement-academic-evidence.tsx`: preserved `FormData` keys, numeric min/max/step, default values, lateral-entry conditional field, `VERIFIED` disabled state, pending guard and success/error toast; native dynamic inputs moved to 3 shared `Input` instances and one shared `Checkbox`. Sources: vNext lines 7-12, 27, 175-345 after replacement; legacy `components___form.scss:111-144` and `components___learn-notifications.scss:9-10`.
+- `src/components/placements/learner-placement-requests.tsx`: request modes, 3 selects, 3 Inputs, 2 controlled reason Textareas, 3 Buttons, pending/cancel flow and in-app toast preserved. Source: lines 1-14, 369-600, 610-690; legacy `components___form.scss:117-143`.
+- `src/components/placements/learner-career-calendar.tsx`: detail event action uses shared `Button variant="link"`. One per-day calendar grid button intentionally remains raw; CSS module `learner-career-calendar.module.css:187-206` defines critical 116px square/day flow, right-aligned date and 2px inset focus; changing to shared inline-flex defaults without rendered verification could break grid. This is a **documented exception, not a strict tick**.
+- Learner errors: `learn/{attendance,calendar,profile,projects,notifications,my-placements}/error.tsx` each uses one PageHeader, retry Button and natural left-aligned spacing within the authenticated shell. Unchanged message semantics, error/empty separation and route reset handling.
+
+### Value proof: legacy SCSS versus vNext (static)
+
+| Property | Legacy source value | Current scoped source value | Match classification |
+|---|---|---|---|
+| Form body font | `components___form.scss:117-143`: 14px/400/20px, tracking .2px, #0a0517 | `src/components/ui/input.tsx:16-25` and `textarea.tsx:16-25` already own typography; learner academic uses `Input`, requests uses `Textarea` | Shared source implementation |
+| Input bg | `components___form.scss:119-121`: $grayCFD #fbfcfd | Shared `Input` uses `--lms-form-bg`; local surface override removed | Token comparison; computed CSS unverified |
+| Focus state | `components___form.scss:128-133`: 2px teal 15% shadow; `components___accessibility.scss:19-38`: 2px teal outline | Shared Input/Textarea and Checkbox focus-visible halo, outline and tokens. No local `outline-none` override | Source-level alignment, keyboard visual proof outstanding |
+| Disabled/verified | `components___variables.scss:34-43`: muted neutral-400 and 50 backdrop; checkbox disabled state | Academic `disabled={locked}` preserved; `Checkbox` own disabled, input disabled palette from shared UI | Source match; screenshot outstanding |
+| Default controls | `components___variables.scss` + `components___learn-notifications.scss:9-10`: <=767px 44px tap target | Academic input class `min-h-11 md:min-h-9`; requests 3 Inputs + 3 Selects `min-h-11 md:min-h-9`, 3 Buttons `max-md:min-h-11` | 44px mobile / 36px 768+ source proof |
+| Reason multiline | `components___form.scss:117-143`: rounded 10px, pale input bg, focus halo, multiline height governed by form | Requests shared Textarea `min-h-[112px]` with `min-h-28`; preserves controlled reason | Source match for field chrome; exact legacy per-field height not specified |
+| Form grid | `components___learn-notifications.scss:9-10,214-221`: <=767px mobile, 768+ width breakpoint | Academic `md:grid-cols-2 lg:grid-cols-4`; request `md:grid-cols-2` ; 1 column until 767px | Source match |
+| Alert/error shell | `old-lms-pages.md:5-13`: one white page canvas, hairline spacing, title left with body/actions | Six route errors: `min-w-0 space-y-4`, one `PageHeader`, left body, `flex-wrap items-center gap-3`; calendar no longer adds centered 40px vertical inset | Structural source match |
+| Retry actions | `components___learn-notifications.scss:9-10,88-90`: 44px phone; shared Button desktop 36px | 6 route errors retain `reset` callback with `max-md:min-h-11` or `min-h-11`, normal desktop skin | Source match, click not executed |
+| Motion | `components___accessibility.scss:113-129`: motion reduced per user pref | Shared controls already use `motion-reduce:transition-none`, no new motion in these pages | Source support, visual check open |
+
+### Per-file source grep-style proof (fetched full text after writes, not shell execution)
+
+| File | Raw HTML controls | 6-digit hex literals | Old `sm:` form/layout classes | Shared controls / PageHeader | Balanced JSX evidence |
+|---|---:|---:|---:|---|---|
+| `learner-placement-academic-evidence.tsx` | 0 | 0 | 0 | 3 Input / 1 Checkbox / 1 Button | 1 section pair, 1 Button pair |
+| `learner-placement-requests.tsx` | 0 | 0 | 0 | 3 Input / 3 Select / 2 Textarea / 3 Button | 1 section pair, 3 Button pairs |
+| `learner-career-calendar.tsx` | **1 exempt day button** | 0 | 0 | 1 Input / 8 Button | 6 section pairs, 8 Button pairs |
+| `learn/attendance/error.tsx` | 0 | 0 | 0 | 1 PageHeader / 1 Button | 1 section pair, 1 Button pair |
+| `learn/calendar/error.tsx` | 0 | 0 | 0 | 1 PageHeader / 1 Button | 1 section pair, 1 Button pair |
+| `learn/profile/error.tsx` | 0 | 0 | 0 | 1 PageHeader / 1 Button | 1 section pair, 1 Button pair |
+| `learn/projects/error.tsx` | 0 | 0 | 0 | 1 PageHeader / 1 Button | 1 section pair, 1 Button pair |
+| `learn/notifications/error.tsx` | 0 | 0 | 0 | 1 PageHeader / 1 Button | 1 section pair, 1 Button pair |
+| `learn/my-placements/error.tsx` | 0 | 0 | 0 | 1 PageHeader / 1 Button | 1 section pair, 1 Button pair |
+
+Regex used on full GitHub-file content (not local executable output): `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/gi`, `/\\bsm:(min-h-9|grid-cols-2|flex-row|p-5|p-6|items-start|justify-between)\\b/g`, `/<Button(?=\\s|>)/g`, `/<\\/Button>/g`. Text control counts include only actual TSX markup, not underlying shared components.
+
+Repro commands for workstation/orchestrator (not run by this lane):
+```bash
+grep -nE '<(button|input|select|textarea)([[:space:]>])' \
+  src/components/placements/learner-placement-{academic-evidence,requests,career-calendar}.tsx
+grep -nE 'sm:(min-h-9|grid-cols-2|flex-row|p-6)' \
+  src/components/placements/learner-placement-{academic-evidence,requests,career-calendar}.tsx
+```
+
+Responsive proof from class rules: at **375px** academic fields and request controls stack, hit targets >=44px, reason textareas span full width; at **700px** same mobile layout because `md:` activates only at 768px; at **768px** academic evidence changes to two columns and form controls may use 36px desktop height; at **1024px** academic evidence becomes four columns and request columns retain the `xl:` two-panel layout until >=1280px. Error screens remain one column, action rows wrap and no extra centered content-box inside the existing LMS page canvas. No browser screenshots/real DOM measurements, keyboard traversal, route reset clicks, or CI have been run.
+
+### Repeatable migration scripts
+
+`scripts/codemods/chat1-learner-dynamic-form-controls.cjs` guards source transitions for the two exceptional forms. `scripts/codemods/chat1-learner-error-shell.cjs` scopes the six error states; both dry-run by default and parse TSX before applying. Neither executed (build lane dev-only, no run). Existing scripts for other modules remain untouched.
+
+**Strict-tick status:** LRN-04 and LRN-06 still **OPEN**, despite completed source-level files, because complete coverage and rendered/state verification have not been established. Do not tick only based on source-scoped regex.
+
+**Exact next:** `src/components/placements/learner-jobs-browse.tsx`, then `src/components/placements/learner-applications-browse.tsx` (LRN-03).
+
+## LRN-03 — learner jobs and applications browse source parity (2026-10-19)
+
+Changed: `src/components/placements/learner-jobs-browse.tsx` and `learner-applications-browse.tsx`. No changes to model, URL serialization, API requests, CSV, dialog, toast, pagination, or shared UI. Route links and all filter values preserved.
+
+| Value | Legacy reference | vNext evidence | Result |
+|---|---|---|---|
+| Filter dimensions | `components___learn-notifications.scss:88-99` 14px / 500, 44px minimum touch | Existing shared `SegmentedControl` and `Tabs` used; touched clear/reset and mobile controls `min-h-11` | Source component/height match; computed styles unverified |
+| Mobile breakpoint | `components___learn-notifications.scss:9-10,56-74` <=767px mobile | Toggle `md:hidden`, filter body `md:block`, grids `md:grid-cols-2/3`; 640–767px remains mobile | Source breakpoint match |
+| Form elements | `components___form.scss:117-143` 14px, 20px line-height, pale form bg and focus halo | Both components render shared `Input`, `Select`, and existing segmented/tabs components | Matches shared token implementation |
+| Summary/empty cards | `components___learn-notifications.scss:304-330` rich empty min 180px, centered, 48px vertical, 24px horizontal | Jobs saved/filtered and Applications filtered empty: `min-h-[180px] px-6 py-12 text-center`; true summary strip has border-bottom not nested wrapper | Structural source match |
+| Data and labels | Existing vNext content is authoritative (owner goal; no page-content clone) | Query filters, counts, CSV export, saved/open state, screening timeline, withdrawal and pagination unchanged | Source-level regression review only |
+| Responsive links | `components___learn-notifications.scss:9-10,88-90` >=44px touch on mobile | Links and controls `min-h-11` phone, `md:min-h-9` when wider; no `min-h-10` in the audited files | Source match |
+| Focus/disabled | `components___accessibility.scss:19-38`; shared component focus/disabled styles | All buttons and selection controls are shared; Drawer and Dialog retained for selected applications | Source component match; not keyboard tested |
+
+Per-file **full-source regex counts** from a read of current GitHub branch:
+
+| File | Raw button/input/select/textarea | Hardcoded 6-digit hex | Deprecated `sm:` mobile tokens | Shared Buttons (open/close) | Controls | Responsive markers |
+|---|---:|---:|---:|---:|---|---|
+| `learner-jobs-browse.tsx` (299 lines) | 0 | 0 | 0 | 5/5 | 2 SegmentedControl, 1 Input, 3 Select | 12 `min-h-11`, 13 `md:` |
+| `learner-applications-browse.tsx` (571 lines) | 0 | 0 | 0 | 11/11 | 1 Tabs, 1 SegmentedControl, 1 Input, 2 Select | 18 `min-h-11`, 25 `md:` |
+
+Source matching: `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/gi`, `/\\bsm:(min-h-9|hidden|block|grid-cols-2|grid-cols-3|w-auto|col-span-2)\\b/g`. Both filter toggles have one `md:hidden` and one `md:block`. Repro checkout grep (NOT run):
+```bash
+grep -En '<(button|input|select|textarea)([ >])|#[[:xdigit:]]{6}|sm:(min-h-9|hidden|block|grid-cols-2|grid-cols-3)' \
+ src/components/placements/learner-{jobs,applications}-browse.tsx
+```
+At 375 and 700px, filter blocks start collapsed and can open with a 44px tap target; at 768px the toggle disappears, filter grid displays with 2/3 columns, controls may use 36px minimum. Large information remains in the one page canvas. These are source-class implications, **not screenshots/interaction tests**. LRN-03 remains open as strict requires live validation.
+
+**Next file:** `src/components/placements/learner-placement-academic-evidence.tsx` is source-completed, then `src/components/placements/learner-placement-requests.tsx` source-completed; inspect `src/components/placements/learner-career-calendar.module.css` together with the exempt day button in `learner-career-calendar.tsx` for pixel-level calendar parity, then `learn/my-placements/jobs/[jobId]/page.tsx`.
+
+## Nested application and support action parity — chat-1 (2026-10-19)
+
+Updated the **five files** `learn/my-placements/applications/[applicationId]/{page.tsx,error.tsx,company/page.tsx}`, `components/placements/learner-application-detail-withdraw.tsx`, `learner-support-cancel.tsx`. Preserved server-only app/offer statuses, company disclosure boundaries, validation, optimistic token cancellation, controlled reason, all existing links/dialogs and action methods.
+
+| Legacy dimension | Expected legacy value/reference | Audited vNext value | Static outcome |
+|---|---|---|---|
+| Nested page headings | `old-lms-pages.md:5-13` single canvas, one PageHeader, left title/action | Both pages and nested error each have exactly 1 shared PageHeader; no added page wrapper/card | Source match |
+| Hairlines | `components___variables.scss:34-40` 1px neutral-200, white continuous body | Nested sections keep `border-b border-border` and existing data section order | Source token match |
+| Mobile link heights | `components___learn-notifications.scss:9-10,82-98` 44px <=767px | Back, company and error actions `min-h-11 md:min-h-9` | Source match |
+| Responsive vertical rhythm | `components___learn-layout.scss:152-163` phone padding/stack, 768px cutoff | Sections `py-4 md:py-6`, Company details `md:grid-cols-2`; error screen `min-w-0 space-y-4` | Source match |
+| Withdrawal / cancellation controls | `components___variables.scss` and shared `Button` chrome 36px desktop / 44px mobile touch | Both action components: 3 `Button`s each with `max-md:min-h-11`; existing disabled/pending state preserved | Source match; behavior untested |
+| Withdrawal reason input | `components___form.scss:117-143` 14px / 400 / 20px / pale input, radius10, 2px teal focus | `learner-application-detail-withdraw.tsx` now uses shared `Textarea` without local `bg-surface` / focus overrides, `min-h-28` | Source component match |
+
+Static complete-file counts after writes:
+
+| File | Raw HTML controls | Hex literals | Deprecated 640px utility | PageHeader | Shared Buttons | Touch 44px tokens |
+|---|---:|---:|---:|---:|---:|---:|
+| Application detail (71 lines) | 0 | 0 | 0 | 1 | 0/0 | 2 |
+| Read-only company (95 lines) | 0 | 0 | 0 | 1 | 0/0 | 1 |
+| Application error (16 lines) | 0 | 0 | 0 | 1 | 1/1 | 2 |
+| Withdrawal dialog (57 lines) | 0 | 0 | 0 | — | 3/3 | 3 |
+| Support cancellation dialog (54 lines) | 0 | 0 | 0 | — | 3/3 | 3 |
+
+Source regex: raw `/<(button|input|select|textarea)(?=\\s|>)/g`; hex `/#[0-9a-f]{6}\\b/gi`; deprecated utility `/\\bsm:(min-h-9|grid-cols-2|py-6)\\b/g`; `<Button` and `</Button>` counts. This scan was performed on **full GitHub file contents**; no local grep, app execution or CI.
+
+Responsive proof by source: at **375px and 700px**, all action targets are at least 44px and nested sections stack, without center-justified error text; at **768px**, 24px section padding, two-column public company facts and desktop link heights apply; at **1024px**, placement app keeps continuous LMS canvas. Rendered phone/tablet, focused/error/disabled screenshots and real withdrawal click flows not executed, so strict LRN-02/04/06 still open.
+
+**Exact next file:** `src/components/placements/learner-career-calendar.module.css` (resolve source-exempt calendar-day button and palette/rhythm), then the remaining nested learner placement `loading.tsx` / `error.tsx` source inventory.
+
+## Career calendar CSS token reconciliation — chat-1
+
+`src/components/placements/learner-career-calendar.module.css` is now mapped to existing globally defined, exact-value legacy tokens for **53 occurrences** across canonical white, neutral, teal and success-text values (source changes only; no altered computed colours when `:root` variables are active). `learner-career-calendar.tsx` still retains the single intentional raw per-day calendar cell button with dynamic CSS-module classes and special `!important` focus/layout overrides; it is explicitly exempted pending rendered grid verification.
+
+| Original literal | Legacy variable and value | vNext reference | Replacements |
+|---|---|---|---:|
+| `#fff` | `components___variables.scss:20-50` white | `var(--lms-white)` | 8 |
+| `#e5e9f0` | `$neutral-200` 1px borders | `var(--lms-neutral-200)` | 9 |
+| `#1a1d21` | `$neutral-900` text | `var(--lms-neutral-900)` | 3 |
+| `#6b7280` | `$neutral-500` text | `var(--lms-neutral-500)` | 1 |
+| `#26bac7` | `$clrThird` interactive teal | `var(--lms-primary)` | 6 |
+| `#0e7c87` | global deep teal | `var(--lms-teal-deep)` | 6 |
+| `#1e9aa8` | `$teal-dark` hover | `var(--lms-primary-hover)` | 2 |
+| `#54505d` | `$neutral-700` body | `var(--lms-neutral-700)` | 4 |
+| `#eff8fa` | `$teal-subtle` | `var(--lms-primary-subtle)` | 5 |
+| `#1a95a1` | `$teal-text` | `var(--lms-primary-text)` | 2 |
+| `#fafbfc` | `$neutral-50` | `var(--lms-neutral-50)` | 2 |
+| `#d6dbe3` | `$neutral-300` | `var(--lms-neutral-300)` | 2 |
+| `#f1f4f9` | `$neutral-100` | `var(--lms-neutral-100)` | 1 |
+| `#065f46` | status success text | `var(--lms-success-text)` | 2 |
+
+**Semantic exceptions (22 remaining literal occurrences):** `#047857`, `#1d4ed8`, `#1e40af`, `#334155`, `#475569`, `#e6f4ff`, `#ecfdf5`, `#f1f5f9`. These currently carry assessment/interview/other-round distinctions; changing them to unrelated brand tokens without the old LMS counterpart would be a visual regression. Grep on the full fetched CSS after replacement: `/#[0-9a-f]{3,8}\\b/gi` → 22; canonical literals listed above → 0. Do not tick colour coverage.
+
+**Responsive source proof:** calendar module `@media(max-width:767px)` and `@media(min-width:768px)` are unchanged; 44px controls under 768px, 20px heading under 768px, 116px calendar-day grid cells, 2px deep-teal inset focus, 150/200ms transitions and `prefers-reduced-motion:reduce` remain. This is layout-rule inspection, not a phone screenshot. The per-day grid button is exempt only because shared inline-flex Button chrome would change its complex child flow; `learner-career-calendar.module.css:187-206` documents the dimension-sensitive native button.
+
+**Next file:** `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx` (source inventory and missing nested loading/error parity), followed by `src/components/placements/learner-placement-job-detail.tsx` computed-style review. No builds, screenshot runner or CI were executed by this lane.
