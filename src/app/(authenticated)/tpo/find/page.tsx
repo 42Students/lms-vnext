@@ -10,6 +10,8 @@ import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-s
 import {findTpoPeopleAndCompanies} from "@/modules/placements/tpo-find-people-service";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 export const dynamic="force-dynamic";
 const querySchema=z.string().trim().min(2).max(100);
 export default async function TpoRecordFinder({searchParams}:{searchParams:Promise<{q?:string|string[]}>}){
@@ -40,8 +42,8 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
      className="mt-1 block w-full min-w-0" placeholder="Find a student, recruiter, company or drive"/>
    </label><Button type="submit" className="self-end">Find</Button>
   </form>
-  {invalid?<p role="alert">Search must contain 2–100 characters.</p>:!text?<p role="status">Type a name or a roll number, for example 21CS001</p>:<>
-   {!hasMatches?<p role="status">No student, recruiter, company or drive matches &quot;{rawText}&quot;</p>:null}
+  {invalid?<Alert tone="error">Search must contain 2–100 characters.</Alert>:!text?<EmptyState title="Type a name or a roll number, for example 21CS001"/>:<>
+   {!hasMatches?<EmptyState title={"No student, recruiter, company or drive matches \""+(rawText??"")+"\""}/>:null}
    <section className="space-y-2"><h2 className="font-semibold">Batches ({foundBatches.length}{batches.batches.length>30?"+":""})</h2>
     {foundBatches.length===0?<p className="text-sm">No matching batches.</p>:<ul className="divide-y divide-border border-y border-border">{foundBatches.map(b=><li key={b.id} className="p-3 text-sm">
       <Link href={"/tpo/batches/"+b.id} className="text-link underline lms-inline-link">{b.name} · {b.program}</Link></li>)}</ul>}
