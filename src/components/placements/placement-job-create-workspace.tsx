@@ -92,14 +92,14 @@ export async function PlacementJobCreateWorkspace({
 
   return (
     <div className="space-y-6">
-      <Link href="/tpo/placements/lifecycle" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Back to drives</Link>
+      <Link href="/tpo/placements/lifecycle" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to drives</Link>
       <PageHeader
         eyebrow={eyebrow}
         title="Create drive"
         description="Build the opportunity students will see"
       />
       {pastDrives.length>0?<details className="rounded-xl border border-border bg-surface p-4">
-        <summary className="min-h-10 cursor-pointer text-sm font-semibold text-foreground">Clone a past drive</summary>
+        <summary className="min-h-11 cursor-pointer text-sm font-semibold text-foreground md:min-h-9">Clone a past drive</summary>
         <p className="my-2 text-xs text-body">Shows up to 20 recent completed drives. Cloning makes a new draft; dates, learners, rounds, outcomes, offers and external links are never carried over.</p>
         <ul className="grid gap-2 sm:grid-cols-2">
           {pastDrives.map(job=><li key={job.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border p-3">
