@@ -28,7 +28,7 @@ export default async function CollegeBatchesPage({
       <PageHeader eyebrow="College Admin · Academic Setup" title="Batches" />
       <ErrorState title="Invalid batch filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
-        action={<Link href="/college/batches" className="font-semibold text-link">Clear filters</Link>} />
+        action={<Link href="/college/batches" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />
     </div>;
   }
   const [directory, periods] = await Promise.all([
