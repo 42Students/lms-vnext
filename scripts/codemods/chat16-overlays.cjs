@@ -191,14 +191,22 @@ for (const file of filesIn(root)) {
   function visit(node) {
     if (ts.isJsxExpression(node) && node.expression) {
       const expression = unwrap(node.expression);
-      if (ts.isBinaryExpression(expression) &&
-          expression.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken) {
-        const overlay = unwrap(expression.right);
-        if (ts.isJsxElement(overlay) && literal(overlay.openingElement, "className")?.includes("fixed inset-0")) {
+      const andOverlay = ts.isBinaryExpression(expression) &&
+        expression.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken;
+      const nullTernary = ts.isConditionalExpression(expression) &&
+        (unwrap(expression.whenFalse).kind === ts.SyntaxKind.NullKeyword ||
+         unwrap(expression.whenFalse).kind === ts.SyntaxKind.FalseKeyword);
+      if (andOverlay || nullTernary) {
+        const overlay = unwrap(andOverlay ? expression.right : expression.whenTrue);
+        const condition = unwrap(andOverlay ? expression.left : expression.condition);
+        const classes = ts.isJsxElement(overlay) ? literal(overlay.openingElement, "className") : null;
+        if (classes && /(?:^|\s)fixed(?:\s|$)/.test(classes) &&
+            /(?:^|\s)inset-0(?:\s|$)/.test(classes)) {
           stats.candidates++;
-          const result = eligible(overlay, unwrap(expression.left), source, sf);
+          const result = eligible(overlay, condition, source, sf);
           if (result.replacement) {
-            edits.push({ start: expression.getStart(sf), end: expression.getEnd(), value: result.replacement, kind: result.kind });
+            edits.push({ start: expression.getStart(sf), end: expression.getEnd(),
+              value: result.replacement, kind: result.kind });
           } else count(result.skip);
         }
       }
