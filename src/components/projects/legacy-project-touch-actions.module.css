@@ -4,6 +4,9 @@
  * old-lms-shell-spec.md:22-24 (36px desktop controls).
  */
 .legacy {
+  min-width: 0;
+}
+.contents {
   display: contents;
 }
 @media (max-width: 767px) {
