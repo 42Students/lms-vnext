@@ -63,7 +63,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
  return <section className="space-y-3" aria-label={title}>
   <h2 className="text-lg font-semibold text-foreground">{title}</h2>
   {rows.length===0?<p role="status" className="border-y border-border py-4 text-sm">{emptyDescription}</p>:<>
-   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+   <div data-report-toolbar className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-48 flex-1 gap-1 text-xs font-semibold">Search table
      <Input type="search" maxLength={100} value={search} onChange={e=>{setSearch(e.target.value);setLimit(100);}}
       className="min-h-11" placeholder="Search shown report rows"/>
