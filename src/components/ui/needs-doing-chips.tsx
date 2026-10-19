@@ -50,7 +50,7 @@ export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs d
         if (onSelect) {
           return <button key={item.key} type="button" aria-label={accessibleLabel} disabled={item.disabled} aria-pressed={selected} onClick={() => onSelect(item.key)} className={classes}>{content}</button>;
         }
-        return <span key={item.key} aria-disabled={item.disabled || undefined} className={classes}>{content}</span>;
+        return <span key={item.key} aria-disabled={item.disabled || undefined} className={cx(classes, "cursor-default hover:brightness-100")}>{content}</span>;
       })}
     </div>
   );
