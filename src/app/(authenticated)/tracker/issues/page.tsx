@@ -7,6 +7,7 @@ import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
 import { TrackerIssueSavedViews } from "@/components/tracker/tracker-issue-saved-views";
 import { TrackerIssueBulkActions } from "@/components/tracker/tracker-issue-bulk-actions";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -43,12 +44,10 @@ export default async function TrackerIssuesPage({
           description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
         <TrackerAdminNav />
-        <div role="status" className="border-y border-border py-6">
-          <p className="m-0 font-semibold text-foreground">Tracker database is not enabled.</p>
-          <p className="mt-2 text-sm text-body">
-            Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
-          </p>
-        </div>
+        <Banner tone="warning">
+          <strong>Tracker database is not enabled.</strong>
+          Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
+        </Banner>
       </div>
     );
   }
