@@ -210,14 +210,14 @@ export default async function RecruiterCompanyReportsPage({
       >
         <Link
           href={`${companyBase}&tab=company`}
-          className="border-b-[3px] border-transparent px-3 py-3 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Company
         </Link>
 
         <Link
           href={`${companyBase}&tab=team`}
-          className="border-b-[3px] border-transparent px-3 py-3 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Team
         </Link>
@@ -227,7 +227,7 @@ export default async function RecruiterCompanyReportsPage({
             collegeId,
           })}
           aria-current="page"
-          className="border-b-[3px] border-primary px-3 py-3 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Reports
         </Link>
