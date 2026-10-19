@@ -690,3 +690,39 @@ Two rechecked files: company-memory-workspace — Link 10/10, Button 1/1, braces
 Global A5/A6/A7/E8 remain [ ]: 40px legacy vs 44px shared Quartz header, old 768px vs DataTable's 640px phone switch, actual phone/tablet hover/focus/disabled/print screenshots and full cross-portal icon inventories are not verified. No app/test/CI ran.
 
 Exact next optional audit: src/components/tpo/tpo-team-search.tsx, src/components/tpo/tpo-team-open-read.tsx and TPO page-level icon/link inventory.
+
+## chat-12 bounded continuation, 2026-10-20 — batch 1
+
+- [x] src/components/tpo/tpo-team-open-read.tsx — Previously error text referred to missing retry button; now explicit shared Retry Button, 44px phone/36px md, slim warning strip; real same-origin POST remains.
+- [x] src/components/tpo/tpo-team-search.tsx — Shared search Input min-h-11/w-full/min-w-0; 36px md at 768px; original slash shortcut and 200ms URL filter retained.
+- [x] src/components/tpo/tpo-after-college-bulk-editor.tsx — One flat border-t workspace, 44px label/row targets and min-h-11/md:min-h-9 Select and confirm/undo; version-checked bulk mutations retained.
+- [x] src/components/tpo/tpo-batch-decision-control.tsx — No nested card, border-y action area, responsive min-h-11/md:min-h-9 Select/save, guarded optimistic API and undo intact.
+- [x] src/components/tpo/tpo-batch-instant-search.tsx — Search and Clear use 44px phone and 36px md; preserves q/page and 250ms debounce.
+- [x] src/components/tpo/tpo-batch-student-keyboard-actions.tsx — Compact border-b toolbar, original Ctrl/Cmd shortcuts, responsive 44px/36px copy, CSV link teal underline and 2px keyboard outline.
+- [x] src/components/tpo/tpo-participation-decision-form.tsx — Shared Select/Input/save at 44px phone/36px md; registration caveat appears in slim warning strip, guarded decision API unchanged.
+
+### Value comparison (legacy measured versus vNext source)
+Baseline: docs/design/old-lms-pages.md:6 one canvas not nested ordinary cards, lines 9 and 18-20 one compact toolbar; docs/design/old-lms-shell.css:23 and 73 specifies phone max 767px, tablet >=768px, min interactive 44px (lines 26-32); docs/design/old-lms-shell-spec.md:24-25 compact desktop 36px; legacy-styles/components___common.scss:68-75 teal underline. TPO changes use shared controls and original form actions.
+| File | VNext authored property, source line(s) and retained behavior | Result |
+|---|---|---|
+| tpo-team-open-read.tsx | tpo-team-open-read.tsx:25,27 — Previously error text referred to missing retry button; now explicit shared Retry Button, 44px phone/36px md, slim warning strip; real same-origin POST remains | Source-aligned, screenshot unverified |
+| tpo-team-search.tsx | tpo-team-search.tsx:29 — Shared search Input min-h-11/w-full/min-w-0; 36px md at 768px; original slash shortcut and 200ms URL filter retained | Source-aligned, screenshot unverified |
+| tpo-after-college-bulk-editor.tsx | tpo-after-college-bulk-editor.tsx:90,98,103 — One flat border-t workspace, 44px label/row targets and min-h-11/md:min-h-9 Select and confirm/undo; version-checked bulk mutations retained | Source-aligned, screenshot unverified |
+| tpo-batch-decision-control.tsx | tpo-batch-decision-control.tsx:39,43,53 — No nested card, border-y action area, responsive min-h-11/md:min-h-9 Select/save, guarded optimistic API and undo intact | Source-aligned, screenshot unverified |
+| tpo-batch-instant-search.tsx | tpo-batch-instant-search.tsx:26,30 — Search and Clear use 44px phone and 36px md; preserves q/page and 250ms debounce | Source-aligned, screenshot unverified |
+| tpo-batch-student-keyboard-actions.tsx | tpo-batch-student-keyboard-actions.tsx:36,40,44 — Compact border-b toolbar, original Ctrl/Cmd shortcuts, responsive 44px/36px copy, CSV link teal underline and 2px keyboard outline | Source-aligned, screenshot unverified |
+| tpo-participation-decision-form.tsx | tpo-participation-decision-form.tsx:81,108,155 — Shared Select/Input/save at 44px phone/36px md; registration caveat appears in slim warning strip, guarded decision API unchanged | Source-aligned, screenshot unverified |
+
+### File-scoped grep and responsive source proof
+Each fetched file was scanned for literal raw button/input/select/textarea opening tags, inline svg and six-digit hex, equivalent to `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`, and for `sm:|md:` breakpoints. JSX Button/Link opening and closing tags plus raw curly counts were compared, not compiled.
+| File | Raw controls/SVG/hex | Button; Link open/close | Curly braces | Breakpoint source |
+|---|---|---|---|---|
+| tpo-team-open-read.tsx | 0/0/0 | 1/1; 0/0 | 16/16 | sm 0; md 1 |
+| tpo-team-search.tsx | 0/0/0 | 0/0; 0/0 | 16/16 | sm 0; md 1 |
+| tpo-after-college-bulk-editor.tsx | 0/0/0 | 4/4; 0/0 | 75/75 | sm 0; md 3 |
+| tpo-batch-decision-control.tsx | 0/0/0 | 1/1; 0/0 | 41/41 | sm 0; md 2 |
+| tpo-batch-instant-search.tsx | 0/0/0 | 1/1; 0/0 | 15/15 | sm 0; md 2 |
+| tpo-batch-student-keyboard-actions.tsx | 0/0/0 | 4/4; 0/0 | 38/38 | sm 0; md 5 |
+| tpo-participation-decision-form.tsx | 0/0/0 | 3/3; 0/0 | 55/55 | sm 0; md 3 |
+
+All entries are strictly **source-complete** only. No rendered phone/tablet screenshots, app execution, CI or browser focus/hover verification. A5/A6/A7/E8 remain unchecked; do not infer global parity.
