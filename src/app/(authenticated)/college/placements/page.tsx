@@ -11,7 +11,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 export default async function CollegePlacementsPage() {
   const context = await getCurrentRequestContext();
   if (!context.membership) return <div className="space-y-5">
-    <PageHeader eyebrow="College Admin" title="Placement Drives"/>
+    <PageHeader title="Placement Drives"/>
     <EmptyState title="Admin not assigned to a college" description="Contact your college administrator to request access to placement drives."/>
   </div>;
   if (!hasMembershipRole(context,"COLLEGE_ADMIN")) redirect("/dashboard");
@@ -19,7 +19,6 @@ export default async function CollegePlacementsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="College Admin"
         title="Placement Drives"
         description="Placement operations inside your active college membership."
         actions={

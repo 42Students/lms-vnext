@@ -24,7 +24,6 @@ export default async function CollegeProgramsPage() {
   return (
     <main className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="College Admin"
         title="Programs"
         description="Create, find and manage the programs in your college."
       />

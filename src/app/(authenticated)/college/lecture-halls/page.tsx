@@ -52,7 +52,7 @@ export default async function CollegeLectureHallsPage({
   if (!query) {
     return (
       <div className="min-w-0 overflow-x-clip space-y-6">
-        <PageHeader eyebrow="College Admin" title="Lecture Halls" />
+        <PageHeader title="Lecture Halls" />
         <ErrorState
           title="Invalid lecture hall filters"
           description="The room search, status, type, department or page is invalid. No records were loaded."

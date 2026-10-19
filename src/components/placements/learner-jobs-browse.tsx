@@ -21,6 +21,7 @@ import {learnerJobsMobileFilterLabel} from "@/modules/placements/learner-jobs-mo
 import {learnerDrivesEmptyState} from "@/modules/placements/learner-drives-empty-state-model";
 import {learnerSavedDriveSummary} from "@/modules/placements/learner-saved-drives-model";
 import {Button} from "@/components/ui/button";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 const PAGE_SIZE = 20;
 
@@ -99,18 +100,14 @@ export function LearnerJobsBrowse({
   const selectClass = "mt-1 min-h-11 sm:min-h-9";
   return (
     <div className="space-y-5">
-      <nav aria-label="Drive bookmarks" className="flex flex-wrap items-center gap-3">
-        <button type="button" aria-pressed={!savedOnly}
-          onClick={()=>updateQuery({saved:null})}
-          className={!savedOnly?"min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] sm:min-h-9":"min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-[14px] font-semibold text-body sm:min-h-9"}>
-          All drives
-        </button>
-        <button type="button" aria-pressed={savedOnly}
-          onClick={()=>updateQuery({saved:"1"})}
-          className={savedOnly?"min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] sm:min-h-9":"min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-[14px] font-semibold text-body sm:min-h-9"}>
-          Saved ({savedSummary.saved})
-        </button>
-      </nav>
+      <SegmentedControl label="Drive bookmarks"
+        className="w-fit max-w-full"
+        value={savedOnly ? "saved" : "all"}
+        onChange={(next) => updateQuery({ saved: next === "saved" ? "1" : null })}
+        options={[
+          { value: "all", label: "All drives" },
+          { value: "saved", label: "Saved (" + savedSummary.saved + ")" },
+        ]} />
       <section className="border-t border-border pt-4" aria-label="Find placement drives">
         <Button variant="ghost" type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
           onClick={()=>setMobileOpen(value=>!value)}
@@ -155,22 +152,19 @@ export function LearnerJobsBrowse({
             </Select>
           </label>
         </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Drive application availability">
-          {([
-            ["all","All published"],
-            ["open","Open to apply"],
-            ["not-open","Not open to you"],
-            ["closed","Deadline passed"],
-          ] as const).map(([key,label])=>(
-            <button type="button" key={key} aria-pressed={filters.availability===key}
-              onClick={()=>updateQuery({availability:key})}
-              className={filters.availability===key
-                ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                : "min-h-10 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
-              {label} ({availabilityCounts[key]})
-            </button>
-          ))}
-        </div>
+        <SegmentedControl label="Drive application availability"
+          className="w-fit max-w-full"
+          value={filters.availability}
+          onChange={(next) => updateQuery({ availability: next })}
+          options={([
+            ["all", "All published"],
+            ["open", "Open to apply"],
+            ["not-open", "Not open to you"],
+            ["closed", "Deadline passed"],
+          ] as const).map(([key, label]) => ({
+            value: key,
+            label: label + " (" + availabilityCounts[key] + ")",
+          }))} />
         <div className="flex flex-wrap items-center gap-3">
           <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
             <Checkbox

@@ -1,9 +1,9 @@
 "use client";
-import {Input} from "@/components/ui/input";
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { MetricBar } from "@/components/ui/metric-bar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -221,7 +221,7 @@ export function FacultyLessonVideoManager({
     </Button>
     {busy&&activeName?<div className="space-y-2" role="status">
       <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
-      <progress className="h-2 w-full" aria-label="Video upload progress" value={progress} max={100}/>
+      <MetricBar label="Video upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className="w-full" />
       <Button size="sm" type="button" variant="secondary" onClick={()=>controllerRef.current?.abort()}>Cancel upload</Button>
     </div>:null}
     {loading?<p role="status" className="text-sm text-muted-foreground">Loading videos…</p>:null}

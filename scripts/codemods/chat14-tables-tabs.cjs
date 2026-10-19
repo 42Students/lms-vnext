@@ -20,8 +20,7 @@ const apply = process.argv.includes("--apply");
 const only = (process.argv.find(arg => arg.startsWith("--only=")) || "").slice(7);
 if (only && !["table", "chip"].includes(only)) {
   process.stderr.write("Expected --only=table or --only=chip\n");
-  process.exitCode = 2;
-  return;
+  process.exit(2);
 }
 const stats = {
   scanned: 0, changed: 0, table: 0, chip: 0,
@@ -78,9 +77,15 @@ function conflictingImport(source, name, from) {
     stmt.importClause.namedBindings && ts.isNamedImports(stmt.importClause.namedBindings) &&
     stmt.importClause.namedBindings.elements.some(el => el.name.text === name));
 }
-function insertionPoint(source, original) {
+function insertionPoint(source) {
   const imports = source.statements.filter(ts.isImportDeclaration);
-  return imports.length ? imports[imports.length - 1].getEnd() : 0;
+  if (imports.length) return imports[imports.length - 1].getEnd();
+  // Client components with no imports must retain their leading directive.
+  const first = source.statements[0];
+  if (first && ts.isExpressionStatement(first) &&
+      ts.isStringLiteral(first.expression) &&
+      first.expression.text === "use client") return first.getEnd();
+  return 0;
 }
 const KEEP = /^(?:-?m[trblxy]?-(?:\S+)|w-(?:\S+)|max-w-(?:\S+)|min-w-(?:\S+)|shrink(?:-\S+)?|grow(?:-\S+)?|self-\S+|align-\S+|truncate|whitespace-\S+|sr-only)$/;
 const tones = [
@@ -172,11 +177,11 @@ for (const file of collect(root)) {
   visit(source);
   if (!edits.length) continue;
   if (needs.has("Table") && !importExists(source, "Table", "@/components/ui/table")) {
-    const point = insertionPoint(source, original);
+    const point = insertionPoint(source);
     edits.push([point, point, '\nimport {Table} from "@/components/ui/table";']);
   }
   if (needs.has("Badge") && !importExists(source, "Badge", "@/components/ui/badge")) {
-    const point = insertionPoint(source, original);
+    const point = insertionPoint(source);
     edits.push([point, point, '\nimport {Badge} from "@/components/ui/badge";']);
   }
   let output = original;

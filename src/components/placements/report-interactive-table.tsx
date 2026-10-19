@@ -114,7 +114,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);}}
      size="sm">Reset view</Button>
    </div>
-   <p role="status" className="text-xs text-muted-foreground">
+   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
    <div className="flex flex-wrap items-center gap-2 sm:hidden">
@@ -127,7 +127,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       {displayedColumns.map(col=><option key={col.index} value={col.index}>{col.heading}</option>)}
      </Select>
     </label>
-    <Button variant="secondary" type="button" disabled={sort===null} aria-label="Reverse sort direction"
+    <Button variant="secondary" type="button" disabled={sort===null} aria-label="Descending order" aria-pressed={descending}
      onClick={()=>setDescending(value=>!value)} >
      {descending?"Descending":"Ascending"}
     </Button>
@@ -154,9 +154,9 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       },
     }))}
    />
-   {ordered.length>limit?<Button variant="secondary" type="button" onClick={()=>setLimit(n=>n+500)}
+   {ordered.length>limit?<Button variant="secondary" type="button" onClick={()=>setLimit(n=>Math.min(ordered.length,n+500))}
     size="sm">Show 500 more</Button>:null}
-   {message?<p role="status" className="text-xs">{message}</p>:null}
+   {message?<p role="status" aria-live="polite" className="text-xs text-body">{message}</p>:null}
   </>}
  </section>;
 }

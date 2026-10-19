@@ -20,6 +20,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   let live=true;
   void Promise.resolve().then(()=>{
    if(!live)return;
+   setPicked("");
    try{const stored=localStorage.getItem(keyFor(path,collegeId,userId));setViews(stored?clean(JSON.parse(stored)):[]);}catch{setViews([]);setMessage("Browser storage is unavailable.");}
   });
   return ()=>{live=false;};
@@ -54,7 +55,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   if(!picked)return;
   if(persist(views.filter(v=>v.name!==picked))){setPicked("");setMessage("Saved filter removed.");}
  }
- return <Disclosure title={`Saved filters (${views.length}/12)`} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ return <Disclosure title={`Saved filters (${views.length}/12)`} className="min-w-0 border-t border-border pt-4">
   <p className="mt-2 text-xs text-muted-foreground">Save this report&apos;s active filters in this browser for your account. Nothing is sent to other users or devices.</p>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Name this view
@@ -65,7 +66,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   </div>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Choose saved view
-    <Select value={picked} onChange={e=>setPicked(e.target.value)}
+    <Select value={picked} disabled={views.length===0} onChange={e=>{setPicked(e.target.value);setMessage("");}}
      >
      <option value="">Select view</option>
      {views.map(v=><option key={v.name} value={v.name}>{v.name}</option>)}
@@ -74,6 +75,6 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
    <Button variant="secondary" type="button" disabled={!picked} onClick={apply} >Apply</Button>
    <Button variant="secondary" type="button" disabled={!picked} onClick={remove} >Delete</Button>
   </div>
-  {message?<p role="status" className="mt-2 text-xs text-body">{message}</p>:null}
+  {message?<p role="status" aria-live="polite" className="mt-2 text-xs text-body">{message}</p>:null}
  </Disclosure>;
 }

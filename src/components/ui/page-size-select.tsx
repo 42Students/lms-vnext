@@ -14,7 +14,7 @@ export function PageSizeSelect({
 }: PageSizeSelectProps) {
   return <label className={cx("grid gap-1 text-sm font-semibold text-body", wrapperClassName)}>
     {label}
-    <Select {...props} className={cx("min-h-11 sm:min-h-9", className)}>
+    <Select {...props} className={cx("min-h-11 md:min-h-9", className)}>
       {options.map(size => <option key={size} value={size}>{size}</option>)}
     </Select>
   </label>;
