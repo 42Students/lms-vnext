@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -69,19 +70,7 @@ export default async function MentorProjectReviewCompletenessPage({
             }).format(item.reviewedAt)} IST
           </p>:null}
         </li>)}</ol>}
-      <nav aria-label="Review version pages" className="flex justify-between gap-3">
-        <span className="text-sm text-muted-foreground">
-          Page {data.page} of {data.totalPages}
-        </span>
-        <div className="flex gap-3">
-          {data.page>1?<Link
-            href={mentorReviewCompletenessHref({projectId,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
-          {data.page<data.totalPages?<Link
-            href={mentorReviewCompletenessHref({projectId,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>:null}
-        </div>
-      </nav>
+      <Pagination label="Review version pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewCompletenessHref({projectId,page})}/>
     </>}
     <p className="text-xs leading-5 text-muted-foreground">
       A review is recorded only when a persisted review decision exists.
