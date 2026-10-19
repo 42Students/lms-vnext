@@ -294,7 +294,7 @@ export function LearnerCourseAttendance({
                     navigateMonth(new Date(year,monthIndex,1));
                   }
                 }}
-                className="mt-1.5 min-h-9 rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
+                className="mt-1.5 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"
               />
             </label>
             {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),currentMonth) ? (
