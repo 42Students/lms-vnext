@@ -33,7 +33,7 @@
 | Warning | `legacy-styles/components___variables.scss:69` #d97706 | `src/app/globals.css:43` #d97706 | Match |
 | Error | `legacy-styles/components___variables.scss:71` #ef4444 | `src/app/globals.css:45` #ef4444 | Match |
 | Info | `legacy-styles/components___variables.scss:73` #26bac7 | `src/app/globals.css:51` #26bac7 | Match |
-| Link default | `legacy-styles/components___common.scss:68-75` #26bac7 | `src/app/globals.css:20` #0e7c87 | **Mismatch**: retained accessible deep-teal link alias |
+| Link default | `legacy-styles/components___common.scss:68-75` #26bac7 | `src/app/globals.css:20` #26bac7 | **Match at token**; link consumers and hover still unverified |
 | Disabled text | `legacy-styles/components___variables.scss:29` #a9a7ae | `src/app/globals.css:30`, `src/components/ui/input.tsx:7` #a9a7ae | Match |
 
 ## A3. Spacing, radii, shadows and transitions
@@ -43,8 +43,8 @@
 | Property | Legacy source | vNext source | Result |
 | --- | --- | --- | --- |
 | Spacing 1–6 | `legacy-styles/components___variables.scss:208-213` 4/8/12/16/24/32px | `src/app/globals.css:332-337` same | Match |
-| Spacing 7–8 **effective** | `legacy-styles/components___variables.scss:214-215` 48/64px (overrides earlier lines 122–123) | `src/app/globals.css:338-339` 48/64px | Match after correction |
-| Control radius | `legacy-styles/components___variables.scss:133` 6px; measured `old-lms-shell-spec.md:23` 9px | `src/app/globals.css:326` 9px | **Source conflict**; matches measured button |
+| Spacing 7–8 **effective** | `legacy-styles/components___variables.scss:214-215` 48/64px (overrides earlier lines 122–123) | `src/app/globals.css:339-340` 48/64px | Match after correction |
+| Control radius | `legacy-styles/components___variables.scss:133` 6px; measured `old-lms-shell-spec.md:23` 9px | `src/app/globals.css:326-327` 9px button, 10px field | **Role-specific**; measured button and `.ln-in2` field declarations match |
 | Card radius | `legacy-styles/components___variables.scss:134` 12px | `src/app/globals.css:327` 12px | Match |
 | Primary shadow | `legacy-styles/components___antddesign.scss:153-158` none | `src/components/ui/button.tsx:27` shadow-none | Match |
 | Elevation 1 | `legacy-styles/components___variables.scss:226` dual subtle layers | `src/app/globals.css:837` dual subtle layers | Match tokens |
@@ -63,7 +63,7 @@
 | Keyboard field focus | `legacy-styles/components___form.scss:130-133` teal 2px/15% | `src/app/globals.css:876-881` teal 2px/15% | Match halo; full cascade unverified |
 | Invalid field focus | `legacy-styles/components___form.scss:136-143` error 2px/20% | `src/app/globals.css:883-889` error 2px/20% | Match halo |
 | Number spinner chrome | `legacy-styles/components___form.scss:14-19` no native spin buttons | `src/app/globals.css:1097-1101` hidden webkit/textfield | Match |
-| Scrollbar thumb on explicit scrollbar | `legacy-styles/components___common.scss:294-298` 8px gray thumb for module | `src/app/globals.css:999-1007` opt-in 4px | **Mismatch** for explicitly visible thin scrollbar |
+| Scrollbar thumb on explicit scrollbar | `legacy-styles/components___common.scss:294-298` 8px gray thumb for module | `src/app/globals.css:1000-1008` opt-in 8px / 1px thumb | **Matches WebKit declaration**, scrollbar runtime unverified |
 
 ## C. ALL FORM CONTROLS
 
@@ -83,7 +83,7 @@
 | Textarea | `legacy-styles/components___form.scss:117-143` form inputs' family | `src/components/ui/textarea.tsx:8` min-height 112px, native resize | **Unverified**: legacy textarea height/rules vary |
 | Select font | `legacy-styles/components___form.scss:3-5` Lato family | `src/components/ui/select.tsx:7` inherited Inter | **Mismatch** to literal legacy SCSS; measured old shell font differs |
 | Multi-select | `legacy-styles/components___antddesign.scss:134-140` AntD selected teal with white text | `src/components/ui/multi-select.tsx:9-12` native multiple select | **Mismatch** selected-option rendering |
-| Searchable/creatable select | `legacy-styles/components___common.scss:256-262` AntD searchable selector | `src/components/ui/searchable-select.tsx:10-17` native datalist | **Mismatch** popup and `creatable=false` enforcement |
+| Searchable/creatable select | `legacy-styles/components___common.scss:256-262` AntD searchable selector | `src/components/ui/searchable-select.tsx:10-17` keyboard combobox/listbox | **Popup source matched**, keyboard/visual verification pending |
 | Native date/time | `legacy-styles/components___antddesign.scss:93-97` AntD picker focus handling | `src/components/ui/date-input.tsx:8-10` native date/time | **Different picker technology**, visuals unverified |
 | Date range | Legacy AntD range popup rules (picker family above) | `src/components/ui/date-range-picker.tsx:21-30` two native dates | **Missing** popup/range drag/day-cell parity |
 | OTP | `legacy-styles/components___form.scss:174-195` login input form style | `src/components/ui/otp-input.tsx:5-10` numeric/OS one-time-code | Style/behaviour not fully compared |
@@ -92,7 +92,7 @@
 | Switch checked | `legacy-styles/components___common.scss:226-229` teal | `src/components/ui/selection-controls.tsx:22-30` teal token in checked state | Colour match; size/animation not certified |
 | Slider | `legacy-styles/components___variables.scss:10` teal | `src/components/ui/range-slider.tsx:5-9` native range | Only colour; thumb/track parity missing |
 | Segmented | Legacy AntD tab/selection variants | `src/components/ui/segmented-control.tsx:14-25` native radio group | Keyboard semantics present; geometry unverified |
-| Upload validations | `legacy-styles/components___button.scss:295+` image upload affordance | `src/components/ui/file-upload.tsx:17-25,34-92` type/size; `file-dropzone.tsx:17-42` drag/picker | Upload progress/preview/list parity absent |
+| Upload validations | `legacy-styles/components___button.scss:295+` image upload affordance | `src/components/ui/file-upload.tsx:74-108` type/size + selected names + caller progress, `file-dropzone.tsx:27-49` | File-list and progress additions; preview/crop and parity remain absent |
 | Required label | `legacy-styles/components___form.scss:110-115` 13/600 | `src/components/ui/form-field.tsx:30-34` 13/600, required star | Base match; asterisk placement/colour not fully compared |
 | Error helper | `legacy-styles/components___form.scss:136-143` red error | `src/components/ui/form-field.tsx:37` 12px error role alert | Error text metrics need comparison |
 | Read-only/disabled | `legacy-styles/components___variables.scss:29` disabled ink #a9a7ae | `src/components/ui/input.tsx:7`, `src/app/globals.css:869-875` | Partial; all native input types unverified |
@@ -113,12 +113,12 @@
 | Active | `legacy-styles/components___antddesign.scss:170-176` 1px translate | `src/app/globals.css:626-628`, `src/components/ui/button.tsx:27` | Match intent, disabled/loading CSS interplay unverified |
 | Secondary | `legacy-styles/components___button.scss:120-139` border #bfc9da, fill teal on hover | `src/components/ui/button.tsx:12`, `src/app/globals.css:635-644` | Token match; all nested contents unverified |
 | Danger | `legacy-styles/components___variables.scss:71` #ef4444 | `src/components/ui/button.tsx:14` #ef4444, hover #dc2626 | Base match; hover source not exhaustively mapped |
-| Ghost/link | `legacy-styles/components___button.scss:188+` transparent controls | `src/components/ui/button.tsx:13` | Partial, link variant absent |
+| Ghost/link | `legacy-styles/components___button.scss:188+` transparent controls | `src/components/ui/button.tsx:13-14` | Link variant added, raw usage unverified |
 | Icon sizes | `old-lms-shell-spec.md:24` 36px icon controls | `src/components/ui/button.tsx:16-23` 36px icons, mobile 44px | Desktop base match; tablet/phone verification missing |
 | Loading | `legacy-styles/components___antddesign.scss:153-185` no hover while loading | `src/components/ui/button.tsx:25-28` aria-busy, disabled, spinner | Pending/double-submit behavior to verify |
 | Disabled | `legacy-styles/components___antddesign.scss:179-184` #e5e9f0, #6b7280 | `src/components/ui/button.tsx:11,27`, `src/app/globals.css:629-633` | Match primary base; other variants unverified |
 | Keyboard focus | `legacy-styles/components___antddesign.scss:172-177` teal visible focus | `src/app/globals.css:862-866`, `src/components/ui/button.tsx:27` | Width/opacity still need computed comparison |
-| Sizes / groups / split | `legacy-styles/components___button.scss:1-18,53-58` base/xs plus app-specific groups | `src/components/ui/button.tsx:16-23` sm/md/lg/icon/icon-sm | No split-button/shared group parity proven |
+| Sizes / groups / split | `legacy-styles/components___button.scss:1-18,53-58` base/xs plus app-specific groups | `src/components/ui/button.tsx:16-23`, `button-group.tsx:13-20`, `split-button.tsx:20-40` | Compositions added; legacy geometry source matched where measured, browser proof incomplete |
 
 ## Coverage and regression evidence — strict rule
 
@@ -209,3 +209,89 @@ grep -rnE '#[0-9A-Fa-f]{3,8}\\b' src --include='*.tsx' --include='*.css'
 ```
 
 **Output counts: not run/unknown** (no mounted checkout; GitHub code-search indexing cannot substitute for the mandatory full-tree grep). Required page-wide raw-control migration is assigned to portal lanes, so their unchecked residuals also prevent this category from being ticked.
+
+
+## 2026-10-19 follow-up after latest main sync — source evidence, do not tick without full proof
+
+**Integration:** `chatgpt/chat-17-b` fast-forwarded to main after earlier work had been merged; later shared a non-overlapping upstream merge. All updates are on the lane branch via GitHub commits. **No application execution, TypeScript compile, lint, tests, CI or visual comparison.** The repository could not be mounted to execute `grep` against the entire source tree, so the strict coverage rule remains unsatisfied.
+
+### A1–A4 source value and state matrix
+
+| Item / state | Old LMS evidence (path:line, value) | vNext evidence (path:line, value) | Result / remaining difference |
+| --- | --- | --- | --- |
+| A1 body font | `docs/design/legacy-styles/components___variables.scss:169` Lato/system fallback; `docs/design/old-lms-shell-spec.md:27` measured Inter | `src/app/globals.css:152` Inter + system fallback | Measured shell match; legacy SCSS family conflict unresolved |
+| A1 base text | `components___variables.scss:184,193-195` 14px, leading 1.6 | `src/app/globals.css:342-345` 14px/400/1.6 | CSS declarations match; page roles not exhausted |
+| A1 label | `components___form.scss:110-115` 13px/600/16px | `src/app/globals.css:600`; `src/components/ui/form-field.tsx:31` 13px/600/16px | Match shared label, page labels unverified |
+| A1 field type | `components___form.scss:123-127` 14px/400/20px, +0.2px | `src/app/globals.css:415-419`; `input.tsx:7`, `select.tsx:7`, `textarea.tsx:8` | Match CSS properties; all field variants and h1–h6 unverified |
+| A2 accent/hover | `components___variables.scss:10-13` teal #26bac7, dark #1e9aa8 | `src/app/globals.css:14,21-23` same | Match tokens; all consumers unverified |
+| A2 shell/link/error/disabled | `components___variables.scss:28,30-31,71`, `components___common.scss:68-75` | `src/app/globals.css:20,30,32-33,44` | Match shared tokens; visited, selection, dark and page hex scan incomplete |
+| A3 canonical spacing | `components___variables.scss:208-215` 4,8,12,16,24,32,48,64px effective | `src/app/globals.css:333-340` same | Match final SCSS assignments; consumer override scan incomplete |
+| A3 field vs button radius | `components___form.scss:120` 10px field; `old-lms-shell-spec.md:23` 9px action; `components___variables.scss:134` 12px card | `src/app/globals.css:326-328,407-412` 9px action/10px field/12px canvas | Source declarations match role-specific design |
+| A3 motion | `components___variables.scss:252,258` 150ms standard easing | `src/app/globals.css:190,194`; `button.tsx:28` | Match shared timing/ease; consumer hover/active not exhaustive |
+| A4 hidden scrolling | `components___common.scss:307-311,329-331` chrome hidden | `src/app/globals.css:176-186` hidden | Selector scope differs; browser proof missing |
+| A4 visible scrollbar | `components___common.scss:294-300` width 8px, thumb #c4c4c4, radius 1px | `src/app/globals.css:1000-1008` 8px, same thumb and radius | Declaration match; Firefox and hover variants unverified |
+| A4 pointer/keyboard focus | `components___form.scss:23-36,130-143` pointer outline none, focus teal 2px, error red 2px | `src/app/globals.css:860-889` equivalent focus/invalid halo | Match primary field rules; native OS focus and phone still unverified |
+
+### C1–C7 and D: form-control value/state matrix
+
+| Item / state | Old LMS evidence (path:line, value or behavior) | vNext evidence (path:line, value or behavior) | Result / remaining difference |
+| --- | --- | --- | --- |
+| C1 text/number | `components___form.scss:14-19,117-143` number spinners hidden; 14px/20px/0.2px, #fbfcfd; error #ef4444 | `src/app/globals.css:407-457,1098-1101`, `src/components/ui/input.tsx:7-8` | Main declarations match; raw input source coverage unknown |
+| C1 textarea | `components___form.scss:117-143` form-family type/error; no fixed universal height | `src/components/ui/textarea.tsx:8-9`, `src/app/globals.css:427-429` 112px min, native resize disabled when disabled | Height/resizing need real legacy screen comparison |
+| C1 search | `components___form.scss:38-61` width clamp(180px,20vw,280px), 14px field | `src/components/ui/search-field.tsx:12-18` clamp plus shared Input and action | Declaration match; search result panel is distinct from this control |
+| C1 password/OTP | `components___form.scss:174-195` white login field, 14px/20px, teal focus | `password-input.tsx:9-13` show/hide; `otp-input.tsx:5-9` native numeric OS autofill | Type/input semantics preserved, login-specific border needs comparison |
+| C2 native select error | `components___form.scss:117-143` 10px field/error halo; `components___antddesign.scss:134-137` selected teal/white | `select.tsx:7-8`, `src/app/globals.css:446-456,1151-1155` | CSS matches where native supports option styling; AntD popup is different |
+| C2 searchable select popup | `components___form.scss:64-92` top +5px, max 200px, radius 12px, shadow 0 14px 16px rgba(0,0,0,.04), min item 44px, hover #d1f1f1 | `searchable-select.tsx:125-154`, `src/app/globals.css:845` | Declarations match; keyboard (Arrow/Enter/Escape), selection and validity implemented in `searchable-select.tsx:55-122`, runtime proof missing |
+| C2 multi-select | `components___antddesign.scss:134-140` selected #26bac7/white, wrapped text | `multi-select.tsx:22-73` native multiple with optional removable tags, `globals.css:1151-1155` | Selected color declarations match; native dropdown/chip geometry and event propagation not verified |
+| C3 day/time picker | `components___antddesign.scss:93-97,191-203,219-224` themed AntD day/time popup | `date-input.tsx:8-10`, `date-range-picker.tsx:21-32` native date fields with range validity | **Mismatch**: browser-native picker not equivalent to AntD month/day/time overlay |
+| C4 checked checkbox/radio | `components___antddesign.scss:123-131,742+` teal checked state; `components___variables.scss:10` | `checkbox.tsx:7-10`, `radio.tsx:7-10`, `selection-controls.tsx:11-20` | Native teal checked, checkbox indeterminate and disabled/focus added; exact geometry missing |
+| C4 switch | `components___common.scss:226-229` checked teal | `selection-controls.tsx:22-30` role switch, 48×28px, checked teal, error outline, disabled | Checked color declaration matches, legacy geometry/animation unmeasured |
+| C4 slider/segment | `components___variables.scss:10,139,148-157` teal and touch 44px | `range-slider.tsx:5-9`, `segmented-control.tsx:16-25` keyboard radios; mobile 44px | Missing thumb/track comparison and full focus/pressed state |
+| C5 file selection and progress | `components___button.scss:295+` upload affordance | `file-upload.tsx:74-109`, `file-dropzone.tsx:27-50`: validation, aria-errormessage, opt-in file list, real caller-owned progress | Preview/crop and file-list parity not yet complete |
+| C6 required/help/error | `components___form.scss:110-115,136-143` 13px/600/16px label, red 2px/20% focus | `form-field.tsx:13-38`, `globals.css:600,883-889` | Label/error declarations match; every caller spread and reading order unverified |
+| C6 grid/breakpoints | `components___variables.scss:148-157` <=767 phone, >=768 tablet, >=992 desktop | `form-grid.tsx:15-22`, `globals.css:1158-1169` 1/2/3 cols | Source breakpoint parity, page-wide migration not proven |
+| C7 rich text | `components___common.scss:7-8` Jodit-specific styling (editor in legacy stack) | Shared `textarea.tsx:8-9` plain long-form only | **Missing:** editor toolbar, selection and formatting parity |
+| D primary button default | `old-lms-shell-spec.md:23` #0a7c88/white, 36px, radius 9px, 14px/650 | `src/app/globals.css:17-19,324,326,615-620`, `button.tsx:11,16-28` | Measured shell declarations match |
+| D hover/active | `components___antddesign.scss:160-169` dark teal/translateY(1px); shell spec teal #086873 | `src/app/globals.css:621-628`, `button.tsx:28` | Measured button hover/active match; source variants conflict with literal .ln-btn |
+| D focus/disabled | `components___antddesign.scss:171-181` 3px teal 35% ring offset 2, disabled grey #e5e9f0/#6b7280 | `globals.css:629-633,1204-1210`, `button.tsx:26-29` | Source state declarations match on primary; full keyboard and all variants unverified |
+| D loading/groups/split | `components___antddesign.scss:153-185` pending not hoverable; `old-lms-shell-spec.md:23-24` grouped control 9px/36px | `globals.css:1127-1148,1172-1201`, `button-group.tsx:13-20`, `split-button.tsx:20-40` | Branded pending and group seams; no browser simulation or caller inventory |
+
+### Responsive proof status (source media rules only)
+
+| Viewport rule | Legacy source | vNext source | Result |
+| --- | --- | --- | --- |
+| Phone at 767px | `components___variables.scss:148`, `components___antddesign.scss:67,780+` | `globals.css:1009-1013,1196-1201`; `date-range-picker.tsx:23`; `segmented-control.tsx:19-23` | Code-reviewed phone breakpoint; **no screenshot/interaction proof** |
+| Tablet 768–991px | `components___variables.scss:149,155` | `globals.css:1162-1165` 2 columns; `date-range-picker.tsx:23` 2 dates | Breakpoint declaration matches; real layout unknown |
+| Desktop >=992px | `components___variables.scss:156` | `globals.css:1166-1168` 3 columns | Declaration matches; no CSS computed measurements |
+| Touch >=44px | `components___variables.scss:139`, `components___antddesign.scss:780+` | `globals.css:606,1196-1200`, `segmented-control.tsx:19-23` | Source targets checked; all interactive elements not inventoried |
+
+### Coverage proof status — STRICT TICK RULE intentionally blocks completion
+
+Required full source commands (not executed, counts **unknown**):
+
+```bash
+grep -rlE '<button([[:space:]]|>)' src --include='*.tsx'
+grep -rlE '<input([[:space:]]|>)' src --include='*.tsx'
+grep -rlE '<select([[:space:]]|>)' src --include='*.tsx'
+grep -rlE '<textarea([[:space:]]|>)' src --include='*.tsx'
+grep -rnE '#[0-9A-Fa-f]{3,8}\\b' src --include='*.tsx' --include='*.css'
+```
+
+GitHub indexed searches for `<button`, `<input`, `<select`, `<textarea` returned respectively **50 (capped), 26, 35, 36 candidate files**; these are **not actual raw JSX tag counts** and cannot substitute for the required grep. A targeted complete-file inspection of six indexed candidates (`tpo-team-rename.tsx`, `tpo-team-search.tsx`, `tracker-report-form.tsx`, `workspace-brief-editor.tsx`, `tpo-inbox-search.tsx`, `college-logo-uploader.tsx`) found **zero raw button/input/select/textarea tags in these six files only**, consistent with the earlier codemod having handled those samples. This does not prove that other files contain zero instances. Native fields inside the shared primitives are intentional exemptions, but must still be inventoried in complete grep results.
+
+### STRICT TICK LEDGER — 12 open, 0 ticked (latest)
+
+- [ ] A1 font and type roles (missing: global role census, dynamic type and phone/tablet computed proof).
+- [ ] A2 colors (missing: exhaustive hardcoded color grep, all visited/selection/disabled and tracker-dark effects).
+- [ ] A3 spacing/radius/shadow/transitions (missing: every consumer and role-specific variant state, browser computed proof).
+- [ ] A4 scrollbar/focus/selection/cursor (missing: complete scrolling component inventory and phone/Firefox/browser check).
+- [ ] C1 inputs and OTP/password/textarea (missing: all variants and real mobile keyboard/error/readonly comparisons).
+- [ ] C2 selects/searchable/multi/tag/creatable (missing: AntD parity for native select popup and tag UI, all keyboard modes verified).
+- [ ] C3 date/time/range (missing: fully custom/AntD-like popup and month/day keyboard states).
+- [ ] C4 checkbox/radio/switch/slider/segmented (missing: exact geometry, animations, touch and screen-reader results).
+- [ ] C5 file/image upload (missing: image preview/crop and end-to-end progress/list visual comparison).
+- [ ] C6 labels/helper/error/disabled/readonly/layout (missing: full form caller migration and fieldset/focus proof).
+- [ ] C7 rich text (missing: rich-text toolbar/editor and format-state parity).
+- [ ] D buttons (missing: complete raw markup grep, icon/sizes/variants caller migration, focused/hovered/disabled browser proof).
+
+**Next exact source file:** `src/components/ui/date-input.tsx`, then `date-range-picker.tsx`: replace the native-only date picker interaction with an accessible legacy-styled date/month popup, keeping `DateInputProps` and existing value/change handlers working. Once that is stable, finish `multi-select.tsx` selected-tags geometry, `selection-controls.tsx` geometry and run authoritative whole-tree grep + responsive source/browser verification before ticking.
