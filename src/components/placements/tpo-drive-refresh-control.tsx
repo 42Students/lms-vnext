@@ -2,6 +2,7 @@
 import {useCallback,useEffect,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import { InlineNotice } from "@/components/ui/inline-notice";
 
 /** Refresh stale projections on focus without discarding server-side records. */
 export function TpoDriveRefreshControl(){
@@ -16,6 +17,6 @@ export function TpoDriveRefreshControl(){
    >
    {pending?"Refreshing drive workspace…":"Refresh drive workspace"}
   </Button>
-  {pending?<span role="status" className="text-sm text-body">Refreshing drive workspace…</span>:null}
+  {pending?<InlineNotice tone="info" message="Refreshing drive workspace…"/>:null}
  </div>;
 }
