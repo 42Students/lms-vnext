@@ -1,3 +1,6 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { COLLEGE_COURSE_TAB_COPY, collegeAudienceLabel, collegeResultsLabel, collegeStatusLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
@@ -99,77 +102,77 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
             Search title
-            <input name="q" type="search" maxLength={100}
+            <Input name="q" type="search" maxLength={100}
               defaultValue={data.query.q} placeholder="Assessment title"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+              className="min-h-11" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Exact course code
-            <input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            <Input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
+              className="min-h-11" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Batch / cohort code (exact)
-            <input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Program code (exact)
-            <input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode??""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode??""}
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Audience scope
-            <select name="scope" defaultValue={data.query.scope}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="scope" defaultValue={data.query.scope}
+              className="min-h-11">
               <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
               <option value="SECTION">Section-specific</option>
-            </select>
+            </Select>
           </label>
           {!isAssignment?<label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Quiz results
-            <select name="results" defaultValue={data.query.results}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="results" defaultValue={data.query.results}
+              className="min-h-11">
               <option value="ALL">Any visibility</option><option value="PUBLISHED">Results published</option>
               <option value="HIDDEN">Results hidden</option>
-            </select>
+            </Select>
           </label>:null}
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Due-date configuration
-            <select name="duePresence" defaultValue={data.query.duePresence}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="duePresence" defaultValue={data.query.duePresence}
+              className="min-h-11">
               <option value="ALL">All deadlines</option><option value="SCHEDULED">Deadline configured</option>
               <option value="UNSCHEDULED">No deadline</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Deadline window
-            <select name="dueWindow" defaultValue={data.query.dueWindow}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="dueWindow" defaultValue={data.query.dueWindow}
+              className="min-h-11">
               <option value="ALL">Any deadline</option><option value="PAST">Deadline passed</option>
               <option value="FUTURE">Deadline upcoming</option>
-            </select>
+            </Select>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Academic period code
-            <input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
+              className="min-h-11"/>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Status
-            <select name="status" defaultValue={data.query.status}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <Select name="status" defaultValue={data.query.status}
+              className="min-h-11">
               <option value="ALL">All statuses</option>
               <option value="DRAFT">Draft</option>
               <option value="PUBLISHED">Published</option>
               {!isAssignment ? <option value="CLOSED">Closed</option> : null}
               <option value="ARCHIVED">Archived</option>
-            </select>
+            </Select>
           </label>
-          <button type="submit"
+          <Button type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
             Filter
-          </button>
+          </Button>
           <Link href={collegeAssessmentHref(data.kind, { q: "", scope: "ALL", results: "ALL", duePresence: "ALL", dueWindow: "ALL", status: "ALL", page: 1 })}
             className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Clear
