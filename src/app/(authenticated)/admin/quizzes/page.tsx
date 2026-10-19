@@ -19,14 +19,14 @@ export default async function SuperAdminQuizzesPage({
   if (!query.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <ErrorState title="Invalid quiz filters" description="Check search, status and page."
-      action={<Link href="/admin/quizzes" className="font-semibold text-[var(--lms-teal-deep)]">Clear filters</Link>} />
+      action={<Link href="/admin/quizzes" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context)) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <ErrorState title="Quiz access denied"
       description="Your account cannot access Super Admin quizzes."
-      action={<Link href="/dashboard" className="font-semibold text-[var(--lms-teal-deep)]">Back to dashboard</Link>}/>
+      action={<Link href="/dashboard" className="font-semibold text-primary-text">Back to dashboard</Link>}/>
   </div>;
   if (!context.adminScope?.collegeId) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
@@ -44,16 +44,16 @@ export default async function SuperAdminQuizzesPage({
     <ErrorState title="Quizzes unavailable"
       description="The quiz directory could not be loaded. Your filters have not changed."
       action={<Link href={adminAssessmentHref("QUIZ",query.data)}
-        className="font-semibold text-[var(--lms-teal-deep)]">Retry loading quizzes</Link>}/>
+        className="font-semibold text-primary-text">Retry loading quizzes</Link>}/>
   </div>;
   const data=dataResult.value;
   return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <a href={adminAssessmentExportHref("QUIZ",query.data)}
-     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Export quizzes.csv</a>
+     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Export quizzes.csv</a>
     {lessonsResult.status==="fulfilled"?
       <CollegeQuizCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>:
-      <p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+      <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
         Quiz creation options are temporarily unavailable. Existing quizzes remain visible.
       </p>}
     <AdminAssessmentDirectory data={data} />
