@@ -50,7 +50,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
   });
  }
  return <section aria-label="College sign-in methods" className="space-y-4 border-t border-border pt-5">
-  <h2 className="font-semibold">Sign-in method</h2>
+  <h2 className="font-semibold text-foreground">Sign-in method</h2>
   <fieldset disabled={!ready||saving} className="grid gap-3">
    <legend className="sr-only">Sign-in method</legend>
    {choices.map(choice=><label key={choice.value} className={"flex min-h-14 items-center gap-3 rounded-[var(--lms-control-radius)] border p-3 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(!ready||saving?"cursor-not-allowed opacity-60 ":"cursor-pointer ")+(selection===choice.value?"border-primary bg-primary-subtle":!ready||saving?"border-border bg-surface":"border-border bg-surface hover:border-primary hover:bg-surface-subtle")}>
