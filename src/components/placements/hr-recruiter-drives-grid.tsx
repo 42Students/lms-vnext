@@ -13,6 +13,9 @@ export type HrRecruiterDriveSheetRow={
  pay:string;
  sharedApplicants:number;
  offers:number;
+ applicantsHref:string;
+ offersHref:string;
+ requestsHref:string;
  deadlineLabel:string;
  status:string;
  nextStep:string;
@@ -49,6 +52,15 @@ export function HrRecruiterDrivesGrid({rows,scopeKey}:{
   storageKey={"hr-recruiter-drives:"+scopeKey}
   mobilePrimaryKeys={["drive","jobType","status","deadline"]}
   rowActions={row=><div className="flex flex-wrap items-center gap-2">
+   <Link href={row.applicantsHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    {row.sharedApplicants} shared applicants
+   </Link>
+   <Link href={row.offersHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    {row.offers} offers
+   </Link>
+   {row.unansweredRequests>0?<Link href={row.requestsHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    Answer {row.unansweredRequests} open {row.unansweredRequests===1?"request":"requests"}
+   </Link>:null}
    <Link href={row.openHref} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Open hiring flow
    </Link>
