@@ -485,3 +485,49 @@ grep -nE '<details([[:space:]>])|<summary([[:space:]>])|<Disclosure([[:space:]>]
 - [ ] E8 AG Grid still open: native source and dynamic TPO callers exist, but package.json lacks ag-grid-community / ag-grid-react; user prohibits manifest edits. No dependency/build/visual proof.
 
 Exact next file: src/components/tpo/tpo-spreadsheet-grid.tsx — compare pin/resize/sort affordances and 48px selection column against legacy TpoGrid before further E8 changes. Do not edit package.json.
+
+
+## 2026-10-19 chat-14 replacement continuation: pressed chips and faculty roster pagination
+
+This batch resumed on `chatgpt/chat-14-b` after reconciling concurrent `main` advances. This section documents **file-level source migrations**, not completed E2/E4 categories. No application, browser, typecheck, tests or CI were run. All JSX counts were computed by scanning the **complete saved file text fetched again from GitHub**, not by running the shell commands below.
+
+### E2 source migration and strict value matrix
+
+| Value/state | Legacy source and exact value | vNext source and value | Static result |
+|---|---|---|---|
+| Phone pager hit box | `docs/design/legacy-styles/components___antddesign.scss:242-256`: 44px min width/height, 8px corner, 42px line-height | `src/components/ui/action-pagination.tsx:27`: `min-h-11 min-w-11 rounded-[8px] leading-[42px]` | Match |
+| Tablet pager | Legacy mobile rule stops at max-width 767px | `action-pagination.tsx:27` switches to `md:min-h-9 md:min-w-9` at 768px | Breakpoint match; desktop exact geometry still unverified |
+| Phone numeric density | `components___antddesign.scss:272-280`: only active page number shown | `action-pagination.tsx:40-48`: current page remains visible, inactive numbered buttons are `hidden md:inline-flex` | Match |
+| Disabled ends | Ant pagination disables first Previous and final Next | `action-pagination.tsx:35,50` disables boundaries; `go()` additionally validates target | Static state match |
+| Current page accessibility | Ant active page selected | `action-pagination.tsx:40` has `aria-current="page"` and accessible current-page label | Semantic match |
+| Faculty roster filtering | Existing Faculty roster local search resets to page 1 | `src/components/courses/faculty-course-roster.tsx:57-85,160-175` retains search, page clamp and data projection | Original behavior untouched |
+| Faculty roster pager | Former hand-rolled Previous / Page n of m / Next navigation | `faculty-course-roster.tsx:234` now single `ActionPagination` with `page={currentPage}`, `pageCount={totalPages}`, `onPageChange={setPage}`, print-hidden class | Source-converted, browser not tested |
+
+**File-scoped JSX grep evidence:** `src/components/courses/faculty-course-roster.tsx` has **one self-closing ActionPagination** and **zero** remaining `aria-label="Student roster pages"` native nav instances. The roster retains **two paired shared Button controls**, the photo Dialog, and `DataTable`; zero raw `<button>`, `<details>`, `<input>`, or `<select>`. No change to photo authorization, CSV export, selection or course data. All page links remain local control actions; no bogus URL introduced.
+
+### E4 source migration and strict value matrix
+
+| Value/state | Legacy source and exact value | Shared vNext / migrated callers | Static result |
+|---|---|---|---|
+| Interactive status-chip phone hit target | `legacy-styles/components___antddesign.scss:1092-1100`: min-height 44px, 12px horizontal padding through 767px | `src/components/ui/filter-chip.tsx:32`: `min-h-11 px-[12px]` before md | Match |
+| Compact legacy pill paint/geometry | `legacy-styles/components___common.scss:995-1005`: 6px radius, 2px/15px padding, 12px/700 ink | `filter-chip.tsx:32`: 6px radius, 2px vertical padding, 12px bold, 18px leading; md:15px horizontal padding | Source shape match, actual interactive hover/pressed color equality unverified |
+| Filter selected state | Legacy pressed quick filters track selection | `learner-notifications-inbox.tsx:125-149` category `aria-pressed={active===key}` and unread `aria-pressed={unread==="unread"}` | State/handlers retained |
+| Saved drive selected state | Legacy quick-action saved toggle | `learner-save-drive-button.tsx:31-35` `FilterChip` with saved `aria-pressed`, busy disabled, same POST/DELETE and errors | State/behavior source retained |
+| Presentation mode selected state | Pressed toggle for fullscreen | `tpo-report-presentation.tsx:25-28` `FilterChip`, `aria-pressed={active}`, print:hidden, browser fullscreen listener/error unchanged | State/behavior source retained |
+| Focus/hover/disabled/empty | Interactive chips need real button semantics and visible focus, disabled guards | `filter-chip.tsx:29-38` delegates to shared Button; call sites pass disabled and handlers. Notifications retain zero/empty/error and reset fallbacks | Source-level matching only; computed-state proof pending |
+
+**File-scoped grep counts after GitHub re-fetch:** `learner-notifications-inbox.tsx` has **two FilterChip opening/closing pairs** (one category map and one unread toggle), **eight shared Button pairs**, **zero raw buttons**; the original navigation, query-backed category filters, quick search and mark-all notices remain. `learner-save-drive-button.tsx` and `tpo-report-presentation.tsx` each have **one FilterChip opening/closing pair**, **zero raw buttons**, no mismatched tags. No `as` casts were split across lines in edited JSX.
+
+Reproduction commands (commands provided for the orchestrator; **not executed** in this turn):
+
+```sh
+grep -nE '<ActionPagination|aria-label="Student roster pages"|<button([ >])' src/components/courses/faculty-course-roster.tsx
+grep -nE '<FilterChip([ >])|</FilterChip>|aria-pressed=|<button([ >])' src/components/activity/learner-notifications-inbox.tsx src/components/placements/learner-save-drive-button.tsx src/components/placements/tpo-report-presentation.tsx
+grep -nE 'min-h-11|rounded-\[8px\]|leading-\[42px\]|md:min-h-9' src/components/ui/action-pagination.tsx
+```
+
+**Responsive source proof:** Through 767px, all migrated chip buttons have min-height 44px and 12px horizontal padding; notification category chips remain horizontally scrollable with `shrink-0`, unread filter is 44px, and faculty pager shows only active page plus Previous/Next. From 768px, shared pager changes to 36px with five-number window and the chip geometry becomes 32px; notification list retains desktop wrapping. No page shell widths, underlying data ordering, form validation, role scope or back-end queries changed.
+
+**STRICT TICK STATUS:** E1–E5 and E8 remain **[ ]** because these are narrow file-level proofs, not complete repo-wide grep, fully enumerated legacy hover/loading/disabled/error/empty computed states, or side-by-side viewport verification. E8 also remains blocked by undeclared AG Grid dependencies and unavailable legacy TpoGrid source.
+
+**Next exact E2/E4 file after these completed files:** `src/components/academics/learner-class-schedule.tsx` for the day-grid pressed controls and schedule view switch (preserve layout classes and date selection).
