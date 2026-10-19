@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
@@ -30,12 +31,12 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
   </div>
   <p className="text-sm text-body">Show or hide student access to published lesson content; unpublished content stays unpublished. This is a bulk operation with a per-content failure report.</p>
   <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold">
-    <input type="checkbox" checked={lessons.length>0&&selected.length===lessons.length}
+    <Checkbox checked={lessons.length>0&&selected.length===lessons.length}
       onChange={e=>setSelected(e.target.checked?lessons.map(l=>l.id):[])} disabled={pending}/> Select all on this page
   </label>
   <div className="grid max-h-48 gap-2 overflow-y-auto sm:grid-cols-2">
    {lessons.map(lesson=><label key={lesson.id} className="flex min-h-10 items-center gap-3 border-b border-border px-3 py-2 text-sm">
-    <input type="checkbox" checked={selected.includes(lesson.id)} disabled={pending}
+    <Checkbox checked={selected.includes(lesson.id)} disabled={pending}
      onChange={e=>setSelected(list=>e.target.checked?[...list,lesson.id]:list.filter(id=>id!==lesson.id))}/>
     <span className="min-w-0"><span className="block truncate font-semibold">{lesson.name}</span>
      <span className="text-xs text-muted-foreground">{lesson.courseName} · {lesson.publishedAndVisibleFlagCount}/{lesson.publishedContentCount} published records visible</span>
