@@ -8,7 +8,7 @@ Equivalent local path inventory command (not executed): git ls-tree -r --name-on
 
 Next required source command (not executed): grep -rlE 'animate-pulse|bg-muted|bg-surface-secondary' src/app --include='loading.tsx' | sort
 
-Extended sprint (2026-10-19): **59** source `loading.tsx` and **24** source `error.tsx` conversions, all separately committed to `chatgpt/chat-5-b`. The 15 authenticated `not-found.tsx` pages were read and remain unchanged because they already preserve headings and recovery links. No route checkbox is ticked without value, grep and responsive proof.
+Extended sprint (2026-10-19): **62** source `loading.tsx` and **24** source `error.tsx` conversions, all separately committed to `chatgpt/chat-5-b`. The 15 authenticated `not-found.tsx` pages were read and remain unchanged because they already preserve headings and recovery links. No route checkbox is ticked without value, grep and responsive proof.
 
 Every item below requires inspection. Routes already using shared components may need no source changes. Do not tick a path merely because its loader was migrated.
 
@@ -512,7 +512,7 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/loading.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/new/loading.tsx`
+- [ ] `src/app/(authenticated)/hr/drives/new/loading.tsx` — migrated with source-label preservation; strict parity open
 - [ ] `src/app/(authenticated)/hr/drives/proposals/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/recorded-outside/loading.tsx`
 - [ ] `src/app/(authenticated)/hr/home/loading.tsx`
@@ -665,7 +665,7 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/mentor/activity/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/calendar/loading.tsx`
 - [ ] `src/app/(authenticated)/mentor/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/loading.tsx`
+- [ ] `src/app/(authenticated)/mentor/notifications/loading.tsx` — migrated with source-label preservation; strict parity open
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
@@ -1160,7 +1160,7 @@ Every item below requires inspection. Routes already using shared components may
 - [ ] `src/app/(authenticated)/tpo/settings/recruiters/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/rules/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/season/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/see/loading.tsx`
+- [ ] `src/app/(authenticated)/tpo/settings/see/loading.tsx` — migrated with source-label preservation; strict parity open
 - [ ] `src/app/(authenticated)/tpo/settings/team/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/templates/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/trusted/loading.tsx` — shared source state migrated in extended sprint; strict visual proof pending
