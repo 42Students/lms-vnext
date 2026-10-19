@@ -89,7 +89,7 @@ export default async function TpoWhatCompaniesSeePage() {
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4">
             <p className="text-xs font-semibold text-muted-foreground">
               Sharing flags enabled
             </p>
@@ -98,7 +98,7 @@ export default async function TpoWhatCompaniesSeePage() {
             </p>
           </div>
 
-          <div className="rounded-lg bg-surface-subtle p-4">
+          <div className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4">
             <p className="text-xs font-semibold text-muted-foreground">
               Sharing flags disabled
             </p>
@@ -132,7 +132,7 @@ export default async function TpoWhatCompaniesSeePage() {
           {settings.fields.map((field) => (
             <article
               key={field.key}
-              className="rounded-xl border border-border bg-surface p-5"
+              className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <h4 className="m-0 text-base font-semibold text-foreground">

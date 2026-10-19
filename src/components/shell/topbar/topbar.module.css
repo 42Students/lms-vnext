@@ -71,3 +71,11 @@
 .recruiterBell > div > button > span { line-height:15px !important; }
 .searchBox:focus-visible,.iconButton:focus-visible,.new:focus-visible,.avatar:focus-visible { outline:2px solid #0a7c88; outline-offset:2px; }
 @media (prefers-reduced-motion:no-preference) { .new,.iconButton,.avatar { transition:background-color .15s ease, color .15s ease; } }
+
+/* Header-owned quick-create menu: preserve legacy TPO action choices. */
+.createMenu { position:relative; flex:none; }
+.createMenu > summary { list-style:none; cursor:pointer; }
+.createMenu > summary::-webkit-details-marker { display:none; }
+.createOptions { position:absolute; top:calc(100% + 8px); right:0; z-index:65; width:min(285px,calc(100vw - 24px)); padding:10px; border:1px solid #e7ecf2; border-radius:9px; background:#fff; box-shadow:9px 11px 28px rgba(0,0,0,.1); }
+.followupAction { display:block; padding:4px 10px; color:#0a7c88; }
+.createMenu[open] > summary { outline:2px solid #0a7c88; outline-offset:2px; }

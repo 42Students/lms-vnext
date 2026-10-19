@@ -55,7 +55,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
   return (
     <form
       onSubmit={submit}
-      className="flex flex-col gap-3 - sm:flex-row sm:items-end border-t border-border pt-4"
+      className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-end"
     >
       <div className="min-w-0 flex-1">
         <label

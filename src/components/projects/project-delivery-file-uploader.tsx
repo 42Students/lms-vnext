@@ -48,10 +48,10 @@ export function ProjectDeliveryFileUploader({projectId,disabled,onUploaded}:{
    setFile(null);setProgress(0);
   }catch(e){setError(e instanceof Error?e.message:"File upload failed.");}finally{setBusy(false);}
  }
- return <div className="space-y-2 rounded-lg border border-border p-3">
+ return <div className="space-y-3 border-b border-border pb-4">
   <label className="block text-sm font-semibold">Upload a file (up to 50 MB)
    <input type="file" accept={acceptAttributeFor("project-resource")} disabled={disabled||busy}
-    className="mt-2 block w-full text-sm" onChange={e=>setFile(e.target.files?.[0]??null)}/>
+    className="mt-2 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link" onChange={e=>setFile(e.target.files?.[0]??null)}/>
   </label>
   <Button type="button" onClick={()=>void upload()} disabled={disabled||busy||!file}
    className="">

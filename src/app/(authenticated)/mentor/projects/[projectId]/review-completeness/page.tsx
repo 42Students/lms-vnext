@@ -31,7 +31,7 @@ export default async function MentorProjectReviewCompletenessPage({
         Delivery workspace
       </Link>} />
     {!data.enabled?<section role="status"
-      className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Delivery history was not loaded.
     </section>:<>
       <p className="text-sm text-body">
@@ -40,8 +40,8 @@ export default async function MentorProjectReviewCompletenessPage({
       </p>
       {data.items.length===0?<EmptyState title="No registered delivery versions"
         description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history."/>
-      :<ol className="grid gap-3">{data.items.map(item=>
-        <li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+      :<ol className="divide-y divide-border">{data.items.map(item=>
+        <li key={item.id} className="py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-semibold text-foreground">Delivery version {item.version}</h2>
             <span className="text-sm font-semibold text-body">{item.status}</span>

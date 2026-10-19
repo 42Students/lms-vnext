@@ -5,7 +5,7 @@ import {Drawer} from "@/components/ui/drawer";
 const go:Record<string,string>={h:"/tpo/home",b:"/tpo/batches",d:"/tpo/placements",s:"/tpo/students",e:"/tpo/recruiters",c:"/tpo/calendar",r:"/tpo/requests",m:"/tpo/messages",p:"/tpo/reports",t:"/tpo/settings"};
 const make:Record<string,string>={l:"/tpo/recruiters?add=1",d:"/tpo/placements/new"};
 const goLabels:Record<string,string>={h:"Home",b:"Batches",d:"Drives",s:"Students",e:"Engage",c:"Calendar",r:"Requests",m:"Messages",p:"Reports",t:"Settings"};
-export function TpoKeyboardShortcuts(){
+export function TpoKeyboardShortcuts({showTrigger=true}:{showTrigger?:boolean}={}){
  const router=useRouter(),[open,setOpen]=useState(false);
  const prefix=useRef<"g"|"n"|null>(null);
  useEffect(()=>{
@@ -25,8 +25,8 @@ export function TpoKeyboardShortcuts(){
   document.addEventListener("keydown",onKey);
   return ()=>{document.removeEventListener("keydown",onKey);if(timeout)clearTimeout(timeout);};
  },[router,open]);
- return <><button type="button" aria-label="Keyboard shortcuts" onClick={()=>setOpen(true)}
-  className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text">?</button>
+ return <>{showTrigger?<button type="button" aria-label="Keyboard shortcuts" onClick={()=>setOpen(true)}
+  className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text">?</button>:null}
   <Drawer title="Keyboard shortcuts" open={open} onOpenChange={setOpen}
    description="Press a key, then the next one. They do nothing while you are typing in a box.">
    <h3 className="font-semibold">Go to</h3>

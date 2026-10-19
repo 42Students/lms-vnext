@@ -24,12 +24,12 @@ export function ProjectResourceOpenLink({url,linkText="Open resource ↗"}:{
   }else setNotice("");
  }
  return <div className="mt-3 space-y-2 text-sm">
-  <Button variant="ghost" type="button" onClick={open} className="text-primary-text underline">
+  <Button variant="ghost" type="button" onClick={open} className="text-link underline">
    {linkText}
   </Button>
-  {notice?<div role="status" className="rounded-md border border-border p-2 text-body">
+  {notice?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-2 text-body">
    <p>{notice}</p><a href={safe} target="_blank" rel="noopener noreferrer"
-    className="mt-1 block break-all font-semibold text-primary-text underline">{safe}</a>
+    className="mt-1 block break-all font-semibold text-link underline">{safe}</a>
   </div>:null}
  </div>;
 }
