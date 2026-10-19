@@ -1,4 +1,6 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
+import {CourseChoiceControl} from "./course-choice-control";
 
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
@@ -44,14 +46,14 @@ export function FacultyQuizLearnerPreview({quizId,deliveryId}:{
    {loading?<p role="status" className="text-sm">Loading quiz…</p>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    {preview?<><label className="flex items-center gap-2 text-sm">
-    <input type="checkbox" checked={answers} onChange={e=>setAnswers(e.target.checked)}/>
+    <Checkbox checked={answers} onChange={e=>setAnswers(e.target.checked)}/>
     Show answer key (faculty only)
    </label>
    {preview.questions.map((q,i)=><fieldset key={q.id} className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
     <legend className="font-semibold text-sm">Question {i+1} · {q.points} points</legend>
     <p className="whitespace-pre-wrap break-words text-sm">{q.prompt}</p>
     {q.options.map(o=><label key={o.id} className="flex gap-2 text-sm">
-     <input type={q.type==="SINGLE_CHOICE"?"radio":"checkbox"} disabled name={"preview-"+q.id}/>
+     <CourseChoiceControl single={q.type==="SINGLE_CHOICE"} disabled name={"preview-"+q.id}/>
      <span>{o.text}</span>
      {answers&&o.correct?<span className="text-success">(Correct)</span>:null}
     </label>)}
