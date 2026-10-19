@@ -34,17 +34,17 @@ export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
   }catch(reason){setError(reason instanceof Error?reason.message:"Could not hand over work. Try again.");}
   finally{pending.current=false;setBusy(false);}
  }
- return <section aria-label={"Hand over "+sourceName+"'s placement work"} className="mt-3 space-y-2">
+ return <section aria-label={"Hand over "+sourceName+"'s placement work"} className="mt-3 min-w-0 space-y-2 border-t border-border pt-3">
   <label className="grid gap-1 text-sm text-body">Who takes over?
    <Select value={target} onChange={event=>setTarget(event.target.value)} disabled={busy}
-    className="min-h-11 min-[768px]:min-h-9">
+    className="min-h-11 md:min-h-9">
     <option value="">Choose an active placement team member</option>
     {members.filter(member=>member.membershipId!==sourceMembershipId).map(member=>
      <option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </Select>
   </label>
   <Button type="button" variant="secondary" disabled={!target||busy} onClick={()=>void handover()}
-   className="min-h-11 min-[768px]:min-h-9">
+   className="min-h-11 md:min-h-9">
    {busy?"Handing over…":"Hand over work"}
   </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
