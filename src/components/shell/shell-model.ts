@@ -82,20 +82,40 @@ export const SHELL_SECTION_LABELS:ReadOnly<Record<NonNullable<ShellNavItem["grou
  operate:"Operate",coordinate:"Coordinate",insights:"Insights",
  administration:"Administration",
 };
-/** A multi-role identity may enter TPO and teaching in separate workspaces.
- * The rail must not interleave Faculty and TPO routes as one menu. Do not
- * prune any single-role menu or the intentionally linked College placement cell. */
-export function scopedShellNavigation(items:readonly ShellNavItem[],pathname:string):ShellNavItem[]{
- const teaching=items.some(item=>item.href.startsWith("/teacher/"));
- const placement=items.some(item=>item.href.startsWith("/tpo/"));
- if(!teaching||!placement)return [...items];
- const isTeacher=pathname==="/teacher"||pathname.startsWith("/teacher/");
- const isTpo=pathname==="/tpo"||pathname.startsWith("/tpo/");
- const scope=isTeacher?"/teacher/":isTpo?"/tpo/":
-  (items.find(item=>item.href.startsWith("/teacher/")||item.href.startsWith("/tpo/"))
-   ?.href.startsWith("/teacher/")?"/teacher/":"/tpo/");
- return items.filter(item=>item.href.startsWith(scope)||
-  (!item.href.startsWith("/teacher/")&&!item.href.startsWith("/tpo/")));
+/** Map a navigation destination to its owning legacy account portal. */
+function navPortal(href: string): string | null {
+ if (href === "/dashboard") return null;
+ if (href === "/college" || href.startsWith("/college/")) return "college";
+ if (href === "/recruiter" || href.startsWith("/recruiter/")) return "hr";
+ for (const prefix of ["teacher", "tpo", "learn", "mentor", "hr", "admin"]) {
+  if (href === `/${prefix}` || href.startsWith(`/${prefix}/`)) return prefix;
+ }
+ return null;
+}
+
+/** The old LMS mounts one account sidebar at a time. Multiple memberships
+ * must not combine learner, mentor, teacher, TPO and recruiter menus.
+ * Single-role college admins retain their one explicit Placement cell link.
+ * The general Dashboard link remains a safe cross-workspace escape. */
+export function scopedShellNavigation(items: readonly ShellNavItem[], pathname: string): ShellNavItem[] {
+ const counts = new Map<string, number>();
+ for (const item of items) {
+  const portal = navPortal(item.href);
+  if (portal) counts.set(portal, (counts.get(portal) ?? 0) + 1);
+ }
+ const substantial = ["learn", "teacher", "mentor", "tpo", "hr", "college"]
+  .filter(portal => (counts.get(portal) ?? 0) > 1);
+ const teacherAndTpo = counts.has("teacher") && counts.has("tpo");
+ if (substantial.length < 2 && !teacherAndTpo) return [...items];
+ const pathPortal = navPortal(pathname);
+ const selected = pathPortal && counts.has(pathPortal) ? pathPortal :
+  substantial[0] ?? (counts.has("teacher") ? "teacher" : "tpo");
+ return items.filter(item => {
+  const portal = navPortal(item.href);
+  return !portal || portal === selected ||
+   (selected === "college" && item.label === "Placement cell" && item.href === "/tpo/home") ||
+   (portal === "college" && counts.get("college") === 1);
+ });
 }
 
 const dashboard: ShellNavItem = {
