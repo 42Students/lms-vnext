@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
+import {MetricBar} from "@/components/ui/metric-bar";
+import chartStyles from "./legacy-company-bar.module.css";
 
 import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
@@ -273,7 +275,7 @@ export function TpoCompanyMemoryWorkspace({
             {company.hiredPerYear.map(item=>(
               <li key={item.year} className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
                 <span>{item.year}</span>
-                <MetricBar size="default" role="img" label={item.hired+" joined learners in "+item.year}
+                <MetricBar size="default" role="img" className={chartStyles.branchBar} label={item.hired+" joined learners in "+item.year}
                   value={item.hired} maximum={Math.max(1,...company.hiredPerYear.map(row=>row.hired))} />
                 <strong className="text-right tabular-nums">{item.hired}</strong>
               </li>
