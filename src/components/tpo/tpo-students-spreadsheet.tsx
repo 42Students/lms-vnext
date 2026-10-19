@@ -12,6 +12,7 @@ import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
 import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard-model";
 import {exportTpoStudentsCsv} from "@/modules/placements/tpo-students-csv";
+import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -133,7 +134,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const anchor=document.createElement("a");
-    anchor.href=url;anchor.download="selected-tpo-students.csv";document.body.appendChild(anchor);
+    anchor.href=url;anchor.download=legacyGridExportFilename("students","csv");document.body.appendChild(anchor);
     anchor.click();anchor.remove();
    }finally{URL.revokeObjectURL(url);}
   }catch{setDownloadError("Could not prepare the selected CSV. Please try again.");}
