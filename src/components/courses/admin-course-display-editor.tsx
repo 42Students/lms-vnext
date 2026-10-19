@@ -140,7 +140,7 @@ export function AdminCourseDisplayEditor({
         <label className="text-sm font-semibold text-body">
           Introduction
           <Input
-            className="mt-1.5"
+            className="mt-1.5 min-h-11 md:min-h-9"
             value={introductionText}
             maxLength={500}
             placeholder="One-line hook for the Course Home page"
@@ -192,7 +192,7 @@ export function AdminCourseDisplayEditor({
         <label className="text-sm font-semibold text-body">
           Thumbnail URL
           <Input
-            className="mt-1.5"
+            className="mt-1.5 min-h-11 md:min-h-9"
             type="url"
             inputMode="url"
             value={thumbnailUrl}
@@ -213,6 +213,7 @@ export function AdminCourseDisplayEditor({
       <div className="mt-5 flex justify-end">
         <Button
           type="button"
+          className="min-h-11 md:min-h-9"
           disabled={pending}
           onClick={save}
         >
