@@ -126,6 +126,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
           ? "Sign out everywhere else. This device stays signed in."
           : "Sign out this device. You can sign in again later."}
         confirmLabel={confirmation?.label??"Sign out"}
+        confirmVariant="danger"
         pending={pending||busy!==null}
         onConfirm={()=>{if(confirmation)run(confirmation.key,confirmation.url,confirmation.success);}}
       />
