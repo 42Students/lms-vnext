@@ -69,22 +69,22 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/learner-project-board-search.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/learner-project-goals.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/learner-project-mobile-filters.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/learner-project-tabs.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/learner-project-tabs.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 12 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [ ] `src/components/projects/learner-task-progress-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/learner-task-status-actions.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-board-task-detail-dialog.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/mentor-calendar-load-failure.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/mentor-calendar-load-failure.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 8 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [ ] `src/components/projects/mentor-delivery-lock-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-lane-board.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/mentor-meeting-history.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/mentor-meeting-history.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 10 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [ ] `src/components/projects/mentor-meeting-notes-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-meeting-reschedule.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-meetings-calendar.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-product-backlog.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-project-about-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-project-closeout-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/mentor-project-tabs.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/mentor-projects-unavailable.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/mentor-project-tabs.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 12 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
+- [x] `src/components/projects/mentor-projects-unavailable.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 10 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [ ] `src/components/projects/mentor-release-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-sprint-delete-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-sprint-details-edit.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -98,17 +98,17 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/project-admin-at-risk-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-admin-audit-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-admin-collection-controls.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-admin-missing-college.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-admin-nav.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/project-admin-missing-college.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 8 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
+- [x] `src/components/projects/project-admin-nav.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 12 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-admin-readiness-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-admin-submission-review.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-admin-submissions-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-admin-workspace-list.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-admin-workspace-page-export.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/project-admin-workspace-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-archive-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-at-risk-page-export.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-audit-page-export.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/project-at-risk-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
+- [x] `src/components/projects/project-audit-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-create-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-delivery-evidence-download.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-delivery-file-uploader.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -124,28 +124,28 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/project-resource-files-panel.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-resource-files-section.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-resource-list.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-resource-open-link.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-submissions-page-export.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/project-resource-open-link.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 10 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
+- [x] `src/components/projects/project-submissions-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-task-assignee-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-task-comments.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-task-submission-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-team-controls.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-template-catalogue-export.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/project-template-catalogue-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-template-controls.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-template-view.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-workspace-page-export.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/project-workspace-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-workspace-readiness.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-workspace.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-archive-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-college-bulk.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-create-form.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-overview-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/super-admin-template-page-export.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/super-admin-template-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/super-admin-template-plan-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-resource-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-rollback-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/super-admin-template-subview-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/super-admin-template-tabs.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/super-admin-template-tabs.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 12 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [ ] `src/components/projects/template-metadata-edit-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/workspace-brief-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 
@@ -293,3 +293,179 @@ The duplicate PageHeader import was removed (one import retained) and eight shar
 ### Repeat-pattern source fix applied
 
 The existing scripts/codemods/chat8-dedupe-page-header-imports.cjs pattern was applied through the GitHub file API to seven owned Mentor pages in one atomic tree update: calendar/page.tsx; projects/[projectId]/{board-review,review-overview,risk-readiness,team-meetings,timeline}/page.tsx; reports/page.tsx. Pre-update source count = 2 PageHeader imports per file; post-update source count = 1; 7 duplicates removed, 7 unaffected component bodies/JSX trees retained. This removes a duplicate-binding compile hazard, not proof of whole-page visual parity. These pages remain unticked until their individual value/coverage/responsive tables are closed.
+
+## chat-8 follow-up: completed shared-component wrappers and project tabs
+
+### Verification scope and commands
+
+This record uses **GitHub file reads and regex counts over the complete source strings**; no local repo, application execution, CI, browser screenshot or computed-style testing was performed. Use the same commands in the orchestrator checkout to repeat the source proof:
+
+~~~sh
+rg -n '<(button|select|input|textarea)([[:space:]/>])|#[a-fA-F0-9]{3,8}|fixed inset-0|role="dialog"|role="tab"|aria-pressed' \
+  src/components/projects/{mentor-project-tabs,learner-project-tabs,super-admin-template-tabs,project-admin-missing-college,mentor-calendar-load-failure,mentor-projects-unavailable,mentor-meeting-history,project-resource-open-link}.tsx
+# Expected matches from the GitHub full-file scans: 0
+rg -n '#[a-fA-F0-9]{3,8}' src/components/projects/legacy-project-tabs.module.css
+# Expected matches from the GitHub full-file scan: 0
+rg -n 'className=\{styles\.legacy\}' src/components/projects/{mentor-project-tabs,learner-project-tabs,super-admin-template-tabs}.tsx
+# Expected: 3 lines, one per wrapper
+~~~
+
+Actual source read counts, in the order listed above: raw JSX controls [0,0,0,0,0,0,0,0], raw hex [0,0,0,0,0,0,0,0], hand-rolled dialogs [0,0,0,0,0,0,0,0], manual tab controls [0,0,0,0,0,0,0,0]. The tab wrappers contain exactly one shared Tabs each; the other five use only shared Banner, PageHeader, PageBackLink, Button and Alert primitives, or plain semantic list rows. Literal screen-specific styles are described in each value table. The files maintain their original component exports, props, navigation destinations, callback behavior and JSX tag names.
+
+### A. MentorProjectTabs / LearnerProjectTabs / SuperAdminTemplateTabs
+
+The three wrappers share one presentation proof: src/components/ui/tabs.tsx:69-95, src/components/ui/scroll-cue.tsx:47-69, src/components/projects/legacy-project-tabs.module.css:1-19, and src/app/globals.css:21,37,342,485-510,931-950. No new tab implementation or panel is introduced. Each wrapper now passes className={styles.legacy} into its existing shared Tabs. This is a paint-only override of the active/hover text token, scoped to these three owned wrappers.
+
+| Property/state (12 checked for **each** wrapper) | Legacy exact file:line/value | vNext exact file:line/value | Match |
+|---|---|---|---|
+| Tabs outside cards | old-lms-pages.md:6,9 — canvas, no card | tabs.tsx:70-71,88 — transparent nav, no card; globals.css:931-935 | yes |
+| Font size | components___common.scss:365-374,461-470 — 13px | tabs.tsx:83,90 and globals.css:936-943 — 13px | yes |
+| Font weight | components___common.scss:371,467 — 600 | tabs.tsx:83,90 — semibold | yes |
+| Line height | components___common.scss:373,469 — 16px | tabs.tsx:83,90 — leading-4 (16px) | yes |
+| Default label colour | components___common.scss:374,470; variables.scss:28 — #a9a7ae | tabs.tsx:84,91 and globals.css:37 — neutral-400 | yes |
+| Active label colour | components___common.scss:403-415,495-505; variables.scss:10 — #26bac7 | legacy-project-tabs.module.css:10-12 — var(--lms-primary), globals.css:21 | yes |
+| Hover label colour | components___common.scss:399-401; variables.scss:10 — #26bac7 | legacy-project-tabs.module.css:13-15 — var(--lms-primary) | yes |
+| Underline height and paint | components___common.scss:381-392,477-488 — 3px #26bac7 | tabs.tsx:83,90 — after:h-[3px], after:bg primary | yes |
+| Active underline reveal | components___common.scss:407-415,499-507 — 0 -> 100%, opacity 0 -> 1 | tabs.tsx:83-91 — after:w-0 to after:w-full, after:opacity-100 | yes |
+| Underline transition | components___common.scss:389,485 — width/opacity 200ms ease-in-out | tabs.tsx:83,90 — after:duration-200 after:ease-in-out | yes |
+| Gap desktop/large | components___common.scss:466,473-475 — 20px, >=1600px 40px | globals.css:342; tabs.tsx:71,88 — 20px, min-[1600px] 40px | yes |
+| Keyboard and overflow | components___common.scss:443-450; components___accessibility.scss:18-23 — horizontal overflow with 2px teal visible focus | tabs.tsx:71,88,90; scroll-cue.tsx:47-69; globals.css:403-409 — horizontal scroll, visible 2px focus | yes |
+
+**File-specific proof:** mentor-project-tabs.tsx:6-25 retains 8 labels and aliases tasks=>board, meetings=>team; learner-project-tabs.tsx:8-18 retains canonicalLearnerProjectTab and its URL preservation; super-admin-template-tabs.tsx:9-26 retains server-provided counts only when loaded and typed TemplateSubview navigation. The shared Tabs disabled case renders aria-disabled spans, not clickable hrefs (tabs.tsx:88-93). No active tab produces a manual/button copy. Desktop/phone/tablet source: the same nav DOM at <=767px and 768-1599px, ScrollCue supplies horizontal overflow, >=1600px increases gap to 40px. Reduced-motion CSS module:16-19 and tabs.tsx:83,90 remove animation for reduced-motion devices. This is static responsive proof, not a screenshot.
+
+### B. ProjectAdminMissingCollege
+
+| Property/state (8 checked) | Legacy | vNext | Match |
+|---|---|---|---|
+| Page head text | old-lms-pages.md:7; old-lms-shell-spec.md:26-27 — 30px/600/#172033 | project-admin-missing-college.tsx:7 delegates PageHeader; ui/page-header.tsx:27-35 | yes |
+| Title phone | legacy listing-page-header.scss:130-140 — 20px | PageHeader.tsx:28-35 — 20px before md | yes |
+| Banner layout | old-lms-pages.md:7 — one slim strip + action | project-admin-missing-college.tsx:8-10 uses shared Banner action | yes |
+| Banner size/radius | old-lms-shell-spec.md:22-24 — 9px controls; old-lms-pages.md:12 — slim notice | Banner.tsx:18-21; globals.css:672-677 — 9px, 13px/20px | yes |
+| Banner warning tone | old-lms-pages.md:12 — pale-yellow | Banner.tsx:12; globals.css:1076-1077 warning surface/border | yes |
+| Back affordance | legacy learn-layout.scss:361-383 — left arrow, min 44px, subdued text, teal hover | project-admin-missing-college.tsx:8; ui/page-back-link.tsx:16-29 | yes |
+| Mobile icon-only back | learn-layout.scss:378-383 — label hidden up to 767px | ui/page-back-link.tsx:28 — hidden md:inline, accessible aria-label | yes |
+| Single canvas/overflow | old-lms-pages.md:6 — no nested card | project-admin-missing-college.tsx:6 — min-w-0 space-y-4; shared banner only | yes |
+
+Coverage: 0 raw controls, 0 literal hex, 0 hand tabs/overlay; PageHeader=1, Banner=1, PageBackLink=1. No interactions aside from the shared accessible back link. Responsive 0-767px icon-only; >=768px label appears, without constraining the canvas.
+
+### C. MentorCalendarLoadFailure
+
+| Property/state (8 checked) | Legacy | vNext | Match |
+|---|---|---|---|
+| No nested card | old-lms-pages.md:6-7 — inline notice | mentor-calendar-load-failure.tsx:10-13 — Banner only | yes |
+| Error semantic colour | legacy variables.scss:71-72 — #ef4444/status error | ui/banner.tsx:13,18 — error token family | yes |
+| Error role | legacy accessibility.scss:18-23 — accessible status/focus | ui/banner.tsx:18 — role alert on error | yes |
+| Notice font | old-lms-pages.md:12 — compact strip | ui/banner.tsx:19; globals.css:672-677 — 13px/20px | yes |
+| Notice radius | old-lms-shell-spec.md:22-24 — 9px | ui/banner.tsx:19; globals.css:672-677 — 9px | yes |
+| Retry button | old-lms-pages.md:12 — outlined secondary action | mentor-calendar-load-failure.tsx:10-11 — shared secondary Button | yes |
+| Retry desktop/touch | old-lms-shell-spec.md:22-24 36px, legacy variables.scss:139,148 44px to 767px | globals.css:341,619-620 — 36/44px | yes |
+| Focus and loading/failed state | legacy accessibility.scss:18-23 — visible ring | shared Button.tsx:25-29, globals.css:399-409; retries router.refresh | yes |
+
+Coverage: raw button=0, modal=0, custom hex=0, Banner=1, Button=1. No loading mutation; this component exists only in the failure branch. Retry remains reachable by keyboard at both breakpoints; no page-level sizing.
+
+### D. MentorProjectsUnavailable
+
+| Property/state (10 checked) | Legacy | vNext | Match |
+|---|---|---|---|
+| Header | old-lms-shell-spec.md:26-27 — 30/600 heading | mentor-projects-unavailable.tsx:7-8 shared PageHeader | yes |
+| Mobile header | listing-page-header.scss:130-140 — 20px, stacked | shared PageHeader:27-50 | yes |
+| One canvas | old-lms-pages.md:6 — one surface | mentor-projects-unavailable.tsx:6 — space-y only | yes |
+| Inline banner | old-lms-pages.md:12 — slim warning | ui/banner.tsx:18-21 | yes |
+| Disabled warning | old-lms-pages.md:12 — pale yellow notice | mentor-projects-unavailable.tsx:9 — warning | yes |
+| Failed-error branch | variables.scss:71-72 — error family | mentor-projects-unavailable.tsx:9 — error | yes |
+| Status role | legacy accessibility.scss:18-23 — accessible states | ui/banner.tsx:18 — warning status / error alert | yes |
+| Retry only on failure | old-lms-pages.md:12 — contextual action | mentor-projects-unavailable.tsx:11 — failure branch only | yes |
+| Links/focus | legacy common.scss:68-75; accessibility.scss:18-23 — teal underline/visible focus | mentor-projects-unavailable.tsx:11-12 — text-link, underline, focus ring | yes |
+| Phone/tablet actions | variables.scss:139,148 — 44px touch <=767px, then content may wrap | mentor-projects-unavailable.tsx:10-12 — min-h-11 and flex-wrap, no fixed widths | yes |
+
+Coverage: raw controls=0, hex=0, hand-rolled overlays=0, PageHeader=1, Banner=1, two safe Link destinations. Error/warning, retry presence, and empty project-access state all remain driven by existing loadFailed prop; no new content or unsafe navigation.
+
+### E. MentorMeetingHistory
+
+| Property/state (10 checked) | Legacy | vNext | Match |
+|---|---|---|---|
+| Continuous section | old-lms-pages.md:6,11 — list, no card | mentor-meeting-history.tsx:19 — section with spacing only | yes |
+| Section font | legacy variables.scss:24-27; old-lms-shell-spec.md:26-27 — heading semibold/body 14px | mentor-meeting-history.tsx:19-20 — text-sm, font-semibold | yes |
+| Borders | common.scss:700-713; variables.scss:30 — 1px #e5e9f0 separators | mentor-meeting-history.tsx:22 — divide-y/border-y canvas token | yes |
+| Row padding | common.scss:720-726 — compact 12px vertical | mentor-meeting-history.tsx:23; globals.css:352 — lms-space-3=12px | yes |
+| Body/metadata | variables.scss:27, old-lms-pages.md:6 — muted secondary detail | mentor-meeting-history.tsx:24-25 — font-medium title, muted text-xs detail | yes |
+| Empty state | old-lms-pages.md:6 — simple inline description | mentor-meeting-history.tsx:21 — no past meetings text without card | yes |
+| Preview cap | content untouched | mentor-meeting-history.tsx:8,18 — 6 visible then expanded | yes |
+| Secondary action | old-lms-pages.md:12, old-lms-shell-spec.md:22-24 — outline and 36px | mentor-meeting-history.tsx:28-32; shared Button secondary | yes |
+| Phone touch | variables.scss:139,148 — 44px through 767px | mentor-meeting-history.tsx:30 — min-h-11 md:min-h-9 | yes |
+| Expanded/focus, time | legacy accessibility.scss:18-23 — focus-visible; IST site default | mentor-meeting-history.tsx:9-13,28-32 — aria-expanded, callback, IST formatted | yes |
+
+Coverage: raw controls=0, hex=0, overlays/tabs=0, list rendered only for rows, SharedButton=1; source checked full 35 lines. No fixed-width columns; long rows naturally wrap. Tablet >=768px uses the 36px shared button, phone <=767px 44px. The reveal and collapse states retain identical content and handler.
+
+### F. ProjectResourceOpenLink
+
+| Property/state (10 checked) | Legacy | vNext | Match |
+|---|---|---|---|
+| Empty information | old-lms-pages.md:12 — slim in-canvas message | project-resource-open-link.tsx:15 shared Alert info | yes |
+| Invalid address error | variables.scss:71-72 — error tone | project-resource-open-link.tsx:16 shared Alert error | yes |
+| Shared message radius | old-lms-shell-spec.md:22-24 — 9px | ui/alert.tsx:16-21; globals.css:672-677 | yes |
+| Inline control | old-lms-pages.md:6-7 — no extra card | project-resource-open-link.tsx:24-27 ghost Button in text flow | yes |
+| Link hover | legacy common.scss:68-75 — interactive teal/underline | project-resource-open-link.tsx:25 + ui/button.tsx:13 and globals.css:659-661 | yes |
+| Control desktop height | old-lms-shell-spec.md:22-24 — 36px | shared Button.tsx:25-29; globals.css:341,384-393 | yes |
+| Control phone height | legacy variables.scss:139,148 — 44px | globals.css:619-620 | yes |
+| Blocked popup warning | old-lms-pages.md:12 — inline warning with recovery | project-resource-open-link.tsx:20-31 uses Banner warning | yes |
+| Recovery action focus/size | legacy accessibility.scss:18-23; variables.scss:139 — focus and 44px | project-resource-open-link.tsx:28-29 — min-h-11 and focus ring | yes |
+| Long safe URL/permission | old-lms-pages.md:6 — no overflow | project-resource-open-link.tsx:14,18-19,28-29 uses validated href, break-all, noopener noreferrer | yes |
+
+Coverage: raw controls=0, hex=0, hand-rolled modal=0, shared Button=1/Banner=1/Alert branches=2. Component retains absent/invalid/safe/blocked-popup behavior and destination filtering. On mobile the recovery link flexes with max-w-full, wraps URL text and stays >=44px. On tablet and desktop it inherits the same inline banner and 36px shared Button.
+
+### Remaining exceptions deliberately unticked
+
+The six native project confirmations from mentor-sprint-delete-control, mentor-delivery-lock-control, super-admin-template-archive-control, workspace-brief-editor, super-admin-template-rollback-control and college-project-summary-editor were migrated from window.confirm() to useConfirmFlow() using the existing scripts/codemods/chat8-project-confirmations.cjs logic. Full-file post-edit reads confirm one askConfirm, one dialog, zero native window.confirm per file. Inline-root span controls are wrapped in JSX fragments, not invalid span > dialog nesting. These **remain unticked** pending each file's editor/confirmation state table and responsive inspection. The existing codemod was corrected to use that fragment branch.
+
+The Mentor activity and calendar pages also remain unticked for known shared-field and shared-filter breakpoints documented earlier in this audit. No visual screenshot claims are made here; the orchestrator's separate screenshot pass is still required for the final pixel-level acceptance.
+
+## chat-8 next batch: completed export controls and Project Admin tabs
+
+### Exact coverage method
+
+A GitHub full-file source scan (not a local grep or executed app) covered all eight files below. Source regex checks: raw JSX controls \`/<(button|input|select|textarea)\b/g\`, literal colours \`/#[a-fA-F0-9]{3,8}\b/g\`, hand-built dialogs \`/window.confirm|fixed inset-0|role="dialog"/g\`, and hand-built tabs \`/role="tab"|aria-pressed|border-b-2/g\`. **Actual count for each of these four patterns is zero in each file (32 empty-result checks).** The seven export files each have exactly one shared Button, one secondary variant and a disabled expression; ProjectAdminNav has one shared Tabs, scoped legacy paint and no extra tab UI. Repeat locally with:
+
+~~~sh
+rg -n '<(button|input|select|textarea)\b|#[a-fA-F0-9]{3,8}|window.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed|border-b-2' \
+  src/components/projects/{super-admin-template-page-export,project-audit-page-export,project-admin-workspace-page-export,project-template-catalogue-export,project-submissions-page-export,project-at-risk-page-export,project-workspace-page-export,project-admin-nav}.tsx
+# GitHub source scan of these eight files: 0 matching files/lines
+~~~
+
+### Seven CSV exports: shared visual value table, 10 properties per file
+
+The shared export action is a single existing Button with variant="secondary"; no new nested card, raw control, tooltip, menu or dialog is present. Exact common values:
+
+| Property / interaction state | Legacy source value | vNext source value | Verdict |
+|---|---|---|---|
+| One export action on the page canvas | old-lms-pages.md:6,7,10 — secondary Export in toolbar, no nested card | each owned export wrapper: a single shared Button; no custom wrapping card | match |
+| Default height | old-lms-shell-spec.md:22-24 — 36px desktop | ui/button.tsx:17-28, globals.css:341,384-393 — min 36px | match |
+| Phone touch height | legacy variables.scss:138-139,148 — 44px through <=767px | globals.css:619-620 — shared Button min 44px | match |
+| Font | old-lms-shell-spec.md:22-24 — 14px, weight 650 | ui/button.tsx:19,25-28; globals.css:389-393 — 14px/650 | match |
+| Radius | old-lms-shell-spec.md:22-24 — 9px | globals.css:343,384-388, ui/button.tsx:28 — 9px | match |
+| Secondary default paint | legacy variables.scss:25,91; components___button.scss:120-137 — #54505d on white, 1px #bfc9da outline | ui/button.tsx:12; globals.css:649-652 — same tokens/values | match |
+| Secondary hover | legacy components___button.scss:130-138; variables.scss:10,37 — teal background/border with white text | ui/button.tsx:12; globals.css:654-658 — teal/white | match |
+| Keyboard focus | legacy accessibility.scss:18-23 — 2px teal outline, offset 3px | ui/button.tsx:28; globals.css:876-880 — 2px teal, offset 3px | match |
+| Disabled empty rows | legacy variables.scss:27-32; form.scss:29-36 — visually muted/inert disabled affordance | export wrappers disabled when rows/items length zero; ui/button.tsx:25-29, globals.css:1158-1161 | match via shared primitive |
+| Click/data behavior | owner instruction: keep existing vNext content and behavior, old-lms-pages.md:3 | existing synchronous onClick CSV generation, scopes and filenames untouched | preserved |
+
+**Per-file state and content proof** (all files 0 manual paint; buttons from shared):
+| Completed export component | Source line of Button / state | Scoped behavior preserved | Responsive proof |
+|---|---|---|---|
+| super-admin-template-page-export.tsx | 15-18, disabled !items.length | 5 columns, project-templates-page.csv | shared 36px desktop/44px phone |
+| project-audit-page-export.tsx | 15-18, disabled !rows.length | visible audit groups, project-audit-log.csv | shared 36/44 |
+| project-admin-workspace-page-export.tsx | 16-19, disabled items.length===0 | only authorized visible page, project-workspaces-page.csv | shared 36/44; changed size=sm to default 14px |
+| project-template-catalogue-export.tsx | 18-21, disabled !rows.length | current scoped catalogue, project-templates.csv | shared 36/44 |
+| project-submissions-page-export.tsx | 32-36, disabled rows.length===0 | visible submission rows, project-submissions-page.csv | shared 36/44 |
+| project-at-risk-page-export.tsx | 26-29, disabled !rows.length | scoped risk page, unchanged dated filename | shared 36/44; changed size=sm to default 14px |
+| project-workspace-page-export.tsx | 21-29, disabled !items.length | visible workspace rows; role=status confirmation stays inline and wraps | shared 36/44 |
+
+The two existing size="sm" Buttons were adjusted to the measured 14px/650 default, preserving their existing export callbacks and labels. The remaining five had the correct default size already. All seven files contain no layout breakpoints of their own; at phone <=767px the shared CSS increases the button target from 36 to 44px, while the containing toolbar (provided by each parent) handles position and wrap. At >=768px, the existing Button stays 36px. Disabled state is supplied by unchanged props; the shared element blocks click when disabled.
+
+### ProjectAdminNav: 12-property tab value proof
+
+This fourth owned project-tab wrapper now uses the same scoped legacy-project-tabs.module.css as the mentor, learner and template tab wrappers. Its value proof is the **same 12 exact matched rows** in the previous A. Tabs table: 13px/600/16px; default #a9a7ae; hover/active #26bac7; 3px underline; 200ms motion; 20px gap, 40px above 1600px; no nested card; horizontal overflow ScrollCue; keyboard focus 2px visible. Sources: legacy components___common.scss:359-415,443-508; vNext ui/tabs.tsx:69-95, src/components/projects/legacy-project-tabs.module.css:10-19, globals.css:21,37,342,931-950. ProjectAdminNav.tsx:1-42 maps 6 unchanged destinations and intentionally returns null on /college/projects or /admin/projects to avoid duplicate navigation. That early-return state has **zero** rendered tab values. Phone <=767, tablet 768-1599 and >=1600 share the same horizontally scrolling tab DOM; label count/selection/disabled states remain owned by the same Tabs implementation. Manual controls=0, manual tabs=0, hardcoded colours=0.
+
+### Remaining source discrepancies
+
+ProjectResourceFilesSection is a non-visual server projection, but it renders ProjectResourceFilesPanel directly; its check box remains unticked until the delegated panel is audited. These export and nav ticks are **source parity**, not a claim of screenshot or browser-computed-pixel validation. The orchestrator owns that later verification stage (ui-clone-checklist.md, section J).

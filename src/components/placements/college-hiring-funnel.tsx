@@ -27,43 +27,43 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     <div><h2 className="font-semibold">Placement Analytics</h2>
      <p className="text-sm text-body">Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below.</p>
     </div>
-    <div className="flex gap-3 text-sm">
-     <Link href={collegeHiringAnalyticsHref({...raw})} className="min-h-11 rounded border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Refresh</Link>
+    <div className="flex flex-wrap gap-3 text-sm print:hidden">
+     <Link href={collegeHiringAnalyticsHref({...raw})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Refresh</Link>
      <a href={"/api/college/placements/hiring-analytics/export"+(exportQuery?"?"+exportQuery:"")}
-      className="min-h-11 rounded border border-border px-4 py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Export CSV</a>
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</a>
     </div>
    </div>
-   <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+   <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 print:hidden">
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
     <input type="hidden" name="jobId" value={selectedJobId??""}/>
     <label className="grid gap-1 text-sm">Department
-     <Select name="departmentId" defaultValue={q.departmentId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+     <Select name="departmentId" defaultValue={q.departmentId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
       <option value="">All departments</option>
       {data.filters.departments.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
     </label>
     <label className="grid gap-1 text-sm">Program
-     <Select name="programId" defaultValue={q.programId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+     <Select name="programId" defaultValue={q.programId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
       <option value="">All programs</option>
       {data.filters.programs.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
     </label>
     <label className="grid gap-1 text-sm">Batch
-     <Select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+     <Select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
       <option value="">All batches</option>
       {data.filters.cohorts.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
     </label>
     <label className="grid gap-1 text-sm">Applied from
-     <Input type="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
+     <Input type="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm"/>
     </label>
     <label className="grid gap-1 text-sm">Applied to
-     <Input type="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
+     <Input type="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm"/>
     </label>
     <div className="flex gap-3 sm:col-span-2 lg:col-span-5">
-     <Button type="submit" >Apply filters</Button>
+     <Button type="submit" className="min-h-11 md:min-h-9">Apply filters</Button>
      <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined})}
-      className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear all</Link>
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear all</Link>
     </div>
    </form>
   </section>

@@ -40,12 +40,12 @@ export function TpoStudentsAssignPrep(){
    });
   }catch{setError("Could not assign preparation. Your selection and due date are kept for retry.");}
  }
- return <section className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4" aria-label="Assign preparation course">
+ return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Assign preparation course">
   <h2 className="font-semibold">Assign prep</h2>
   <p className="text-sm">Choose a college course and an optional due date for up to 100 selected students per batch. Existing assignments are skipped; students receive an in-app notice.</p>
   <p role="status" className="text-xs">{picked.length} students selected. {picked.length>100?"The first 100 will be checked in this batch.":""}</p>
-  <div className="flex flex-wrap gap-3">
-   <label className="grid gap-1 text-sm">Preparation course
+  <div className="flex min-w-0 flex-wrap gap-3">
+   <label className="grid min-w-0 flex-1 gap-1 text-sm">Preparation course
     <Select value={offeringId} onChange={e=>setOfferingId(e.target.value)} disabled={pending}
      >
      <option value="">Choose a course</option>

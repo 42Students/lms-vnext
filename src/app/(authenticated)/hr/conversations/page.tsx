@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/ui/empty-state";
+import {Disclosure} from "@/components/ui/disclosure";
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -112,8 +113,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    <section className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
-    {generalThread?<details className="mt-3 border-b border-border py-3">
-      <summary className="min-h-9 max-md:min-h-11 cursor-pointer rounded-[var(--lms-control-radius)] py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Message the placement cell · General</summary>
+    {generalThread?<Disclosure title="Message the placement cell · General"
+      className="mt-3 border-b border-border py-3 [&>summary]:min-h-11 md:[&>summary]:min-h-9">
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
       {generalThread.preview&&!generalHistory&&!generalHistoryResult?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
@@ -134,7 +135,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       {generalHistoryResult?.ok?<div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>:null}
       <Link href={"/hr/conversations/"+generalThread.id}
         className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open full conversation</Link>
-    </details>:null}
+    </Disclosure>:null}
     {generalLookup && !generalLookup.ok?
       <p role="status" className="mt-3 text-sm text-body">
         General conversation preview is temporarily unavailable. Refresh to try again; existing conversations remain accessible.

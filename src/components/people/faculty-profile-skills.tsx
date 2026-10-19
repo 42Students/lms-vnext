@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
@@ -35,27 +36,27 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
    <p className="mt-1 text-sm text-muted-foreground">Add up to 100 professional skills and optional proficiency levels. Changes are saved only when you submit.</p>
   </div>
   {rows.length===0?<p className="text-sm text-muted-foreground">No skills added yet.</p>:null}
-  {rows.length>5?<label className="block text-sm text-body">Find skill
+  {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find skill
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleSkills.length)}</span>
-    <Button variant="secondary" type="button" className="rounded border border-border px-2 py-1" onClick={()=>setSearch("")}>Clear Skill search</Button>
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setSearch("")}>Clear Skill search</Button>
    </div>:null}
   {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground">No matching skills. Clear the search to show all.</p>:null}
   {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground">Clear search to reorder Skills.</p>:null}
   <div className="space-y-3">
-   {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-    <label className="min-w-0 text-sm font-semibold text-body">Skill {index+1}
+   {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid min-w-0 gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 md:grid-cols-[1fr_1fr_auto] md:items-end">
+    <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Skill {index+1}
      <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.skill}
       maxLength={120} required disabled={pending} onChange={event=>edit(skill.id,"skill",event.target.value)}/>
     </label>
-    <label className="min-w-0 text-sm font-semibold text-body">Proficiency
+    <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Proficiency
      <Input className="mt-1.5 min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.proficiency}
       maxLength={64} disabled={pending} onChange={event=>edit(skill.id,"proficiency",event.target.value)}/>
     </label>
-    <div className="flex flex-wrap gap-2 sm:col-span-3">
+    <div className="flex flex-wrap gap-2 md:col-span-3">
       <Button variant="secondary" type="button" disabled={pending||index===0||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index-1));setChanged(true);}}
        >Move up</Button>
@@ -65,7 +66,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     </div>
     <Button variant="secondary" type="button" disabled={pending} onClick={async()=>{if(!(await askConfirm("Remove skill "+(index+1)+" from the unsaved draft?")))return;
       setRows(current=>removeFacultySkillDraft(current,skill.id));setChanged(true);}}
-     className="text-error">Remove</Button>
+     className="min-h-11 text-error md:min-h-[var(--lms-control-height)]">Remove</Button>
    </div>)}
   </div>
   <div className="flex flex-wrap gap-3">
@@ -79,7 +80,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
      if(!(await askConfirm("Discard unsaved skill edits and restore saved skills?")))return;
      setRows(restoreFacultySkills(initial));setChanged(false);
     }} >Discard unsaved skill edits</Button>:null}
-   {changed&&skillsIssue?<p role="alert" className="text-sm text-error">Review Skills: {skillsIssue}</p>:null}
+   {changed&&skillsIssue?<Alert tone="error">Review Skills: {skillsIssue}</Alert>:null}
    <Button variant="primary" type="submit" disabled={pending||!changed||Boolean(skillsIssue)}
     className="min-h-11 min-[768px]:min-h-9 px-4">
     {pending?"Saving…":"Save skills"}

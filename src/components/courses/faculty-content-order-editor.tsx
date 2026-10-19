@@ -99,7 +99,7 @@ function FacultyContentOrderEditorInner({
   }
 
   return (
-    <section className="mt-3 border-t border-border pt-4">
+    <section className="mt-3 border-t border-border pt-4 max-[767px]:[&_button]:min-h-11">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -117,13 +117,14 @@ function FacultyContentOrderEditorInner({
             Section only. Assessments keep their own sequence.
           </p>
         </div>
-        {dirty ? <Button type="button" size="sm" variant="secondary"
+        {dirty ? <Button type="button" size="md" variant="secondary"
           disabled={pending} onClick={()=>setOrder(facultyResetContentOrder(items))}>
           Reset order
         </Button> : null}
         <Button
           type="button"
-          size="sm"
+          size="md"
+          loading={pending}
           disabled={!enabled || pending || !dirty}
           onClick={save}
         >
@@ -138,17 +139,17 @@ function FacultyContentOrderEditorInner({
           return (
             <li
               key={id}
-              className="flex items-center gap-3 rounded-[var(--lms-control-radius)] bg-surface-subtle px-3 py-2"
+              className="flex min-w-0 items-center gap-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle px-3 py-2 md:gap-3"
             >
-              <span className="w-6 text-xs font-semibold text-muted-foreground">
+              <span className="w-6 shrink-0 text-xs font-semibold text-muted-foreground">
                 {index + 1}.
               </span>
-              <span className="min-w-0 flex-1 truncate text-sm text-body">
+              <span className="min-w-0 flex-1 break-words text-sm text-body">
                 {item.title}
               </span>
               <Button
                 type="button"
-                size="sm"
+                size="md"
                 variant="secondary"
                 aria-label={`Move ${item.title} up`}
                 disabled={
@@ -164,7 +165,7 @@ function FacultyContentOrderEditorInner({
               </Button>
               <Button
                 type="button"
-                size="sm"
+                size="md"
                 variant="secondary"
                 aria-label={`Move ${item.title} down`}
                 disabled={

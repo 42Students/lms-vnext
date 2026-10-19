@@ -418,3 +418,70 @@ grep -nE 'min-h-11|min-w-11|rounded-\[8px\]|leading-\[42px\]|md:min-h-9|onPageCh
 ```
 
 Strict E2 global checklist still **[ ]** pending all portal pagination, full state coverage and side-by-side responsive proof. E1/E3/E4/E5/E8 also remain **[ ]**. Next file after this source batch: `src/components/placements/report-interactive-table.tsx` — assess sort-pressed states and show-more versus actual pagination without changing authorized report rows.
+
+
+## chat-14 replacement E1/E4/E5 continuation — sort states, chips and final simple disclosures
+
+Baseline: chatgpt/chat-14-b was a clean ancestor of inspected origin/main 6807f03 at the start; the branch was fast-forwarded to main (main was never written). Work is exclusively committed/pushed to chatgpt/chat-14-b. No repository code, tests, typecheck, browser, app or CI were executed; all grep-equivalent counts below were obtained from full GitHub-fetched file text after each edit.
+
+### E1 table sorting — value/state/coverage proof
+
+| Property / state | Legacy exact source | Current vNext source | Result |
+|---|---|---|---|
+| Compact header, table hairline and white canvas | old-lms-pages.md:5-11: white canvas, hairlines, compact table with sort icons | src/components/ui/data-table.tsx:96-104: canvas-transparent table, sticky white header from sm, one-pixel bottom line via --lms-canvas-border (#e5e9f0, globals.css:39/339) | Static legacy-token match for hairline; exact sort icon graphic not yet proven |
+| Sorted heading, ascending/descending | old-lms-pages.md:11 and legacy-styles/components___antddesign.scss: table sorter treatment | DataTableColumn.sortDirection optional at data-table.tsx:13; th aria-sort at :100; report-interactive-table.tsx:143 calculates ascending/descending/none from sort+descending | Accessible state correctly propagated, visual computed icon still open |
+| Search / filters / columns / export toolbar | old-lms-pages.md:10-11 toolbar search, Filters, Views, Columns, Export | report-interactive-table.tsx:68-120 includes search, per-column filters, column selector, copy and CSV, reset; original views remain model-specific | Preserved behavior and current page content; not a claim of full global toolbar parity |
+| Mobile table layout | old-lms-pages.md:11 table compact, WCAG touch target legacy-styles/components___antddesign.scss:1081-1100 | ui/data-table.tsx:92-142 existing card projection below sm; report sort choice Select and chip below sm (:121-136) | Source responsive behavior preserved; pixel snapshot pending |
+| Report sort pressed chip | legacy-styles/components___antddesign.scss:1092-1100 role=button tag: min-height 44px and padding 0 12px on phone | report-interactive-table.tsx:131-134 uses FilterChip; ui/filter-chip.tsx:27-35: min-h-11, px-[12px], md:min-h-8, md:px-[15px] | Exact touch/padding rule matched; selected/focus computed states pending |
+
+### E4 source-migrated choice chips — full-file JSX counts and behavior
+
+| Completed source file | New FilterChip opening/closing pairs in fetched file | Raw native button tags | Handler/disabled/selected state still retained |
+|---|---:|---:|---|
+| src/components/tpo/tpo-custom-job-type-placed.tsx | 2 / 2 | 0 | Yes/No counts-as-placed PATCH flow, confirm prompt, version token, not-decided fallback, error; pressed value true/false; busy disable |
+| src/components/tpo/tpo-team-follow-controls.tsx | 2 / 2 | 0 | Follow and Mute choices, ready/pending guards, state updates and API actions; aria-pressed state preserved |
+| src/components/tpo/tpo-team-decision-toggle.tsx | 1 / 1 | 0 | Mark/unmark decision, optimistic expectedMarked payload, pending guard and error; aria-pressed preserved |
+| src/components/tpo/recruiter-leads-workspace.tsx | 3 / 3 | 0 | Existing Needs doing chips remain; newly migrated active filter-clear chip keeps per-key updateFilter and active selected state |
+| src/components/courses/assignment-submission-control.tsx | 3 / 3 | 0 | Written response / External Link / File or multipart combine; all allowed-method/submitting/mayWrite/mayLink/mayUpload guards and setSubmissionType callbacks preserved |
+| src/components/placements/report-interactive-table.tsx | 1 / 1 | 0 | Ascending/descending toggle disabled without sort and aria-pressed preserved; the 7 other Button pairs and source sorting still present |
+| src/components/ui/needs-doing-chips.tsx | 0 / 0 (uses one shared Button open/close) | 0 | Existing chip count/disabled/selected/href/no-inert-action behavior preserved; interactive onSelect uses keyboard Button |
+
+Value table for these chips: legacy mobile tagged actions at components___antddesign.scss:1092-1100 are >=44px and horizontal padding 12px; shared FilterChip at src/components/ui/filter-chip.tsx:27-36 uses min-h-11 = 44px, px-[12px], md:min-h-8 = 32px and md:px-[15px]. Radius 6px, 12px bold, 18px line-height also match legacy .ln-status at components___common.scss:995-1005 for *badge geometry*, but interactive hover/active/backgrounds must be checked against legacy actual tagged-action colors before ticking E4. These replacements did not touch business logic, network writes, or row data.
+
+### E5 final ordinary accordions — fetched-file structural evidence
+
+| Completed file | Shared Disclosure opening/closing | Raw page-level details/summary | State and semantics preserved |
+|---|---:|---:|---|
+| src/components/placements/learner-jobs-browse.tsx | 1 / 1 | 0 / 0 | Not open to you summary count, role list and defaultOpen when availability filter is not-open |
+| src/app/(authenticated)/hr/conversations/page.tsx | 1 / 1 | 0 / 0 | General placement cell message preview/history, reply form, full-conversation link, responsive summary touch |
+| src/app/(authenticated)/tpo/batches/[batchId]/page.tsx | 1 / 1 | 0 / 0 | Undo last decision action, immutable audit consequence copy, original summary tooltip now passed as summaryTitle |
+| src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx | 1 / 1 | 0 / 0 | Batch student exports region label now passed as ariaLabel; current filtered and unfiltered CSV hrefs unchanged |
+| src/components/ui/disclosure.tsx | Shared primitive itself (not a caller) | 1 / 1 intentionally | Optional summaryTitle and details ariaLabel are backward-compatible; native details/summary keyboard, defaultOpen and previous rich title behavior remain |
+
+### Responsive and exact source grep proof
+
+Static file reads show all migrated page disclosures listed in the E5 table have 0 native opening <details and 0 native opening <summary tags and exactly 1 shared opening/closing Disclosure pair. Source-level chip table files have 0 native <button tags and equal shared chip closing tag counts. The report source has native aria-sort exposed on the table header and per-column sort state; its existing DataTable empty state and infinite/show-more boundary remain.
+
+Reproduction commands (NOT executed by this lane; the numbers above come from text inspection of the fetched files):
+
+```sh
+grep -nE '<(button|details|summary)([[:space:]>])' src/components/{tpo/tpo-custom-job-type-placed,tpo/tpo-team-follow-controls,tpo/tpo-team-decision-toggle,tpo/recruiter-leads-workspace,courses/assignment-submission-control,placements/report-interactive-table,placements/learner-jobs-browse}.tsx
+grep -nE '<FilterChip([[:space:]>])|</FilterChip>|aria-pressed|sortDirection|aria-sort=' src/components/{placements/report-interactive-table,tpo/tpo-custom-job-type-placed,tpo/tpo-team-follow-controls,tpo/tpo-team-decision-toggle,courses/assignment-submission-control}.tsx src/components/ui/data-table.tsx
+grep -nE '<details([[:space:]>])|<summary([[:space:]>])|<Disclosure([[:space:]>])|</Disclosure>' 'src/app/(authenticated)/hr/conversations/page.tsx' 'src/app/(authenticated)/tpo/batches/[batchId]/page.tsx' 'src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx' src/components/placements/learner-jobs-browse.tsx
+```
+
+- Phone <=767px: interactive chips are min-height 44px with 12px horizontal padding; simple shared disclosure summary min-height 44px with native focus/Enter/Space; table switches to its existing mobile DataTable projection and report mobile sort Select.
+- Tablet 768–1599px: chip min-height 32px and padding 15px; table headers become sticky from sm (640px), report column sort action remains keyboard-operable; disclosure content keeps its original surrounding widths and scroll regions.
+- Wide >=1600px: no canvas/toolbar/column width overrides introduced; shared Tabs continue gap 40px and scroll cue, unaffected by these source changes.
+- Error, loading, disabled and empty: API busy guards, warnings and feedback in migrated choice files remain intact. Shared chips preserve disabled and aria-pressed. DataTable no-data fallback and CSV/clipboard errors remain unchanged. Disclosure messages and forms remain inside the same conditional gates.
+
+### STRICT TICK RULE
+
+- [ ] E1 tables still open: not all table implementations/legacy sorted hover states exhaustively covered or browser-verified.
+- [ ] E2 pagination still open: remaining page-specific pagers, all page-size selectors and runtime behavior not exhaustively proven.
+- [ ] E3 tabs still open: other tab/vertical variant census and rendered states pending.
+- [ ] E4 chips/pills still open: full hover/active/disabled color equality and global grep not executed.
+- [ ] E5 accordions/steppers still open: existing shared Dropdown/Tooltip native details are intentional primitive exceptions; exhaustive stepper/timeline state coverage and rendered proof pending.
+- [ ] E8 AG Grid still open: native source and dynamic TPO callers exist, but package.json lacks ag-grid-community / ag-grid-react; user prohibits manifest edits. No dependency/build/visual proof.
+
+Exact next file: src/components/tpo/tpo-spreadsheet-grid.tsx — compare pin/resize/sort affordances and 48px selection column against legacy TpoGrid before further E8 changes. Do not edit package.json.

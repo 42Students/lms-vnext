@@ -27,11 +27,11 @@ const columns:readonly TpoGridColumn<Row>[]=[
  {key:"phone",label:"Phone",read:r=>r.phone??"Not recorded"},
  {key:"batch",label:"Batch",read:r=>r.batchName??"Not recorded"},
  {key:"branch",label:"Branch",read:r=>r.branchName??"Not recorded"},
- {key:"cgpa",label:"CGPA",read:r=>r.cgpaHundredths===null?"Not recorded":(r.cgpaHundredths/100).toFixed(2)},
- {key:"activeBacklogs",label:"Active backlogs",read:r=>r.activeBacklogs===null?"Not recorded":String(r.activeBacklogs)},
- {key:"pastBacklogs",label:"Past backlogs",read:r=>r.pastBacklogs===null?"Not recorded":String(r.pastBacklogs)},
- {key:"tenth",label:"10th %",read:r=>r.tenthPctBasisPoints===null?"Not recorded":(r.tenthPctBasisPoints/100).toFixed(2)+"%"},
- {key:"twelfth",label:"12th %",read:r=>r.twelfthPctBasisPoints===null?"Not recorded":(r.twelfthPctBasisPoints/100).toFixed(2)+"%"},
+ {key:"cgpa",label:"CGPA",sortKind:"number",read:r=>r.cgpaHundredths===null?"Not recorded":(r.cgpaHundredths/100).toFixed(2)},
+ {key:"activeBacklogs",label:"Active backlogs",sortKind:"number",read:r=>r.activeBacklogs===null?"Not recorded":String(r.activeBacklogs)},
+ {key:"pastBacklogs",label:"Past backlogs",sortKind:"number",read:r=>r.pastBacklogs===null?"Not recorded":String(r.pastBacklogs)},
+ {key:"tenth",label:"10th %",sortKind:"number",read:r=>r.tenthPctBasisPoints===null?"Not recorded":(r.tenthPctBasisPoints/100).toFixed(2)+"%"},
+ {key:"twelfth",label:"12th %",sortKind:"number",read:r=>r.twelfthPctBasisPoints===null?"Not recorded":(r.twelfthPctBasisPoints/100).toFixed(2)+"%"},
  {key:"lastRound",label:"Last assessed round",read:r=>r.lastRound??"Not recorded"},
  {key:"lastResult",label:"Last applied result",read:r=>r.lastResult??"Not recorded"},
  {key:"stage",label:"Stage",read:r=>applicantStage(r)},
@@ -64,7 +64,7 @@ export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly
       previousId={rows.findIndex(candidate=>candidate.id===row.id)>0?
         rows[rows.findIndex(candidate=>candidate.id===row.id)-1]?.id:undefined}
       nextId={rows[rows.findIndex(candidate=>candidate.id===row.id)+1]?.id}/>
-    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+row.id} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">Open applicant</Link>
+    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.id)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open applicant</Link>
    </div>}/>
  </GridWorkspace>;
 }

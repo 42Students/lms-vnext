@@ -119,23 +119,23 @@ export function TpoAuditSavedViews({filters}:{filters:{
   await mutate({action:"DELETE",id:selectedView.id,
    expectedRevision:selectedView.revision},"Saved view deleted.");
  }
- return <Disclosure title={`Saved audit views (${views.length}/12)`} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ return <Disclosure title={`Saved audit views (${views.length}/12)`} className="border-y border-border py-3">
   <p className="mt-1 text-xs text-muted-foreground">
    {ready?"Saved audit views sync across your signed-in devices, privately for your TPO account and college.":
     loading?"Loading your saved audit views…":
     "Saved audit view storage is unavailable. Your current audit filters still work."}
   </p>
-  <div className="mt-3 flex flex-wrap items-end gap-2">
-   <label className="grid min-w-44 flex-1 gap-1 text-xs">View name
+  <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
+   <label className="grid min-w-0 flex-[1_1_180px] gap-1 text-xs">View name
     <Input value={name} maxLength={50} disabled={!ready||busy}
      onChange={event=>setName(event.target.value)}
      />
    </label>
    <Button variant="secondary" type="button" onClick={()=>void save()} disabled={!ready||busy||!name.trim()}
-    className="min-h-9">Save current</Button>
+    className="min-h-11 md:min-h-9">Save current</Button>
   </div>
-  {views.length?<div className="mt-3 flex flex-wrap gap-2">
-   <label className="grid min-w-40 flex-1 gap-1 text-xs">Saved view
+  {views.length?<div className="mt-3 flex min-w-0 flex-wrap gap-2">
+   <label className="grid min-w-0 flex-[1_1_160px] gap-1 text-xs">Saved view
     <Select value={selected} onChange={event=>setSelected(event.target.value)}
      disabled={!ready||busy} >
      <option value="">Select a view</option>
@@ -145,15 +145,15 @@ export function TpoAuditSavedViews({filters}:{filters:{
     </Select>
    </label>
    <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void open()}
-    className="min-h-9">Open</Button>
+    className="min-h-11 md:min-h-9">Open</Button>
    <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void pin()}
-    className="min-h-9">
+    className="min-h-11 md:min-h-9">
     {selectedView?.pinned?"Unpin":"Pin"}
    </Button>
    <Button variant="secondary" type="button" disabled={!selectedView||busy||!name.trim()} onClick={()=>void rename()}
-    className="min-h-9">Rename</Button>
+    className="min-h-11 md:min-h-9">Rename</Button>
    <Button variant="secondary" type="button" disabled={!selectedView||busy} onClick={()=>void remove()}
-    className="min-h-9">Delete</Button>
+    className="min-h-11 md:min-h-9">Delete</Button>
   </div>:null}
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
