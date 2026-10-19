@@ -21,7 +21,7 @@ function ActionLink({
     return (
       <div
         aria-disabled="true"
-        className="rounded-[var(--lms-control-radius,9px)] border border-border bg-muted p-4"
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
       >
         <p className="m-0 text-sm font-semibold text-foreground">{label}</p>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -33,7 +33,7 @@ function ActionLink({
   return (
     <Link
       href={href}
-      className="block rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+      className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
     >
       <p className="m-0 text-sm font-semibold text-foreground">{label}</p>
       <p className="mt-1 text-xs text-muted-foreground">
