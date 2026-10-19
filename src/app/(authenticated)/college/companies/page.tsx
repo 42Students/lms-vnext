@@ -1,6 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { EmptyState } from "@/components/ui/empty-state";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -24,8 +26,10 @@ export default async function CollegeCompaniesPage({
     redirect("/dashboard");
   }
   const parsed=parseCollegeCompaniesQuery(await searchParams);
-  if(!parsed.success) return <ErrorState title="Invalid company search"
-    description="Check search text or page." />;
+  if(!parsed.success) return <div className="space-y-5"><PageHeader title="Companies"/>
+    <ErrorState title="Invalid company search" description="Check search text or page."
+      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear company filters</Link>}/>
+  </div>;
   const query=parsed.data;
   const collegeId=context.membership.collegeId;
   const [data,owners]=await Promise.all([
@@ -40,7 +44,7 @@ export default async function CollegeCompaniesPage({
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader title="Companies" description="Maintain each recruiting company once and reuse it across drives." />
     <CollegeCompanyCreate collegeId={collegeId}/>
-    <a href={"/api/college/companies/export?"+exportParams.toString()} className="font-semibold text-link underline">Export CSV</a>
+    <a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export CSV</a>
     <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Company
         <Input name="q" type="search" maxLength={100} defaultValue={query.q}
@@ -62,9 +66,9 @@ export default async function CollegeCompaniesPage({
         </Select>
       </label>
       <label className="flex items-center gap-2 text-sm">
-        <input name="showDeleted" type="checkbox" value="1" defaultChecked={query.showDeleted==="1"}/>Show deleted
+        <Checkbox name="showDeleted" value="1" defaultChecked={query.showDeleted==="1"}/>Show deleted
       </label>
-      <Button variant="primary" type="submit">Filter</Button>
+      <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">Filter</Button>
     </form>
     <p role="status" className="text-sm text-body">Showing {data.items.length} of {data.total} companies {query.showDeleted==="1"?"(including deleted)":""}, searching name &amp; industry only.</p>
     <PlacementEmployerRelationships key={[query.q,query.page,query.pageSize,query.sort,query.showDeleted].join(":")}
@@ -87,8 +91,8 @@ export default async function CollegeCompaniesPage({
     />
     <nav aria-label="Company pages" className="flex flex-wrap items-center gap-4 text-sm">
       <span>Page {query.page} of {data.totalPages}</span>
-      {query.page>1?<Link href={collegeCompaniesHref({...query,page:query.page-1})}>Previous</Link>:null}
-      {query.page<data.totalPages?<Link href={collegeCompaniesHref({...query,page:query.page+1})}>Next</Link>:null}
+      {query.page>1?<Link href={collegeCompaniesHref({...query,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Previous</Link>:null}
+      {query.page<data.totalPages?<Link href={collegeCompaniesHref({...query,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Next</Link>:null}
     </nav>
   </div>;
 }
