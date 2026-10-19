@@ -1,8 +1,6 @@
-import { Select } from "@/components/ui/select";
 "use client";
-import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+
 import {DataTable} from "@/components/ui/data-table";
 
 import { useState } from "react";
