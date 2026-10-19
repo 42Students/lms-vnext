@@ -18,8 +18,8 @@ const sizeClasses = {
   sm: "min-h-[var(--lms-control-height)] px-[var(--lms-space-3)] text-[13px]",
   md: "min-h-[var(--lms-control-height)] px-3.5 text-[14px]",
   lg: "min-h-10 px-[var(--lms-space-5)] text-[14px]",
-  icon: "h-9 w-9 min-w-9 shrink-0 p-0 text-[14px] max-sm:min-h-11 max-sm:min-w-11",
-  "icon-sm": "h-9 w-9 min-w-9 shrink-0 p-0 text-[13px] max-sm:min-h-11 max-sm:min-w-11",
+  icon: "h-9 w-9 min-w-9 shrink-0 p-0 text-[14px] max-[767px]:min-h-11 max-[767px]:min-w-11",
+  "icon-sm": "h-9 w-9 min-w-9 shrink-0 p-0 text-[13px] max-[767px]:min-h-11 max-[767px]:min-w-11",
 } as const;
 
 export function Button({ className, variant = "primary", size = "md", loading = false, type = "button", disabled, children, ...props }: ButtonProps) {

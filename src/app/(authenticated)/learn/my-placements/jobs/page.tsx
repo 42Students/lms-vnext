@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
@@ -62,11 +63,14 @@ export default async function LearnerPlacementJobsPage() {
 
   return (
     <div className="min-w-0 space-y-6">
-
-      <Link href="/learn/my-placements/rules?from=drives"
+      <PageHeader title="Drives" actions={(
+        <Link href="/learn/my-placements/rules?from=drives"
         className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         Review placement rules and preparation →
       </Link>
+      )} />
+
+      
       <Suspense fallback={<p className="text-sm text-body">Loading drive filters…</p>}>
         <LearnerJobsBrowse items={rows.map(toItem)} snapshotNowIso={snapshotNowIso}
           savedJobIds={savedJobs.map(job=>job.jobId)} />

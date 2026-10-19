@@ -49,7 +49,7 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
    </label>)}
   </div>
   <Button type="button" disabled={busy||(!dirty&&currentVersion!==null)} onClick={()=>void save()}
-   className="min-h-11 sm:min-h-9">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</Button>
+   className="min-h-11 min-[768px]:min-h-9">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;

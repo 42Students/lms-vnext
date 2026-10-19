@@ -54,7 +54,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
   </label>)}
   <p className="text-xs text-muted-foreground">These are college preferences; sending requires verified mail templates and an enabled delivery provider.</p>
   <Button type="button" disabled={busy||!dirty} onClick={()=>void save()}
-   className="min-h-11 sm:min-h-9">Save changes</Button>
+   className="min-h-11 min-[768px]:min-h-9">Save changes</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {status?<p role="status" className="text-sm">{status}</p>:null}
  </section>;
