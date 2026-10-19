@@ -185,7 +185,7 @@ export default async function TpoCompanyMemoryPage({
         <form
           action="/tpo/companies"
           method="get"
-          className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
+          className="grid gap-3 border-b border-border py-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Search companies
