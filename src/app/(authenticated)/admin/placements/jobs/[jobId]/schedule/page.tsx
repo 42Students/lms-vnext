@@ -2,6 +2,7 @@ import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tab
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { ErrorState } from "@/components/ui/error-state";
@@ -71,8 +72,8 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       <p className="text-sm text-muted-foreground">{data.total} matching interview/GD rounds</p>
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
         caption="Persisted interview rounds"
-        empty={<p role="status" className="text-sm text-body">{data.total===0?
-          "No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}</p>}/>
+        empty={<EmptyState title={data.total===0?"No matching interview rounds":"No rounds on this page"}
+          description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}/>}/>
     </section>
     <div className="space-y-2">
       <p className="text-sm text-muted-foreground">Page {query.page} of {data.totalPages}</p>
