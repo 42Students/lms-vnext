@@ -16,7 +16,7 @@ import {
 } from "@/modules/placements/tpo-recruiter-attention-model";
 import { RecruiterLeadCsvImport } from "./recruiter-lead-csv-import";
 import {RecruiterRosterDisplayControls} from "./recruiter-roster-display-controls";
-import {ENGAGE_DEFAULT_COLUMNS,normalizeEngageColumns,sortEngageRows,
+import {ENGAGE_COLUMNS,ENGAGE_DEFAULT_COLUMNS,normalizeEngageColumns,sortEngageRows,
  type EngageColumn,type EngageSort} from "@/modules/placements/tpo-recruiter-table-view-model";
 import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
@@ -32,6 +32,8 @@ import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
+import {GridWorkspace} from "./grid/grid-workspace";
+import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 
 type Lead = {
   id: string;
