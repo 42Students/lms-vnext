@@ -76,7 +76,7 @@ export function ProjectReadinessOverrideForm({
         <label className="block text-sm font-medium" htmlFor="project-readiness-override">{copy.stateLabel}</label>
         <Select
           id="project-readiness-override"
-          className="w-full rounded border border-border bg-surface p-2"
+          className="w-full"
           value={state}
           disabled={pending}
           onChange={(event) => {
@@ -101,11 +101,11 @@ export function ProjectReadinessOverrideForm({
               placeholder={copy.notePlaceholder}
               maxLength={2000}
               rows={3}
-              className="w-full rounded border border-border bg-surface p-2"
+              className="w-full"
             />
           </>
         ) : null}
-        <Button type="submit" variant="primary" disabled={pending} className="rounded bg-primary px-4 py-2 text-primary-foreground disabled:opacity-50">
+        <Button type="submit" variant="primary" disabled={pending} className="disabled:opacity-50">
           {copy.submit}
         </Button>
         {feedback ? <p role="status" className="text-sm text-body">{feedback}</p> : null}
