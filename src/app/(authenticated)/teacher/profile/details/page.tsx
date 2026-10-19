@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -17,7 +17,7 @@ export default async function FacultyProfileDetailsPage(){
   <Breadcrumbs items={[{label:"Profile",href:"/teacher/profile"},{label:"About & details"}]}/>
   <PageHeader eyebrow="Faculty · Profile" title="About & details"
    description="Your self-managed profile sections, separate from college-managed employment information."/>
-  <Link href="/teacher/profile" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Profile</Link>
+  <PageBackLink href="/teacher/profile" label="Profile" />
   {!ready||!profile?<Card role="status">
    <h2 className="font-semibold text-foreground">Profile editing unavailable</h2>
    <p className="mt-2 text-sm text-body">Private Faculty profile storage awaits an approved database migration. No edits will be sent or saved until it is ready.</p>

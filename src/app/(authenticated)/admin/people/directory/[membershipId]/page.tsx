@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {SuperAdminPlatformBlockAction} from "@/components/admin/super-admin-platform-block-action";
@@ -40,6 +41,6 @@ export default async function MembershipDetail({params}:{params:Promise<{members
     View audit trail →
    </Link>
   <p className="text-xs text-muted-foreground">This page shows only this membership, not roles at other colleges.</p>
-  <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Users &amp; Roles directory</Link>
+  <PageBackLink href="/admin/people/directory" label="Users & Roles directory" />
  </div>;
 }

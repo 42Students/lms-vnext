@@ -1,7 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import {facultyQuizParamsSchema} from "@/modules/courses/faculty-quiz-authoring-model";
@@ -17,7 +17,6 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
   {workspace.lessons.length?<FacultyChoiceQuizBuilder deliveryId={deliveryId}
    lessons={workspace.lessons.map(l=>({id:l.id,name:l.name}))} quizzes={quizzes}/>:
    <section role="status" className="rounded border border-border p-4">No registered lessons are available for this Section. Publish a learning path first.</section>}
-  <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
-   className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to course</Link>
+  <PageBackLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)} label="Back to course" />
  </div>;
 }

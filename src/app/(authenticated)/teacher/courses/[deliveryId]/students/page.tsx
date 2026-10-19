@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import {notFound,redirect} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseRoster } from "@/components/courses/faculty-course-roster";
@@ -32,12 +32,7 @@ export default async function FacultyCourseStudentsPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-5">
-      <Link
-        href={`/teacher/courses/${deliveryId}/home`}
-        className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
-        ← Course workspace
-      </Link>
+      <PageBackLink href={`/teacher/courses/${deliveryId}/home`} label="Course workspace" />
       <PageHeader
         eyebrow="Faculty · Course"
         title="Students"
