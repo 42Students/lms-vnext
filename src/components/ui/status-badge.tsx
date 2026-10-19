@@ -14,5 +14,5 @@ const toneClasses = {
 } as const;
 
 export function StatusBadge({ children, tone = "neutral", className }: StatusBadgeProps) {
-  return <span data-slot="status-badge" data-tone={tone} className={cx("inline-flex min-h-[22px] min-w-0 max-w-full items-center justify-center gap-[var(--lms-space-1)] align-middle tabular-nums rounded-[var(--lms-radius-pill)] border border-current/10 px-[var(--lms-space-2)] py-0.5 text-[var(--lms-font-xs)] font-semibold leading-[18px] text-center break-words shadow-none [overflow-wrap:anywhere]", toneClasses[tone], className)}>{children}</span>;
+  return <span data-slot="status-badge" data-tone={tone} className={cx("inline-flex min-h-[22px] min-w-0 max-w-full items-center justify-center gap-[var(--lms-space-1)] align-middle tabular-nums rounded-[var(--lms-radius-pill)] border border-current/10 px-[var(--lms-space-2)] py-[1px] text-[var(--lms-font-xs)] font-semibold leading-[18px] text-center break-words shadow-none [overflow-wrap:anywhere]", toneClasses[tone], className)}>{children}</span>;
 }
