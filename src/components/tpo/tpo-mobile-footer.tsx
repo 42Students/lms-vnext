@@ -27,7 +27,7 @@ export function TpoMobileFooter(){
    const active=pathname===link.href||pathname.startsWith(link.href+"/")||
     (link.label==="Engage"&&pathname.startsWith("/tpo/companies"));
    if(link.label==="More")return <Button key="more" variant="ghost" type="button" aria-label="More TPO workspaces"
-    aria-expanded={moreOpen} onClick={()=>setMoreOpen(open=>!open)}
+    aria-expanded={moreOpen} aria-pressed={moreOpen} onClick={()=>setMoreOpen(open=>!open)}
     className={"h-full min-h-14 w-full rounded-none px-1 py-2 text-xs font-semibold "+(moreOpen?"bg-primary-subtle text-primary-text":"text-body")}>More</Button>;
    return <Link key={link.label} href={link.href}
     aria-current={active?"page":undefined}
