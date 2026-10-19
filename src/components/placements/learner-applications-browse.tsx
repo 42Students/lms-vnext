@@ -235,7 +235,7 @@ export function LearnerApplicationsBrowse({
           ) : null}
         </section>
       ) : null}
-      <section aria-label="Application list filters" className="rounded-xl border border-border bg-surface p-3 sm:p-5">
+      <section aria-label="Application list filters" className="border-t border-border pt-4">
         <button type="button" aria-controls="learner-app-filters" aria-expanded={mobileOpen}
           onClick={()=>setMobileOpen(open=>!open)}
           className="flex min-h-11 sm:min-h-9 w-full items-center justify-between gap-3 text-left text-sm font-semibold text-primary-text sm:hidden">
@@ -251,8 +251,8 @@ export function LearnerApplicationsBrowse({
               aria-pressed={view===option.key}
               onClick={() => updateQuery({view:option.key})}
               className={view===option.key
-                ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                : "min-h-10 rounded-full border border-border px-4 text-sm font-semibold text-body"}
+                ? "min-h-9 border-b-2 border-[var(--lms-button-primary)] px-4 py-2 text-sm font-semibold text-[var(--lms-primary-text)]"
+                : "min-h-9 border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-body hover:text-[var(--lms-primary-text)]"}
             >{option.label} ({viewCounts[option.key]})</button>
           ))}
         </div>
@@ -265,8 +265,8 @@ export function LearnerApplicationsBrowse({
             <button type="button" key={stageKey} aria-pressed={filters.stage===stageKey}
               onClick={()=>updateQuery({stage:stageKey})}
               className={filters.stage===stageKey
-                ? "min-h-11 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
-                : "min-h-11 rounded-full border border-border px-4 text-sm font-semibold text-body"}>
+                ? "min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] sm:min-h-9"
+                : "min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body sm:min-h-9"}>
               {stageKey==="all"?"All screening stages":humanize(stageKey)} ({count})
             </button>
           ))}
@@ -359,13 +359,13 @@ export function LearnerApplicationsBrowse({
         <nav aria-label="Application results pages" className="flex items-center justify-between gap-3">
           <button type="button" disabled={page<=1}
             onClick={() => updateQuery({page:String(page-1)})}
-            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
             Previous
           </button>
           <span className="text-sm tabular-nums text-body">Page {page} of {totalPages}</span>
           <button type="button" disabled={page>=totalPages}
             onClick={() => updateQuery({page:String(page+1)})}
-            className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
+            className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body disabled:opacity-40">
             Next
           </button>
         </nav>

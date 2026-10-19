@@ -55,7 +55,7 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
   {task.blockerReason?<p className="text-sm text-body">Blocker: {task.blockerReason}</p>:null}
   {canBlock?<label className="block text-sm text-body">What is blocking this task?
    <textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
-    className="mt-1 min-h-24 w-full rounded-md border border-border bg-surface p-3" />
+    className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" />
   </label>:null}
   <div className="flex flex-wrap gap-3">
    {canStart?<button type="button" disabled={pending} onClick={()=>void change("IN_PROGRESS")}

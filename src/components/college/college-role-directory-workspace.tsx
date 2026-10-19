@@ -139,7 +139,7 @@ export async function CollegeRoleDirectoryWorkspace({
           <p className="mt-1 text-xs text-muted-foreground">Do not infer presence from login or membership status.</p>
         </div>
       </section>
-      <section className="border-t border-border pt-4" aria-label={title + " directory filters"}>
+      <section className="sm: border-t border-border pt-4" aria-label={title + " directory filters"}>
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-48 flex-1 gap-2 text-sm font-semibold text-body">
             {collegeDirectorySearchHint(kind)}

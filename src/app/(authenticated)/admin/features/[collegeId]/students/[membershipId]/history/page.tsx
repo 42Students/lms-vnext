@@ -35,7 +35,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
    <label className="grid gap-1 text-sm font-semibold text-body">To (India day)
     <Input type="date" name="to" defaultValue={cursor.data.to} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground"/>
    </label>
-   <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter history</Button>
+   <Button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-foreground">Filter history</Button>
    <Link href={studentRuleHistoryHref(collegeId,membershipId,null)} className="inline-flex min-h-11 items-center text-primary-text">Clear</Link>
   </form>
   <Link href={studentRuleHistoryExportHref(collegeId,membershipId,

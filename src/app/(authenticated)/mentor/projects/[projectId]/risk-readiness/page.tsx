@@ -41,7 +41,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Full project workspace
       </Link>}/>
-    {!data.enabled?<section role="status" className="rounded-xl border border-border bg-surface p-5">
+    {!data.enabled?<section role="status" className="border-b border-border pb-4">
       Projects are disabled. No private task, meeting or delivery evidence was loaded.
     </section>:<>
       <section aria-label="Recorded workflow signals" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -83,8 +83,8 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       </form>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
         description="No matching stored signals were found. This is not a certificate of project safety or completeness."/>:
-      <ol className="grid gap-3">{data.items.map(row=>
-        <li key={row.key} className="rounded-xl border border-border bg-surface p-4">
+      <ol className="divide-y divide-border">{data.items.map(row=>
+        <li key={row.key} className="py-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h2 className="break-words font-semibold text-foreground">{row.title}</h2>
             <span className="text-xs font-semibold text-body">

@@ -21,7 +21,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Review overview
       </Link>}/>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border pb-5">
       <h2 className="text-base font-semibold">Registered review decision</h2>
       <dl className="mt-4 grid gap-3 sm:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Submission state</dt>
@@ -54,13 +54,13 @@ export default async function MentorDeliveryVersionPage({params}:{
           No written reviewer feedback is recorded for this version.
         </p>}
     </section>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border pb-5">
       <h2 className="font-semibold">Learner notes</h2>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
         {v.notes||"No learner notes were attached to this version."}
       </p>
     </section>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border pb-5">
       <h2 className="font-semibold">Submitted source and demo links</h2>
       <div className="mt-3 flex flex-wrap gap-3">
         {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
@@ -72,7 +72,7 @@ export default async function MentorDeliveryVersionPage({params}:{
           <p className="text-sm text-muted-foreground">No valid source or demo URL.</p>:null}
       </div>
     </section>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border pb-5">
       <h2 className="font-semibold">Additional submission files and links ({attachments.length})</h2>
       {!attachments.length?<p className="mt-2 text-sm text-muted-foreground">No extra attachments recorded.</p>:null}
       <ul className="mt-3 space-y-2">{attachments.map((entry,index)=>{
@@ -88,7 +88,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         </li>;
       })}</ul>
     </section>
-    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+    <section className="border-b border-border pb-5">
       <h2 className="font-semibold">Recorded submission history</h2>
       <ol className="mt-3 space-y-2 text-sm">
         {v.createdAt?<li>Draft created · {format(v.createdAt)} · {data.createdByName??"Project learner"}</li>:null}

@@ -31,7 +31,7 @@ export default async function SuperAdminModuleAccessPage({
     <PageHeader eyebrow="Super Admin" title="Module Access"/>
     <ErrorState title="Invalid feature filters"
       description="The search or page value is invalid."
-      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)]">Clear filters</Link>}/>
+      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center font-semibold text-link">Clear filters</Link>}/>
   </div>;
   const result=await listSuperAdminFeatureControls(context,parsed);
   const scopeMetrics=await getModuleAccessOverviewMetrics(context,result.items.map(item=>item.id));
@@ -66,7 +66,7 @@ export default async function SuperAdminModuleAccessPage({
       description="No college in the current scope matches these filters."/>:
       <div className="grid gap-3 md:grid-cols-2">
         {result.items.map(college=><article key={college.id}
-          className="min-w-0 rounded-lg border border-border bg-surface p-4">
+          className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <h2 className="font-semibold text-foreground">{college.name}</h2>
           <p className="mt-1 text-sm text-body">{college.code}</p>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)}

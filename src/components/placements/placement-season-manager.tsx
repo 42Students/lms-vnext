@@ -20,7 +20,7 @@ export type PlacementSeasonItem = {
 };
 
 const inputClass =
-  "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
+  "min-h-10 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
 
 function humanizeError(value: string) {
   return value
@@ -175,7 +175,7 @@ export function PlacementSeasonManager({
 
   return (
     <section className="border-t border-border pt-5">
-      <div className="border-b border-border px-5 py-4">
+      <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Placement season
         </h2>
@@ -185,7 +185,7 @@ export function PlacementSeasonManager({
       </div>
 
       {active ? (
-        <div className="grid gap-4 p-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+        <div className="grid gap-4 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <p className="m-0 font-semibold text-foreground">
@@ -215,7 +215,7 @@ export function PlacementSeasonManager({
       ) : (
         <form
           onSubmit={create}
-          className="grid gap-4 p-5 lg:grid-cols-4"
+          className="grid gap-4 py-5 lg:grid-cols-4"
         >
           <label>
             <span className="mb-1 block text-xs font-semibold text-body">

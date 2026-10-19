@@ -11,7 +11,7 @@ export default async function LearnerAcademicRecordPage(){
  return <div className="min-w-0 space-y-6">
   <Link href="/learn/profile" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">← Profile</Link>
   <PageHeader title="Academic record" description="Your college-recorded current program enrollment."/>
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section className="border-t border-border pt-5">
    <h2 className="text-base font-semibold text-foreground">Current academic enrollment</h2>
    {record.enrollment?<dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
     {([
