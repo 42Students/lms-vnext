@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -63,10 +64,10 @@ export default async function TpoScheduleConflictsPage({
             ))}
           </Select
         </label>
-        <button type="submit"
+        <Button variant="primary" type="submit"
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground">
           Apply
-        </button>
+        </Button>
       </form>
       <section aria-label="Schedule assessment" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
