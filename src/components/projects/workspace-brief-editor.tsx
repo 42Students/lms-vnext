@@ -1,4 +1,5 @@
 "use client";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {useState} from "react";
@@ -9,6 +10,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt}:{
  projectId:string;initial:WorkspaceBrief;updatedAt:Date|string;
 }){
  const router=useRouter();
+ const {askConfirm,dialog}=useConfirmFlow();
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [goal,setGoal]=useState(initial.goal),[description,setDescription]=useState(initial.description),
  [deliverables,setDeliverables]=useState(initial.deliverables.join("\n")),
@@ -20,7 +22,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt}:{
    goal,description,deliverables:lines(deliverables),completionConditions:lines(conditions),personas:lines(personas),
   });
   if(!parsed.success){setError(parsed.error.issues[0]?.message??"Invalid brief");return;}
-  if(!window.confirm("Save workspace brief? These changes apply to this workspace only."))return;
+  if(!(await askConfirm("Save workspace brief? These changes apply to this workspace only.")))return;
   setBusy(true);setError("");
   try{
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/brief","PATCH",{
@@ -55,5 +57,6 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt}:{
    </div>
   </div>:null}
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+   {dialog}
  </section>;
 }
