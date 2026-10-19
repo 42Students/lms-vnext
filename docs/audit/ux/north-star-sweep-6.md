@@ -278,3 +278,10 @@ src/components/placements/placement-operations-overview.tsx
 src/components/placements/placement-request-queue.tsx
 src/components/placements/tpo-drive-deadline-form.tsx
 ```
+
+## Upstream merge and continued component pass (2026-10-19)
+
+- Merged immutable upstream `main` commit `a5d88d7cdfce161100ec7233f1d009e8e5b199d4` into `chatgpt/chat-6-b` through merge commit `400ebdfe7f5b99f4af556267c0fc2afe5ccbd2b1` (two parents). The merge included all 506 upstream commits observed at reconciliation and retained the lane's previous 45 commits; no branch ref was force-pushed.
+- Resolved all six overlapping placement files from the newer `main` source, reapplying *only* visual shell-level changes: `placement-draft-edit-form.tsx`, `placement-drive-controls.tsx`, `placement-drive-workspace.tsx`, `placement-job-create-form.tsx`, `placement-operations-overview.tsx`, `tpo-drive-deadline-form.tsx`. Upstream logic and markup are authoritative, with retained layout tokens/white canvas controls, shared Input/Select/Button/textarea styling and dropdown shadow tokens.
+- Pushed **10 further [chat-6] file commits** after the merge. Restyled `super-admin-drive-quick-search`, `super-admin-needs-attention`, `placement-drive-day-overview`, `tpo-round-reorder`, `placement-bulk-add-applicants`, `super-admin-hr-accounts`, `super-admin-hr-detail-drawer`, `super-admin-hr-account-dialog`, `super-admin-today-board`, and `super-admin-student-bulk-access` to the old LMS 9px token/teal control skin and border-separated white-page strips.
+- Kept scope visual-only: no alteration of application creation, round mutation, eligibility, applicant transition, authentication, authorization, API requests, or tenant scope. Static JSX tag balance and expected-source checks only; no TypeScript compilation, tests, CI, browser, or app run.
