@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
 import { Drawer } from "@/components/ui/drawer";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
@@ -62,8 +63,12 @@ export function HrRecruiterBell(){
   <Button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
    aria-expanded={open} aria-haspopup="dialog"
    onClick={()=>setOpen(value=>!value)}
-   variant="secondary" className="relative">
-   Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
+   variant="secondary" className="relative min-w-9 !px-2">
+   <ShellNavGlyph name="bell"/>
+   {unread>0?<span aria-hidden="true"
+    className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">
+    {unread>99?"99+":unread}
+   </span>:null}
   </Button>
   <Drawer open={open} onOpenChange={setOpen} title="Recruiter notifications">
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
