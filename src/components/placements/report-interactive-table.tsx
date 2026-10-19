@@ -83,10 +83,10 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       }} size="sm">
        Close filters
       </Button>
-      {displayedColumns.map(col=><label key={col.index} className="grid gap-1 text-xs font-semibold">
-       {col.heading}
-       <Input type="search" maxLength={100} value={columnFilters[col.index]??""}
-        onChange={event=>{setColumnFilters(current=>({...current,[col.index]:event.target.value}));setLimit(100);}}
+      {headings.map((heading,index)=><label key={index} className="grid gap-1 text-xs font-semibold">
+       {heading}
+       <Input type="search" maxLength={100} value={columnFilters[index]??""}
+        onChange={event=>{setColumnFilters(current=>({...current,[index]:event.target.value}));setLimit(100);}}
         />
       </label>)}
      </div>
