@@ -199,10 +199,14 @@ for (const file of filesIn(root)) {
   visit(sf);
   if (!edits.length) continue;
   const names = [...new Set(edits.map((edit) => edit.kind))].filter(Boolean);
-  const missing = names.filter((name) => {
-    const moduleName = name.toLowerCase();
-    return !new RegExp('import\\s*\\{[^}]*\\b' + name + '\\b[^}]*\\}\\s*from\\s*["\\\']@/components/ui/' + moduleName + '["\\\']').test(source);
-  });
+  const missing = names.filter((name) => !sf.statements.some((stmt) =>
+    ts.isImportDeclaration(stmt) &&
+    ts.isStringLiteral(stmt.moduleSpecifier) &&
+    stmt.moduleSpecifier.text === "@/components/ui/" + name.toLowerCase() &&
+    !!stmt.importClause?.namedBindings &&
+    ts.isNamedImports(stmt.importClause.namedBindings) &&
+    stmt.importClause.namedBindings.elements.some((element) =>
+      element.name.text === name && !element.propertyName)));
   if (missing.length) {
     const pos = importPosition(sf, source);
     edits.push({ start: pos, end: pos,
