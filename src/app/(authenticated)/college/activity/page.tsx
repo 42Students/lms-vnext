@@ -21,7 +21,7 @@ export default async function CollegeActivityPage({
   searchParams,
 }: { searchParams: Promise<RawSearch> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) return <div className="space-y-3"><PageHeader eyebrow="College Admin" title="Activity Log"/><p role="alert" className="rounded border border-border p-4">Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail.</p></div>;
+  if (!context.membership) return <div className="space-y-3"><PageHeader eyebrow="College Admin" title="Activity Log"/><p role="alert" className="rounded-[var(--lms-control-radius,9px)] border border-border p-4">Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail.</p></div>;
   const parsed = collegeActivityQuerySchema.safeParse(
     activitySearchParams(await searchParams),
   );
@@ -40,7 +40,7 @@ export default async function CollegeActivityPage({
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader eyebrow="College Admin · Operations" title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
-      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="rounded border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">View project activity</Link><a href={"/api/activity/college-export" +
+      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center">View project activity</Link><a href={"/api/activity/college-export" +
         (exportParams.size ? "?" + exportParams.toString() : "")}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Export filtered CSV (max 1,000)
