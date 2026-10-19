@@ -44,6 +44,10 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
  const root=useRef<HTMLDivElement>(null);
  const trigger=useRef<HTMLButtonElement>(null);
  const [mobile,setMobile]=useState(false);
+ const [allReadRevision,setAllReadRevision]=useState<number|null>(null);
+ const [readIds,setReadIds]=useState<string[]>([]);
+ const [latest,setLatest]=useState<{items:BellItem[];unread:number}|null>(null);
+ const [refreshing,setRefreshing]=useState(false);
  const displayedItems=latest?.items??items;
  const groupedItems=displayedItems.slice(0,20).reduce<{day:string;items:BellItem[]}[]>((groups,item)=>{
   const day=new Intl.DateTimeFormat("en-IN",{
