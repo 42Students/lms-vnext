@@ -20,7 +20,7 @@ export function TpoTeamOpenRead({threadId}:{threadId:string}){
   void acknowledge();
   return ()=>{active=false;};
  },[threadId,router]);
- return failed?<p role="alert" className="text-sm text-danger">
+ return failed?<p role="alert" className="text-sm text-error">
   Could not mark this conversation as read. Use the button below to retry.
  </p>:null;
 }
