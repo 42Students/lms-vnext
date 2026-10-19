@@ -681,7 +681,7 @@ export async function PlacementCalendarWorkspace({
             </p>
           </div>
           <div
-            className="flex flex-wrap gap-2"
+            className={"flex flex-wrap gap-2 "+(isTpo?calendarStyles.tpoViewSwitch:"")}
             role="group"
             aria-label="Calendar view"
           >
@@ -711,7 +711,7 @@ export async function PlacementCalendarWorkspace({
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <div className={"mt-4 flex flex-wrap items-center gap-2 "+(isTpo?calendarStyles.tpoNavigationRow:"")}>
           <Link
             href={calendarHref(
               basePath,
