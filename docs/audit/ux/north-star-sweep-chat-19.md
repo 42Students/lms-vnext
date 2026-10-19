@@ -107,3 +107,16 @@ Branch `chatgpt/chat-19-b` was fast-forwarded to main at `8175bfbde69c2ffbec45f3
 **Source regression checks, authored only:** Extended `tests/unit/chat19-north-star-legacy-sidebar.test.ts` and `tests/unit/chat19-sidebar-hr-value-parity.test.ts`, and created `tests/unit/chat19-hr-recovery-canvas.test.ts` for headings, icon mappings, page/control radii, errors, loading and nested-main avoidance. These tests were not executed, per explicit no-code/no-CI instruction.
 
 **Outstanding verification:** Legacy visual comparison at phone/tablet/desktop viewport widths, keyboard and screen-reader navigation, and TypeScript/unit/CI results require the later integration pass; no browser execution, typecheck, tests, CI or deployment was performed here. The audit documents source parity only, not pixel-perfect runtime confirmation.
+
+
+## Fifth pass — synchronized to latest main, sidebar aliases and HR controls (2026-10-19)
+
+- Merged current `main` at `a5d88d7cdfce161100ec7233f1d009e8e5b199d4` into `chatgpt/chat-19-b` with a two-parent merge commit `222c4119eed222ef9cd6708daaea0fb64378cb72`; preserved the branch's unmerged HR error/loading work, retaining newer main versions where they overlapped (HR messages error, HR notifications error).
+- Re-read `docs/design/old-lms-shell.css`, `sidebar-nav.tsx`, `sidebar-legacy.css` and `shell-model.ts`. The 96→256px push, 150ms easing, 24px icon boxes, 15px labels, TPO-only headings, group hairlines, collapsed badges, 3px active inset bar and mobile drawer remain intact.
+- Fixed the recruiter sidebar's route ownership so **Drives** stays selected through `/hr/placements`, `/hr/placements/jobs/*`, `/hr/round-results` and `/recruiter/drives/*`, while **Messages** owns both `/hr/conversations/*` and its `/hr/messages` alias. These are existing page aliases, not new navigation rows.
+- Re-read every canonical HR page: the remaining broad raw-color/fixed-radius patterns were not present. Corrected one more notification bell outline class using `--lms-primary`.
+- Matched old LMS underline tab styling in recruiter conversation kind and unread-only filters (active versus inactive state); changed employer college chooser corners from pills to the shared 9px control radius in `/hr/company`, `/hr/company/reports`, `/hr/home` and `/hr/drives`. Added `aria-current` to the selected company page college link.
+- Re-read modified JSX Link opening/closing tags and confirmed balanced pairs in all modified link-heavy page files. No page content, forms, copy, query schemas or permissions changed.
+- Added unexecuted source tests `chat19-sidebar-navigation-aliases.test.ts` and `chat19-hr-tabs-and-college-selector-skin.test.ts`; no runtime code, typecheck, CI, visual browser runs or deployment.
+
+Pixel-comparison against a running old LMS and responsive keyboard/touch checks remain integration-verification work rather than a claim of tested pixel parity.

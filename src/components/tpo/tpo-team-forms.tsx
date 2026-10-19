@@ -1,13 +1,14 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {tpoTeamFormErrorMessage} from "@/modules/placements/tpo-team-form-feedback-model";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
-import {Input} from "@/components/ui/input";
-import {Select} from "@/components/ui/select";
-import {Textarea} from "@/components/ui/textarea";
-import {Button} from "@/components/ui/button";
 
 type Member={membershipId:string;displayName:string};
 async function postForm(url:string,values:Record<string,string>){
@@ -152,7 +153,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
     className="w-full" placeholder="Share a private team update"/>
   </label>
   <label className="flex items-center gap-2 text-sm">
-   <input type="checkbox" checked={markDecision} disabled={busy}
+   <Checkbox checked={markDecision} disabled={busy}
     onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>
    Mark as decision
   </label>
