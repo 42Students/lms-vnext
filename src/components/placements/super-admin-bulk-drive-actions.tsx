@@ -59,14 +59,14 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         <select value={action} aria-label="Bulk action" onChange={e=>{
           setAction(e.target.value as "OPEN" | "CLOSE");setSelected([]);
           setPreview(null);setResult(null);}}
-          className="min-h-11 rounded border border-border bg-surface p-2">
+          className="min-h-9 rounded-[9px] border border-border bg-surface p-2">
           <option value="CLOSE">Close selected</option>
           <option value="OPEN">Open closed drives</option>
         </select>
       </label>
       <button type="button" disabled={busy || !selected.length || selected.length>25}
         onClick={()=>void send(false)}
-        className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
+        className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50">
         Preview {selected.length} drive(s)
       </button>
     </div>
@@ -91,11 +91,11 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         `${preview.pendingLettersWithdrawn} issued offers may be withdrawn when these drives close.`:
         "Previously withdrawn offers will not be reissued."}</p>
       <button type="button" disabled={busy || !preview.eligible} onClick={()=>setConfirmOpen(true)}
-        className="min-h-11 rounded bg-primary px-3 font-semibold text-foreground disabled:opacity-50">
+        className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-3 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50">
         Confirm {action.toLowerCase()}
       </button>
       <button type="button" disabled={busy} onClick={()=>setPreview(null)}
-        className="ml-2 min-h-11 rounded border border-border px-3">Cancel</button>
+        className="ml-2 min-h-9 rounded-[9px] border border-border px-3">Cancel</button>
     </div>:null}
     {result?<div role="status" className="space-y-2 text-sm">
       <p>{result.updated} updated, {result.skipped} failed. Retry will target only failed drives.</p>
