@@ -69,14 +69,14 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
   </div>
   <p role="status" className="text-xs text-muted-foreground">{visible.length} of {types.length} custom job types</p>
   {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{tpoJobTypesEmptyMessage(types.length,search,status)}</p>:
-   <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+   <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius,12px)] border border-border p-3">
     <div className="min-w-0 space-y-2"><span className="block break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"}</span>
      <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
      <TpoCustomJobTypePlaced id={item.id} label={item.label} version={item.updatedAt} value={item.countsAsPlaced}/>
     </div>
     <Button type="button" variant="secondary" disabled={busy} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{
       active:!item.active,expectedVersion:item.updatedAt,
-    })} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm disabled:opacity-50">
+    })} className="min-h-11 sm:min-h-9">
       {item.active?"Switch off":"Reactivate"}
     </Button></li>)}</ul>}
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
