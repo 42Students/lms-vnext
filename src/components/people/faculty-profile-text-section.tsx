@@ -9,6 +9,7 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 
 export type FacultyProfileTextField = {
   name: string; label: string; maxLength: number;
@@ -47,16 +48,16 @@ export function FacultyProfileTextSection({ section, title, description, fields,
           {props=>field.multiline
             ? <Textarea {...props} rows={4} value={draft[field.name]??""} maxLength={field.maxLength}
                 disabled={pending} onChange={event=>setDraft(current=>({...current,[field.name]:event.target.value}))}/>
-            : <Input {...props} className="min-h-11 min-[768px]:min-h-9" type={field.type??"text"} value={draft[field.name]??""}
+            : <Input {...props} className="min-h-11 md:min-h-[var(--lms-control-height)]" type={field.type??"text"} value={draft[field.name]??""}
                 maxLength={field.maxLength} disabled={pending}
                 onChange={event=>setDraft(current=>({...current,[field.name]:event.target.value}))}/>}
         </FormField>;
       })}
     </div>
-    {changed && issue ? <p role="alert" className="text-sm text-foreground">Review {title}: {issue}</p> : null}
+    {changed && issue ? <Alert tone="error">Review {title}: {issue}</Alert> : null}
     <div className="flex flex-wrap items-center gap-3">
-      {changed ? <Button variant="secondary" disabled={pending} className="min-h-11 min-[768px]:min-h-9" onClick={()=>setDiscardOpen(true)}>Discard edits</Button> : null}
-      <Button type="submit" loading={pending} disabled={!changed||Boolean(issue)} className="min-h-11 min-[768px]:min-h-9">{pending?"Saving…":"Save "+title}</Button>
+      {changed ? <Button variant="secondary" disabled={pending} className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setDiscardOpen(true)}>Discard edits</Button> : null}
+      <Button type="submit" loading={pending} disabled={!changed||Boolean(issue)} className="min-h-11 md:min-h-[var(--lms-control-height)]">{pending?"Saving…":"Save "+title}</Button>
     </div>
     <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen} title={"Discard unsaved changes to "+title+"?"}
       description={"Discard unsaved changes to "+title+"?"} confirmLabel="Discard edits" onConfirm={()=>{
