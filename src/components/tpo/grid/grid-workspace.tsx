@@ -100,13 +100,21 @@ export function GridWorkspace<Row>({
   if(!selection||!rollOf)return;
   const tokens=[...new Set(pasteText.split(/[\s,;]+/).map(part=>part.trim().toLowerCase()).filter(Boolean))];
   if(tokens.length>500){setNotice("Paste at most 500 roll numbers at a time.");return;}
-  const requested=new Set(tokens);
-  const matched=rows.filter(row=>requested.has(String(rollOf(row)??"").trim().toLowerCase()));
-  const matchedRolls=new Set(matched.map(row=>String(rollOf(row)??"").trim().toLowerCase()));
+  const lookup=new Map<string,string|null>();
+  for(const row of rows){
+   const key=String(rollOf(row)??"").trim().toLowerCase();
+   if(!key)continue;
+   const id=rowKey(row);
+   if(lookup.has(key)&&lookup.get(key)!==id)lookup.set(key,null);
+   else if(!lookup.has(key))lookup.set(key,id);
+  }
+  const matches=tokens.map(token=>lookup.get(token));
+  const chosen=matches.filter((value):value is string=>typeof value==="string");
+  const unmatched=tokens.filter(token=>!lookup.get(token));
   const outside=selection.selected.filter(key=>!pageIds.has(key));
-  selection.onChange([...new Set([...outside,...matched.map(rowKey)])]);
-  setNotice("Matched "+matchedRolls.size+" of "+requested.size+" roll number(s) on this authorized page."+
-   (requested.size>matchedRolls.size?" Unmatched: "+tokens.filter(value=>!matchedRolls.has(value)).slice(0,12).join(", "):""));
+  selection.onChange([...new Set([...outside,...chosen])]);
+  setNotice("Matched "+chosen.length+" of "+tokens.length+" roll number(s) on this authorized page."+
+   (unmatched.length?" Unmatched or ambiguous: "+unmatched.slice(0,12).join(", "):""));
  };
  return <section className="min-w-0 space-y-3" aria-label="TPO grid workspace" data-tpo-grid-workspace>
   <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label="TPO table tools">
