@@ -154,7 +154,7 @@ export function CollegeBrandingForm({
                   value={validColor(values[key]) ?? "#26BAC7"}
                   onChange={(event) => set(key, event.target.value.toUpperCase())}
                   disabled={!canEdit}
-                  className="h-11 w-12 cursor-pointer rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-1"
+                  className="h-11 w-12 cursor-pointer rounded-[var(--lms-control-radius)] border border-border bg-surface p-1"
                 />
                 <Input
                   value={values[key] ?? ""}
