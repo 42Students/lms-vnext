@@ -21,19 +21,19 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
    description={"Recent authorized module override and lock changes for "+(result.learnerName||"this learner")+". Changes are shown 40 at a time, newest first. The optional module filter is applied to the scoped audit query."}/>
   <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid gap-1 text-sm font-semibold text-body">Module
-    <Select name="module" defaultValue={cursor.data.module} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground">
+    <Select name="module" defaultValue={cursor.data.module} className="min-h-11 sm:min-h-9">
      <option value="all">All modules</option><option value="projects">Projects</option><option value="electives">Electives</option>
     </Select>
    </label>
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Actor name
     <Input name="actorName" maxLength={100} defaultValue={cursor.data.actorName}
-     className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground"/>
+     className="min-h-11 sm:min-h-9"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">From (India day)
-    <Input type="date" name="from" defaultValue={cursor.data.from} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground"/>
+    <Input type="date" name="from" defaultValue={cursor.data.from} className="min-h-11 sm:min-h-9"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">To (India day)
-    <Input type="date" name="to" defaultValue={cursor.data.to} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground"/>
+    <Input type="date" name="to" defaultValue={cursor.data.to} className="min-h-11 sm:min-h-9"/>
    </label>
    <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-on-primary">Filter history</Button>
    <Link href={studentRuleHistoryHref(collegeId,membershipId,null)} className="inline-flex min-h-11 items-center text-primary-text">Clear</Link>
