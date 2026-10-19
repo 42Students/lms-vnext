@@ -120,3 +120,15 @@ Branch `chatgpt/chat-19-b` was fast-forwarded to main at `8175bfbde69c2ffbec45f3
 - Added unexecuted source tests `chat19-sidebar-navigation-aliases.test.ts` and `chat19-hr-tabs-and-college-selector-skin.test.ts`; no runtime code, typecheck, CI, visual browser runs or deployment.
 
 Pixel-comparison against a running old LMS and responsive keyboard/touch checks remain integration-verification work rather than a claim of tested pixel parity.
+
+
+## Sixth pass — main resync, legacy recruiter aliases and canvas flattening (2026-10-19)
+
+- Reconciled newly landed `main` commits twice by preserving lane-only changes in merge commits `4120b0459b592f62f0fa0191d5cde18a1371bc60` and `dd3f8c46956a793e7c5da2ac0eb14cc6a98af33f`. All new commits stay on `chatgpt/chat-19-b`; no direct `main` pushes.
+- Sidebar active-item logic now recognizes alias entrypoints for **Today** (`/recruiter`, `/recruiter/home`), **Calendar**, **Company & Team**, **Messages**, **Drives**, `/hr/placements/jobs/*`, and `/hr/round-results` without exposing additional sidebar rows.
+- Generalized multi-role rail scoping by active portal without changing permission checks or route handlers. Kept the College Admin placement-cell handoff and dashboard escape available. Source-only alias/scoping contracts were added but not run.
+- Matched the old visual primitives more closely: white single canvas with compact ruled sections in HR Today, a linked metric summary strip for Today, a 5-item compact calendar summary strip, a ruled company reports summary strip, and hairline proposal rows. Preserved genuine event, drive, task, and action cards.
+- Converted proposal history search/sort inputs and submit control to shared `Input`, `Select`, `Button` primitives while retaining existing query names, values, form method, export action and permissions. Reviewed complete `</Select>` closing tag.
+- Revisited the **recruiter alias** error boundaries (including nested drive/round removal) so they render `insideShell` with the retry action and do not replace the authenticated page canvas. Mobile drawer open/close now use balanced 20px inline SVG glyphs, the old 9px control radius and matching teal focus rings; scroll area uses legacy 8px top and 16px bottom padding. Original focus trap/Escape/return-focus behavior remains.
+- Added `chat19-hr-surface-parity.test.ts` and extended existing source tests to preserve route aliases, strips, one-canvas layout, shared controls and mobile SVG markup. Test files were authored but **not run**, per instruction. Typecheck/lint/CI/browser checks were also not run.
+- Outstanding: screenshots and real browser comparison at mobile/tablet/desktop widths, runtime keyboard focus verification, and TypeScript/test execution by integration owner. Source review does not prove perfect pixel parity.
