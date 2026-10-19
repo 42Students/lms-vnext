@@ -13,6 +13,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { parseProjectAdminRiskQuery } from "@/modules/projects/admin-risk-query-model";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { FilterChipLink } from "@/components/ui/filter-chip";
 import {
   listProjectAdminRiskQueue,
 } from "@/modules/projects/admin-insights-service";
@@ -78,19 +79,17 @@ export async function ProjectAdminAtRiskPage({
           Workspace blocker data is unavailable. Task blockers are still counted.
         </Banner>
       ) : null}
-      <div className="grid min-w-0 gap-3 md:grid-cols-3">
+      <nav aria-label="At-risk quick filters" className="flex min-w-0 flex-wrap items-center gap-2">
         {([
           ["Stalled", result.buckets.stalled, "STALLED"],
           ["Active blocker", result.buckets.blocker, "BLOCKER"],
           ["Pending review", result.buckets.review, "REVIEW"],
         ] as const).map(([title, value, key]) =>
-          <Link key={key} href={basePath + "/at-risk?riskBucket=" + key}
-            className={"block min-h-11 min-w-0 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary " +
-              (query.riskBucket === key ? "border-primary" : "border-border")}>
-            <p className="text-sm font-semibold text-body">{title}</p>
-            <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
-          </Link>)}
-      </div>
+          <FilterChipLink key={key} href={basePath + "/at-risk?riskBucket=" + key}
+            selected={query.riskBucket === key} tone={value > 0 ? "warning" : "neutral"}>
+            {title} <span className="tabular-nums">{value}</span>
+          </FilterChipLink>)}
+      </nav>
       <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
       <ProjectAdminFilters query={query} includeRiskSort />
       <ListToolbar label="At-risk workspaces" viewCount={result.total} />
