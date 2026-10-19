@@ -196,7 +196,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         className="mt-3 min-h-11 md:min-h-9 px-4">Close</Button>
   </Dialog>:null}
   {!slot&&message?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-[var(--lms-gold-accent)]">{message}</p>:null}
-  {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next)cancelDraft();}} title="New recruiter follow-up" className="max-w-md">
+  {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next&&!saving)cancelDraft();}} dismissible={!saving} title="New recruiter follow-up" className="max-w-md">
    <div className="space-y-3">
     {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-warning px-3 py-2 text-sm text-[var(--lms-gold-accent)]">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
     {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}

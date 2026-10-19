@@ -37,7 +37,8 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
    {busy?"Checking…":"Remind students who haven't applied"}</Button>
   {outcome?<span role="status" className="text-xs text-body">{outcome}</span>:null}
   {error&&!open?<span role="alert" className="text-xs text-error">{error}</span>:null}
-  {preview?<Dialog open={open} onOpenChange={setOpen} title="Remind students who haven't applied" className="max-w-xl">
+  {preview?<Dialog open={open} onOpenChange={next=>{if(!busy)setOpen(next);}} dismissible={!busy}
+    title="Remind students who haven't applied" className="max-w-xl">
    <div className="space-y-4">
     <p className="text-sm text-body">{preview.count} eligible registered students have not applied to this drive.
      These students will receive an in-app notification linking to the drive. Reminders are allowed once per drive each day before the deadline.</p>
