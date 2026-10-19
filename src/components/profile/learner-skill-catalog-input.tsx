@@ -32,6 +32,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
   return ()=>{controller.abort();window.clearTimeout(timer);};
  },[value]);
  useEffect(()=>{
+  if(!popupOpen)return;
   const outside=(event:PointerEvent)=>{
    if(event.target instanceof Node && !rootRef.current?.contains(event.target)){
     setPopupOpen(false);setActiveIndex(-1);
@@ -39,7 +40,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
   };
   document.addEventListener("pointerdown",outside);
   return ()=>document.removeEventListener("pointerdown",outside);
- },[]);
+ },[popupOpen]);
  return <div ref={rootRef} data-slot="searchable-select" className="relative sm:col-span-2"
   onBlur={event=>{
    if(!event.currentTarget.contains(event.relatedTarget)){setPopupOpen(false);setActiveIndex(-1);}
