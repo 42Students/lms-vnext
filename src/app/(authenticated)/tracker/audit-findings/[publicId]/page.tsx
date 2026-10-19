@@ -24,14 +24,14 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   ["Actual",finding.actual],["Evidence",finding.evidence],["Suggested fix",finding.suggestedFix],
  ];
  return <div className="min-w-0 space-y-5">
-  <Link href="/tracker/audit-findings" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Back to audit findings</Link>
+  <Link href="/tracker/audit-findings" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Back to audit findings</Link>
   <PageHeader title={finding.title} description={finding.externalId+" · "+finding.area+" · "+finding.kind}/>
   <div className="flex flex-wrap gap-2"><StatusBadge>{finding.severity}</StatusBadge><StatusBadge>{finding.status}</StatusBadge>
    <StatusBadge>{finding.assignee??"Unassigned"}</StatusBadge></div>
-  {details.map(([label,value])=><section key={label} className="rounded-xl border border-border bg-surface p-4">
+  {details.map(([label,value])=><section key={label} className="border-b border-border pb-4">
    <h2 className="font-semibold">{label}</h2><p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{value??"Not recorded"}</p>
   </section>)}
-  <section className="rounded-xl border border-border bg-surface p-4">
+  <section className="border-b border-border pb-4">
    <h2 className="font-semibold">Source and affected code</h2>
    <p className="text-sm text-body">Repository: {finding.sourceRepo} · Source: {finding.sourcePath??"Not recorded"}</p>
    {([["Paths",finding.paths],["Pages",finding.pages],["Endpoints",finding.endpoints]] as const).map(([label,values])=>
@@ -39,7 +39,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
      <ul className="list-disc pl-5 text-sm">{values.map(value=><li key={value} className="break-all">{value}</li>)}</ul></div>)}
   </section>
   <Link href={"/tracker/audit-findings?q="+encodeURIComponent(finding.title.slice(0,100))}
-   className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Looks similar</Link>
+   className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Looks similar</Link>
   <IndependentFindingCopyAction finding={{
    id:finding.externalId,title:finding.title,summary:finding.summary,steps:finding.steps,
    expected:finding.expected,actual:finding.actual,sourceRepo:finding.sourceRepo,
@@ -47,14 +47,14 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   }}/>
   <IndependentFindingActions externalId={finding.externalId} version={finding.version} status={finding.status} severity={finding.severity}
    candidates={candidates.items.filter(item=>item.id!==finding.id).map(item=>({id:item.id,externalId:item.externalId,title:item.title}))}/>
-  <section className="rounded-xl border border-border bg-surface p-4">
+  <section className="border-b border-border pb-4">
    <h2 className="font-semibold">Audit event history</h2>
    <ol className="mt-3 space-y-2 text-sm">{events.map(event=><li key={event.id} className="border-b border-border pb-2">
     {event.action} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(event.createdAt)}
     {event.note?<p className="mt-1 whitespace-pre-wrap break-words">{event.note}</p>:null}
    </li>)}</ol>
   </section>
-  <section className="rounded-xl border border-border bg-surface p-4">
+  <section className="border-b border-border pb-4">
    <h2 className="font-semibold">Fix commits</h2>
    <ul className="mt-2 space-y-2">{finding.fixCommits.map(commit=><li key={commit.repo+":"+commit.sha}
     className="break-all text-sm text-body">{commit.repo} · {commit.sha}</li>)}</ul>
