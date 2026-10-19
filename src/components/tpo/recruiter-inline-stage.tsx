@@ -31,18 +31,18 @@ export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:stri
   {open?<div className="space-y-2">
    <label className="block text-xs">Stage
     <Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
-     className="min-h-10 w-full rounded border border-border bg-surface">
+     className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface">
      <option value="CONTACTED">Contacted</option><option value="NOT_NOW">Not now</option>
     </Select>
    </label>
    {action==="NOT_NOW"?<label className="block text-xs">Reason
     <Input value={reason} maxLength={255} onChange={e=>setReason(e.target.value)}
-     className="min-h-10 w-full rounded border border-border bg-surface px-2"/>
+     className="min-h-11 md:min-h-9 w-full rounded border border-border bg-surface px-2"/>
    </label>:null}
    <Button variant="primary" type="button" disabled={busy} onClick={()=>void save()}
-    className="min-h-10 px-3">Apply</Button>
+    className="min-h-11 md:min-h-9 px-3">Apply</Button>
    <Button variant="ghost" type="button" disabled={busy} onClick={()=>setOpen(false)}
-    className="ml-2 min-h-10">Cancel</Button>
+    className="ml-2 min-h-11 md:min-h-9">Cancel</Button>
   </div>:null}
   {error?<p role="alert" className="text-xs text-warning">{error}</p>:null}
  </div>;
