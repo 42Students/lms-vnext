@@ -1,3 +1,5 @@
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -109,16 +111,16 @@ export function CollegeQuizCreate({lessons,deliveries}:{
        {x.sectionName} ({x.sectionCode})</option>)}
      </select></label>
     <label className="grid gap-1 text-sm font-semibold">Title
-     <input maxLength={255} required value={title} disabled={busy}
+     <Input maxLength={255} required value={title} disabled={busy}
       onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold">Deadline (IST, required before publishing)
-     <input type="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
+     <Input type="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
       className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold">Maximum attempts
-     <input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
+     <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
       onChange={e=>setMaxAttempts(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Description
-     <textarea rows={2} maxLength={10000} value={description} disabled={busy}
+     <Textarea rows={2} maxLength={10000} value={description} disabled={busy}
       onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/></label>
    </div>
    <p role="status" className="text-xs text-muted-foreground">Audience: {deliveryId?
@@ -142,11 +144,11 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
      </select>
-     <input type="number" min={1} max={1000} aria-label="Question points" disabled={busy}
+     <Input type="number" min={1} max={1000} aria-label="Question points" disabled={busy}
       value={question.points} onChange={e=>replaceQuestion(i,{...question,points:Number(e.target.value)})}
       className="w-28 rounded border border-border px-2"/>
     </div>
-    <textarea value={question.prompt} maxLength={5000} disabled={busy} placeholder="Question prompt"
+    <Textarea value={question.prompt} maxLength={5000} disabled={busy} placeholder="Question prompt"
      aria-label={"Question "+(i+1)+" prompt"} onChange={e=>replaceQuestion(i,{...question,prompt:e.target.value})}
      className="w-full rounded border border-border p-2"/>
     {question.options.map((option,j)=><label key={j} className="flex items-center gap-2 text-sm">
@@ -155,7 +157,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       aria-label={"Correct answer "+(j+1)} onChange={e=>replaceQuestion(i,{...question,
        options:question.options.map((o,k)=>({...o,correct:question.type==="SINGLE_CHOICE"?
         k===j:k===j?e.target.checked:o.correct}))})}/>
-     <input maxLength={2000} disabled={busy} value={option.text} placeholder={"Option "+(j+1)}
+     <Input maxLength={2000} disabled={busy} value={option.text} placeholder={"Option "+(j+1)}
       onChange={e=>replaceQuestion(i,{...question,options:question.options.map((o,k)=>k===j?{...o,text:e.target.value}:o)})}
       className="min-h-10 min-w-0 flex-1 rounded border border-border px-2"/>
      {question.options.length>2?<Button variant="ghost" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
