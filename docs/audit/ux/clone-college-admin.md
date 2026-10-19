@@ -300,20 +300,20 @@
 - [ ] `src/components/college/college-admin-profile-editor.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-department-insights.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-faculty-assignment-actions.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
+- [ ] `src/components/college/college-faculty-csv-import.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-faculty-lifecycle-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-faculty-reassign-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-faculty-schedule-reassign.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-legacy-group-tabs.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-offering-lifecycle-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-offering-metadata-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/components/college/college-person-audit-modal.tsx`
+- [ ] `src/components/college/college-person-audit-modal.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-person-edit-action.tsx`
 - [ ] `src/components/college/college-person-profile-overview-modal.tsx`
 - [ ] `src/components/college/college-role-directory-workspace.tsx`
 - [ ] `src/components/college/college-student-csv-import.tsx`
-- [ ] `src/components/college/college-student-import-history.tsx`
-- [ ] `src/components/college/college-student-lifecycle-action.tsx`
+- [ ] `src/components/college/college-student-import-history.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/components/college/college-student-lifecycle-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-student-register-form.tsx`
 - [ ] `src/components/college/student-class-move-action.tsx`
 - [ ] `src/components/college/use-college-confirmation.tsx`
@@ -1178,3 +1178,60 @@ Shared component references from inspected source: `src/components/admin/managed
 **Strict tick count:** 0 in this set. Full-scope zero-grep, complete every-state visual values, recorded phone+tablet screenshots and typecheck not available; the shared `PageHeader` typography and `DataTable` 640/767 switch are known upstream discrepancies. The source scans are proof of changes, not proof of full pixel parity.
 
 **Exact next file:** `src/components/college/college-faculty-assignment-actions.tsx`, then `college-faculty-csv-import.tsx`, `college-person-*`, and the remaining unticked College Admin queue.
+
+
+### Replacement chat-4 College Admin CSV/history/lifecycle/person-audit source batch — 2026-10-19
+
+**Source-refactored this turn:** four full files. Existing CSV parsing limits, partial results and imports, person audit record scope, lifecycle permission checks, optimistic versions, and error text were retained. Shared UI imports are used; no edits to shared UI, globals or auth. No application/code execution, CI, TSX typecheck, browser, or screenshots.
+
+**Scoped regex proof (full GitHub blob text, per file):** `/<(button|select|input|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`. Paired closing-tag scan includes Button, Input, Textarea, Alert, EmptyState, Skeleton, DataTable, Dialog, ConfirmDialog, section, div, label, form, h2, h3, nav, ol, li. Counts **do not** represent a whole-repo grep; parser validation was not run.
+
+| File | Native controls | Hex colours | Hand overlay | Native h1 | Closing tag orphan families | md/sm prefixes |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| `src/components/college/college-faculty-csv-import.tsx` | 0 | 0 | 0 | 0 | none found | 5/0 |
+| `src/components/college/college-student-import-history.tsx` | 0 | 0 | 0 | 0 | none found | 4/0 |
+| `src/components/college/college-student-lifecycle-action.tsx` | 0 | 0 | 0 | 0 | none found | 1/0 |
+| `src/components/college/college-person-audit-modal.tsx` | 0 | 0 | 0 | 0 | none found | 2/0 |
+
+#### `src/components/college/college-faculty-csv-import.tsx`
+
+| Property/state | Legacy value and file | vNext component/value | Result |
+| --- | --- | --- | --- |
+| CSV upload/textarea | legacy-styles/components___form.scss:117-143: 10px field radius, 14px/20px text, 2px teal focus shadow | Shared FileUpload and Textarea with existing maxBytes 1 MB, max 500 faculty rows; shared field token chrome | **Exact CSV picker style/disabled hover legacy source missing** |
+| Validation, errors and empty | old-lms-pages.md:6,11: inline warning/error strip, no nested canvas | Shared Alert(info/error) for summary, structural and network failures; shared EmptyState for DataTable zero rows | **Legacy faculty import-specific notices not measured** |
+| Pending and primary action | old-lms-shell-spec.md:22-24: 36px/9px primary, 14px font/650, white on teal | Shared Button loading/disabled with 44px mobile, 36px md+; data integrity draft-version guard retained | **Source token alignment; hover/focus live state unknown** |
+| Responsive and exports | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px, 44px targets | CSV template / row report action anchors min-h-11 md:min-h-9, form blocks naturally stack, DataTable has its own mobile mode | **DataTable switches at 640px rather than 767px; strict tablet parity open** |
+
+
+#### `src/components/college/college-student-import-history.tsx`
+
+| Property/state | Legacy value and file | vNext component/value | Result |
+| --- | --- | --- | --- |
+| Modal geometry and table | old-lms-pages.md:6,11: central dialog, hairline table, no nested heading | Shared Dialog owns title and accessible close; DataTable owns rows; duplicate modal title removed | **Modal max-height/scroll and exact old table metrics unknown** |
+| Loading/error/empty | old-lms-pages.md:6,11: no empty state masquerading as loading | Shared Skeleton(row) during pending, Alert(error) on failure, EmptyState only after successful empty read | **Source state separation matches intent; still no browser proof** |
+| Previous/next and disabled | old-lms-shell-spec.md:22-24: secondary white/hairline 36px desktop; button.scss:49-51 disabled | Shared Button, 44px below 768, 36px >=768, current page guards preserved | **Shared disabled hover CSS not visually measured** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: phone <=767px uses single-column actions | Dialog shared viewport sizing and wrapping navigation; DataTable mobile cards <=639px, rows above | **Known responsive cutoff mismatch for DataTable, open** |
+
+
+#### `src/components/college/college-student-lifecycle-action.tsx`
+
+| Property/state | Legacy value and file | vNext component/value | Result |
+| --- | --- | --- | --- |
+| Confirmation | old-lms-pages.md:6: common modal rather than hand-rolled card | Inline confirmation replaced by shared ConfirmDialog; original reason field and server mutation unchanged | **UI surface changed from inline to modal; exact old student confirm unspecified** |
+| Input validation and disabled | form.scss:117-143: field radius 10px and 2px focus; button.scss:49-51 disabled | Shared Input maxLength 500 and pending disable; shared ConfirmDialog blocks until reason >=3 chars | **Source validation preserved; browser focus sequence untested** |
+| Error and success | old-lms-pages.md:11: slim error notice | Shared Alert(error) inside/outside dialog; closes on successful server confirmation and refreshes | **Error appearance source only** |
+| Responsive buttons | legacy-styles/components___listing-page-header.scss:130-153: 44px phone targets through 767px | Trigger Button min-h-11 md:min-h-9, ConfirmDialog delegates footer to shared UI | **Touch target matches; modal phone rendering unverified** |
+
+
+#### `src/components/college/college-person-audit-modal.tsx`
+
+| Property/state | Legacy value and file | vNext component/value | Result |
+| --- | --- | --- | --- |
+| Audit data rows | old-lms-pages.md:6,11: hairline divider rows rather than card per ordinary record | Audit ol now divide-y; original kind, actor, IST timestamp and 100-row cap retained | **Row separator anatomy matches; row exact padding/hover unknown** |
+| Central dialog | old-lms-pages.md:6: no hand-rolled modal | Uses shared Dialog; duplicated h2 removed; shared Button close | **Shared overlay; native WebView/keyboard no runtime test** |
+| Loading, empty, error | old-lms-pages.md:6,11: state feedback within the same canvas | Shared Skeleton(row x3), EmptyState when no events, Alert(error) on read failure, Alert(info) for truncation | **Shared state shape, legacy toast/empty metrics unknown** |
+| Responsive | listing-page-header.scss:130-153: phone <=767px; 44px targets | Trigger/close Buttons min-h-11 md:min-h-9; Dialog adapts to available viewport height | **Phone/tablet computed render not captured** |
+
+**Strict ticks:** 0 of these four, and 0 total in the queue. Complete route ownership grep, every-state exact pixel/property matches, live tablet/phone focus and modal interactions, and TSX parse are still outstanding. Corrected shared Skeleton variant to documented `row`, preserving type compatibility at source level. All input and dialog source changes were read back after writing.
+
+**Next exact file:** `src/components/college/college-faculty-assignment-actions.tsx` (then Student CSV import, Student register form, faculty teaching workflows).
