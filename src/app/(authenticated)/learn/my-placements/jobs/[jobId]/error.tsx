@@ -11,7 +11,7 @@ export default function LearnerJobDetailError({
 }) {
   return (
     <section role="alert" className="rounded-xl border border-border bg-surface p-8 text-center">
-      <h1 className="m-0 text-lg font-semibold text-foreground">Unable to load this drive</h1>
+      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Unable to load this drive</h1>
       <p className="mt-2 text-sm text-body">
         Drive information could not be loaded. This is different from an unavailable or removed job.
       </p>
