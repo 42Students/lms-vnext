@@ -59,7 +59,7 @@ export function CollegePromotionConfirmation({
   return <div className="space-y-3">
     {success && <p role="status" className="text-sm font-semibold text-[var(--lms-teal-deep)]">{success}</p>}
     <Button type="button" onClick={() => { setError(null); setOpen(true); }}
-      className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
+      className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-semibold text-on-primary">
       {BATCH_PROMOTION_COPY.promoteButton}
     </Button>
     <ConfirmDialog open={open} onOpenChange={setOpen} title="Promote Batch" description={"Confirm promotion to term "+targetTerm} confirmLabel="Yes, Promote" pending={pending} onConfirm={submit}>

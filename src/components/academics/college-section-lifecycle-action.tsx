@@ -28,7 +28,7 @@ export function CollegeSectionLifecycleAction({row}:{
   }
   return <div className="space-y-1">
     <button type="button" disabled={pending} onClick={()=>setConfirming(true)}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       {pending?"Saving…":action==="ARCHIVE"?"Archive":"Restore"}
     </button>
     <ConfirmDialog open={confirming} onOpenChange={setConfirming}
