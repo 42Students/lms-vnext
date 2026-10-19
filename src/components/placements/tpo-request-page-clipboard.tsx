@@ -2,6 +2,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
+import {Disclosure} from "@/components/ui/disclosure";
 export type TpoRequestClipboardRow={id:string;student:string;number:string|null;
  kind:string;company:string;asked:string;status:string;decided:string|null};
 export type TpoRequestClipboardColumn=Exclude<keyof TpoRequestClipboardRow,"id">;
@@ -76,8 +77,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
      <option value="DECIDED_NEW">Decided on · newest</option><option value="DECIDED_OLD">Decided on · oldest</option>
     </select>
    </label>
-   <details className="min-w-0 max-w-full rounded border border-border p-2 text-sm">
-    <summary className="inline-flex min-h-11 cursor-pointer items-center rounded font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Choose columns</summary>
+   <Disclosure title="Choose columns" className="min-w-0 max-w-full rounded border border-border p-2 text-sm">
     <div className="mt-2 flex flex-wrap gap-3">{options.map(option=><label key={option.key} className="flex min-h-11 items-center gap-2">
       <Checkbox checked={visible.includes(option.key)}
        disabled={visible.length===1&&visible.includes(option.key)}
@@ -85,7 +85,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
       {option.label}
     </label>)}</div>
     <button type="button" className="mt-2 min-h-11 rounded-[9px] border border-border px-3 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" onClick={()=>setVisible(options.map(option=>option.key))}>Reset columns</button>
-   </details>
+   </Disclosure>
   </div>
   <DataTable<TpoRequestClipboardRow>
    caption="Request spreadsheet"
