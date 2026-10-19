@@ -6,12 +6,13 @@ import {tpoGridTimeLabel} from "@/modules/placements/tpo-grid-time-label";
 import {TpoApplicantReviewDrawer} from "@/components/placements/tpo-applicant-review-drawer";
 import dynamic from "next/dynamic";
 import type { TpoGrid } from "./grid/tpo-grid";
+import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 
 const TpoGridClient = dynamic(
   () => import("./grid/tpo-grid").then(module => module.TpoGrid),
   { ssr: false },
 ) as unknown as typeof TpoGrid;
-import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
+
 
 type Row={
  id:string;student:string|null;role:string;rollNumber:string|null;email:string|null;phone:string|null;batchName:string|null;branchName:string|null;cgpaHundredths:number|null;activeBacklogs:number|null;pastBacklogs:number|null;tenthPctBasisPoints:number|null;twelfthPctBasisPoints:number|null;lastRound:string|null;lastResult:string|null;applicationStatus:string;screeningStatus:string|null;
