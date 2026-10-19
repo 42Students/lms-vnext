@@ -43,7 +43,7 @@ export default async function CollegeElectivesPage({
   return <div className="space-y-4">
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={electiveCsvHref(data.query)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
       Export filtered electives CSV
     </Link>
     <p className="text-xs text-muted-foreground">Exports up to {ELECTIVES_EXPORT_CAP} matching elective slots; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
