@@ -16,9 +16,9 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
    <Link href={detail.related.href+"/applications"} className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Manage this drive&apos;s applications and stage decisions →</Link>
    <Link href={detail.related.href+"/schedule?applicationId="+encodeURIComponent(applicationId)} className="inline-flex min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Schedule candidate interview →</Link>
   </div>:null}
-  <section aria-label="Application stage history" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+  <section aria-label="Application stage history" className="space-y-3 border-b border-border pb-5">
    <h2 className="text-lg font-semibold">Status history</h2>
-   {history?.length?<ol className="space-y-2">{history.map(event=><li key={event.id} className="rounded-[9px] border border-border p-3 text-sm">
+   {history?.length?<ol className="divide-y divide-border border-y border-border">{history.map(event=><li key={event.id} className="py-3 text-sm">
      <p className="font-semibold">{event.fromStage??"New application"} → {event.toStage}</p>
      <p className="mt-1 text-body">{event.reason}</p>
      <time className="text-xs text-muted-foreground" dateTime={event.changedAt.toISOString()}>
