@@ -32,8 +32,8 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
   <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
    Proposals and employer-internal reservations are not confirmed student interviews. The placement cell must arrange its own rooms, candidates and confirmed schedule separately.
   </p>
-  {data.slots.length?<ol className="space-y-3">{data.slots.map(slot=><li key={slot.id}
-    className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
+  {data.slots.length?<ol className="divide-y divide-border">{data.slots.map(slot=><li key={slot.id}
+    className="py-4">
     <h2 className="font-semibold text-foreground">{slot.roundName}</h2>
     <p className="mt-1 text-sm text-body">{when(slot.startAt)} – {when(slot.endAt)}</p>
     <p className="mt-1 text-sm text-body">{slot.status==="PROPOSED"?"Not sent yet":

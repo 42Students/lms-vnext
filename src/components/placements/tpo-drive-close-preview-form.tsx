@@ -53,9 +53,9 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  return <form onSubmit={submit} className="space-y-4 border-b border-border pb-5">
   <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
   <p className="text-sm text-body">Closing stops new applications. Applicants without accepted offers who are still in the process are marked Not selected and told; pending withdrawal requests are settled. Accepted offers remain valid. Application, round and offer history is retained.</p>
-  <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+  <dl className="grid grid-cols-1 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-3">
    {consequences
-    .map(([label,n])=><div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-3">
+    .map(([label,n])=><div key={label} className="border-b border-border p-3 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0">
      <dt className="text-xs text-body">{label}</dt><dd className="text-2xl font-semibold tabular-nums">{n}</dd>
     </div>)}
   </dl>
