@@ -22,8 +22,8 @@ export default async function Page({params}:{
   </section>
   {data.feedback.length===0?<EmptyState title="No recorded reviewer feedback"
    description="No persisted submission-version feedback exists for this authorized task. Missing messages are not reconstructed."/>
-   :<ol className="divide-y divide-border">{data.feedback.map(entry=><li key={entry.id}
-    className="py-4">
+   :<ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.feedback.map(entry=><li key={entry.id}
+    className="py-[var(--lms-space-3)]">
     <div className="flex flex-wrap items-center justify-between gap-2">
      <h2 className="text-sm font-semibold">Version {entry.version} · {taskFeedbackStatusLabel(entry.status)}</h2>
      <span className="text-xs text-muted-foreground">
@@ -35,7 +35,7 @@ export default async function Page({params}:{
     <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">{entry.feedback}</p>
    </li>)}</ol>}
   <Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"?tab=board"}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Back to authorized task Board
   </Link>
   <p className="text-xs text-muted-foreground">
