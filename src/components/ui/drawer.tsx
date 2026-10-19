@@ -45,7 +45,7 @@ export function Drawer({ open, onOpenChange, title, description, children, foote
         {dismissible ? <Button className="min-h-11 min-w-11 shrink-0 rounded-full bg-surface p-0 text-[var(--lms-muted-text)] hover:bg-[var(--lms-neutral-100)]" variant="ghost" aria-label="Close drawer" onClick={() => onOpenChange(false)}><OverlayCloseIcon /></Button> : null}
       </header>
       <ScrollCue axis="y" label={`${title} drawer content`} className="min-h-0 flex-1" viewportClassName={cx("h-full min-h-0 overscroll-contain p-4 sm:p-[var(--lms-canvas-padding)]", bodyClassName)}>{children}</ScrollCue>
-      {footer ? <footer className="flex shrink-0 flex-wrap items-center justify-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-[var(--lms-canvas-padding)]">{footer}</footer> : null}
+      {footer ? <footer data-slot="drawer-footer" className="flex shrink-0 flex-wrap items-center justify-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-[var(--lms-canvas-padding)]">{footer}</footer> : null}
     </div>
   </dialog>;
 }
