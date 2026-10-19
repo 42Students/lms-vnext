@@ -64,7 +64,7 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
    <Button type="button" variant="secondary" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(true)}
     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
-    {pending?"Updating…":"Show to students"}</button>
+    {pending?"Updating…":"Show to students"}</Button>
    <button type="button" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(false)}
     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
