@@ -14,11 +14,11 @@ export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:
  // Never leave a foreign/stale ID selected or silently hide the current college authoring control.
  const selected=resolveSuperAdminAuthoringLesson(lessons,lessonId);
  return <section aria-label="Create lesson content" className="space-y-3 border-b border-border pb-5">
-  <h2 className="font-semibold">Add {kind==="VIDEOS"?"video":kind==="LIVE_CLASSES"?"live class":"resource"}</h2>
+  <h2 className="font-semibold text-foreground">Add {kind==="VIDEOS"?"video":kind==="LIVE_CLASSES"?"live class":"resource"}</h2>
   {!lessons.length?<p className="text-sm text-muted-foreground">Create a course offering, learning path and lesson before adding content.</p>:<>
    <label className="grid gap-1 text-sm font-semibold text-body">Lesson
     <Select value={selected?.id??""} onChange={e=>setLessonId(e.target.value)}
-     className="w-full sm:min-h-[var(--lms-control-height)]">
+     className="min-h-11 w-full md:min-h-9">
      {lessons.map(x=><option value={x.id} key={x.id}>{x.courseCode} · {x.courseName} · {x.name}</option>)}
     </Select>
    </label>
