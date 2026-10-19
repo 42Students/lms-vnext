@@ -116,7 +116,7 @@ export async function ProjectAdminReadinessPage({
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(row.at)},
             {key:"action",header:"Action",mobilePriority:"action",cell:row=><Link
-              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline"
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
               href={basePath+"/"+row.projectId+"/readiness"}>Manage</Link>},
           ]}
           empty={<p role="status" className="text-sm text-body">No workspace overrides match these filters.</p>}
