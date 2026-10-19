@@ -160,7 +160,7 @@ export function LearnerNotificationsInbox({
       {unreadPersonalCount>0 ? (
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3">
           <p className="text-sm text-body">{unreadPersonalCount} unread personal notifications</p>
-          <Button variant="secondary" size="sm" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
+          <Button variant="secondary" size="sm" className="min-h-11 min-[768px]:min-h-9" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
             Mark all personal as read
           </Button>
         </div>
@@ -178,7 +178,7 @@ export function LearnerNotificationsInbox({
         <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
           <p className="font-semibold text-foreground">Announcements not refreshed</p>
           <p className="mt-1">{sourceStatus.notice}</p>
-          <Button size="sm" variant="secondary" onClick={()=>router.refresh()}>
+          <Button size="sm" variant="secondary" className="min-h-11 min-[768px]:min-h-9" onClick={()=>router.refresh()}>
             Retry announcements
           </Button>
         </div>
