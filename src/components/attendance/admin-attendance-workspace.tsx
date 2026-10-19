@@ -552,7 +552,7 @@ export function AdminAttendanceWorkspace({
                           const multiple = sessions.length > 1;
                           return (
                             <td key={day} className="px-3 py-3 text-center">
-                              <Button
+                              <Button variant="ghost"
                                 type="button"
                                 disabled={!multiple && new Date(first.startsAt).getTime() > loadedAt}
                                 aria-label={multiple
