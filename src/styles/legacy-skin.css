@@ -495,10 +495,13 @@
  * Read-only and disabled controls retain their own neutral border styling.
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"])
-    :not([type="file"]):not([type="range"]):not([type="color"])
-    :not([type="button"]):not([type="submit"]):not([type="reset"])
-    :not([type="image"]), select, textarea):not(:where([data-unskin], [data-unskin] *))
-  :hover:not(:disabled):not(:read-only):not([aria-invalid="true"]) {
+  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), textarea):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled):not(:read-only):not([aria-invalid="true"]) {
+  border-color: var(--lms-field-hover-border) !important;
+}
+/* Legacy: components___antddesign.scss:511-523 (select hover/focus theme),
+ * components___variables.scss:91 (muted hover border).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(select):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled):not([aria-invalid="true"]) {
   border-color: var(--lms-field-hover-border) !important;
 }
