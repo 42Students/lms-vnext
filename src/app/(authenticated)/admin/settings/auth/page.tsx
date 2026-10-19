@@ -18,7 +18,7 @@ export default async function SuperAdminAuthSettings(){
     action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
   </div>;
  return <div className="min-w-0 space-y-6">
-  <Link href="/admin/settings" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">← Platform settings</Link>
+  <Link href="/admin/settings" className="inline-flex min-h-9 items-center text-[14px] font-[650] text-primary-text">← Platform settings</Link>
   <PageHeader eyebrow="Super Admin · Platform Security" title="Authentication settings"
    description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication."/>
   <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
@@ -34,7 +34,7 @@ export default async function SuperAdminAuthSettings(){
   <section aria-label="Legacy platform and auth setting keys" className="space-y-3 border-b border-border pb-5">
    <h2 className="font-semibold">Platform &amp; auth policy keys</h2>
    <p className="text-sm text-body">Names and validation are listed for review. Environment and live network configuration are never displayed. Changes to host, cookie or network controls require manual deployment acceptance.</p>
-   <ul className="space-y-2 text-sm">{LEGACY_TENANT_SETTING_SPECS.filter(spec=>spec.group==="Platform & auth").map(spec=><li key={spec.key} className="rounded-md border border-border p-3">
+   <ul className="space-y-2 text-sm">{LEGACY_TENANT_SETTING_SPECS.filter(spec=>spec.group==="Platform & auth").map(spec=><li key={spec.key} className="border-b border-border py-3">
     <strong className="block">{spec.label}</strong>
     <code className="break-all text-xs">{spec.key}</code>
     {spec.dangerous?<span className="ml-2 text-warning-text">High impact · deployment gated</span>:null}
