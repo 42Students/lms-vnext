@@ -614,3 +614,64 @@ All changed JSX opening/closing names were read from each fetched file and kept 
 **Exact fetched-file grep counts:** \`multi-select.tsx\` and \`searchable-select.tsx\` each have raw \`<button>\` **0**, \`<input>\` **0**, \`<select>\` **0**, \`<textarea>\` **0**, based on the same complete-file pattern \`/<(button|input|select|textarea)(?=[\\s>])/g\`. Both use matched shared opening/closing JSX tags and no new hard-coded hex color paint. The global all-caller scan and actual mobile/keyboard/browser checks have not been run; **C2 stays unticked**, as do the other eleven strict categories.
 
 **Next exact file for the replacement lane:** \`src/components/ui/date-input.tsx\` (week/datetime-local/seconds/any-step native fallback vs legacy picker popup; do not tick C3 without value and viewport proof).
+
+
+## 2026-10-20 — C1/C3/C4 picker, range and form-control source completion pass
+
+**Source-level completed files** (a file-level check does not satisfy the STRICT CATEGORY TICK RULE):
+
+- [x] `src/components/ui/date-input.tsx` — ISO week/year calculation, Monday-first week selection, min/max/step enforcement for date/month/week, minute-step time panels, a date + time popup for minute-precision datetime-local, native fallback for seconds and `step="any"`, native bubbling input/change and ref preservation, Escape/focus recovery, Home/End and arrow traversal. Uses the shared Button, Input, CalendarGrid and PopoverPanel with paired opening/closing tags.
+- [x] `src/components/ui/date-range-picker.tsx` — keeps caller start/end min/max/disabled/required plus wrapper bounds, associates labels and reversed-range error with both fields; date fields stack at <=767px and form two columns from 768px.
+- [x] `src/components/ui/range-slider.tsx` — readonly pointer/keyboard protection with native slider/ref/name, red invalid outline, teal checked track, disabled neutral text without compounded opacity.
+- [x] `src/components/ui/selection-controls.tsx` — switch/checkbox/radio labels no longer reduce disabled control opacity twice; readonly cursor and 44px label hit areas kept.
+- [x] `src/components/ui/otp-input.tsx` — integer length clamped to 1–12, caller minlength clamped to maxlength, numeric keypad and one-time-code autofill maintained, Enter key hints “done”; shared Input paints default/focus/invalid.
+- [x] `src/components/ui/textarea.tsx` — explicit caller `rows` takes precedence over default 112px height; existing native `cols`, resize, value and forwarded ref unaffected; error and readonly tokens unchanged.
+- [x] `src/components/ui/password-input.tsx` — user-supplied React 19 ref preserved alongside internal focus ref; Show/Hide returns keyboard focus to its field without changing controlled value or password manager autofill.
+- [x] `src/components/ui/button-group.tsx` and `src/components/ui/split-button.tsx` — complete-file source review only; shared Button/group semantics already present, no edit justified.
+
+### Legacy value/property comparison (static source evidence)
+
+| Component/property or state | Old LMS source and exact value | Current vNext source/line | Comparison and limitation |
+| --- | --- | --- | --- |
+| Picker selected date/week/month | `legacy-styles/components___antddesign.scss:191-199` selected cell `$clrThird` = #26bac7, focus border teal | `date-input.tsx:335-360` selected button `--lms-primary`/white with Button focus | Source color matched; native AntD pseudo-border not pixel-proven |
+| Time selected hour/minute | `components___antddesign.scss:219-222` #26bac7 fill / white text | `date-input.tsx:306-326` selected `--lms-primary`/white, pressed state | Paint matched; AntD time-column cell geometry not proven |
+| Time list scrolling | `components___antddesign.scss:224-230` scrollbar-width:none plus hidden WebKit | `date-input.tsx:303-315` hidden scrollbars and max-height 14rem | Hide/show source matched; original list max-height unspecified |
+| Picker outline and focus | `components___form.scss:130-143` teal 2px/15% focus, red 2px/20% error | `date-input.tsx:251-256`, shared `input.tsx:30-41`, `button.tsx:26-29` | Shared tokens match; keyboard outline additionally visible for accessibility |
+| Popup shell | `components___form.scss:64-79` white, radius 12px, shadow 0 14px 16px rgba(0,0,0,.04) for legacy dropdown; AntD calendar popup separately styled | `date-input.tsx:284-288` white, radius 12px, shared shadow | Surface/radius match known popup role; calendar shadow exactness unconfirmed |
+| Week Monday column order | ISO week semantics inherent to `<input type=week>`; `components___antddesign.scss:191-199` selected cell theme | `date-input.tsx:31-49,245-250,348-360` seven Monday-first days | Correct ISO week format source; not a legacy layout screenshot |
+| Min, max and step | HTML native date/week/month/time constraints; `components___antddesign.scss:191-224` selected state only | `date-input.tsx:90-163,329-357` per-mode bounds, integer stepping, seconds fallback | Preserved known native validity constraints; browser execution unverified |
+| Datetime date+time confirmation | `components___antddesign.scss:191-230` selected day, selected time, no mandated Apply placement | `date-input.tsx:365-380` date grid, native time entry, min/max/step gate, Apply | Functional source coverage; AntD picker panel layout and seconds support differ |
+| Date/time field font and radius | `components___form.scss:117-127` 14px, 400, 20px, 0.2px tracking, #0a0517, 10px | `date-input.tsx:250-255` shared Input; `src/components/ui/input.tsx:21-26` | Shared field source match |
+| Date range error and labels | `components___form.scss:110-115,136-143` 13px/600 label, #ef4444 invalid and red focus | `date-range-picker.tsx:32-76` required indicators, linked errors, strict min/max; shared DateInput error | Role colors/sizes match; runtime constraint flow unverified |
+| Range slider brand | `components___variables.scss:10-14` teal #26bac7, muted/disabled neutrals | `range-slider.tsx:20-37` accent `--lms-primary`, disabled neutral | Brand matches; native OS slider thumb/track geometry cannot be inferred |
+| Choice selected and switch fill | `components___antddesign.scss:123-131`, `components___common.scss:226-229`: #26bac7 | `selection-controls.tsx:11-30` shared Checkbox/Radio and 44px teal switch | Fill token matches; switch animation/track measurement unverified |
+| Choice disabled state | `components___variables.scss:27-32` muted #a9a7ae on neutral surfaces | `selection-controls.tsx:13,24-26` neutral label plus one actual disabled opacity | Neutral source aligned, no double fade |
+| OTP and password input | `components___form.scss:117-143` 10px radius / 14px / teal focus / red 20% invalid halo | `otp-input.tsx:20-37`, `password-input.tsx:29-40` via shared Input | Paint source matched; legacy authentication page layout belongs to chat-16 |
+| Textarea default and explicit rows | `components___form.scss:117-128` text 14px/400/20px; default .ln-in2 padding 15px 10px | `textarea.tsx:14-43` shared field with explicit row-minheight and 112px default | Font/error match; textarea role-specific padding differs, remains C1 gap |
+| Disabled and read-only | `components___button.scss:146-149` disabled opacity .5; `components___variables.scss:27-32` muted ink | `range-slider.tsx:17-37`, `selection-controls.tsx:13,24-26`, `password-input.tsx:31-39` | Correct neutral family; no browser interaction proof |
+
+### Raw JSX grep proof (fetched whole files; not an exhaustive repository grep)
+
+Per-file source was read in full and checked with the equivalent expression `/<(button|input|select|textarea)(?=[\\s>])/g`. Literal hexadecimal values in comments are not style overrides. Native raw fields occur only inside their owning primitive.
+
+| File | Raw button | Raw input | Raw select | Raw textarea |
+| --- | ---: | ---: | ---: | ---: |
+| `date-input.tsx` | 0 | 0 | 0 | 0 |
+| `date-range-picker.tsx` | 0 | 0 | 0 | 0 |
+| `range-slider.tsx` | 0 | 1 (own slider primitive) | 0 | 0 |
+| `selection-controls.tsx` | 0 | 0 | 0 | 0 |
+| `otp-input.tsx` | 0 | 0 | 0 | 0 |
+| `textarea.tsx` | 0 | 0 | 0 | 1 (own primitive) |
+| `password-input.tsx` | 0 | 0 | 0 | 0 |
+| `button-group.tsx` | 0 | 0 | 0 | 0 |
+| `split-button.tsx` | 0 | 0 | 0 | 0 |
+| `form-field.tsx` | 0 | 0 | 0 | 0 |
+| `form-grid.tsx` | 0 | 0 | 0 | 0 |
+
+### Responsive source proof (NOT screenshot or computed CSS evidence)
+
+The old LMS breakpoint comes from `legacy-styles/components___variables.scss:139,148-156`: phone ends at 767px; tablet begins at 768px; standard touch target 44px; desktop layout at 992px. In vNext `date-input.tsx:275-288,340-359` expands the popup to max 22rem on phones (bounded by viewport minus 2rem), enables horizontal scrolling of 7×44px weekday cells when the phone is narrower than the grid, preserves a 36px desktop day button, and sets 44px phone calendar and picker targets. `date-range-picker.tsx:49-76` uses one column up to 767px and two at 768px. `range-slider.tsx:30-36` uses min-height 44px at <=767px; `selection-controls.tsx:13,24` labels are min-height 44px even on desktop; OTP input and password Show/Hide inherit 44px at <=767px. No browser, screenshot, mobile soft keyboard, pointer, focus order, screen reader, app runtime, build, tests or CI was run.
+
+**STRICT CATEGORY TICK LEDGER** remains unchanged: **0 ticked / 12 unticked** (A1–A4, C1–C7, D). Outstanding blockers are real full-tree grep/consumer inventory, rendered phone/tablet proof, exact AntD geometry/popup comparisons, rich editor toolbar and sanitization (C7), image crop (C5) and native-browser popup differences (C2/C3). Do not treat these file-level checks as category closure.
+
+**Next exact lane-owned file:** `src/app/globals.css` — foundation A1–A4 whole-token and state sweep, then `src/styles/legacy-skin.css` with any verified parity-report deltas.
