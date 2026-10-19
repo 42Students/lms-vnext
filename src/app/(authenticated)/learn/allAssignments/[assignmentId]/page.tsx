@@ -8,6 +8,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { AssignmentFileOpenControl } from "@/components/courses/assignment-file-open-control";
 import { AssignmentSubmissionControl } from "@/components/courses/assignment-submission-control";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import {listOwnLearnerAssignmentMaterialLinks} from "@/modules/courses/learner-assignment-materials-service";
 import { resolveLearnerOfferingDelivery } from "@/modules/courses/learner-offering-delivery-model";
@@ -95,9 +96,9 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         </div> : <p>Grade and feedback are not published yet.</p>}
       </div> : <div className="mt-3">
         {!item.dueAt || item.dueAt.getTime() <= overview.snapshotNowMs ? (
-          <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">
+          <Alert tone="warning">
             {item.dueAt ? "Submissions are closed" : "Submission unavailable · deadline missing"}
-          </p>
+          </Alert>
         ) : null}
         {item.dueAt && item.dueAt.getTime() > overview.snapshotNowMs ? (
           <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} deliveryId={item.deliveryId} />
