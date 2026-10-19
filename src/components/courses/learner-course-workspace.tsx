@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
 import {learnerAssessmentSubmittedLinkHref} from "@/modules/courses/learner-assessment-submitted-link-model";
 import {learnerRoadmapHeadline} from "@/modules/courses/learner-roadmap-headline-model";
@@ -342,13 +343,13 @@ function ContentCard({
         <div className="mt-4 flex flex-wrap gap-2">
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file`}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Open resource ↗
           </a>
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file?download=1`}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Download
           </a>
@@ -505,10 +506,10 @@ function AssignmentCard({
       {!readOnly && !assignment.submissionId && submissionClosed ?
         <div role="status" className="mt-3 space-y-2 text-sm text-warning">
           <p>{assignment.dueAt?"Submissions are closed":"Submission unavailable · deadline missing"}</p>
-          <button type="button" disabled aria-disabled="true"
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-muted-foreground">
+          <Button variant="secondary" type="button" disabled aria-disabled="true"
+            className="min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-muted-foreground">
             {assignment.dueAt?"Submission closed":"Unavailable"}
-          </button>
+          </Button>
         </div>:null}
       {!readOnly && !submissionClosed && interaction.canSubmit ? (
         <AssignmentSubmissionControl
@@ -812,8 +813,8 @@ export function LearnerCourseWorkspace({
               aria-current={activeFilter === item.key ? "page" : undefined}
               className={
                 activeFilter === item.key
-                  ? "inline-flex min-h-11 items-center rounded-lg bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
-                  : "inline-flex min-h-11 items-center rounded-lg px-3 py-2 text-sm font-semibold text-body hover:bg-muted hover:text-primary-text"
+                  ? "inline-flex min-h-9 items-center rounded-lg bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
+                  : "inline-flex min-h-9 items-center rounded-lg px-3 py-2 text-sm font-semibold text-body hover:bg-muted hover:text-primary-text"
               }
             >
               {item.label}{" "}
@@ -826,7 +827,7 @@ export function LearnerCourseWorkspace({
       </nav></ScrollCue>
 
       <details className="rounded-xl border border-border bg-surface sm:hidden">
-        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">
+        <summary className="flex min-h-9 cursor-pointer items-center justify-between gap-2 p-4 text-sm font-semibold text-primary-text">
           Jump to lesson ({mobileOutline.length})
           <span aria-hidden="true">⌄</span>
         </summary>
@@ -837,7 +838,7 @@ export function LearnerCourseWorkspace({
                 <li key={lesson.id}>
                   <Link
                     href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${activeFilter}&lesson=${encodeURIComponent(lesson.id)}#lesson-${encodeURIComponent(lesson.id)}`}
-                    className="flex min-h-11 sm:min-h-9 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-muted">
+                    className="flex min-h-9 sm:min-h-9 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-muted">
                     <span className="min-w-0 break-words">{index+1}. {lesson.name}</span>
                     <span className="shrink-0 text-xs text-muted-foreground">{lesson.count} items</span>
                   </Link>
