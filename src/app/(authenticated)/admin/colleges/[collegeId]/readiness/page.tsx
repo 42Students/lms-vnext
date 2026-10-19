@@ -234,12 +234,12 @@ export default async function CollegeReadinessPage({
 
         <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
           <label className="grid gap-1 text-sm font-semibold text-body">Show checks
-            <Select name="status" defaultValue={parsed.status} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            <Select name="status" defaultValue={parsed.status} className="min-h-11 sm:min-h-9">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
             </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Setup area
-            <Select name="area" defaultValue={parsed.area} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground">
+            <Select name="area" defaultValue={parsed.area} className="min-h-11 sm:min-h-9">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </Select>
           </label><Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-on-primary">Filter</Button>
