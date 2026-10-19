@@ -10,7 +10,7 @@ export default function LearnerProfileError({
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
+    <section role="alert" className="px-3 py-10 text-center">
       <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         Unable to load your profile
       </h1>
