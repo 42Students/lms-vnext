@@ -581,3 +581,39 @@ Each fetched file was scanned for literal raw button/input/select/textarea openi
 | tpo-participation-decision-form.tsx | 0/0/0 | 3/3; 0/0 | 55/55 | sm 0; md 3 |
 
 All entries are strictly **source-complete** only. No rendered phone/tablet screenshots, app execution, CI or browser focus/hover verification. A5/A6/A7/E8 remain unchecked; do not infer global parity.
+
+## chat-12 bounded continuation, 2026-10-20 — batch 2
+
+- [x] src/components/tpo/tpo-batch-class-decision.tsx — Inherited class eligibility Select and save button min-h-11/md:min-h-9; responsive flex, guarded confirmation unchanged.
+- [x] src/components/tpo/tpo-after-college-editor.tsx — Outcome Select w-full min-w-0, all Save/Undo/Dialog controls min-h-11 md:min-h-9, original versioned update and undo retained.
+- [x] src/components/tpo/tpo-debar-control.tsx — Debar screen flat border-y, required reason Input 44px phone/36px md and reviewed Checkbox 44px row; original restrictions/confirmation unchanged.
+- [x] src/components/tpo/tpo-timed-debar-control.tsx — Timed restrictions/history moved from nested cards to one border-y panel and divided rows; date/count/duration input 44px phone/36px md; same guarded record/undo flow.
+- [x] src/components/tpo/tpo-roster-verification-bulk.tsx — 20-selected profile verification, preview and guard unchanged; preview responsive inset moves from sm (640px) to md (768px), aligns legacy shell phone boundary.
+- [x] src/components/tpo/tpo-batch-inline-decision.tsx — Learner override Select 44px phone/36px md, confirmation Checkbox label 44px, save button responsive; reason preset and undo protected.
+- [x] src/components/tpo/tpo-batch-student-saved-views.tsx — Private scoped/pinned batch views preserved; name Input 44px/36px md, download CSV teal underlined and keyboard outline, no raw link duplicate.
+
+### Value comparison — old shell/legacy source versus actual vNext property
+Old reference: docs/design/old-lms-pages.md:6-10 single 12px-radius white canvas and compact rows rather than per-section ordinary cards; old-lms-shell.css:23,26-32,73 44px phone touch and 768px media switch; old-lms-shell-spec.md:24-25 36px desktop actions; components___common.scss:68-75 teal link and visible hover underline.
+| File | Source/value and preserved behavior | Status |
+|---|---|---|
+| tpo-batch-class-decision.tsx | tpo-batch-class-decision.tsx:42,49 — Inherited class eligibility Select and save button min-h-11/md:min-h-9; responsive flex, guarded confirmation unchanged | Source aligned; browser pending |
+| tpo-after-college-editor.tsx | tpo-after-college-editor.tsx:68,78,81 — Outcome Select w-full min-w-0, all Save/Undo/Dialog controls min-h-11 md:min-h-9, original versioned update and undo retained | Source aligned; browser pending |
+| tpo-debar-control.tsx | tpo-debar-control.tsx:83,127,132 — Debar screen flat border-y, required reason Input 44px phone/36px md and reviewed Checkbox 44px row; original restrictions/confirmation unchanged | Source aligned; browser pending |
+| tpo-timed-debar-control.tsx | tpo-timed-debar-control.tsx:43,52,57 — Timed restrictions/history moved from nested cards to one border-y panel and divided rows; date/count/duration input 44px phone/36px md; same guarded record/undo flow | Source aligned; browser pending |
+| tpo-roster-verification-bulk.tsx | tpo-roster-verification-bulk.tsx:62,66,72 — 20-selected profile verification, preview and guard unchanged; preview responsive inset moves from sm (640px) to md (768px), aligns legacy shell phone boundary | Source aligned; browser pending |
+| tpo-batch-inline-decision.tsx | tpo-batch-inline-decision.tsx:49,85,91 — Learner override Select 44px phone/36px md, confirmation Checkbox label 44px, save button responsive; reason preset and undo protected | Source aligned; browser pending |
+| tpo-batch-student-saved-views.tsx | tpo-batch-student-saved-views.tsx:64,74,75 — Private scoped/pinned batch views preserved; name Input 44px/36px md, download CSV teal underlined and keyboard outline, no raw link duplicate | Source aligned; browser pending |
+
+### Grep-equivalent and phone/tablet breakpoint proof
+Used full current branch file text. Regular expression equivalent to `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' FILE`, plus `grep -nE 'sm:|md:' FILE`. Paired Button/Link tags and literal brace counts were checked, not TypeScript compiled.
+| File | Raw/SVG/hex | Button; Link open/close | Curly | Source breakpoints |
+|---|---|---|---|---|
+| tpo-batch-class-decision.tsx | 0/0/0 | 1/1; 0/0 | 40/40 | sm 0; md 2 |
+| tpo-after-college-editor.tsx | 0/0/0 | 4/4; 0/0 | 58/58 | sm 0; md 5 |
+| tpo-debar-control.tsx | 0/0/0 | 1/1; 0/0 | 43/43 | sm 0; md 2 |
+| tpo-timed-debar-control.tsx | 0/0/0 | 4/4; 0/0 | 74/74 | sm 0; md 3 |
+| tpo-roster-verification-bulk.tsx | 0/0/0 | 4/4; 0/0 | 89/89 | sm 0; md 2 |
+| tpo-batch-inline-decision.tsx | 0/0/0 | 4/4; 0/0 | 75/75 | sm 0; md 2 |
+| tpo-batch-student-saved-views.tsx | 0/0/0 | 6/6; 0/0 | 78/78 | sm 0; md 3 |
+
+Source matching is not a substitute for responsive screenshots or clicking/typing in the app; visual/behavioral acceptance for phone 360px, 767px, 768px and tablet 1024px remains open. Global A5/A6/A7/E8 unticked.
