@@ -52,7 +52,7 @@ export default async function MentorTeamCoveragePage({
         Projects
       </Link>} />
     {!data.enabled
-      ? <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
           Projects access is disabled for this membership. No team records were loaded.
         </section>
       : <>
@@ -119,8 +119,8 @@ export default async function MentorTeamCoveragePage({
                 description="There are no current non-archived project assignments for this Mentor. No historical team or staffing status is inferred." />
             : <EmptyState title="No projects match these filters"
                 description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments." />
-          : <div className="grid gap-3">{data.items.map(item =>
-            <article key={item.projectId} className="rounded-xl border border-border bg-surface p-4">
+          : <div className="divide-y divide-border">{data.items.map(item =>
+            <article key={item.projectId} className="py-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="font-semibold text-foreground">{item.title}</h2>
                 <span className="text-xs font-semibold text-body">{item.status}</span>
