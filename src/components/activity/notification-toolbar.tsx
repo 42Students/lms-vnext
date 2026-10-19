@@ -49,19 +49,19 @@ export function NotificationToolbar({
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
       <div className="flex flex-wrap gap-2" role="group" aria-label="Notification filter">
         <Link
           href={baseHref + "?view=all"}
           aria-current={view === "all" ? "page" : undefined}
-          className={`inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold transition ${view === "all" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
+          className={`inline-flex min-h-11 items-center rounded-[var(--lms-radius-md)] border px-4 text-sm font-semibold transition ${view === "all" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
         >
           {allLabel}
         </Link>
         <Link
           href={baseHref + "?view=unread"}
           aria-current={view === "unread" ? "page" : undefined}
-          className={`inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold transition ${view === "unread" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
+          className={`inline-flex min-h-11 items-center rounded-[var(--lms-radius-md)] border px-4 text-sm font-semibold transition ${view === "unread" ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-foreground hover:border-primary"}`}
         >
           Unread ({unreadCount})
         </Link>
