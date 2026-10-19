@@ -112,7 +112,7 @@ export function LearnerPlacementsDashboard({
         </div>
         {waitingOnYou.length?<ul className="mt-3 divide-y divide-border border-y border-border">{waitingOnYou.map(item=><li key={item.key}
           className="flex flex-wrap items-center justify-between gap-3 py-3">
-          <div>
+          <div className="min-w-0 flex-1">
             <span className={"text-xs font-semibold "+(item.priority==="URGENT"?"text-warning-text":"text-primary-text")}>{item.priority==="URGENT"?"Urgent":item.priority==="SOON"?"Soon":"Next"}</span>
             <p className="font-semibold text-foreground">{item.label}</p>
             <p className="text-xs text-body">{item.detail}</p>
@@ -217,7 +217,7 @@ export function LearnerPlacementsDashboard({
               Review the issued offer terms and expiration before responding.
             </p>
           </div>
-          <Link href="/learn/my-placements/offers?status=pending" className="text-sm font-semibold text-primary-text hover:underline">
+          <Link href="/learn/my-placements/offers?status=pending" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline sm:min-h-9">
             Review offers →
           </Link>
         </div>
@@ -309,7 +309,7 @@ export function LearnerPlacementsDashboard({
                           <span className="mt-1 block text-xs font-normal text-body">{formatWhen(event.when)}</span>
                         </Link>
                          <Link href={"/learn/my-placements?requestRoundId="+encodeURIComponent(event.roundId)}
-                           className="mt-1 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">
+                           className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline sm:min-h-9">
                            Ask to reschedule →
                          </Link>
                       </li>
@@ -326,7 +326,7 @@ export function LearnerPlacementsDashboard({
               {display.fullWeekEventCount-shownWeekEvents===1?" event":" events"} are included in the full calendar.
             </p>
           ) : null}
-          <Link href="/learn/my-placements/calendar" className="inline-block min-h-10 pt-3 text-sm font-semibold text-primary-text hover:underline">
+          <Link href="/learn/my-placements/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline sm:min-h-9">
             Full schedule →
           </Link>
         </section>
