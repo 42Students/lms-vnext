@@ -1,4 +1,5 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -26,7 +27,7 @@ export function MentorDeliveryLockControl({projectId,submissionId,status,lockedA
    className="min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Lock submission</button>
   {open?<div className="space-y-2">
     <label className="block text-sm font-semibold">Why are you locking this delivery?
-     <textarea data-slot="textarea" required maxLength={4000} value={reason} onChange={e=>setReason(e.target.value)}
+     <Textarea required maxLength={4000} value={reason} onChange={e=>setReason(e.target.value)}
       className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
     <button type="button" disabled={busy||!reason.trim()} onClick={()=>void lock()}
      className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50">
