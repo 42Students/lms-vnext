@@ -488,7 +488,7 @@ export function AdminOfferingLearningOverview({
                   />
 
                   {itemCount === 0 ? (
-                    <div className="mt-3 rounded-lg border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
+                    <div className="mt-3 rounded-xl border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
                       No shared learning items in
                       this Lesson yet.
                     </div>
