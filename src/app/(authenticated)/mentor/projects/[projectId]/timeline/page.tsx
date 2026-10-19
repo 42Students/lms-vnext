@@ -1,6 +1,7 @@
 import { Pagination } from "@/components/ui/pagination";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Timeline, TimelineEntry } from "@/components/ui/timeline";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -53,9 +54,8 @@ export default async function MentorProjectTimelinePage({
       </p>
       {data.items.length===0?<EmptyState title="No matching registered Releases"
         description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed."/>
-      :<ol className="relative space-y-5 border-l-2 border-border pl-5">
-        {data.items.map(release=><li key={release.id}
-          className="border-b border-border py-4 last:border-b-0">
+      :<Timeline aria-label="Registered releases">
+        {data.items.map(release=><TimelineEntry key={release.id}>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-semibold text-foreground">
               Release {release.sequence+1}: {release.title}
@@ -79,7 +79,7 @@ export default async function MentorProjectTimelinePage({
                     ?"Progress unknown (no tasks)":sprint.progressPercent+"% recorded completion"}
                 </p>
               </li>)}</ol>}
-        </li>)}</ol>}
+        </TimelineEntry>)}</Timeline>}
       <Pagination label="Release timeline pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTimelineHref({...data.query,page})}/>
     </>}
     <p className="text-xs text-muted-foreground">
