@@ -313,7 +313,8 @@ export function LearnerCourseList({
               <div>Semester: {selectedPeriod?.name??"Not recorded"}</div>
             </dl>
           </Disclosure>
-          <Disclosure title="All Courses" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+          <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+            <summary className="cursor-pointer font-semibold">All Courses</summary>
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
               className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{periodRows.slice(0,100).map((row,i)=>
               <li key={row.course.deliveryId+"-"+i}>{row.course.courseName}</li>)}</ul>
