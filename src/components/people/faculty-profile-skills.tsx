@@ -37,51 +37,51 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   {rows.length===0?<p className="text-sm text-muted-foreground">No skills added yet.</p>:null}
   {rows.length>5?<label className="block text-sm text-body">Find skill
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-     className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-background p-3"/>
+     className="mt-1 w-full bg-background p-3"/>
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleSkills.length)}</span>
-    <Button type="button" className="rounded border border-border px-2 py-1" onClick={()=>setSearch("")}>Clear Skill search</Button>
+    <Button variant="secondary" type="button" className="rounded px-2 py-1" onClick={()=>setSearch("")}>Clear Skill search</Button>
    </div>:null}
   {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground">No matching skills. Clear the search to show all.</p>:null}
   {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground">Clear search to reorder Skills.</p>:null}
   <div className="space-y-3">
    {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
     <label className="min-w-0 text-sm font-semibold text-body">Skill {index+1}
-     <Input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" value={skill.skill}
+     <Input className="mt-1.5 w-full min-w-0 p-3" value={skill.skill}
       maxLength={120} required disabled={pending} onChange={event=>edit(skill.id,"skill",event.target.value)}/>
     </label>
     <label className="min-w-0 text-sm font-semibold text-body">Proficiency
-     <Input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3" value={skill.proficiency}
+     <Input className="mt-1.5 w-full min-w-0 p-3" value={skill.proficiency}
       maxLength={64} disabled={pending} onChange={event=>edit(skill.id,"proficiency",event.target.value)}/>
     </label>
     <div className="flex flex-wrap gap-2 sm:col-span-3">
-      <Button type="button" disabled={pending||index===0||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
+      <Button variant="secondary" type="button" disabled={pending||index===0||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index-1));setChanged(true);}}
-       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Move up</Button>
-      <Button type="button" disabled={pending||index===rows.length-1||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
+       className="min-h-11">Move up</Button>
+      <Button variant="secondary" type="button" disabled={pending||index===rows.length-1||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index+1));setChanged(true);}}
-       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Move down</Button>
+       className="min-h-11">Move down</Button>
     </div>
-    <Button type="button" disabled={pending} onClick={async()=>{if(!(await askConfirm("Remove skill "+(index+1)+" from the unsaved draft?")))return;
+    <Button variant="secondary" type="button" disabled={pending} onClick={async()=>{if(!(await askConfirm("Remove skill "+(index+1)+" from the unsaved draft?")))return;
       setRows(current=>removeFacultySkillDraft(current,skill.id));setChanged(true);}}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-error">Remove</Button>
+     className="min-h-11 text-error">Remove</Button>
    </div>)}
   </div>
   <div className="flex flex-wrap gap-3">
-   <Button type="button" disabled={pending||rows.length>=100}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground"
+   <Button variant="secondary" type="button" disabled={pending||rows.length>=100}
+    className="min-h-11"
     onClick={async()=>{setRows(current=>[...current,{id:crypto.randomUUID(),skill:"",proficiency:""}]);
      setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);}}>
     Add skill
    </Button>
-   {changed?<Button type="button" disabled={pending} onClick={async()=>{
+   {changed?<Button variant="secondary" type="button" disabled={pending} onClick={async()=>{
      if(!(await askConfirm("Discard unsaved skill edits and restore saved skills?")))return;
      setRows(restoreFacultySkills(initial));setChanged(false);
-    }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold">Discard unsaved skill edits</Button>:null}
+    }} className="min-h-11">Discard unsaved skill edits</Button>:null}
    {changed&&skillsIssue?<p role="alert" className="text-sm text-error">Review Skills: {skillsIssue}</p>:null}
    <Button type="submit" disabled={pending||!changed||Boolean(skillsIssue)}
-    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    >
     {pending?"Saving…":"Save skills"}
    </Button>
   </div>
