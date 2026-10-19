@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
+import styles from "./legacy-project-touch-actions.module.css";
 export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
  currentVersion,status}:{templateId:string;selectedVersion:{
   id:string;version:number;title:string};
@@ -27,7 +28,7 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   }catch(cause){setError(cause instanceof Error?cause.message:"Template rollback failed.");}
   finally{setBusy(false);}
  }
- return <div className="space-y-2 border-b border-border pb-5 text-body">
+ return <div className={"space-y-2 border-b border-border pb-5 text-body "+styles.legacy}>
   <h2 className="text-sm font-semibold text-foreground">Restore this snapshot</h2>
   <p className="text-xs text-body">Review the compared changes above. Rollback creates a new editable version;
    assigned colleges and existing workspaces keep their current pinned versions.</p>
