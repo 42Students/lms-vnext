@@ -19,7 +19,7 @@ export default async function LearnerPlacementRulesPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={back.href}
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← {back.label}
       </Link>
       <PageHeader eyebrow="My Placements" title="Placement rules"
@@ -65,20 +65,20 @@ export default async function LearnerPlacementRulesPage({
         </ul>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link href="/learn/my-placements#placement-academic-evidence"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             Review academic evidence →
           </Link>
           <Link href="/learn/my-placements/jobs"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             Check published drive eligibility →
           </Link>
           <Link href="/learn/profile/verification"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             View my college verification status →
           </Link>
         </div>
       </section>
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border py-5">
         <h2 className="m-0 text-base font-semibold text-foreground">How eligibility works</h2>
         <p className="mt-2 text-sm leading-6 text-body">Each published drive carries its own eligibility configuration. Your verified academic evidence is evaluated against that drive when you open or apply to it. A drive can therefore be available, eligible, or blocked with an explainable reason.</p>
         <Link href="/learn/my-placements/jobs" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Check current drives →</Link>
@@ -94,12 +94,12 @@ export default async function LearnerPlacementRulesPage({
           No retroactive eligibility decision is inferred.
         </p>
         <Link href="/learn/my-placements/applications"
-          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+          className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
           Review my saved applications →
         </Link>
       </section>
       <div className="grid gap-4 md:grid-cols-2">
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className="border-b border-border py-5">
           <h2 className="m-0 text-base font-semibold text-foreground">Your academic evidence</h2>
           <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
             <div><dt className="text-muted-foreground">CGPA</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.cgpa ?? "Not recorded"}</dd></div>
@@ -109,7 +109,7 @@ export default async function LearnerPlacementRulesPage({
           </dl>
           <Link href="/learn/my-placements#placement-academic-evidence" className="mt-4 inline-flex text-sm font-semibold text-primary-text">Open academic record →</Link>
         </section>
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className="border-b border-border py-5">
           <h2 className="m-0 text-base font-semibold text-foreground">Your job preferences</h2>
           <p className="mt-3 text-sm leading-6 text-body">{preferences.preferredRoleTitles.length ? preferences.preferredRoleTitles.join(", ") : "No preferred roles recorded."}</p>
           <p className="mt-2 text-sm leading-6 text-body">{preferences.preferredLocations.length ? preferences.preferredLocations.join(", ") : "No preferred locations recorded."}</p>
