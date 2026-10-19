@@ -12,4 +12,5 @@ const assertClonedPage=(page:string)=>{
 describe("chat-19 HR pages use shared old-LMS chrome",()=>{
  it("shares legacy controls and title chrome: activity",()=>assertClonedPage("activity"));
  it("shares legacy controls and title chrome: calendar",()=>assertClonedPage("calendar"));
+ it("shares legacy controls and title chrome: colleges",()=>assertClonedPage("colleges"));
 });
