@@ -24,7 +24,7 @@ export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
         const info=learnerBoardCardMetadata(task,sprints);
         return <li key={task.id}>
          <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
-          className="block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-primary-text hover:bg-muted">
+          className="block min-h-9 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-primary-text hover:bg-muted">
           <span className="block break-words font-semibold">{task.title}</span>
           <span className="mt-2 block text-xs text-muted-foreground">{info.priority} · {info.sprintTitle}</span>
          </Link>
