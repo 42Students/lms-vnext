@@ -58,7 +58,7 @@ export default async function TpoShortlistSharePreviewPage({
       title={data.job.title + " · Recruiter-visible shortlist preview"}
       description="Read-only, current submitted/shortlisted candidates. This is a TPO report, not a sent share or authorization for an external recipient."
       actions={<a href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground md:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary md:min-h-9">
         Export capped CSV
       </a>}
     />
