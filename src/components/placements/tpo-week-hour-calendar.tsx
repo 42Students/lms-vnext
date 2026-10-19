@@ -145,7 +145,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
      const offHours=positioned.filter(e=>e.outsideHours);
      const inHours=positioned.filter(e=>!e.outsideHours);
      return <div key={day} className="relative border-r border-border" style={{height}} aria-label={label(day)+" events"}>
-      {Array.from({length:LAST-FIRST},(_,offset)=><Button variant="primary" key={offset} type="button"
+      {Array.from({length:LAST-FIRST},(_,offset)=><Button variant="ghost" key={offset} type="button"
        aria-label={"Add follow-up on "+label(day)+" at "+clock(FIRST+offset)}
        disabled={!canCreate||saving} onClick={clickEvent=>void open(day,FIRST+offset,clickEvent.currentTarget)}
        onDragOver={event=>{if(canCreate){event.preventDefault();event.dataTransfer.dropEffect="move";}}}
@@ -153,7 +153,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         event.preventDefault();const followupId=event.dataTransfer.getData("application/x-tpo-followup");
         if(followupId)void moveFollowup(followupId,day,FIRST+offset);
        }}
-       className="inset-x-0 text-left"
+       className="absolute inset-x-0 z-0 rounded-none border-b border-[var(--lms-canvas-border)] px-1 text-left hover:bg-[var(--lms-primary-subtle)] focus-visible:z-20"
        style={{top:offset*HEIGHT,height:HEIGHT}}/>)}
       {day===today&&nowMinutes>=FIRST*60&&nowMinutes<=LAST*60?
        <div aria-label="Current time" className="pointer-events-none absolute inset-x-0 z-10 border-t-2 border-warning"
