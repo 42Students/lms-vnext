@@ -17,7 +17,7 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
    <PageHeader title="Create the customer, then make one college launch-ready"/>
    <ErrorState title="Tenant creation access denied"
     description="Your account cannot create or configure platform tenants."
-    action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+    action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
  let organizations:Awaited<ReturnType<typeof listOrganizations>>;
  try{
