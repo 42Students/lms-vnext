@@ -195,7 +195,7 @@
  */
 /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="option"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-button-primary) !important;
   border-color: var(--lms-button-primary) !important;
   border-radius: 9px !important;
@@ -215,7 +215,7 @@
  */
 /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled) {
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="option"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled) {
   background-color: var(--lms-button-primary-hover) !important;
   border-color: var(--lms-button-primary-hover) !important;
   color: var(--lms-on-primary) !important;
@@ -227,7 +227,7 @@
  */
 /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):disabled {
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="option"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):disabled {
   background-color: var(--lms-neutral-200) !important;
   border-color: var(--lms-neutral-200) !important;
   color: var(--lms-neutral-500) !important;
@@ -235,14 +235,14 @@
 }
 /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="option"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   box-shadow: 0 0 0 3px rgba(38, 186, 199, 0.35) !important;
 }
 /* Legacy reduced motion: components___antddesign.scss:184-189. */
 @media (prefers-reduced-motion: reduce) {
   /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-    :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
+    :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="option"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
     transition: none !important;
   }
 }
@@ -562,7 +562,7 @@
  */
 /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):active:not(:disabled) {
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="option"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):active:not(:disabled) {
   background-color: var(--lms-button-primary-hover) !important;
   border-color: var(--lms-button-primary-hover) !important;
   color: var(--lms-on-primary) !important;
