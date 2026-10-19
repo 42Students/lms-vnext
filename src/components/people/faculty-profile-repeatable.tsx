@@ -1,4 +1,6 @@
 "use client";
+
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { Textarea } from "@/components/ui/textarea";
@@ -69,7 +71,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       {rows.length === 0 ? <p className="text-sm text-muted-foreground">No records added yet.</p> : null}
       {rows.length>5?<label className="block text-sm font-semibold text-body">Find {title.toLowerCase()} records
         <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-          className="mt-1.5 w-full bg-background p-3" placeholder="Search section fields"/>
+          className="mt-1.5 w-full rounded-md border border-border bg-background p-3" placeholder="Search section fields"/>
       </label>:null}
       {rows.length>5&&search.trim()?<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
@@ -102,7 +104,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                       disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
                   ) : (
-                    <input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
+                    <Input className="mt-1.5 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"
                       type={field.kind ?? "text"} maxLength={field.maxLength}
                       value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
