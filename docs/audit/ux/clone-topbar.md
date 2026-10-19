@@ -328,7 +328,7 @@ Source-content grep equivalent (the GitHub connector exposes file bytes but not 
 
 **First-third files actively migrated in this pass:**
 
-- `src/components/courses/admin-offering-learning-page.tsx`: four old `border-b-2` anchor tabs replaced with the shared `Tabs` through `src/components/courses/admin-offering-section-tabs.tsx`. Existing fragment navigation, labels, PageHeader and panels preserved.
+- `src/components/courses/admin-offering-learning-page.tsx`: four old `border-b-2` anchor tabs replaced with the shared `Tabs` through `src/components/courses/course-detail-anchor-tabs.tsx`. Existing fragment navigation, labels, PageHeader and panels preserved.
 - `src/components/admin/college-branding-form.tsx`: remaining two native picker hex literals centralized in `src/components/ui/branding-color-tokens.ts` (required because input[type=color] does not accept `var(...)`).
 - `src/components/announcements/announcement-admin-workspace.tsx`: list item card-in-canvas wrappers flattened to top borders and the handwritten empty card replaced with shared `EmptyState`.
 - `src/components/shell/topbar/topbar.module.css`: all remaining hex values replaced with their exact shared theme tokens.
@@ -344,3 +344,16 @@ Source-content grep equivalent (the GitHub connector exposes file bytes but not 
 - [ ] Keyboard/focus/tab order and actual rendered responsive screenshot comparison at representative 320px, 375px, 768px and desktop sizes.
 - [ ] Confirm the old command-palette *result* hover/empty/loading/error behavior beyond the supplied generic dropdown SCSS; do not guess missing legacy properties.
 - [ ] Verify Messages link and unread provenance for every portal where the role has a supported inbox. Do not introduce unauthorized destinations or fabricated counts.
+
+
+## Mainline reconciliation and completed file inventory (2026-10-19)
+
+After syncing `main` at `d54978d84992`, preserved the newer upstream `src/components/courses/course-detail-anchor-tabs.tsx` and `src/components/courses/admin-offering-learning-page.tsx` rather than keeping a duplicate `AdminOfferingSectionTabs`. The upstream implementation already uses the shared `Tabs` and preserves `deliveryId` plus hash/scroll offsets. The earlier historical notes describe prior chat-13 work, not a second active tabs component; `admin-offering-section-tabs.tsx` is **not in the current branch**.
+
+Preserved the upstream recruiter `ShellNavGlyph` icon and reconciled chat-13's shared `TopbarNotificationEmpty`, accessible list semantics, exact unread-red token, 8px list rows, and shared Drawer body inset. No duplicate control element was introduced.
+
+**Completed, inspected source files:** `src/components/shell/topbar/command-search.tsx` (shared PopoverListbox), `account-menu.tsx`, `organization-switcher.tsx`, `legacy-topbar.tsx`, `notification-actions.tsx`, `topbar.module.css`, `notification-empty.tsx`, `src/components/tpo/tpo-bell-panel.tsx`, `src/components/hr/hr-recruiter-bell.tsx`, `src/components/shell/learner-notification-bell.tsx`, `src/app/globals.css`, `src/components/admin/college-branding-form.tsx`, `src/components/ui/branding-color-tokens.ts`, `src/components/announcements/announcement-admin-workspace.tsx`, and the upstream `course-detail-anchor-tabs.tsx`.
+
+**First-third Super Admin:** 36 route wrappers plus 56 directly imported components and three shared page delegates were inspected at source level. No remaining native `<button>`, `<input>`, `<select>`, `<textarea>`, one-off `rounded-full` pills, `border-b-2` tabs or literal hex colors were observed in that inspected scope after fixing the offering tabs, branding swatches, and announcement cards. This is not evidence that every route's nested *transitive* imports or runtime states have been compared visually.
+
+**Strict rule outcome:** B1/B2 remain unticked. The full-repository grep and all-portal hover/focus/disabled/error/empty and responsive checks have not been fully established, and several portal-specific Messages routes/unread counts are intentionally undefined. Do not mark the four topbar items completed on the strength of these scoped source checks. The source-level visual sweep has advanced substantially, but pixel-level and runtime parity are unverified.
