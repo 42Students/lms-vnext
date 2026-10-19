@@ -39,7 +39,6 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="My Placements"
         title="Assessments"
         description="Scheduled placement tests and assessments for your shortlisted applications."
       />
