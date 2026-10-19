@@ -50,8 +50,8 @@ const safeTsv=(value:unknown)=>{
 /** Legacy TPO list chrome. Accepts only the authorized rows supplied by the page:
  * search persists in its URL, and copy/paste/export never fetch broader datasets. */
 export function GridWorkspace<Row>({
- rows,columns,rowKey,children,filters=[],selection,rollOf,savedViews,extraActions,act,
- exportName="export",xlsxHref,searchPlaceholder="Search name, roll no., anything",
+ rows,columns,rowKey,children,filters=[],externalFilters,selection,rollOf,savedViews,extraActions,act,
+ exportName="tpo-grid",xlsxHref,searchPlaceholder="Search name, roll no., anything",
  searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
  searchMaxLength=120,searchMode="url",searchValue,onSearchChange,
  columnKeys,onColumnKeysChange,onExportCsv,onExportXlsx,onCopyRows,
