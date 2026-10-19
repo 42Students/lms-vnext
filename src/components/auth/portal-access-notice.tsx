@@ -20,7 +20,7 @@ export function PortalAccessNotice(){
     if(timer.current)clearTimeout(timer.current);};
  },[]);
  return apiDenied||search.get("access")==="denied"?
-  <p role="alert" aria-live="assertive" className="mx-4 my-2 rounded-md border border-border bg-surface px-4 py-3 text-sm text-foreground">
+  <p role="alert" aria-live="assertive" className="mx-4 my-2 rounded-[9px] border border-border bg-surface px-4 py-3 text-sm text-foreground">
    {PORTAL_PERMISSION_DENIED}
   </p>:null;
 }
