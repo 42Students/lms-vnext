@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import {
   attendanceCalendarDayKey, attendanceCalendarDays,
   attendanceCalendarHref, learnerAttendanceCalendarQuerySchema,
@@ -82,7 +83,7 @@ export default async function LearnerAttendanceCalendarPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
-          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 w-full sm:min-h-9">
           <option value="ALL">All accessible Courses</option>
           {data.courses.map(course=>
             <option key={course.deliveryId} value={course.deliveryId}>
@@ -92,7 +93,7 @@ export default async function LearnerAttendanceCalendarPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <Select name="status" defaultValue={data.query.status}
-          className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+          className="min-h-11 w-full sm:min-h-9">
           <option value="ALL">All status types</option>
           {Object.entries(statusNames).map(([value,label])=>
             <option key={value} value={value}>{label}</option>)}
@@ -113,10 +114,7 @@ export default async function LearnerAttendanceCalendarPage({
         ["Not marked",data.summary.unmarked],
         ["Scheduled",data.summary.scheduled],
       ] as const).map(([label,value])=>
-        <section key={label} className="rounded-xl border border-border bg-surface p-4">
-          <h2 className="text-xs font-semibold uppercase text-muted-foreground">{label}</h2>
-          <p className="mt-2 text-xl font-semibold tabular-nums">{value}</p>
-        </section>)}
+        <StatTile key={label} label={label} value={value} />)}
     </div>
     <p className="text-sm text-body">
       {data.summary.total} recorded class{data.summary.total===1?"":"es"} match the filters.
