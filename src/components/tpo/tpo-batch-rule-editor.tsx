@@ -118,7 +118,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
   {readOnly?<p role="status" className="text-sm">Finished batches cannot change placement rules.</p>:null}
   <div className="flex flex-wrap gap-3">
    <button type="button" disabled={readOnly||busy||!changed}
-    onClick={()=>void save(draft)} className="min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
+    onClick={()=>void save(draft)} className="min-h-11 rounded bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save"}</button>
    {Object.keys(draft).length>0?<button type="button" disabled={busy||readOnly}
     onClick={()=>void save({})} className="min-h-11 rounded border border-border px-3 text-sm text-[var(--lms-teal-deep)]">
