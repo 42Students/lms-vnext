@@ -26,15 +26,13 @@ export default async function LearnerAttendancePage({searchParams}:{
 
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader
-        title="Attendance"
-      />
-      <div className="flex flex-wrap justify-end gap-3">
+      <PageHeader title="Attendance" actions={(
         <Link href="/learn/attendance/calendar"
           className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
           Monthly attendance calendar →
         </Link>
-      </div>
+      )} />
+      
       <LearnerAttendanceWorkspace
         defaultMonth={defaultMonth}
         courses={workspace.courses}

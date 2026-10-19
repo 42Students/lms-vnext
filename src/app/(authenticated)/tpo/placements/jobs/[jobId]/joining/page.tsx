@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { TpoJoiningUpdateForm } from "@/components/placements/tpo-joining-update-form";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
@@ -57,10 +58,10 @@ export default async function TpoDriveJoiningPage({
         ))}
       </section>
       {tracker.items.length === 0 ? (
-        <p role="status" className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+        <Alert tone="info">
           No currently accepted offers are recorded for this drive. Issued,
           declined and withdrawn offers cannot be assigned a joining outcome.
-        </p>
+        </Alert>
       ) : (
         <div className="space-y-4">
           {tracker.items.map((item) => (

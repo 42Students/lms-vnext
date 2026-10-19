@@ -45,7 +45,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    role="combobox" aria-autocomplete="list" aria-expanded={status==="ready"&&items.length>0}
    aria-controls={id+"-choices"}
    aria-activedescendant={activeIndex>=0?`${id}-choice-${activeIndex}`:undefined}
-   className="mt-1 min-h-11 sm:min-h-9 w-full"/>
+   className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
   {status==="loading"?<p role="status" className="mt-1 text-xs text-muted-foreground">Searching skills…</p>:null}
   {status==="ready"&&items.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">
     No catalog suggestions found. You can still save your own skill name.
@@ -57,7 +57,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
     className="mt-2 max-h-48 overflow-y-auto p-1" onDismiss={() => setItems([])}>
     <ul className="space-y-1">
     {items.map((item,index)=><li id={id+"-choice-"+index} key={item.id} role="option" aria-selected={activeIndex===index||item.displayName===value}>
-      <Button type="button" variant="ghost" className="min-h-11 sm:min-h-9 w-full justify-start text-left text-sm"
+      <Button type="button" variant="ghost" className="min-h-11 min-[768px]:min-h-9 w-full justify-start text-left text-sm"
        onClick={()=>{selectedSkill.current=item.displayName;onChange(item.displayName);setItems([]);setActiveIndex(-1);}}>
        {item.displayName}{item.category?<span className="ml-2 text-xs text-muted-foreground">{item.category}</span>:null}
       </Button>

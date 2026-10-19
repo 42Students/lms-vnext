@@ -187,3 +187,51 @@ No CI, app execution, or bulk codemod execution was run. Files manually edited t
 Additional source migrations: `src/components/tpo/recruiter-leads-workspace.tsx` now uses shared `FilterChip` for its attention/Unassigned counts; `src/components/placements/learner-career-calendar.tsx` also uses shared `Button` for all calendar view toggles. `scripts/codemods/chat14-tables-tabs.cjs` now discovers files containing only raw `<button>` or `<Button>` presses and recognizes `bg-primary`/`bg-muted` tone candidates. Strict category checkboxes remain unchanged; these are source-file completions, not verified pixel parity.
 
 More source-file migrations committed on this lane branch: `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx` (company-share tabs), `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx` (application pipeline tabs with counts), and `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` (grading, publication, order tabs) now use shared `Tabs`. These were fetched back from GitHub; all replaced tab groups use self-closing `<Tabs />`, no altered unmatched JSX closing tags, and no stray quoted className or newline-before-as forms were observed. This still does not establish exhaustive all-portal coverage or runtime parity, so E3 stays unticked.
+
+## chat-14 next-file batch — source-level completion ledger (2026-10-19)
+
+**This is a per-file source inspection, not category closure or a browser comparison.** Each edited file was fetched back from the branch in full. The counts below are from applying the exact regular expressions to those fetched TSX strings (GitHub API), not from executing shell `grep`, running the application, or running CI. To independently rerun the equivalent source grep in the repository:
+
+```sh
+grep -nE '<button([[:space:]]|>)|<table([[:space:]]|>)|border-b-2|rounded-full|aria-pressed=|<details([[:space:]]|>)' PATH
+grep -nE '<(Pagination|Tabs|FilterChip|SegmentedControl)([[:space:]]|>)|</FilterChip>' PATH
+```
+
+### File-level pattern proof and exemptions
+
+| File (relative to `src/`) | Shared migration | Raw button | `border-b-2` | `rounded-full` | Raw `details` | Shared chip pairs | Exemption or source result |
+|---|---|---:|---:|---:|---:|---:|---|
+| `components/placements/learner-jobs-browse.tsx` | Pagination line 289, SegmentedControl lines 104/156; all 4 remaining raw action buttons converted to Button | 0 | 0 | 0 | 1 | 0 | `details` line 273 retains **dynamic open state** tied to filter availability, a nonstandard content disclosure; replacing with generic Disclosure would lose its controlled and named summary behavior |
+| `components/tpo/tpo-student-quick-panel.tsx` | Controlled shared Tabs line 106; preserves asynchronous `chooseTab`, request waiting wording, drawer rows and detail caching | 0 | 0 | 0 | 0 | 0 | One Tabs strip, no hand-rolled underline; note external panel semantics need runtime a11y verification |
+| `components/tpo/tpo-batch-inline-decision.tsx` | FilterChip lines 64/68 for six presets and Other | 0 | 0 | 0 | 0 | 2/2 | Preserves disabled, reason selection, guarded save and audit confirmation |
+| `components/placements/tpo-drive-cancel-form.tsx` | FilterChip line 92 for cancellation reasons | 0 | 0 | 0 | 0 | 1/1 | Preserves reason selection, pending, reviewed acknowledgment and controlled textarea |
+| `components/placements/learner-career-rounds-workspace.tsx` | FilterChip lines 307/325/330/335/340/350, including dynamic assessment counts | 0 | 0 | 0 | 0 | 6/6 | Preserves existing schedule and due-bucket URL state, selected toggles and multiple filter groups |
+| `components/academics/learner-class-schedule.tsx` | FilterChip lines 544/599 for upcoming-only and course selection | 1 | 0 | 2 | 0 | 2/2 | The remaining native `button` at line 634 is a **calendar date cell**, not a filter chip; both remaining rounded circles are event dots and a highlighted calendar date, not status pills |
+| `components/courses/faculty-course-home-signals.tsx` (inspected, unchanged) | Existing StatusBadge, Disclosure, MetricBar and StatTile are shared | 0 | 0 | 0 | 1 | 0 | Custom grade-bucket `details` at line 232 has a permanent three-column label/bar/count summary; generic string-title Disclosure cannot preserve it. Written **semantic exemption**, not an E5 tick |
+
+`FilterChip` counts above mean source occurrences, including one map that renders many actual choices. In every modified file, the number of opening and closing `<FilterChip>` tags is identical. File reads found **zero** suspect stray quote-before-`className` forms or newline-before-`as` casts. These are bounded static checks, not compilation or runtime proof.
+
+### Legacy value comparison for this batch
+
+| Property/state | Legacy source, exact rule | Updated vNext source, exact rule | Assessment |
+|---|---|---|---|
+| Interactive chip phone touch target | `legacy-styles/components___antddesign.scss:1090-1102`: tagged buttons at 44px minimum up to 767px; 12px horizontal padding | `src/components/ui/filter-chip.tsx:28-33`: `min-h-11` (44px) until `md` 768px; `px-[15px]` | **Height/breakpoint match; horizontal padding differs 3px**. Requires owner decision about legacy clickable-tag subtype |
+| Status label geometry | `components___common.scss:994-1005`: background #fafbfc, radius 6px, padding 2px 15px, min width 90px, 12px/700 | `filter-chip.tsx:28-33`: radius 6px, 2px/15px, 12px/700; interactive width based on content | **Shared status-like geometry**; do not conflate interactive chips with 90px status badge |
+| Selected chip indication | `components___common.scss:389-410`: primary teal active foreground for tabbed selection; interactive tag state depends on Ant variant | `filter-chip.tsx:33-34`: `aria-pressed` plus primary border/subtle fill/primary text | State preserved; **exact Ant tag computed paint unverified** |
+| Chip hover/focus/disabled | `components___antddesign.scss:1073-1102`: 44px target; Ant defaults govern focus/disabled/hover | `filter-chip.tsx:29-34` + `button.tsx`: hover brightness, visible outline, disabled pointer/opacity | Accessible behavior present; complete legacy value matrix **open** |
+| Active and inactive tabs | `components___common.scss:365-410`: 13px, weight 600, line 16px; neutral inactive and teal active | `src/components/ui/tabs.tsx:83-91`: same font size, weight, line height; tokenized inactive and active paint | Static values mostly mapped; token equality not exhaustively proven |
+| Tab underline and motion | `components___common.scss:381-392`: centered 3px pseudo-element, 0.2s ease-in-out width/opacity | `tabs.tsx:83-91`: same centered 3px pseudo-element, 200ms ease-in-out | Source rule matches |
+| Tab spacing/overflow | `components___common.scss:444-475`: scrollable overflow with hidden scrollbar, 20px gap and 40px at 1600px | `tabs.tsx:71,88`: ScrollCue horizontal, 20px token gap, 40px at 1600px | Gap matches; hidden-scrollbar computed paint unverified |
+| Phone page buttons | `components___antddesign.scss:242-280`: 44px minimum square, 8px radius, only active numeric visible, prev/next visible | `src/components/ui/pagination.tsx:52-84`: 44px square until md, 8px radius, non-active links hidden until md, prev/next always present | Height/radius and visibility match; 42px line-height Ant mechanism differs |
+| Page URL preservation | Legacy page filters and paging persist together | `learner-jobs-browse.tsx:289-294`: `learnerDriveQueryWithChanges(params.toString(),{page:String(target)})` | Preserves all other query keys per model; browser navigation untested |
+| Dynamic disclosure summary | `old-lms-pages.md:5-7`: expanded rows and in-row explanatory content remain visible | `learner-jobs-browse.tsx:273-283` and `faculty-course-home-signals.tsx:232-250` | Deliberate native disclosure exemptions to retain page content and the always-visible metric bar |
+
+### Responsive source proof and regression limits
+
+- **Phone through 767px:** filter-chip minimum height 44px (`filter-chip.tsx:28`), page controls 44px (`pagination.tsx:52`); schedule month view remains selected on phone via `matchMedia("(max-width: 767px)")` in `learner-class-schedule.tsx`; native calendar dates retain their minimum-height 64px and 96px at `sm` rather than being converted into chip controls.
+- **Tablet 768–1599px:** chips compact at `md:min-h-8`; shared Tabs keep 20px gap and horizontal scrolling; pager numeric links appear at `md`.
+- **Wide 1600px+:** shared Tabs use 40px gap (`tabs.tsx:71,88`) matching legacy SCSS.
+- **Behavior carried forward:** TPO panel still awaits detail on relevant tab selection and still keys cache to membership; batch decisions and cancellation still guard async mutation; learner pagination retains every URL filter; calendar date buttons and both native rich disclosures retain their original behavior.
+- **No regression limitation:** no browser, TypeScript, CI, interaction automation, exact computed-style audit or full repo grep run under the requested dev-only/no-CI constraint. The strict category checkboxes E1–E5 and E8 stay **[ ]**; the completed list here records **source-file migration**, not finished pixel parity.
+
+**Remaining work queue:** other dynamic tabs and pills across portals; E4 computed-state and padding equality; scroll/cascade and mobile disclosure comparisons; exhaustive repo-wide greps; AG Grid dependency and visual check. Exact next candidate: `src/components/placements/learner-applications-browse.tsx` for any remaining custom tab/filter state, then `src/components/placements/tpo-drive-cancel-form.tsx` UI capture in the later browser verification phase.

@@ -49,6 +49,11 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
   { id: "withdrawn", label: learnerOfferStatusTabLabel("withdrawn") },
 ];
 
+// Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
+const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-[14px] font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+// Legacy mobile (<768px): one-line horizontally scrolling filter strip (SCSS:56-74).
+const placementFilterNavClass = "min-w-0 max-w-[calc(100vw-48px)] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:max-w-full sm:flex-wrap sm:overflow-visible sm:pb-0";
+
 export default async function LearnerOffersPage({
   searchParams,
 }: {
@@ -161,37 +166,37 @@ export default async function LearnerOffersPage({
           Clear offer filters (keep selected status)
         </Link>
       ) : null}
-      <nav aria-label="Recorded joining outcome" className="flex flex-wrap gap-3 text-sm">
+      <nav aria-label="Recorded joining outcome" className={placementFilterNavClass}>
         {joiningTabs.map(tab => (
           <Link key={tab.id}
             href={learnerOfferStatusHref(view,{searchTerm,dueOnly,sort:order,kind,joining:tab.id,expiry})}
             aria-current={joiningFilter===tab.id?"page":undefined}
-            className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">
+            className={placementFilterPillClass}>
             {tab.label}
           </Link>
         ))}
       </nav>
-      <nav aria-label="Offer document kind" className="flex flex-wrap gap-3 text-sm">
+      <nav aria-label="Offer document kind" className={placementFilterNavClass}>
         {kindTabs.map(({id:value,label})=><Link key={value} href={kindHref(value)}
           aria-current={kind===value?"page":undefined}
-          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">
+          className={placementFilterPillClass}>
           {label}
         </Link>)}
       </nav>
-      <nav aria-label="Offer deadline filter" className="flex flex-wrap gap-3 text-sm">
+      <nav aria-label="Offer deadline filter" className={placementFilterNavClass}>
         <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:false,sort:order,kind,joining:joiningFilter,expiry:"all"})}
           aria-current={!dueOnly?"page":undefined}
-          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">All deadlines</Link>
+          className={placementFilterPillClass}>All deadlines</Link>
         <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:true,sort:order,kind,joining:joiningFilter,expiry:"all"})}
           aria-current={dueOnly?"page":undefined}
-          className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">Awaiting response · next 7 days</Link>
+          className={placementFilterPillClass}>Awaiting response · next 7 days</Link>
       </nav>
-      <nav aria-label="Issued offer expiry state" className="flex flex-wrap gap-3 text-sm">
+      <nav aria-label="Issued offer expiry state" className={placementFilterNavClass}>
         {expiryTabs.map(tab=>(
           <Link key={tab.id}
             href={learnerOfferStatusHref(view,{searchTerm,dueOnly:false,sort:order,kind,joining:joiningFilter,expiry:tab.id})}
             aria-current={expiry===tab.id?"page":undefined}
-            className="inline-flex items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-primary-text min-h-11 whitespace-nowrap hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:border-primary aria-[current=page]:bg-[var(--lms-button-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:bg-[var(--lms-button-primary)]">
+            className={placementFilterPillClass}>
             {tab.label}
           </Link>
         ))}

@@ -28,7 +28,7 @@ export default async function HrRoundsEditorPage({params}:{
  }
  const endpoint="/api/placements/recruiter/drives/"+jobId+"/rounds";
  return <div className="min-w-0 max-w-full space-y-6">
-  <PageHeader eyebrow="Recruiter · Hiring drive" title="Edit hiring rounds"
+  <PageHeader title="Edit hiring rounds"
    description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."/>
   <nav className="flex flex-wrap gap-4 text-sm">
    <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive rounds</Link>
@@ -36,8 +36,8 @@ export default async function HrRoundsEditorPage({params}:{
   </nav>
   <section className="space-y-4 border-b border-border pb-4">
    <h2 className="font-semibold text-foreground">Add a round</h2>
-   <form action={endpoint} method="post" className="grid gap-3 sm:grid-cols-2">
-    <input type="hidden" name="action" value="CREATE"/>
+   <form action={endpoint} method="post" className="grid gap-3 md:grid-cols-2">
+    <Input type="hidden" name="action" value="CREATE"/>
     <label className="grid gap-1 text-sm text-body">Round name
      <Input name="name" required maxLength={100} className="w-full"/>
     </label>
@@ -54,7 +54,7 @@ export default async function HrRoundsEditorPage({params}:{
     <label className="grid gap-1 text-sm text-body">Duration (minutes)
      <Input name="durationMinutes" type="number" min={1} max={1440} className="w-full"/>
     </label>
-    <Button type="submit" className="sm:col-span-2">Add round</Button>
+    <Button type="submit" className="md:col-span-2">Add round</Button>
    </form>
   </section>
   <section className="space-y-3">
@@ -63,9 +63,9 @@ export default async function HrRoundsEditorPage({params}:{
    {rounds.map(round=><Card as="article" key={round.id} className="space-y-3">
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
      <span className="flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge>{round.status}</StatusBadge></span></div>
-    {round.editable?<form action={endpoint} method="post" className="grid gap-3 sm:grid-cols-2">
-      <input type="hidden" name="action" value="UPDATE"/><input type="hidden" name="roundId" value={round.id}/>
-      <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
+    {round.editable?<form action={endpoint} method="post" className="grid gap-3 md:grid-cols-2">
+      <Input type="hidden" name="action" value="UPDATE"/><Input type="hidden" name="roundId" value={round.id}/>
+      <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
       <label className="grid gap-1 text-sm text-body">Name
        <Input name="name" required defaultValue={round.name} maxLength={100} className="w-full"/>
       </label>

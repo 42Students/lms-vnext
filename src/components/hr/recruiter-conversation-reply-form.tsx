@@ -4,6 +4,7 @@ import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {isVerifiedHrReplyReceipt,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
@@ -102,9 +103,9 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   <p className="text-xs text-muted-foreground">
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
-  {notice?<Alert tone={notice.startsWith("Could not") || notice.startsWith("Write a") || notice.startsWith("Keep a")?"error":"success"}>{notice}</Alert>:null}
+  {notice?<InlineNotice tone={notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
   <div className="flex flex-wrap items-center gap-3">
-  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 sm:min-h-9">
+  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 min-[768px]:min-h-9">
    {sending?"Sending…":"Send reply"}
   </Button>
   <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"
