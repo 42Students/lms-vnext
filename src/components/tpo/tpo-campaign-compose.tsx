@@ -136,7 +136,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     Change selected recruiters in Engage
    </Link>}
    {!deliveryReady?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
-   <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 min-[768px]:min-h-9">
+   <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 md:min-h-9 print:hidden">
     {busy?"Saving…":"Save draft"}
    </Button>
   </form>
