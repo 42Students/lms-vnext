@@ -179,6 +179,7 @@ export function CollegeEditDialog({
             </label>
             <Input
               id={`college-state-${college.id}`}
+              disabled={pending}
               value={state}
               onChange={(event) =>
                 setState(event.target.value)
