@@ -18,7 +18,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
  const {jobId,roundId}=await params;
  const raw=await searchParams;
  const selected=tpoRoundResultViewSchema.safeParse({q:first(raw.q),status:first(raw.status)});
- if(!selected.success)return <div role="alert" className="space-y-3 p-4"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="text-[var(--lms-link-text)] underline">Clear filters</Link></div>;
+ if(!selected.success)return <div role="alert" className="space-y-3 p-4"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="text-link underline">Clear filters</Link></div>;
  let data:Awaited<ReturnType<typeof getTpoRoundResultTable>>;
  try{data=await getTpoRoundResultTable(context,{jobId,roundId});}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw error;}
@@ -28,7 +28,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}/>
   <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Result counts">
-   {Object.entries(data.counts).map(([label,n])=><div key={label} className="rounded-xl border border-border bg-surface p-3">
+   {Object.entries(data.counts).map(([label,n])=><div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
     <p className="text-xs capitalize text-body">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
@@ -44,17 +44,17 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   {data.truncated?<p role="status" className="text-sm text-body">Source capped at 500 application records; counts may be incomplete.</p>:null}
   <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="min-w-0 flex-1 text-sm">Student or role
-    <input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 md:min-h-9"/>
+    <input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9"/>
    </label>
    <label className="text-sm">Result state
-    <select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 rounded-[9px] border border-border bg-surface px-3 md:min-h-9">
+    <select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9">
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
     </select>
    </label>
-   <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-primary-foreground md:min-h-9">Filter</button>
+   <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-primary-foreground md:min-h-9">Filter</button>
   </form>
   <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
-  {visibleRows.length===0?<p role="status" className="rounded-[9px] border border-border bg-muted p-3 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:
+  {visibleRows.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:
    <section className="grid gap-3" aria-label="Round result entries">
     {visibleRows.map(row=><article key={row.applicationId} className="border-b border-border py-4">
      <div className="mb-3">
