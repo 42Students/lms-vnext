@@ -40,8 +40,8 @@ export default async function HrJobActivityPage({searchParams}:{
      className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary"}>{grant.collegeName}</Link>)}
    </nav>:null}
    <form action="/hr/activity" method="get" className="flex flex-wrap gap-2">
-     <input type="hidden" name="collegeId" value={result.collegeId}/>
-     <input type="hidden" name="kind" value={input.data.kind}/>
+     <Input type="hidden" name="collegeId" value={result.collegeId}/>
+     <Input type="hidden" name="kind" value={input.data.kind}/>
      <label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</label>
      <Input id="hr-activity-q" name="q" defaultValue={input.data.q} maxLength={120}
        placeholder="Search hiring drive titles" className="min-w-48 flex-1"/>
