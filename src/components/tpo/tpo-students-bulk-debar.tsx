@@ -78,12 +78,12 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
    if(next.some(row=>row.status==="saved"))router.refresh();
   }).catch(()=>setError("The batch did not finish. Review the per-student results before trying again."));
  }
- return <section aria-label="Bulk student debarment" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ return <section aria-label="Bulk student debarment" className="min-w-0 space-y-3 border-y border-border py-4">
   <h2 className="font-semibold">Debar or lift selected students</h2>
   <p className="text-sm">Uses the same students selected in the roster. Each student is checked and updated separately. Existing applications are not deleted.</p>
   <p role="status" className="text-sm">{picked.length} selected from the filtered roster (maximum {MAX} per batch).</p>
   <label className="grid max-w-xs gap-1 text-sm">Action
-   <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+   <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9">
     <option value="DEBAR">Debar</option><option value="LIFT">Lift</option>
    </Select>
   </label>
@@ -92,12 +92,12 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
   </label>
   {action==="DEBAR"?<>
    <label className="grid max-w-xs gap-1 text-sm">Until
-    <Select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+    <Select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9">
      <option value="DATE">A specific date (IST)</option><option value="DRIVES">A number of drives</option><option value="MANUAL">Lifted by placement team</option>
     </Select>
    </label>
    {duration==="DATE"?<label className="grid gap-1 text-sm">Last date
-    <Input type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)} className="max-w-xs"/>
+    <Input type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)} className="min-h-11 max-w-xs md:min-h-9"/>
    </label>:duration==="DRIVES"?<label className="grid gap-1 text-sm">Number of drives
     <Input type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)} className="max-w-xs"/>
    </label>:null}

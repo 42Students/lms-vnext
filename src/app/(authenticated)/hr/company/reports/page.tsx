@@ -258,7 +258,7 @@ export default async function RecruiterCompanyReportsPage({
             </Select>
           </label>
 
-          <Button type="submit" variant="secondary">Apply filters</Button>
+          <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply filters</Button>
 
           <Link
             href={recruiterCompanyReportsHref({
@@ -277,14 +277,10 @@ export default async function RecruiterCompanyReportsPage({
           Totals cover only the visible authorized drive rows on this page, not every company drive.
           Outstanding means currently issued offers; these counts may represent multiple offer versions.
         </p>
-        <dl className="mt-3 grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
-          {Object.entries(hrCompanyReportPageSignals(jobs)).map(([label,value])=>(
-            <div key={label} className="rounded-[var(--lms-control-radius)] border border-border p-3">
-              <dt className="capitalize text-xs text-muted-foreground">{label}</dt>
-              <dd className="mt-1 text-xl font-bold tabular-nums text-foreground">{value}</dd>
-            </div>
-          ))}
-        </dl>
+        <SummaryStrip label="Current page hiring totals" className="mt-3"
+          steps={Object.entries(hrCompanyReportPageSignals(jobs)).map(([label,value])=>({
+            label,value,
+          }))}/>
       </section>
 
       <section className="space-y-3">

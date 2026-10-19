@@ -218,10 +218,10 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           <Input aria-label="Find similar issues by keyword" type="search" value={similarQuery}
             onChange={event=>{setSimilarQuery(event.target.value);setSimilarSearched(false);setSimilarError("");}}
             maxLength={100} placeholder="e.g. Quiz submission"
-            className={field+" min-w-0 w-full basis-full md:min-w-48 md:basis-auto md:flex-1"}/>
+            className={field+" min-h-11 min-w-0 w-full basis-full md:w-[220px] md:basis-auto md:flex-none"}/>
           <Button type="button" onClick={()=>void checkSimilar()}
             disabled={similarLoading||similarQuery.trim().length<3}
-            variant="secondary" className="min-h-11 md:min-h-9">
+            variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">
             {similarLoading?"Searching…":"Find similar issues"}
           </Button>
         </div>

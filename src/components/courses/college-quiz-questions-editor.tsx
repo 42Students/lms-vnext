@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -70,49 +71,49 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
  }
  return <section className="space-y-2">
   <Button variant="secondary" type="button" disabled={busy||loading} onClick={()=>open?(dirty?window.confirm("Discard unsaved Quiz question changes?")&&(setOpen(false),setDirty(false)):setOpen(false)):void load()}
-   className="text-primary-text">
+   className="min-h-11 md:min-h-9">
    {loading?"Loading…":open?"Close questions":"Edit questions"}</Button>
   {open&&!loading?<div className="max-h-[32rem] space-y-3 overflow-auto rounded border border-border p-3">
    {questions.map((q,i)=><fieldset key={i} className="space-y-2 rounded border border-border p-2">
     <legend className="text-xs font-semibold">Question {i+1}</legend>
     <Select value={q.type} onChange={e=>update(i,{...q,type:e.target.value as Question["type"],
      options:q.options.map((o,j)=>({...o,correct:j===0}))})} disabled={busy}
-     className="min-h-10 text-xs">
+     className="min-h-11 text-xs md:min-h-9">
      <option value="SINGLE_CHOICE">Single choice</option><option value="MULTIPLE_CHOICE">Multiple choice</option>
     </Select>
     <Input type="number" aria-label={"Question "+(i+1)+" points"} min={1} max={1000}
      value={q.points} disabled={busy} onChange={e=>update(i,{...q,points:Number(e.target.value)})}
-     className="ml-2 w-20 text-xs"/>
+     className="ml-2 min-h-11 w-20 text-xs md:min-h-9"/>
     <Textarea aria-label={"Question "+(i+1)+" prompt"} value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>update(i,{...q,prompt:e.target.value})} disabled={busy}
      className="w-full text-xs"/>
-    {q.options.map((o,j)=><label key={j} className="flex min-w-0 items-center gap-2 text-xs">
+    {q.options.map((o,j)=><label key={j} className="flex min-h-11 min-w-0 items-center gap-2 text-xs">
      <CorrectAnswerInput multiple={q.type==="MULTIPLE_CHOICE"} name={"correct-"+quizId+"-"+i}
       checked={o.correct} disabled={busy} onChange={e=>update(i,{...q,options:q.options.map((option,k)=>({
        ...option,correct:q.type==="SINGLE_CHOICE"?k===j:k===j?e.target.checked:option.correct}))})}/>
      <Input value={o.text} maxLength={2000} disabled={busy} aria-label={"Option "+(j+1)}
       onChange={e=>update(i,{...q,options:q.options.map((option,k)=>k===j?{...option,text:e.target.value}:option)})}
-      className="min-h-10 min-w-0 flex-1"/>
-     {q.options.length>2?<Button variant="secondary" type="button" className="text-error" disabled={busy}
+      className="min-h-11 min-w-0 flex-1 md:min-h-9"/>
+     {q.options.length>2?<Button variant="secondary" type="button" className="min-h-11 text-error md:min-h-9" disabled={busy}
       onClick={()=>update(i,{...q,options:q.options.filter((_,k)=>k!==j)})}>Remove</Button>:null}
     </label>)}
     <div className="flex flex-wrap gap-3 text-xs">
      <Button variant="ghost" type="button" disabled={busy||q.options.length>=20}
       onClick={()=>update(i,{...q,options:[...q.options,{text:"",correct:false}]})}
-      className="text-primary-text">+ Option</Button>
-     {questions.length>1?<Button variant="secondary" type="button" disabled={busy} className="text-error"
+      className="min-h-11 md:min-h-9">+ Option</Button>
+     {questions.length>1?<Button variant="secondary" type="button" disabled={busy} className="min-h-11 text-error md:min-h-9"
       onClick={()=>{setDirty(true);setQuestions(prev=>prev.filter((_,k)=>k!==i));}}>Remove question</Button>:null}
     </div>
    </fieldset>)}
    <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={busy||questions.length>=100} onClick={()=>{setDirty(true);setQuestions(rows=>[...rows,empty()]);}}
-     >+ Add question</Button>
-    <Button variant="primary" type="button" disabled={busy} onClick={()=>void save()}
+     className="min-h-11 md:min-h-9">+ Add question</Button>
+    <Button variant="primary" type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 md:min-h-9"
      >
      {busy?"Saving…":"Save questions"}</Button>
    </div>
   </div>:null}
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {notice?<Alert tone="success">{notice}</Alert>:null}
  </section>;
 }

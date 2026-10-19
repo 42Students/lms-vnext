@@ -341,10 +341,10 @@ export function LearnerCareerCalendar({
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-3">
-              <button type="button" onClick={()=>showEventDetail(event)}
-                className="min-h-11 text-sm font-semibold text-primary-text hover:underline">
+              <Button variant="link" className="max-md:min-h-11 text-sm font-semibold" type="button"
+                onClick={()=>showEventDetail(event)}>
                 Event details
-              </button>
+              </Button>
               <Link href={hrefForEvent(event)}
                 className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
                 View application →

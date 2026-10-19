@@ -31,7 +31,7 @@ export function LearnerLiveClassLink({href,endsAt}:{href:string;endsAt?:string|n
  </p>;
  return <div className="mt-3 flex flex-wrap items-center gap-2">
   <ThirdPartyLink href={href} label="Join Meeting" />
-  <Button type="button" variant="secondary" onClick={()=>void copy()} className="min-h-11">Copy meeting link</Button>
+  <Button type="button" variant="secondary" onClick={()=>void copy()} className="min-h-11 md:min-h-9">Copy meeting link</Button>
   {message?<span role="status" className="text-xs text-muted-foreground">{message}</span>:null}
  </div>;
 }

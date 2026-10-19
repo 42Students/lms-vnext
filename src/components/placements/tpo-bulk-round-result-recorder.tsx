@@ -149,7 +149,7 @@ export function TpoBulkRoundResultRecorder({
         </p>
       ) : (
         <>
-          <fieldset className="space-y-2">
+          <fieldset className="space-y-2 print:hidden">
             <legend className="text-sm font-semibold text-foreground">
               Select learners ({selected.length} / 25)
             </legend>
@@ -160,9 +160,9 @@ export function TpoBulkRoundResultRecorder({
             </label>
             <div className="flex flex-wrap gap-3 text-sm">
               <Button variant="secondary" type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
-                className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)]">Select first 25 unmarked</Button>
+                className="inline-flex min-h-11 items-center font-semibold text-primary-text md:min-h-9">Select first 25 unmarked</Button>
               <Button variant="secondary" type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
-                className="font-semibold text-[var(--lms-link-text)]">Clear selection</Button>
+                className="min-h-11 font-semibold text-primary-text md:min-h-9">Clear selection</Button>
             </div>
             <Disclosure title="Paste application IDs from a spreadsheet" className="rounded-[var(--lms-control-radius)] border border-border p-3">
               <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
@@ -175,7 +175,7 @@ export function TpoBulkRoundResultRecorder({
                   setError(null);setSelected(resolved.ids);
                 }}>Select matching learners</Button>
             </Disclosure>
-            <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-52 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
+            <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-52 min-h-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] print:max-h-none print:overflow-visible">
               {visible.map((row) => (
                 <label key={row.applicationId} className="flex min-h-11 items-center gap-3 px-2 text-sm text-body hover:bg-muted md:min-h-9">
                   <Checkbox
@@ -189,7 +189,7 @@ export function TpoBulkRoundResultRecorder({
               ))}
             </div>
           </fieldset>
-          <label className="block text-sm font-semibold text-foreground">
+          <label className="block text-sm font-semibold text-foreground print:hidden">
             Staged outcome
             <Select
               value={outcome}
@@ -203,7 +203,7 @@ export function TpoBulkRoundResultRecorder({
               <option value="ABSENT">Marked absent (ABSENT)</option>
             </Select>
           </label>
-          <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3">
+          <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3 print:hidden">
             <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
             <label className="flex items-start gap-2 text-sm text-body">
               <Checkbox disabled={busy||available.length>25}
@@ -215,7 +215,7 @@ export function TpoBulkRoundResultRecorder({
             <p className="text-xs text-body">Opt in explicitly. All affected learners receive an audited staged result, but nothing is published until Apply results. This bulk action is limited to 25 total applicants; for larger rosters use the reviewed import.</p>
           </fieldset>
           {(outcome !== "PASS" || failUnselected) ? (
-            <label className="block text-sm font-semibold text-foreground">
+            <label className="block text-sm font-semibold text-foreground print:hidden">
               Learner-facing message (required)
               <Textarea
                 value={message}
@@ -227,7 +227,7 @@ export function TpoBulkRoundResultRecorder({
               />
             </label>
           ) : null}
-          {outcome==="HOLD"?<label className="block text-sm font-semibold text-foreground">
+          {outcome==="HOLD"?<label className="block text-sm font-semibold text-foreground print:hidden">
             First waitlist rank (in checkbox selection order)
             <Input type="number" min={1} max={100000} value={firstWaitlistRank}
               onChange={e=>setFirstWaitlistRank(Number(e.target.value))}
@@ -248,7 +248,7 @@ export function TpoBulkRoundResultRecorder({
               ((outcome !== "PASS" || failUnselected) && !message.trim()) ||
               pendingTotal > 25 ||
               (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1))}
-            className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50"
+            className="min-h-11 rounded-[var(--lms-control-radius)] px-4 text-sm font-[650] disabled:opacity-50 md:min-h-9 print:hidden"
           >
             {busy ? "Staging..." : "Review and confirm staged results"}
           </Button>
@@ -258,7 +258,7 @@ export function TpoBulkRoundResultRecorder({
         title={"Stage "+pendingTotal+" result(s) as "+({PASS:"Shortlisted",FAIL:"Not selected",HOLD:"Waitlisted",ABSENT:"Marked absent"}[outcome])+"?"}
         description={(failUnselected?unselected.length+" additional unmarked applicants will be staged Not cleared. ":"")+"Each successful result will be audited individually. This does NOT publish results; a completed round requires separate APPLY confirmation. Some rows may succeed even if others fail. Continue?"}
         confirmLabel="Review and confirm staged results" onConfirm={()=>void stageSelected(true)}/>
-      {error ? <p role="alert" className="text-sm text-foreground">{error}</p> : null}
+      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {results.length > 0 ? (
         <div role="status" className="space-y-2 text-sm text-body">
           <Button variant="secondary" type="button" onClick={()=>{
@@ -272,8 +272,11 @@ export function TpoBulkRoundResultRecorder({
               reportedOutcomeByApplicant[row.applicationId]??outcome,row.status,row.reason??""].map(cell).join(","))];
             const url=URL.createObjectURL(new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}));
             const link=document.createElement("a");link.href=url;
-            link.download="round-"+roundId+"-bulk-results.csv";link.click();URL.revokeObjectURL(url);
-          }} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
+            link.download="round-"+roundId+"-bulk-results.csv";
+            document.body.appendChild(link);
+            try { link.click(); }
+            finally { link.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
+          }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text md:min-h-9 print:hidden">
             Export per-learner staging report (CSV)
           </Button>
           <p className="font-semibold">Per-learner outcomes</p>
