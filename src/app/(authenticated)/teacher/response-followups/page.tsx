@@ -31,7 +31,7 @@ export default async function FacultyResponseFollowUpsPage({
     <PageHeader eyebrow="Faculty · Assessments" title="Response follow-ups"
       description="Published assessments past their due date with missing responses from learners in your current teaching Sections."
       actions={<Link href="/teacher/results"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
         Results overview
       </Link>} />
     <form action="/teacher/response-followups" method="get"
