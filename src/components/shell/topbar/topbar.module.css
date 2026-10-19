@@ -24,9 +24,9 @@
   border-bottom: 1px solid var(--lms-header-border);
   box-shadow: var(--lms-header-shadow);
 }
-.command { display:grid; grid-template-columns:auto minmax(0,380px); align-items:center; gap:12px; min-width:0; flex:1; justify-content:start; }
-.commandNoNew { grid-template-columns:minmax(0,380px); }
-.search { position: relative; min-width: 0; width: min(291px, 100%); max-width: 100%; }
+.command { display:grid; grid-template-columns:auto minmax(220px,380px) 1fr; align-items:center; gap:12px; min-width:0; flex:1 1 auto; max-width:none; }
+.commandNoNew { grid-template-columns:minmax(220px,380px) 1fr; }
+.search { position: relative; min-width: 0; width:291px; max-width:100%; }
 .searchBox { display:flex; align-items:center; gap:9px; box-sizing:border-box; height:36px; width:100%; padding:0 10px; border:1px solid var(--lms-header-border); border-radius:var(--lms-control-radius); background:var(--topbar-search-bg); color:var(--topbar-muted); }
 .searchInput { min-width:0; width:100%; flex:1; padding:0; background:transparent; border:0; outline:none; font-family:inherit; font-size:12px; font-weight:400; line-height:1.4; color:var(--lms-heading); }
 .searchInput::placeholder { color:var(--topbar-placeholder); opacity:1; }
@@ -58,15 +58,15 @@
 .bellAdapter > div > section { z-index:70; }
 @media (min-width:768px) and (max-width:1199px) {
   .bar { gap:10px; padding:0 14px; }
-  .command { gap:8px; grid-template-columns:auto minmax(180px,1fr); }
-  .commandNoNew { grid-template-columns:minmax(180px,1fr); }
+  .command { gap:8px; grid-template-columns:auto minmax(180px,1fr) auto; }
+  .commandNoNew { grid-template-columns:minmax(180px,1fr) auto; }
   .search { width:100%; }
   .orgName { max-width:180px; }
 }
 @media (max-width:767px) {
-  .bar { min-height:58px; height:58px; gap:8px; padding:0 10px; }
-  .command { gap:8px; grid-template-columns:auto auto; justify-content:flex-start; flex:1; }
-  .commandNoNew { grid-template-columns:auto; }
+  .bar { min-height:58px; height:auto; gap:8px; padding:max(7px,env(safe-area-inset-top,0px)) 10px 7px; }
+  .command { display:flex; align-items:center; width:auto; min-width:0; gap:8px; flex:1 1 0; }
+  .commandNoNew { display:flex; }
   .search { width:36px; }
   .searchBox { width:36px; padding:0; justify-content:center; }
   .searchInput { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
@@ -76,7 +76,7 @@
   .searchOpen .searchInput { position:static; width:auto; height:auto; opacity:1; pointer-events:auto; }
   .new { width:38px; gap:0; }
   .newLabel { display:none; }
-  .actions { gap:6px; }
+  .actions { gap:6px; margin-left:auto; }
   .orgName { display:none; }
   .avatar { width:40px; height:40px; }
 }
