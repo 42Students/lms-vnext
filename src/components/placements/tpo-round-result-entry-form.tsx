@@ -43,7 +43,7 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
    <Select name="outcome" value={outcome} onChange={event=>setOutcome(event.target.value)} disabled={pending||saved} className={"mt-1 block w-full "+cls}>
     <option value="PASS">Pass</option><option value="FAIL">Fail</option>
     <option value="HOLD">Hold (requires rank)</option><option value="ABSENT">Absent</option>
-   </Select</label>
+   </Select></label>
   {outcome==="HOLD"?<label className="text-sm text-body">Waitlist rank
    <Input name="waitlistRank" type="number" min="1" max="100000" step="1" required disabled={pending||saved} className={"mt-1 block w-full "+cls}/>
   </label>:null}
