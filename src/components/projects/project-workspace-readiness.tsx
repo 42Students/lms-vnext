@@ -1,3 +1,4 @@
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireProjectManageAccess} from "@/modules/projects/access";
 import {getProjectReadiness} from "@/modules/projects/readiness-service";
@@ -38,7 +39,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <PageHeader title={copy.title} eyebrow="Projects"
       description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side."
-      actions={<Link href={basePath} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Back to workspaces</Link>} />
+      actions={<PageBackLink href={basePath} label="Back to workspaces" />} />
     <nav aria-label="Workspace sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border">
       {([
         ["summary","Summary"], ["overview","Overview"], ["team","Team"], ["sprints","Sprints"],
