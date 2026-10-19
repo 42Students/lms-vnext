@@ -25,7 +25,7 @@ type Props = {
 };
 type Sprint = ProjectTemplateBlueprint["sprints"][number];
 type Task = ProjectTemplateBlueprint["tasks"][number];
-const field = "mt-1 min-h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const field = "mt-1 w-full";
 const label = "block text-xs font-semibold text-body";
 
 export function SuperAdminTemplatePlanEditor(props: Props) {
