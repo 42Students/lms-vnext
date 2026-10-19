@@ -495,3 +495,33 @@ hover/collapsed icon screenshot, keyboard interaction, and tablet/phone
 viewport proof are attached. These source-value fixes do not justify a
 false whole-category tick. B4 remains `[ ]` for the non-legacy route bar
 and remaining loader pixel comparisons.
+
+### College Admin ↔ TPO shortcut: menu isolation completed from source
+
+A genuine College Admin-only navigation has one `Placement cell` link
+whose destination is `/tpo/home`. Previously selecting it made
+`scopedShellNavigation` treat that sole shortcut as a complete TPO
+portal, hiding every College Admin sidebar entry and enabling TPO-only
+group/scrollbar chrome. The following source contract now holds:
+
+| State | Legacy account contract | vNext evidence | Outcome |
+|---|---|---|---|
+| College home | College Admin menu is the single active account menu | `shell-model.ts:103-126,319-329`: college rows retained and Placement cell shortcut included | Source match |
+| College → Placement cell | A shortcut is not a separate TPO role | `shell-model.ts:108-118`: when the sole TPO row is `Placement cell`, selected portal stays college | Corrected |
+| Genuine TPO account | TPO Home/Students/Drives/etc. remain a full separate account | `shell-model.ts:113-119`: 2+ TPO rows or the real `Home` row selects TPO | No regression by construction |
+| Logo/fallback destination | Account role home rather than cross-role generic page | `app-shell.tsx:54-55,80,87` derives first permitted `homeHref` | Corrected functional safety |
+| Group headings | `old-lms-shell.css:49-53`: uppercase TPO groups only | `sidebar-nav.tsx:20-25,53-58,94`: visible College Admin rows prevent TPO headings | Source match |
+| Scrollbar mode | `old-lms-shell.css:41-43`: thin TPO scrollbar only for TPO | `sidebar-nav.tsx:53-58` sets `data-sidebar-portal=other` for college; `sidebar-legacy.css:240-256` uses `tpo` selector | Corrected |
+| Responsive link geometry | `old-lms-shell.css:23`, `components___antddesign.scss:305-389`: desktop icon rail, mobile drawer with all menu links | Shared `SidebarNav`/scoping applies to both widths; no branch-specific filtered copy | Structural match; browser still open |
+
+**Regression proof:** `tests/unit/chat19-north-star-legacy-sidebar.test.ts`
+adds two explicit route cases: a sole College Admin shortcut keeps all
+college entries while opening `/tpo/home`, whereas a real two-row TPO
+navigation selects only TPO rows. Assertions were authored but not run.
+
+No additional raw controls or modal implementations were introduced.
+The earlier remote-source sweep across 41 shell TypeScript/CSS files
+(0 raw controls, 50 rail-class matches) remains the available scoped
+coverage proof, not a checkout `git grep`. Browser hover, keyboard
+and phone/tablet screenshot parity remain open. **B3 stays [ ]; B4
+stays [ ].**
