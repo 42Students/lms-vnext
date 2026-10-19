@@ -21,7 +21,7 @@ export default async function CollegeActivityPage({
   searchParams,
 }: { searchParams: Promise<RawSearch> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) return <div className="space-y-3 p-6"><PageHeader eyebrow="College Admin" title="Activity Log"/><p role="alert" className="rounded border border-border p-4">Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail.</p></div>;
+  if (!context.membership) return <div className="space-y-3"><PageHeader eyebrow="College Admin" title="Activity Log"/><p role="alert" className="rounded border border-border p-4">Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail.</p></div>;
   const parsed = collegeActivityQuerySchema.safeParse(
     activitySearchParams(await searchParams),
   );
@@ -170,7 +170,7 @@ export default async function CollegeActivityPage({
         </div>
       </form>
     </section>
-    <section className="min-w-0 rounded-xl border border-border bg-surface" aria-label="College activity events">
+    <section className="min-w-0 rounded-[8px] border border-border bg-surface" aria-label="College activity events">
       <DataTable rows={data.items} getRowKey={item=>item.event.id} caption="College activity events"
         columns={[
           {key:"occurred",header:"Occurred (IST)",mobilePriority:"secondary",cell:item=>when(item.event.occurredAt)},
