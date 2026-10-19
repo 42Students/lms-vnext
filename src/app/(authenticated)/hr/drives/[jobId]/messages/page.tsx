@@ -22,19 +22,19 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
  return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Recruiter · Drive" title="Messages"
    description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}/>
-  <Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Back to drive overview</Link>
+  <Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive overview</Link>
   <section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Drive conversation</h2>
    <p className="mt-2 text-sm text-body">Open or resume the conversation tied to this authorized employer drive.</p>
    <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
     <input type="hidden" name="collegeId" value={result.workspace.college.id}/>
     <input type="hidden" name="jobId" value={result.workspace.job.id}/>
-    <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Open drive discussion</button>
+    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open drive discussion</button>
    </form>
   </section>
   {result.threads.length?<ol className="space-y-3">
    {result.threads.map(thread=><li key={thread.id} className="rounded-xl border border-border p-4">
-    <Link href={"/hr/conversations/"+thread.id} className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Continue discussion</Link>
+    <Link href={"/hr/conversations/"+thread.id} className="font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Continue discussion</Link>
    </li>)}
   </ol>:<p role="status" className="text-sm text-body">No conversation has been started for this drive.</p>}
  </div>;
