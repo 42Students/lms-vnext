@@ -90,16 +90,13 @@ export async function ProjectAdminReadinessPage({
       <PageHeader
         eyebrow={eyebrow}
         title="Submission readiness"
-        description="Execution completion and final-delivery readiness across project workspaces."
+        description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to."
+        actions={<a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Export overrides CSV</a>}
       />
-      <p className="text-sm text-body">See whether each team is ready to submit, and override the gate when you need to.</p>
       <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-base font-semibold">Active overrides ({activeOverrides.length})</h2>
-          <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
-            Export overrides CSV
-          </a>
         </div>
         {!activeOverrides.length ? <p className="mt-3 text-sm text-muted-foreground">
           No workspace currently has a manual override — every gate is running on its own completion state.
