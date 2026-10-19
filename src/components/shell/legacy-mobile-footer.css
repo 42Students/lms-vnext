@@ -1,0 +1,65 @@
+/* Source: docs/design/legacy-styles/components___antddesign.scss:912-936;
+ * original 42Students/lms2-fe/src/components/MobileFooter/mobileFooter.scss:1-11.
+ * Icon sizes/order: lms2-fe/src/components/MobileFooter/MobileFooter.jsx:21-149.
+ */
+.lms-legacy-mobile-footer {display:none;}
+@media (max-width:767px) {
+ .lms-legacy-mobile-footer {
+  position:fixed;
+  inset-inline:0;
+  bottom:0;
+  z-index:40;
+  width:100%;
+  height:calc(64px + env(safe-area-inset-bottom,0px));
+  box-sizing:border-box;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  display:flex;
+  flex-direction:column;
+  background-color:#fff;
+  border-top:1px solid #f1f4f9;
+  box-shadow:0 -2px 8px rgba(0,0,0,.04);
+ }
+ /* Reserve the original 64px footer plus the phone's safe-area in learner/faculty main. */
+ .lms-shell-page:has(> .lms-legacy-mobile-footer) #lms-main-content {
+  padding-bottom:calc(80px + env(safe-area-inset-bottom,0px)) !important;
+ }
+ .lms-legacy-mobile-footer-nav {flex:1;min-height:0;display:flex;flex-direction:column;}
+ .lms-legacy-mobile-footer-items {
+  flex:1;
+  min-height:0;
+  width:100%;
+  margin:0;
+  padding:0 24px;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+ }
+ .lms-legacy-mobile-footer-link {
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:44px;
+  border-radius:8px;
+ }
+ .lms-legacy-mobile-footer-icon {width:30px;height:30px;object-fit:contain;opacity:.5;}
+ .lms-legacy-mobile-footer-items .active .lms-legacy-mobile-footer-icon {opacity:1;}
+ .lms-legacy-mobile-footer-link:focus-visible {outline:2px solid #26bac7;outline-offset:2px;}
+ .lms-legacy-mobile-footer-badge {
+  position:absolute;
+  top:-1px;
+  right:-4px;
+  min-width:16px;
+  height:16px;
+  padding:0 3px;
+  border-radius:999px;
+  background:#26bac7;
+  color:#fff;
+  font-size:10px;
+  line-height:16px;
+  font-weight:700;
+  text-align:center;
+ }
+}
