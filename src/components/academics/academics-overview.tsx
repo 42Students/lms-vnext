@@ -375,7 +375,7 @@ export function AcademicsOverview({
             Period-specific roster boundaries. Open a Section for learners, Faculty responsibilities and schedule.
           </p>
         </div>
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Academic sections" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={sectionColumns}
           rows={workspace.sections}
           getRowKey={(section) => section.id}
