@@ -147,12 +147,12 @@ export default async function CollegeReadinessPage({
         }
       />
 
-      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export all persisted readiness checks (CSV) →</Link>
+      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export all persisted readiness checks (CSV) →</Link>
       <p className="text-xs text-muted-foreground">Export includes all ten persisted checks even when the page filter hides some; runtime verification is not certified.</p>
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
         >
           Recheck persisted readiness →
         </Link>
@@ -185,7 +185,7 @@ export default async function CollegeReadinessPage({
         ].map((metric) => (
           <article
             key={metric.label}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4"
           >
             <p className="m-0 text-xs font-semibold text-muted-foreground">
               {metric.label}
@@ -242,7 +242,7 @@ export default async function CollegeReadinessPage({
             <Select name="area" defaultValue={parsed.area} className="min-h-11 sm:min-h-9">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </Select>
-          </label><Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</Button>
+          </label><Button type="submit" className="min-h-11 sm:min-h-9">Filter</Button>
           <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
         </form>
         <p className="mt-2 text-xs text-muted-foreground">Showing {shownChecks.length} of {evaluation.checks.length} required checks; the overall verdict always uses all ten.</p>
@@ -255,7 +255,7 @@ export default async function CollegeReadinessPage({
         </p>
 
         {shownChecks.length===0 ? (
-          <p role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 text-sm text-body">
+          <p role="status" className="mt-4 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-muted p-4 text-sm text-body">
             No readiness checks match the selected status and area. The overall tenant readiness verdict above still uses all ten checks.
           </p>
         ) : null}
@@ -264,7 +264,7 @@ export default async function CollegeReadinessPage({
             (check, index) => (
               <li
                 key={check.id}
-                className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4"
+                className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-muted p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">

@@ -8,8 +8,8 @@ function ItemList({items}:{items:readonly {
  studentVisible:boolean;
 }[]}){
  if(!items.length)return <p className="text-xs text-muted-foreground">No items for this Section.</p>;
- return <ul className="space-y-1">{items.map(item=><li key={item.id}
-  className="flex flex-wrap items-center justify-between gap-2 rounded border border-border bg-background p-2 text-sm">
+ return <ul className="divide-y divide-border border-y border-border">{items.map(item=><li key={item.id}
+  className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
   <span className="break-words">{item.title}
    {item.kind?<span className="ml-1 text-xs text-muted-foreground">({item.kind.replaceAll("_"," ")})</span>:null}
   </span>

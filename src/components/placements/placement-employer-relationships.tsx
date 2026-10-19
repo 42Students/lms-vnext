@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -246,8 +247,8 @@ export function PlacementEmployerRelationships({
                     <span className="mb-1 block text-xs font-semibold text-body">
                       Relationship owner
                     </span>
-                    <select
-                      className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus-visible:ring-2 focus:ring-[var(--lms-focus-ring)] md:min-h-9"
+                    <Select
+                      className="min-h-11 w-full md:min-h-9"
                       value={
                         draft.ownerMembershipId
                       }
@@ -287,7 +288,7 @@ export function PlacementEmployerRelationships({
                           )}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </label>
 
                   <label className="flex items-center gap-2 text-sm font-semibold text-body">
