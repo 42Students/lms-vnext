@@ -359,7 +359,7 @@ export function AcademicsOverview({
             Program intakes with progression stored as learner history.
           </p>
         </div>
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Cohorts and batches" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={cohortColumns}
           rows={workspace.cohorts}
           getRowKey={(cohort) => cohort.id}
