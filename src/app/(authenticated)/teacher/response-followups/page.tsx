@@ -19,8 +19,8 @@ export default async function FacultyResponseFollowUpsPage({
   const raw = await searchParams;
   const parsed = parseFacultyFollowUpSearchParams(raw);
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid follow-up filters</h1>
-    <Link href="/teacher/response-followups" className="text-primary-text underline inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+    <PageHeader title="Invalid follow-up filters" />
+    <Link href="/teacher/response-followups" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
