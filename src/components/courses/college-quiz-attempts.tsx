@@ -1,4 +1,6 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
@@ -34,11 +36,11 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  if(!options.length||status==="DRAFT")return null;
  return <div className="mt-2 space-y-2">
   {options.length>1?<label className="grid gap-1 text-xs font-semibold">Section
-   <select value={chosen.deliveryId} disabled={loading} onChange={e=>{
+   <Select value={chosen.deliveryId} disabled={loading} onChange={e=>{
     setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
     className="min-h-11 rounded border border-border px-2">
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
-   </select></label>:null}
+   </Select></label>:null}
   <Button variant="secondary" type="button" disabled={loading} onClick={()=>opened?setOpened(false):void open()}
    aria-expanded={opened} className="min-h-11 px-3">
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
@@ -52,7 +54,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
     <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student on this page
-     <input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
+     <Input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-11 rounded border border-border bg-background p-2" placeholder="Student name or email"/>
     </label>
     {learnerSearch.trim()&&!attempts.some(item=>(item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||(item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase()))?
