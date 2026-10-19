@@ -478,3 +478,5 @@
 .topbarNotificationBody ul[aria-label="Recent placement notifications"] > li > p { margin:0; padding:12px 12px 8px; color:var(--lms-muted-text); font-size:12px; font-weight:600; }
 
 .topbarNotificationError { display:flex; align-items:center; justify-content:center; min-height:44px; padding:32px 20px; color:var(--lms-error-text); font-size:14px; text-align:center; }
+
+.learnerNotificationPopover { position:absolute; z-index:70; right:0; top:calc(100% + 8px); box-sizing:border-box; width:min(420px,calc(100vw - 24px)); min-width:min(360px,calc(100vw - 24px)); max-height:min(520px,calc(100dvh - 120px)); overflow:auto; overscroll-behavior:contain; border:1px solid #e5e9f0; border-radius:12px; background:#fff; box-shadow:0 4px 24px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04); }
