@@ -1,9 +1,6 @@
+"use client";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { PageHeader } from "@/components/ui/page-header";
-"use client";
-
-import { Dropdown } from "@/components/ui/dropdown";
-import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
