@@ -1,6 +1,7 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
 import {Disclosure} from "@/components/ui/disclosure";
@@ -85,7 +86,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
        onChange={e=>setVisible(keys=>e.target.checked?[...keys,option.key]:keys.filter(key=>key!==option.key))}/>
       {option.label}
     </label>)}</div>
-    <button type="button" className="mt-2 min-h-11 rounded-[9px] border border-border px-3 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" onClick={()=>setVisible(options.map(option=>option.key))}>Reset columns</button>
+    <Button variant="secondary" type="button" className="mt-2 min-h-11" onClick={()=>setVisible(options.map(option=>option.key))}>Reset columns</Button>
    </Disclosure>
   </div>
   <DataTable<TpoRequestClipboardRow>
