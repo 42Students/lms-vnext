@@ -27,10 +27,10 @@ export function Menu({ className, onKeyDown, children, ...props }: MenuProps) {
     items[target]?.focus();
   }
   return <div {...props} data-slot="menu" role="menu" onKeyDown={handleKeyDown}
-    className={cx("min-w-44 rounded-[var(--lms-radius-control)] bg-white p-[var(--lms-space-1)] shadow-none text-[14px] leading-5 text-[var(--lms-body-text)]", className)}>{children}</div>;
+    className={cx("min-w-44 rounded-[6px] bg-white p-1 shadow-none text-[14px] leading-5 text-[var(--lms-body-text)]", className)}>{children}</div>;
 }
 
 export function MenuItem({ className, children, type = "button", ...props }: MenuItemProps) {
   return <button {...props} type={type} role="menuitem"
-    className={cx("flex min-h-11 w-full items-center rounded-[var(--lms-radius-control)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-left text-[14px] leading-5 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50", className)}>{children}</button>;
+    className={cx("flex min-h-11 w-full items-center rounded-[6px] px-3 py-2 text-left text-[14px] leading-5 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50", className)}>{children}</button>;
 }
