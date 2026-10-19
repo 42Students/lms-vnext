@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;
@@ -59,9 +60,9 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
   finally{setBusy(false);}
  }
  return <section className="space-y-2">
-  <button type="button" disabled={busy||loading} onClick={()=>open?(dirty?window.confirm("Discard unsaved Quiz question changes?")&&(setOpen(false),setDirty(false)):setOpen(false)):void load()}
-   className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
-   {loading?"Loading…":open?"Close questions":"Edit questions"}</button>
+  <Button variant="secondary" type="button" disabled={busy||loading} onClick={()=>open?(dirty?window.confirm("Discard unsaved Quiz question changes?")&&(setOpen(false),setDirty(false)):setOpen(false)):void load()}
+   className="text-primary-text">
+   {loading?"Loading…":open?"Close questions":"Edit questions"}</Button>
   {open&&!loading?<div className="max-h-[32rem] space-y-3 overflow-auto rounded border border-border p-3">
    {questions.map((q,i)=><fieldset key={i} className="space-y-2 rounded border border-border p-2">
     <legend className="text-xs font-semibold">Question {i+1}</legend>
@@ -83,23 +84,23 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
      <input value={o.text} maxLength={2000} disabled={busy} aria-label={"Option "+(j+1)}
       onChange={e=>update(i,{...q,options:q.options.map((option,k)=>k===j?{...option,text:e.target.value}:option)})}
       className="min-h-10 min-w-0 flex-1 rounded border border-border px-2"/>
-     {q.options.length>2?<button type="button" className="text-error" disabled={busy}
-      onClick={()=>update(i,{...q,options:q.options.filter((_,k)=>k!==j)})}>Remove</button>:null}
+     {q.options.length>2?<Button variant="secondary" type="button" className="text-error" disabled={busy}
+      onClick={()=>update(i,{...q,options:q.options.filter((_,k)=>k!==j)})}>Remove</Button>:null}
     </label>)}
     <div className="flex flex-wrap gap-3 text-xs">
-     <button type="button" disabled={busy||q.options.length>=20}
+     <Button variant="ghost" type="button" disabled={busy||q.options.length>=20}
       onClick={()=>update(i,{...q,options:[...q.options,{text:"",correct:false}]})}
-      className="text-primary-text">+ Option</button>
-     {questions.length>1?<button type="button" disabled={busy} className="text-error"
-      onClick={()=>{setDirty(true);setQuestions(prev=>prev.filter((_,k)=>k!==i));}}>Remove question</button>:null}
+      className="text-primary-text">+ Option</Button>
+     {questions.length>1?<Button variant="secondary" type="button" disabled={busy} className="text-error"
+      onClick={()=>{setDirty(true);setQuestions(prev=>prev.filter((_,k)=>k!==i));}}>Remove question</Button>:null}
     </div>
    </fieldset>)}
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={busy||questions.length>=100} onClick={()=>{setDirty(true);setQuestions(rows=>[...rows,empty()]);}}
-     className="min-h-10 rounded border border-border px-3 text-xs">+ Add question</button>
-    <button type="button" disabled={busy} onClick={()=>void save()}
-     className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
-     {busy?"Saving…":"Save questions"}</button>
+    <Button variant="secondary" type="button" disabled={busy||questions.length>=100} onClick={()=>{setDirty(true);setQuestions(rows=>[...rows,empty()]);}}
+     >+ Add question</Button>
+    <Button variant="primary" type="button" disabled={busy} onClick={()=>void save()}
+     >
+     {busy?"Saving…":"Save questions"}</Button>
    </div>
   </div>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
