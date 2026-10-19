@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {useEffect,useState} from "react";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import Link from "next/link";
@@ -26,7 +27,7 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
   };
  },[storageKey]);
  if(!hasDraft)return null;
- return <aside role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-[var(--lms-warning-subtle)] p-4">
+ return <Alert tone="warning">
    <p className="font-semibold text-foreground">You have a drive request you haven&apos;t sent yet</p>
    <p className="mt-1 text-sm text-body">It is saved on this device.</p>
    <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
@@ -54,5 +55,5 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
       setHasDraft(false);setConfirmDiscard(false);setError("");
     }}/>
    {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
- </aside>;
+ </Alert>;
 }
