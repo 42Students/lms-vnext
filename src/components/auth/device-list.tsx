@@ -62,7 +62,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
         {devices.map((device) => (
           <li
             key={device.id}
-            className="flex min-w-0 flex-wrap items-center justify-between gap-3 p-4 sm:p-5"
+            className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-4"
           >
             <div className="min-w-0 flex-1">
               <p className="m-0 flex flex-wrap items-center gap-2 break-words text-sm font-semibold text-foreground">
@@ -80,6 +80,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
               <Button
                 variant="secondary"
                 size="sm"
+                className="min-h-11 sm:min-h-9"
                 disabled={pending || busy!==null}
                 onClick={() =>
                   ask(
@@ -98,10 +99,11 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
       </ul>
 
       {others > 0 ? (
-        <div className="border-t border-border p-4">
+        <div className="border-t border-border py-4">
           <Button
             variant="danger"
             size="sm"
+            className="min-h-11 sm:min-h-9"
             disabled={pending || busy!==null}
             onClick={() =>
               ask(
