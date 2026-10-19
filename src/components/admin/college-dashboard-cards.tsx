@@ -15,7 +15,7 @@ export function CollegeDashboardCards({ cards }: { cards: Cards }) {
     <h2 className="text-xl font-semibold text-foreground">{COLLEGE_AT_A_GLANCE_HEADING}</h2>
     <div className="grid min-w-0 grid-cols-1 gap-3 min-[375px]:grid-cols-2 lg:grid-cols-4">
       {visible.map(card => <Link key={card.key} href={card.href}
-        className="block min-w-0 break-words rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle sm:p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="block min-w-0 break-words rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle sm:p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         <p className="text-sm text-muted-foreground">{card.label}</p>
         <p className="mt-2 text-2xl font-semibold tabular-nums text-primary-text">
           {card.count === null ? "—" : card.count.toLocaleString("en-IN")}

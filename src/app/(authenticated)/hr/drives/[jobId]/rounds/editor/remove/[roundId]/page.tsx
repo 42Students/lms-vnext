@@ -21,7 +21,7 @@ export default async function HrRoundRemovalConfirm({params}:{
  return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader eyebrow="Recruiter · Hiring rounds" title="Confirm unused round removal"
    description="Only an unused, pending recruiter-created round can be cancelled. The record remains in audit history."/>
-  <div className="rounded-xl border border-border bg-surface p-5">
+  <div className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5">
    <p className="font-semibold text-foreground">{round.sequence}. {round.name}</p>
    <p className="mt-2 text-sm text-body">{round.kind} · {round.status} · No recorded candidate results.</p>
   </div>
@@ -32,7 +32,7 @@ export default async function HrRoundRemovalConfirm({params}:{
     <input type="hidden" name="action" value="REMOVE"/>
     <input type="hidden" name="roundId" value={round.id}/>
     <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      Confirm remove
     </button>
    </form>

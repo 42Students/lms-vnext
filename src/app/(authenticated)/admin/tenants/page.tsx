@@ -77,7 +77,7 @@ export default async function TenantDirectory({searchParams}:{
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching colleges · page {data.query.page} of {data.totalPages}</p>
   {data.items.length?<div className="grid gap-3 md:grid-cols-2">
-   {data.items.map(x=><article key={x.id} className="min-w-0 rounded-[8px] border border-border bg-surface p-4">
+   {data.items.map(x=><article key={x.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <h2 className="m-0 break-words font-semibold text-foreground">{x.name}</h2>
     <p className="mt-1 text-sm text-body">{x.organizationName} · {x.code}</p>
     <div className="mt-2 flex flex-wrap gap-2"><StatusBadge tone={x.status==="ACTIVE"?"success":"neutral"}>College {x.status}</StatusBadge>

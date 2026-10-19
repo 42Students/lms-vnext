@@ -537,7 +537,7 @@ export function PlacementDraftEditForm({
           </p>
 
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
-            <fieldset className="rounded-lg border border-border bg-muted p-4">
+            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible programs
               </legend>
@@ -582,7 +582,7 @@ export function PlacementDraftEditForm({
               )}
             </fieldset>
 
-            <fieldset className="rounded-lg border border-border bg-muted p-4">
+            <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible cohorts
               </legend>

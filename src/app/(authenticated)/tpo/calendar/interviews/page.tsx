@@ -46,7 +46,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
   </nav>
   {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found."/>:
    <section aria-label="Interview rounds" className="divide-y divide-border border-y border-border">
-   {data.rows.map(r=><article key={r.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   {data.rows.map(r=><article key={r.id} className="py-4">
     <h2 className="font-semibold text-foreground">{r.companyName} · {r.jobTitle}</h2>
     <p className="mt-1 text-sm text-body">{r.name} · {r.state.replaceAll("_"," ")} · {r.mode??"Mode not recorded"}</p>
     <p className="mt-1 text-sm text-body">{r.scheduledAt?new Date(r.scheduledAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Start not scheduled"} IST · {r.venue??"Venue not recorded"}</p>

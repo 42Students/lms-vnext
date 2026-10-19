@@ -50,6 +50,6 @@ export function TpoNoticeReadProgress({id}:{id:string}){
      <li key={index} className="break-words py-0.5">{name}</li>)}</ul>
    </details>:null}
   </div>:null}
-  {error?<p role="alert" className="mt-2 break-words text-sm text-danger">{error}</p>:null}
+  {error?<p role="alert" className="mt-2 break-words text-sm text-error">{error}</p>:null}
  </section>;
 }

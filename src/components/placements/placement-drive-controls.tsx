@@ -151,8 +151,8 @@ type ResultDraft = {
   internalComment: string;
 };
 
-const inputClass = "min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
-const textareaClass = "min-h-20 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const inputClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
+const textareaClass = "min-h-20 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-[var(--lms-focus-ring)]";
 
 function humanize(value: string) {
   return value
@@ -883,7 +883,7 @@ export function PlacementDriveControls({
                         "No contact on profile"}
                     </p>
 
-                    <div className="mt-3 rounded-lg border border-border bg-muted p-3">
+                    <div className="mt-3 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-3">
                       {eligibilityReviews[
                         item.membershipId
                       ] ? (
@@ -1435,7 +1435,7 @@ export function PlacementDriveControls({
             Stage results first. Applying a staged result is the explicit step that advances candidate progression.
           </p>
           {scheduleWarnings ? (
-            <div className="mt-3 rounded-lg border border-border bg-surface p-3 text-sm text-body">
+            <div className="mt-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 text-sm text-body">
               {scheduleWarnings.state === "UNAVAILABLE"
                 ? "Venue collision checking is unavailable. Do not assume the schedule is clear."
                 : scheduleWarnings.state === "LIMITED"
@@ -1514,7 +1514,7 @@ export function PlacementDriveControls({
               {scheduleWarnings?.warnings
                 .find((entry) => entry.roundId === round.id)?.messages.map((message) => (
                   <p key={message} role="status"
-                    className="mt-3 rounded-md border border-border bg-muted p-3 text-sm text-warning">
+                    className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm text-warning">
                     {message}
                   </p>
                 ))}
@@ -1523,7 +1523,7 @@ export function PlacementDriveControls({
                 round.status ===
                   "SCHEDULED") &&
               schedule ? (
-                <details className="mt-4 rounded-lg border border-border bg-muted p-4">
+                <details className="mt-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
                   <summary className="cursor-pointer text-sm font-semibold text-foreground">
                     {round.status ===
                     "SCHEDULED"
@@ -1775,7 +1775,7 @@ export function PlacementDriveControls({
                           key={
                             participant.applicationId
                           }
-                          className="rounded-lg border border-border bg-muted p-4"
+                          className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4"
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <div>
