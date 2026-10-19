@@ -27,15 +27,38 @@ function localISO(date: Date): string {
   const y = date.getFullYear();
   return `${y}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
+function pad2(value: number) { return String(value).padStart(2, "0"); }
+function isoWeek(date: Date): string {
+  // ISO weeks begin on Monday and belong to the year containing Thursday.
+  const utc = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  utc.setUTCDate(utc.getUTCDate() + 4 - (utc.getUTCDay() || 7));
+  const year = utc.getUTCFullYear();
+  const yearStart = new Date(Date.UTC(year, 0, 1));
+  const week = Math.ceil(((utc.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return `${year}-W${pad2(week)}`;
+}
+function weekStart(raw: string): Date | null {
+  const match = /^(\d{4})-W(\d{2})$/.exec(raw);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const week = Number(match[2]);
+  if (year < 1 || week < 1 || week > 53) return null;
+  const jan4 = new Date(year, 0, 4);
+  const monday = new Date(year, 0, 4 - ((jan4.getDay() + 6) % 7) + (week - 1) * 7);
+  return isoWeek(monday) === raw ? monday : null;
+}
 function initialMonth(raw: unknown): Date {
-  if (typeof raw === "string" && /^\d{4}-\d{2}(?:-\d{2})?$/.test(raw)) {
-    const [year, month] = raw.split("-").map(Number);
-    if (year >= 1 && month >= 1 && month <= 12) return new Date(year, month - 1, 1);
+  if (typeof raw === "string") {
+    const monday = weekStart(raw);
+    if (monday) return new Date(monday.getFullYear(), monday.getMonth(), 1);
+    if (/^\d{4}-\d{2}(?:-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?)?)?$/.test(raw)) {
+      const [year, month] = raw.split("-").map(Number);
+      if (year >= 1 && month >= 1 && month <= 12) return new Date(year, month - 1, 1);
+    }
   }
   const today = new Date();
   return new Date(today.getFullYear(), today.getMonth(), 1);
 }
-function pad2(value: number) { return String(value).padStart(2, "0"); }
 function minuteOf(raw: string): number | null {
   const match = /^(\d{2}):(\d{2})$/.exec(raw);
   if (!match) return null;
