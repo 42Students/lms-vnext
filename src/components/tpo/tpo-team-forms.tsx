@@ -88,7 +88,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   <p className="text-xs text-muted-foreground">Only named active placement team members can take part.</p>
   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
   <button type="submit" disabled={busy||!recipient||!topic.trim()}
-   className="min-h-11 rounded-[9px]-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+   className="min-h-11 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
    {busy?"Starting…":"Start conversation"}
   </button>
  </form>;
@@ -157,7 +157,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <button type="submit" disabled={busy||!body.trim()}
-   className="min-h-11 rounded-[9px]-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+   className="min-h-11 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
    {busy?"Sending…":"Send"}
   </button>
  </form>;
