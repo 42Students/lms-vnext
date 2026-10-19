@@ -38,7 +38,7 @@ export default async function AdminVerificationEntry() {
           Choose a college at the top to see its students waiting for verification.
           A global or organization-only scope cannot authorize a college review.
         </p>
-        <Link href="/admin/colleges" className="mt-4 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">
+        <Link href="/admin/colleges" className="mt-4 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">
           Browse colleges
         </Link>
       </section>
