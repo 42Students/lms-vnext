@@ -204,9 +204,11 @@ export function GridWorkspace<Row>({
   </div>:null}
   <div className="flex flex-wrap items-center justify-between gap-2 border-y border-border py-2 text-sm">
    <span role="status">{rows.length} items in this view{selection?" · "+selectedPage.length+" selected":""}</span>
-   {selection?.selected.length?<Button variant="ghost" type="button" onClick={()=>selection.onChange(
-     selection.selected.filter(key=>!pageIds.has(key))
-   )}>Clear page selection</Button>:null}
+   {selection&&rows.length?<Button variant="secondary" type="button"
+    disabled={selectedPage.length===rows.length}
+    onClick={()=>selection.onChange([...new Set([...selection.selected,...rows.map(rowKey)])])}>
+    Act on all {rows.length}
+   </Button>:null}
   </div>
   {notice?<p role="status" className="text-xs text-muted-foreground">{notice}</p>:null}
   {typeof children==="function"?children(activeKeys):children}
