@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent, type ComponentPropsWithRef, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 import { Input } from "./input";
+import { Button } from "./button";
 
 export type FileUploadProps = Omit<ComponentPropsWithRef<"input">, "type" | "onChange"> & {
   label: string;
@@ -104,6 +105,17 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     setError(null);
     onFiles(files);
   }
+  function clearSelection() {
+    if (disabled || pickerUnavailable) return;
+    if (inputRef.current) inputRef.current.value = "";
+    selectedRef.current = false;
+    setSelectedNames([]);
+    setPreviewFile(null);
+    setPreviewUrl(null);
+    setError(null);
+    onFiles(null);
+    inputRef.current?.focus();
+  }
   return <div className={cx("min-w-0 space-y-2", className)} data-slot="file-upload">
     <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       {label}{required ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}
@@ -121,6 +133,11 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
       ? <ul aria-label="Selected files" className="space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
           {selectedNames.map((name, index) => <li key={`${index}-${name}`} className="min-w-0 break-all">{name}</li>)}
         </ul> : null}
+    {showSelectedFiles && selectedNames.length > 0 && !unavailable
+      ? <Button type="button" variant="ghost" size="sm" onClick={clearSelection}
+          className="!min-h-9 !px-2 max-[767px]:!min-h-11" aria-label="Remove selected files">
+          Remove selected files
+        </Button> : null}
     {showImagePreview && previewFile && previewUrl && !pickerUnavailable && !disabled
       ? <div data-slot="image-upload-preview" className="rounded-[10px] border border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] p-2">
           <img src={previewUrl} alt={`${label} preview`} className="max-h-40 max-w-full rounded-[6px] object-contain" />
