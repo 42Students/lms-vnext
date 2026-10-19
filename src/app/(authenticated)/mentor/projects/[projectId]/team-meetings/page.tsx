@@ -39,10 +39,10 @@ export default async function MentorTeamMeetingsPage({
         Team workspace
       </Link>} />
     {!data.enabled?<section role="status"
-      className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+      className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No private team or meeting data was loaded.
     </section>:<>
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Active team coverage</h2>
         <dl className="mt-4 grid gap-3 sm:grid-cols-3">
           <div><dt className="text-xs text-muted-foreground">Learners</dt>
@@ -105,8 +105,8 @@ export default async function MentorTeamMeetingsPage({
       <p className="text-sm text-body">{data.total} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
         description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." />
-        :<ol className="grid gap-3">{data.items.map(meeting=>
-          <li key={meeting.id} className="rounded-xl border border-border bg-surface p-4">
+        :<ol className="divide-y divide-border">{data.items.map(meeting=>
+          <li key={meeting.id} className="py-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-foreground">{meeting.title}</h2>
               <span className="text-xs font-semibold text-body">{mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderedAt)}</span>
