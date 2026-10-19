@@ -303,7 +303,7 @@ Do not edit shared `src/app/globals.css`, `src/components/ui/**`, `src/component
 ## Progress log
 
 - Inventory created against latest main tree after fast-forwarding chat-7 branch to main.
-- UI edits: in progress. 122 distinct files listed in the four completed visual batches have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
+- UI edits: in progress. 127 distinct files listed in the five completed visual batches have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
 
 
 ## Completed visual edits — 2026-10-19 (first sweep batch)
@@ -447,3 +447,13 @@ Retained learner placements/projects data, behavior, and page contents while ali
 - [x] `src/components/placements/learner-placement-preferences.tsx`
 
 Merged the latest origin/main as a genuine two-parent merge, retaining 86 non-conflicting lane files and choosing main for 13 concurrently modified course files; replayed remaining style-only deltas in four overlapping files. Continued through learner course controls and learner-facing placements components: standard 9px controls, hover/focus rings, primary teal with readable white foreground, compact typography, informative warning surfaces, list section dividers instead of extra white outer cards. No page wording/data/API behavior intentionally changed. No build/run/typecheck/lint/CI, per lane instructions. Source closing tags rechecked textually after edits. Work remains in inventory.
+
+## Completed visual edits — learner placements failure states (5 files)
+
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/interviews/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/calendar/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/error.tsx`
+
+Removed duplicated white full-page cards inside the authenticated canvas, kept retry/back actions reachable with 44px mobile targets and legacy teal outline control styling. Existing error wording and routing are unchanged. JSX closing tags inspected textually; no test, typecheck or CI execution.
