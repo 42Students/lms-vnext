@@ -4,6 +4,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
 import {useState,useTransition} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -36,11 +37,11 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
   });
  }
  return <div className="space-y-1">
-  <Button type="button" size="sm" variant="secondary" disabled={pending} onClick={change}
+  <Button type="button" size="sm" variant={visible ? "primary" : "secondary"} disabled={pending} onClick={change}
    aria-pressed={visible}>
    {pending?"Saving…":label}
   </Button>
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
  </div>;
 }
 
