@@ -385,3 +385,92 @@ Do not check the strict C3 category until date/time/month/week popup parity and 
 - [x] `scripts/audit/chat17-form-skin-coverage.cjs` source review: TypeScript AST enumerates raw JSX controls, hard-coded colors, responsive references and JSX parse diagnostics. **No run or result count claimed.**
 
 These are file-level source completions, **not** strict A1–A4, C1–C7 or D ticks. Without actually executing the source inventory and comparing the app at phone/tablet sizes to the old LMS, the owner-defined coverage/responsive requirements are not met. Picker time/week/month equivalence, image cropping, and rich-text editor parity also remain unproven.
+
+
+## 2026-10-19 next batch — complete files with source-only evidence
+
+The following four lane-owned components have been completely reviewed and updated as **files**. Their exact-file JSX source was searched from GitHub's full fetched content; this is a narrower proof than the mandatory whole-`src` grep. Source breakpoint declarations were compared at the old-LMS phone boundary, but no browser viewport or CI was executed.
+
+| Completed file | Legacy value / source file:line | Current implementation file:line | Source outcome |
+| --- | --- | --- | --- |
+| [x] `src/components/ui/multi-select.tsx` | `legacy-styles/components___antddesign.scss:134-140` selected #26bac7 / white, wrapped; `:511-524` selector 10px/14px, `variables.scss:139` 44px touch | `multi-select.tsx:64-100` native selected options, aria-labeled removable-value list, mobile 44px tag/remove; `legacy-skin.css:640-644` selected teal/white, `globals.css:1128-1133` mobile native select | Source colors and touch boundary match. Browser-native popup may differ from AntD; C2 remains open |
+| [x] `src/components/ui/search-field.tsx` | `legacy-styles/components___form.scss:38-61` width clamp(180px,20vw,280px); `variables.scss:139,148-156` mobile touch and 767px boundary | `search-field.tsx:14-18` same clamp, 767px flex-column/full-width input, 44px mobile search button, disabled input blocks submit | Source values match; actual phone rendered widths unverified |
+| [x] `src/components/ui/range-slider.tsx` | `legacy-styles/components___variables.scss:10` teal #26bac7; `:139,148` 44px mobile touch; `components___form.scss:110-115` 13px/600 label | `range-slider.tsx:12-29` teal native accent, valid label fallback, keyboard focus/invalid/disabled and phone min-height 44px | Matched available legacy source attributes; native thumb/track geometry not sourced or browser-verified |
+| [x] `src/components/ui/input-group.tsx` | `legacy-styles/components___form.scss:117-143` 10px field radius, neutral base, teal 15% focus halo/red 20% invalid; `variables.scss:30,139` neutral border, 44px touch | `input-group.tsx:18-38` single grouped shell, compatible div/ARIA/ref props, prefix/suffix, invalid/readonly states; `legacy-skin.css:695-721` overrides nested Input skin to avoid double focus halos | Outer visual declarations match; child Input keeps its shared keyboard/phone behavior |
+
+**Fetched-file raw JSX search (exact per-file counts):**
+
+| File | raw `<button>` | raw `<input>` | raw `<select>` | raw `<textarea>` | Hex codes outside comments |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `multi-select.tsx` | 0 | 0 | 0 | 0 | 0 |
+| `search-field.tsx` | 0 | 0 | 0 | 0 | 0 |
+| `range-slider.tsx` | 0 | 1 (native range — intentional shared implementation) | 0 | 0 | 0 |
+| `input-group.tsx` | 0 | 0 | 0 | 0 | 0 |
+
+The searches are the exact-file equivalent of `grep -E '<(button|input|select|textarea)([[:space:]]|>)'`; comment-only hex references to #26bac7 in `multi-select.tsx` and `range-slider.tsx` are not hard-coded visual properties. All shared `<Select>` and `<Button>` opening and closing tags in `multi-select.tsx` and `search-field.tsx` balance. Responsive evidence is *source-level only*: phone is <=767px (`variables.scss:148`) and tablet begins 768px (`:155`); `multi-select.tsx:84,91`, `search-field.tsx:15-17`, `range-slider.tsx:24` and shared Input's phone rule supply the corresponding implementation. The input group inherits the child control's responsive geometry.
+
+**Whole-tree coverage / strict categories:** Full-`src` grep results and rendered 375px/768px computed styles are still **unknown**, so A1–A4, C1–C7 and D stay unticked. Do not convert file-level checkmarks into category claims. The committed `scripts/audit/chat17-form-skin-coverage.cjs` can supply source counts when run by the orchestrator.
+
+**Next files still needing category-complete parity:** `src/components/ui/select.tsx` (native popup vs AntD), `src/components/ui/date-input.tsx` (time/week/month popups), and rich-text editor parity. Browser comparison, upload crop behavior and whole-tree grep remain open.
+
+
+## 2026-10-19 next completed batch — native fields, password and OTP
+
+**Completed file checklist (source-level complete, category tick still requires all-screen/grep proof):**
+
+- [x] `src/components/ui/select.tsx` — native select API preserved (form name/value, multiple, options, ref, key navigation, default/controlled state). Consolidated default/hover/focus/disabled/error paint and eliminated duplicated utilities.
+- [x] `src/components/ui/textarea.tsx` — shared 10px/14px field states, native text editing, rows/cols and resizing preserved; type now admits React 19 `ref`.
+- [x] `src/components/ui/input.tsx` — shared native input, one normalized `aria-invalid`, field focus/error/readonly/disabled states with the same tokens and intact type/autocomplete/ref behavior.
+- [x] `src/components/ui/otp-input.tsx` — keeps mobile numeric keyboard/paste/autofill; finite integer code length 1–12 and phone 44px; no split hand-rolled inputs.
+- [x] `src/components/ui/password-input.tsx` — native password-manager autofill and explicit show/hide button; disabled locks the action, `aria-controls` and `aria-pressed` exposed, phone 44px tap target.
+
+### Per-property legacy-to-vNext value comparison
+
+| Family and property/state | Legacy reference/value | vNext reference/value | Source result |
+| --- | --- | --- | --- |
+| Input/select/textarea base color | `components___form.scss:117-127` #fbfcfd background, #0a0517 ink | `src/components/ui/input.tsx:21-27`, `select.tsx:25-29`, `textarea.tsx:22-26`; `src/app/globals.css:863-869` token values | Match shared field declarations |
+| Border radius | `components___form.scss:120` 10px; `components___antddesign.scss:517-519` AntD select 10px | `src/app/globals.css:344,424`; `input.tsx:21`, `select.tsx:25`, `textarea.tsx:22` use `--lms-field-radius` | Match |
+| Type size/weight/leading/tracking | `components___form.scss:123-126` 14px / 400 / 20px / .2px; `components___antddesign.scss:520-523` select same | `src/components/ui/input.tsx:23`, `select.tsx:27`, `textarea.tsx:24` (14px token, 400, 20px, .2px) | Match |
+| Focus paint | `components___form.scss:130-133` 2px brand teal / 15% halo | `src/components/ui/input.tsx:30-31`, `select.tsx:30-31`, `textarea.tsx:30-31`, `src/styles/legacy-skin.css:143-151` | Match halo and brand color; keyboard outline is additional accessibility protection |
+| Error border/fill | `components___form.scss:136-139` #ef4444 border, 6% red fill | `input.tsx:36`, `select.tsx:34`, `textarea.tsx:36`; `legacy-skin.css:152-157` | Match, `aria-invalid` propagated |
+| Error focus | `components___form.scss:140-143` 2px red / 20% halo | `input.tsx:39-40`, `select.tsx:37-39`, `textarea.tsx:39-40`; `legacy-skin.css:158-164` | Match |
+| Disabled neutral | `components___variables.scss:27-32` muted #a9a7ae on neutral #fafbfc, light border #e5e9f0 | `input.tsx:33-35`, `select.tsx:32-33`, `textarea.tsx:33-35`, `legacy-skin.css:166-179` | Match paint; native disabled handling preserved |
+| Hover border | `components___variables.scss:91-92` #bfc9da, `components___form.scss:117-143` | `input.tsx:28`, `select.tsx:29`, `textarea.tsx:28`, `legacy-skin.css:540-557` | Match; invalid wins over hover |
+| Placeholder | `components___form.scss:57-60` muted gray / 14px | `src/styles/legacy-skin.css:476-485`; `input.tsx:27`, `textarea.tsx:27` | Match |
+| Selected native multi-option | `components___antddesign.scss:134-140` #26bac7 and white | `legacy-skin.css:634-645`, `globals.css:1165-1169` | Source color match; browser popup rendering varies |
+| Standard desktop control minimum | Measured `old-lms-shell-spec.md:22-24`: 36px control role; AntD select inside older forms `components___antddesign.scss:511-524` 50px-specific role | `globals.css:341` default 36px; `select.tsx:24`, `input.tsx:20` | Source role distinction documented; actual page uses require verification |
+| Phone tap target | `components___variables.scss:139,148-156` >=44px at <=767px | `src/app/globals.css:618-624,1127-1133`; `otp-input.tsx:33`, `password-input.tsx:29` | Source breakpoint match, not a rendered measurement |
+
+### Exact fetched-file grep proof (not repository-wide grep)
+
+| File | raw `<button>` | raw `<input>` | raw `<select>` | raw `<textarea>` | hard-coded hex in declarations |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `select.tsx` | 0 | 0 | 1 (shared primitive) | 0 | 0 |
+| `textarea.tsx` | 0 | 0 | 0 | 1 (shared primitive) | 0 |
+| `input.tsx` | 0 | 1 (shared primitive) | 0 | 0 | 0 |
+| `otp-input.tsx` | 0 | 0 | 0 | 0 | 0 |
+| `password-input.tsx` | 0 | 0 | 0 | 0 | 0 |
+
+Grep equivalent on full fetched file text: `/<(button|input|select|textarea)(?=[\\s>])/g`. Text inside SCSS comments is not counted as a hard-coded declaration. The `<select>...</select>` in `select.tsx` and the `<Button>...</Button>` / `<div>...</div>` in `password-input.tsx` have matching opening and closing JSX tags; the other native inputs/textarea are self-closing.
+
+### Responsive proof boundary / limitations
+
+At the old LMS SCSS `components___variables.scss:148-156` phone boundary 767px and tablet start 768px, shared `globals.css:618-624` sets input/select/button tap heights >=44px on phones. OTP and password-visibility controls also explicitly enforce >=44px at 767px; date/time and plain textarea remain native responsive form controls. No extra tablet grid/property overrides are introduced in these five files; they inherit the parent page and global skin rules. Source code shows input/select remain `w-full min-w-0` and textarea `w-full min-w-0`, preventing rigid desktop widths. This is **source-only responsive proof**: 375px and 768px computed-style/browser snapshots have NOT been executed.
+
+**STRICT category tick rule remains unchanged:** C1 and C2, as well as A1–A4 / C3–C7 / D, stay open until a whole-tree raw-control grep and per-page/mobile comparison are actually performed. Native system select dropdown appearance is not equivalent to a rendered AntD popup on every OS, so C2 is not falsely completed.
+
+
+### Additional completed file: shared Button
+
+- [x] `src/components/ui/button.tsx` — verified primary/secondary/ghost/link/danger, sm/md/lg/icon/icon-sm, disabled/loading/keyboard focus contracts, and corrected the icon widths and heights to use the legacy phone cutoff at **767px**, not Tailwind's 640px `sm` cutoff. Native button implementation preserved with matched `<button>...</button>` tags, `type="button"` default, disabled double-submit prevention and pending indicator.
+
+| Button property/state | Legacy reference | Shared source value | Result |
+| --- | --- | --- | --- |
+| Measured primary | `old-lms-shell-spec.md:22-24`: solid #0a7c88/white, 36px high, 9px, 14px/650 | `button.tsx:10-12,24-29` + `globals.css:17-19,341-346` | Match source role |
+| Secondary | `components___button.scss:97-126`: outlined #bfc9da, dark copy, teal/white hover | `button.tsx:11`, `globals.css:627-656` | Match measured shell variant |
+| Hover/active | `components___antddesign.scss:160-169` darker teal hover and pressed feedback | `button.tsx:10-15,28`, `globals.css:621-628` | Source transition and paint aligned |
+| Keyboard focus | `components___antddesign.scss:171-174` teal 35% ring / 2px offset | `button.tsx:28`, `globals.css:629-635`, `legacy-skin.css:226-251` | Source paint aligned; actual native accessibility not browser-proven |
+| Disabled/loading | `components___button.scss:146-149` 50% secondary opacity; `components___antddesign.scss:176-185` primary disabled/loading | `button.tsx:25-29`, `globals.css:1140-1162` | Source state separately identified; no runtime click proof |
+| Touch target | `components___variables.scss:139,148` 44px phone target at 767px | `button.tsx:19-23` icon sizing uses `max-[767px]`; `globals.css:618-624` min-height >=44px | Matched breakpoint declarations |
+
+**Exact fetched-file grep:** `button.tsx`: raw `<button>` **1** (intentional shared primitive), `<input>` **0**, `<select>` **0**, `<textarea>` **0**; 2 existing `#dc2626` danger-hover color tokens remain in the shared-component file, and the global skin's source colors are separate. **Phone/tablet source proof:** at 767px and narrower, icon buttons now meet 44px in *both dimensions*; 768px and above retain the 36px desktop action role. Whole-repository raw-button grep and browser interaction/rendered measurements are outstanding, so strict D stays **[ ]**.

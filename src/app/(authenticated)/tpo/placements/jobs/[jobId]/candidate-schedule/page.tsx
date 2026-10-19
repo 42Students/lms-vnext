@@ -1,6 +1,9 @@
 import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
+import { Banner } from "@/components/ui/banner";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { notFound, redirect } from "next/navigation";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -41,13 +44,10 @@ export default async function TpoCandidateSchedulePage({
       className="text-sm font-semibold text-link">← Back to drive</Link>
     <PageHeader title={drive.job.title+" · Candidate round schedule"}
       description="Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes." />
-    <section role="status" className="text-sm text-body border-b border-border pb-6">
+    <Banner tone={slotsReady ? "info" : "warning"} action={<Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-current px-3 text-sm font-semibold md:min-h-9">Edit existing shared round schedules →</Link>}>
       {slotsReady ? "Candidate-specific slot booking is available from each interview round. Room-time conflicts are checked at assignment." :
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
-      <Link href="/tpo/calendar/rounds" className="ml-2 font-semibold text-link">
-        Edit existing shared round schedules →
-      </Link>
-    </section>
+    </Banner>
     <section className="border-b border-border pb-6">
       <h2 className="font-semibold text-foreground">Persisted venue collision assessment</h2>
       {warning.state === "UNAVAILABLE" ?
@@ -74,21 +74,16 @@ export default async function TpoCandidateSchedulePage({
     {roundId ? (
       <div className="flex flex-wrap items-center gap-3 text-sm">
         {selectedRound ? <p className="font-semibold text-foreground">Round: {selectedRound.name}</p>
-          : <p role="alert" className="font-semibold text-error">That round is not part of this drive.</p>}
+          : <Alert tone="error">That round is not part of this drive.</Alert>}
         <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/candidate-schedule"}
           className="font-semibold text-link underline">Show all rounds</Link>
       </div>
     ) : null}
     {drive.rounds.length === 0 ?
-      <p role="status" className="border-b border-border py-4 text-sm text-body">
-        No persisted rounds exist for this drive.
-      </p> : roundId && !selectedRound ?
-      <p role="status" className="border-b border-border py-4 text-sm text-body">No candidates shown for an unknown round.</p>
+      <EmptyState title="No persisted rounds exist for this drive." /> : roundId && !selectedRound ?
+      <EmptyState title="No candidates shown for an unknown round." />
       : readiness.total === 0 ?
-      <p role="status" className="border-b border-border py-4 text-sm text-body">
-        No progression-eligible round participants are currently recorded.
-        This does not imply slots were assigned.
-      </p> : <>
+      <EmptyState title="No progression-eligible round participants are currently recorded. This does not imply slots were assigned." /> : <>
         <p className="text-sm text-body">
           {roundId ? displayed.length+" candidate entries shown for this round." : readiness.total+" round-candidate combinations found."}
           {readiness.limited ? " Only the first 1,000 combined round entries were loaded; the selected round may be incomplete." : ""}
@@ -97,7 +92,7 @@ export default async function TpoCandidateSchedulePage({
           caption="Candidate schedule"
           rows={displayed}
           getRowKey={item=>item.roundId+":"+item.applicationId}
-          empty={<p role="status">No progression-eligible round participants are currently recorded. This does not imply slots were assigned.</p>}
+          empty={<EmptyState title="No progression-eligible round participants are currently recorded. This does not imply slots were assigned." />}
           columns={[
             {key:"name",header:"Candidate",cell:item=>item.name,mobilePriority:"primary"},
             {key:"round",header:"Round",cell:item=>item.roundName,mobilePriority:"secondary"},

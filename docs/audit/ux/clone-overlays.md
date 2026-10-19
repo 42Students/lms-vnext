@@ -206,3 +206,89 @@ These are expand/collapse content, filters, academic details, results, or forms;
 - [x] Search-index review: the only `fixed inset-0` in public source is the noninteractive, aria-hidden confidentiality watermark. Shared `Dialog` consumers own all inspected `role="alertdialog"` usages. Existing nonmodal `PopoverPanel` and DOM selector literals are not modal candidates. Hand-built search listboxes identified in command search, TPO find, learner skill suggestions and SearchableSelect were moved to shared `PopoverListbox`.
 - [x] Paired JSX opening/closing tags re-read in the changed Dropdown, Tooltip, Popover, search listbox consumers, responsive drive actions, and three notification bell variants. No local execution was done; this is a source-only balance check.
 - [ ] Viewport/browser parity still requires the orchestrator: especially the new mobile notification Drawer breakpoint, scroll/focus, and layered popup close timing. Keep F1/F2 unchecked until measured.
+
+## Replacement chat-16 continuation (2026-10-19)
+
+- [x] Synced the previous chat-16 head `5f76b8c7` with inspected main `2d3438d2` via history-preserving merge `d10a8bee`; used the main tree because upstream already contained the previously reviewed Tooltip, Dropdown and overlay CSS implementations. The prior HR list row styling in the lane was superseded by main; no old modal markup was reintroduced.
+- [x] Source-backed desktop notification surface: `docs/design/legacy-styles/components___notification-drawer.scss:109-125` specifies a 360px minimum and viewport-safe 420px maximum; `src/components/ui/legacy-overlays.css` now uses `min-width:min(360px,calc(100vw - 24px))` and the existing `max-width:min(420px,calc(100vw - 24px))`. This preserves the exact desktop min at viewports 384px and wider while constraining small viewports. Runtime responsive proof is still pending.
+- [x] Reviewed `src/components/tpo/tpo-bell-panel.tsx`: removed a duplicate `mobile` state, `root`/`trigger` refs, and duplicate document listeners introduced by overlapping main/lane integration; retained one media listener and the compact-desktop outside/Escape listener. Preserved `allReadRevision`, `readIds`, `latest`, and `refreshing` state declarations; re-read the closing `Drawer`/`PopoverPanel`, fragment and nested list/button tags in source.
+- [x] Reviewed `src/components/hr/hr-recruiter-bell.tsx`: added missing `ShellNavGlyph` import from `src/components/shell/shell-nav-icons.tsx` while preserving one mobile Drawer and the existing desktop PopoverPanel, including both closing tags.
+- [ ] F1/F2 strict tick **still not permitted**: no fresh local checkout grep or browser comparison was run; popup close timing, toast-specific legacy policy, all icon/context-menu variants and all device/disabled/loading states have not been fully proven. The SCSS fragment proves only the specified notification desktop width row, not the whole category.
+
+**Next file for source-level follow-up:** `src/components/ui/dropdown.tsx` — reconcile the mobile sheet's 640px implementation breakpoint with the old notification drawer's 767px boundary, then assess keyboard, outside-click and exit behavior without replacing disclosure-style page content. The orchestrator must run the checkout greps and phone/tablet checks before either F1 or F2 can be ticked.
+
+
+## Replacement chat-16 F2 source file completion (2026-10-19, next batch)
+
+The following four source files were edited and re-read after the latest main reconciliation. **A file checkbox below means source editing/review completed, not whole-category strict parity.** No app, viewport simulator, tests, typecheck, lint, CI or codemod was executed.
+
+### Exact checked values (legacy SCSS : vNext path:line)
+
+| Property / state | Legacy exact source | vNext current source | Source verdict |
+| --- | --- | --- | --- |
+| Action/notification mobile cutoff | `docs/design/legacy-styles/components___notification-drawer.scss:23` — `767px` | `src/components/ui/dropdown.tsx:34,111,126` — `<=767` sheet-position logic, backdrop event and `md:` anchor switch; `src/components/ui/legacy-overlays.css:127,139,152,157` — `@media(max-width:767px)` | Match breakpoint; general action-sheet layout is **not** the notification right-drawer variant |
+| Dropdown/header surface fill | `components___dropdown.scss:96-99` — `#fff` | `src/components/ui/dropdown.tsx:126` — `bg-white` | Match |
+| Dropdown/header surface radius | `components___dropdown.scss:100` — `6px` | `src/components/ui/legacy-overlays.css:147-150` — `6px`, `src/components/ui/dropdown.tsx:126` — `md:rounded-[6px]` | Match for desktop |
+| Dropdown/header surface shadow | `components___dropdown.scss:98` — `9px 11px 28px rgba(0,0,0,.1)` | `src/components/ui/legacy-overlays.css:147-150` — same value | Match |
+| Dropdown/header minimum width | `components___dropdown.scss:102-105` — `100px` | `src/components/ui/dropdown.tsx:126` — `min-w-[100px]` | Match for non-mobile-sheet default |
+| Dropdown/header inner padding | `components___dropdown.scss:101` — `16px 24px` | `src/components/ui/dropdown.tsx:126` — `py-4 px-6` for regular popup | Match regular popup, not mobile action sheet |
+| Trigger hover | `components___notification-drawer.scss:42-45` — `rgba(0,0,0,.035)` | `src/components/ui/dropdown.tsx:124` — same value | Match notification-style trigger |
+| Trigger active | `components___notification-drawer.scss:46-49` — `rgba(0,0,0,.06)` | `src/components/ui/dropdown.tsx:124` — same value | Match notification-style trigger |
+| Trigger background transition | `components___notification-drawer.scss:41` — `background .2s ease` | `src/components/ui/dropdown.tsx:124` — background-color 200ms ease | Match |
+| Mobile backdrop colour | `components___antddesign.scss:143-145` — `rgba(30,54,63,.1)` | `src/components/ui/legacy-overlays.css:131-136` — same RGBA | Match mobile sheet with Ant drawer mask, not the distinct desktop notification backdrop |
+| Mobile menu edge radius and safe area | Old `components___notification-drawer.scss:22-24,395-493` — mobile cutoff/16px pad and device safe-area handling; **no generic bottom-sheet corner radius in those source lines** | `src/components/ui/dropdown.tsx:126`, `legacy-overlays.css:139-160` — 12px upper corners, bottom safe-area pad and 70dvh height | Source-backed safe area and cutoff; bottom-sheet radius/height not independently legacy-proved |
+| Tooltip surface | `components___antddesign.scss:48-57` — background `#1a1d21`, radius `8px`, 12/16 type, 6px 16px padding, 27px min-height, `0 2px 8px rgba(0,0,0,.2)` | `src/components/ui/legacy-overlays.css:98-110`, `src/components/ui/tooltip.tsx:64` | Match listed static values |
+| Tooltip arrow | `components___antddesign.scss:59-64` — dark, 10×10px, right -2px | `src/components/ui/legacy-overlays.css:111-115`, `tooltip.tsx:64` | Match static dimensions and offset |
+| Tooltip mobile width/scroll cutoff | `components___antddesign.scss:66-79` — through 767px: `max-width:calc(100vw - 32px)`, horizontal scrolling and touch scrolling | `src/components/ui/legacy-overlays.css:116-125` — same width/scroll; `tooltip.tsx:64` — desktop 260px cap and absolute placement start at `md`, not `sm` | Match width cutoff, but actual popover placement/flow not visually checked |
+| Notification menu row minimum | `components___notification-drawer.scss:21,37-45` — 44px touch target | `src/components/ui/menu.tsx:39` — `min-h-11` | Match |
+| Menu row hover/active | `components___notification-drawer.scss:18-19,39-49` — `.035` / `.06` black fill | `src/components/ui/menu.tsx:39`, `legacy-overlays.css:173-178` — same fills | Match |
+| Menu row transition | `components___notification-drawer.scss:202` — background, border and shadow transitions `.2s ease` | `src/components/ui/menu.tsx:39` — those properties, 200ms ease | Match selected row variant |
+| Menu row disabled | Bundled notification styles do **not** define an all-menu canonical disabled opacity | `src/components/ui/menu.tsx:37-39` — native disabled, aria-disabled, opacity 50%, noninteractive | Functional guard in source; exact legacy visual disabled state **unproved** |
+| Menu focus and keyboard | Bundled notification SCSS specifies visible focus styles but not an arrow-navigation algorithm | `src/components/ui/menu.tsx:10-30` — up/down/home/end/escape with now-hidden/inert exclusion; `dropdown.tsx:67-95,117-145` — outside/focus/Escape/list movement | Keyboard coverage reviewed; runtime and focus equivalence still **unproved** |
+
+### Responsive rules — source-only breakpoint inspection
+
+| Nominal viewport width | vNext rule or component branch | Corresponding legacy source | Source outcome |
+| --- | --- | --- | --- |
+| 375px phone | `Dropdown.mobileSheet`: fixed full-width, bottom aligned; pseudo-scrim; 44px trigger; safe-area pad; at most 70dvh | `components___notification-drawer.scss:22-24,395-493`; `components___antddesign.scss:143-145` | Mobile breakpoint, scrim and touch minimum match; bottom-sheet geometry is a non-identical variant |
+| 640px phone/landscape | Still the same mobile sheet and scrim (previously diverged at 640px) | Legacy mobile cutoff 767px | Breakpoint regression fixed |
+| 767px narrow tablet | Still mobile sheet; tooltip still uses phone width/scroll rule | `components___notification-drawer.scss:23`; `components___antddesign.scss:66-79` | Static breakpoint matches |
+| 768px tablet | `md:absolute` anchored popup; sheet scrim removed, desktop width and 6px radius; inlineDesktop disclosures become inline; tooltip desktop placement/cap | Legacy `max-width:767px` rules no longer apply | Source breakpoint handoff matches; layout not device-checked |
+| 1024px desktop | Anchored dropdown and keyboard/outside dismissal; no mobile scrim | `components___dropdown.scss:93-105` | Desktop surface values match selected legacy dropdown |
+
+### Source coverage scan, not a checkout grep
+
+A fresh GitHub **default-branch** code-search query (which can lag and is NOT checkout-wide or guaranteed complete) returned these results scoped to `src/`:
+
+- `"fixed inset-0"`: **1 file**, `src/app/company-share/[token]/page.tsx`, the documented noninteractive `aria-hidden` watermark.
+- `"role=\\"dialog\\""`: **4 files**, `src/components/ui/popover.tsx` (shared nonmodal panel), `src/components/shell/route-announcer.tsx`, `src/components/hr/recruiter-conversation-live-refresh.tsx` (quoted DOM selectors), and `src/app/globals.css` (style selector).
+- `"role=\\"alertdialog\\""`: **4 files**, `src/components/ui/confirm-action-dialog.tsx` plus 3 TPO callers passing the role to the shared Dialog.
+- `"<details"`: **17 src files**, primarily reviewed disclosure/form panels; a search for `data-slot="dropdown-root"` also identifies the shared Dropdown and CSS/observer references.
+
+These do **not** satisfy the strict branch-wide zero-hand-rolled-overlay proof. Run in an actual checkout: `git grep -n 'fixed inset-0' -- src`, `git grep -n 'role="dialog"' -- src`, `git grep -n 'role="alertdialog"' -- src`, and inspect every non-shared JSX match, plus viewport/focus/animation checks.
+
+### File-level queue (source phase only)
+
+- [x] `src/components/ui/dropdown.tsx` — completed legacy breakpoint/trigger/source review, preserved one `<details>`, one `<summary>`, one popup `<div>` and matching `</details>`.
+- [x] `src/components/ui/legacy-overlays.css` — completed sheet CSS 767px cutoff and legacy values review; 4 media blocks changed, other popup variants left unchanged.
+- [x] `src/components/ui/tooltip.tsx` — completed tooltip 767px breakpoint alignment and source review, preserved `<details>`/`</details>`, `<summary>`/`</summary>`.
+- [x] `src/components/ui/menu.tsx` — completed row state/motion and hidden/inert keyboard candidate review, preserved `Menu`, `MenuItem`, `MenuSeparator` exports.
+
+**STRICT CATEGORY STATUS — F1 [ ], F2 [ ].** Cannot tick without exact legacy value proof for all variants (including toast policy/exit timing), true checkout grep, phone/tablet/browser behavior and no-regression verification. The source tables above prove only the rows labeled Match. No code/application/CI execution was performed.
+
+**Next source file:** `src/components/ui/popover.tsx` (review listbox keyboard semantics and responsive popup geometry), followed by `src/components/ui/toast.tsx` and then the F1 confirmation-specific actions in `src/components/ui/confirm-action-dialog.tsx`.
+
+
+### Popover follow-up source review — completed source file
+
+- [x] `src/components/ui/popover.tsx` — listbox arrows/Home/End now skip editable fields and hidden/inert actions, while Escape still dismisses and returns focus to its owning trigger. The shared `PopoverPanel` remains a **nonmodal** `<section role="dialog" aria-modal={false}>` with the matching `</section>`; the listbox keeps its single `<div role="listbox">` and `</div>`. No page-level layout or content changed.
+
+| Property/state | Old LMS source | Current vNext source | Result |
+| --- | --- | --- | --- |
+| Basic header popup background/radius/elevation | `docs/design/legacy-styles/components___dropdown.scss:96-100`: white, 6px radius, 9px 11px 28px rgba(0,0,0,.1) | `src/components/ui/popover.tsx:23-26`; `src/components/ui/legacy-overlays.css:190-204`: white, 6px, identical shadow | Exact static visual match on the shared nonmodal panel; consumer geometry may differ |
+| Notification listbox maximum width/height | `components___notification-drawer.scss:113-126`: max min(420px, viewport - 24px), max min(520px, viewport - 120px) | `src/components/ui/legacy-overlays.css:218-220`: same constraints, dynamic viewport instead of vh | Numeric cap matches; viewport-unit enhancement documented |
+| Popup links / touch target | `components___notification-drawer.scss:21,39-49`: min 44px, hover rgba(0,0,0,.035), active .06 | `src/components/ui/legacy-overlays.css:221-226`: same numeric values | Match selected link states |
+| Option focus, disabled, keyboard | Legacy bundled SCSS gives focus appearance but no canonical algorithm | `src/components/ui/popover.tsx:34-62`: Escape, ArrowUp/Down, Home/End, visible options only, preserve editable caret | Source functionality reviewed; keyboard/browser equivalence unknown |
+| Popover phone/tablet width | `components___notification-drawer.scss:23,113-126,395-493`: 767px mobile drawer, notification desktop 420px max | Generic shared popup is nonmodal; phone bell consumers use native Drawer and desktop uses PopoverPanel; `popover.tsx` itself defines no breakpoint | Source-specific consumer paths are documented, but no runtime/viewport proof |
+
+**Next file to resolve:** `src/components/ui/toast.tsx`; look for an actual legacy toast/message-specific duration and presentation reference before changing its persistence/timeout semantics. Following that, audit `src/components/ui/confirm-action-dialog.tsx` against `components___antddesign.scss:899-906`. F1/F2 remain unticked.

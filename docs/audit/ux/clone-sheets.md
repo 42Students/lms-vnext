@@ -140,3 +140,123 @@ Counts in this file respectively **0, 0, 0, 0**. Shared component tags: Button *
 **Scoped grep-equivalent proof:** Full fetched file counted raw controls **0**, literal six-digit hex **0**, inline SVG **0**, manual rounded card wrappers with the audited exact root pattern **0**, shared tab strips **1**, duplicate bottom nav **0**; Link opening/closing tags **9/9**; `focus-visible:outline-2` occurs **9** times. Checks use the exact file content returned by GitHub rather than a local shell grep. Browser/phone/tablet rendered evidence remains pending.
 
 **Next E8 file:** `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx` for authorized roster table and local filters. The `TpoGrid` engine remains a shared-table fallback until chat-14 integrates AG Grid and dependencies; keep that global checkbox unticked.
+
+## chat-12 follow-on: batch Students and companion actions (2026-10-19)
+
+**Branch sync:** Before the file pass, `chatgpt/chat-12-b` was merged with the latest checked `origin/main` tree (`2d3438d241385b3e913ac27e3908758fc0212294`) using a two-parent GitHub commit `b71fffc28f065456a1b477df5988fbac504a8945`. This retained the unmerged chat-12 roster/batch changes. No local application, typecheck or CI was executed.
+
+### Source-finished file 1 — `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
+
+| Property | Legacy source/value | vNext file:line/source value | Outcome |
+|---|---|---|---|
+| TPO list chrome | `docs/design/old-lms-pages.md:9-10`: search and filters, then outlined export, compact table with status pills | :103-160 validated GET form with six dimensions; `details` Export has filtered/unfiltered choices | Source-aligned, existing URLs retained |
+| One page canvas, no nested ordinary cards | `old-lms-pages.md:5,12` one white canvas, compact funnel/summary strip | :56-74 Journey and :163 summary use `border-b` / `border-l-2`, no nested surface cards | Source-aligned |
+| Legacy status pills | `old-lms-pages.md:10` small coloured status labels | :68-69 and :179-184 shared `Badge` for undecided, gap and per-row eligibility | Shared implementation |
+| Compact data rows | `old-lms-pages.md:10` hairline table with student, status and actions | :166-206 `DataTable`: Student/roll/class/branch, Eligibility, Registration, Decision source, Actions | Source-aligned; underlying `DataTable` is not AG Grid |
+| Authorized row actions | `lms2-fe/src/components/tpo/grid/GridWorkspace.jsx:476-494` actions on current selected/shown rows | :47,167-206 uses `selectTpoBatchStudentView`, `TpoBatchInlineDecision` with original snapshot; participation route preserved | Permissions and scoped model unchanged |
+| CSV exports | legacy `GridWorkspace.jsx:321-335,449-455` one Export menu with chosen/visible options | :153-160 details menu links to existing `batchStudentViewExportHref` and current-page CSV API; same page bounds and order | Exports preserved; no speculative Excel |
+| Search vs pagination | `GridWorkspace.jsx:400-405,461-470` query and in-view count | :38-48,103-152 server validated search; :161 count explains global search vs 25-person slice; :207-208 server page links retained | Scoped and explained |
+| Phone/tablet custom controls | `docs/design/old-lms-shell.css:68-85` phone width below 768px | :58 `md:grid-cols-4`, :104 `grid-cols-1 md:grid-cols-2 xl:grid-cols-3`, :163 `md:grid-cols-3`; all filter selectors `min-h-11` | Authored layout boundary matches 768px |
+
+### Source-finished file 2 — `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
+
+| Property | Legacy source/value | vNext file:line/source value | Outcome |
+|---|---|---|---|
+| Ctrl/Cmd selection and copy | `lms2-fe/src/components/tpo/grid/TpoGrid.jsx:59-62,224-228` select/copy shortcuts and TSV | :9-34 preserves `tpoBatchShortcut` and `tpoBatchSelectedClipboard` over visible rows | Functional source retained, runtime untested |
+| Visible selection cap | `TpoGrid.jsx:89-102` do not carry hidden selected rows into actions | :13-19 `tpoBatchVisibleSelection(rows,selected)`, select up to 25 authorized rows | Preserved |
+| Shared controls and keyboard | `old-lms-pages.md:9-10` compact toolbar, `old-lms-shell.css:31-32` 44px interactive size | :1-2 Button + **added missing Checkbox import**, :35-65 shared Buttons/Checkboxes; 44px `min-h-11` | Strict TS import defect fixed, source aligned |
+| Responsive | `old-lms-shell.css:68-85` tablet at 768px | :43 `md:hidden` mobile Actions trigger, :45-50 desktop action row, :56 `grid-cols-1 md:grid-cols-2` with wrapping learner names | Authored breakpoints aligned |
+| CSV consolidation | `GridWorkspace.jsx:449-455` Export control | :7 `downloadHref?` optional, :49 link conditional; parent now owns CSV Export menu | Existing component still supports its old caller API |
+
+### Source-finished file 3 — `src/components/tpo/tpo-batch-student-saved-views.tsx`
+
+| Property | Legacy source/value | vNext file:line/source value | Outcome |
+|---|---|---|---|
+| Pinned saved views | `GridWorkspace.jsx:410-438,518-525`: pinned/recent and save/manage flows | :14-58 same vNext account/batch saved-view API and open/CRUD logic untouched | Source behaviour retained |
+| Compact panel | `old-lms-pages.md:5,9`: no redundant nested card; Views accessible from list chrome | :64 border-separated panel, :85 `grid-cols-1 md:grid-cols-2` saved-view rows | Source-aligned |
+| Named CSV per saved filter | `GridWorkspace.jsx:294-303,321-335` export via chosen view | :94-95 uses existing server `batchStudentViewExportHref(batchId,1,view.query)` with 44px focusable link | Same authorized endpoint |
+| Per-account privacy | legacy saved views are user-scoped `GridWorkspace.jsx:170-194` | :15-34 calls existing batch + current-account API, shows private context copy | No change to authorization |
+
+### Exact file-scoped grep-equivalent counts
+
+The complete current GitHub text of each file was scanned with JS regexes equivalent to the following greps (NOT a local repository-wide shell scan):
+
+`grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}' <file>` and search for `rounded-[var(--lms-canvas-radius)] ... border ... bg-surface`.
+
+| File | Raw controls | Inline SVG | Six-digit hex | Nested canvas cards | Bad quote patterns | Notes |
+|---|---:|---:|---:|---:|---:|---|
+| batch Students page | 0 | 0 | 0 | 0 | 0 | DataTable 1, Badge 3, Select 5, Next Link open/close 6/6 |
+| keyboard-actions | 0 | 0 | 0 | 0 | 0 | Checkbox 2, Button 4; matching open/close tags |
+| saved-views | 0 | 0 | 0 | 0 | 0 | Checkbox 1, Button 6; matching open/close tags |
+
+### Responsive and remaining strict-tick evidence
+
+Phone source path: custom forms and saved-view/selection lists are one column, wrap names, and provide `min-h-11` (44px) controls. Tablet: `md:` applies from 768px, matching `old-lms-shell.css:68-85`; summary and grid selectors expand to two/three/four columns as documented. The shared `src/components/ui/data-table.tsx` still uses `sm:table` (640px) rather than the legacy 768px transition. That component is owned by another lane and was not edited.
+
+**STRICT TICK RULE:** These three files are **source-finished**, but global E8 remains **[ ]** (native AG Grid engine still a `shared-table-fallback`; rendered phone/tablet screenshots not performed; shared DataTable breakpoints differ; repo-wide grep coverage missing). Do not claim that source-only checks constitute pixel-level proof.
+
+**Exact next file:** `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx` — compact registration records and filter/export chrome, then `src/components/tpo/tpo-batch-student-saved-views.tsx` visual verification when real browser proof is available.
+
+
+## chat-12 replacement-lane continuation — registrations (2026-10-19)
+
+**Synced baseline:** GitHub two-parent merge `b9d1af7b9cb799ac317e14ecdc6069d1aa0a19bc` incorporates inspected main `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` and preserved all five outstanding chat-12 files. This was a merge, not a destructive branch reset or a git rebase. Later changes below are pushed ONLY to `chatgpt/chat-12-b`. The owner forbids app execution, CI and typecheck. Source inspection is not a screenshot.
+
+### File source-complete: `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx`
+
+| Property | Legacy source / actual value | vNext file source/value | Proof status |
+|---|---|---|---|
+| Sheet anatomy | `docs/design/old-lms-pages.md:9-10`: toolbar, compact continuous table, status pills, actions | `registrations/page.tsx:34-89`: existing validated GET filters, DataTable with Learner/Choice/Recorded source/Last recorded update/Consent evidence/Actions | Source-aligned; renderer's 640px mobile breakpoint remains cross-lane mismatch |
+| One canvas, no tiles inside sampled funnel | `old-lms-pages.md:5,12`: single canvas, hairline separators and summary strip | `registrations/page.tsx:55-57`: single `border-b` section, small metrics on `border-l-2` instead of nested metric cards | Source-aligned |
+| Status badge | `old-lms-pages.md:10`: compact coloured stage/status pills | `registrations/page.tsx:70-72`: shared Badge success for recorded choice, warning for unrecorded | Source-aligned; visual color/state measurements open |
+| Export and privacy | `old-lms-pages.md:9-10`: Export from current list | `registrations/page.tsx:58-63`: unchanged scoped /api/placements/tpo/batches/:id/registrations/export with validated filter/page keys | Existing server behavior intact; no unscoped XLSX inferred |
+| Link hover/focus | `docs/design/legacy-styles/components___common.scss:68-75`: teal link, underline on hover | `registrations/page.tsx:80-89`: lms-inline-link, text-link, underline + focus-visible outline; 44px target | Default/focus source matched; visited pixel proof open |
+| Phone/tablet | `old-lms-shell.css:68-85`: phone <768px, tablet from 768px | `registrations/page.tsx:36`: filter grid 1 col then 2 at md/768, 3 at xl; metric grid md:4 | Authored breakpoint proven; DataTable renders table at sm/640, requires other owner/browser correction |
+
+**File-scoped source scan** on fetched complete `registrations/page.tsx`: regexes `/<(button|input|select|textarea)(?:\\s|>)/g`, `/<svg(?:\\s|>)/g`, `/#[a-f0-9]{6}\\b/gi` each returned **0**. `<Link ` and `</Link>` are **4/4**; curly-brace counts **68/68**. No broad repository claim.
+
+### File source-complete: `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
+
+| Property | Legacy source/value | vNext file/value | Proof status |
+|---|---|---|---|
+| Continuous canvas timeline | `old-lms-pages.md:5,12`: ordinary sections use thin separators, not cards | `history/page.tsx:27-34`: ordered immutable history list now `divide-y` and `border-y` rather than cards | Source-aligned |
+| Filter layout | `old-lms-shell.css:68-85`: 768px phone/tablet transition | `history/page.tsx:22`: 1-column phone, 2-column md, 3-column xl, 44px shared selectors/button | Authored breakpoint; no browser screenshot |
+| Warning/availability | `old-lms-pages.md:11`: slim pale warning strips | `history/page.tsx:25-26`: left warning bar, subtle fill | Source-aligned, color rendered proof open |
+| Links | `components___common.scss:68-75`: teal hover underline | `history/page.tsx:21,23`: Back and CSV links styled with text-link, visible keyboard focus and 44px targets | Source-aligned |
+| Server scope / consent | Existing TPO history service provides tenant-scoped immutable events | Same service and filter parser unchanged; history still never reveals contact details or raw consent versions | Retained; not an authorization runtime test |
+
+**File-scoped source scan:** raw native form controls **0**, six-digit hex **0**, inline SVG **0**; `<Link` / `</Link>` **3/3**, `<Select` / `</Select>` **2/2**, `<Button` / `</Button>` **1/1**. JSX curly braces **34/34**.
+
+**E8 native grid dependency update:** Current main now contains `src/components/tpo/grid/tpo-grid.tsx` with `ag-grid-community`, `ag-grid-react` imports and `themeQuartz` (verified at source lines 10-31, 67); the former fallback-only note elsewhere in this audit is stale. This does **not** prove full native AG Grid row/column/export parity across all TPO sheets. The global E8 checkbox remains **[ ]** until complete coverage, legacy source evidence and rendered responsiveness are verified.
+
+**Unticked follow-up:** `src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx`, then registration/eligibility import, all legacy-grid HEADER_ALIASES and complete TPO sheet list. No tests, runtime or CI were run.
+
+
+### More source-complete files: decision history and native company sheets
+
+| File | Legacy reference / value | Current vNext source evidence | Limit |
+|---|---|---|---|
+| `src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx` | `old-lms-pages.md:5-6`: continuous canvas, border-separated ordinary sections; `old-lms-shell.css:68-85`: phone <768px | :22 title, :25 mobile-first 1→2→3-column shared select filters, :26 44px export link, :28 audit events as `divide-y` rather than nested cards; existing undo component untouched | Source only; no browser visual proof or safety behavior test |
+| `src/components/tpo/tpo-companies-spreadsheet.tsx` | `lms2-fe/src/components/tpo/grid/TpoGrid.jsx:1-24`: AG Grid community Quartz, 44px rows; `old-lms-pages.md:9`: toolbar, table | :16-19 dynamic native grid; :42-76 GridWorkspace with authorized rows, local column chooser/export, native Quartz, company open action, same Create drive route, status label and safe website link | Only current authorized server page; rendered grid and exports untested |
+| `src/components/tpo/tpo-company-memory-drive-grid.tsx` | `lms2-fe/src/components/tpo/grid/GridWorkspace.jsx:1-35`: in-view search/export and AG Grid | :31-34 native Quartz dynamic mount; :42-54 existing local search + companyDriveCsv filename `-drives.csv` untouched; :56-69 GridWorkspace, local columns and drive open action | Rendered grid unverified; source-based parity not full E8 |
+
+**File-scoped coverage proof:** GitHub-fetched complete files were inspected with equivalents of `grep -nE '<(button|input|select|textarea)([[:space:]]|>)|<svg([[:space:]]|>)|#[[:xdigit:]]{6}'`. Each of the three files returned **0** raw controls, **0** inline SVG and **0** hex color literals. JSX braces: decision history **43/43**, company directory **40/40**, company drives **35/35**. Decision-history `Link` tags **1/1**, directory `Link` **1/1**. Company grids both mount the AG Grid module through `next/dynamic` with `ssr:false`; phone/tablet fallback belongs to existing `TpoGrid` and remains unverified visually. No package or shared UI files changed.
+
+**Privacy/behavior check from source:** Company directory still gets `rows` from its authorized page and `GridWorkspace` never fetches broader rows. Invalid or non-http(s) company URLs are displayed as text instead of being opened; verified outbound links still use `target=_blank rel=noopener noreferrer`. Memory drives retain the same `shown` controlled role/status/year filtering and existing `companyDriveCsv` CSV file naming. Native grid uses `TpoGrid` provided by chat-14 (not edited here). The original server query, permissions and API surfaces were not changed.
+
+**Unclosed strict E8 evidence:** Native AG Grid cells compared value by value against running legacy, exact entire-repo sheet coverage, XLSX formatting, filtered selection and saved-view migrations, and screenshot proof are still missing. Do **not** tick global E8. Next: `src/components/tpo/tpo-recruiter-leads-spreadsheet.tsx` (if present), otherwise `src/components/tpo/tpo-company-memory-workspace.tsx` and import aliases / preview components.
+
+
+### Legacy import HEADER_ALIASES and preview UI — replacement lane
+
+| Check | Legacy literal source | vNext source / implementation | Status |
+|---|---|---|---|
+| Case/punctuation-insensitive aliases | `lms2-fe/src/components/tpo/tpoFiles.js:5-39`: 26 canonical fields with aliases including fullname, emailid, mobileno, companyname, foundvia, ctc, CGPA, passing year | Existing `src/modules/placements/tpo-import-header-aliases.ts:4-34` carries the same 26 canonical fields plus vNext UUID-only `studentCode` and `activeBacklogs` | Source mapped; utility was already present |
+| Resolve duplicates and unknown | Legacy `tpoFiles.js:38-55`: header normalization before field whitelist | `tpo-import-header-aliases.ts:35-67` resolves only whitelisted fields and rejects ambiguous aliases/duplicates; academic import parser already calls it | vNext stricter fail-closed behavior retained |
+| Recruiter CSV alias use | Legacy `tpoFiles.js:7-24`: name, email, phone, company, designation, source synonyms | `tpo-lead-csv-import-model.ts:137-153` now calls shared map, renames only `company` to recruiter schema `companyName`, retains old `foundThrough` spelling and rejects duplicate/missing six required columns | Source change; no CSV execution or parser tests |
+| Import with preview | `lms2-fe/src/components/tpo/ImportPreviewModal.js:10-19`: upload → preview matched/unmatched → commit only after confirmation | `tpo-academic-import-workspace.tsx:107-181`: added visible import step copy (:116), 44px template link (:121-123), actual PREVIEW/IMPORT guarded actions and confirm Dialog retained | Text and toolbar source aligned; actual browser flow untested |
+| Limits/identity | Legacy generic matcher accepts aliases such as roll/reference; vNext academic import deliberately requires tenant membership UUID | Existing `tpo-academic-preview-import-model.ts` and scoped TPO import API untouched; roll cannot be silently mapped to membership UUID | vNext security requirement takes precedence |
+
+**File-scoped JSX proof (`tpo-academic-import-workspace.tsx`):** Button tags **5/5**, Dialog **1/1**, label **2/2**, section **1/1**, curly braces **97/97**; zero native button/input/select/textarea tags and no six-digit color literals. `tpo-lead-csv-import-model.ts` curly braces **39/39**, same server schema and duplicate-phone/email checks remain. New import aliases affect the six-column recruiter preview parser but no API contracts or permissions were changed.
+
+**STRICT TICK RULE:** E8 remains **[ ]**; no runtime, CI, viewport or end-to-end preview / XLSX verification occurred. Next area: `src/components/tpo/recruiter-leads-workspace.tsx` for the still-generic Engage/Leads DataTable and its GridWorkspace composition; afterward full icon/link source inventory. Branch edits stayed limited to chat-12-owned TPO files and audit.

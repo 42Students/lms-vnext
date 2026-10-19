@@ -44,6 +44,10 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
  const root=useRef<HTMLDivElement>(null);
  const trigger=useRef<HTMLButtonElement>(null);
  const [mobile,setMobile]=useState(false);
+ const [allReadRevision,setAllReadRevision]=useState<number|null>(null);
+ const [readIds,setReadIds]=useState<string[]>([]);
+ const [latest,setLatest]=useState<{items:BellItem[];unread:number}|null>(null);
+ const [refreshing,setRefreshing]=useState(false);
  const displayedItems=latest?.items??items;
  const groupedItems=displayedItems.slice(0,20).reduce<{day:string;items:BellItem[]}[]>((groups,item)=>{
   const day=new Intl.DateTimeFormat("en-IN",{
@@ -166,7 +170,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
       <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>
     </svg>
     {unread>0?<span aria-hidden="true"
-      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-surface bg-[var(--lms-notification-unread,#ff7576)] px-0.5 text-[10px] font-bold leading-none text-white">
+      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-surface bg-[var(--lms-topbar-unread)] px-0.5 text-[10px] font-bold leading-none text-white">
       {unread>99?"99+":unread}
     </span>:null}
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
