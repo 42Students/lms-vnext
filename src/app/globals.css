@@ -172,7 +172,7 @@ body {
   --lms-primary-subtle: #164e57;
 }
 
-/* Invisible scrollbars everywhere (owner decision): scrolling still works with wheel, touch, keyboard and
+/* Invisible scrollbars everywhere (owner decision, matching legacy drawer and overlay sources): scrolling works with wheel, touch, keyboard and
    focus; only the bar chrome is hidden. Scrollable regions must still show an edge fade or cue per the UX playbook. */
 * {
   scrollbar-width: none;
@@ -379,9 +379,9 @@ body {
 [data-slot="tabs"] :is(button,a):focus-visible,
 [data-slot="pagination"] a:focus-visible,
 [data-slot="info-popover"] summary:focus-visible {
-  outline: 2px solid rgba(38, 186, 199, .65);
-  outline-offset: 2px;
-  box-shadow: var(--lms-control-shadow);
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(26, 149, 161, .12);
 }
 [data-slot="button"]:disabled,
 [data-slot="input"]:disabled,
@@ -844,9 +844,9 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   outline: none;
 }
 :where([data-slot="button"],[data-slot="dropdown-root"] > summary,[data-slot="menu"] [role="menuitem"]):focus-visible {
-  outline: var(--lms-outline-width) solid rgba(38,186,199,.65);
-  outline-offset: 2px;
-  box-shadow: var(--lms-control-shadow);
+  outline: var(--lms-outline-width) solid var(--lms-primary-text);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(26,149,161,.12);
 }
 [data-slot="button"]:active:not(:disabled) { transition-duration: 150ms; }
 [data-slot="button"][aria-busy="true"] { cursor: progress; }
@@ -976,8 +976,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
  * for keyboard/touch overflow regions and opt back into thin scrollbar where
  * the sidebar explicitly requests a hover scrollbar. */
 [data-slot="scroll-cue"] > [role="region"]:focus-visible {
-  outline: 2px solid rgba(38,186,199,.65);
-  outline-offset: 2px;
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 3px;
 }
 [data-slot="scroll-cue"] [data-scroll-fade] { pointer-events: none; }
 .lms-scrollbar-thin {
