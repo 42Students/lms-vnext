@@ -77,6 +77,19 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(SHELL_NAV_ICON_KEYS["/tpo/requests"]).toBe("check-circle");
   expect(SHELL_NAV_ICON_KEYS["/tpo/reports"]).toBe("file-text");
   expect(SHELL_NAV_ICON_KEYS["/tpo/settings"]).toBe("wrench");
+  expect(SHELL_NAV_ICON_KEYS["/tpo/placements"]).toBe("solution");
+  expect(SHELL_NAV_ICON_KEYS["/hr/drives"]).toBe("solution");
+  expect(SHELL_NAV_ICON_KEYS["/tpo/recruiters"]).toBe("usergroup-add");
+  expect(SHELL_NAV_ICON_KEYS["/admin/features"]).toBe("appstore");
+  expect(SHELL_NAV_ICON_KEYS["/admin/module-access"]).toBe("partition");
+  expect(SHELL_NAV_ICON_KEYS["/admin/tenants"]).toBe("bank");
+  expect(SHELL_NAV_ICON_KEYS["/tpo/batches"]).toBe("apartment");
+ });
+ it("uses unique stroke glyphs rather than the shared Layers fallback for legacy AntD icon families",()=>{
+  const glyphs=source("src/components/shell/shell-nav-icons.tsx");
+  for(const name of ["solution","usergroup-add","bank","appstore","partition","apartment"]){
+   expect(glyphs).toContain(name+":");
+  }
  });
  it("shows one active workspace for multi-role memberships without mixing all portal rows",()=>{
   const learn:ShellNavItem={href:"/learn/courses",label:"Courses",shortLabel:"C",group:"learning"};
