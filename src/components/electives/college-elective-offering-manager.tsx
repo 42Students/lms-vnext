@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
@@ -134,24 +136,24 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
         <div className="border-t border-border pt-3">
           <h4 className="text-sm font-semibold">{editing ? "Edit offering" : "Add offering"}</h4>
           <label className="mt-2 block text-sm">Course
-            <select className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
+            <Select className="mt-1 w-full"
               value={deliveryId} onChange={event => setDeliveryId(event.target.value)}>
               <option value="">Select course and class</option>
               {selectable.map(row => <option key={row.id} value={row.id}>
                 {row.course} ({row.code}) · {row.section}</option>)}
-            </select>
+            </Select>
           </label>
           {!editing && <label className="mt-2 block text-sm">Group (optional)
-            <select className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
+            <Select className="mt-1 w-full"
               value={groupId} onChange={event => setGroupId(event.target.value)}>
               <option value="">Create elective group automatically</option>
               {data.groups.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
-            </select>
+            </Select>
           </label>}
           <label className="mt-2 block text-sm">Capacity
-            <input type="number" min="1" max="100000" required
+            <Input type="number" min="1" max="100000" required
               value={capacity} onChange={event => setCapacity(event.target.value)}
-              className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
+              className="mt-1 w-full" />
           </label>
           {selectable.length === 0 && <p role="status" className="mt-2 text-sm">
             Create an active elective course delivery for this program before adding an offering.</p>}
