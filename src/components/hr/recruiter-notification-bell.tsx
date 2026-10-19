@@ -66,18 +66,18 @@ export function RecruiterNotificationBell(){
   <Button variant="primary" className="relative" ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
-   >
+    className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     <span aria-hidden="true">🔔</span>
     {data?.unread&&data.unread>0?<span aria-hidden="true"
-      className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
+      className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#ff7576] px-1 text-[10px] leading-3 text-white">
       {data.unread>99?"99+":data.unread}</span>:null}
   </Button>
   {isOpen?<section ref={popoverRef} role="dialog" aria-modal="false" aria-label="Notifications"
-    className="absolute right-0 top-full z-50 mt-2 w-[min(25rem,94vw)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
-   <div className="flex items-center justify-between gap-3">
-    <h2 className="font-semibold text-foreground">Notifications</h2>
-    <Button variant="secondary" type="button" onClick={()=>setIsOpen(false)}
-     aria-label="Close notifications">Close</Button>
+    className="absolute right-0 top-full z-[1050] mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,94vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[#e5e9f0] bg-white p-4 shadow-[var(--lms-overlay-shadow)]">
+   <div className="-mx-4 -mt-4 flex items-center justify-between gap-3 rounded-t-[12px] border-b border-[#e5e9f0] bg-[#fafbfc] px-4 py-3">
+    <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[#1a1d21]">Notifications</h2>
+    <button type="button" onClick={()=>{setIsOpen(false);triggerRef.current?.focus();}}
+     aria-label="Close notifications" className="min-h-9 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
    </div>
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
     <Button variant="ghost" type="button" onClick={()=>void load()}>Retry</Button>
@@ -92,11 +92,11 @@ export function RecruiterNotificationBell(){
    {data?.status==="READY"&&data.rows?.length===0?
      <p role="status" className="mt-4 text-sm text-muted-foreground">No notifications yet</p>:null}
    {data?.status==="READY"&&data.rows?.length?
-    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-[50vh]"><ul className="divide-y divide-border">
-     {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
+    <ScrollCue axis="y" label="Recruiter notifications" className="mt-3" viewportClassName="max-h-[50vh]"><ul className="space-y-1.5">
+     {recruiterBellPreview(data.rows).map(item=><li key={item.id} className="rounded-[8px] border border-[#e5e9f0] bg-white">
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-9 py-3 text-sm text-primary-text hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="block min-h-11 rounded-[8px] px-3 py-3 text-sm text-primary-text hover:bg-[#fafbfc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
