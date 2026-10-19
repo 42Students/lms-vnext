@@ -58,13 +58,13 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
      {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
       onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
-      className="w-full"/>:
+      className="min-h-11 min-[768px]:min-h-9 w-full"/>:
       <Input type={spec.type==="int"||spec.type==="decimal"?"number":"text"}
        min={"min" in spec?spec.min:undefined} max={"max" in spec?spec.max:undefined}
        step={spec.type==="int"?1:spec.type==="decimal"?"any":undefined}
        value={draft[spec.key]??""} maxLength={4096}
        onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
-       className="w-full"/>}
+       className="min-h-11 min-[768px]:min-h-9 w-full"/>}
      {"min" in spec&&spec.min!==undefined?<span className="text-xs text-muted-foreground">
        Range {spec.min}–{"max" in spec?spec.max:undefined}</span>:null}
     </label>)}
@@ -72,7 +72,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </fieldset>)}
   <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries}/>
   <div className="flex flex-wrap items-center gap-3">
-   <Button variant="primary" type="button" disabled={!ready||saving||changed.length===0} onClick={()=>void save()}>
+   <Button variant="primary" type="button" disabled={!ready||saving||changed.length===0} className="min-h-11 min-[768px]:min-h-9" onClick={()=>void save()}>
     {saving?"Saving…":"Save "+changed.length+" changed setting"+(changed.length===1?"":"s")}
    </Button>
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>

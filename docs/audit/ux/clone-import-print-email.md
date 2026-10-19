@@ -274,3 +274,88 @@ grep -rlE '<table[ >]' src --include='*.tsx'
 grep -rlE '#[[:xdigit:]]{3,8}' src --include='*.tsx'
 ```
 **No tests, TypeScript, lint, CI, application, responsive browser or actual print render were executed.** G4 and G5 remain `[ ]` until exhaustive legacy value/state tables, whole-repository source scans, computed styles, and genuine historical PDF/email/print output are available. No parity checkmark asserted.
+
+## chat-6 continued import-wizard pass · next unticked queue batch · 2026-10-19
+
+**Branch reconciliation:** `main` advanced 206 commits after the previous bounded turn. The branch was reconciled through a two-parent merge `869db4a3f79e27bc6833c1cfaef24402ab52f05c`, preserving chat-6's ten modified source files, reconciling the shared ledger append, and taking the new main tree for all other paths. No unique lane work was discarded.
+
+### Work queue (whole-file source pass; not a strict category parity tick)
+- [x] `src/components/admin/college-bulk-import.tsx` — complete source pass of open/paste CSV/validation/confirm/row result/print states; shared Button/Select/Textarea/DataTable/StatusBadge/ConfirmDialog retained, handler code unchanged.
+- [x] `src/components/college/college-student-csv-import.tsx` — complete source pass of template, three selection fields, upload/paste, preview, row result CSV, confirm and print; shared components retained, permission/data calls unchanged.
+- [x] `src/components/college/college-faculty-csv-import.tsx` — complete source pass of template, upload/paste, validation, row report, confirmation and print; shared components retained, no CSV value changes.
+- [x] `src/components/tpo/tpo-academic-import-workspace.tsx` — complete source pass of open/template, upload/paste, preview table, inclusion toggles, confirmation and print; same TPO matching and guarded import API path.
+- [ ] **Next exact file:** `src/components/tpo/tpo-batch-eligibility-import.tsx` — upload, preview, result chips and print; then `src/components/placements/tpo-selection-import.tsx`.
+
+The following are **source-based value comparisons**; every remaining mismatch / unmeasured state is explicitly left open, not declared a pixel-level match.
+
+### Legacy-source reference values used
+`docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214`: 44px minimum touch target under `@media (max-width: 767px)`; `docs/design/legacy-styles/components___accessibility.scss:12-22`: no mouse-only focus outline, keyboard focus solid 2px teal with 3px offset; `docs/design/legacy-styles/components___variables.scss:12,30-40,76-85`: brand text `#1a95a1`, neutral lines `#e5e9f0`, semantic status tones; `docs/design/ui-clone-checklist.md:46-47`: owner-observed button 36px, 9px radius, 14px/650 and hover. `src/app/globals.css:27,334-337` has corresponding vNext text/button tokens. `src/components/ui/button.tsx:10-35` and `status-badge.tsx:5-17` remain shared and unchanged.
+
+#### `src/components/admin/college-bulk-import.tsx`
+| Property/state | Old LMS reference | Current file:line and value | Source verdict |
+|---|---|---|---|
+| Phone launch/import/discard hit height | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `:47,66,69` `min-h-11` = 44px | Matched source |
+| Desktop control minimum | `ui-clone-checklist.md:46-47` 36px | `:47,52,66,69` `md:min-h-9` = 36px from 768px | Matched source |
+| Secondary/primary button colors, hover and disabled | `ui-clone-checklist.md:46-47` shared variants | `:47,66,69` shared `Button` variants, `disabled={busy}`, `loading={busy}` | Shared source, actual computed values unverified |
+| CSV validation failure | `components___variables.scss:79-85` error semantic | `:59,64` `aria-invalid`, `role="alert"`, `text-error` | Semantic token; exact legacy import error visual unavailable |
+| Result table | `old-lms-pages.md:9` single canvas, compact hairline table | `:72-80` shared `DataTable`; `StatusBadge` created success, failed error, skipped neutral | Shared source; legacy import-specific row heights unverified |
+| Print-only controls | No legacy printed import source in checked-in SCSS | `:47,51,56,62,63,65` `print:hidden`; result region `:72-80` remains | Safe print separation only; no exact print parity |
+| Confirmation and empty | No historical college import confirmation specs | `:73-86` shared table empty and both `ConfirmDialog` states | Source behavior preserved; G4 comparison open |
+
+#### `src/components/college/college-student-csv-import.tsx`
+| Property/state | Old LMS reference | Current file:line and value | Source verdict |
+|---|---|---|---|
+| Template and row CSV download hit area | `pages___admin-list-pages.scss:8,193-214` 44px mobile | `:70,137` `min-h-11 md:min-h-9` | Matched source |
+| Link focus thickness/offset/color | `components___accessibility.scss:18-21` 2px/3px/`$teal-text` | `:70,137` 2px, 3px, `--lms-primary-text` (`globals.css:29` `#1a95a1`) | Matched source on light-theme token |
+| Program/batch/class controls | `pages___admin-list-pages.scss:193-214` 44px mobile | `:77,85,94` shared `Select`, `min-h-11 md:min-h-9`; `:73` selectors grid preserved | Matched source touch minimum |
+| Upload input | `pages___admin-list-pages.scss:193-214` 44px mobile | `:101` shared `FileUpload`, descendant input `min-h-11 md:min-h-9` | Matched source target; native picker/platform visuals unverified |
+| Validation, pending and confirmation | `components___variables.scss:79-85` semantic error; shared primary button style | `:119-122,133,150-162` shared Button/Checkbox, role alerts, existing disabled/pending guards | Source states covered; exact legacy error/disabled pixels unverified |
+| Row results | `old-lms-pages.md:9` compact table/status pills | `:140-148` shared `DataTable` with success/error/warning pills | Source structure aligned; computed table styles unverified |
+| Print | No old print sheet available | `:70,73,101,108,119,137,150,161` print-hidden controls; results table visible | Source-only; historical print parity unknown |
+
+#### `src/components/college/college-faculty-csv-import.tsx`
+| Property/state | Old LMS reference | Current file:line and value | Source verdict |
+|---|---|---|---|
+| Template/report download hit height | `pages___admin-list-pages.scss:8,193-214` 44px phone; `ui-clone-checklist.md:46-47` 36px desktop | `:57,90-91` `min-h-11 md:min-h-9` | Matched source |
+| Keyboard focus links | `components___accessibility.scss:18-21` 2px teal/3px offset | `:57,90-91` focus-visible 2px/3px, `--lms-primary-text` | Matched source on light-theme token |
+| File selection | `pages___admin-list-pages.scss:193-214` 44px mobile | `:60` shared FileUpload with 44px descendant / 36px desktop | Matched source size; WebView native picker still unverified |
+| Preview/import disabled/loading | `ui-clone-checklist.md:46-47` shared primary look | `:79-82,109-112` shared `Button` pending/confirmation guards | Shared source; computed disabled/loading and hover unverified |
+| Structural error and row pills | `components___variables.scss:79-85` status semantics | `:88,94-100` error role/color and shared status tones | Matched semantic source, not historical import screenshot |
+| Print separation | No source legacy print template | `:57,60,73,79,90-91,105,109` print:hidden on input/controls, results table retained | Safe omission; G5 still open |
+
+#### `src/components/tpo/tpo-academic-import-workspace.tsx`
+| Property/state | Old LMS reference | Current file:line and value | Source verdict |
+|---|---|---|---|
+| Open/preview/confirm action touch area | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `:102,132,166` shared `Button` `min-h-11 md:min-h-9` | Matched source |
+| Template link keyboard state | `components___accessibility.scss:18-21` 2px teal/3px offset | `:121` link focus-visible 2px/3px and `--lms-primary-text` | Matched source on light-theme token |
+| File input and pasted data | `components___form.scss:23-33` mouse focus removal; `pages___admin-list-pages.scss:193-214` 44px phone | `:124,126` shared FileUpload/Textarea; input 44px/36px | Shared inherited source; original drop-area state metrics missing |
+| Match/invalid table and badges | `old-lms-pages.md:9` compact list/data table and status pills | `:142-156` shared `DataTable`, success/warning `StatusBadge`, per-row Checkbox | Structural match; exact historical cells/badges unknown |
+| Review/confirmation and failure | No old import wizard result-state source | `:137-180` existing guarded preview, row inclusion, Dialog, alerts/status messages | Behaviors retained, no pixel-level claim |
+| Paper output | No legacy TPO import printer stylesheet | `:102,116,121,124,126,132,158,166` interactive controls hidden; results table retained | Source-only G5 print baseline |
+
+### Scoped grep proof and responsive-state audit
+
+All **four complete TSX files** were retrieved again after mutation. They contain **zero** case-sensitive native `<button`, `<input`, `<select`, `<textarea`, `<table` elements and **zero** hard-coded CSS hex literals. Existing shared imports and opening/closing tag pairs were retained. Per-file counts:
+
+| File | Native button/input/select/textarea/table | Hex literals | `print:hidden` occurrences |
+|---|---:|---:|---:|
+| `admin/college-bulk-import.tsx` | 0 / 0 / 0 / 0 / 0 | 0 | 6 |
+| `college/college-student-csv-import.tsx` | 0 / 0 / 0 / 0 / 0 | 0 | 8 |
+| `college/college-faculty-csv-import.tsx` | 0 / 0 / 0 / 0 / 0 | 0 | 6 |
+| `tpo/tpo-academic-import-workspace.tsx` | 0 / 0 / 0 / 0 / 0 | 0 | 7 |
+
+Suggested checkout reproduction (NOT executed):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+ src/components/admin/college-bulk-import.tsx \
+ src/components/college/college-student-csv-import.tsx \
+ src/components/college/college-faculty-csv-import.tsx \
+ src/components/tpo/tpo-academic-import-workspace.tsx
+```
+
+**Responsive source proof:** 0–767px uses `min-h-11` = 44px in actions, inputs and links, matching `pages___admin-list-pages.scss:193-214`; 768px+ `md:min-h-9` resolves 36px matching `ui-clone-checklist.md:46-47`. Student chooser uses `sm:grid-cols-3`, which may show three columns on 640–767px with 44px targets. The row results are shared `DataTable` with phone single-row-card presentation and `sm:` table layout (see `src/components/ui/data-table.tsx:49-100`); no new page-specific overflow or fixed width was added. Print modifiers only suppress interactive widgets; no A4 margins, fonts or page geometry were invented.
+
+**Still open for G4:** exact legacy import wizard drop-zone measurements, hover/disabled/error/empty/stepper visual values, complete repository-wide grep and runtime phone/tablet screenshots. **Still open for G5:** historical printed offer/certificate/receipt/PDF and hosted email templates, computed print output and email clients. No tests/CI/app/browser were run. These are **whole-file source completions**, not strict category parity ticks.
+
+### Concurrent-main integration proof (2026-10-19)
+The second merge `c0886af430adec3868af30b7059c07c2cea887db` incorporated newer `main` `2808e32a641e1e35f513755b840b6ef892c61163`. For overlapping files, the merge retained the other lanes' **tenant DataTable migration** (`admin/tenants/page.tsx`) and **assessment Pagination migration** (`admin-assessment-read-directory.tsx`), with that pager still `print:hidden` at current line 104. The TPO academic import's concurrent step guidance was kept at `tpo-academic-import-workspace.tsx:116-118`; the import template/export control states are now at lines 121/124/126/132/158/166. Only G4 visual controls were patched over the newer page. The four-file scoped zero-native-control / zero-hex count was reverified after merging. G4/G5 categories remain unticked, with no tests, browser rendering or CI.

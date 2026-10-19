@@ -30,7 +30,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
       <PageHeader title="Project template"/>
       <ErrorState title="Project template access denied"
         description="The active administrator does not have permission to view global project templates."
-        action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>}/>
+        action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
     </div>;
   }
   let detail: Awaited<ReturnType<typeof getProjectTemplateDetail>>;

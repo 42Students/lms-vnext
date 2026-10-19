@@ -56,7 +56,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
        <p className="mt-1 break-all text-body">{entry.value==="[redacted]"?"[redacted]":entry.value}</p>
       </div>
       <Button variant="secondary" type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
-       className="min-h-11 md:min-h-9">
+       className="min-h-11 min-[768px]:min-h-9">
        Remove</Button>
      </li>;
     })}
@@ -66,15 +66,15 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
    <label className="grid gap-1 text-sm">Key
     <Input value={key} onChange={event=>setKey(event.target.value)} maxLength={120}
      placeholder="custom.settingName" autoComplete="off"
-     className="w-full"/>
+     className="min-h-11 min-[768px]:min-h-9 w-full"/>
    </label>
    <label className="grid gap-1 text-sm">Value
     <Textarea rows={2} value={value} onChange={event=>setValue(event.target.value)}
-     maxLength={4096} className="w-full"/>
+     maxLength={4096} className="min-h-11 min-[768px]:min-h-9 w-full"/>
    </label>
    <p className="text-xs text-body">Use letters, digits, dots, dashes and underscores. Typos create unused keys. Documented settings must be edited in their section above.</p>
    <Button variant="primary" type="button" disabled={!ready||busy||!/^[A-Za-z][A-Za-z0-9._-]*$/.test(key)||!value.trim()}
-    onClick={()=>void apply("POST")} className="min-h-11 md:min-h-9">
+    onClick={()=>void apply("POST")} className="min-h-11 min-[768px]:min-h-9">
     {busy?"Saving…":"Add setting"}</Button>
   </fieldset>
   {message?<Alert tone={messageTone}>{message}</Alert>:null}

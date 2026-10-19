@@ -1,0 +1,140 @@
+/*
+ * Scoped mentor meeting list skin, borrowing the actual old-LMS project meeting
+ * card and history rhythm without changing calendar data or the list grouping.
+ * Reference: lms2-fe@prod-2026/src/styles/components/_learn-projects.scss:
+ * 17-23,37-49,68-73,3674-3745,3763-3829,5569-5578.
+ */
+.calendar {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.section {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.heading {
+  margin: 0;
+  color: #1a1d21;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.list {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 20px;
+  row-gap: 12px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid rgba(38,186,199,.12);
+  border-radius: 20px;
+  background: linear-gradient(180deg,rgba(255,255,255,.995),rgba(255,255,255,.965));
+  box-shadow: 0 1px 2px rgba(26,29,33,.04), 0 8px 20px rgba(26,29,33,.05);
+  transition: transform 140ms cubic-bezier(.2,0,0,1), border-color 140ms cubic-bezier(.2,0,0,1), box-shadow 140ms cubic-bezier(.2,0,0,1);
+}
+.row:hover {
+  transform: translateY(-1px);
+  border-color: rgba(38,186,199,.25);
+  box-shadow: 0 2px 6px rgba(26,29,33,.05), 0 14px 32px rgba(26,29,33,.09);
+}
+.row:focus-within {
+  outline: 2px solid #0e7c87;
+  outline-offset: 2px;
+}
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  grid-column: 1 / -1;
+}
+.titleBlock {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.title {
+  display: block;
+  margin: 0;
+  color: #1a1d21;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.subtitle {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.meta {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+.action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #0a7c88;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.action:hover { color: #075f69; }
+.action:focus-visible {
+  outline: 2px solid #0e7c87;
+  outline-offset: 2px;
+}
+.empty {
+  margin: 0;
+  padding: 12px;
+  border: 1px dashed #e5e9f0;
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 750;
+}
+.expand { justify-self: start; }
+@media (max-width: 767px) {
+  .calendar { gap: 16px; }
+  .row {
+    grid-template-columns: minmax(0,1fr);
+    row-gap: 12px;
+    padding: 12px;
+  }
+  .actions { justify-content: flex-start; grid-column: 1 / -1; }
+  .head,.meta { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .row { transition: none; }
+  .row:hover { transform: none; }
+}

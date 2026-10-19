@@ -10,6 +10,8 @@ export type PaginationProps = {
   className?: string;
   /** Show first/last shortcuts for long page ranges. */
   showBoundaryLinks?: boolean;
+  /** Preserve scroll position for client-side filter/pager transitions. */
+  scroll?: boolean;
 };
 
 /** Reject nonfinite and unsafe-integer pagination counts before creating links.
@@ -39,7 +41,7 @@ function safePageHref(hrefForPage: PaginationProps["hrefForPage"], target: numbe
   }
 }
 
-export function Pagination({ page, pageCount, hrefForPage, label = "Pages", className, showBoundaryLinks = true }: PaginationProps) {
+export function Pagination({ page, pageCount, hrefForPage, label = "Pages", className, showBoundaryLinks = true, scroll = true }: PaginationProps) {
   const total = normalizedPageCount(pageCount);
   const current = Number.isFinite(page) ? Math.max(1, Math.min(total, Math.trunc(page))) : 1;
   const previousHref = current > 1 ? safePageHref(hrefForPage, current - 1) : null;
@@ -54,17 +56,17 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]", className)}>
       {!previousHref ?
         <span aria-disabled="true" className={cx(buttonClass, "cursor-not-allowed opacity-50")}>Previous</span> :
-        <Link className={buttonClass} href={previousHref} aria-label="Previous page">Previous</Link>}
+        <Link className={buttonClass} href={previousHref} scroll={scroll} aria-label="Previous page">Previous</Link>}
       <span role="status" className="px-1 text-[12px] font-medium text-[var(--lms-neutral-500)] md:sr-only">Page {current} of {total}</span>
       {showBoundaryLinks && firstShown > 1 ? <>
-        {firstHref ? <Link href={firstHref} className={cx(buttonClass, "hidden md:inline-flex")} aria-label={`Page 1 of ${total}`}>1</Link> :
+        {firstHref ? <Link href={firstHref} scroll={scroll} className={cx(buttonClass, "hidden md:inline-flex")} aria-label={`Page 1 of ${total}`}>1</Link> :
           <span aria-disabled="true" aria-label="First page unavailable" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>1</span>}
         {firstShown > 2 ? <span aria-hidden="true" className="hidden px-1 text-[var(--lms-neutral-500)] md:inline-flex">…</span> : null}
       </> : null}
       {pageLinks.map(({item,href}) => item === current ?
         <span key={item} aria-current="page" aria-label={`Current page ${item} of ${total}`}
           className={cx(buttonClass, "cursor-default border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]")}>{item}</span> :
-        href ? <Link key={item} href={href}
+        href ? <Link key={item} href={href} scroll={scroll}
           aria-label={`Page ${item} of ${total}`}
           className={cx(buttonClass, "hidden md:inline-flex hover:bg-[var(--lms-primary-subtle)]")}>
           {item}
@@ -74,12 +76,12 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
       )}
       {showBoundaryLinks && lastShown < total ? <>
         {lastShown < total - 1 ? <span aria-hidden="true" className="hidden px-1 text-[var(--lms-neutral-500)] md:inline-flex">…</span> : null}
-        {lastHref ? <Link href={lastHref} className={cx(buttonClass, "hidden md:inline-flex")} aria-label={`Page ${total} of ${total}`}>{total}</Link> :
+        {lastHref ? <Link href={lastHref} scroll={scroll} className={cx(buttonClass, "hidden md:inline-flex")} aria-label={`Page ${total} of ${total}`}>{total}</Link> :
           <span aria-disabled="true" aria-label="Last page unavailable" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>{total}</span>}
       </> : null}
       {!nextHref ?
         <span aria-disabled="true" className={cx(buttonClass, "cursor-not-allowed opacity-50")}>Next</span> :
-        <Link className={buttonClass} href={nextHref} aria-label="Next page">Next</Link>}
+        <Link className={buttonClass} href={nextHref} scroll={scroll} aria-label="Next page">Next</Link>}
     </nav>
   );
 }

@@ -74,10 +74,10 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           placeholder="e.g., ABC University"
         />
       </div>
-      <Button type="submit" disabled={pending || !name.trim()}>
+      <Button type="submit" disabled={pending || !name.trim()} className="min-h-11 md:min-h-9">
         {pending ? "Creating…" : "Create Organization"}
       </Button>
-      {restored?<p role="status" className="text-xs text-body">Draft restored</p>:null}
+      {restored?<Alert tone="info" className="md:w-full">Draft restored</Alert>:null}
       {error ? (
         <Alert tone="error" className="md:w-full">
           {error}
