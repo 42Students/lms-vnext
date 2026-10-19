@@ -138,6 +138,7 @@ export function GridWorkspace<Row>({
   }catch{setNotice("Could not prepare the CSV. Please try again.");}
  };
  const copyRows=async()=>{
+  if(onCopyRows){onCopyRows();return;}
   const lines=[chosen.map(column=>safeTsv(column.label)).join("\t"),
    ...exportedRows.map(row=>chosen.map(column=>safeTsv(column.read(row))).join("\t"))];
   try{await navigator.clipboard.writeText(lines.join("\r\n"));
