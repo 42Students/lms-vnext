@@ -37,7 +37,7 @@ export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
  }
  return <div className="mt-3 flex flex-wrap items-center gap-2">
   <button type="button" disabled={saving||complete} onClick={()=>void markRead()}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60">
+   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-60">
    {complete?"Marked as read":saving?"Saving…":"Mark as read"}
   </button>
   {message?<span role="status" className="text-xs text-body">{message}</span>:null}

@@ -77,7 +77,7 @@ export function HrRecruiterBell(){
   <button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
    aria-expanded={open} aria-haspopup="dialog"
    onClick={()=>setOpen(value=>!value)}
-   className="relative min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+   className="relative min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
    Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
   </button>
   {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 w-[400px] max-w-[calc(100vw-2rem)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
@@ -99,7 +99,7 @@ export function HrRecruiterBell(){
    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
     <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
     {unread>0?<button type="button" disabled={loading} onClick={()=>void markAll()}
-      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50">{loading?"Saving…":"Mark all read"}</button>:null}
+      className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50">{loading?"Saving…":"Mark all read"}</button>:null}
    </div>
    {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
   </section>:null}

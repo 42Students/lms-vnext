@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import type { BulkDriveResult } from "@/modules/placements/bulk-drive-model";
 
@@ -142,14 +143,15 @@ export function PlacementBulkAddApplicants({
                 className="mt-2 min-h-11 w-full md:min-h-9"
               />
             </label>
-            <button
+            <Button
               type="button"
+              variant="secondary"
               onClick={() => void load(1)}
               disabled={busy}
-              className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50 md:min-h-9"
+              className="min-h-11 md:min-h-9"
             >
               Search
-            </button>
+            </Button>
           </div>
 
           {candidates.learners.length === 0 ? (
@@ -161,7 +163,7 @@ export function PlacementBulkAddApplicants({
               {candidates.learners.map((candidate) => (
                 <label
                   key={candidate.membershipId}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 px-3 py-2 hover:bg-primary-subtle"
+                  className="flex min-h-11 cursor-pointer items-center gap-3 border-b border-border px-3 py-2 hover:bg-muted"
                 >
                   <input
                     type="checkbox"
@@ -181,22 +183,23 @@ export function PlacementBulkAddApplicants({
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
             <span className="text-body">Page {candidates.page}</span>
             <div className="flex gap-2">
-              <button
+              <Button
                 type="button"
+                variant="secondary"
                 disabled={busy || candidates.page === 1}
                 onClick={() => void load(candidates.page - 1)}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-medium text-foreground disabled:opacity-50 md:min-h-9"
+                className="min-h-11 md:min-h-9"
               >
                 Previous
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 disabled={busy || !candidates.hasMore}
                 onClick={() => void load(candidates.page + 1)}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-medium text-foreground disabled:opacity-50 md:min-h-9"
+                className="min-h-11 md:min-h-9"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -205,22 +208,23 @@ export function PlacementBulkAddApplicants({
               {selected.size} / 200 selected
             </span>
             <div className="flex gap-2">
-              <button
+              <Button
                 type="button"
                 disabled={busy || selected.size === 0}
                 onClick={() => setSelected(new Map())}
-                className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-medium text-foreground disabled:opacity-50 md:min-h-9"
+                className="min-h-11 md:min-h-9"
               >
                 Clear
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 disabled={busy || selected.size === 0 || !roleOptionId}
                 onClick={() => void submit()}
-                className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50 md:min-h-9"
+                variant="primary"
+                className="min-h-11 md:min-h-9"
               >
                 {busy ? "Working..." : "Review and confirm Add-to-Drive"}
-              </button>
+              </Button>
             </div>
           </div>
         </>
