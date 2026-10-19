@@ -55,16 +55,16 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
   <p className="text-sm text-body">Closing stops new applications. Applicants without accepted offers who are still in the process are marked Not selected and told; pending withdrawal requests are settled. Accepted offers remain valid. Application, round and offer history is retained.</p>
   <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
    {consequences
-    .map(([label,n])=><div key={label} className="rounded-lg border border-border bg-muted p-3">
+    .map(([label,n])=><div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-3">
      <dt className="text-xs text-body">{label}</dt><dd className="text-2xl font-semibold tabular-nums">{n}</dd>
     </div>)}
   </dl>
   <label className="block text-sm font-semibold text-body">Reason for closure (audited)
    <textarea required name="reason" minLength={10} maxLength={1000} rows={3}
-    className="mt-2 w-full rounded-[9px] border border-border bg-surface p-3 text-foreground"/></label>
+    className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/></label>
   <p className="text-xs text-body">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <button type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-5 font-[650] disabled:opacity-50 text-primary-foreground">
+  <button type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-5 font-[650] disabled:opacity-50 text-primary-foreground">
    {pending?"Closing…":"Review and close drive"}</button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
     title="Close this drive?"
