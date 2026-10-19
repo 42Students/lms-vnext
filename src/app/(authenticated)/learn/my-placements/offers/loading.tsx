@@ -5,7 +5,6 @@ export default function LearnerOffersLoading() {
   return (
     <div className="space-y-5">
       <PageHeader
-        eyebrow="My Placements"
         title="My offers"
         description="Retrieving your official offers and recorded joining outcomes."
       />
