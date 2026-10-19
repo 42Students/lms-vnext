@@ -99,7 +99,7 @@ export function TpoAcademicImportWorkspace() {
   }
 
   return <div className="min-w-0">
-    <Button variant="secondary" type="button" onClick={() => setOpen(value => !value)}
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={() => setOpen(value => !value)}
       aria-expanded={open} aria-controls={id}
       >
       Import academic details
@@ -115,18 +115,18 @@ export function TpoAcademicImportWorkspace() {
       </p>
       <a download="academic-import-template.csv"
         href="data:text/csv;charset=utf-8,studentCode%2Ccgpa%2CactiveBacklogs%0A"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download a template
       </a>
-      <FileUpload label="Drop a CSV file here, or click to choose" accept=".csv,text/csv" maxBytes={200_000}
+      <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Drop a CSV file here, or click to choose" accept=".csv,text/csv" maxBytes={200_000}
          disabled={busy} onFiles={files => void upload(files?.[0] ?? null)}/>
-      <label className="block text-sm font-semibold">Or paste CSV rows
+      <label className="block text-sm font-semibold print:hidden">Or paste CSV rows
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");
         }} rows={5} maxLength={200000}
           className="mt-1 font-mono text-xs" />
       </label>
-      <Button variant="secondary" disabled={busy} type="button" onClick={() => void validate()}
+      <Button variant="secondary" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} type="button" onClick={() => void validate()}
         >
         {busy ? "Checking…" : "Preview import"}
       </Button>
@@ -152,7 +152,7 @@ export function TpoAcademicImportWorkspace() {
             {key:"backlogs",header:"Backlogs",mobilePriority:"secondary",cell:row=><span>{row.oldBacklogs??"—"} → {row.activeBacklogs}</span>},
             {key:"result",header:"Result",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.match==="WILL_UPDATE"?"success":"warning"}>{row.match==="WILL_UPDATE"?"Will update":"Can't match"}</StatusBadge>},
           ]}/>
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
           <Checkbox checked={preview.filter(row => row.match === "WILL_UPDATE")
             .every(row => !excluded.includes(row.studentCode))}
             onChange={event => setExcluded(event.target.checked
@@ -160,7 +160,7 @@ export function TpoAcademicImportWorkspace() {
               : preview.map(row => row.studentCode))} />
           Select all matched students
         </label>
-        <Button variant="secondary" type="button" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
+        <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
           onClick={() => setConfirmOpen(true)}
           >
           Confirm import
