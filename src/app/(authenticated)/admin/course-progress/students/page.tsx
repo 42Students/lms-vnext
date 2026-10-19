@@ -33,8 +33,12 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const mean=average.length?Math.round(average.reduce((a,n)=>a+n,0)/average.length):null;
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Student Course Progress"
-    description="Persisted video completion, assignment submissions and quiz attempts for active enrolled students in the selected course offering."/>
-  {back}
+    description="Persisted video completion, assignment submissions and quiz attempts for active enrolled students in the selected course offering."actions={<div className="flex flex-wrap items-center gap-2">
+      {back}
+      <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Export CSV</a>
+    </div>}
+  />
   <dl className="grid gap-4 border-y border-border py-4 sm:grid-cols-4">
    <div className="border-b border-border pb-3 sm:border-b-0 sm:border-r sm:pr-4 sm:last:border-r-0"><dt>Average completion</dt><dd className="text-xl font-semibold">{mean===null?"Not measured":mean+"%"}</dd></div>
    <div className="border-b border-border pb-3 sm:border-b-0 sm:border-r sm:pr-4 sm:last:border-r-0"><dt>Students</dt><dd className="text-xl font-semibold">{report.rows.length}</dd></div>
@@ -42,8 +46,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
    <div className="border-b border-border pb-3 sm:border-b-0 sm:border-r sm:pr-4 sm:last:border-r-0"><dt>Items measured</dt><dd className="text-xl font-semibold">{lowestMeasured===highestMeasured?
      highestMeasured:lowestMeasured+"–"+highestMeasured+" per learner"}</dd></div>
   </dl>
-  <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Export CSV</a>
+  
   <p className="text-sm text-body">Video completions, submitted assignments and attempted quizzes are counted from persisted learner records. No completion percentage is inferred when there are no measurable items.</p>
   {report.truncated?<p role="alert" className="text-warning-text">Showing the first 500 students. Narrowing by course offering is required for large cohorts.</p>:null}
   <DataTable<(typeof report.rows)[number]>
