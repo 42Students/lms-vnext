@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {ScrollCue} from "@/components/ui/scroll-cue";
+import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 type Course={id:string;name:string};
@@ -39,16 +40,16 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   }
   finally{setPending(false);}
  }
- return <section aria-label="Bulk course visibility" className="space-y-3 rounded-lg border border-border p-4">
+ return <section aria-label="Bulk course visibility" className="space-y-3 border-b border-border pb-5">
   <h3 className="font-semibold text-foreground">Students see it</h3>
   <p className="text-sm text-body">Show to students or hide from students across currently published lesson content in selected courses. Archived or unpublished content remains unchanged. New content keeps its own student visibility setting.</p>
-  <label className="flex min-h-11 items-center gap-2 text-sm">
+  <label className="flex min-h-11 items-center gap-2 py-2 text-sm">
    <input type="checkbox" checked={courses.length>0&&selectedInScope.length===courses.length}
     disabled={pending||!courses.length}
     onChange={e=>setSelected(e.target.checked?courses.map(course=>course.id):[])}/>
    Select all courses on this page
   </label>
-  <ScrollCue axis="y" label="Bulk course selection" viewportClassName="max-h-48"><div className="grid gap-2 sm:grid-cols-2">
+  <ScrollCue axis="y" label="Bulk course selection" viewportClassName="max-h-48"><div className="divide-y divide-border border-y border-border">
    {courses.map(course=><label key={course.id} className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" checked={selectedInScope.includes(course.id)} disabled={pending}
      onChange={e=>setSelected(ids=>{
@@ -60,23 +61,23 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
   </div></ScrollCue>
   <p className="text-xs text-muted-foreground" role="status">{selectedInScope.length} selected</p>
   <div className="flex flex-wrap gap-2">
-   <button type="button" disabled={!selectedInScope.length||pending}
+   <Button type="button" variant="secondary" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(true)}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold disabled:opacity-50">
-    {pending?"Updating…":"Show to students"}</button>
-   <button type="button" disabled={!selectedInScope.length||pending}
+    className="min-h-11 sm:min-h-9">
+    {pending?"Updating…":"Show to students"}</Button>
+   <Button type="button" variant="secondary" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(false)}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold disabled:opacity-50">
-    Hide from students</button>
+    className="min-h-11 sm:min-h-9">
+    Hide from students</Button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {report?<div role="status" className="space-y-2 text-sm">
    <p>{report.changed} updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
-   {report.failures.length?<button type="button" disabled={pending||lastAction===null||!report.failedCourseIds.some(id=>currentIds.has(id))}
+   {report.failures.length?<Button type="button" variant="secondary" disabled={pending||lastAction===null||!report.failedCourseIds.some(id=>currentIds.has(id))}
     onClick={()=>lastAction!==null?void apply(lastAction,report.failedCourseIds):undefined}
-    className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold">
+    className="min-h-11 sm:min-h-9">
     Retry failed
-   </button>:null}
+   </Button>:null}
    {report.matchedLessons===0?<p>No published lesson content is available for the selected courses.</p>:null}
   </div>:null}
  </section>;
