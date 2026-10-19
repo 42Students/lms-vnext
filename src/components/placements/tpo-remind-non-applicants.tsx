@@ -50,7 +50,7 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     <div className="flex flex-wrap gap-3">
      <button type="button" disabled={!confirmed||busy||!preview.allowed||preview.alreadySent||!preview.count}
-      onClick={()=>void send()} className="min-h-11 md:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
+      onClick={()=>void send()} className="min-h-11 md:min-h-9 rounded bg-primary px-4 font-[650] text-on-primary disabled:opacity-50 text-primary-foreground">
       {busy?"Sending…":"Remind "+preview.count+" students"}</button>
      <button type="button" disabled={busy} onClick={()=>{setOpen(false);setError("");}}
       className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-4">Cancel</button>
