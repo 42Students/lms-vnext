@@ -225,3 +225,21 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 
 - [ ] Computed styles and click-through functional checks remain pending under owner no-runtime directive.
 - [ ] **Next**: `src/components/admin/super-admin-batch-roster-manager.tsx` and `src/components/admin/super-admin-batch-graduate-action.tsx` (first-third academic admin components).
+
+
+### First-third Super Admin academic-component continuation
+
+| Completed file | Exact legacy value proof | Source grep, responsive and JSX proof |
+| --- | --- | --- |
+| [x] `src/components/admin/super-admin-batch-roster-manager.tsx` | Search/class labels now 13px/600 (`components___form.scss:110-112`), shared `Input`, `Select` and `DataTable`; section remains flat `border-b border-border` (source `:44-95`). | Raw controls `0`, literals `0`, inline styles `0`; `Button` 1/1, `Select` 2/2. Fields min 44px ≤767px/36px ≥768px, roster filters stack on phone and pair from 768px. |
+| [x] `src/components/admin/super-admin-batch-graduate-action.tsx` | Shared secondary `Button`, `ConfirmDialog`; existing disabled, pending, success and error states retained. | Raw controls `0`, literals `0`, inline styles `0`; `Button` 1/1. The action uses 44px minimum on phone and 36px from 768px (line 32). |
+| [x] `src/components/admin/super-admin-faculty-bulk-import.tsx` | Header is semantic `text-foreground` (`globals.css:327`), success/error states use semantic `text-body`/`text-error`; sample and submit remain shared `Button` and file UI. | Raw controls `0`, literals `0`, inline styles `0`; `Button` 2/2. Pre-existing `md:min-h-9` is exactly ≥768px, 44px phone buttons and file input remain. |
+| [x] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx` | Replacement label 13px/600 (`components___form.scss:110-112`, source `:67`); shared `Select` and `Dialog`. | Raw controls `0`, literals `0`, inline styles `0`; `Button` 3/3 and `Select` 1/1; Select 44px ≤767px/36px ≥768px, preserves prompt and dialog behavior. |
+| [x] `src/components/admin/admin-program-directory.tsx` | Four form labels and search 13px/600, headings use `--lms-heading` (`globals.css:327`); Refresh and Clear link now use semantic outlined action, hover/focus, 9px radius. | Raw controls `0`, literals `0`, inline styles `0`; `Button` 5/5, `Select` 1/1; 5 explicit 768px action breakpoints, program form one column on phone and two at ≥768px. |
+
+**Reproducible grep proof from GitHub text scan (no local repository execution):** `rg -o '<(button|select|input|textarea)\\b' <file> | wc -l` => `0` in each; `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l` => `0`; `rg -o 'style=\\{' <file> | wc -l` => `0`; shared `Button`/`Select` opening and closing tag totals above match. The typography, touch, radius, focus and semantic palette values match the prior checkpoint's legacy/value table, with native file upload and shared controls exempt from bespoke chrome.
+
+**Responsive source:** `pages___admin-list-pages.scss:8,193` + `components___variables.scss:139` specify 44px ≤767px; `globals.css:341` defines 36px default desktop. Corrected leftover `sm:min-h-9` on the batch components to `min-[768px]:min-h-9`. No change to enrollment moves, graduation confirmation, faculty import, schedule reassignment or program CRUD behavior.
+
+- [ ] Visual screenshots, browser focus interactions, TS compile, tests and CI intentionally unverified.
+- [ ] **Next file:** `src/components/admin/lecture-hall-manager.tsx` (first-third Super Admin academics) then `src/components/admin/department-directory.tsx`.
