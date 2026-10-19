@@ -16,13 +16,20 @@ import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
-import {TpoGrid} from "./grid/tpo-grid";
+import dynamic from "next/dynamic";
+import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {GridWorkspace} from "./grid/grid-workspace";
 import {TpoStudentSavedViews} from "./tpo-student-saved-views";
 import type {TpoFilterField} from "./tpo-grid-filter-panel";
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
+
+/** Spreadsheet viewport is browser-only; authorization and export remain with the page. */
+const TpoGrid = dynamic<TpoSpreadsheetGridProps<TpoStudentRow>>(
+ () => import("./grid/tpo-grid").then(module => module.TpoGrid<TpoStudentRow>),
+ {ssr:false, loading:() => <div role="status" className="min-h-16 py-4 text-sm text-muted-foreground">Loading student spreadsheet…</div>},
+);
 
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?

@@ -59,3 +59,17 @@ Branch was fast-forwarded to the then-current main before this sweep. Directory 
 **Strict tick rule:** A5, A6, A7 remain **[ ]**. Only the asset filename inventory is complete. No repository-wide icon caller grep, legacy/vNext state-by-state stroke audit, no phone/tablet proof, no full avatar tab-title check and no side-by-side comparison were performed. The user specifically disallowed running code/CI; do not count the API directory listing as source grep coverage. Shell owner lanes remain chat-13/chat-19, shared UI owner remains chat-17.
 
 **Exact next A5/A6/A7 source file:** src/components/tpo/tpo-company-memory-workspace.tsx (review its avatar/person links and activity timeline icons), then src/components/tpo/recruiter-leads-workspace.tsx. Keep untouched all shared UI components and topbar/sidebar owned by other lanes.
+
+## Bounded continuation — icon, avatar and link source checks (2026-10-19)
+
+| Property | Legacy source and literal value | Current vNext source and literal value | Status |
+|---|---|---|---|
+| Recruiter create icon | Original common/plus.svg:1-4, 16×16 white 2px strokes | public/assets/images/common/plus.svg:1-4 and src/components/tpo/recruiter-leads-workspace.tsx:643-647, Image 16×16 | SVG matched; button spacing is not browser-verified |
+| Contact links | legacy-styles/components___common.scss:69-74, teal link and underline on hover | recruiter-leads-workspace.tsx:1032-1034, text-link, lms-inline-link, focus-visible outline | Partial; no visited/phone screenshots |
+| Board links | Same SCSS:69-74 | recruiter-leads-workspace.tsx:1094-1096, text-link and hover underline, visible focus | Partial |
+| Topbar avatar | legacy-styles/components___header.scss:129-159: 52×52 outer wrap and 45×45 circular inner | src/components/shell/topbar/topbar.module.css:53-58: desktop 42×42 outer, 38×38 inner; at :111-113 phone outer 40, inner 36 | **Mismatch identified**, owned by chat-13; do not silently tick A6 or overwrite shell |
+| Notification avatars | legacy-styles/components___dropdown.scss:59-71, 38×38 radius 10 | Shared topbar/avatar system and notification content not fully compared | Open |
+
+**Action and ownership:** A5/A6/A7 remain unticked. Full family and active/hover/disabled/focus states across every portal, font icon aliases, avatar fallbacks, favicon format and tab-title format require owner coordination. Icon and link source checks above are not responsive proof. The main browser/topbar shell is chat-13/chat-19 owned, so no edits were made to shell or src/components/ui.
+
+**Exact next A5–A7 file:** src/components/tpo/tpo-company-memory-workspace.tsx, then corresponding company/recruiter activity avatar and outbound link states.

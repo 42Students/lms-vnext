@@ -14,7 +14,7 @@ export default async function CollegeRecurringPreviewPage({
   const classId = typeof query.classId === "string" &&
     options.classes.some(row => row.id === query.classId) ? query.classId : "";
   return <div className="min-w-0 overflow-x-clip space-y-6">
-    <PageHeader eyebrow="College Admin · Academic Setup" title="Recurring Schedule Preview"
+    <PageHeader title="Recurring Schedule Preview"
       description="Preview weekday/time patterns against persisted class, faculty and lecture hall scheduling conflicts in India Standard Time." />
     <CollegeRecurringPreview key={classId || "unselected"} {...options} defaultSectionId={classId} classes={options.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))} />
   </div>;
