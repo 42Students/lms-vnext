@@ -25,4 +25,8 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(legacy()).toContain("transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1)");
  expect(css()).toContain("transform 260ms cubic-bezier(.2,.8,.2,1)");
 });
+ it("keeps legacy pending-route opacity 0.78",()=>{
+ expect(legacy()).toContain("opacity: 0.78");
+ expect(css()).toContain("opacity:.78");
+});
 });
