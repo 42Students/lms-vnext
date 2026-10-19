@@ -24,7 +24,7 @@ export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
  }
  return <span className="inline-flex flex-wrap items-center gap-2">
   <Button variant="secondary" type="button" aria-pressed={marked} disabled={busy} onClick={()=>void toggle()}
-   >
+   className="min-h-11 sm:min-h-9 text-xs">
    {busy?"Saving…":marked?"Unmark decision":"Mark as decision"}
   </Button>
   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
