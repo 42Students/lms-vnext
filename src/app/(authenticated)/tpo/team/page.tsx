@@ -18,6 +18,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Alert} from "@/components/ui/alert";
 import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
@@ -160,12 +161,12 @@ export default async function TpoTeamPage({searchParams}:{
       member=>member.membershipId!==context.membership?.id&&
       (member.roles.includes("TPO")||member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN")))
       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
-    {conversations?.status==="FAILED"?<div role="alert" className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+    {conversations?.status==="FAILED"?<Alert tone="error">
      Could not load conversations right now. Your search has been kept.
      <Link className="ml-2 font-semibold text-link underline lms-inline-link" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
-    </div>:null}
+    </Alert>:null}
     {conversations?.status==="NOT_REGISTERED"?
-      <p role="status" className="mt-2 text-sm text-body">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</p>:
+      <Alert tone="warning">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</Alert>:
       conversations?.status==="FAILED"?null:
       visibleConversations.length?<ul className="mt-3 space-y-2">{visibleConversations.map(row=>
        <li key={row.id} className="border-b border-border py-3">
@@ -181,7 +182,7 @@ export default async function TpoTeamPage({searchParams}:{
         {conversations?.status==="READY"&&conversations.asksReady&&row.openAsks>0?<p className="mt-1 text-xs text-body">{row.openAsks} open {row.openAsks===1?"ask":"asks"}{row.asksForMe>0?" · "+row.asksForMe+" assigned to you":""}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Last activity · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.lastActivityAt)} IST</p>
        </li>)}</ul>:
-       <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>:null}</div>}
+       <div className="mt-2 space-y-2 text-sm text-body"><EmptyState title={search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}/>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>:null}</div>}
     {conversations?.status==="READY" && (conversations.page>1||conversations.hasMore)?
      <nav aria-label="Team conversation pages" className="mt-4 flex flex-wrap items-center gap-3">
       <span className="text-sm text-body">Page {conversations.page}</span>
