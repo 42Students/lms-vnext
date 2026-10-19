@@ -497,3 +497,48 @@ These are source-only checks, not a repo-wide terminal grep, browser-computed re
 
 Next file: src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx (confirm actual route path), then remaining G2/G3 profile and messaging components.
 
+## Replacement lane follow-on G2/G3 imported-editor source checkpoint
+  
+13 more source files read back and aligned with old-LMS mobile/desktop controls. In addition, the earlier listed custom-job-type Placed/Rename controls now use the same shared useConfirmFlow rather than window.confirm; previously authored 44px action sizes remain intact.
+
+| Property | Legacy value / source | Current vNext source |
+| --- | --- | --- |
+| Minimum mobile target | components___notification-drawer.scss:21-24,31-33 = 44px | min-h-11 through 767px |
+| Tablet/desktop target | old-lms-shell-spec.md:24-27 = 36px default control | min-[768px]:min-h-9 from 768px |
+| Mobile form layout | components___learn-notifications.scss:60-84 = mobile through 767px | min-[768px]:grid-cols for changed settings forms |
+| Focus/confirmation | components___form.scss:14-23 = focus-visible keyboard ring; owner requires shared overlays | useConfirmFlow uses shared ConfirmDialog; keyboard behavior inherited from shared UI |
+| Page head | old-lms-pages.md:5-6 = single header on canvas, no eyebrow | existing PageHeaders left in place; no extra eyebrow in scanned files |
+
+### Follow-on individual source rows
+
+| Source file (relative to src/) | Changed/verified lines | Source-level responsive or dialog proof |
+| --- | --- | --- |
+
+| app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx | 29,55 | Draft/back link 44px mobile; 36px from 768px |
+| components/tpo/tpo-campaign-send-control.tsx | 45 | Send confirmation opener touch-safe; status gating unchanged |
+| components/hr/recruiter-conversation-read-control.tsx | 61 | Read receipt action 44px through 767px |
+| app/(authenticated)/tpo/messages/[threadId]/page.tsx | 30 | Back-to-messages link 44px mobile; thread bubble copy/sender untouched |
+| components/placements/learner-placement-notification-settings.tsx | 82,85,93-94 | Preference review/reload/confirm/cancel 44px mobile |
+| components/admin/college-branding-form.tsx | 169,195,209 | Hex input and branding URI fields 44px mobile; user color data preserved |
+| components/tpo/tpo-after-college-editor.tsx | 68,78,81,90-91 | Confirmation buttons 44px mobile |
+| components/tpo/tpo-blocked-dates-editor.tsx | 41,59,74,83,88 | 767px one-column grids; shared confirmation for range/day deletion |
+| components/tpo/tpo-job-types-editor.tsx | 46,53,57,60,65,80 | 767px form grids; shared field/action tokens |
+| components/tpo/tpo-company-visibility-editor.tsx | 42,48,55 | Shared confirmation replaces native window.confirm; Save 44px mobile |
+| components/tpo/tpo-team-handover.tsx | 40,47 | Shared confirmation; select/send 44px mobile |
+| components/admin/descendant-feature-rule-editor.tsx | 45,54,59,61,64-65 | Shared confirmation and scope selects/buttons 44px mobile |
+| components/tpo/tpo-batch-decision-control.tsx | 43,53 | Shared confirmation; select/save 44px mobile |
+
+### Re-fetched scoped pattern counts, these 13 files only
+
+| Pattern | Count | Exemption |
+| --- | ---: | --- |
+| Raw visible button/input/select/textarea | 0 | All visible controls use shared src/components/ui |
+| Hidden raw input | 0 | None in this follow-on subset |
+| Literal hex colours | 0 | Branding colour values are data, not CSS literals |
+| Native window.confirm, fixed inset-0, role=dialog | 0 | useConfirmFlow/ConfirmDialog handles confirmation |
+| sm:min-h-9 and PageHeader eyebrow= | 0 | Responsive switch at 768px; no duplicate eyebrow |
+
+Each modified file was reread after its GitHub write and exact intended source text matched. JSX tag names were retained; no run of the app, TypeScript, CI, compiled CSS or browser simulation was done. The STRICT TICK RULE for complete G2/G3 remains open: a repository-wide grep, legacy chat bubble comparison, browser-computed focus/disabled/loading/error state table, and phone/tablet/pixel proofs are still needed.
+
+Exact next file: src/components/tpo/tpo-audit-saved-views.tsx only if queue ownership includes saved personal views; otherwise resume source sweep at src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx.
+
