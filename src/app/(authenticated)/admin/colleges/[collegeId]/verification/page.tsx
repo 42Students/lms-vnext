@@ -40,7 +40,7 @@ export default async function AdminCollegeVerification({
  const header=<PageHeader eyebrow="Super Admin · Verification" title={college.name}
   description="College-scoped learner Education and Identity verification. Review only the currently selected college."/>;
  if(!parsed?.success)return <div className="min-w-0 space-y-5">{header}
-  <div role="alert" className="rounded-[8px] border border-border p-5">Invalid verification filters.
+  <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-5">Invalid verification filters.
    <Link href={base} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Reset</Link></div></div>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>;
  try{data=await listCollegeVerificationQueue(context,parsed.data,college.id);}
