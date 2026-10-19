@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -119,15 +120,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
               {new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(event.occurredAt)} IST
             </time>
           </li>)}</ol>}
-      <nav aria-label="Project activity pagination" className="flex items-center justify-between gap-3">
-        <span className="text-sm text-body">Page {data.page} of {data.totalPages}</span>
-        <div className="flex gap-3">
-          {data.page > 1 && <Link href={mentorPortfolioHref("activity",{...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
-          {data.page < data.totalPages && <Link href={mentorPortfolioHref("activity",{...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
-        </div>
-      </nav>
+      <Pagination label="Project activity pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorPortfolioHref("activity",{...data.query,page})}/>
     </>}
     <p className="text-xs text-muted-foreground">
       Only registered project activity events tied to active Mentor assignments are counted. Full legacy history is not yet certified.
