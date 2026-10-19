@@ -60,6 +60,7 @@
   background: var(--lms-neutral-50);
 }
 [data-slot="dropdown"] {
+  box-shadow: 9px 11px 28px rgba(0, 0, 0, .1);
   border-radius: 6px;
   border-color: var(--lms-canvas-border);
 }
