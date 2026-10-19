@@ -1,4 +1,7 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -148,7 +151,7 @@ export function TpoBulkRoundResultRecorder({
               Select learners ({selected.length} / 25)
             </legend>
             <label className="block text-sm font-semibold text-body">Find unmarked learner
-              <input type="search" maxLength={100} value={search} onChange={event=>setSearch(event.target.value)}
+              <Input type="search" maxLength={100} value={search} onChange={event=>setSearch(event.target.value)}
                placeholder="Search name, roll or application ID"
                className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
             </label>
@@ -161,7 +164,7 @@ export function TpoBulkRoundResultRecorder({
             <details className="rounded-[var(--lms-control-radius)] border border-border p-3">
               <summary className="cursor-pointer text-sm font-semibold">Paste application IDs from a spreadsheet</summary>
               <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
-              <textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
+              <Textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
                 className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"/>
               <button type="button" disabled={busy} className="mt-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm"
                 onClick={()=>{
@@ -187,7 +190,7 @@ export function TpoBulkRoundResultRecorder({
           </fieldset>
           <label className="block text-sm font-semibold text-foreground">
             Staged outcome
-            <select
+            <Select
               value={outcome}
               onChange={(event) => setOutcome(event.target.value as "PASS" | "FAIL" | "HOLD" | "ABSENT")}
               disabled={busy}
@@ -197,7 +200,7 @@ export function TpoBulkRoundResultRecorder({
               <option value="FAIL">Not selected (FAIL)</option>
               <option value="HOLD">Waitlisted (HOLD)</option>
               <option value="ABSENT">Marked absent (ABSENT)</option>
-            </select>
+            </Select
           </label>
           <fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3">
             <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
@@ -213,7 +216,7 @@ export function TpoBulkRoundResultRecorder({
           {(outcome !== "PASS" || failUnselected) ? (
             <label className="block text-sm font-semibold text-foreground">
               Learner-facing message (required)
-              <textarea
+              <Textarea
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 rows={2}
@@ -225,7 +228,7 @@ export function TpoBulkRoundResultRecorder({
           ) : null}
           {outcome==="HOLD"?<label className="block text-sm font-semibold text-foreground">
             First waitlist rank (in checkbox selection order)
-            <input type="number" min={1} max={100000} value={firstWaitlistRank}
+            <Input type="number" min={1} max={100000} value={firstWaitlistRank}
               onChange={e=>setFirstWaitlistRank(Number(e.target.value))}
               className="mt-1 block min-h-11 md:min-h-9 w-40 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
             <span className="mt-1 block text-xs font-normal text-body">Chosen learners are assigned consecutive ranks. Check existing waitlisted results to avoid duplicate ranks.</span>
