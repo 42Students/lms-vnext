@@ -130,7 +130,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         ["Offers waiting on their answer",student.offersAwaitingAnswer],
         ["Prep %","Not recorded"],
         ["Registration",student.registrationChoice??"Not recorded"],
-       ].map(([label,value])=><div key={String(label)} className="rounded border border-border p-3">
+       ].map(([label,value])=><div key={String(label)} className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
        </div>)}
       </dl>
@@ -157,7 +157,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         ["Active applications",student.activeApplicationCount],["Offers",student.offerCount],
         ["Accepted offers",student.acceptedOfferCount],["Best so far",student.bestCompany?
          student.bestCompany+": "+tpoStudentDisplayLabel(student.bestSoFar):tpoStudentDisplayLabel(student.bestSoFar)],
-       ].map(([label,value])=><div key={String(label)} className="rounded border border-border p-3">
+       ].map(([label,value])=><div key={String(label)} className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
        </div>)}
       </dl>
@@ -207,7 +207,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     {tab==="History"?<>
       <h3 className="font-semibold">Team and student activity</h3>
       {detail&&!detail.teamHistory?.length?<p>No recorded team actions for this student.</p>:null}
-      <ol className="space-y-2">{detail?.teamHistory?.map(row=><li key={row.id} className="rounded border border-border p-3">
+      <ol className="space-y-2">{detail?.teamHistory?.map(row=><li key={row.id} className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
        <p className="font-semibold">{row.summary}</p>
        <p className="mt-1 text-xs text-muted-foreground">{when(row.occurredAt)} · {row.eventType}</p>
       </li>)}</ol>
