@@ -127,7 +127,7 @@ export function SearchableSelect({
       error={error || Boolean(selectionError)} aria-invalid={error || Boolean(selectionError) || props["aria-invalid"]}
       aria-describedby={describedBy} aria-errormessage={selectionError ? validationId : undefined}
       role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
-      aria-controls={listId} aria-expanded={open && !disabled && !readOnly}
+      aria-controls={open && !disabled && !readOnly ? listId : undefined} aria-expanded={open && !disabled && !readOnly}
       aria-activedescendant={open && activeIndex >= 0 ? `${listId}-option-${activeIndex}` : undefined}
       className={cx(clearable ? "pr-12" : "", className)} onChange={change} onFocus={focus} onBlur={blur} onKeyDown={keyDown} />
     {clearable && Boolean(visibleQuery) && !disabled && !readOnly
