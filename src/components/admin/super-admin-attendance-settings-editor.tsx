@@ -40,7 +40,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
  }
  return <section aria-label="Attendance policy" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold">Attendance policy</h2>
-  <div className="grid gap-4 sm:grid-cols-2">
+  <div className="grid gap-4 md:grid-cols-2">
    <label className="grid gap-1 text-sm font-semibold">Late marking allowed for
     <Input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
      onChange={e=>setHours(e.target.value)} aria-describedby="late-marking-help"
