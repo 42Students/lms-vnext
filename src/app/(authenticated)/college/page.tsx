@@ -262,7 +262,7 @@ export default async function CollegeOverviewPage() {
         <p className="text-sm text-muted-foreground">Records still missing a critical academic relationship.</p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {setupGaps.map(item => <Link key={item.label} href={item.href}
-            className="rounded-[9px] border border-border p-4 hover:border-primary">
+            className="rounded-[var(--lms-control-radius,9px)] border border-border p-4 hover:border-primary">
             <p className="text-sm text-muted-foreground">{item.label}</p>
             <p className="mt-2 text-xl font-semibold tabular-nums">{item.count}</p>
             <span className="text-xs font-semibold text-primary-text">Review →</span>
