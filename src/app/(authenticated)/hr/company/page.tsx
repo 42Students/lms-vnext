@@ -208,8 +208,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             Colleagues from your company who work with this college. To add one, ask the placement cell to invite them with their work email; the placement cell decides who gets access.
           </p>
           <form action="/hr/company" method="get" className="mt-3 flex flex-wrap gap-2">
-            <input type="hidden" name="collegeId" value={result.grant.collegeId}/>
-            <input type="hidden" name="tab" value="team"/>
+            <Input type="hidden" name="collegeId" value={result.grant.collegeId}/>
+            <Input type="hidden" name="tab" value="team"/>
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <Input id="hr-team-query" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
