@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 "use client";
 import { Input } from "@/components/ui/input";
 
@@ -295,16 +296,7 @@ function Metric({
   value: string;
   tooltip?: string;
 }) {
-  return (
-    <div title={tooltip} className="rounded-xl border border-border bg-surface p-4">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 text-base font-semibold text-foreground">
-        {value}
-      </p>
-    </div>
-  );
+  return <div title={tooltip}><StatTile label={label} value={value} /></div>;
 }
 
 export function LearnerClassSchedule({
