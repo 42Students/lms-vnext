@@ -1,5 +1,7 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -99,13 +101,13 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      <button type="button" disabled={busy||row.status!=="SUBMITTED"}
       onClick={()=>selectRow(row,"REINSTATE")}
       className="min-h-9 rounded-[9px] border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reinstate</button>:
-     <select aria-label={"Move "+(row.name??"learner")+" to"} value=""
+     <Select aria-label={"Move "+(row.name??"learner")+" to"} value=""
       disabled={busy||row.status!=="SUBMITTED"}
       onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
-      className="min-h-9 max-w-full rounded-[9px] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] sm:text-sm">
+      className="min-h-9 max-w-full text-base sm:text-sm">
       <option value="">Move to...</option>
       {(transitions[row.stage]??[]).map(stage=><option key={stage} value={stage}>{stage}</option>)}
-     </select>}
+     </Select>}
    </div>},
  ];
  return <section className="space-y-4">
@@ -120,14 +122,14 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    {allMatching?<button type="button" onClick={()=>{setAllMatching(false);setSelected([]);}}
     className="min-h-9 rounded-[9px] border border-border px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear selection</button>:null}
    {total>3000?<span className="text-error">Narrow filters to 3,000 or fewer applicants before bulk actions.</span>:null}
-   <select aria-label="Bulk application action" value={target} onChange={e=>setTarget(e.target.value)}
-    className="min-h-9 rounded-[9px] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm">
+   <Select aria-label="Bulk application action" value={target} onChange={e=>setTarget(e.target.value)}
+    className="min-h-9 text-base sm:text-sm">
     {COLLEGE_APPLICATION_STAGES.filter(s=>s!=="APPLIED").map(stage=><option key={stage} value={stage}>
       {stage==="SHORTLISTED"?"Shortlist":stage==="REJECTED"?"Reject":
        stage==="ASSESSMENT"?"Move to Assessment":stage==="INTERVIEW"?"Move to Interview":
        stage==="WAITLISTED"?"Move to Waitlisted":stage==="OFFERED"?"Move to Offered":
        stage==="HIRED"?"Mark Hired":stage}</option>)}
-   </select>
+   </Select>
    <button type="button" disabled={!selectedCount||busy} onClick={()=>chooseBulk(target)}
     className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Act on {selectedCount} selected</button>
@@ -149,8 +151,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       <li key={id}>{rowMap.get(id)?.name??id}</li>)}
      {selected.length>8?<li>and {selected.length-8} more</li>:null}</ul>
     <label className="grid gap-2 text-sm font-semibold">Reason
-     <textarea rows={3} minLength={3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
-      className="rounded-[9px] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/></label>
+     <Textarea rows={3} minLength={3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
+      className="w-full text-base sm:text-sm"/></label>
     <label className="flex items-center gap-2 text-sm">
      <input type="checkbox" checked={email} onChange={e=>setEmail(e.target.checked)}/>
      Also notify candidates by email (currently unavailable)
@@ -165,7 +167,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     </div>:null}
     <div className="flex flex-wrap gap-3">
      <button type="button" disabled={busy||email||reason.trim().length<3||!selectedCount}
-      onClick={()=>void save()} className="min-h-9 rounded-[9px] bg-[var(--lms-button-primary)] px-4 font-semibold text-[var(--lms-on-primary)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      onClick={()=>void save()} className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       {busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</button>
      <button type="button" disabled={busy} onClick={()=>{setDialog(false);setError("");setOutcome(null);}}
       className="min-h-9 rounded-[9px] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Close</button>
