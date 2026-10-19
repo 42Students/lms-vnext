@@ -32,19 +32,19 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
   }
   return <div className="mt-3 space-y-2">
     <label className="grid gap-1 text-xs font-semibold text-body">Keep company
-      <Select className="min-h-11 w-full sm:min-h-9"
+      <Select className="min-h-11 w-full min-[768px]:min-h-9"
         value={keep} onChange={e=>setKeep(e.target.value)}>
         {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
       </Select>
     </label>
     <label className="grid gap-1 text-xs font-semibold text-body">Merge duplicate
-      <Select className="min-h-11 w-full sm:min-h-9"
+      <Select className="min-h-11 w-full min-[768px]:min-h-9"
         value={source} onChange={e=>setSource(e.target.value)}>
         {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
       </Select>
     </label>
     <Button type="button" variant="danger" disabled={busy||keep===source} onClick={merge}
-      className="min-h-11 sm:min-h-9">
+      className="min-h-11 min-[768px]:min-h-9">
       {busy?"Merging…":"Review and merge"}
     </Button>
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
