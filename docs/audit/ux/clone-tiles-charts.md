@@ -541,3 +541,35 @@ Fetched **complete** latest branch bodies after the edits and checked:
 All `MetricBar` instances are **self-closing JSX**, not unmatched paired tags. `DataTable` is also self-closing where present. These are source string checks of full files, not TS typechecking, runtime assertions or actual touch/keyboard checks. No confidence claim is made for browser-computed geometry without the owner-run parity report.
 
 **Remaining E7 and G6 [ ]:** deep chart legend/tooltip parity, generic metric tile/summary-strip exhaustive coverage, progress metrics on all remaining pages and states, original/native `<progress>` in HR focused review, category-wide grep; keyboard/motion/phone/tablet screenshots and full component state comparison. **Next exact file:** `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` (graded report distribution bars), then `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx`. Compare original `_learn-report.scss` and original academic reporting stylesheet before changing any values.
+
+
+## 2026-10-19 chat-2 teacher quiz/assignment report source batch
+
+**Additional source-complete page migrations:** `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` and `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx`, both using the new `src/components/courses/faculty-report-legacy-charts.module.css`. Original pages: `lms2-fe@prod-2026/src/components/Report/QuizReportContent.jsx`, `AssignmentReportContent.jsx`; original SCSS `src/styles/components/_learn-report.scss`; original question accuracy tones `src/components/Report/QuestionAccuracyList.jsx`. All data retrieval, sorting, exports, grade calculations, links, question prompts and submission content remain vNext originals; **CSS/visible classes only** changed.
+
+### Original value table: header metrics and distribution charts
+
+| Property/state | Exact old LMS reference | vNext source | Result |
+| --- | --- | --- | --- |
+| Four summary metrics columns/gap | `_learn-report.scss:45-50` 4 equal columns, 12px gap, top margin16 | `faculty-report-legacy-charts.module.css:9-13`, quiz and assignment pages use `styles.stats` | Match columns/gap; page's existing outer section margin retained |
+| Metric base surface | `_learn-report.scss:52-59` padding12px, border `#e5e9f0`, radius12px (`$radius-card`), white, 2px internal gap | CSS :14-23, `styles.stat` | Match |
+| Metric number | `_learn-report.scss:61-68` 20px/800, `#1a1d21`, tabular figures | CSS :24-32, `styles.statValue` | Match |
+| Metric label | `_learn-report.scss:70-73` 12px, muted `#6b7280` | CSS :33-37, `styles.statLabel` | Match |
+| Distribution layout | vNext existing 6rem / 1fr / 2rem, gap12px; original uses report-specific question rows, not this newer vNext bucket control | CSS :38-45 with `styles.distribution` on original markup of both pages | Layout preserved; original control not directly equivalent |
+| Distribution numbers/track | `_learn-report.scss:160-176` 14px/800 dark numbers; old question track6px; vNext scores are distributions rather than questions | CSS :46-63 `styles.distributionLabel/Count/Track`; neutral count, gray progress | Label/count match ink/weight; bar height8px is **documented vNext category-specific exception** |
+| Quiz question row | `_learn-report.scss:110-118` padding8px 12px, radius6px, `#f1f4f9`; poor/fair left bar 3px in :183-184 | CSS :64-73, quiz page `styles.accuracyRow` with computed old risk tone | Match paint/geometry; vNext retains question card content arrangement |
+| Question accuracy track | `_learn-report.scss:142-157` track6px, round999, `#e5e9f0`, fill success `#059669` / warning `#d97706` / error `#ef4444` / unanswered `#a9a7ae` | CSS :74-87; quiz `MetricBar` gets `accuracyTrack` and dynamic status class | Exact track/color match |
+| Quiz accuracy cutoffs | `src/components/Report/QuestionAccuracyList.jsx:3-7`: null=unanswered, under50 poor, under75 fair, >=75 good | quiz page conditional `question.accuracyPercent===null ? accuracyUnanswered : <50 ? accuracyPoor : <75 ? accuracyFair : accuracyGood` | Exact old logic, not a guessed threshold |
+| Assignment timing cards | `_learn-report.scss:293-328`: neutral `#f1f4f9`, radius6, padding12, numbers18px/800, muted label11px | CSS :88-104; assignment page uses `styles.timing/TimingStat/TimingValue` | Paint and value match; original two-column on-time/late layout differs from vNext three columns including missing, which must remain |
+| Phone stats | `_learn-report.scss:388-391`: 4-up metrics become 2-up at <=767px | CSS :105-107 `@media(max-width:767px)` | Source breakpoint match |
+| Phone accuracy | `_learn-report.scss:407-422`: rows become 2 tracks, value shifts below body | CSS :105-114 reduces spacing and grid width but keeps current vNext question structure | Partial geometry match; actual browser layout and keyboard interactions untested |
+
+### Scoped grep / JSX and responsive proof
+
+- Quiz report full body: `grep -o '<MetricBar' ...` ⇒ **2 mapped sites** (distribution and accuracy), `<Disclosure>` **1 open / 1 close**, `<Link>` **5/5**, **0 raw native button/input/select/textarea**. **16 distinct scoped CSS class identifiers**, all defined.
+- Assignment report full body: `<MetricBar>` **1 mapped site**, `<Disclosure>` **1/1**, `<Link>` **2/2**, **0 raw native button/input/select/textarea**. **11 distinct scoped CSS identifiers**, all defined.
+- Suspicious duplicate-quote before `className`: **0** in both complete fetched TSX file bodies.
+- Module contains `@media (max-width:767px)` and `@media (prefers-reduced-motion: reduce)`, with source-checked 2-up summary at phone.
+- **Not performed:** TypeScript parsing/build, app render, PDF/XLS exports, snapshots, whole-repo grep, side-by-side legacy comparison at computed/browser level. Therefore E7 stat tiles, charts/legends and progress remain **[ ]** at umbrella level.
+
+**Next exact file:** `src/components/courses/learner-course-workspace.tsx` (dashboard course completion chart), then `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx` and any unscoped calendar/kanban surfaces.
