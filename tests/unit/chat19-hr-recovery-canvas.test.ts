@@ -21,6 +21,17 @@ describe("NORTH-STAR-CHAT19: recruiter recovery screens inherit the legacy canva
     }
   });
 
+  it("keeps page loading placeholders within one shared main and on legacy radii", () => {
+    for (const page of pages) {
+      const path = page.replace(/page\.tsx$/, "loading.tsx");
+      if (!existsSync(path)) continue;
+      const code = readFileSync(path, "utf8");
+      expect(code, path).not.toMatch(/\brounded-(?:md|lg|xl|2xl)\b/);
+      expect(code, path).not.toContain("rounded-[9px]");
+      expect(code, path).not.toContain("<main aria-busy");
+    }
+  });
+
   it("retains navigation actions without duplicate 9px literal controls", () => {
     for (const path of [
       "src/app/(authenticated)/hr/not-found.tsx",
