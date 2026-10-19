@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import styles from "@/components/courses/faculty-report-legacy-charts.module.css";
 import { Disclosure } from "@/components/ui/disclosure";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
@@ -89,16 +90,16 @@ export default async function FacultyAssignmentReportPage({
           { title: "Not submitted", rows: missingLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
       />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className={styles.stats}>
         {[
           ["Submitted", `${metrics.submitted}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Graded", `${metrics.graded}/${metrics.submitted}`],
           ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(assignment.dueAt) : "—"],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
-            <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
+          <div key={label} className={styles.stat}>
+            <p className={styles.statLabel}>{label}</p>
+            <p className={styles.statValue}>{value}</p>
           </div>
         ))}
       </div>
@@ -118,11 +119,11 @@ export default async function FacultyAssignmentReportPage({
             const total = Math.max(metrics.graded, 1);
             const width = Math.round((bucket.count / total) * 100);
             return (
-              <Disclosure key={bucket.label} title={<span className="grid min-w-0 flex-1 grid-cols-[6rem_minmax(0,1fr)_2rem] items-center gap-3">
-                <span className="text-body">{bucket.label}</span>
-                <MetricBar label={bucket.label+" grade distribution"}
+              <Disclosure key={bucket.label} title={<span className={styles.distribution+" min-w-0 flex-1"}>
+                <span className={styles.distributionLabel}>{bucket.label}</span>
+                <MetricBar className={styles.distributionTrack} label={bucket.label+" grade distribution"}
                   value={width} maximum={100} unit="percent" />
-                <strong className="text-right text-foreground">{bucket.count}</strong>
+                <strong className={styles.distributionCount}>{bucket.count}</strong>
                 </span>}
                  className="rounded-md border border-border p-2 text-sm [&>summary]:min-h-9 [&>summary]:px-0">
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
@@ -145,7 +146,7 @@ export default async function FacultyAssignmentReportPage({
         <h2 className="text-lg font-semibold text-foreground">
           Submission timing
         </h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className={"mt-4 "+styles.timing}>
           {[
             ["On time", metrics.onTime],
             ["Late", metrics.late],
@@ -153,12 +154,12 @@ export default async function FacultyAssignmentReportPage({
           ].map(([label, value]) => (
             <div
               key={label}
-              className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4"
+              className={styles.timingStat}
             >
               <p className="text-xs font-semibold uppercase text-muted-foreground">
                 {label}
               </p>
-              <p className="mt-1 text-2xl font-semibold text-foreground">
+              <p className={styles.timingValue}>
                 {value}
               </p>
             </div>

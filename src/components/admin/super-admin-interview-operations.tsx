@@ -40,7 +40,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
      <dt className="text-xs text-muted-foreground">{label}</dt><dd className="text-xl font-semibold tabular-nums">{value}</dd>
     </div>)}
   </dl>
-  <div className="flex flex-wrap items-end gap-3">
+  <div className="flex flex-wrap items-end gap-3 print:hidden">
    {choices("Type",unique(events.map(x=>x.kind)),kind,setKind)}
    {choices("Status",unique(events.map(x=>x.status)),status,setStatus)}
    {choices("Mode",unique(events.map(calendarMode)),mode,setMode)}
@@ -50,14 +50,14 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
     <Checkbox checked={conflictsOnly} onChange={e=>setConflictsOnly(e.target.checked)}/>
     Possible conflicts only
    </label>
-   <Button type="button" variant="secondary" onClick={()=>{
+   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
      setKind("ALL");setStatus("ALL");setMode("ALL");setDepartment("ALL");setConflictsOnly(false);setSort("DATE");
    }}>Clear filters</Button>
   </div>
   <p role="status" aria-live="polite" className="text-sm text-body">{filtered.length} matching candidate interview bookings. Department filter uses the applicant’s currently active academic program; historical departments may be unrecorded.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
   <a download="interviews.csv" href={filtered.length?"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv):undefined}
    onClick={e=>{if(!filtered.length){e.preventDefault();setExportError("No interviews match the selected filters. Clear filters to export.");}else setExportError("");}}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Export interviews.csv</a>
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Export interviews.csv</a>
   {filtered.length>500?<p role="status" className="text-sm text-muted-foreground">Export includes the first 500 visible rounds. Narrow filters for the remaining records.</p>:null}
   {exportError?<p role="alert" className="border-l-2 border-error bg-error-subtle px-4 py-3 text-sm text-error">{exportError}</p>:null}
   {!filtered.length?<p className="border-b border-border py-4">No interviews match these filters. Clear filters to see all rounds.</p>:
@@ -78,9 +78,9 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
      </>},
      {key:"venue",header:"Venue",mobilePriority:"secondary",cell:row=>row.venue??"Not recorded"},
      {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap gap-2">
-      {row.jobId?<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+      {row.jobId?<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 print:hidden"
        href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}>Open schedule</Link>:null}
-      <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+      <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 print:hidden"
        download={"interview-"+row.id+".ics"}
        href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
         id:row.id,title:row.title,date:row.startsAt,

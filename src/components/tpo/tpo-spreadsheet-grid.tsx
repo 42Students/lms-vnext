@@ -1,5 +1,6 @@
 "use client";
 import {Checkbox} from "@/components/ui/checkbox";
+import {FilterChip} from "@/components/ui/filter-chip";
 import {Button} from "@/components/ui/button";
 import {Dropdown} from "@/components/ui/dropdown";
 import { Table } from "@/components/ui/table";
@@ -196,9 +197,9 @@ export function TpoSpreadsheetGrid<Row>({
        disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="min-h-11 min-w-11">−</Button>
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.min(500,colWidth(col.key)+40)})}
        disabled={colWidth(col.key)>=500} aria-label={"Widen "+col.label} className="min-w-11">+</Button>
-      <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{pinned:!columnView[col.key]?.pinned})}
-       aria-pressed={Boolean(columnView[col.key]?.pinned)}
-       className="min-w-11">{columnView[col.key]?.pinned?"Unpin":"Pin"}</Button>
+      <FilterChip type="button" onClick={()=>updateLayout(col.key,{pinned:!columnView[col.key]?.pinned})}
+       aria-pressed={Boolean(columnView[col.key]?.pinned)} aria-label={(columnView[col.key]?.pinned?"Unpin ":"Pin ")+col.label}
+       className="min-w-11">{columnView[col.key]?.pinned?"Unpin":"Pin"}</FilterChip>
      </div>:null}
     </th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
     <tbody>{orderedRows.map(row=><tr key={rowKey(row)} aria-selected={selection?.selected.includes(rowKey(row))||undefined}

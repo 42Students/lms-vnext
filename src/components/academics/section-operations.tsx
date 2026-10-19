@@ -269,7 +269,7 @@ export function SectionOperations({
           <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
               size="sm"
-              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={pending}
               onClick={() =>
@@ -288,7 +288,7 @@ export function SectionOperations({
             </Button>
             <Button
               size="sm"
-              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="ghost"
               disabled={pending}
               onClick={() =>
@@ -347,7 +347,7 @@ export function SectionOperations({
           <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
               size="sm"
-              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={pending}
               onClick={() =>
@@ -366,7 +366,7 @@ export function SectionOperations({
             </Button>
             <Button
               size="sm"
-              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="ghost"
               disabled={pending}
               onClick={() =>
@@ -521,7 +521,7 @@ export function SectionOperations({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-5)]">
-      <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)] sm:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)] md:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Program
@@ -571,7 +571,7 @@ export function SectionOperations({
             <p className="m-0 text-sm font-semibold text-foreground">
               Admit learner to Program
             </p>
-            <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-3 flex flex-col gap-3 md:flex-row">
               <Select
                 aria-label="Learner to admit to program"
                 value={learnerMembershipId}
@@ -633,7 +633,7 @@ export function SectionOperations({
             <p className="m-0 text-sm font-semibold text-foreground">
               Place learner in this Section
             </p>
-            <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-3 flex flex-col gap-3 md:flex-row">
               <Select
                 aria-label="Active program enrollment to place in section"
                 value={placementEnrollmentId}
