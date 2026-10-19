@@ -61,7 +61,7 @@ export default async function TpoJoiningStatusReportPage({
       />
 
       <Link href="/tpo/reports/joining-followups"
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
         Review joining follow-ups →
       </Link>
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/joining-status" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
@@ -86,7 +86,7 @@ export default async function TpoJoiningStatusReportPage({
         ].map(([label, value]) => (
           <div
             key={label}
-            className="rounded-xl border border-border bg-surface p-4"
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
           >
             <p className="text-xs font-semibold uppercase text-body">
               {label}

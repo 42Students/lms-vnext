@@ -18,7 +18,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
     {items.map(item=>{
       const name=item.displayName?.trim()||"Name not recorded";
       return <article key={item.membershipId}
-        className="rounded-xl border border-border bg-surface p-4">
+        className="border-b border-border py-3 last:border-0">
         <h2 className="text-sm font-semibold text-foreground">
           {detailBaseHref?<Link
             href={detailBaseHref+"/"+encodeURIComponent(item.membershipId)+detailQuery}

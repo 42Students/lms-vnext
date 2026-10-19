@@ -110,7 +110,7 @@ export function SuperAdminTemplateCreateForm(){
   </fieldset>
   {error?<p role="alert" className="break-words text-sm text-error-text">{error}</p>:null}
   <div className="flex flex-wrap justify-end gap-3">
-   <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Cancel</Link>
+   <Link href="/admin/projects/templates" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Cancel</Link>
    <Button type="submit" disabled={saving} className="">{saving?"Creating…":"Create draft template"}</Button>
   </div>
  </form>;

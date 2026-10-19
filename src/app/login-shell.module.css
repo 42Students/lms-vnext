@@ -1,17 +1,17 @@
 /* Auth-only shell. Measurements follow docs/design/legacy-styles/pages___login.scss
    and the 2026-10-19 North Star; shared app chrome belongs to other lanes. */
 .viewport {
-  --auth-primary: #0a7c88;
-  --auth-ink: #172033;
-  --auth-body: #54505d;
-  --auth-border: #e5e9f0;
+  --auth-primary: var(--lms-button-primary, #0a7c88);
+  --auth-ink: var(--lms-heading, #172033);
+  --auth-body: var(--lms-body-text, #54505d);
+  --auth-border: var(--lms-border, #e5e9f0);
   position: relative;
   isolation: isolate;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   min-height: 100dvh;
   overflow-x: hidden;
-  background: #f1f4f9;
+  background: var(--lms-page-background, #f1f4f9);
   color: var(--auth-ink);
   font-family: var(--font-inter), Inter, Lato, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -102,7 +102,7 @@
   width: min(100%, 468px);
   min-width: 0;
   padding: 40px 42px 38px;
-  border: 1px solid #e5e9f0;
+  border: 1px solid var(--auth-border);
   border-radius: 14px;
   background: #fff;
   box-shadow: 0 18px 48px rgba(23, 32, 51, .07), 0 3px 10px rgba(23, 32, 51, .025);
@@ -124,9 +124,9 @@
 }
 .card :global([role="tablist"]) {
   gap: 4px;
-  border-radius: 10px;
+  border-radius: 9px;
   padding: 4px;
-  background: #f1f4f9;
+  background: var(--lms-page-background, #f1f4f9);
 }
 .card :global([role="tab"]) {
   min-height: 40px;
@@ -168,7 +168,7 @@
   border: 1px solid var(--auth-primary);
   border-radius: 9px;
   background: var(--auth-primary);
-  color: #fff;
+  color: var(--lms-on-primary, #fff);
   font-size: 14px;
   font-weight: 650;
   line-height: 20px;

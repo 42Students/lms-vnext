@@ -37,7 +37,7 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
   ].includes(e.message)?e.message:"Could not save preferences. Try again.");}
   finally{saving.current=false;setBusy(false);}
  }
- return <section aria-label="Edit my notification preferences" className="space-y-3 p-5">
+ return <section aria-label="Edit my notification preferences" className="space-y-3">
   <p className="text-xs text-muted-foreground">These five preferences are for your own TPO account in this college. In-app history remains accessible. Delivery routing is controlled separately.</p>
   <div className="divide-y divide-border">
    {TPO_NOTIFICATION_PREFERENCE_FIELDS.map(field=><label key={field.key} className="flex min-h-14 items-center justify-between gap-4 py-3">
@@ -47,7 +47,7 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
    </label>)}
   </div>
   <button type="button" disabled={busy||(!dirty&&currentVersion!==null)} onClick={()=>void save()}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</button>
+   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;

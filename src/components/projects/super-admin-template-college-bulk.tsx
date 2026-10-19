@@ -51,9 +51,9 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   <div className="flex flex-wrap gap-3 text-sm">
    <Button type="button" variant="secondary" disabled={pending||!allowed.length}
     onClick={()=>setSelected(allowed.map(row=>row.id))}
-    className="rounded-[9px] border border-border px-3 py-2 disabled:opacity-50">Select all on page</Button>
+    >Select all on page</Button>
    <Button type="button" variant="secondary" disabled={pending||!selected.length} onClick={()=>setSelected([])}
-    className="rounded-[9px] border border-border px-3 py-2 disabled:opacity-50">Clear selection</Button>
+    >Clear selection</Button>
    <span className="self-center">{selectedItems.length} selected</span>
   </div>
   <ul className="grid gap-2 sm:grid-cols-2">
@@ -68,9 +68,9 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   </ul>
   <div className="flex flex-wrap gap-2">
    <Button type="button" variant="primary" disabled={pending||!published||!selectedItems.some(row=>!row.assigned)}
-    onClick={()=>setOperation("assign")} className="rounded-[9px] bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">Assign selected</Button>
+    onClick={()=>setOperation("assign")} >Assign selected</Button>
    <Button type="button" variant="secondary" disabled={pending||!selectedItems.some(row=>row.assigned)}
-    onClick={()=>setOperation("remove")} className="rounded-[9px] border border-border px-3 py-2 text-sm font-semibold disabled:opacity-50">Remove selected</Button>
+    onClick={()=>setOperation("remove")} >Remove selected</Button>
   </div>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
   <ConfirmDialog open={operation!==null} onOpenChange={open=>{if(!open)setOperation(null)}}

@@ -70,43 +70,43 @@ export default async function TpoAccreditationReportPage({
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/accreditation"].description}
         actions={selectedBatch&&studentReport&&studentReport.rows.length>0?
           <a href={"/api/placements/reports?"+query.toString()}
-           className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-white">
+           className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white">
            Export student list CSV
           </a>:
-          <span aria-disabled="true" role="status" className="inline-flex min-h-11 sm:min-h-9 cursor-not-allowed items-center rounded-[9px] border border-border bg-surface-subtle px-4 text-sm font-semibold text-muted-foreground">
+          <span aria-disabled="true" role="status" className="inline-flex min-h-11 sm:min-h-9 cursor-not-allowed items-center rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-4 text-sm font-semibold text-muted-foreground">
            Export student list CSV — {selectedBatch?"No placed students":"Pick a batch first"}
           </span>
         }
       />
       <Link
         href="/tpo/reports"
-        className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline"
+        className="text-sm font-semibold text-link hover:underline"
       >
         ← All reports
       </Link>
-      <section id="accreditation-batch" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+      <section id="accreditation-batch" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
        <h2 className="font-semibold">NAAC 5.2.1 · Placed students</h2>
        <p role="status" className="text-sm">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
        <form method="get" className="flex flex-wrap items-end gap-3">
         <label className="text-sm">Batch
-         <select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 sm:min-h-9 rounded-[9px] border bg-background px-3">
+         <select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border bg-background px-3">
           <option value="">Pick a batch</option>
           {batches.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
          </select>
         </label>
         {report.selectedSeasonId&&<input type="hidden" name="seasonId" value={report.selectedSeasonId}/>}
         {report.selectedJobId&&<input type="hidden" name="jobId" value={report.selectedJobId}/>}
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border px-4 text-sm">Show students</button>
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border px-4 text-sm">Show students</button>
        </form>
        {batchId&&!selectedBatch&&<p role="alert" className="text-sm">Choose a batch from this college.</p>}
        {selectedBatch&&studentReport?.rows.length===0?<p role="status" className="text-sm text-muted-foreground">No placed students in this batch. Export is unavailable until a recorded placement exists.</p>:null}
        {studentReport&&<>
-        {completeness?<div aria-label="NAAC and NIRF completeness" className="space-y-2 rounded border border-border bg-surface-subtle p-4">
+        {completeness?<div aria-label="NAAC and NIRF completeness" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
          <h3 className="font-semibold">{completeness.missingStudents} of {completeness.total} students are missing data NAAC/NIRF ask for</h3>
          <ul className="grid gap-1 text-sm sm:grid-cols-2">{completeness.fields.map(field=>
           <li key={field.key}>{field.label} — missing for {field.missing}</li>)}</ul>
          <p className="text-xs text-muted-foreground">This checks seven fields in the recorded placed-student export, not all graduating learners or external placement evidence.</p>
-         {studentReport.rows.length>0?<a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)] underline">
+         {studentReport.rows.length>0?<a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">
           Export anyway
          </a>:null}
         </div>:null}
@@ -133,7 +133,7 @@ export default async function TpoAccreditationReportPage({
         />
        </>}
       </section>
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">
           Reporting scope
         </h2>
@@ -154,7 +154,7 @@ export default async function TpoAccreditationReportPage({
 
       <section
         aria-label="Accreditation data completeness"
-        className="rounded-xl border border-border bg-surface p-5"
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
       >
         <h2 className="text-lg font-semibold text-foreground">
           Completeness preflight
@@ -175,7 +175,7 @@ export default async function TpoAccreditationReportPage({
           Evidence preview
         </h2>
         {overview.length === 0 ? (
-          <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+          <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
             No reportable placement season was found. Download the
             CSV for the explicit completeness warnings.
           </p>

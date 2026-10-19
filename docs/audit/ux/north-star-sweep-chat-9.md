@@ -140,3 +140,52 @@ Owner: chat-9 · 2026-10-19 · branch `chatgpt/chat-9-b`
 **Unchanged by intent:** API/permission code, page layout structure, user wording, `src/components/ui/**`, `src/components/shell/**`, `src/app/globals.css`, React control semantics and all native checkbox/radio/file controls. Standalone cards around independent actionable objects remain intentional and are not considered duplicate page canvases.
 
 **Integration limitation:** During the second pass `main` advanced independently. The lane fast-forward was performed before edits; subsequent main changes are not merged into this source-only second pass. Integration conflict resolution and pixel acceptance must happen against final main; do not claim exact legacy screenshots from source inspection alone.
+
+## Follow-on North Star sweep — chat-9 continuation (2026-10-19)
+
+**Integration:** synchronized `chatgpt/chat-9-b` forward to then-current `main` (`7e3ab6102265`) via non-forced fast-forward before editing; branch-only GitHub commits tagged `[chat-9]`. No commit or push to `main`.
+
+**This continuation's source changes:** 29 commits ahead of `main` when ledger was recorded; 307 commits behind at that comparison. Page sections, routes, queries, mutations, displayed copy, permission guards and behavior were left intact. Independent data tiles/summary objects, warnings, confirmation dialogs and selectable records retain boundaries. The shared kit, shell, global stylesheet and layout were not edited.
+
+The reviewed/modified files in this continuation:
+
+- `src/app/(authenticated)/admin/module-access/page.tsx`
+- `src/app/(authenticated)/admin/programs/page.tsx`
+- `src/app/(authenticated)/admin/projects/page.tsx`
+- `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- `src/app/(authenticated)/admin/quizzes/page.tsx`
+- `src/app/(authenticated)/admin/semesters/page.tsx`
+- `src/app/(authenticated)/admin/settings/auth/page.tsx`
+- `src/app/(authenticated)/admin/settings/page.tsx`
+- `src/app/(authenticated)/admin/students/page.tsx`
+- `src/app/(authenticated)/admin/tenants/page.tsx`
+- `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- `src/app/(authenticated)/admin/verification/page.tsx`
+- `src/app/(authenticated)/college/projects/page.tsx`
+- `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+- `src/components/projects/class-team-workspace-creator.tsx`
+- `src/components/projects/college-project-summary-editor-full.tsx`
+- `src/components/projects/project-admin-audit-page.tsx`
+- `src/components/projects/project-admin-collection-controls.tsx`
+- `src/components/projects/project-admin-readiness-page.tsx`
+- `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- `src/components/projects/project-admin-submission-review.tsx`
+- `src/components/projects/project-admin-submissions-page.tsx`
+- `src/components/projects/project-admin-workspace-list.tsx`
+- `src/components/projects/project-create-control.tsx`
+- `src/components/projects/project-workspace.tsx`
+- `src/components/projects/super-admin-template-college-bulk.tsx`
+- `src/components/projects/super-admin-template-create-form.tsx`
+- `src/components/projects/super-admin-template-subview-page.tsx`
+
+**Legacy visual corrections applied:**
+- In Admin tenant, settings, quiz, semester, program and module-access screens, removed ad-hoc height/radius/background overrides on shared inputs and selects so the chat-17 control skin determines the result.
+- Normalized bordered action links to a 36px minimum height and the shared 9px control radius; primary Create workspace actions keep white text on primary teal.
+- Converted Projects Cards/List and submissions category navigation to thin underlined tabs with `aria-current` active-state styling, without changing search/filter state or nav wording.
+- Reduced redundant nested page-surface boxes to hairline sections in plain tenant lists, student quick actions, the class team explainer and the empty workspace/template-diff states; independent actionable cards and status warnings remain.
+- Removed local button style overrides from submission-review modal actions, college summary editor and Super Admin template bulk assignments, retaining button variants, disabled states, confirmation flow and user input.
+- Preserved 44px touch areas on contextual text links where useful; only standardized visually bordered control chrome to the legacy 36px baseline.
+- Scope stayed on the Super Admin last-third /admin surfaces, college-side Projects pages and their Projects UI components; `src/modules/projects` holds the domain/service models rather than the TSX surfaces.
+
+**Verification boundary:** every replacement was exact-match guarded against the fetched source and committed separately. No code execution, unit test, typecheck, CI, runtime browser or screenshot diff was performed, as instructed. Source-only edits do not certify pixel-perfect legacy parity or strict TypeScript compilation. Browser comparison at desktop/mobile widths, keyboard tab focus and the final main-branch integration remain outstanding.

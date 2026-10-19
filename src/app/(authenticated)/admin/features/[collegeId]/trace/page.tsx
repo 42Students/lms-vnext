@@ -111,7 +111,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           action={
             <Link
               href={basePath}
-              className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
             >
               Clear filters
             </Link>
@@ -198,37 +198,37 @@ export default async function SuperAdminLearnerAccessTracePage({
               maxLength={100}
               defaultValue={query.q}
               placeholder="Find learner"
-              className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-base text-foreground"
+              className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-base text-foreground"
             />
           </label>
 
           <label className="grid gap-2 text-sm font-semibold text-body">Learner scope
-            <Select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground">
+            <Select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground">
               <option value="all">All active learners</option>
               <option value="only">Only students with stored overrides</option>
               <option value="locked">Only students with locked overrides</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored override module
-            <Select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground">
+            <Select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground">
               <option value="">Any module</option><option value="projects">Projects</option><option value="electives">Electives</option><option value="placements">Placements (ignored below college)</option>
             </Select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Stored rule state
-            <Select name="storedValue" defaultValue={query.storedValue} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground">
+            <Select name="storedValue" defaultValue={query.storedValue} className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground">
               <option value="all">Stored On or Off</option><option value="on">Stored On only</option><option value="off">Stored Off only</option>
             </Select>
           </label>
           <Button
             type="submit"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
           >
             Search
           </Button>
 
           <Link
             href={basePath}
-            className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
           >
             Clear
           </Link>
@@ -284,7 +284,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                       query.membershipId,
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 ← Previous
               </Link>
@@ -302,7 +302,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                       query.membershipId,
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 Next →
               </Link>
@@ -376,7 +376,7 @@ export default async function SuperAdminLearnerAccessTracePage({
            ].join(String.fromCharCode(10))),
            ].join(String.fromCharCode(10,10))}/>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}
-            className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
             Inspect membership overrides and locks →
           </Link>
           <section className="min-w-0 border-t border-border pt-5" aria-label="Student overrides and locks">

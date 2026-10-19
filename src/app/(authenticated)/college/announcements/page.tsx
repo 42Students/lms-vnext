@@ -36,25 +36,25 @@ export default async function AnnouncementsPage({
           title="Announcements"
           description="Scheduling and audience management are staged, but DB10 announcement migrations are not verified yet."
         />
-      <section aria-label="Personal college notifications" className="space-y-3 - border-t border-border pt-5">
+      <section aria-label="Personal college notifications" className="space-y-3 border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
             <p className="mt-1 text-sm text-muted-foreground">{collegeNoticeUnreadLabel(ownInbox.unreadCount)}</p>
           </div>
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-link">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
         {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">{params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}</p>
-          : <ul className="space-y-3">{ownInbox.items.map(item => <li key={item.id} className="rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+          : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="border-b border-border py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
-            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Open related page</Link> : null}
+            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link">Open related page</Link> : null}
           </li>)}</ul>}
-        <Link href="/notifications" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+        <Link href="/notifications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
         <div role="status" className="rounded-[8px] border border-border bg-surface p-6">
           <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
@@ -135,22 +135,22 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
-      <section aria-label="Personal college notifications" className="space-y-3 - border-t border-border pt-5">
+      <section aria-label="Personal college notifications" className="space-y-3 border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-foreground">Your college notifications</h2>
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          <Link href={unreadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-sm font-semibold text-link">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </Link>
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
         {ownInbox.items.length === 0 ? <p className="text-sm text-muted-foreground">{params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}</p>
-          : <ul className="space-y-3">{ownInbox.items.map(item => <li key={item.id} className="rounded-[var(--lms-control-radius,9px)] border border-border p-3">
+          : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="border-b border-border py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
-            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Open related page</Link> : null}
+            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link">Open related page</Link> : null}
           </li>)}</ul>}
-        <Link href="/notifications" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+        <Link href="/notifications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
       <AnnouncementAdminWorkspace items={items} targets={targets} />
       {next ? (
