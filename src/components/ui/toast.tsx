@@ -198,7 +198,7 @@ export function ToastAction({ title, children, tone = "info" }: {
   children: ReactNode;
   tone?: ToastTone;
 }) {
-  return <div data-slot="toast-action" role="status"
+  return <div data-slot="toast-action" role={tone === "error" ? "alert" : "status"}
     className={cx("flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius)] border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[tone])}>
     <div className="flex min-w-0 items-center gap-3">
       <span aria-hidden="true" className={cx("h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[tone])} />
