@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 
 export type DropdownProps = Omit<HTMLAttributes<HTMLDetailsElement>, "children"> & {
@@ -17,6 +17,12 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDetailsElement>, "children">
 export function Dropdown({ trigger, triggerClassName, children, label, align = "start", mobileSheet = false, className, ...props }: DropdownProps) {
   const rootRef = useRef<HTMLDetailsElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const closeDropdown = useCallback((restoreFocus = false) => {
+    const root = rootRef.current;
+    if (!root?.open) return;
+    root.open = false;
+    if (restoreFocus) root.querySelector<HTMLElement>("summary")?.focus();
+  }, []);
   useEffect(() => {
     const root = rootRef.current;
     const panel = panelRef.current;
@@ -58,15 +64,14 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
     window.visualViewport?.addEventListener("scroll", positionPanel);
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target;
-      if (target instanceof Node && !rootRef.current?.contains(target) && rootRef.current) rootRef.current.open = false;
+      if (target instanceof Node && !rootRef.current?.contains(target)) closeDropdown();
     };
     const onFocusIn = (event: FocusEvent) => {
-      if (rootRef.current?.open && event.target instanceof Node && !rootRef.current.contains(event.target)) rootRef.current.open = false;
+      if (rootRef.current?.open && event.target instanceof Node && !rootRef.current.contains(event.target)) closeDropdown();
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape" || !rootRef.current?.open) return;
-      rootRef.current.open = false;
-      rootRef.current.querySelector("summary")?.focus();
+      closeDropdown(true);
       event.preventDefault();
     };
     document.addEventListener("pointerdown", onPointerDown);
@@ -82,15 +87,14 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
       document.removeEventListener("focusin", onFocusIn);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [mobileSheet]);
+  }, [mobileSheet, closeDropdown]);
   return <details ref={rootRef} data-slot="dropdown-root" data-mobile-sheet={mobileSheet || undefined} className={cx("group relative inline-block min-w-0 align-middle", className)} {...props}
     onPointerDown={event => {
       props.onPointerDown?.(event);
       if (event.defaultPrevented || !mobileSheet || window.innerWidth >= 640) return;
       if (rootRef.current?.open && event.target === rootRef.current) {
         event.preventDefault();
-        rootRef.current.open = false;
-        rootRef.current.querySelector("summary")?.focus();
+        closeDropdown(true);
       }
     }}>
     <summary aria-label={label} onKeyDown={event => {
@@ -120,8 +124,7 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
       onClick={event => {
         const item = event.target instanceof Element ? event.target.closest('[role="menuitem"], a[href]') : null;
         if (!item || item.matches('[aria-disabled="true"], :disabled') || !rootRef.current) return;
-        rootRef.current.open = false;
-        rootRef.current.querySelector("summary")?.focus();
+        closeDropdown(true);
       }}>{children}</div>
   </details>;
 }
