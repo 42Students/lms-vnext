@@ -1,6 +1,7 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
 import {DataTable} from "@/components/ui/data-table";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
@@ -183,7 +184,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             <FileUpload ref={fileRef} label="Choose CSV or Excel file" maxBytes={10_000_000}
               accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               disabled={busy} onFiles={files => void chooseFile(files?.[0])}/>
-            {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
+            {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
             {preview ? (
               <div className="space-y-3">
                 <p className="text-sm text-body" role="status">
@@ -217,7 +218,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"name",header:"Name",mobilePriority:"primary",cell:item=>item.name||"Unnamed"},
                       {key:"row",header:"File row",mobilePriority:"secondary",cell:item=>item.row},
                       {key:"status",header:"Validation",mobilePriority:"secondary",cell:item=><span>
-                        {item.error??(existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}
+                        <StatusBadge tone={item.error?"error":existingNumbers.has(item.row)?"info":skipRows.includes(item.row)?"warning":"success"}>{item.error??(existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}</StatusBadge>
                         {existing.find(entry=>entry.row===item.row)?
                           <Link className="ml-2 inline-flex min-h-11 items-center text-primary-text underline" href={"/tpo/recruiters/"+existing.find(entry=>entry.row===item.row)!.leadId}>Open</Link>:null}
                       </span>},
@@ -227,7 +228,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                         onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/>},
                     ]}/>
                 </ScrollCue>
-                {reviewReady&&!result ? <p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-foreground">
+                {reviewReady&&!result ? <p role="status" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body">
                   Import {newRows} recruiter lead row(s) from {fileName}. {preview.invalid} invalid row(s) will be skipped. Existing contacts will be reported as duplicates. Each created lead receives an audit entry.
                 </p>:null}
                 {!result ? (
@@ -259,7 +260,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                 ).then(()=>setCopyNotice("Non-created rows copied."),()=>setCopyNotice("Could not copy these results."))}>
                   Copy rows not imported
                 </Button>
-                {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
+                {copyNotice?<p role="status" aria-live="polite" className="text-xs text-body">{copyNotice}</p>:null}
                 <h3 className="font-semibold text-foreground">Import results</h3>
                 <p className="text-sm text-body">
                   {result.counts.created} created, {result.counts.duplicate} duplicate,
@@ -270,7 +271,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                     empty={<p>No import results to display.</p>}
                     columns={[
                       {key:"row",header:"File row",mobilePriority:"primary",cell:item=>item.row},
-                      {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>item.status},
+                      {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="created"?"success":item.status==="duplicate"?"info":item.status==="invalid"?"error":"warning"}>{item.status}</StatusBadge>},
                       {key:"details",header:"Details",mobilePriority:"secondary",cell:item=>item.leadId?
                         <Link href={"/tpo/recruiters/"+encodeURIComponent(item.leadId)}
                           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
