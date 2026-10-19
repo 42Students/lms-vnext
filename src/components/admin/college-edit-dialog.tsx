@@ -146,6 +146,7 @@ export function CollegeEditDialog({
             </label>
             <Input
               id={`college-name-${college.id}`}
+              autoComplete="organization"
               disabled={pending}
               value={name}
               onChange={(event) =>
