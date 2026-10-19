@@ -2,6 +2,7 @@
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {Button} from "@/components/ui/button";
 export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
  threadId:string;messageId:string;marked:boolean;
 }){
@@ -22,10 +23,10 @@ export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
   finally{pending.current=false;setBusy(false);}
  }
  return <span className="inline-flex flex-wrap items-center gap-2">
-  <button type="button" aria-pressed={marked} disabled={busy} onClick={()=>void toggle()}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-xs font-semibold">
+  <Button type="button" variant="secondary" aria-pressed={marked} disabled={busy} onClick={()=>void toggle()}
+   className="min-h-11 sm:min-h-9 text-xs">
    {busy?"Saving…":marked?"Unmark decision":"Mark as decision"}
-  </button>
+  </Button>
   {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
  </span>;
 }
