@@ -1,6 +1,5 @@
 "use client";
 import {Checkbox} from "@/components/ui/checkbox";
-import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { Table } from "@/components/ui/table";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
@@ -9,6 +8,7 @@ import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGri
 import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
 import {gridSelectionClick, gridSelectionCheckbox, selectedGridIdsWithin} from "./grid/grid-selection";
 import {sortTpoGridRows,type TpoGridSort} from "./grid/grid-sort";
+import {gridClipboardTsv} from "./grid/grid-export";
 
 export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;mobilePrimaryKeys?:readonly string[];storageKey?:string;
  selection?:{selected:readonly string[];onChange:(ids:string[])=>void;allIds?:readonly string[]};
@@ -26,6 +26,7 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
    : display.slice(0,5);
  const mobileExtra = display.filter(column=>!mobilePrimary.some(primary=>primary.key===column.key));
  const [columnView,setColumnView]=useState<Record<string,{width:number;pinned:boolean}>>({});
+ const [clipboardMessage,setClipboardMessage]=useState("");
  const viewKey=storageKey?storageKey+":layout-v2":null;
  const colWidth=(key:string)=>columnView[key]?.width??160;
  function updateLayout(key:string,patch:{width?:number;pinned?:boolean}){
@@ -127,9 +128,20 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
  }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
   <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
+  {clipboardMessage?<p role="status" className="text-xs text-muted-foreground">{clipboardMessage}</p>:null}
   {rows.length===0?<p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-3">No matching records.</p>:<>
-   <div className="hidden md:block"><Table scrollLabel="TPO spreadsheet columns" className="w-full text-left text-sm"><caption className="sr-only">Current page TPO spreadsheet records</caption>
-    <thead className="bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-700)]"><tr>{selection?<th scope="col" className="px-3 py-2"><Checkbox aria-label="Select all filtered students" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)}>
+   <div className="hidden md:block" tabIndex={0} aria-label="TPO grid keyboard copy"
+    onKeyDown={event=>{
+     if(!(event.ctrlKey||event.metaKey)||event.key.toLowerCase()!=="c"||event.defaultPrevented)return;
+     if(event.target instanceof HTMLElement&&event.target.closest("input,textarea,select,[contenteditable=true]"))return;
+     if(window.getSelection()?.toString())return;
+     event.preventDefault();event.stopPropagation();
+     const copied=orderedRows.filter(row=>!selection?.selected.length||selection.selected.includes(rowKey(row)));
+     void navigator.clipboard.writeText(gridClipboardTsv(display,copied,true))
+       .then(()=>setClipboardMessage("Visible grid rows copied as TSV."))
+       .catch(()=>setClipboardMessage("Clipboard unavailable. Use Export CSV instead."));
+    }}><Table scrollLabel="TPO spreadsheet columns" className="w-full text-left text-sm"><caption className="sr-only">Current page TPO spreadsheet records</caption>
+    <thead className="bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-700)]"><tr>{selection?<th scope="col" className="sticky left-0 z-30 w-12 min-w-12 bg-[var(--lms-table-header)] px-2 py-2"><Checkbox aria-label="Select all filtered students" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)}>
      {col.sortKind?<button type="button" aria-label={"Sort "+col.label}
       aria-pressed={sort?.key===col.key}
       className="inline-flex min-h-9 items-center gap-1 font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary"
@@ -138,15 +150,6 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
         : {key:col.key,direction:"asc"})}>
       {col.label}<span aria-hidden="true">{sort?.key===col.key?(sort.direction==="asc"?"↑":"↓"):"↕"}</span>
      </button>:<span>{col.label}</span>}
-     {col.filter?<Select aria-label={"Filter "+col.label} className="mt-1 text-xs font-normal"
-       value={params.get(col.filter.urlKey)??""}
-       onChange={event=>{
-        const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{[col.filter!.urlKey]:event.target.value});
-        router.replace(pathname+(next.size?"?"+next.toString():""));
-       }}>
-       <option value="">All</option>
-       {col.filter.options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
-      </Select>:null}
      {viewKey?<div className="mt-1 flex flex-wrap gap-2 text-xs font-normal">
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.max(100,colWidth(col.key)-40)})}
        disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="min-h-11 min-w-11">−</Button>
@@ -161,7 +164,7 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
      onClick={event=>{
       if(event.target instanceof HTMLElement && event.target.closest("button,a,input,select,textarea,[role=button]"))return;
       changeRowClick(rowKey(row),event);
-     }} className="cursor-default border-t border-border align-top aria-selected:bg-primary-subtle">{selection?<td className="px-3 py-2"><Checkbox checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
+     }} className="cursor-default border-t border-border align-top aria-selected:bg-primary-subtle">{selection?<td className="sticky left-0 z-20 w-12 min-w-12 bg-surface px-2 py-2"><Checkbox checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<Button variant="ghost" type="button" className="justify-start px-0 text-left text-link underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</Button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
    </Table></div>
    {selection?<label className="flex min-h-11 items-center gap-2 text-sm md:hidden"><Checkbox checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/>Select all filtered students</label>:null}
    <ul aria-label="Current page TPO spreadsheet records" className="space-y-2 md:hidden">{orderedRows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
