@@ -1,6 +1,8 @@
-export default function PublicPlacementNotFound(){
- return <main className="mx-auto max-w-xl space-y-3 px-4 py-12">
-  <h1 className="text-2xl font-semibold">This page isn&apos;t available</h1>
-  <p className="text-sm text-body">The placement cell hasn&apos;t published a placements page here.</p>
- </main>;
+import { GracefulScreen } from "@/components/public/graceful-screen";
+
+/** Public placement links use the branded missing-page treatment. */
+export default function PublicPlacementNotFound() {
+  return <GracefulScreen title="This page isn't available"
+    message="The placement cell hasn't published a placements page here."
+    homeHref="/home" homeLabel="Go to home" />;
 }
