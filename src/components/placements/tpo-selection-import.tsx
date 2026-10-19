@@ -76,7 +76,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     description={unmatched.length+" unmatched rows will not be recorded. No offers will be released yet."}
     confirmLabel={"Confirm and record "+entries.length+" selections"}
     onConfirm={()=>void confirm()}/>
-  {unmatched.length?<Disclosure title={`${unmatched.length} unmatched or unusable rows`} className="rounded-[var(--lms-control-radius)] border border-border p-3" defaultOpen>
+  {unmatched.length?<Disclosure title={`${unmatched.length} unmatched or unusable rows`} className="border-t border-border pt-3" defaultOpen>
    <div role="region" aria-label="Unmatched selection import rows" tabIndex={0} className="mt-2 max-h-40 min-w-0 overflow-auto"><DataTable caption="Unmatched selection import rows" rows={unmatched} getRowKey={row=>String(row.line)} empty={<p>No unmatched rows.</p>} columns={[{key:"line",header:"Row",mobilePriority:"primary",cell:row=>row.line},{key:"identity",header:"Identifier",mobilePriority:"secondary",cell:row=>row.value||"Empty identifier"},{key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.reason}]}/></div>
   </Disclosure>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

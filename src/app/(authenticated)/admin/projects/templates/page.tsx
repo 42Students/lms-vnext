@@ -27,7 +27,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  const raw=await searchParams;
  const query=parseSuperAdminTemplateDirectoryQuery(raw);
  if(!query.success)return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Projects" title="Templates" />
+  <PageHeader title="Templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
    action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
@@ -35,7 +35,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  if(!can(context,"project-template.read"))
   return <div className="min-w-0 space-y-5">
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
-   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"/>
+   <PageHeader title="Project templates"/>
    <ErrorState title="Project templates access denied"
     description="This account cannot read the global project template catalogue. Check the active Super Admin session."
     action={<Link href="/dashboard" className="font-semibold text-primary-text">Return to dashboard</Link>}/>
@@ -46,7 +46,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  } catch {
   return <div className="min-w-0 space-y-5">
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
-   <PageHeader eyebrow="Super Admin · Projects" title="Project templates"/>
+   <PageHeader title="Project templates"/>
    <ErrorState title="Project templates unavailable"
     description="The template catalogue could not be loaded. Your search and status filters are unchanged; try again."
     action={<Link href={templateDirectoryHref(query.data)} className="font-semibold text-primary-text">Retry loading templates</Link>}/>
@@ -54,7 +54,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  }
  return <div className="min-w-0 space-y-5">
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
-  <PageHeader eyebrow="Super Admin · Projects" title="Project templates"
+  <PageHeader title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">New template →</Link>:undefined}/>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">

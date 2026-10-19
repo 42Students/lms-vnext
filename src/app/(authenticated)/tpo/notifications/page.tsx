@@ -47,7 +47,7 @@ export default async function TpoNotificationsPage({
     return (
       <section role="alert" className="space-y-3">
         <PageHeader title="Invalid notification filters" />
-        <Link href={TPO_NOTIFICATIONS_PATH} className="text-[var(--lms-teal-deep)] underline">
+        <Link href={TPO_NOTIFICATIONS_PATH} className="text-primary-text underline">
           Return to newest notifications
         </Link>
       </section>
@@ -74,7 +74,6 @@ export default async function TpoNotificationsPage({
     <div className="space-y-6">
       <TpoNotificationRefresh/>
       <PageHeader
-        eyebrow="TPO"
         title="Notifications"
         description="A clean history of what happened across placements. Actionable work stays on Home under Needs you."
       />
@@ -110,7 +109,7 @@ export default async function TpoNotificationsPage({
             <div className="flex justify-center">
               <Link
                 href={nextHref}
-                className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-foreground hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-primary-subtle)]"
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle"
               >
                 Older notifications
               </Link>

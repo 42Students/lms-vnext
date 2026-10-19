@@ -1,4 +1,3 @@
-import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -23,7 +22,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
 }) {
   const context=await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
-    <PageHeader eyebrow="Super Admin" title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <PageHeader title="Placement Drives" description="Placement administration requires a college safety scope." />
     <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
   </div>;
   // Validate the platform actor and selected tenant before reading private rounds.
@@ -46,8 +45,8 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     {key:"slots",header:"Candidate slots",mobilePriority:"secondary",cell:()=> "See candidate interviews above"},
   ];
   return <div className="min-w-0 space-y-6">
-    <SuperAdminDriveTabs jobId={jobId} active="Schedule"/>
-    <PageHeader eyebrow="Super Admin · Placements" title={"Interviews · "+data.job.title}
+    
+    <PageHeader title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="inline-flex min-h-11 items-center text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-4 border-b border-border pb-4">
@@ -71,8 +70,8 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       <p className="text-sm text-muted-foreground">{data.total} matching interview/GD rounds</p>
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
         caption="Persisted interview rounds"
-        empty={<p role="status" className="text-sm text-body">{data.total===0?
-          "No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}</p>}/>
+        empty={<EmptyState title={data.total===0?"No matching interview rounds":"No rounds on this page"}
+          description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}/>}/>
     </section>
     <div className="space-y-2">
       <p className="text-sm text-muted-foreground">Page {query.page} of {data.totalPages}</p>

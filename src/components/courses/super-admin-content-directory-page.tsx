@@ -1,3 +1,4 @@
+import { Banner } from "@/components/ui/banner";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -85,13 +86,8 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}/>
   {lessonsResult.status==="fulfilled"
    ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false}/>
-   :<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
-     Content authoring options are temporarily unavailable. Existing content remains visible.
-    </p>}
-  {sectionsResult.status==="rejected"?<p role="status"
-   className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
-     Section filter choices are temporarily unavailable. Your selected filters are still applied.
-   </p>:null}
+   :<Banner tone="warning">Content authoring options are temporarily unavailable. Existing content remains visible.</Banner>}
+  {sectionsResult.status==="rejected"?<Banner tone="warning">Section filter choices are temporarily unavailable. Your selected filters are still applied.</Banner>:null}
   <form method="get" className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}

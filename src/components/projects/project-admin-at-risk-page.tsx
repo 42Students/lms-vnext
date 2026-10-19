@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { parseProjectAdminRiskQuery } from "@/modules/projects/admin-risk-query-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
@@ -23,7 +24,6 @@ import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} 
 export async function ProjectAdminAtRiskPage({
   collegeId,
   basePath,
-  eyebrow,
   searchParams,
 }: {
   collegeId: string;
@@ -38,7 +38,7 @@ export async function ProjectAdminAtRiskPage({
   const parsed = parseProjectAdminRiskQuery(searchParams);
   if (!parsed.success) {
     return <div className="space-y-6">
-      <PageHeader eyebrow={eyebrow} title="At-risk projects"
+      <PageHeader title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review." />
       <ErrorState title="Invalid project filters"
         description="Check the risk, status, sort, search and page filters, or clear them to continue."
@@ -61,7 +61,6 @@ export async function ProjectAdminAtRiskPage({
         active="at-risk"
       />
       <PageHeader
-        eyebrow={eyebrow}
         title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review."
         actions={
@@ -97,9 +96,7 @@ export async function ProjectAdminAtRiskPage({
       <ListToolbar label="At-risk workspaces" viewCount={result.total} />
 
       {!result.items.length ? (
-        <section className="border-b border-border py-6 text-sm text-muted-foreground">
-          No at-risk project workspaces match these filters.
-        </section>
+        <EmptyState title="No at-risk projects" description="No at-risk project workspaces match these filters."/>
       ) : (
         <div className="divide-y divide-border">
           {result.items.map((project) => (
