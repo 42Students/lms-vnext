@@ -1,6 +1,7 @@
 "use client";
 
 import {useState, type FormEvent} from "react";
+import {Select} from "@/components/ui/select";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -51,7 +52,7 @@ export function SuperAdminFacultyAssignmentCreate({
    }
   });
  }
- const inputClass="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground sm:min-h-9";
+ const inputClass="min-h-11 w-full sm:min-h-9";
  return <section aria-label="Create teaching assignment" className="space-y-3">
    <button type="button" disabled={!available.length||!faculty.length||pending}
     onClick={()=>setOpen(value=>!value)} aria-expanded={open}
@@ -62,17 +63,17 @@ export function SuperAdminFacultyAssignmentCreate({
     Create an active course offering and class delivery before assigning a teacher.
    </p>:null}
    {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
-   {open?<form onSubmit={e=>void submit(e)} className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2">
+   {open?<form onSubmit={e=>void submit(e)} className="grid gap-3 border-b border-border pb-5 sm:grid-cols-2">
     <p className="sm:col-span-2 text-sm text-body">Select a course and class in the current college. Only active faculty can be assigned.</p>
     <label className="grid gap-1 text-sm font-semibold">Course / Class / Semester
-     <select required className={inputClass} value={deliveryId} onChange={e=>{setDeliveryId(e.target.value);setOtherDeliveryIds([]);}}>
+     <Select required className={inputClass} value={deliveryId} onChange={e=>{setDeliveryId(e.target.value);setOtherDeliveryIds([]);}}>
       <option value="">Choose an active class</option>
       {available.map(item=><option key={item.id} value={item.id}>
        {item.courseCode} · {item.courseName} · {item.cohortName} · {item.sectionName} · {item.academicPeriodName}
       </option>)}
-     </select>
+     </Select>
     </label>
-    {selected?<fieldset className="grid gap-2 rounded-md border border-border p-3 sm:col-span-2">
+    {selected?<fieldset className="grid gap-2 border-b border-border pb-3 sm:col-span-2">
       <legend className="px-1 text-sm font-semibold">Course(s)</legend>
       <p className="text-xs text-body">Select several courses to assign this lecturer to all of them at once. The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
       <div role="region" aria-label="Available courses in the selected class" tabIndex={0}
@@ -86,19 +87,19 @@ export function SuperAdminFacultyAssignmentCreate({
       </div>
     </fieldset>:null}
     <label className="grid gap-1 text-sm font-semibold">Faculty
-     <select required className={inputClass} value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
+     <Select required className={inputClass} value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
       <option value="">Choose faculty</option>
       {faculty.map(item=><option key={item.membershipId} value={item.membershipId}>
        {item.displayName}
       </option>)}
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Role
-     <select className={inputClass} value={role} onChange={e=>setRole(e.target.value as CourseTeachingRole)}>
+     <Select className={inputClass} value={role} onChange={e=>setRole(e.target.value as CourseTeachingRole)}>
       {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
        {facultyAssignmentRoleLabel(value)}
       </option>)}
-     </select>
+     </Select>
     </label>
     {truncated?<p role="status" className="text-xs text-muted-foreground">
      Only the first 500 active faculty members are available here. Use the course workspace to find others.
@@ -152,12 +153,12 @@ export function SuperAdminTeachingRoleEdit({
    </button>
    {open?<div className="grid gap-2">
       <label className="grid gap-1 text-xs font-semibold">Teaching role
-       <select value={role} disabled={pending}
+       <Select value={role} disabled={pending}
         onChange={e=>setRole(e.target.value as CourseTeachingRole)}
         className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm sm:min-h-9">
         {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
           {facultyAssignmentRoleLabel(value)}</option>)}
-       </select>
+       </Select>
       </label>
       <button type="button" disabled={pending||role===initialRole}
        onClick={()=>void save()}
