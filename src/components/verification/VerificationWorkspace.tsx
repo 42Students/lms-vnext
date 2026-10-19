@@ -47,7 +47,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   <nav aria-label="Verification status" className="flex flex-wrap gap-2">
    {(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>
     <Button variant={tab===t?"primary":"secondary"} type="button" key={t} aria-pressed={tab===t} onClick={()=>onTabChange?onTabChange(t):setTab(t)}
-     className="min-h-11 sm:min-h-9">
+     className="min-h-[var(--lms-control-height)] ">
      {t==="SENT_BACK"?"Sent back":t==="WAITING"?"Waiting":"Verified"}{showTabCounts?` (${counts[t]})`:""}
     </Button>)}
   </nav>
@@ -65,7 +65,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   </div>
   {loading?<p role="status">Loading verification requests…</p>:
    error?<div role="alert" className="space-y-2"><p>Unable to load verification requests: {error}</p>
-    {onRetry&&<Button variant="secondary" type="button" className="min-h-11 sm:min-h-9" onClick={onRetry}>Retry</Button>}</div>:
+    {onRetry&&<Button variant="secondary" type="button" className="min-h-[var(--lms-control-height)] " onClick={onRetry}>Retry</Button>}</div>:
    visible.length===0?<div role="status" className="rounded-md border p-4">
      {(legacyCollegeCopy||legacyTpoCopy) && counts[tab]===0
       ? <><p className="font-semibold">{tab==="WAITING"
@@ -98,7 +98,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      <p className="mt-2 text-xs">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
      {row.attention.length>0&&<p className="mt-2 break-words text-sm" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}
      <Button variant="secondary" type="button" disabled={!onReview} onClick={()=>onReview?.(row)}
-      className="mt-3 min-h-11 sm:min-h-9">{verificationQueueCardPresentation(row.status).action}</Button>
+      className="mt-3 min-h-[var(--lms-control-height)] ">{verificationQueueCardPresentation(row.status).action}</Button>
     </li>)}
    </ul>}
  </section>;
