@@ -117,7 +117,7 @@ export default async function LearnerPlacementRulesPage({
           <Link href="/learn/my-placements#placement-job-preferences" className="mt-4 inline-flex text-sm font-semibold text-primary-text">Edit job preferences →</Link>
         </section>
       </div>
-      <section className="rounded-xl border border-border bg-surface p-5" aria-label="College-wide placement policy">
+      <section className="border-b border-border py-5" aria-label="College-wide placement policy">
         <h2 className="font-semibold text-foreground">College-wide placement policy</h2>
         {policyView?<div className="mt-3 space-y-3">
           <h3 className="text-sm font-semibold text-foreground">Where you stand:</h3>
