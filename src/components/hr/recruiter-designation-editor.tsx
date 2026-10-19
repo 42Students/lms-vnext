@@ -34,7 +34,7 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
    <div className="flex flex-wrap gap-2">
     <Input id="hr-recruiter-designation" value={title} onChange={event=>setTitle(event.target.value)}
        maxLength={160} className="min-w-48 flex-1"/>
-    <Button type="submit" disabled={saving||title.length>160}>
+    <Button type="submit" disabled={saving||title.length>160} loading={saving}>
       {saving?"Saving…":"Save designation"}</Button>
    </div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
