@@ -46,6 +46,13 @@ describe("NORTH-STAR-HR-03: secondary recruiter surfaces inherit page canvas",()
   expect(form).not.toContain("grid gap-4 rounded-xl border");
   expect(form).toContain("name=\"collegeId\"");
  });
+ it("retains the incoming 36px recruiter bell while enforcing legacy focus and radius",()=>{
+  const bell=read("src/components/hr/recruiter-notification-bell.tsx");
+  expect(bell).toContain("min-h-9 min-w-9");
+  expect(bell).not.toContain("rounded-[9px]");
+  expect(bell).not.toContain("focus-visible:outline-primary");
+  expect(bell).toContain("rounded-[var(--lms-control-radius)]");
+ });
  it("keeps every recruiter operation while using the 9px control token",()=>{
   const paths=[
    "src/components/placements/recruiter-interview-slot-form.tsx",
