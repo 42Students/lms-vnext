@@ -9,6 +9,8 @@ export type DataTableColumn<Row> = {
   key: string;
   header: ReactNode;
   cell: (row: Row) => ReactNode;
+  /** Native table sorting semantics; visual sort controls stay in the column header. */
+  sortDirection?: "ascending" | "descending" | "none";
   className?: string;
   mobileLabel?: string;
   mobilePriority?: "primary" | "secondary" | "action" | "hidden";
@@ -95,7 +97,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
       <table className="block w-full border-separate border-spacing-0 text-left text-[13px] leading-5 tabular-nums sm:table sm:border-collapse sm:[&_tbody_tr:last-child_td]:border-b-0">
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden sm:table-header-group sm:bg-[var(--lms-white)]">
-          <tr>{columns.map(col=><th key={col.key} scope="col"
+          <tr>{columns.map(col=><th key={col.key} scope="col" aria-sort={col.sortDirection}
             className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] sm:sticky sm:top-0 sm:z-10 sm:bg-[var(--lms-white)] sm:first:left-0 sm:first:z-20",col.className)}>{col.header}</th>)}</tr>
         </thead>
         <tbody className="block space-y-[var(--lms-space-3)] sm:table-row-group sm:space-y-0">

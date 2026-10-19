@@ -1,4 +1,5 @@
 import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
+import {Disclosure} from "@/components/ui/disclosure";
 import batchStyles from "@/components/tpo/legacy-batch-eligibility.module.css";
 import Link from "next/link";
 import {tpoBatchReturnHref} from "@/modules/placements/tpo-batch-return-model";
@@ -37,14 +38,12 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
  return <div className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
  <Link href={backHref} className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Placement eligibility</Link>
- {undoable?<details className="border-b border-border py-3">
-  <summary className="min-h-11 cursor-pointer font-semibold text-link"
-   title={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}>
-   Undo last decision
-  </summary>
+ {undoable?<Disclosure title="Undo last decision"
+    summaryTitle={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}
+    className="border-b border-border py-3 [&>summary]:min-h-11 [&>summary]:text-link">
   <p className="my-2 text-sm text-muted-foreground">Only the latest unreversed batch or learner action can be undone. A newer decision will block this request.</p>
   <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
- </details>:null}
+ </Disclosure>:null}
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
  {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
   Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
