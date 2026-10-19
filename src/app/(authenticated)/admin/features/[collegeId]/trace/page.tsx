@@ -316,7 +316,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           className="min-w-0 space-y-6"
           aria-label="Selected learner module access"
         >
-          <div className="rounded-xl border border-border bg-surface p-5">
+          <div className="border-b border-border pb-5">
             <h2 className="m-0 text-xl font-semibold text-foreground">
               Why this learner sees these modules
             </h2>
