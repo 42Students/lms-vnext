@@ -88,7 +88,7 @@ export default async function TpoRecruiterAccessPage({
           action={
             <Link
               href="/tpo/settings/recruiters"
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link"
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link"
             >
               Clear filters
             </Link>
@@ -139,7 +139,7 @@ export default async function TpoRecruiterAccessPage({
       />
 
       {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
-       <p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">Recruiter access duration settings are not available yet.</p>}
+       <p role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-4 text-sm">Recruiter access duration settings are not available yet.</p>}
       <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
 
       <TpoRecruiterGrantForm companies={linkedCompanies.companies.map((company) => ({
@@ -204,7 +204,7 @@ export default async function TpoRecruiterAccessPage({
 
           <Link
             href="/tpo/settings/recruiters"
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Clear
           </Link>
@@ -218,11 +218,11 @@ export default async function TpoRecruiterAccessPage({
           </h2>
           <div className="flex flex-wrap gap-2">
             <a href={tpoRecruiterGrantExportHref(query)}
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
               Export filtered grants CSV
             </a>
             <a href={tpoRecruiterGrantExportHref(query,"xlsx")}
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
               Export filtered grants Excel
             </a>
           </div>
@@ -302,7 +302,7 @@ export default async function TpoRecruiterAccessPage({
                   q:query.q,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
               >
                 ← Previous
               </Link>
@@ -311,7 +311,7 @@ export default async function TpoRecruiterAccessPage({
             {page < totalPages ? (
               <Link
                 href={nextTpoRecruiterGrantPage(query,page)}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
               >
                 Next →
               </Link>
