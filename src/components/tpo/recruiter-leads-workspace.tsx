@@ -148,9 +148,9 @@ function friendlyError(status: number, payload: { error?: string }) {
   return "The request failed. Check your connection and try again.";
 }
 
-const inputStyle = "min-h-11 sm:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground";
-const buttonStyle = "inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
-const primaryStyle = "inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[9px] bg-primary px-4 py-2 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
+const inputStyle = "min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-sm text-foreground";
+const buttonStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50";
+const primaryStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[9px] bg-primary px-4 py-2 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
 
 export function RecruiterLeadsWorkspace({
   collegeId,
@@ -681,18 +681,18 @@ export function RecruiterLeadsWorkspace({
         }
       />
 
-      {phase==="ready"&&error?<div role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm">
+      {phase==="ready"&&error?<div role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
         {error} Showing the last recruiter list we loaded.
         <Button variant="secondary" type="button" className={buttonStyle+" ml-2"} onClick={()=>void load()}>Retry</Button>
       </div>:null}
-      {companiesPhase==="ready"&&companiesError?<div role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm">
+      {companiesPhase==="ready"&&companiesError?<div role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
         {companiesError} Showing the last company list we loaded.
         <Button variant="secondary" type="button" className={buttonStyle+" ml-2"} onClick={()=>void loadCompanies()}>Retry companies</Button>
       </div>:null}
-      {actionToast?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm">{actionToast}</p>:null}
+      {actionToast?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm">{actionToast}</p>:null}
       {phase !== "ready" && view!=="companies" ? (
         <div role={phase === "loading" ? "status" : "alert"}
-          className="rounded-lg border border-border bg-surface p-5">
+          className="border-l-2 border-warning bg-warning-subtle px-4 py-3">
           {phase === "loading" ? "Loading recruiter leads…" : error}
           {phase === "error" ? (
             <Button variant="secondary" className={buttonStyle + " ml-3"} onClick={() => void load()}>Retry</Button>
@@ -766,7 +766,7 @@ export function RecruiterLeadsWorkspace({
               </Button>)}
             </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
-              className="grid gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-4">
+              className="grid gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-4">
               <label className="text-sm">Status
                 <Select className={inputStyle+" mt-1"} value={statusFilter}
                   onChange={e=>updateFilter("status",e.target.value)}>
@@ -913,7 +913,7 @@ export function RecruiterLeadsWorkspace({
             </div>
           ) : null}
           {view !== "companies" && visible.length === 0 ? (
-            <div className="rounded-lg border border-border bg-surface p-8 text-center text-muted-foreground">
+            <div className="border-y border-border py-8 text-center text-muted-foreground">
               {rows.length ? "No leads match your filters." : "No recruiters yet. Add a company contact to start tracking outreach."}
             </div>
           ) : view === "companies" ? (
@@ -959,11 +959,7 @@ export function RecruiterLeadsWorkspace({
                   setCompanySearch("");setCompanyContacts("ALL");setCompanyHistory("ALL");setCompanyAliases(false);setCompanyCommunicationFilter("ALL");
                 }}>Clear company filters</Button>
               </div>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <p role="status" className="text-xs text-body">{visibleCompanies.length} of {companies.length} companies</p>
-                <Button variant="secondary" type="button" disabled={visibleCompanies.length===0} onClick={exportCompanies}
-                 className={buttonStyle}>Export companies CSV</Button>
-              </div>
+              <p role="status" className="text-xs text-body">{visibleCompanies.length} of {companies.length} companies</p>
               {!communicationReady?<p role="status" className="text-xs text-muted-foreground">Communication changes are unavailable until company status storage is registered.</p>:null}
               {communicationError?<p role="alert" className="text-sm text-warning">{communicationError}</p>:null}
               {companiesPhase !== "ready" ? (
@@ -971,7 +967,7 @@ export function RecruiterLeadsWorkspace({
                   {companiesPhase==="loading"?"Loading companies…":companiesError}
                 </p>
               ) : visibleCompanies.length===0 ? (
-                <p className="rounded-lg border border-border bg-surface p-6 text-sm">
+                <p className="border-y border-border py-6 text-sm">
                   No companies match the current filters.
                 </p>
               ) : (
@@ -1172,13 +1168,13 @@ export function RecruiterLeadsWorkspace({
                 This saves a new college contact and records an auditable creation event.
               </p>
               {form.followupDate?<p>First follow-up: {form.followupDate} (IST)</p>:null}
-              <Button variant="secondary" type="button" className="mt-2 text-[var(--lms-teal-deep)] underline" onClick={()=>setReviewingCreate(false)}>
+              <Button variant="secondary" type="button" className="mt-2 text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onClick={()=>setReviewingCreate(false)}>
                 Edit details
               </Button>
             </div>:null}
             {saveError && <p role="alert" className="text-sm text-foreground">{saveError}</p>}
             <div className="flex justify-end">
-              <Button variant="secondary" type="submit" className={primaryStyle}
+              <Button variant="primary" type="submit" className={primaryStyle}
                 disabled={saving || checking || Boolean(duplicate)}>
                 {saving ? "Creating…" : reviewingCreate?"Confirm and create recruiter":"Review and create recruiter"}
               </Button>
