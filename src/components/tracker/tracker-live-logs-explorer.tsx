@@ -158,33 +158,28 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     </div>
     <div className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold">Time window
-        <Select value={windowMinutes} onChange={event=>setWindowMinutes(event.target.value)}
-         >
+        <Select value={windowMinutes} onChange={event=>setWindowMinutes(event.target.value)} className="min-h-11 md:min-h-9">
           <option value="15">Last 15 minutes</option><option value="60">Last hour</option>
           <option value="360">Last 6 hours</option><option value="1440">Last 24 hours</option>
         </Select>
       </label>
       <label className="grid gap-1 text-sm font-semibold">Minimum severity
-        <Select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")}
-         >
+        <Select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")} className="min-h-11 md:min-h-9">
           <option value="ERROR">Error and above</option>
           <option value="WARNING">Warning and above</option>
         </Select>
       </label>
       <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold">Search this page
         <Input type="search" maxLength={150} value={query} onChange={event=>setQuery(event.target.value)}
-          placeholder="Message, route, reference"/>
+          placeholder="Message, route, reference" className="min-h-11"/>
       </label>
-      <Button variant="primary" type="button" onClick={()=>void load()} loading={pending} disabled={pending||exporting}
-       >
+      <Button variant="primary" type="button" onClick={()=>void load()} loading={pending} disabled={pending||exporting} className="min-h-11 w-full md:min-h-9 md:w-auto">
         {pending?"Loading…":"Refresh newer"}
       </Button>
-      <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} loading={exporting} disabled={pending||exporting||configured!==true}
-       >
+      <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} loading={exporting} disabled={pending||exporting||configured!==true} className="min-h-11 w-full md:min-h-9 md:w-auto">
         {exporting?"Exporting…":"Download logs"}
       </Button>
-      <Button variant="secondary" type="button" onClick={()=>setReportOpen(true)} disabled={!items.length}
-       >
+      <Button variant="secondary" type="button" onClick={()=>setReportOpen(true)} disabled={!items.length} className="min-h-11 w-full md:min-h-9 md:w-auto">
         Report for Claude
       </Button>
     </div>
@@ -196,29 +191,28 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
           <p className="mt-2 whitespace-pre-wrap break-words text-body">{item.message}</p>
           <p className="mt-2 text-xs text-muted-foreground">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
           <div className="mt-3 flex flex-wrap gap-3">
-            <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void copy(trackerLogMarkdown([item]))}
+            <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" onClick={()=>void copy(trackerLogMarkdown([item]))}
              >Copy for Claude</Button>
-            <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event))}
+            <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event))}
              >Copy permalink</Button>
             <Link href={"/tracker?context="+encodeURIComponent(
               [item.event,item.path,item.message,"Reference: "+(item.requestId??"none")].join("\n").slice(0,450))}
-              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Report this</Link>
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Report this</Link>
             {item.knownErrorId?<>
               <Link href={"/tracker/logs#known-error-"+item.knownErrorId}
-                className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Known error details</Link>
-              <Button variant="ghost" className="underline text-primary-text" type="button" disabled={mutating}
+                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Known error details</Link>
+              <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" disabled={mutating}
                 onClick={()=>{setMuteReason("");setMuteTarget({id:item.knownErrorId!,muted:item.muted===true});}}
                >
                 {item.muted?"Unmute this error":"Mute this error"}
               </Button>
             </>:<Link href="/tracker/logs#known-errors"
-              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Open Known Errors</Link>}
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Open Known Errors</Link>}
           </div>
         </Disclosure>
       </li>)}
     </ol>:<EmptyState title="No live errors loaded" description="Load or refresh live logs to see the latest authorized error events."/>}
-    {nextPage?<Button variant="secondary" type="button" onClick={()=>void load(true)} loading={pending} disabled={pending||exporting}
-     >
+    {nextPage?<Button variant="secondary" type="button" onClick={()=>void load(true)} loading={pending} disabled={pending||exporting} className="min-h-11 md:min-h-9">
       Load older
     </Button>:null}
     <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}
@@ -237,11 +231,11 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       <Textarea readOnly aria-label="Redacted tracker log report" value={trackerLogMarkdown(items)} rows={8}
        />
       <div className="mt-3 flex flex-wrap gap-3">
-        <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void copy(trackerLogMarkdown(items))}
+        <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" onClick={()=>void copy(trackerLogMarkdown(items))}
          >Copy report</Button>
-        <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>void downloadRange("markdown")} loading={exporting} disabled={exporting}
+        <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" onClick={()=>void downloadRange("markdown")} loading={exporting} disabled={exporting}
          >Download report</Button>
-        <Button variant="ghost" className="underline text-primary-text" type="button" onClick={()=>setReportOpen(false)}
+        <Button variant="ghost" className="min-h-11 underline text-primary-text md:min-h-9" type="button" onClick={()=>setReportOpen(false)}
          >Close</Button>
       </div>
     </Dialog>
