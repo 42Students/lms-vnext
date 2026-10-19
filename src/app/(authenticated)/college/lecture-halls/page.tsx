@@ -54,7 +54,7 @@ export default async function CollegeLectureHallsPage({
           title="Invalid lecture hall filters"
           description="The room search, status, type, department or page is invalid. No records were loaded."
           action={
-            <Link href="/college/lecture-halls" className="font-semibold text-link">
+            <Link href="/college/lecture-halls" className="font-semibold text-link lms-inline-link">
               Clear filters
             </Link>
           }
