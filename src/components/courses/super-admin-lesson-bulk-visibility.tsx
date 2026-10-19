@@ -5,7 +5,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
-import {Checkbox} from "@/components/ui/checkbox";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 type Lesson={id:string;name:string;courseName:string;contentCount:number;publishedContentCount:number;publishedAndVisibleFlagCount:number};
@@ -29,7 +28,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
  }
  return <section aria-label="Lesson bulk visibility" className="space-y-3 border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h2 className="font-semibold">Bulk lesson visibility</h2>
+   <h2 className="font-semibold text-foreground">Bulk lesson visibility</h2>
    <span role="status" className="text-sm text-muted-foreground">{selected.length} of {lessons.length} lessons selected</span>
   </div>
   <p className="text-sm text-body">Show or hide student access to published lesson content; unpublished content stays unpublished. This is a bulk operation with a per-content failure report.</p>
