@@ -269,6 +269,7 @@ export function SectionOperations({
           <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
               size="sm"
+              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={pending}
               onClick={() =>
@@ -287,6 +288,7 @@ export function SectionOperations({
             </Button>
             <Button
               size="sm"
+              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
               variant="ghost"
               disabled={pending}
               onClick={() =>
@@ -345,6 +347,7 @@ export function SectionOperations({
           <div className="flex min-w-0 flex-wrap justify-end gap-[var(--lms-space-2)]">
             <Button
               size="sm"
+              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={pending}
               onClick={() =>
@@ -363,6 +366,7 @@ export function SectionOperations({
             </Button>
             <Button
               size="sm"
+              className="min-h-11 sm:min-h-[var(--lms-control-height)]"
               variant="ghost"
               disabled={pending}
               onClick={() =>
