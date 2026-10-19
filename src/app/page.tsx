@@ -177,8 +177,7 @@ export default async function HomePage({
       </div>
 
       <footer className={styles.footer}>
-        <span>{tenant.kind === "college" ? "Powered by 42LMS" :
-          "© " + new Date().getFullYear() + " 42LMS · JRSPF Technologies Pvt. Ltd."}</span>
+        <span>© {new Date().getFullYear()} 42LMS · JRSPF Technologies Pvt. Ltd.{tenant.kind === "college" ? " · Powered by 42LMS" : ""}</span>
         <nav className={styles.footerLinks} aria-label="Sign-in footer">
           {branding?.supportEmail ? <a href={`mailto:${branding.supportEmail}`}>{branding.supportEmail}</a> : null}
           {branding?.supportPhone ? <a href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}>{branding.supportPhone}</a> : null}
