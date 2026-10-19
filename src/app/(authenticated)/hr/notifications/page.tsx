@@ -70,7 +70,7 @@ export default async function HrMessagesPage({searchParams}:{
        aria-label={"Notifications for "+group.title}
        className="border-b border-border pb-4">
        <div className="flex flex-wrap items-center justify-between gap-2">
-         <h2 className="font-semibold text-foreground">
+         <h2 className="text-[18px] font-semibold leading-[1.35] text-[var(--lms-heading)]">
            <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
              className="text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{group.title}</Link>
          </h2>
@@ -87,7 +87,7 @@ export default async function HrMessagesPage({searchParams}:{
          </li>)}
        </ol>
      </section>)}
-   </div>:<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm text-body">
+   </div>:<p role="status" className="border-y border-border py-5 text-sm text-body">
      No matching notifications for this employer and college.</p>}
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground">
