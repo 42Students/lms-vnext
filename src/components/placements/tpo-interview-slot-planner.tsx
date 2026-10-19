@@ -48,15 +48,15 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    <p className="mt-1 text-sm text-body">Create unassigned start-time slots in each room. Existing bookings stay unchanged; overlapping room times are refused.</p>
    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
     <label className="grid gap-1 text-sm">Start time (IST)<Input type="datetime-local" required value={date} onChange={e=>setDate(e.target.value)}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
+      className="min-h-11 md:min-h-9 "/></label>
     <label className="grid gap-1 text-sm">Room names (comma-separated)<Input value={rooms} onChange={e=>setRooms(e.target.value)}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
+      className="min-h-11 md:min-h-9 "/></label>
     <label className="grid gap-1 text-sm">Minutes per slot<Input type="number" min={5} max={240} value={minutes} onChange={e=>setMinutes(Number(e.target.value))}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
+      className="min-h-11 md:min-h-9 "/></label>
     <label className="grid gap-1 text-sm">Gap (minutes)<Input type="number" min={0} max={120} value={gap} onChange={e=>setGap(Number(e.target.value))}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
+      className="min-h-11 md:min-h-9 "/></label>
     <label className="grid gap-1 text-sm">Slots per room<Input type="number" min={1} max={100} value={count} onChange={e=>setCount(Number(e.target.value))}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
+      className="min-h-11 md:min-h-9 "/></label>
    </div>
    <div className="mt-4 flex flex-wrap gap-3">
     <Button variant="primary" type="button" disabled={busy||!date||!rooms.trim()} onClick={()=>void action({
@@ -74,11 +74,11 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    <p className="mt-1 text-sm text-body">Preview the affected roll range, then assign a room. Overlapping room bookings are skipped and reported.</p>
    <div className="mt-3 grid gap-3 sm:grid-cols-3">
     <label className="grid gap-1 text-sm">From roll<Input value={fromRoll} onChange={e=>setFromRoll(e.target.value)}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/></label>
+     className="min-h-11 md:min-h-9 "/></label>
     <label className="grid gap-1 text-sm">To roll<Input value={toRoll} onChange={e=>setToRoll(e.target.value)}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/></label>
+     className="min-h-11 md:min-h-9 "/></label>
     <label className="grid gap-1 text-sm">New room<Input value={bulkRoom} onChange={e=>setBulkRoom(e.target.value)}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/></label>
+     className="min-h-11 md:min-h-9 "/></label>
    </div>
    {fromRoll&&toRoll&&fromRoll.localeCompare(toRoll,"en",{numeric:true})>0?<p role="alert" className="mt-2 text-sm text-foreground">The ending roll must be after the starting roll.</p>:null}
    {fromRoll&&toRoll?<p role="status" className="mt-3 text-sm">
@@ -97,13 +97,13 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <div className="flex flex-wrap gap-3">
      <Select value={requestTarget[req.id]??""} aria-label={"New slot for "+(req.name??"learner")}
       onChange={e=>setRequestTarget(p=>({...p,[req.id]:e.target.value}))}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm">
+      className="min-h-11 md:min-h-9  text-sm">
       <option value="">Choose new slot</option>
       {free.map(slot=><option key={slot.id} value={slot.id}>{format(slot.startsAt)} · {slot.room}</option>)}
      </Select>
      <Input placeholder="Decision reason" aria-label={"Reason for "+(req.name??"learner")}
       value={requestReason[req.id]??""} onChange={e=>setRequestReason(p=>({...p,[req.id]:e.target.value}))}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
+      className="min-h-11 md:min-h-9  text-sm"/>
     </div>
     <div className="flex flex-wrap gap-3">
      <Button variant="primary" type="button" disabled={busy||!requestTarget[req.id]||(requestReason[req.id]??"").trim().length<3}
@@ -122,7 +122,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <p className="text-sm">{format(p.startsAt)} · {p.mode} · {p.panelLabel??"Recruiter panel"}</p>
     <label className="grid gap-1 text-sm">Venue or meeting link
      <Input value={venue[p.id]??p.meetingLocation??""} onChange={e=>setVenue(v=>({...v,[p.id]:e.target.value}))}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+      className="min-h-11 md:min-h-9 "/>
     </label>
     <Button variant="primary" type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
      onClick={()=>void action({action:"CONFIRM_RECRUITER_PROPOSAL",proposalId:p.id,expectedVersion:p.version,
@@ -143,14 +143,14 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
        <p className="text-sm text-body">{slot.status==="BOOKED"?(student?.name??"Assigned learner"):"Available"} · Until {format(slot.endsAt)}</p></div>
       {slot.status==="AVAILABLE"?<div className="flex flex-wrap gap-2">
        <Select aria-label="Select learner for slot" value={pick[slot.id]??""} onChange={e=>setPick(p=>({...p,[slot.id]:e.target.value}))}
-        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
+        className="min-h-11 md:min-h-9  text-sm">
         <option value="">Choose student</option>{waiting.map(c=><option key={c.applicationId} value={c.applicationId}>{c.roll??""} {c.name??"Learner"}</option>)}
        </Select>
        <Button variant="primary" type="button" disabled={busy||!pick[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary"
         onClick={()=>void action({action:"BOOK",slotId:slot.id,expectedVersion:slot.version,applicationId:pick[slot.id]})}>Book</Button>
       </div>:<div className="flex flex-wrap items-center gap-2">
        <Select aria-label="Move to available slot" value={move[slot.id]??""}
-        onChange={e=>setMove(p=>({...p,[slot.id]:e.target.value}))} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
+        onChange={e=>setMove(p=>({...p,[slot.id]:e.target.value}))} className="min-h-11 md:min-h-9  text-sm">
         <option value="">Move to free slot</option>{free.map(target=><option key={target.id} value={target.id}>{format(target.startsAt)} · {target.room}</option>)}
        </Select>
        <Button variant="secondary" type="button" disabled={busy||!move[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50"
@@ -162,7 +162,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      <div className="flex flex-wrap items-center gap-2">
       <label className="text-sm">Change room
        <Input value={roomChange[slot.id]??slot.room} onChange={e=>setRoomChange(p=>({...p,[slot.id]:e.target.value}))}
-        className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
+        className="ml-2 min-h-11 md:min-h-9 "/></label>
       <Button variant="secondary" type="button" disabled={busy||(roomChange[slot.id]??slot.room)===slot.room}
        onClick={()=>void action({action:"ASSIGN_ROOM",slotId:slot.id,expectedVersion:slot.version,room:roomChange[slot.id]})}
        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50">Save room</Button>
