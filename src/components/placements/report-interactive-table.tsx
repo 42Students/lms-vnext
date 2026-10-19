@@ -114,7 +114,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
      size="sm">Reset view</Button>
    </div>
    <p role="status" className="text-xs text-muted-foreground">
-    {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Click a column heading to sort.
+    {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
    <div className="flex flex-wrap items-center gap-2 sm:hidden">
     <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Sort rows by
