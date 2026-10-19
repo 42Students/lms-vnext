@@ -96,6 +96,14 @@
 [data-slot="dropdown"] a[href]:active:not([aria-disabled="true"]) {
   background: rgba(0, 0, 0, .06);
 }
+[data-slot="notification-popover"] > div:first-child > h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.02em;
+  color: var(--lms-neutral-900);
+}
 [data-slot="notification-popover"] {
   border: 1px solid var(--lms-neutral-200);
   border-radius: 12px;
