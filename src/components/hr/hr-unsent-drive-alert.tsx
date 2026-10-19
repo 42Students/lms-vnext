@@ -29,11 +29,11 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
    <p className="font-semibold text-foreground">You have a drive request you haven&apos;t sent yet</p>
    <p className="mt-1 text-sm text-body">It is saved on this device.</p>
    <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-    className="mt-3 inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+    className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Continue
    </Link>
    <button type="button"
-    className="ml-3 min-h-9 rounded-[9px] px-3 text-sm font-semibold text-body underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]"
+    className="ml-3 min-h-11 rounded-md px-3 text-sm font-semibold text-body underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
     onClick={()=>{setError("");setConfirmDiscard(true);}}>Discard saved draft</button>
    <ConfirmActionDialog open={confirmDiscard}
     title="Discard the unsent drive request saved on this device?"
