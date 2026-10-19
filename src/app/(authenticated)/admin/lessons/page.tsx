@@ -13,6 +13,7 @@ import {CollegeLessonVisibilityControl} from "@/components/courses/college-lesso
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -28,7 +29,7 @@ export default async function SuperAdminLessonsPage({
   if (!parsed.success) return <div className="space-y-5">
     <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
-      action={<Link href="/admin/lessons" className="font-semibold text-primary-text">Clear filters</Link>} />
+      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-5">
@@ -46,7 +47,7 @@ export default async function SuperAdminLessonsPage({
     <ErrorState title="Lessons unavailable"
       description="The lesson directory could not be loaded. Your filters have not changed."
       action={<Link href={adminLearningHref("LESSONS",parsed.data)}
-        className="font-semibold text-primary-text">Retry loading lessons</Link>} />
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9">Retry loading lessons</Link>} />
   </div>;
   const data=dataResult.value;
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
@@ -56,32 +57,29 @@ export default async function SuperAdminLessonsPage({
     <PageHeader title="Lessons"
       description="Authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion."
       actions={<a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export lessons.csv</a>}
+     className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export lessons.csv</a>}
     />
     
-    <form className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-5">
-      <label className="grid gap-1 text-sm font-semibold text-body">Search
+    <form className="grid gap-3 py-1 md:grid-cols-2 xl:grid-cols-5">
+      <label className="grid gap-1 text-xs font-semibold text-body">Search
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"
-          className="min-h-11 sm:min-h-9" />
+          className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <Select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9">
+      <label className="grid gap-1 text-xs font-semibold text-body">Status
+        <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
       </label>
       <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
-      <Button type="submit" className="self-end">Filter</Button>
+      <Button type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
     </form>
-    <Link className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text" href="/admin/lessons">Clear filters</Link>
+    <Link className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
-    {filtersResult.status==="rejected"?<p role="status"
-      className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+    {filtersResult.status==="rejected"?<Alert tone="warning">
       Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
-    </p>:null}
+    </Alert>:null}
     {pathsResult.status==="fulfilled"?<SuperAdminLessonCreate paths={paths}/>:
-      <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
-        Lesson creation options are temporarily unavailable. Existing lessons remain visible.
-      </p>}
+      <Alert tone="warning">Lesson creation options are temporarily unavailable. Existing lessons remain visible.</Alert>}
     {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
     {data.items.length ? <div className="divide-y divide-border border-y border-border">
       {data.items.map(lesson => <article key={lesson.id} className="min-w-0 py-4">
@@ -101,7 +99,7 @@ export default async function SuperAdminLessonsPage({
             expectedSequence={lesson.sequence} canMoveUp={lesson.sequence>0} canMoveDown={true}/>
         </div>:null}
         <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
-          className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering to add lessons →
         </Link>
       </article>)}
@@ -110,11 +108,11 @@ export default async function SuperAdminLessonsPage({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page - 1 })}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text sm:min-h-9">Previous</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text md:min-h-9">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={adminLearningHref("LESSONS", { ...data.query, page: data.query.page + 1 })}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text sm:min-h-9">Next</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text md:min-h-9">Next</Link> : null}
       </div>
     </nav>
-    <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
   </div>;
 }
