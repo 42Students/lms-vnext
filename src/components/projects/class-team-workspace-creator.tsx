@@ -283,8 +283,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
           empty={<p>No individual results recorded.</p>}
         />
       </div>
-      <button type="button"
-        className="inline-flex min-h-11 items-center rounded font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+      <Button type="button" variant="secondary" className=""
         onClick={()=>{
           let url:string|null=null;
           let link:HTMLAnchorElement|null=null;
@@ -304,7 +303,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
             const disposableUrl=url;
             if(disposableUrl)window.setTimeout(()=>URL.revokeObjectURL(disposableUrl),0);
           }
-        }}>Export outcome CSV</button>
+        }}>Export outcome CSV</Button>
     </section>:null}
     <div className="flex flex-wrap justify-end gap-3">
       <Button variant="secondary" disabled={pending} onClick={()=>router.push(basePath)}>Cancel</Button>
