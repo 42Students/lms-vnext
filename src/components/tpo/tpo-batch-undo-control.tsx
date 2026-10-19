@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
@@ -23,7 +24,7 @@ export function TpoBatchUndoControl({batchId,actionId}:{batchId:string;actionId:
    finally{setBusy(false);}
   });
  }
- return <div className="space-y-2"><label className="flex items-start gap-2 text-sm text-body"><input type="checkbox" checked={reviewed} disabled={busy} onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>I reviewed this exact decision. Undo is audited and will be rejected if another decision changed the same learners.</label><button type="button" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50" disabled={busy||!reviewed}
+ return <div className="space-y-2"><label className="flex items-start gap-2 text-sm text-body"><Checkbox checked={reviewed} disabled={busy} onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>I reviewed this exact decision. Undo is audited and will be rejected if another decision changed the same learners.</label><button type="button" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50" disabled={busy||!reviewed}
   onClick={()=>void undo()}>{busy?"Undoing…":"Undo this action"}</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}</div>;
 }
