@@ -45,7 +45,7 @@ export default async function HrMessagesPage({searchParams}:{
      className={grant.collegeId===result.collegeId ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-semibold text-on-primary" : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary"}>{grant.collegeName}</Link>):null}
     <Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+
       (query.data.unreadOnly==="true"?"false":"true")+"&q="+encodeURIComponent(query.data.q)}
-     className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      {query.data.unreadOnly==="true"?"Show all":"Unread only"}
     </Link>
    </nav>
@@ -87,7 +87,7 @@ export default async function HrMessagesPage({searchParams}:{
          </li>)}
        </ol>
      </section>)}
-   </div>:<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-5 text-sm text-body">
+   </div>:<p role="status" className="border-y border-border py-5 text-sm text-body">
      No matching notifications for this employer and college.</p>}
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground">
