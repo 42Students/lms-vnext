@@ -227,7 +227,7 @@
 }
 .lms-sidebar-heading-label {min-width:0; white-space:nowrap;}
 .lms-sidebar-role-details {z-index:2;min-width:0;margin-top:auto;padding:25px 16px;transition:opacity .15s cubic-bezier(.2,0,0,1);}
-.lms-sidebar-scroll {overscroll-behavior-y:contain;overflow-x:hidden;scrollbar-width:none;}
+.lms-sidebar-scroll {overscroll-behavior-y:contain;overflow-x:hidden;text-wrap:nowrap;scrollbar-width:none;}
 .lms-sidebar-scroll::-webkit-scrollbar {display:none;width:0;height:0;}
 /* Legacy TPO rail exposes a 4px scroll thumb only while expanded.
  * Keep it hidden for the collapsed icon rail and non-TPO workspaces. */
