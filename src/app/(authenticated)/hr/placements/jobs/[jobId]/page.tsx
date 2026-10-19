@@ -378,7 +378,7 @@ export default async function HrPlacementJobPage({
             </dl>
           </section>
           <section aria-labelledby="recruiter-shared-funnel-title"
-            className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
+            className="border-b border-border pb-4 sm:pb-5">
             <h3 id="recruiter-shared-funnel-title" className="font-semibold text-foreground">Hiring pipeline</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
