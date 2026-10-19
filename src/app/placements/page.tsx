@@ -39,7 +39,7 @@ export default async function PublicPlacementsPage() {
   return (
     <main className="mx-auto my-4 min-h-[calc(100vh-2rem)] w-full max-w-4xl rounded-[12px] border border-border bg-surface p-4 shadow-none sm:p-6">
       <header className="space-y-3">
-        <h1 className="break-words text-[30px] font-semibold leading-[1.3] tracking-[-0.02em] text-[#172033]">
+        <h1 className="break-words text-[30px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-heading)]">
           {college?.collegeName??"College placements"}
         </h1>
       </header>
@@ -51,12 +51,12 @@ export default async function PublicPlacementsPage() {
         </p>
       ) : null}
       {brandRead && !brandRead.available ? (
-        <p role="status" className="mt-6 rounded-lg border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="mt-6 rounded-[9px] border border-border bg-surface p-4 text-sm text-body">
           {publicPageAvailabilityMessage("branding")}
         </p>
       ) : null}
       {publicRead && !publicRead.available ? (
-        <p role="status" className="mt-6 rounded-lg border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="mt-6 rounded-[9px] border border-border bg-surface p-4 text-sm text-body">
           Public placement statistics are temporarily unavailable. No individual student information is shown.
         </p>
       ) : null}
@@ -67,7 +67,7 @@ export default async function PublicPlacementsPage() {
       {published?<p className="mt-8 text-xs text-muted-foreground">Live numbers over the last 12 months.</p>:null}
       <section aria-label="Placement results" className="mt-4 grid min-w-0 gap-3 sm:grid-cols-3">
         {metricKeys.map(key=><article key={key}
-         className="min-w-0 rounded-[10px] border border-border bg-surface p-4">
+         className="min-w-0 rounded-[9px] border border-border bg-surface p-4">
          <h2 className="text-sm font-medium text-muted-foreground">{PUBLIC_METRIC_LABELS[key]}</h2>
          <p className="mt-3 break-words text-lg font-semibold text-foreground">
           {formatPublicPlacementMetric(key,{
