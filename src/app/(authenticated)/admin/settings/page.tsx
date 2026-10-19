@@ -146,13 +146,13 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       {sections.length===0 ? <p role="status" className="border-l-2 border-border bg-muted px-3 py-2 text-sm text-body">No visible settings match the selected filters.</p> : null}
       <nav
         aria-label="Settings sections"
-        className="flex flex-wrap gap-2 border-b border-border"
+        className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-1"
       >
         {sections.map((section) => (
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="inline-flex min-h-11 items-center border-b-[3px] border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle sm:min-h-9"
+            className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-[3px] border-transparent px-3 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9"
           >
             {section.title}
           </a>
