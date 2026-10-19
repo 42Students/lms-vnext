@@ -1,6 +1,7 @@
 "use client";
 import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -44,9 +45,7 @@ export function FacultyCourseTabNavigation({
     <div className="space-y-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
-          <Link href="/teacher/courses" className="text-sm font-semibold text-primary-text hover:underline">
-            Back to courses
-          </Link>
+          <PageBackLink href="/teacher/courses" label="Back to courses" />
           <p className="mt-2 text-sm font-semibold text-foreground">
             {courseName} · {sectionName}
           </p>
