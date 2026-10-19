@@ -36,7 +36,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
+        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Course attendance
       </Link>
       <PageHeader title="Course attendance history" />
@@ -72,7 +72,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
       <nav aria-label="Attendance month filter" className="flex flex-wrap gap-2">
         <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendance-summary"}
           aria-current={selectedMonth === null ? "page" : undefined}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
           All months
         </Link>
         {available.map((entry) => (
@@ -80,7 +80,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
             href={"/learn/courses/" + encodeURIComponent(deliveryId) +
               "/attendance-summary?month=" + entry.month}
             aria-current={selectedMonth === entry.month ? "page" : undefined}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)]">
+            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
             {entry.month}
           </Link>
         ))}
@@ -112,7 +112,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
               </div>
               <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                 {month.records.map((row) => (
-                  <li key={row.id} className="flex flex-wrap items-start justify-between gap-2 rounded-lg border border-border p-3">
+                  <li key={row.id} className="flex flex-wrap items-start justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground">{row.title}</p>
                       <time dateTime={row.startsAt.toISOString()}
