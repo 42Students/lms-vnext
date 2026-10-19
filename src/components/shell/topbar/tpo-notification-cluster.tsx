@@ -56,7 +56,7 @@ export function TpoNotificationCluster() {
     {state ? <TpoBellPanel compact initialUnread={state.value.unread}
       items={state.value.items} revision={state.revision}/> :
       <Link href="/tpo/notifications" className={style.iconButton}
-        aria-label="Notifications" title="Notifications">
+        aria-label="Notifications — open inbox" title="Open notifications inbox">
         <BellIcon/>
       </Link>}
   </div>;
