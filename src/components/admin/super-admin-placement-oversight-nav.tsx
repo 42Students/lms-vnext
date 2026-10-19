@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   SUPER_ADMIN_PLACEMENT_OVERSIGHT_PRIMARY,
   SUPER_ADMIN_PLACEMENT_OVERSIGHT_ADDITIONAL,
@@ -15,11 +16,10 @@ export function SuperAdminPlacementOversightNav() {
     <nav aria-label="Super Admin placement oversight" className="flex min-w-0 flex-wrap gap-2">
       <NavLinks links={SUPER_ADMIN_PLACEMENT_OVERSIGHT_PRIMARY} />
     </nav>
-    <details className="border-t border-border pt-3">
-      <summary className="cursor-pointer text-sm font-semibold text-primary-text">More placement reports</summary>
+    <Disclosure title="More placement reports" className="border-t border-border pt-3">
       <nav aria-label="Additional placement reports" className="mt-3 flex flex-wrap gap-2">
         <NavLinks links={SUPER_ADMIN_PLACEMENT_OVERSIGHT_ADDITIONAL} />
       </nav>
-    </details>
+    </Disclosure>
   </div>;
 }
