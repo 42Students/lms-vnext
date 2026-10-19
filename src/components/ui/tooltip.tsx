@@ -17,6 +17,7 @@ export function InfoPopover({ content, children, className, label }: TooltipProp
     <details ref={detailsRef} data-slot="info-popover" className={cx("group relative inline-block min-w-0 align-middle", className)}
       onMouseEnter={() => { if (detailsRef.current) detailsRef.current.open = true; }}
       onMouseLeave={() => { if (detailsRef.current) detailsRef.current.open = false; }}
+      onKeyDown={event => { if (event.key === "Escape" && detailsRef.current?.open) { detailsRef.current.open = false; event.preventDefault(); event.stopPropagation(); } }}
       onFocus={() => { if (detailsRef.current) detailsRef.current.open = true; }}
       onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget) && detailsRef.current) detailsRef.current.open = false; }}>
       <summary aria-describedby={contentId} aria-label={label ?? (typeof children === "string" ? undefined : "More information")} className="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">
