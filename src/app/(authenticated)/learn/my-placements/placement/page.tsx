@@ -34,7 +34,7 @@ export default async function LearnerPlacementCellPage({
       <section id="registration" className="scroll-mt-24" aria-label="Registration">
         <LearnerPlacementRegistration registration={registration}/>
       </section>
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Need help with a placement decision?</h2>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
         <Link href="/learn/my-placements/support" className="mt-3 mr-4 inline-flex text-sm font-semibold text-primary-text">My support-request history →</Link>
@@ -55,7 +55,7 @@ export default async function LearnerPlacementCellPage({
       )}
       {!requestRead.available ? <p role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="font-semibold text-primary-text underline">Retry requests</Link></p> : null}
       {offerRows.length===0 ? (
-        <section role="status" className="rounded-xl border border-border bg-surface p-5">
+        <section role="status" className="border-b border-border pb-5">
           <h2 className="text-base font-semibold text-foreground">Official offers</h2>
           <p className="mt-2 text-sm text-body">{learnerPlacementCellOfferEmptyMessage(offerRows.length)}</p>
           <Link href="/learn/my-placements/applications"
