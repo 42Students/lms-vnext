@@ -237,3 +237,10 @@ This is an ancestry/source reconciliation only. No TypeScript execution, tests, 
 - Kept `src/components/ui/**`, `src/components/shell/**`, global styling, and page contents untouched.
 
 **Source review:** exact-match guarded every replacement before each GitHub commit; this pass was 24 commits ahead / 0 behind moving main at ledger time. No local runtime, TypeScript compiler, lint, automated tests, CI, screenshot comparison, or device acceptance was run. This is not a pixel-perfect or build-clean certification. The remaining acceptance work is independent old-LMS screenshot comparison and final upstream integration.
+
+
+### Third-pass integration checkpoint
+
+During this source sweep, `main` advanced by another 230 commits after the initial reconciliation. The lane made a non-forced two-parent merge `f4ba6594cf76` against upstream `6d6c7790bab2`, preserving 20 scoped source changes plus the two audit files. Among the changed paths, only the tracker overlapped with upstream, whose contents were a prefix of the updated lane tracker. At the checkpoint, the branch was **24 commits ahead and 0 behind `main`**. A short requested-path pointer at [north-star-sweep-9.md](./north-star-sweep-9.md) directs reviewers to this canonical ledger. No files were written to `main`; shared shell/UI kit and tests remained untouched.
+
+Strict TypeScript correctness, responsive browser rendering and screenshot parity remain unverified because no local application execution, tests, lint or CI were run.
