@@ -105,4 +105,11 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(announcer).toContain('role="status" aria-live="polite"');
  expect(announcer).toContain("main?.focus({preventScroll:true})");
 });
+ it("keeps the modal mobile menu Escape and Tab cycle",()=>{
+ const mobile=read("src/components/shell/mobile-navigation.tsx");
+ expect(mobile).toContain('event.key === "Escape"');
+ expect(mobile).toContain('event.key !== "Tab"');
+ expect(mobile).toContain("lastItem.focus()");
+ expect(mobile).toContain("firstItem.focus()");
+});
 });
