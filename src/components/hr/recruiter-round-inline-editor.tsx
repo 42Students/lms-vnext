@@ -13,7 +13,7 @@ const kinds:readonly [Kind,string][]=[
  ["TALK","Company talk"],["TEST","Online test"],["VENDOR_TEST","Vendor test"],
  ["GD","Group discussion"],["INTERVIEW","Interview"],
 ];
-const field="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground";
+const field="min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground";
 
 /** REC-home-drives-46: accessible inline authoring. Server still enforces
  * author-only, pending and no existing results/slots. Never trust client flags. */
@@ -82,13 +82,13 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
  const canEdit=(row:Row)=>row.createdByYou&&row.status==="PENDING";
  return <div className="space-y-3">
   {!readOnly?<button type="button" onClick={()=>edit(null)}
-   className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+   className="min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">
    Add a round</button>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
   {error&&!open?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!readOnly?<div className="flex flex-wrap gap-2">{rows.filter(canEdit).map(row=>
    <button key={row.id} type="button" onClick={()=>edit(row)}
-    className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
+    className="min-h-9 rounded-[9px] border border-border px-3 text-xs font-semibold text-primary-text">
     Change / Remove: {row.name}
    </button>)}</div>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
@@ -111,11 +111,11 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
      <div className="flex flex-wrap justify-end gap-2">
       {active?<button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
-       className="min-h-11 rounded-md border border-error px-3 text-sm text-error">Remove</button>:null}
+       className="min-h-9 rounded-[9px] border border-error px-3 text-sm text-error">Remove</button>:null}
       <button type="button" disabled={pending} onClick={requestClose}
-       className="min-h-11 rounded-md border border-border px-3 text-sm">Cancel</button>
+       className="min-h-9 rounded-[9px] border border-border px-3 text-sm">Cancel</button>
       <button type="submit" disabled={pending}
-       className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">
+       className="min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary">
        {pending?"Saving…":active?"Save changes":"Add round"}</button>
      </div>
     </form>

@@ -32,7 +32,7 @@ export function RecruiterRequestCancelButton({requestId,collegeId,updatedAt}:{
  }
  return <div className="mt-2">
   <button type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
-   className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-primary-text disabled:opacity-50">
+   className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-3 text-sm text-primary-text disabled:opacity-50">
    {busy?"Cancelling…":"Cancel request"}
   </button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}

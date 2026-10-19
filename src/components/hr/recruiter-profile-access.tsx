@@ -53,7 +53,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
         Open a page for the exact college you select. These links do not change your account-wide active college. Leaving access takes effect immediately and requires a new placement-cell grant to return.
       </p>
       {error ? (
-        <div role="alert" className="mt-3 rounded-md border border-error/30 bg-error/5 p-3 text-sm text-error">
+        <div role="alert" className="mt-3 rounded-[9px] border border-error/30 bg-error/5 p-3 text-sm text-error">
           {error}
         </div>
       ) : null}
@@ -76,7 +76,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
                   className="mt-2 flex flex-wrap gap-3 text-xs">
                   {hrRecruiterGrantLinks(grant.collegeId).map(link=>(
                     <Link key={link.label} href={link.href}
-                      className="inline-flex min-h-11 items-center font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+                      className="inline-flex min-h-9 items-center font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
                       {link.label}
                     </Link>
                   ))}
@@ -86,7 +86,7 @@ export function RecruiterProfileAccess({ grants }: { grants: readonly Grant[] })
                 type="button"
                 disabled={leaving === grant.id}
                 onClick={() => setConfirmGrant(grant)}
-                className="min-h-11 rounded-md border border-error/30 bg-surface px-3 py-2 text-sm font-medium text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] hover:bg-error/5 disabled:opacity-50"
+                className="min-h-9 rounded-[9px] border border-error/30 bg-surface px-3 py-2 text-sm font-medium text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)] hover:bg-error/5 disabled:opacity-50"
               >
                 {leaving === grant.id ? "Leaving…" : "Leave Access"}
               </button>
