@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -42,10 +43,10 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
  }
  const field="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
  return <section className="space-y-3">
-  <button type="button" disabled={pending} onClick={()=>setOpen(value=>!value)}
-    aria-expanded={open} className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">
+  <Button variant="primary" type="button" disabled={pending} onClick={()=>setOpen(value=>!value)}
+    aria-expanded={open} className="min-h-11 px-4">
     Add company
-  </button>
+  </Button>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
   {open?<form onSubmit={submit} className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2">
     <h2 className="font-semibold sm:col-span-2">Add company</h2>
@@ -66,11 +67,11 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
     </p>
     {error?<p role="alert" className="sm:col-span-2 text-sm text-error">{error}</p>:null}
     <div className="flex gap-2 sm:col-span-2">
-      <button type="submit" disabled={pending} className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 px-4">
         {pending?"Adding…":"Save company"}
-      </button>
-      <button type="button" disabled={pending} onClick={()=>setOpen(false)}
-        className="min-h-11 rounded-md border border-border px-4 font-semibold">Cancel</button>
+      </Button>
+      <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
+        className="min-h-11 px-4">Cancel</Button>
     </div>
    </form>:null}
  </section>;
