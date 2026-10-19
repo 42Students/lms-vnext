@@ -44,7 +44,7 @@ export default async function LearnerNotificationHistoryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href="/learn/notifications"
-        className="inline-flex min-h-9 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Notifications
       </Link>
       <PageHeader
@@ -88,7 +88,7 @@ export default async function LearnerNotificationHistoryPage({
         {page.isOlderPage ? (
           <Link
             href={learnerNotificationHistoryHref(null, page.unreadOnly)}
-            className="inline-flex min-h-9 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
+            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
           >
             Return to newest
           </Link>

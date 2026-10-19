@@ -28,8 +28,10 @@ describe("NORTH-STAR-SIDEBAR-03: measured original icons and mobile group parity
   expect(css).toContain("margin:12px 12px 6px 46px");
   expect(css).toContain("font-size:9px");
   expect(mobile).toContain("lms-mobile-sidebar");
-  expect(mobile).toContain('aria-modal="true"');
-  expect(mobile).toContain('event.key === "Escape"');
+  const drawer=read("src/components/ui/drawer.tsx");
+  expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');
+  expect(drawer).toContain("<dialog ref={ref}");
+  expect(drawer).toContain("onCancel={event =>");
  });
  it("announces TPO pending counts even when sidebar labels are visually hidden",()=>{
   const nav=read("src/components/shell/sidebar-nav.tsx");

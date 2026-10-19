@@ -28,3 +28,68 @@
   outline: 2px solid #26bac7;
   outline-offset: -2px;
 }
+
+/*
+ * TPO command bar + calendar month frame:
+ * lms2-fe@prod-2026/src/styles/components/_tpo-calendar.scss:25-38,
+ * 253-269, 333-345, 349-370. Kept TPO-scoped so learner/admin layouts
+ * continue to use their own original visual conventions.
+ */
+.tpoCommandBar {
+  border: 1px solid #e7ecf2 !important;
+  border-radius: 14px;
+  background: #fff;
+  padding: 16px 18px;
+  box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+}
+.tpoMonthFrame {
+  overflow: hidden;
+  border: 1px solid #e7ecf2 !important;
+  border-radius: 14px !important;
+  background: #fff;
+  padding: 10px 14px 14px;
+  box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+}
+@media (max-width: 991px) {
+  .tpoCommandBar { min-width: 0; }
+}
+/*
+ * Mobile TPO view switch and three-way navigation:
+ * lms2-fe@prod-2026/_tpo-calendar.scss:349-385.
+ */
+@media (max-width: 767px) {
+  .tpoCommandBar { padding: 13px; }
+  .tpoMonthFrame { padding-inline: 13px; }
+  .tpoViewSwitch {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+  .tpoViewSwitch > a {
+    display: flex;
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .tpoNavigationRow {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    gap: 10px;
+  }
+  .tpoNavigationRow > a {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+  }
+  .tpoNavigationRow > span {
+    order: -1;
+    grid-column: 1 / -1;
+    margin-left: 0;
+  }
+}

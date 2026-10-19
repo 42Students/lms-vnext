@@ -38,7 +38,7 @@ export function HrNotificationReadButton({notificationId,expectedCreatedAt}:{
   finally{gate.current.end();setSaving(false);}
  }
  return <div className="mt-3 flex flex-wrap items-center gap-2">
-  <Button type="button" variant="secondary" className="min-h-11 sm:min-h-9" disabled={saving||complete} loading={saving} onClick={()=>void markRead()}>
+  <Button type="button" variant="secondary" className="min-h-11 min-[768px]:min-h-9" disabled={saving||complete} loading={saving} onClick={()=>void markRead()}>
    {complete?"Marked as read":saving?"Saving…":"Mark as read"}
   </Button>
   {message?<Alert tone="error">{message}</Alert>:null}

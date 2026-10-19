@@ -1,4 +1,5 @@
 import {DataTable} from "@/components/ui/data-table";
+import {EmptyState} from "@/components/ui/empty-state";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -47,7 +48,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    <div className="mt-4">
     <DataTable caption="Eligible and applied learners by branch"
      rows={data.byBranch} getRowKey={row=>row.branch}
-     empty={<p role="status" className="text-sm text-body">No active academic branch enrollments are recorded.</p>}
+     empty={<EmptyState title="No active academic branch enrollments are recorded."/>}
      columns={[
       {key:"branch",header:"Branch",mobileLabel:"Branch",mobilePriority:"primary",cell:row=>row.branch},
       {key:"eligible",header:"Eligible",mobileLabel:"Eligible",mobilePriority:"secondary",cell:row=>row.eligible},
@@ -109,7 +110,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    <h2 className="font-semibold">Role packages</h2>
    <div className="mt-3">
     <DataTable caption="Role packages and compensation" rows={data.packages} getRowKey={pkg=>pkg.id}
-     empty={<p role="status" className="text-sm text-body">No role packages are recorded for this drive.</p>}
+     empty={<EmptyState title="No role packages are recorded for this drive."/>}
      columns={[
       {key:"role",header:"Role",mobileLabel:"Role",mobilePriority:"primary",cell:pkg=>pkg.title},
       {key:"ctc",header:"CTC range",mobileLabel:"CTC range",mobilePriority:"secondary",
@@ -126,7 +127,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   </section>:null}
   <section id="activity" aria-label="Drive activity" className="scroll-mt-24 border-b border-border pb-6">
    <h2 className="font-semibold">Recent activity · last {data.feed.length} (maximum 100)</h2>
-   {!data.feed.length?<p className="mt-3 text-sm text-body">No placement activity recorded for this drive.</p>:
+   {!data.feed.length?<EmptyState title="No placement activity recorded for this drive."/>:
    <ol className="mt-3 divide-y divide-border">{data.feed.map(event=><li key={event.id} className="py-3 text-sm">
     <span className="font-semibold">{event.summary}</span>
     <time className="ml-2 text-body" dateTime={event.occurredAt}>{when(event.occurredAt)}</time>

@@ -3,12 +3,14 @@ import {useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {Alert} from "@/components/ui/alert";
 import {useRouter} from "next/navigation";
 type Managed={ready:boolean;baseDomain:string|null;currentHost:string|null};
 export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;initial:Managed}){
  const router=useRouter(),[state,setState]=useState(initial),[label,setLabel]=useState(
   initial.currentHost&&initial.baseDomain?initial.currentHost.slice(0,-initial.baseDomain.length-1):"");
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
+ const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [pendingAction,setPendingAction]=useState<"ALLOT"|"CHANGE"|"REMOVE"|null>(null);
  async function send(action:"ALLOT"|"CHANGE"|"REMOVE"){
   if(!state.ready||busy)return;
@@ -31,15 +33,16 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
    }
    const data=await res.json() as {host:string|null};
    setState({...state,currentHost:data.host});setPendingAction(null);
+   setMessageTone("success");
    setMessage(data.host?data.host+" is live":"Managed web address removed.");
    router.refresh();
-  }catch(err){setMessage(err instanceof Error?err.message:"Unable to update address");}
+  }catch(err){setMessageTone("error");setMessage(err instanceof Error?err.message:"Unable to update address");}
   finally{setBusy(false);}
  }
  return <section className="space-y-3 border-t border-border pt-5" aria-label="Managed college web address">
   <h2 className="font-semibold">Web address · Managed subdomain</h2>
-  {!state.ready?<p role="status" className="text-sm text-warning-text">
-   One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.</p>:
+  {!state.ready?<Alert tone="warning">
+   One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.</Alert>:
    <>
     <p className="text-sm">Platform domain: {state.baseDomain}</p>
     <p className="text-sm">Current: {state.currentHost??"Not allotted"}</p>
@@ -65,6 +68,6 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
    pending={busy} onConfirm={()=>{if(pendingAction)void send(pendingAction);}}>
    {message?<p role="alert" className="text-sm text-body">{message}</p>:null}
   </ConfirmDialog>
-  {message&&<p role="status" className="text-sm">{message}</p>}
+  {message&&<Alert tone={messageTone}>{message}</Alert>}
  </section>;
 }

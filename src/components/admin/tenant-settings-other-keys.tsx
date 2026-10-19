@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -13,6 +14,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
  const router=useRouter();
  const [key,setKey]=useState(""),[value,setValue]=useState("");
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
+ const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [pendingRemoval,setPendingRemoval]=useState<Entry|null>(null);
  const others=entries.filter(entry=>LEGACY_TENANT_SETTING_MAP.get(entry.key)?.scope!==scopeType);
  const target={scopeType,...(collegeId?{collegeId}:{})};
@@ -27,15 +29,17 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
     body:JSON.stringify(body),
    });
    if(!response.ok){
+    setMessageTone("error");
     setMessage(response.status===409
      ?"This setting changed. Reload the stored values before retrying."
      :"The setting could not be saved. Check the key and your scope.");
     return;
    }
    if(method==="POST"){setKey("");setValue("");}
+   setMessageTone("success");
    setMessage(method==="POST"?"Setting added. Stored keys do not automatically change any runtime service.":"Stored setting removed.");
    router.refresh();
-  }catch{setMessage("Connection failed. The stored setting was not confirmed.");}
+  }catch{setMessageTone("error");setMessage("Connection failed. The stored setting was not confirmed.");}
   finally{setBusy(false);setPendingRemoval(null);}
  }
  return <section aria-label="Other stored keys" className="space-y-3 border-b border-border pb-5">
@@ -52,7 +56,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
        <p className="mt-1 break-all text-body">{entry.value==="[redacted]"?"[redacted]":entry.value}</p>
       </div>
       <Button variant="secondary" type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
-       className="min-h-11 sm:min-h-9">
+       className="min-h-11 md:min-h-9">
        Remove</Button>
      </li>;
     })}
@@ -70,10 +74,10 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
    </label>
    <p className="text-xs text-body">Use letters, digits, dots, dashes and underscores. Typos create unused keys. Documented settings must be edited in their section above.</p>
    <Button variant="primary" type="button" disabled={!ready||busy||!/^[A-Za-z][A-Za-z0-9._-]*$/.test(key)||!value.trim()}
-    onClick={()=>void apply("POST")} className="min-h-11 sm:min-h-9">
+    onClick={()=>void apply("POST")} className="min-h-11 md:min-h-9">
     {busy?"Saving…":"Add setting"}</Button>
   </fieldset>
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {message?<Alert tone={messageTone}>{message}</Alert>:null}
   <ConfirmDialog open={pendingRemoval!==null} onOpenChange={open=>{if(!open)setPendingRemoval(null);}}
    title={pendingRemoval?'Remove "'+pendingRemoval.key+'"?':"Remove setting?"}
    description="The stored value is deleted and the backend falls back to its built-in default. This does not remove a runtime configuration."

@@ -11,6 +11,7 @@ import { Select } from "@/components/ui/select";
 import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { FilterChipLink } from "@/components/ui/filter-chip";
 import { SuperAdminInterviewOperations } from "@/components/admin/super-admin-interview-operations";
 import { listSuperAdminBookedInterviews } from "@/modules/placements/super-admin-booked-interviews-service";
 import { PlacementPanelErrorBoundary } from "@/components/admin/placement-panel-error-boundary";
@@ -669,7 +670,7 @@ export async function PlacementCalendarWorkspace({
         ))}
       </section>
 
-      <section className="border-b border-border pb-5">
+      <section className={isTpo?"border-b border-border pb-5 "+calendarStyles.tpoCommandBar:"border-b border-border pb-5"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -681,7 +682,7 @@ export async function PlacementCalendarWorkspace({
             </p>
           </div>
           <div
-            className="flex flex-wrap gap-2"
+            className={"flex flex-wrap gap-2 "+(isTpo?calendarStyles.tpoViewSwitch:"")}
             role="group"
             aria-label="Calendar view"
           >
@@ -711,7 +712,7 @@ export async function PlacementCalendarWorkspace({
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <div className={"mt-4 flex flex-wrap items-center gap-2 "+(isTpo?calendarStyles.tpoNavigationRow:"")}>
           <Link
             href={calendarHref(
               basePath,
@@ -801,10 +802,9 @@ export async function PlacementCalendarWorkspace({
     <span className="text-xs font-semibold text-muted-foreground">Companies in this period:</span>
     {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
       .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
-      <Link key={name} href={calendarHref(basePath,audience,state,{company:name})}
-       aria-current={state.company===name?"page":undefined}
-       className="inline-flex min-h-9 max-w-52 items-center truncate rounded-full border border-border px-3 text-xs text-[var(--lms-link-text)]"
-       title={name}>{name}</Link>)}
+      <FilterChipLink key={name} href={calendarHref(basePath,audience,state,{company:name})}
+        selected={state.company===name} className="max-w-52 truncate"
+        title={name}>{name}</FilterChipLink>)}
     {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
        className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
    </div>:null}
@@ -877,23 +877,21 @@ export async function PlacementCalendarWorkspace({
       </section>
 
       {isTpo?<nav aria-label="Filter calendar by event type" className="flex flex-wrap gap-2">
- <Link href={calendarHref(basePath,audience,state,{kind:undefined,kinds:[]})}
-  aria-current={!state.kind&&!state.kinds.length?"page":undefined}
-  className={!state.kind&&!state.kinds.length?"inline-flex min-h-9 items-center rounded-full bg-[var(--lms-button-primary)] px-3 text-xs font-semibold text-[var(--lms-on-primary)]":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
-  All events ({eventTypeCountsSource&&blockedDays?.ready?countSourceEvents.length+toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length:"unavailable"})
- </Link>
+ <FilterChipLink href={calendarHref(basePath,audience,state,{kind:undefined,kinds:[]})}
+   selected={!state.kind&&!state.kinds.length}>
+   All events ({eventTypeCountsSource&&blockedDays?.ready?countSourceEvents.length+toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length:"unavailable"})
+  </FilterChipLink>
  {TPO_CALENDAR_CHIP_CHOICES.map(filter=>{
   const count=filter.value==="BLOCKED"?(blockedDays?.ready?eventTypeCounts.get("BLOCKED")??0:"unavailable"):(eventTypeCountsSource?tpoCalendarChipCount(eventTypeCountsSource.events,filter.value):"unavailable");
   const active=state.kinds.includes(filter.value)||(!state.kinds.length&&state.kind===filter.value);
   const currently=state.kinds.length?state.kinds:parseTpoCalendarChips(state.kind);
   const nextKinds=toggleTpoCalendarChip(currently,filter.value);
-  return <Link key={filter.value} href={calendarHref(basePath,audience,state,{kind:undefined,kinds:nextKinds})}
-   aria-current={active?"page":undefined}
-   aria-label={filter.label+" ("+count+"), "+(active?"selected":"not selected")}
-   className={active?"inline-flex min-h-9 items-center rounded-full bg-[var(--lms-button-primary)] px-3 text-xs font-semibold text-[var(--lms-on-primary)]":"inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs font-semibold text-[var(--lms-link-text)]"}>
-   <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-full "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
-   {filter.label} ({count})
-  </Link>;
+  return <FilterChipLink key={filter.value} href={calendarHref(basePath,audience,state,{kind:undefined,kinds:nextKinds})}
+    selected={active}
+    aria-label={filter.label+" ("+count+"), "+(active?"selected":"not selected")}>
+    <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-full "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
+    {filter.label} ({count})
+   </FilterChipLink>;
  })}
  <p className="self-center text-xs text-muted-foreground">Select multiple event types to combine them · rounds, talks, deadlines, follow-ups and blocked days (IST).</p>
  {eventTypeCounts.has("INTERVIEW_SLOT")?<p className="self-center text-xs text-muted-foreground">
@@ -960,7 +958,7 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`} tabIndex={0}
-          className="hidden overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]"
+          className={"hidden overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 md:block md:[mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1.25rem),transparent_100%)] "+(isTpo?calendarStyles.tpoMonthFrame:"")}
         >
           <CalendarGrid variant="hairline" className={"min-w-[56rem] "+calendarStyles.calendarHairline}>
             {[
