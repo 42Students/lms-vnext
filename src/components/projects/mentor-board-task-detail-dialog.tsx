@@ -1,4 +1,5 @@
 "use client";
+import { Banner } from "@/components/ui/banner";
 import { Dialog } from "@/components/ui/dialog";
 import Link from "next/link";
 import {ProjectTaskComments} from "./project-task-comments";
@@ -47,10 +48,10 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
   <section className="mt-4"><h3 className="font-semibold">Done when</h3>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.acceptanceCriteria||"No criteria recorded"}</p></section>
   {task.blockerReason||task.status==="BLOCKED"?
-   <section role="alert" className="mt-4 rounded border border-warning-border bg-warning-subtle p-3 text-sm">
-    <h3 className="font-semibold">Blocked</h3>
-    <p className="mt-1 whitespace-pre-wrap">{task.blockerReason||"No blocker reason recorded."}</p>
-   </section>:null}
+   <Banner tone="warning" className="mt-4">
+    <strong>Blocked</strong>
+    <p className="whitespace-pre-wrap">{task.blockerReason||"No blocker reason recorded."}</p>
+   </Banner>:null}
   <section className="mt-4">
    <h3 className="font-semibold">Submissions · {attempts.length}</h3>
    {attempts.length?<ul className="mt-2 space-y-2">{attempts.map(row=>
