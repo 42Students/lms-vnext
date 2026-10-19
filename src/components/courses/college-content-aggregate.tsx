@@ -29,12 +29,12 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         title={title}
         actions={
           <Link href="/college/lessons"
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
             Lessons
           </Link>
         }
       />
-      <section aria-label={title + " filters"} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <section aria-label={title + " filters"} className="border-b border-border pb-5">
         <form method="get" action={path} className="flex flex-wrap items-end gap-3">
           <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Title, lesson or course
@@ -157,7 +157,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
             Filter
           </Button>
           <Link href={path}
-            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
             Clear
           </Link>
         </form>
@@ -265,13 +265,13 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         <div className="flex gap-2">
           {data.query.page > 1 ? (
             <Link href={collegeContentHref(data.kind, { ...data.query, page: data.query.page - 1 })}
-              className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
               Previous
             </Link>
           ) : null}
           {data.query.page < data.totalPages ? (
             <Link href={collegeContentHref(data.kind, { ...data.query, page: data.query.page + 1 })}
-              className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">
               Next
             </Link>
           ) : null}
