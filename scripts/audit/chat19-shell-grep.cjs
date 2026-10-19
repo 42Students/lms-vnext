@@ -41,8 +41,6 @@ const rules = [
 ];
 
 function search(rule) {
-  const args = ["grep", "-n", "-I", "-E", rule.regex, "--",
-    ...rule.paths.map(path => `:(glob)${path}/**/*.{tsx,ts,css}`)];
   // Git pathspec glob braces are not portable, so issue one query per suffix.
   const matches = [];
   for (const ext of ["tsx", "ts", "css"]) {
