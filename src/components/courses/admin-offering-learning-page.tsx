@@ -84,10 +84,10 @@ export async function AdminOfferingLearningPage({
         }
       />
       <nav aria-label="Course detail tabs" className="flex flex-wrap gap-2 border-b border-border text-sm">
-       <a href="#course-home" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-button-primary)] sm:min-h-9">Home</a>
-       <a href="#course-syllabus" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-button-primary)] sm:min-h-9">Syllabus</a>
-       <a href="#who-teaches-it" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-button-primary)] sm:min-h-9">Who teaches it</a>
-       <a href="#section-content" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-button-primary)] sm:min-h-9">Section content</a>
+       <a href="#course-home" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:min-h-9">Home</a>
+       <a href="#course-syllabus" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:min-h-9">Syllabus</a>
+       <a href="#who-teaches-it" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:min-h-9">Who teaches it</a>
+       <a href="#section-content" className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:min-h-9">Section content</a>
       </nav>
       <section id="course-home" aria-label="Course Home" className="space-y-2">
       <h2 className="text-lg font-semibold">Home</h2>
