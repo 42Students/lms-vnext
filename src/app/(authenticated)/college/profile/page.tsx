@@ -25,7 +25,7 @@ export default async function CollegeAdminProfilePage({
   ]);
   if(profileResult.status==="rejected")return <main className="mx-auto w-full min-w-0 max-w-5xl space-y-4 p-4">
     <PageHeader eyebrow="College Admin" title="Profile"/>
-    <div role="alert" className="space-y-2 rounded-xl border border-border bg-surface p-5">
+    <div role="alert" className="space-y-2 rounded-[8px] border border-border bg-surface p-5">
       <p className="font-semibold">Failed to load profile.</p>
       <p className="text-sm text-body">Couldn&apos;t refresh profile. Your existing details have not been changed.</p>
       <Link href="/college/profile" prefetch={false} className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Retry</Link>
