@@ -88,7 +88,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   invitedAt:lifecycle.invitedAt?.toISOString()??null,finishedAt:lifecycle.finishedAt?.toISOString()??null,
   expectedVersion:lifecycle.updatedAt.toISOString(),
  }:null}/>:null}
- <section aria-label="Batch eligibility snapshot" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ <section aria-label="Batch eligibility snapshot" className="min-w-0 space-y-3 border-b border-border py-4">
   <h2 className="font-semibold">Eligibility decisions</h2>
   <p className="text-sm text-muted-foreground">{summary.complete?
    "Inherited learner, class and batch decisions for the active roster.":
