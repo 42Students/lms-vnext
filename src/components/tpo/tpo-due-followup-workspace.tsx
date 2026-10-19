@@ -31,8 +31,8 @@ type Queue = {
   window:"DUE"|"NEXT_7_DAYS";
 };
 
-const field = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-base text-foreground sm:text-sm";
-const action = "min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-foreground disabled:opacity-50";
+const field = "min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-base text-foreground sm:text-sm";
+const action = "min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50";
 function displayDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
@@ -204,7 +204,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       setActiveId(activeId === row.id ? null : row.id);
                       setDoneNote(""); setOutcome("CONTACTED");
                     }}
-                    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground">
+                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground">
                     {activeId === row.id ? "Cancel" : "Record outcome and Done"}
                   </button>
                 </div>

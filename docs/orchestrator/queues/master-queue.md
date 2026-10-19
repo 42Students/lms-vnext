@@ -100,3 +100,6 @@ Source-level now: compare `docs/audit/legacy-inventory-A.md`, `legacy-inventory-
 
 ## Unowned and spillover
 Anything in docs/audit/ux/COVERAGE-MATRIX.md still red; unit failures in docs/orchestrator/unit-failures-*.md newest file; any lane's overflow.
+
+## AFTER NORTH STAR (orchestrator, 2026-10-19): ONE SOURCE OF TRUTH FOR CONTROLS
+Tokens exist in globals.css and shared components in src/components/ui, but many pages hand-roll raw <button>/<select>/<input>/<textarea> with long class strings. Do after the sweeps: (1) make src/components/ui the single source for every control; (2) add a lint rule or unit test failing on raw controls with long class strings and on hard-coded hex colours outside globals.css/ui; (3) one codemod pass moving remaining raw controls to the shared components.

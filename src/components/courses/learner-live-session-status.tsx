@@ -21,5 +21,5 @@ export function LearnerLiveSessionStatus({startsAt,endsAt}:{
   const timer=window.setInterval(update,30000);
   return ()=>{window.clearTimeout(initial);window.clearInterval(timer);};
  },[startsAt,endsAt]);
- return <p role="status" className="mt-2 text-sm font-semibold text-body">{label}</p>;
+ return <p role="status" className={label==="Live now"?"mt-2 text-sm font-semibold text-success":"mt-2 text-sm font-semibold text-body"}>{label}</p>;
 }

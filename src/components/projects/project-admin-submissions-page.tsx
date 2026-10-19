@@ -181,12 +181,12 @@ export async function ProjectAdminSubmissionsPage({
           ["Reviewed", summary.reviewed, queuePath+"?submissionStatus=APPROVED"],
         ] as const).map(([name, value, href]) => {
           return <Link key={name} href={href}
-            className="rounded-xl border border-border bg-surface p-4 hover:border-primary">
+            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary">
             <p className="text-xs font-semibold text-muted-foreground">{name}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>;
         })}
-      </div>:<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+      </div>:<p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
         Submission totals are temporarily unavailable. The filtered submissions below are still visible.
       </p>}
       <ProjectAdminFilters

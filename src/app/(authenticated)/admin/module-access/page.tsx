@@ -39,7 +39,7 @@ export default async function SuperAdminModuleAccessPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="Super Admin" title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
-      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Feature Controls</Link>}/>
+      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Feature Controls</Link>}/>
     <section aria-label="Module Access overview" className="border-b border-border pb-5">
       <p className="text-sm font-semibold">Effective access · {scopeLabel}</p>
       <h2 className="mt-1 text-base font-semibold">Optional module access hierarchy</h2>
@@ -56,7 +56,7 @@ export default async function SuperAdminModuleAccessPage({
           className="w-full"/>
       </label>
       <Button type="submit">Filter</Button>
-      <Link className="inline-flex min-h-11 sm:min-h-9 items-center px-3 text-sm font-semibold text-primary-text"
+      <Link className="inline-flex min-h-9 items-center px-3 py-2 text-sm font-semibold text-primary-text"
         href="/admin/module-access">Clear filters</Link>
     </form>
     <p role="status" className="text-sm text-body">
@@ -66,7 +66,7 @@ export default async function SuperAdminModuleAccessPage({
       description="No college in the current scope matches these filters."/>:
       <div className="grid gap-3 md:grid-cols-2">
         {result.items.map(college=><article key={college.id}
-          className="min-w-0 border-b border-border py-4">
+          className="min-w-0 rounded-[12px] border border-border bg-surface p-4">
           <h2 className="font-semibold text-foreground">{college.name}</h2>
           <p className="mt-1 text-sm text-body">{college.code}</p>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)}
