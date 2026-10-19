@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import {Pagination} from "@/components/ui/pagination";
 import {notFound,redirect} from "next/navigation";
@@ -30,8 +31,8 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
   </Link>
   {!ready?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)]">{CAMPAIGN_DRAFT_UNAVAILABLE}</p>:
    draft?<article className="space-y-4 border-t border-border pt-5">
-    <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">{draft.title}</h1>
-    <p className="text-sm text-body">{draft.sender_name} · {draft.status} · {draft.total_recipients} potential recipients · {draft.segment.replaceAll("_"," ")}</p>
+    <PageHeader title={draft.title}
+      description={draft.sender_name+" · "+draft.status+" · "+draft.total_recipients+" potential recipients · "+draft.segment.replaceAll("_"," ")} />
     <dl className="grid grid-cols-3 gap-3 text-sm">
       <div><dt>Provider accepted</dt><dd className="font-semibold">{draft.sent}</dd></div>
       <div><dt>Failed</dt><dd className="font-semibold">{draft.failed}</dd></div>
