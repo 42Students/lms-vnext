@@ -1,3 +1,5 @@
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
 import {LearnerSaveDriveButton} from "./learner-save-drive-button";
@@ -40,31 +42,22 @@ export function LearnerPlacementJobDetail({
   const requirements=learnerDriveEvidenceRequirements(items);
 
   return (
-    <main className="space-y-6" aria-label="Published placement drive">
-      <nav aria-label="Placement breadcrumbs" className="flex flex-wrap items-center gap-2 text-sm text-body">
-        <Link href="/learn/my-placements" className="text-primary-text hover:underline">
-          My Placements
-        </Link>
-        <span aria-hidden="true">/</span>
-        <Link href={returnHref} className="text-primary-text hover:underline">
-          Drives
-        </Link>
-        <span aria-hidden="true">/</span>
-        <span aria-current="page" className="font-semibold text-foreground">{summary.title}</span>
-      </nav>
+    <div className="space-y-6" aria-label="Published placement drive">
+      <Breadcrumbs items={[
+        { label: "My Placements", href: "/learn/my-placements" },
+        { label: "Drives", href: returnHref },
+        { label: summary.title },
+      ]} />
 
       <section className="border-t border-border pt-5" aria-labelledby="drive-title">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-              Published campus drive
-            </p>
-            <h1 id="drive-title" className="mt-2 text-[30px] font-semibold leading-9 text-[var(--lms-heading)]">
-              {summary.title}
-            </h1>
-            <p className="mt-2 text-base font-semibold text-body">{summary.companyName}</p>
-          </div>
-          {summary.appliedCount ? (
+        <PageHeader
+          id="drive-title"
+          eyebrow="Published campus drive"
+          title={summary.title}
+          description={summary.companyName}
+          actions={
+            <>
+              {summary.appliedCount ? (
             <StatusBadge tone="success">{summary.appliedCount} role{summary.appliedCount === 1 ? "" : "s"} applied</StatusBadge>
           ) : summary.deadlinePassed ? (
             <StatusBadge tone="neutral">Applications closed</StatusBadge>
@@ -73,7 +66,9 @@ export function LearnerPlacementJobDetail({
           ) : (
             <StatusBadge tone="warning">Review eligibility</StatusBadge>
           )}
-        </div>
+            </>
+          }
+        />
 
         <dl className="mt-6 grid gap-4 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-3">
           <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Where</dt>
@@ -303,6 +298,6 @@ export function LearnerPlacementJobDetail({
         </div>
         <LearnerPlacementJobs items={items} savedJobIds={initialSaved?[item.job.id]:[]} />
       </section>
-    </main>
+    </div>
   );
 }

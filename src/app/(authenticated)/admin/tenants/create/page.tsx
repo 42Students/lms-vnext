@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {can} from "@/modules/permissions/policy";
@@ -36,7 +37,7 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Create the customer, then make one college launch-ready"
    description="Creating organizations and colleges is a platform-level action. Domains, branding and readiness checks are college-specific, so the current scope is always visible before you edit."
-   actions={<Link href="/admin/tenants" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] px-3.5 text-sm font-semibold text-primary-text ">← Tenant directory</Link>}/>
+   actions={<PageBackLink href="/admin/tenants" label="Tenant directory" />}/>
   <section className="space-y-3 border-b border-border pb-5" aria-label="Create organization">
    <h2 className="text-lg font-semibold">Create an organization and its colleges</h2>
    {orgCreate?<OrganizationCreateForm advanceToCollege/>:

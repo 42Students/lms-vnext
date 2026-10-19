@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ClassTeamWorkspaceCreator } from "@/components/projects/class-team-workspace-creator";
 import { PageHeader } from "@/components/ui/page-header";
@@ -36,7 +37,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
   return <div className="w-full min-w-0 space-y-6">
     <PageHeader eyebrow="Super Admin · Projects" title="Create project workspace"
       description="Every workspace starts from a template — pick one below."
-      actions={<Link href="/admin/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Project workspaces</Link>} />
+      actions={<PageBackLink href="/admin/projects" label="Project workspaces" />} />
     {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."/> :
       <ClassTeamWorkspaceCreator collegeId={collegeId} basePath="/admin/projects" initialTemplateId={selected} templates={templates.map(t => ({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/>}
   </div>;

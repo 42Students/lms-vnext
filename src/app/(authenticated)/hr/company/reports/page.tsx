@@ -1,4 +1,4 @@
-import { Tabs } from "@/components/ui/tabs";
+import { MetricBar } from "@/components/ui/metric-bar";
 import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -252,9 +252,8 @@ export default async function RecruiterCompanyReportsPage({
               <span className="font-semibold text-foreground">{stage.label}</span>
               <span className="tabular-nums text-body">{stage.total} · {stage.previousPercentLabel} of previous</span>
             </div>
-            <div className="mt-1 h-2 overflow-hidden rounded-full bg-border">
-              <div className="h-full bg-primary" style={{width:stage.appliedPercent+"%"}}/>
-            </div>
+            <MetricBar className="mt-1" label={stage.label+" hiring funnel"}
+              value={stage.appliedPercent} maximum={100} unit="percent" />
           </div>)}
         </div>
       </section>

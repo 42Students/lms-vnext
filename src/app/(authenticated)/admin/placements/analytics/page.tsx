@@ -1,3 +1,4 @@
+import { MetricBar } from "@/components/ui/metric-bar";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -105,10 +106,9 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
      <span className="block text-sm font-semibold">{step.label}</span>
      <strong className="block text-2xl tabular-nums">{step.count.toLocaleString("en-IN")}</strong>
      <p className="text-xs text-muted-foreground">{step.percentPrevious===null?"No preceding stage":step.percentPrevious+"% of previous"}</p>
-     <div className="mt-2 h-2 overflow-hidden rounded bg-muted" role="img"
-      aria-label={step.label+": "+step.count+" applications"}>
-      <div className="h-full rounded bg-primary" style={{width:step.widthPercent+"%"}} />
-     </div>
+     <MetricBar className="mt-2" role="img"
+      label={step.label+": "+step.count+" applications"}
+      value={step.widthPercent} maximum={100} unit="percent" />
     </li>)}</ol>
   </section>
   <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
