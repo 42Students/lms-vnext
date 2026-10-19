@@ -59,6 +59,7 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
    expect(topbarInitials("Alice.Doe@example.edu")).toBe("AD");
    expect(topbarInitials("phanindra@example.edu")).toBe("PH");
    expect(topbarInitials("6931-7af3-55ab")).toBe("42");
+   expect(topbarInitials("opaque-oauth-user-id", "Super Admin")).toBe("SA");
  });
  it("TOPBAR-04 replaces only the app header slot, keeping the sidebar and drawer",()=>{
    const shell=read("src/components/shell/app-shell.tsx");
