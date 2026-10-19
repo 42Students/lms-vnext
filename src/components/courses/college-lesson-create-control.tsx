@@ -84,7 +84,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
    Create an active Course Offering first. Lessons belong to a Course and Batch.
   </p>:null}
   {open&&chosen?<div className="grid gap-3">
-   <label className="grid gap-1 text-sm font-semibold text-body">Course
+   <label className="grid gap-1 text-xs font-semibold text-body">Course
     <Select className="min-h-11 md:min-h-9"
      value={chosen.offeringId} disabled={busy}
      onChange={event=>{setOfferingId(event.target.value);setError("");}}>
@@ -98,11 +98,11 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
      "The Lesson will be added to this Course Offering’s active Learning Path.":
      "An active Learning Path will be created for this Course Offering before the Lesson."}
    </p>
-   <label className="grid gap-1 text-sm font-semibold text-body">Lesson Name
+   <label className="grid gap-1 text-xs font-semibold text-body">Lesson Name
     <Input value={name} onChange={event=>setName(event.target.value)} maxLength={255}
      className="min-h-11 md:min-h-9" required/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Description (optional)
+   <label className="grid gap-1 text-xs font-semibold text-body">Description (optional)
     <Textarea value={description} onChange={event=>setDescription(event.target.value)}
      maxLength={5000} rows={3}
      className="min-h-11 md:min-h-9"/>
