@@ -360,9 +360,9 @@ export function AcademicsOverview({
         />
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="admin-academic-cohorts-title">
         <div>
-          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <h2 id="admin-academic-cohorts-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Cohorts / batches
           </h2>
           <p className="mt-1 text-sm text-body">
@@ -376,9 +376,9 @@ export function AcademicsOverview({
         />
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="admin-academic-sections-title">
         <div>
-          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <h2 id="admin-academic-sections-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Sections
           </h2>
           <p className="mt-1 text-sm text-body">
