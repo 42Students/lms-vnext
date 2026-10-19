@@ -152,7 +152,7 @@ export default async function SuperAdminProjectsPage({
       />
 
       {!templatesResult.ok && (
-        <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm leading-5 text-body">
           Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
         </p>
       )}
