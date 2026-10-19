@@ -288,3 +288,18 @@ historical icon/spinner and phone/tablet comparisons.
 
 **Next file:** `docs/audit/ux/clone-sidebar.md` after the orchestrator runs
 `node scripts/audit/chat19-shell-grep.cjs` and provides the full checkout output.
+
+### B3 no-regression test correction (commits 63a76a2, be2fad7)
+
+Two existing chat-19 suites described earlier abandoned DOM variants and would have
+incorrectly failed the current legacy-matched implementation:
+
+| State | Original source requirement | vNext actual file:line | Guard now checks |
+|---|---|---|---|
+| Push rather than overlay | `old-lms-shell.css:13,18`: rail is a relative flex sibling, width 96→256px | `app-shell.tsx:75-104`; `sidebar-legacy.css:7-25` | `chat19-north-star-legacy-sidebar.test.ts:150-152`: flex frame/page sizing, no fake padding-left shift |
+| Mobile drawer role and Escape | `legacy-styles/components___antddesign.scss:305-359`: modal left drawer, 82% width / max300px | `mobile-navigation.tsx:25-37`; `ui/drawer.tsx:38-41`: native dialog and onCancel | `chat19-north-star-legacy-sidebar.test.ts:178-186,229-235` and `chat19-sidebar-hr-original-icons-and-secondary-surfaces.test.ts:30-34` |
+| Mobile body gutter | `components___antddesign.scss:348-359`: 12px sides, 8px top | `mobile-navigation.tsx:35`: `!px-3 !pt-2`, `sidebar-legacy.css:220`: internal nav padding 0 | Guard compares Drawer body gutter rather than obsolete nav padding |
+
+No page, route, or UI shell contract was weakened; the assertions now inspect
+where the behaviour actually lives. Neither suite was run, and **neither B3
+nor B4 is ticked** without the pending coverage/output and browser proof.
