@@ -136,7 +136,7 @@ export function LearnerCareerRounds({
                 <button
                   type="button"
                   onClick={() => onSelect(round)}
-                  className="min-h-11 w-full text-left text-sm font-semibold text-primary-text hover:underline sm:w-auto focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                  className="min-h-11 sm:min-h-9 w-full text-left text-sm font-semibold text-primary-text hover:underline sm:w-auto focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                 >
                   Round details
                 </button>
