@@ -116,7 +116,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <LearnerModuleAccessDrawer collegeId={college.id}/>
 
-      <section className="- border-t border-border pt-5">
+      <section className="border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -130,7 +130,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           </div>
           <Link
             href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
           >
             Open learner access trace →
           </Link>
@@ -138,7 +138,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         View audited college module changes →
       </Link>
       <section className="grid gap-3 md:grid-cols-3">
@@ -173,7 +173,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         ))}
       </section>
 
-      <section className="- border-t border-border pt-5" aria-label="Placements college access impact">
+      <section className="border-t border-border pt-5" aria-label="Placements college access impact">
         <h2 className="text-base font-semibold text-foreground">Placements: college-level access impact</h2>
         {modules.filter(decision=>decision.module==="placements").map(decision=>(
           <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
@@ -187,33 +187,33 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4" aria-label="Filter stored module overrides">
         <label className="grid gap-1 text-sm font-semibold text-body">Stored descendant module
-          <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground">
             <option value="">All modules</option>
             {OPTIONAL_MODULE_KEYS.map(key => <option key={key} value={key}>{ADMIN_MODULE_LABELS[key]}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Stored scope
-          <Select name="scope" defaultValue={result.scopeFilter ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="scope" defaultValue={result.scopeFilter ?? ""} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground">
             <option value="">All descendant scopes</option>
             {(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"] as const).map(key =>
               <option key={key} value={key}>{MODULE_SCOPE_LABELS[key]}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Lock state
-          <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground">
             <option value="ALL">All stored rules</option><option value="LOCKED">Locked rules only</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Stored value
-          <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground">
             <option value="ALL">Any stored value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Exact scope ID (optional)
-          <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+          <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground"/>
         </label>
         <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Filter overrides</Button>
-        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Reset</Link>
+        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text">Reset</Link>
       </form>
 
       <section className="min-w-0 space-y-3">
@@ -251,7 +251,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       </section>
 
-      <section aria-label="Academic module rules" className="- border-t border-border pt-5">
+      <section aria-label="Academic module rules" className="border-t border-border pt-5">
         <h2 className="font-semibold">Department, Program, Batch and Class access</h2>
         <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
@@ -306,7 +306,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page > 1 ? (
               <Link
                 href={pageHref(result.page - 1)}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 ← Previous
               </Link>
@@ -314,7 +314,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page < result.totalPages ? (
               <Link
                 href={pageHref(result.page + 1)}
-                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+                className="inline-flex min-h-11 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text"
               >
                 Next →
               </Link>

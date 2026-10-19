@@ -38,14 +38,14 @@ export default async function SuperAdminCourseProgressPage({
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
     </p>
     <a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export course-progress.csv</a>
+     className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export course-progress.csv</a>
     <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
-          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Offering status
-        <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
       </label>
@@ -74,11 +74,11 @@ export default async function SuperAdminCourseProgressPage({
           <div className="col-span-2"><dt className="text-xs text-muted-foreground">Learners with recorded activity</dt><dd className="text-lg font-semibold tabular-nums">{item.learnersWithRecords}</dd></div>
         </dl>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-          className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          className="mt-3 inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering →
         </Link>
         <Link href={`/admin/course-progress/students?offeringId=${encodeURIComponent(item.offeringId)}`}
-         className="ml-3 mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+         className="ml-3 mt-3 inline-flex min-h-11 items-center rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text">
           View student progress →
         </Link>
       </article>)}

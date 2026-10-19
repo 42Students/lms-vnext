@@ -21,19 +21,19 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
    description={"Recent authorized module override and lock changes for "+(result.learnerName||"this learner")+". Changes are shown 40 at a time, newest first. The optional module filter is applied to the scoped audit query."}/>
   <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="grid gap-1 text-sm font-semibold text-body">Module
-    <Select name="module" defaultValue={cursor.data.module} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+    <Select name="module" defaultValue={cursor.data.module} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground">
      <option value="all">All modules</option><option value="projects">Projects</option><option value="electives">Electives</option>
     </Select>
    </label>
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Actor name
     <Input name="actorName" maxLength={100} defaultValue={cursor.data.actorName}
-     className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+     className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">From (India day)
-    <Input type="date" name="from" defaultValue={cursor.data.from} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+    <Input type="date" name="from" defaultValue={cursor.data.from} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">To (India day)
-    <Input type="date" name="to" defaultValue={cursor.data.to} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+    <Input type="date" name="to" defaultValue={cursor.data.to} className="min-h-11 rounded-[9px] border border-border bg-background px-3 text-foreground"/>
    </label>
    <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-foreground">Filter history</Button>
    <Link href={studentRuleHistoryHref(collegeId,membershipId,null)} className="inline-flex min-h-11 items-center text-primary-text">Clear</Link>
@@ -41,7 +41,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
   <Link href={studentRuleHistoryExportHref(collegeId,membershipId,
    cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null,
    cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)}
-   className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this history page (CSV)</Link>
+   className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this history page (CSV)</Link>
   <p className="text-xs text-muted-foreground">Export contains at most 40 authorized changes from this page, not an unrestricted audit archive.</p>
   {result.items.length===0?<p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No module override changes have been recorded for this membership.</p>:
    <ol className="min-w-0 space-y-3">{result.items.map(item=><li key={item.id} className="rounded-xl border border-border bg-surface p-4">
@@ -49,7 +49,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
     <p className="mt-2 text-sm text-body">{item.change}</p>
     <p className="mt-2 text-xs text-muted-foreground">{item.actorName} · {item.occurredAt.toLocaleString("en-IN")}</p>
    </li>)}</ol>}
-  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Older changes →</Link>:null}
+  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="inline-flex min-h-11 items-center rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Older changes →</Link>:null}
   <Link href={"/admin/audit?collegeId="+encodeURIComponent(collegeId)+"&subjectType=MEMBERSHIP&subjectId="+encodeURIComponent(membershipId)}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open scoped Activity Log →</Link>
  </div>;
