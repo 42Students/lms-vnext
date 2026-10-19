@@ -20,6 +20,7 @@ export function LearnerNotificationBell(){
  const [loading,setLoading]=useState(true);
  const [everLoaded,setEverLoaded]=useState(false);
  const root=useRef<HTMLDivElement|null>(null);
+ const refreshInFlight=useRef(false);
  const trigger=useRef<HTMLButtonElement|null>(null);
  const [count,setCount]=useState(0);
  const refreshDue=useCallback(async()=>{
