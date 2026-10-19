@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -84,15 +85,7 @@ export default async function MentorProjectTimelinePage({
                 </p>
               </li>)}</ol>}
         </li>)}</ol>}
-      <nav aria-label="Release timeline pages" className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
-        <div className="flex gap-3">
-          {data.page>1&&<Link href={mentorTimelineHref({...data.query,page:data.page-1})}
-            className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
-          {data.page<data.totalPages&&<Link href={mentorTimelineHref({...data.query,page:data.page+1})}
-            className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
-        </div>
-      </nav>
+      <Pagination label="Release timeline pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTimelineHref({...data.query,page})}/>
     </>}
     <p className="text-xs text-muted-foreground">
       The registered schema has no planned start/end dates on Releases or Sprints.
