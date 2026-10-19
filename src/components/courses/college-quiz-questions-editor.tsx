@@ -1,9 +1,18 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Radio } from "@/components/ui/radio";
+import type { ComponentPropsWithRef } from "react";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;
  options:{text:string;correct:boolean}[]};
+function CorrectAnswerInput({ multiple, ...props }: Omit<ComponentPropsWithRef<"input">, "type"> & { multiple: boolean }) {
+ return multiple ? <Checkbox {...props} /> : <Radio {...props} />;
+}
 const empty=():Question=>({type:"SINGLE_CHOICE",prompt:"",points:1,
  options:[{text:"",correct:true},{text:"",correct:false}]});
 export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
@@ -66,24 +75,24 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
   {open&&!loading?<div className="max-h-[32rem] space-y-3 overflow-auto rounded border border-border p-3">
    {questions.map((q,i)=><fieldset key={i} className="space-y-2 rounded border border-border p-2">
     <legend className="text-xs font-semibold">Question {i+1}</legend>
-    <select value={q.type} onChange={e=>update(i,{...q,type:e.target.value as Question["type"],
+    <Select value={q.type} onChange={e=>update(i,{...q,type:e.target.value as Question["type"],
      options:q.options.map((o,j)=>({...o,correct:j===0}))})} disabled={busy}
-     className="min-h-10 rounded border border-border px-2 text-xs">
+     className="min-h-10 text-xs">
      <option value="SINGLE_CHOICE">Single choice</option><option value="MULTIPLE_CHOICE">Multiple choice</option>
-    </select>
-    <input type="number" aria-label={"Question "+(i+1)+" points"} min={1} max={1000}
+    </Select>
+    <Input type="number" aria-label={"Question "+(i+1)+" points"} min={1} max={1000}
      value={q.points} disabled={busy} onChange={e=>update(i,{...q,points:Number(e.target.value)})}
-     className="ml-2 w-20 rounded border border-border p-2 text-xs"/>
-    <textarea aria-label={"Question "+(i+1)+" prompt"} value={q.prompt} maxLength={5000} rows={2}
+     className="ml-2 w-20 text-xs"/>
+    <Textarea aria-label={"Question "+(i+1)+" prompt"} value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>update(i,{...q,prompt:e.target.value})} disabled={busy}
-     className="w-full rounded border border-border p-2 text-xs"/>
+     className="w-full text-xs"/>
     {q.options.map((o,j)=><label key={j} className="flex min-w-0 items-center gap-2 text-xs">
-     <input type={q.type==="SINGLE_CHOICE"?"radio":"checkbox"} name={"correct-"+quizId+"-"+i}
+     <CorrectAnswerInput multiple={q.type==="MULTIPLE_CHOICE"} name={"correct-"+quizId+"-"+i}
       checked={o.correct} disabled={busy} onChange={e=>update(i,{...q,options:q.options.map((option,k)=>({
        ...option,correct:q.type==="SINGLE_CHOICE"?k===j:k===j?e.target.checked:option.correct}))})}/>
-     <input value={o.text} maxLength={2000} disabled={busy} aria-label={"Option "+(j+1)}
+     <Input value={o.text} maxLength={2000} disabled={busy} aria-label={"Option "+(j+1)}
       onChange={e=>update(i,{...q,options:q.options.map((option,k)=>k===j?{...option,text:e.target.value}:option)})}
-      className="min-h-10 min-w-0 flex-1 rounded border border-border px-2"/>
+      className="min-h-10 min-w-0 flex-1"/>
      {q.options.length>2?<Button variant="secondary" type="button" className="text-error" disabled={busy}
       onClick={()=>update(i,{...q,options:q.options.filter((_,k)=>k!==j)})}>Remove</Button>:null}
     </label>)}
