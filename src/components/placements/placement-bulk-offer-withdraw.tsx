@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import type { BulkOfferWithdrawalResult } from "@/modules/placements/bulk-offer-withdrawal-model";
 
@@ -93,7 +95,7 @@ export function PlacementBulkOfferWithdraw({
 
   if (choices.length === 0) return null;
   return (
-    <section className="space-y-4 border-b border-border pb-6" aria-label="Bulk offer withdrawal">
+    <section className="space-y-4 border-b border-border pb-5" aria-label="Bulk offer withdrawal">
       <div>
         <h3 className="text-base font-semibold text-foreground">
           Bulk withdraw offers
@@ -126,25 +128,25 @@ export function PlacementBulkOfferWithdraw({
           </div>
           <label className="block text-sm font-semibold text-foreground">
             Withdrawal reason (required)
-            <textarea
+            <Textarea
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               maxLength={1000}
               rows={2}
               disabled={busy}
-              className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal text-foreground"
+              className="mt-2 w-full"
             />
           </label>
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
             <span className="font-medium text-body">{selected.length} / 50 offers selected</span>
-            <button
+            <Button variant="danger"
               type="button"
               onClick={() => void submit()}
               disabled={busy || selected.length === 0 || reason.trim().length < 8}
-              className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-primary-foreground disabled:opacity-50 md:min-h-9"
+              className="min-h-10"
             >
               {busy ? "Applying withdrawal..." : "Review and confirm withdrawals"}
-            </button>
+            </Button>
           </div>
         </>
       )}

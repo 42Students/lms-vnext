@@ -39,7 +39,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
  }
 
  return <div className="min-w-0 space-y-3">
-  {rows.length===0?<p role="status" className="rounded-xl border border-border p-5">No inbound messages match these filters.</p>:
+  {rows.length===0?<p role="status" className="border-y border-border py-4 text-sm text-body">No inbound messages match these filters.</p>:
    <div className="min-w-0 divide-y divide-border border-y border-border">
     {rows.map(row=><article key={row.id} className="min-w-0 py-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -67,7 +67,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
       </Button>)}
     </div>
     {message?<p role="status" className="mt-3 text-sm text-body">{message}</p>:null}
-    <section className="mt-5 min-w-0 rounded-[9px] border border-border p-4">
+    <section className="mt-5 min-w-0 border-t border-border pt-4">
       <h3 className="text-sm font-semibold">Plain text message</h3>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{selected.bodyPlain.slice(0,15000)}</p>
       {selected.bodyPlain.length>15000?<p className="text-xs text-muted-foreground">Message preview truncated after 15,000 characters.</p>:null}
