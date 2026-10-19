@@ -50,7 +50,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
       <p className="mt-1 text-xs text-muted-foreground">Sender identity and conversation-routing status are not verified by this inbox.</p>
       <p className="mt-1 text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
       <button type="button" onClick={()=>{setMessage("");setSelected(row);}}
-       className="mt-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Read message</button>
+       className="mt-3 min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Read message</button>
     </article>)}
    </div>}
   {selected?<Drawer open onOpenChange={open=>{if(!open)setSelected(null)}} title={selected.subject||"(No subject)"}
