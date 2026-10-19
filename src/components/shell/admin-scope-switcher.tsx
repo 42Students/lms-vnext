@@ -38,6 +38,7 @@ export function AdminScopeSwitcher({
     setError(null);
 
     startTransition(async () => {
+      try {
       let response: Response;
 
       if (!value) {
@@ -64,6 +65,9 @@ export function AdminScopeSwitcher({
       }
 
       router.refresh();
+      } catch {
+        setError("Could not change admin scope. Check your connection and retry.");
+      }
     });
   }
 
