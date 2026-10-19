@@ -21,9 +21,19 @@ export function legacySidebarItemActive(
  };
  const utilityOwner=Object.entries(utilityOwners).some(([base,owner])=>
    href===owner&&(pathname===base||pathname.startsWith(base+"/")));
+ /** Recruiter jobs, results, and conversations have legacy alias routes outside
+  * the five top-level /hr sidebar paths. Keep the owning item highlighted. */
+ const recruiterDriveArea=href==="/hr/drives"&&(
+   pathname==="/hr/placements"||pathname.startsWith("/hr/placements/")||
+   pathname==="/hr/round-results"||
+   pathname==="/recruiter/drives"||pathname.startsWith("/recruiter/drives/")
+ );
+ const recruiterMessagesArea=href==="/hr/conversations"&&(
+   pathname==="/hr/messages"||pathname.startsWith("/hr/messages/")
+ );
  const descendant=href!=="/dashboard"&&href!=="/college"&&
    pathname.startsWith(href+"/")&&!(href==="/admin/features"&&featureDetail);
- return exact||descendant||utilityOwner||
+ return exact||descendant||utilityOwner||recruiterDriveArea||recruiterMessagesArea||
    (href==="/tpo/recruiters"&&(pathname==="/tpo/companies"||pathname.startsWith("/tpo/companies/")))||
    (admin&&superAdminGroup!==null&&superAdminGroup===item.label)||
    (college&&collegeGroup!==null&&collegeGroup===item.label)||
