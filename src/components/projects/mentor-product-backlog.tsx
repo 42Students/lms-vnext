@@ -1,5 +1,6 @@
-import { Disclosure } from "@/components/ui/disclosure";
 "use client";
+
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
