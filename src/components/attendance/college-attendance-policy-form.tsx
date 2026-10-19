@@ -88,7 +88,7 @@ export function CollegeAttendancePolicyForm({
     <>
     <form
       onSubmit={save}
-      className="space-y-6 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:p-6"
+      className="space-y-6 border-b border-border pb-5"
     >
       <div>
         <h2 className="m-0 text-lg font-semibold text-foreground">

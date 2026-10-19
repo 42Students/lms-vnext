@@ -56,9 +56,9 @@ export function TpoCompanyTeamComposer({companyId,actorUserId}:{
     onChange={event=>update(event.target.value)}
     />
   </label>
-  {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <p className="text-xs text-muted-foreground">Only active placement-team members in this college can read and reply.</p>
-  <Button type="submit" disabled={busy||!body.trim()}
+  <Button type="submit" className="min-h-11 min-[768px]:min-h-9" disabled={busy||!body.trim()}
    >
    {busy?"Sending…":"Send"}
   </Button>
