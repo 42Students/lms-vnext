@@ -145,7 +145,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
-   <form method="get" action="/hr/conversations" className="flex flex-wrap gap-2">
+   <form method="get" action="/hr/conversations" className="flex min-w-0 flex-wrap items-end gap-2">
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>
@@ -154,9 +154,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
     </label>
-    <label className="flex-1 text-sm text-body">Search by drive or message
-     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1"/></label>
-    <Button type="submit" variant="secondary" className="self-end">Search</Button>
+    <label className="min-w-0 basis-full text-sm text-body sm:basis-auto sm:flex-1">Search by drive or message
+     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 w-full"/></label>
+    <Button type="submit" variant="secondary" className="min-h-11 self-end sm:min-h-9">Search</Button>
    </form>
    <Tabs renderPanel={false} ariaLabel="Conversation kind" value={parsed.data.scope}
     items={HR_CONVERSATION_KINDS.map(item => ({value:item.value,label:item.label,
