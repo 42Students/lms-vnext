@@ -44,7 +44,6 @@ export default async function CollegeDomainsPage() {
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
-        eyebrow="College Admin"
         title="Tenant domains"
         description="Connect and verify college hostnames without changing the canonical tenant boundary."
       />
