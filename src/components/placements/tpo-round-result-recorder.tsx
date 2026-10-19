@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -207,14 +208,14 @@ export function TpoRoundResultRecorder({
               className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-foreground"
             />
           </label>
-          <button
+          <Button variant="primary"
             type="button"
             disabled={busy}
             onClick={() => void submitStage()}
             className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 font-semibold text-on-primary disabled:opacity-50 text-primary-foreground"
           >
             {busy ? "Saving..." : "Confirm staged result"}
-          </button>
+          </Button>
         </>
       ) : null}
       {applicable ? (
