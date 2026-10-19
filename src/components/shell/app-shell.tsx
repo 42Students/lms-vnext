@@ -1,30 +1,21 @@
 import { Suspense, type ReactNode } from "react";
-import Link from "next/link";
-import { RECRUITER_REQUEST_DRIVE_HREF } from "@/modules/placements/recruiter-page-copy";
 import {
   hasMembershipRole,
-  hasActiveRecruiter,
   isSuperAdmin,
   type RequestContext,
 } from "@/modules/identity/context";
 import type { MembershipChoice } from "@/modules/identity/context-service";
 import type { AdminScopeChoices } from "@/modules/admin-scope/service";
-import { MembershipSwitcher } from "./membership-switcher";
-import { AdminScopeSwitcher } from "./admin-scope-switcher";
-import { AccountActions } from "./account-actions";
 import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
+import Link from "next/link";
 import {ShellLogoMark} from "./shell-nav-icons";
-import { MobileNavigation } from "./mobile-navigation";
+import { LegacyTopbar } from "./topbar/legacy-topbar";
 import { RouteAnnouncer } from "./route-announcer";
 import {ShellWidgetBoundary} from "./shell-widget-boundary";
 import {ShellConnectivityNotice} from "./shell-connectivity-notice";
-import {hasTpoTooling} from "@/modules/placements/tpo-workspace-access-model";
 import {canOpenTpoWorkspace} from "@/modules/placements/tpo-workspace-access-model";
-import { LearnerTopbarTools } from "./learner-topbar-tools";
-import {TpoTopbarMessages} from "./tpo-topbar-messages";
-import {HrRecruiterBell} from "@/components/hr/hr-recruiter-bell";
 import { ToastProvider } from "@/components/ui/toast";
 import { TrackerQuickReportLauncher } from "@/components/tracker/tracker-quick-report-launcher";
 import { getLearnerShellAccess } from "@/modules/module-access/learner-shell-access";
@@ -107,59 +98,19 @@ export async function AppShell({
       </aside>
 
       <div className="lms-shell-page min-h-dvh">
-        <header className="sticky top-0 pt-[env(safe-area-inset-top)] z-10 border-b border-border bg-surface/95 backdrop-blur">
-          <div className="mx-auto flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
-            <div className="flex min-w-0 items-center gap-3">
-              <ShellWidgetBoundary name="Mobile navigation" fallbackHref="/dashboard"><MobileNavigation items={navigation} /></ShellWidgetBoundary>
-              <div className="min-w-0">
-                <p className="m-0 text-xs font-semibold text-muted-foreground">
-                  {getShellRoleLabel(context)}
-                </p>
-                <p className="mt-1 truncate text-sm font-semibold text-foreground">
-                  {currentMembership
-                    ? currentMembership.collegeName
-                    : superAdmin
-                      ? selectedScopeLabel ?? "Platform administration"
-                      : context.recruiter
-                        ? context.recruiter.companyName
-                        : "Choose an active college"}
-                </p>
-              </div>
-            </div>
-            <div className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2 sm:gap-3">
-              {learner ? <ShellWidgetBoundary name="Learner tools" fallbackHref="/learn/notifications"><LearnerTopbarTools /></ShellWidgetBoundary> : null}
-              {hasTpoTooling(context)?<ShellWidgetBoundary name="TPO unread messages" fallbackHref="/tpo/messages"><TpoTopbarMessages/></ShellWidgetBoundary>:null}
-              {superAdmin && adminScopeChoices ? (
-                <AdminScopeSwitcher
-                  choices={adminScopeChoices}
-                  scope={context.adminScope}
-                />
-              ) : memberships.length > 0 ? (
-                <MembershipSwitcher
-                  memberships={memberships}
-                  activeMembershipId={context.membership?.id ?? null}
-                />
-              ) : context.recruiter ? (
-                <p className="m-0 hidden text-xs font-semibold text-muted-foreground sm:block">
-                  Recruiter
-                </p>
-              ) : (
-                <MembershipSwitcher
-                  memberships={memberships}
-                  activeMembershipId={context.membership?.id ?? null}
-                />
-              )}
-              {!context.membership && context.recruiter ? (
-                <Link href={RECRUITER_REQUEST_DRIVE_HREF}
-                  className="inline-flex min-h-11 items-center rounded-md bg-primary px-3 text-sm font-semibold text-on-primary">
-                  Request a drive
-                </Link>
-              ) : null}
-              {hasActiveRecruiter(context)?<HrRecruiterBell/>:null}
-              <ShellWidgetBoundary name="Account actions" fallbackHref="/dashboard"><AccountActions showNotifications={!learner&&!hasActiveRecruiter(context)&&!hasTpoTooling(context)} variant={accountVariant} /></ShellWidgetBoundary>
-            </div>
-          </div>
-        </header>
+        <LegacyTopbar
+          navigation={navigation}
+          roleLabel={getShellRoleLabel(context)}
+          organizationName={currentMembership?.collegeName ??
+            selectedScopeLabel ?? context.recruiter?.companyName ??
+            "Platform administration"}
+          identityUid={context.user.identityUid}
+          accountVariant={accountVariant}
+          memberships={memberships}
+          activeMembershipId={context.membership?.id ?? null}
+          adminScopeChoices={superAdmin ? adminScopeChoices : null}
+          adminScope={context.adminScope}
+        />
 
         <Suspense fallback={null}><RouteAnnouncer /></Suspense>
         <ShellConnectivityNotice />
