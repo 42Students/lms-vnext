@@ -303,7 +303,7 @@ Do not edit shared `src/app/globals.css`, `src/components/ui/**`, `src/component
 ## Progress log
 
 - Inventory created against latest main tree after fast-forwarding chat-7 branch to main.
-- UI edits: in progress. 131 distinct files listed in the six completed visual batches have direct old-LMS visual edits committed; continue auditing all remaining inventory entries.
+- UI edits: in progress. 149 distinct inventory files across previous and current batches have direct old-LMS visual edits committed; continue auditing the remaining inventory entries. (18 newly edited in the branch-reset continuation.)
 
 
 ## Completed visual edits — 2026-10-19 (first sweep batch)
@@ -466,3 +466,30 @@ Removed duplicated white full-page cards inside the authenticated canvas, kept r
 - [x] `src/components/placements/learner-placement-academic-evidence.tsx`
 
 Neutral skeleton placeholders remain visibly distinguishable on the white page canvas. Academic evidence, placement preferences, and placement requests now align their existing sectional separators and internal margins with the shared canvas instead of nesting full-page border cards. Functional workflows and JSX hierarchy are preserved; no CI, tests, typecheck, or application execution.
+
+## Completed visual edits — reset-to-main shared-control pass (18 additional files)
+
+The stale `chatgpt/chat-7-b` history was deliberately overwritten with the then-current `origin/main` commit `0a542bfcf587fd23955883a7a98a33dc011d7023` using a force-with-lease ref update. All following lane edits are descendants of that exact main head; old conflicting lane history is not replayed.
+
+- [x] `src/components/projects/learner-project-mobile-filters.tsx`
+- [x] `src/components/projects/learner-project-board-search.tsx`
+- [x] `src/components/projects/learner-own-task-controls.tsx`
+- [x] `src/components/projects/learner-task-status-actions.tsx`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-registration.tsx`
+- [x] `src/components/projects/learner-board-interactive.tsx`
+- [x] `src/components/projects/learner-task-progress-control.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
+- [x] `src/components/courses/learner-course-overview.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/courses/page.tsx`
+- [x] `src/components/courses/admin-course-display-editor.tsx`
+- [x] `src/components/courses/assignment-submission-links.tsx`
+- [x] `src/components/projects/learner-board-task-index.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-career-rounds.tsx`
+
+Replaced local native search/select/textarea/button/checkbox/radio controls with shared Input, Select, Textarea, Button, Checkbox and Radio components. Kept hidden navigation form inputs native. Replaced course metadata, submitted link and project task-count pills with shared Badge; flattened course and student progress statistics onto white canvas separators, and grouped Super Admin course directory links without changing their order. Restyled learner interview/assessment bucket controls using the shared Button variants, retaining their aria-pressed filters and URL workflows. Preserved dialog's method=dialog submit semantics.
+
+Manual source hygiene: all touched `Select`, `Button`, `Badge`, `nav`, `form` and `dialog` opening/closing JSX tag counts balanced; no partial `</Select` tags found. Every touched client component keeps `"use client"` before imports. No application execution, build, lint, typecheck, test, CI or deployment. Untouched inventory entries still require review; this entry is **not** a claim of sweep completion.
