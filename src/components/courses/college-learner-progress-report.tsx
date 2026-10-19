@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 
 import Link from "next/link";
@@ -27,21 +28,21 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
   </div>
   <form action="/college/course-progress" method="get" className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Class
-    <select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
+    <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
      className="min-h-11 rounded-md border border-border bg-surface px-3">
      <option value="">Select Class</option>
      {[...sections].map(([id,name])=><option key={id} value={id}>{name}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Course
-    <select value={offeringId} onChange={event=>setOfferingId(event.target.value)}
+    <Select value={offeringId} onChange={event=>setOfferingId(event.target.value)}
      name="offeringId" disabled={!sectionId}
      className="min-h-11 rounded-md border border-border bg-surface px-3">
      <option value="">Select Course</option>
      {courses.map(item=><option key={item.offeringId} value={item.offeringId}>
       {item.courseCode} · {item.courseName}
      </option>)}
-    </select>
+    </Select>
    </label>
    <input type="hidden" name="deliveryId" value={deliveryId}/>
    <button type="submit" disabled={!deliveryId}
