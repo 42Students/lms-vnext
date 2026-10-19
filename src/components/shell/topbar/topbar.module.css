@@ -460,3 +460,5 @@
   .topbarNotificationDrawer { max-width:calc(100vw - 24px) !important; }
   .orgPopover { width:min(280px,calc(100vw - 24px)); }
 }
+
+.topbarNotificationState { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px 20px; text-align:center; font-size:14px; line-height:1.5; color:var(--lms-body-text); }
