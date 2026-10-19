@@ -66,7 +66,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
       <p className="text-sm text-body">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
       {decision.reason?<p className="text-xs text-muted-foreground">Reason: {decision.reason}</p>:null}
     </div>
-    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link">
+    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       {lifecycle?.finishedAt?"Review batch decision":"Set batch decision"} →
     </Link>
   </div>
