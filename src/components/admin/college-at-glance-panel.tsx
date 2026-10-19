@@ -36,7 +36,7 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
   <div className="flex flex-wrap items-center justify-between gap-2">
    <h2 className="font-semibold">At a glance</h2>
    <Button type="button" variant="secondary" disabled={refreshing} onClick={()=>void refresh()}
-     className="min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)]">
+     className="min-h-11 md:min-h-9 print:hidden">
      {refreshing?"Refreshing…":"Retry"}</Button>
   </div>
   {error?<Alert tone="error">{error}</Alert>:null}

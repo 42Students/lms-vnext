@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -39,9 +40,9 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   finally{setSaving(false);}
  }
  return <section aria-label="Attendance policy" className="space-y-3 border-b border-border pb-5">
-  <h2 className="font-semibold text-foreground">Attendance policy</h2>
-  <div className="grid gap-4 min-[768px]:grid-cols-2">
-   <label className="grid gap-1 text-[13px] font-semibold text-body">Late marking allowed for
+  <h2 className="font-semibold">Attendance policy</h2>
+  <div className="grid gap-4 md:grid-cols-2">
+   <label className="grid gap-1 text-sm font-semibold">Late marking allowed for
     <Input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
      onChange={e=>setHours(e.target.value)} aria-describedby="late-marking-help"
      className="w-full"/>
@@ -54,9 +55,9 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
     <span id="minimum-attendance-help" className="text-xs font-normal text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
    </label>
   </div>
-  <Button variant="primary" type="button" disabled={saving} onClick={requestSave}
-   className="">{saving?"Saving…":"Save attendance policy"}</Button>
-  {message?<p role={failed?"alert":"status"} className="text-sm text-body">{message}</p>:null}
+  <Button variant="primary" type="button" loading={saving} disabled={saving} onClick={requestSave}
+   className="min-h-11 md:min-h-[var(--lms-control-height)]">{saving?"Saving…":"Save attendance policy"}</Button>
+  {message?<Alert tone={failed?"error":"success"}>{message}</Alert>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance settings for this college?"
    description="Changes apply to the selected college." confirmVariant="primary" confirmLabel="Save settings"
    pending={saving} onConfirm={()=>void save()}>

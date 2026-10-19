@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { Tabs } from "@/components/ui/tabs";
+import styles from "./legacy-project-tabs.module.css";
 import { canonicalLearnerProjectTab, LEARNER_PROJECT_DETAIL_TABS } from "@/modules/projects/learner-project-tab-alias-model";
 import { learnerProjectTabHref } from "@/modules/projects/learner-project-tab-href-model";
 
@@ -9,7 +10,7 @@ import { learnerProjectTabHref } from "@/modules/projects/learner-project-tab-hr
 export function LearnerProjectTabs({ projectId }: { projectId: string }) {
   const searchParams = useSearchParams();
   const active = canonicalLearnerProjectTab(searchParams.get("tab"));
-  return <Tabs ariaLabel="Project sections" renderPanel={false} value={active}
+  return <Tabs className={styles.legacy} ariaLabel="Project sections" renderPanel={false} value={active}
     items={LEARNER_PROJECT_DETAIL_TABS.map(tab => ({
       value: tab.key,
       label: tab.label,

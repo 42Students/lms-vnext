@@ -142,15 +142,15 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    </div>
    <div className="flex flex-wrap items-center gap-3 text-sm">
     {data?.status==="READY"?<Button variant="ghost" type="button" disabled={busy}
-      className="underline text-link px-0"
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
       onClick={()=>void mutate({action:"FOLLOW",following:!data.following})}>
       {data.following?"Following":"Follow"}
     </Button>:null}
     <Link href={"/tpo/team/company/"+encodeURIComponent(companyId)}
-      className="underline text-link px-0">Open in Team</Link>
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open in Team</Link>
    </div>
   </div>
-  {error?<p role="alert" className="text-sm text-error">{error} <Button variant="ghost" className="underline text-link px-0"
+  {error?<p role="alert" className="text-sm text-error">{error} <Button variant="ghost" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
     type="button" onClick={()=>void load()}>Retry</Button></p>:null}
   {!data&&!error?<p role="status" className="text-sm text-body">Loading company Team conversation…</p>:null}
   {data?.status==="NOT_REGISTERED"?<p role="status" className="text-sm text-body">
@@ -162,7 +162,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
      className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
      <h3 className="font-semibold">Decided:</h3>
      {data.messages.filter(m=>m.decision&&!m.deletedAt).slice(-5).map(m=>
-       <a key={m.id} href={"#company-team-"+m.id} className="block truncate text-primary-text underline">{m.body}</a>)}
+       <a key={m.id} href={"#company-team-"+m.id} className="lms-inline-link block min-h-11 truncate text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{m.body}</a>)}
    </aside>:null}
    <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">
     {data.messages.length===0?<li className="text-sm text-muted-foreground">
@@ -181,20 +181,20 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
         {m.askOverdue?"Overdue ask":"Open ask"} · {data.members.find(person=>person.membershipId===m.askAssigneeMembershipId)?.name??"Team member"}
         {m.dueLabel?" · by "+m.dueLabel:""} · {m.askStatus??"OPEN"}
         {m.askStatus==="OPEN"&&m.askAssigneeMembershipId===actorMembershipId?
-         <Button variant="ghost" className="underline text-link px-0" type="button" disabled={busy}
+         <Button variant="ghost" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" type="button" disabled={busy}
            onClick={()=>void mutate({action:"ASK_DONE",messageId:m.id})}>Mark done</Button>:null}
         {m.askStatus==="OPEN"&&m.authorMembershipId===actorMembershipId?
-         <Button variant="ghost" className="underline text-link px-0" type="button" disabled={busy}
+         <Button variant="ghost" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" type="button" disabled={busy}
            onClick={()=>void mutate({action:"ASK_CANCEL",messageId:m.id})}>Cancel ask</Button>:null}
        </div>:null}
        {!m.deletedAt?<div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
-         <Button variant="ghost" type="button" disabled={busy} className="underline text-link px-0"
+         <Button variant="ghost" type="button" disabled={busy} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
            onClick={()=>void mutate({action:"DECISION",messageId:m.id,marked:!m.decision})}>
            {m.decision?"Take the decision mark off":"Mark as decision"}</Button>
          {m.authorMembershipId===actorMembershipId?<>
-           <Button variant="ghost" type="button" className="underline text-link px-0"
+           <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
              onClick={()=>{setEditing(m.id);setEditBody(m.body);}}>Edit (within 15 minutes)</Button>
-           <Button variant="ghost" type="button" className="underline text-link px-0"
+           <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
              onClick={()=>setDeleting(m.id)}>Delete</Button>
          </>:null}
        </div>:null}
@@ -202,8 +202,8 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
           void mutate({action:"EDIT",messageId:m.id,body:editBody}).then(ok=>{if(ok)setEditing(null);});}}>
         <Textarea required maxLength={4000} rows={3} 
           value={editBody} onChange={event=>setEditBody(event.target.value)}/>
-        <Button variant="primary" type="submit" disabled={busy||!editBody.trim()} className="min-h-11 min-[768px]:min-h-9">Save edit</Button>
-        <Button variant="ghost" type="button" className="underline text-link px-0" onClick={()=>setEditing(null)}>Cancel</Button>
+        <Button variant="primary" type="submit" disabled={busy||!editBody.trim()} className="min-h-11 md:min-h-9">Save edit</Button>
+        <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" onClick={()=>setEditing(null)}>Cancel</Button>
        </form>:null}
     </li>)}
    </ol></ScrollCue>
@@ -229,7 +229,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
       </Select>
     </label>
     <p className="text-xs text-muted-foreground">Use @team to notify the placement team or #drive:&lt;UUID&gt; and #company:&lt;UUID&gt; to link authorized records.</p>
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
      <label className="grid gap-1 text-sm">Ask someone (optional)
        <Select value={assignee} disabled={busy} onChange={event=>updateDraft({body,decision,assignee:event.target.value,dueAt:event.target.value?dueAt:""})}
         >
@@ -243,7 +243,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
         />
      </label>:null}
     </div>
-    <label className="flex items-center gap-2 text-sm">
+    <label className="flex min-h-11 items-center gap-2 text-sm">
       <Checkbox checked={decision} disabled={busy} onChange={event=>updateDraft({body,decision:event.target.checked,assignee,dueAt})}/>
       Mark as decision
     </label>

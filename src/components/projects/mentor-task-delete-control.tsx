@@ -21,16 +21,18 @@ export function MentorTaskDeleteControl({projectId,taskId,title,updatedAt}:{
   }catch{setError("Could not delete this task. Please try again.");}
   finally{setPending(false);}
  }
- return <span>
+ return <>
+  <span>
   <Button variant="danger" type="button" disabled={pending} onClick={()=>setConfirmOpen(true)}
     >
     {pending?"Deleting…":"Delete task"}
   </Button>
+  </span>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title="Delete this task?" confirmLabel="Delete task" pending={pending} onConfirm={remove}
    description="This permanently removes the task from the project board. It cannot be undone.">
    <p className="break-words text-sm font-semibold text-foreground">{title}</p>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </ConfirmDialog>
- </span>;
+ </>;
 }
