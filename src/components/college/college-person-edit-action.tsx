@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 import {Dialog} from "@/components/ui/dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
@@ -95,22 +96,22 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
           </label>
           {kind==="FACULTY"?<>
             <label className="grid gap-1 text-sm">Department
-              <select className={field} value={person.primaryDepartmentId??""}
+              <Select className={field} value={person.primaryDepartmentId??""}
                 onChange={e=>patch("primaryDepartmentId",e.target.value)}>
                 <option value="">No department</option>
                 {person.primaryDepartmentId&&!departments.some(d=>d.id===person.primaryDepartmentId)&&
                   <option value={person.primaryDepartmentId}>Current department</option>}
                 {departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
-              </select>
+              </Select>
             </label>
             <label className="grid gap-1 text-sm">Faculty Type
-              <select className={field} value={person.employmentType??""}
+              <Select className={field} value={person.employmentType??""}
                 onChange={e=>patch("employmentType",e.target.value)}>
                 <option value="">Not specified</option>
                 {person.employmentType&&!LEGACY_FACULTY_TYPES.some(v=>v===person.employmentType)&&
                   <option value={person.employmentType}>{person.employmentType} (existing)</option>}
                 {LEGACY_FACULTY_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
-              </select>
+              </Select>
             </label>
             <label className="grid gap-1 text-sm">Academic title
               <input className={field} maxLength={128} value={person.academicTitle??""}
@@ -127,10 +128,10 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             </label>
           </>}
           <label className="grid gap-1 text-sm">Gender
-            <select className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
+            <Select className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
               {["","Male","Female","Other","Prefer not to say"].map(value=>
                 <option key={value} value={value}>{value||"Not specified"}</option>)}
-            </select>
+            </Select>
           </label>
           <label className="grid gap-1 text-sm">Date of Birth
             <input className={field} type="date" value={person.dateOfBirth}
