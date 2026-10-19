@@ -44,7 +44,7 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
    {error?<p role="alert" className="text-error">{error}</p>:null}
    <Button variant="danger" type="button" disabled={busy}
     onClick={()=>void submit("DELETE")}>{busy?"Removing…":"Delete message"}</Button>
-   <Button variant="ghost" type="button" disabled={busy} onClick={()=>setMode(null)} >Cancel</Button>
+   <Button variant="ghost" type="button" disabled={busy} onClick={()=>{setMode(null);setError("");}} >Cancel</Button>
   </Dialog>}
  </div>;
 }
