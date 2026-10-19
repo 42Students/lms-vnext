@@ -18,7 +18,7 @@ export default async function SuperAdminAuthSettings(){
     action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
   </div>;
  return <div className="min-w-0 space-y-6">
-  <Link href="/admin/settings" className="inline-flex min-h-9 items-center text-[14px] font-[650] text-primary-text">← Platform settings</Link>
+  <Link href="/admin/settings" className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text">← Platform settings</Link>
   <PageHeader eyebrow="Super Admin · Platform Security" title="Authentication settings"
    description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication."/>
   <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
