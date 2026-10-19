@@ -51,10 +51,10 @@ export default async function TenantDirectory({searchParams}:{
   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />} />
-  <Link href="/admin/domains" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Domains</Link>
+  <Link href="/admin/domains" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Domains</Link>
   <div className="flex flex-wrap gap-3">
-   <Link href="/admin/tenants/create" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Create an organization and its colleges</Link>
-   <Link href="/admin/tenants/setup" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
+   <Link href="/admin/tenants/create" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Create an organization and its colleges</Link>
+   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
   </div>
   <form className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold text-body">College
