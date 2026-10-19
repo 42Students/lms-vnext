@@ -143,3 +143,12 @@ Pixel-comparison against a running old LMS and responsive keyboard/touch checks 
 - Migrated HR round editor's visible name/duration inputs, round kind/mode selects, primary create/update actions and round-removal confirm button to the shared `Input`, `Select`, and `Button`. Hidden form values, post actions, validation constraints, labels, editability and optimistic updated-at fields were preserved. Re-read explicit matching `</Select>` and `</Button>` tags after each edit.
 - Added/normalized teal keyboard-focus outlines and selected-college `aria-current` where needed in recruiter Today, Drives, Company Reports, Notifications and Calendar. Replaced a nonlegacy thick ring on the calendar's clickable events with the shared 2px offset focus outline.
 - Added unexecuted source checks for TPO scrollbar data scoping, one-row mixed roles and complete round editor shared component JSX. **No application execution, tests, typecheck, lint, browser tests, CI or deployment.** Responsive/browser visual parity remains unverified.
+
+
+## Eighth pass — follow-up consistency after round editor and keyboard scan
+
+- Existing `scopedShellNavigation` now strips multi-role portal disambiguators (such as `Courses · Teaching`) after selecting the active portal, returning exactly the original LMS navigation row labels rather than mixed-account qualifiers. Existing authorization and route definitions are unchanged. Authored a source-only assertion for this case.
+- Converted the last raw discussion-opening submit control in the recruiter hiring-drive detail into the shared `Button` component, preserving the POST form and hidden college/job identifiers.
+- Restored the standard 2px teal keyboard focus indicator and active selection accessibility metadata in HR notification college filtering, the recruiter Drives lifecycle tabs, and recruiter calendar event-category/view tabs. Removed a nonlegacy thick calendar event grid focus ring.
+- Re-scanned the full `src/components/hr/` widget directory for non-token `rounded-lg/xl/md`, literal 9px radii, hard-coded Tailwind palette colours, and old primary focus classes. No further matches in the 19 canonical HR widgets at this main baseline.
+- The implementation commits only to `chatgpt/chat-19-b`; no tests, compilation, lint, CI, runtime checks, deployments or browser screenshots were performed. This remains a source-level CSS/JSX legacy look sweep.
