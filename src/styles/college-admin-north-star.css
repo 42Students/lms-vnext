@@ -2,10 +2,10 @@
  * The wrapper is display:contents so the authenticated shell owns the ONE white canvas. */
 .lms-college-portal {
   display: contents;
-  --college-control-radius: var(--lms-control-radius, 9px);
+  --college-control-radius: var(--lms-control-radius);
   /* Legacy admin list cards are 8px, while the single page canvas is 12px. */
   --college-card-radius: 8px;
-  --college-title-ink: var(--lms-page-title-color, #172033);
+  --college-title-ink: var(--lms-page-title-color);
 }
 .lms-college-portal h1 {
   color: var(--college-title-ink);
@@ -25,14 +25,14 @@
   border-radius: var(--college-control-radius);
 }
 .lms-college-portal :is(a, button)[class~="bg-primary"] {
-  color: var(--lms-on-primary, #fff);
-  background-color: var(--lms-button-primary, #0a7c88);
+  color: var(--lms-on-primary);
+  background-color: var(--lms-button-primary);
   font-weight: 650;
   font-size: 14px;
 }
 @media (min-width: 768px) {
   .lms-college-portal :is(a, button)[class*="min-h-11"] {
-    min-height: var(--lms-control-height, 36px);
+    min-height: var(--lms-control-height);
   }
 }
 @media (max-width: 767px) {
@@ -45,37 +45,37 @@
 /* College/Tenant control rhythm: the shared UI kit provides the skin; this
  * portal layer only normalizes local native controls and legacy inline CTAs. */
 .lms-college-portal :is(input:not([type="checkbox"]):not([type="radio"]), select) {
-  min-height: var(--lms-control-height, 36px);
+  min-height: var(--lms-control-height);
   font-family: inherit;
   font-size: 14px;
-  background-color: var(--lms-surface, #fff);
-  border-color: var(--lms-border, #e5e9f0);
+  background-color: var(--lms-surface);
+  border-color: var(--lms-border);
 }
 .lms-college-portal textarea {
   font-family: inherit;
   font-size: 14px;
-  background-color: var(--lms-surface, #fff);
-  border-color: var(--lms-border, #e5e9f0);
+  background-color: var(--lms-surface);
+  border-color: var(--lms-border);
 }
 .lms-college-portal :is(input, select, textarea):focus-visible {
-  outline: 2px solid var(--lms-teal-deep, #0e7c87);
+  outline: 2px solid var(--lms-teal-deep);
   outline-offset: 2px;
 }
 .lms-college-portal :is(a, button)[class~="bg-primary"],
 .lms-college-portal button[data-slot="button"][data-variant="primary"] {
-  background: var(--lms-button-primary, #0a7c88);
-  border-color: var(--lms-button-primary, #0a7c88);
-  color: var(--lms-on-primary, #fff);
-  border-radius: var(--lms-control-radius, 9px);
+  background: var(--lms-button-primary);
+  border-color: var(--lms-button-primary);
+  color: var(--lms-on-primary);
+  border-radius: var(--lms-control-radius);
 }
 .lms-college-portal :is(a, button)[class~="bg-primary"]:hover,
 .lms-college-portal button[data-slot="button"][data-variant="primary"]:hover {
-  background: var(--lms-button-primary-hover, #086873);
-  border-color: var(--lms-button-primary-hover, #086873);
+  background: var(--lms-button-primary-hover);
+  border-color: var(--lms-button-primary-hover);
 }
 .lms-college-portal :is(a, button)[class~="bg-primary"]:focus-visible,
 .lms-college-portal button[data-slot="button"]:focus-visible {
-  outline: 2px solid var(--lms-teal-deep, #0e7c87);
+  outline: 2px solid var(--lms-teal-deep);
   outline-offset: 2px;
 }
 @media (max-width: 767px) {
@@ -90,5 +90,5 @@
   border-radius: 8px;
 }
 .lms-college-portal :is(a, button)[class~="rounded-xl"] {
-  border-radius: var(--lms-control-radius, 9px);
+  border-radius: var(--lms-control-radius);
 }
