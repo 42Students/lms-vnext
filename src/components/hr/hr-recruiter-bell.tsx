@@ -109,7 +109,7 @@ export function HrRecruiterBell(){
    variant="secondary" className="relative">
    Notifications {unread>0?<span className="ml-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[var(--lms-notification-unread,#ff7576)] px-1 text-[10px] font-bold leading-none text-white">{unread}</span>:null}
   </Button>
-  {open ? (mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} footer={panelFooter}>
+  {open ? (mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} bodyClassName={style.hrNotificationDrawerBody} footer={panelFooter}>
    {panelBody}
   </Drawer> : <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}>
    <div className={style.hrNotificationHeader}>
