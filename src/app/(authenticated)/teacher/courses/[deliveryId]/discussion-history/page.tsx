@@ -15,7 +15,7 @@ export default async function FacultyDiscussionHistoryPage({
   const [{deliveryId},raw]=await Promise.all([params,searchParams]);
   const parsed=parseFacultyDiscussionHistoryLocation(deliveryId,raw);
   if(!parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="text-xl font-semibold">Invalid discussion history filters</h1>
+    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid discussion history filters</h1>
     <Link href="/teacher/courses" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to Courses</Link>
   </section>;
   const context=await getCurrentRequestContext();
@@ -24,13 +24,13 @@ export default async function FacultyDiscussionHistoryPage({
     <PageHeader eyebrow="Faculty · Discussion audit" title="Discussion moderation history"
       description={[data.delivery.courseName,data.delivery.sectionName].join(" · ")}
       actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-[var(--lms-teal-deep)] inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
         Discussions
       </Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    <form method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Recorded action
         <select name="action" defaultValue={data.query.action}
-          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
           <option value="ALL">All moderation and reply actions</option>
           <option value="PIN">Pin/unpin</option>
           <option value="DELETE">Deletions</option>
