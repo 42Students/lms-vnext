@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {roundApplyPreviewCsv,roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-model";
@@ -51,7 +52,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     <div><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
     <div><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
    </dl>
-   <div className="max-h-60 overflow-y-auto rounded border border-border p-2">
+   <div className="max-h-60 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border p-2">
     {preview.rows.map(r=><div key={r.resultId} className="flex justify-between gap-2 border-b border-border px-2 py-2 text-sm">
      <span>{r.student}</span><span>{r.outcome} → {r.destination} · {r.status}</span>
     </div>)}
@@ -64,9 +65,9 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    </button>
    {!preview.ready?<p role="alert" className="text-sm text-foreground">Complete this evaluation round before applying results.</p>:null}
    <div className="flex flex-wrap gap-3">
-    <button type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
+    <Button variant="primary" type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
-     Confirm and apply {preview.staged} result(s)</button>
+     Confirm and apply {preview.staged} result(s)</Button>
     <button type="button" disabled={busy} onClick={()=>setPreview(null)}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Not yet</button>
    </div>
