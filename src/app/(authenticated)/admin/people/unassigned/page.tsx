@@ -66,7 +66,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
     </form>
     <p className="text-xs text-muted-foreground">{data.total} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
     {data.items.length ? <div className="divide-y divide-border border-y border-border">{data.items.map(row => <article key={row.id}
-      className="min-w-0 border-b border-border py-4">
+      className="min-w-0 py-4">
       <h2 className="break-words text-base font-semibold text-foreground">{row.displayName ?? "Unnamed user"}</h2>
       <div className="flex flex-wrap gap-2"><StatusBadge tone={row.platformStatus === "ACTIVE" ? "success" : "neutral"}>{row.platformStatus}</StatusBadge>
         {row.roles.length ? row.roles.map(role => <StatusBadge key={role}>{role}</StatusBadge>) : <StatusBadge>No system role</StatusBadge>}</div>
