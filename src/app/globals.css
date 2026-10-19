@@ -1098,3 +1098,14 @@ body {
 [data-slot="input"][type="number"] { appearance: textfield; -moz-appearance: textfield; }
 [data-slot="input"][type="number"]::-webkit-inner-spin-button,
 [data-slot="input"][type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Specialist primitives inherit legacy input focus and invalid states. */
+[data-slot="date-range-picker"] [data-slot="date-input"],
+[data-slot="searchable-select"] [data-slot="input"],
+[data-slot="otp-input"],
+[data-slot="password-input"] [data-slot="input"] { min-width: 0; }
+[data-slot="file-upload"] [data-slot="input"]:focus-visible,
+[data-slot="input-group"]:focus-within,
+[data-slot="multi-select"]:focus-visible { outline: 2px solid rgba(38,186,199,.65); outline-offset: 2px; }
+[data-slot="file-upload"] [aria-invalid="true"]:focus-visible,
+[data-slot="multi-select"][aria-invalid="true"]:focus-visible { border-color: var(--lms-error); outline-color: var(--lms-error); box-shadow: 0 0 0 2px rgba(239,68,68,.2); }
