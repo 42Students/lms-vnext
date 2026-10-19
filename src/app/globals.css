@@ -211,6 +211,11 @@ dialog[open],
 [role="dialog"] {
   animation: lms-overlay-in var(--lms-motion-base) var(--lms-motion-ease);
 }
+/* The dialog is positioned with translate(-50%, -50%). A transform-based
+   entrance animation would briefly override centering and visibly jump. */
+dialog[data-slot="dialog"][open] {
+  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-ease);
+}
 dialog::backdrop {
   animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-ease);
 }
