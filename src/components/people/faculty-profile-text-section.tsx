@@ -40,7 +40,7 @@ export function FacultyProfileTextSection({ section, title, description, fields,
       <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       <p className="mt-1 text-sm text-body">{description}</p>
     </div>
-    <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+    <div className="grid min-w-0 gap-4 min-[768px]:grid-cols-2">
       {fields.map(field=>{
         const id=`${facultyProfileAnchor(section)}-${field.name}`;
         return <FormField key={field.name} id={id} label={field.label}>
