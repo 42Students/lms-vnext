@@ -22,13 +22,13 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
           title="Courses"
           description="Course administration requires a college safety scope."
         />
-        <Link href="/admin/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Lessons directory →</Link>
-      <Link href="/admin/videos" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Videos directory →</Link>
-      <Link href="/admin/resources" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Resources directory →</Link>
-      <Link href="/admin/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Live Classes directory →</Link>
-        <Link href="/admin/course-progress" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Course Progress directory →</Link>
-        <Link href="/admin/assignments" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Assignments directory →</Link>
-        <Link href="/admin/quizzes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Quizzes directory →</Link>
+        <Link href="/admin/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Lessons directory →</Link>
+      <Link href="/admin/videos" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Videos directory →</Link>
+      <Link href="/admin/resources" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Resources directory →</Link>
+      <Link href="/admin/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Live Classes directory →</Link>
+        <Link href="/admin/course-progress" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Course Progress directory →</Link>
+        <Link href="/admin/assignments" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Assignments directory →</Link>
+        <Link href="/admin/quizzes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Quizzes directory →</Link>
         <EmptyState
           title="Select a college to continue"
           description="Choose a college in the header above to see its courses."
@@ -42,7 +42,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
   if(!parsed)return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin" title="Courses"/>
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
-      action={<Link href="/admin/courses" className="font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>}/>
+      action={<Link href="/admin/courses" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
   </div>;
   const {catalogueQuery,duplicateCourseId}=parsed;
   const [workspace,lessonCountByCourse]=await Promise.all([
@@ -57,13 +57,13 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         title="Courses"
         description="Course structure inside the selected college safety scope."
       />
-      <Link href="/admin/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Lessons directory →</Link>
-      <Link href="/admin/videos" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Videos directory →</Link>
-      <Link href="/admin/resources" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Resources directory →</Link>
-      <Link href="/admin/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Live Classes directory →</Link>
-      <Link href="/admin/course-progress" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Course Progress →</Link>
-      <Link href="/admin/assignments" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Assignments →</Link>
-      <Link href="/admin/quizzes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-[14px] font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Quizzes →</Link>
+      <Link href="/admin/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Lessons directory →</Link>
+      <Link href="/admin/videos" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Videos directory →</Link>
+      <Link href="/admin/resources" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Resources directory →</Link>
+      <Link href="/admin/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Live Classes directory →</Link>
+      <Link href="/admin/course-progress" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Course Progress →</Link>
+      <Link href="/admin/assignments" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Assignments →</Link>
+      <Link href="/admin/quizzes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Quizzes →</Link>
       <AdminCourseOverview
         workspace={workspace}
         courseBasePath="/admin/courses"
