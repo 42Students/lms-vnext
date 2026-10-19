@@ -163,7 +163,7 @@ export function TpoBulkRoundResultRecorder({
               <button type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
                 className="font-semibold text-[var(--lms-link-text)]">Clear selection</button>
             </div>
-            <details className="rounded border border-border p-3">
+            <details className="rounded-[var(--lms-control-radius)] border border-border p-3">
               <summary className="cursor-pointer text-sm font-semibold">Paste application IDs from a spreadsheet</summary>
               <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
               <Textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
