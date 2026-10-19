@@ -45,7 +45,7 @@ export default async function TpoActorAuditPage({
   const parsed = tpoActorAuditQuerySchema.safeParse(filters);
   if (!parsed.success) {
     return <section role="alert" className="rounded-xl border border-border bg-surface p-6">
-      <h1 className="text-lg font-semibold text-foreground">Invalid audit filters</h1>
+      <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">Invalid audit filters</h1>
       <Link className="mt-2 inline-block text-[var(--lms-teal-deep)] underline" href="/tpo/audit/actors">
         Clear filters
       </Link>
@@ -72,7 +72,7 @@ export default async function TpoActorAuditPage({
     <PageHeader eyebrow="TPO · Oversight" title="Actor and entity audit"
       description="Canonical placement activity events with exact persisted actor, entity and IST date filters."
       actions={<a href={exportHref}
-        className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground">
+        className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">
         Export matching CSV (first 2,000)
       </a>} />
     <p className="text-sm leading-6 text-body">

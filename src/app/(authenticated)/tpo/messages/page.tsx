@@ -168,7 +168,7 @@ export default async function TpoMessagesPage({
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
             <Link
               href="/tpo/messages/notifications"
-              className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-foreground"
+              className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary"
             >
               My placement notifications
             </Link>
@@ -354,7 +354,7 @@ export default async function TpoMessagesPage({
           <div className="flex flex-wrap gap-3 sm:col-span-2 xl:col-span-5">
             <Button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-foreground hover:bg-primary-hover"
+              className="inline-flex min-h-11 items-center rounded-[9px] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover"
             >
               Apply filters
             </Button>
