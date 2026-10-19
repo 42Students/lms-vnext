@@ -40,13 +40,13 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
    </select></label>:null}
   <Button variant="secondary" type="button" disabled={loading} onClick={()=>opened?setOpened(false):void open()}
-   aria-expanded={opened} className="min-h-11 px-3">
+   aria-expanded={opened} className="text-primary-text">
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
   </Button>
   {opened?<div role="region" aria-label="Quiz submissions, scroll for more attempts" tabIndex={0}
    className="max-h-80 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-error">{error}
-    <Button variant="ghost" type="button"  disabled={loading} onClick={()=>void open(page)}>Retry</Button>
+    <Button variant="ghost" type="button" className="underline" disabled={loading} onClick={()=>void open(page)}>Retry</Button>
    </div>:null}
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
@@ -88,10 +88,10 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
       <div className="flex items-center gap-3">
        <Button variant="secondary" type="button" disabled={loading||page<=1}
         onClick={()=>{setLearnerSearch("");void open(page-1);}}
-        className="min-h-11 px-3">Previous</Button>
+        className="text-primary-text">Previous</Button>
        <Button variant="secondary" type="button" disabled={loading||!hasMore}
         onClick={()=>{setLearnerSearch("");void open(page+1);}}
-        className="min-h-11 px-3">Next</Button>
+        className="text-primary-text">Next</Button>
       </div>
      </nav>:null}
   </div>:null}
