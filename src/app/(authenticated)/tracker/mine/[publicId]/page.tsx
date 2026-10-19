@@ -2,6 +2,7 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {getMyTrackerReport} from "@/modules/bug-tracker/reporter-service";
 import {TrackerAdminError} from "@/modules/bug-tracker/admin-errors";
@@ -14,7 +15,10 @@ export default async function MyTrackerReportDetail({
   if(context.user.platformStatus!=="ACTIVE")redirect("/dashboard");
   const {publicId}=await params;
   if(!trackerPublicIdSchema.safeParse(publicId).success)notFound();
-  if(!trackerAdminRuntimeEnabled())return <p role="status">Reports are temporarily unavailable. Try again soon.</p>;
+  if(!trackerAdminRuntimeEnabled())return <div className="space-y-4">
+    <PageHeader title="My report" description={publicId}/>
+    <Banner tone="warning">Reports are temporarily unavailable. Try again soon.</Banner>
+  </div>;
   let report;
   try{report=await getMyTrackerReport(context,publicId);}
   catch(error){

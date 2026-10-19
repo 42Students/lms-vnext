@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 
 export type TooltipProps = {
@@ -16,6 +16,16 @@ export function InfoPopover({ content, children, className, label }: TooltipProp
   const hoverRef = useRef(false);
   const pointerTypeRef = useRef("keyboard");
   const openAtPointerDown = useRef(false);
+  const suppressFocusOpen = useRef(false);
+  useEffect(() => {
+    const onOutsidePointerDown = (event: PointerEvent) => {
+      const root = detailsRef.current;
+      if (root?.open && event.target instanceof Node && !root.contains(event.target))
+        root.open = false;
+    };
+    document.addEventListener("pointerdown", onOutsidePointerDown);
+    return () => document.removeEventListener("pointerdown", onOutsidePointerDown);
+  }, []);
   return (
     <details ref={detailsRef} data-slot="info-popover" className={cx("group relative inline-block min-w-0 align-middle", className)}
       onPointerEnter={event => {
@@ -29,8 +39,8 @@ export function InfoPopover({ content, children, className, label }: TooltipProp
         const trigger = detailsRef.current?.querySelector("summary");
         if (detailsRef.current && !trigger?.matches(":focus-visible")) detailsRef.current.open = false;
       }}
-      onKeyDown={event => { if (event.key === "Escape" && detailsRef.current?.open) { detailsRef.current.open = false; event.preventDefault(); event.stopPropagation(); } }}
-      onFocus={() => { if (detailsRef.current) detailsRef.current.open = true; }}
+      onKeyDown={event => { if (event.key === "Escape" && detailsRef.current?.open) { detailsRef.current.open = false; const summary = detailsRef.current.querySelector<HTMLElement>("summary"); if (summary && document.activeElement !== summary) { suppressFocusOpen.current = true; summary.focus(); } event.preventDefault(); event.stopPropagation(); } }}
+      onFocus={() => { if (suppressFocusOpen.current) { suppressFocusOpen.current = false; return; } if (detailsRef.current) detailsRef.current.open = true; }}
       onBlur={event => {
         if (!event.currentTarget.contains(event.relatedTarget) && !hoverRef.current && detailsRef.current) detailsRef.current.open = false;
       }}>

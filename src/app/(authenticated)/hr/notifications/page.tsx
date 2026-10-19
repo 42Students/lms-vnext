@@ -1,4 +1,3 @@
-import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
@@ -47,19 +46,20 @@ export default async function HrMessagesPage({searchParams}:{
        href:"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId),
      }))}/>
   </section>:<>
-   {result.choices.length>1?<NeedsDoingChips label="College notifications:"
+   <nav aria-label="Inbox filters" className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)]">
+    {result.choices.length>1?<NeedsDoingChips label="College notifications:"
      selectedKey={result.collegeId}
      items={result.choices.map(grant=>({
-       key:grant.collegeId,label:grant.collegeName,
-       href:"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId),
+      key:grant.collegeId,label:grant.collegeName,
+      href:"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId),
      }))}/>:null}
-   <Tabs renderPanel={false} ariaLabel="Inbox filters" value={query.data.unreadOnly}
+    <Tabs renderPanel={false} ariaLabel="Unread notification filter"
+     value={query.data.unreadOnly}
      items={[
-       {value:"false",label:"Show all",href:"/hr/notifications?collegeId="+
-         encodeURIComponent(result.collegeId)+"&unreadOnly=false&q="+encodeURIComponent(query.data.q)},
-       {value:"true",label:"Unread only",href:"/hr/notifications?collegeId="+
-         encodeURIComponent(result.collegeId)+"&unreadOnly=true&q="+encodeURIComponent(query.data.q)},
+      {value:"false",label:"All",href:"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly=false&q="+encodeURIComponent(query.data.q)},
+      {value:"true",label:"Unread",href:"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly=true&q="+encodeURIComponent(query.data.q)},
      ]}/>
+   </nav>
    <form action="/hr/notifications" method="get" className="flex flex-wrap gap-2">
      <Input type="hidden" name="collegeId" value={result.collegeId} />
      <Input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />

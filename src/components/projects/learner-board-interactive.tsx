@@ -1,5 +1,7 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { BoardColumn } from "@/components/ui/board-column";
@@ -92,7 +94,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
     :"Drag your own task into a lane, or use the move control for touch and keyboard."}</p>
   {busy?<p role="status" aria-live="polite" className="text-sm text-body">Saving your change…</p>:null}
   {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
-  {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   {undo&&tasks.some(task=>task.id===undo.taskId&&canLearnerMoveOwnTask(task.status,undo.status))?
    <Button type="button" disabled={busy||readOnly} variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)] underline"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
@@ -114,7 +116,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
       const editable=!readOnly&&own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
       return <li key={task.id} draggable={editable&&!busy}
        onDragStart={event=>{if(editable)event.dataTransfer.setData("text/plain",task.id)}}
-       className="rounded-lg border border-border bg-surface p-3 text-sm">
+       className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm">
         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
          className="block break-words font-semibold text-primary-text">{task.title}</Link>
         <p className="mt-2 text-xs text-muted-foreground">{task.priority}</p>
@@ -145,7 +147,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
         </label>:null}
        </li>;
      })}
-     {!lane.tasks.length?<li className="py-5 text-center text-xs text-muted-foreground">No tasks</li>:null}
+     {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
      </ul>
     </BoardColumn>)}</div>
   </div>

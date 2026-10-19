@@ -1,4 +1,6 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+
 import { Badge } from "@/components/ui/badge";
 
 import {useEffect,useState} from "react";
@@ -35,7 +37,7 @@ export function AssignmentSubmissionLinks({submissionId}:{submissionId:string}){
   })();
   return ()=>abort.abort();
  },[submissionId]);
- if(error)return <p role="alert" className="text-sm text-error">{error}</p>;
+ if(error)return <Alert tone="error">{error}</Alert>;
  if(!links.length)return null;
  return <section aria-label="Submitted repository and website links" className="space-y-2">
   <h4 className="text-sm font-semibold">Submitted links</h4>

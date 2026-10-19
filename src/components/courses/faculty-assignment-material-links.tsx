@@ -1,4 +1,6 @@
 "use client";
+import { Alert } from "@/components/ui/alert";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {useEffect,useRef,useState} from "react";
@@ -52,27 +54,27 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
  return <section aria-label="Instructor assignment resources" className="space-y-2">
   <h3 className="text-sm font-semibold">Instructions &amp; resources</h3>
   {loading?<p role="status" className="text-sm text-body">Loading instructor links…</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
   <ul className="space-y-2">
    {links.map(link=><li key={link.id} className="flex flex-wrap items-center gap-3 text-sm">
     <a href={link.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">{link.title}</a>
     <Button variant="secondary" type="button" disabled={disabled||pending} onClick={()=>{
      if(window.confirm("Remove this instructor resource link?"))void act({action:"REMOVE",materialId:link.id});
-    }} className="min-h-10 rounded">Remove</Button>
+    }} variant="secondary" size="sm">Remove</Button>
    </li>)}
   </ul>
   {!disabled?<div className="grid gap-2 sm:grid-cols-2">
    <label className="text-sm">Resource title
     <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={160}
-     className="mt-1 min-h-10 w-full rounded px-2"/>
+     className="mt-1 min-h-11 w-full"/>
    </label>
    <label className="text-sm">Secure resource link
     <Input value={externalUrl} onChange={e=>setExternalUrl(e.target.value)} type="url" maxLength={2048}
-     placeholder="https://" className="mt-1 min-h-10 w-full rounded px-2"/>
+     placeholder="https://" className="mt-1 min-h-11 w-full"/>
    </label>
    <Button variant="secondary" type="button" disabled={pending||loading||links.length>=20||!parsed.success}
     onClick={()=>{if(parsed.success)void act({action:"ADD",link:parsed.data});}}
-    className="min-h-10 rounded">Add link</Button>
+    variant="secondary" size="sm">Add link</Button>
   </div>:null}
   <p className="text-xs text-muted-foreground">Only HTTPS links can be added here. File handouts require verified private storage.</p>
  </section>;

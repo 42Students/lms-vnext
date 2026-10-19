@@ -50,7 +50,7 @@ export default async function TrackerIssueDetailPage({
   if (!trackerAdminRuntimeEnabled()) {
     return (
       <div className="space-y-6">
-        <PageHeader eyebrow="42 Tracker" title={publicId} description="The tracker is temporarily unavailable." />
+        <PageHeader title={publicId} description="The tracker is temporarily unavailable." />
         <TrackerAdminNav />
         <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body">
           We could not load tracker details right now. Please try again later.
@@ -86,7 +86,6 @@ export default async function TrackerIssueDetailPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="42 Tracker"
         title={issue.publicId}
         description={`${issue.issueType} · ${issue.page}`}
         actions={

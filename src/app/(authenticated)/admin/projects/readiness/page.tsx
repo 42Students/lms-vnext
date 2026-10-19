@@ -21,7 +21,7 @@ export default async function SuperAdminProjectReadinessRoute({
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) {
     return <div className="min-w-0 space-y-6">
-      <PageHeader eyebrow="Super Admin Projects" title="Submission readiness" />
+      <PageHeader title="Submission readiness" />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
         action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}
@@ -39,7 +39,6 @@ export default async function SuperAdminProjectReadinessRoute({
           active="readiness"
         />
         <PageHeader
-          eyebrow="Super Admin Projects"
           title="Submission readiness"
           description="A selected college scope is required."
         />

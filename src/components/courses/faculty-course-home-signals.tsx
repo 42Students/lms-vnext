@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
@@ -185,9 +186,9 @@ export function FacultyCourseHomeSignals({
             ))}
           </ul>
         </section>
-      ) : <p role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
+      ) : <Alert tone="info">
         {riskReady ? "No major learner risk signals" : "Learner risk signals are unavailable until attendance and submission data can be refreshed."}
-      </p>}
+      </Alert>}
 
       {assignmentsReady ? <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
