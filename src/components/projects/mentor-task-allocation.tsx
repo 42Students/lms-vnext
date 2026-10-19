@@ -1,6 +1,6 @@
+"use client";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-"use client";
 import { PageHeader } from "@/components/ui/page-header";
 import {useEffect,useMemo,useState} from "react";
 import { Select } from "@/components/ui/select";
