@@ -35,11 +35,11 @@ export function LearnerVerificationSubmit({
  }
  return <div className="mt-4 min-w-0">
   <button type="button" disabled={pending||refreshRequired} onClick={submit}
-   className="inline-flex min-h-11 max-w-full items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
+   className="inline-flex min-h-11 sm:min-h-9 max-w-full items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
    {pending?"Submitting…":learnerVerificationSubmitLabel(status)}
   </button>
   {message?<p role="status" aria-live="polite" className="mt-2 break-words text-sm text-body">{message}</p>:null}
   {refreshRequired?<button type="button" onClick={()=>router.refresh()}
-    className="mt-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh verification status</button>:null}
+    className="mt-3 min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Refresh verification status</button>:null}
  </div>;
 }
