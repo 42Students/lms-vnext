@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/ui/empty-state";
 import { Tabs } from "@/components/ui/tabs";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import Link from "next/link";
@@ -62,7 +63,7 @@ export default async function HrJobActivityPage({searchParams}:{
     <li key={item.id} className="py-4">
      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
       className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.title}</Link>
-     <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={item.status==="PUBLISHED"?"success":"neutral"}>{item.status}</StatusBadge> {fmt(item.occurredAt)} IST</p>
+     <p className="mt-1 text-sm text-body">{item.status} · {fmt(item.occurredAt)} IST</p>
     </li>)}</ol>:<EmptyState title="No hiring activity" description="No visible publication or closure activity at this college."/>}
    <div className="flex justify-end">
      <Link href={"/api/placements/recruiter/activity/export?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)}
