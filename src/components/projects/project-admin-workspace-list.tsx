@@ -131,7 +131,7 @@ export function ProjectAdminWorkspaceList({
               "Project workspace."}
           </p>
 
-          <div className="mt-4 grid min-w-0 grid-cols-3 divide-x divide-border border-y border-border py-3 text-xs [&>*]:px-2">
+          <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border py-3 text-xs min-[425px]:grid-cols-3 min-[425px]:divide-x min-[425px]:divide-y-0 [&>*]:min-w-0 [&>*]:px-2 [&>*]:py-2 min-[425px]:[&>*]:py-0">
             <Metric
               label="Mentor"
               value={

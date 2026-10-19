@@ -326,12 +326,12 @@ The following are **source-based value comparisons**; every remaining mismatch /
 #### `src/components/tpo/tpo-academic-import-workspace.tsx`
 | Property/state | Old LMS reference | Current file:line and value | Source verdict |
 |---|---|---|---|
-| Open/preview/confirm action touch area | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `:102,129,163` shared `Button` `min-h-11 md:min-h-9` | Matched source |
-| Template link keyboard state | `components___accessibility.scss:18-21` 2px teal/3px offset | `:118` link focus-visible 2px/3px and `--lms-primary-text` | Matched source on light-theme token |
-| File input and pasted data | `components___form.scss:23-33` mouse focus removal; `pages___admin-list-pages.scss:193-214` 44px phone | `:121,123` shared FileUpload/Textarea; input 44px/36px | Shared inherited source; original drop-area state metrics missing |
-| Match/invalid table and badges | `old-lms-pages.md:9` compact list/data table and status pills | `:139-153` shared `DataTable`, success/warning `StatusBadge`, per-row Checkbox | Structural match; exact historical cells/badges unknown |
-| Review/confirmation and failure | No old import wizard result-state source | `:134-177` existing guarded preview, row inclusion, Dialog, alerts/status messages | Behaviors retained, no pixel-level claim |
-| Paper output | No legacy TPO import printer stylesheet | `:102,118,121,123,129,155,163` interactive controls hidden; results table retained | Source-only G5 print baseline |
+| Open/preview/confirm action touch area | `pages___admin-list-pages.scss:8,193-214` 44px through 767px | `:102,132,166` shared `Button` `min-h-11 md:min-h-9` | Matched source |
+| Template link keyboard state | `components___accessibility.scss:18-21` 2px teal/3px offset | `:121` link focus-visible 2px/3px and `--lms-primary-text` | Matched source on light-theme token |
+| File input and pasted data | `components___form.scss:23-33` mouse focus removal; `pages___admin-list-pages.scss:193-214` 44px phone | `:124,126` shared FileUpload/Textarea; input 44px/36px | Shared inherited source; original drop-area state metrics missing |
+| Match/invalid table and badges | `old-lms-pages.md:9` compact list/data table and status pills | `:142-156` shared `DataTable`, success/warning `StatusBadge`, per-row Checkbox | Structural match; exact historical cells/badges unknown |
+| Review/confirmation and failure | No old import wizard result-state source | `:137-180` existing guarded preview, row inclusion, Dialog, alerts/status messages | Behaviors retained, no pixel-level claim |
+| Paper output | No legacy TPO import printer stylesheet | `:102,116,121,124,126,132,158,166` interactive controls hidden; results table retained | Source-only G5 print baseline |
 
 ### Scoped grep proof and responsive-state audit
 
@@ -356,3 +356,194 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 **Responsive source proof:** 0–767px uses `min-h-11` = 44px in actions, inputs and links, matching `pages___admin-list-pages.scss:193-214`; 768px+ `md:min-h-9` resolves 36px matching `ui-clone-checklist.md:46-47`. Student chooser uses `sm:grid-cols-3`, which may show three columns on 640–767px with 44px targets. The row results are shared `DataTable` with phone single-row-card presentation and `sm:` table layout (see `src/components/ui/data-table.tsx:49-100`); no new page-specific overflow or fixed width was added. Print modifiers only suppress interactive widgets; no A4 margins, fonts or page geometry were invented.
 
 **Still open for G4:** exact legacy import wizard drop-zone measurements, hover/disabled/error/empty/stepper visual values, complete repository-wide grep and runtime phone/tablet screenshots. **Still open for G5:** historical printed offer/certificate/receipt/PDF and hosted email templates, computed print output and email clients. No tests/CI/app/browser were run. These are **whole-file source completions**, not strict category parity ticks.
+
+### Concurrent-main integration proof (2026-10-19)
+The second merge `c0886af430adec3868af30b7059c07c2cea887db` incorporated newer `main` `2808e32a641e1e35f513755b840b6ef892c61163`. For overlapping files, the merge retained the other lanes' **tenant DataTable migration** (`admin/tenants/page.tsx`) and **assessment Pagination migration** (`admin-assessment-read-directory.tsx`), with that pager still `print:hidden` at current line 104. The TPO academic import's concurrent step guidance was kept at `tpo-academic-import-workspace.tsx:116-118`; the import template/export control states are now at lines 121/124/126/132/158/166. Only G4 visual controls were patched over the newer page. The four-file scoped zero-native-control / zero-hex count was reverified after merging. G4/G5 categories remain unticked, with no tests, browser rendering or CI.
+
+## G4/G5 next bounded source batch — lane chat-6
+
+**Scope note.** The following eleven full source files were refetched from `chatgpt/chat-6-b` after all patches and following concurrent `main` merges. Every row is a **source-only property comparison**, not computed style evidence. Screen/table contents, routes, data permissions and submission APIs were not deliberately rewritten. No app, TypeScript compiler, tests, CI, screenshot or print preview was executed. Owner G4/G5 **still remain unchecked** under STRICT TICK RULE; do not treat scoped source edits as a claim of pixel-level historical parity.
+
+### Whole-file source remediation queue
+- [x] **Source remediation only** — `src/components/tpo/tpo-batch-eligibility-import.tsx`: Eligibility decision import drawer: opener, FileUpload/CSV, per-row skip, status tab filters, eight-row preview and confirmation; Import results still use shared DataTable and StatusBadge; repaired missing Checkbox import; template download focus uses explicit 2px/3px brand ring. **Still required for strict category tick:** Legacy eligibility drawer-specific spacing, stepper and results print are absent.
+- [x] **Source remediation only** — `src/components/placements/tpo-selection-import.tsx`: Company selection import: shared FileUpload, match preview, unmatched explanation, confirm; Paired confirmed shared Button and two DataTables; print expands 52-row and 40-row max-scroll wrappers. **Still required for strict category tick:** Legacy match-preview-specific row heights and disabled text values absent.
+- [x] **Source remediation only** — `src/components/placements/tpo-round-results-import.tsx`: Round-result import: file, CSV template, four result preview tables, matching overrides and staging confirmation; CSV template focus 2px/3px, shared FileUpload input 44px; print expands capped containers, hides stage controls. **Still required for strict category tick:** Legacy radio/checkbox and missing-policy print specifics absent.
+- [x] **Source remediation only** — `src/components/tpo/tpo-academic-import-preview.tsx`: Page-local TPO academic CSV preview: paste, validate, warning status and result rows; Retained newer main progress guidance, shared Button 44px phone/36px desktop, print rows overflow visible. **Still required for strict category tick:** No legacy exact page-local academic preview values.
+- [x] **Source remediation only** — `src/components/placements/tpo-report-presentation.tsx`: Fullscreen report presentation button and error status; Shared Button 44px phone/36px desktop; paper-hidden trigger; preserved aria-pressed, fullscreen handler and listener. **Still required for strict category tick:** Inherited shared Button focus 2px offset (legacy global 3px) not computed.
+- [x] **Source remediation only** — `src/components/tpo/recruiter-lead-csv-import.tsx`: Recruiter leads CSV dialog: opener, chooser, tabbed review, filters, grouped rows and result export; All seven paired shared Buttons; CSV template link explicit 2px/3px; result download anchor cleaned up and URL release delayed. **Still required for strict category tick:** Legacy dialog width/focus/drag-drop specific output missing; no visual client check.
+- [x] **Source remediation only** — `src/components/placements/report-interactive-table.tsx`: Interactive TPO report table: search, row-size select, column dropdowns, exports, sorting, show more; Shared DataTable; on-screen header Button stays interactive, separate print-only heading text prevents blank printed headers; export CSV model unchanged. **Still required for strict category tick:** Only first currently rendered rows print when limit truncates data; no old print evidence.
+- [x] **Source remediation only** — `src/components/placements/tpo-report-saved-filters.tsx`: Saved report filter disclosure: name/selected view inputs and save/apply/delete; Input Select Button 44px phone/36px desktop; Disclosure hidden on paper; browser-local storage behavior unchanged. **Still required for strict category tick:** Legacy filter/disclosure specifics and saved-state visuals not supplied.
+- [x] **Source remediation only** — `src/components/placements/college-report-navigation.tsx`: College report links: four separate routes, navigation/keyboard/touch; Each Link 44px/36px, focus 2px/3px brand token, radius shared and nav hidden in print. **Still required for strict category tick:** Exact historical college links and print rules missing.
+- [x] **Source remediation only** — `src/components/tpo/tpo-batch-undo-control.tsx`: Eligibility import undo review: Checkbox acknowledgement, Undo action and error; Phone checkbox label 44px, Undo shared Button 44px/36px; entire action hidden on print. **Still required for strict category tick:** Old undo affordance and user-review text layout absent.
+- [x] **Source remediation only** — `src/components/placements/placement-report-ui.tsx`: TPO report filters, season/drive choices, route navigation, export link; Select and filter shared Button mobile 44px/desktop 36px, printed report excludes filters/nav; CSV primary export has 2px/3px focus. **Still required for strict category tick:** Native hidden input intentional and not replaced; no old complete print/PDF output available.
+- [ ] **Next file:** `src/components/admin/super-admin-faculty-bulk-import.tsx` (review actual template/download print and file-chooser mismatch against other imports), then continue other G4 import/export surfaces.
+
+### Reference properties shared by this matrix
+- **Legacy touch rule:** `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` declares `$admin-list-touch-min:44px` for `@media(max-width:767px)`; vNext `min-h-11` is 44px and `md:min-h-9` is 36px beginning 768px.
+- **Desktop owner value:** `docs/design/ui-clone-checklist.md:46-47` describes the measured old TPO 36px button, 9px radius, 14px/650 and brand hover; `src/app/globals.css:334-337` defines 36px/9px tokens. The shared Button source is `src/components/ui/button.tsx:10-35`, not edited by this lane.
+- **Legacy focus:** `docs/design/legacy-styles/components___accessibility.scss:18-21` outlines 2px solid `$teal-text` and offset 3px; `docs/design/legacy-styles/components___variables.scss:12` and `src/app/globals.css:29` both resolve the light-theme text brand to `#1a95a1`. Shared Button's inherited outline is offset 2px, so its exact global 3px focus parity remains a chat-17 skin question; explicit anchor focus values are local source matches.
+- **Legacy table:** `docs/design/old-lms-pages.md:9` describes compact hairline rows and badges; `docs/design/legacy-styles/pages___admin-list-pages.scss:69-111` provides table scroll, font and padding values. Shared `DataTable` at `src/components/ui/data-table.tsx:37-100` carries responsive and table skin rules; exact browser computed rows not inspected.
+- **Print historical gap:** Checked-in `docs/design/legacy-styles/*.scss` contains no matching authenticated `@media print` or PDF/receipt/certificate layouts. `src/app/(authenticated)/authenticated-print.css:1-80` is the vNext paper baseline, **not** a validated historical template.
+
+### Value/property evidence by completed source file
+
+#### `src/components/tpo/tpo-batch-eligibility-import.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/tpo/tpo-batch-eligibility-import.tsx:94, 102, 108, 112, 118 (+6 more)` — `min-h-11`, 11 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/tpo/tpo-batch-eligibility-import.tsx:94, 102, 118, 142, 156 (+2 more)` — `md:min-h-9`, 7 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/ui/button.tsx:30-35` inherited offset 2px; no local 3px ring | Known inherited offset differs from 3px legacy global; remains OPEN |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | `src/components/tpo/tpo-batch-eligibility-import.tsx:127` shared DataTable; alerts `src/components/tpo/tpo-batch-eligibility-import.tsx:121, 170`, results `src/components/tpo/tpo-batch-eligibility-import.tsx:120, 171` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/tpo/tpo-batch-eligibility-import.tsx:94, 102, 108, 114, 118 (+4 more)` — 9 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | Import results still use shared DataTable and StatusBadge; repaired missing Checkbox import; template download focus uses explicit 2px/3px brand ring | Code reviewed, **not executed** |
+
+#### `src/components/placements/tpo-selection-import.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/placements/tpo-selection-import.tsx:56, 70` — `min-h-11`, 2 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/placements/tpo-selection-import.tsx:70` — `md:min-h-9`, 1 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/ui/button.tsx:30-35` inherited offset 2px; no local 3px ring | Known inherited offset differs from 3px legacy global; remains OPEN |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | `src/components/placements/tpo-selection-import.tsx:61, 80` shared DataTable; alerts `src/components/placements/tpo-selection-import.tsx:82`, results `src/components/placements/tpo-selection-import.tsx:59, 83` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/placements/tpo-selection-import.tsx:56, 70` — 2 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | Paired confirmed shared Button and two DataTables; print expands 52-row and 40-row max-scroll wrappers | Code reviewed, **not executed** |
+
+#### `src/components/placements/tpo-round-results-import.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/placements/tpo-round-results-import.tsx:62, 63, 66, 91, 97 (+1 more)` — `min-h-11`, 6 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/placements/tpo-round-results-import.tsx:62, 66, 91, 121` — `md:min-h-9`, 4 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/placements/tpo-round-results-import.tsx:62` — `focus-visible:outline-offset-[3px]` | Explicit link source matches light-theme legacy token; inherited controls require separate computed verification |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | `src/components/placements/tpo-round-results-import.tsx:73, 84, 105, 134` shared DataTable; alerts `src/components/placements/tpo-round-results-import.tsx:144`, results `src/components/placements/tpo-round-results-import.tsx:71, 131` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/placements/tpo-round-results-import.tsx:62, 63, 66, 91, 97 (+2 more)` — 7 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | CSV template focus 2px/3px, shared FileUpload input 44px; print expands capped containers, hides stage controls | Code reviewed, **not executed** |
+
+#### `src/components/tpo/tpo-academic-import-preview.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/tpo/tpo-academic-import-preview.tsx:25` — `min-h-11`, 1 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/tpo/tpo-academic-import-preview.tsx:25` — `md:min-h-9`, 1 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/ui/button.tsx:30-35` inherited offset 2px; no local 3px ring | Known inherited offset differs from 3px legacy global; remains OPEN |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | `src/components/tpo/tpo-academic-import-preview.tsx:28` shared DataTable; alerts `src/components/tpo/tpo-academic-import-preview.tsx:26`, results `src/components/tpo/tpo-academic-import-preview.tsx:27` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/tpo/tpo-academic-import-preview.tsx:22, 24, 25` — 3 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | Retained newer main progress guidance, shared Button 44px phone/36px desktop, print rows overflow visible | Code reviewed, **not executed** |
+
+#### `src/components/placements/tpo-report-presentation.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/placements/tpo-report-presentation.tsx:24` — `min-h-11`, 1 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/placements/tpo-report-presentation.tsx:24` — `md:min-h-9`, 1 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/ui/button.tsx:30-35` inherited offset 2px; no local 3px ring | Known inherited offset differs from 3px legacy global; remains OPEN |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | No table in this component; alerts `src/components/placements/tpo-report-presentation.tsx:28`, results `src/components/placements/tpo-report-presentation.tsx:not present` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/placements/tpo-report-presentation.tsx:24` — 1 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | Shared Button 44px phone/36px desktop; paper-hidden trigger; preserved aria-pressed, fullscreen handler and listener | Code reviewed, **not executed** |
+
+#### `src/components/tpo/recruiter-lead-csv-import.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/tpo/recruiter-lead-csv-import.tsx:159, 174, 181, 185, 198 (+6 more)` — `min-h-11`, 11 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/tpo/recruiter-lead-csv-import.tsx:159, 174, 181, 198, 203 (+3 more)` — `md:min-h-9`, 8 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/tpo/recruiter-lead-csv-import.tsx:181` — `focus-visible:outline-offset-[3px]` | Explicit link source matches light-theme legacy token; inherited controls require separate computed verification |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | `src/components/tpo/recruiter-lead-csv-import.tsx:216, 274` shared DataTable; alerts `src/components/tpo/recruiter-lead-csv-import.tsx:188`, results `src/components/tpo/recruiter-lead-csv-import.tsx:191, 232, 267` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/tpo/recruiter-lead-csv-import.tsx:159, 174, 181, 185, 197 (+4 more)` — 9 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | All seven paired shared Buttons; CSV template link explicit 2px/3px; result download anchor cleaned up and URL release delayed | Code reviewed, **not executed** |
+
+#### `src/components/placements/report-interactive-table.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/placements/report-interactive-table.tsx:69, 73, 84, 91, 102 (+6 more)` — `min-h-11`, 11 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/placements/report-interactive-table.tsx:69, 73, 84, 91, 102 (+6 more)` — `md:min-h-9`, 11 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/ui/button.tsx:30-35` inherited offset 2px; no local 3px ring | Known inherited offset differs from 3px legacy global; remains OPEN |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | `src/components/placements/report-interactive-table.tsx:135` shared DataTable; alerts `src/components/placements/report-interactive-table.tsx:not present`, results `src/components/placements/report-interactive-table.tsx:65, 117, 139, 159` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/placements/report-interactive-table.tsx:84, 102, 112, 113, 115 (+3 more)` — 8 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | Shared DataTable; on-screen header Button stays interactive, separate print-only heading text prevents blank printed headers; export CSV model unchanged | Code reviewed, **not executed** |
+
+#### `src/components/placements/tpo-report-saved-filters.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/placements/tpo-report-saved-filters.tsx:62, 65, 69, 75, 76` — `min-h-11`, 5 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/placements/tpo-report-saved-filters.tsx:62, 65, 69, 75, 76` — `md:min-h-9`, 5 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/ui/button.tsx:30-35` inherited offset 2px; no local 3px ring | Known inherited offset differs from 3px legacy global; remains OPEN |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | No table in this component; alerts `src/components/placements/tpo-report-saved-filters.tsx:not present`, results `src/components/placements/tpo-report-saved-filters.tsx:78` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/placements/tpo-report-saved-filters.tsx:58` — 1 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | Input Select Button 44px phone/36px desktop; Disclosure hidden on paper; browser-local storage behavior unchanged | Code reviewed, **not executed** |
+
+#### `src/components/placements/college-report-navigation.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/placements/college-report-navigation.tsx:15` — `min-h-11`, 1 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/placements/college-report-navigation.tsx:15` — `md:min-h-9`, 1 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/placements/college-report-navigation.tsx:15` — `focus-visible:outline-offset-[3px]` | Explicit link source matches light-theme legacy token; inherited controls require separate computed verification |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | No table in this component; alerts `src/components/placements/college-report-navigation.tsx:not present`, results `src/components/placements/college-report-navigation.tsx:not present` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/placements/college-report-navigation.tsx:10` — 1 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | Each Link 44px/36px, focus 2px/3px brand token, radius shared and nav hidden in print | Code reviewed, **not executed** |
+
+#### `src/components/tpo/tpo-batch-undo-control.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/tpo/tpo-batch-undo-control.tsx:28` — `min-h-11`, 1 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/tpo/tpo-batch-undo-control.tsx:28` — `md:min-h-9`, 1 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/ui/button.tsx:30-35` inherited offset 2px; no local 3px ring | Known inherited offset differs from 3px legacy global; remains OPEN |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | No table in this component; alerts `src/components/tpo/tpo-batch-undo-control.tsx:30`, results `src/components/tpo/tpo-batch-undo-control.tsx:not present` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/tpo/tpo-batch-undo-control.tsx:28` — 1 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | Phone checkbox label 44px, Undo shared Button 44px/36px; entire action hidden on print | Code reviewed, **not executed** |
+
+#### `src/components/placements/placement-report-ui.tsx`
+
+| State/property | Legacy file:line value | vNext file:line value (source check) | Evidence status |
+|---|---|---|---|
+| Small-screen interactive target | `pages___admin-list-pages.scss:8,193-214` — 44px through 767px | `src/components/placements/placement-report-ui.tsx:67, 82, 103, 115, 228 (+1 more)` — `min-h-11`, 6 occurrence(s) | Source target only; physical touch not measured |
+| Large-screen button control | `ui-clone-checklist.md:46-47` — 36px, radius 9px | `src/components/placements/placement-report-ui.tsx:67, 82, 103, 115, 228 (+1 more)` — `md:min-h-9`, 6 occurrence(s) | Source target only; resolved style unverified |
+| Keyboard focus | `components___accessibility.scss:18-21` — teal 2px / 3px offset | `src/components/placements/placement-report-ui.tsx:228, 267` — `focus-visible:outline-offset-[3px]` | Explicit link source matches light-theme legacy token; inherited controls require separate computed verification |
+| Table / result display | `old-lms-pages.md:9` — shared hairline rows/status pills | No table in this component; alerts `src/components/placements/placement-report-ui.tsx:not present`, results `src/components/placements/placement-report-ui.tsx:218` | Structured source inspected; exact hover, error, empty and table metrics not fully compared |
+| Paper separation | No historical authenticated print counterpart in checked-in SCSS | `src/components/placements/placement-report-ui.tsx:60, 222, 223, 267` — 4 `print:hidden` marker(s), plus shared paper CSS | vNext paper behavior source-only; G5 remains OPEN |
+| Workflow preservation | No complete legacy import flow or report behavior counterpart supplied | Select and filter shared Button mobile 44px/desktop 36px, printed report excludes filters/nav; CSV primary export has 2px/3px focus | Code reviewed, **not executed** |
+
+### Scoped grep ledger and responsive proof (complete file reads)
+
+These regex counts were computed over the entire fetched UTF-8 content of exactly eleven files on `chatgpt/chat-6-b`. They are **not** a checkout-wide grep. Native hidden-field exemption is explicitly identified below.
+
+| Path | Raw `button/input/select/textarea/table` tags | Hex literals | `print:hidden` markers | Paired shared Button open/close |
+|---|---|---|---|
+| `src/components/tpo/tpo-batch-eligibility-import.tsx` | 0/0/0/0/0 | 0 | 9 | 10/10 |
+| `src/components/placements/tpo-selection-import.tsx` | 0/0/0/0/0 | 0 | 2 | 1/1 |
+| `src/components/placements/tpo-round-results-import.tsx` | 0/0/0/0/0 | 0 | 7 | 2/2 |
+| `src/components/tpo/tpo-academic-import-preview.tsx` | 0/0/0/0/0 | 0 | 3 | 1/1 |
+| `src/components/placements/tpo-report-presentation.tsx` | 0/0/0/0/0 | 0 | 1 | 1/1 |
+| `src/components/tpo/recruiter-lead-csv-import.tsx` | 0/0/0/0/0 | 0 | 9 | 7/7 |
+| `src/components/placements/report-interactive-table.tsx` | 0/0/0/0/0 | 0 | 8 | 8/8 |
+| `src/components/placements/tpo-report-saved-filters.tsx` | 0/0/0/0/0 | 0 | 1 | 3/3 |
+| `src/components/placements/college-report-navigation.tsx` | 0/0/0/0/0 | 0 | 1 | 0/0 |
+| `src/components/tpo/tpo-batch-undo-control.tsx` | 0/0/0/0/0 | 0 | 1 | 1/1 |
+| `src/components/placements/placement-report-ui.tsx` | 0/1/0/0/0 | 0 | 4 | 2/2 |
+
+**Scoped totals:** raw controls `0/1/0/0/0`; hard-coded hex `0`; all shared Button pairs balanced. The **one native input** is `src/components/placements/placement-report-ui.tsx:92-97`, intentionally `type="hidden"` to preserve season scope across a drive filter GET form; it is not a visible hand-rolled input and has no CSS class override. No native `<button>` remains in these eleven files. JSX open/close counts are lexical proof, not a TypeScript parser.
+
+Checkout reproduction, **not executed**:
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+  src/components/tpo/tpo-batch-eligibility-import.tsx \
+  src/components/placements/tpo-selection-import.tsx \
+  src/components/placements/tpo-round-results-import.tsx \
+  src/components/tpo/tpo-academic-import-preview.tsx \
+  src/components/placements/tpo-report-presentation.tsx \
+  src/components/tpo/recruiter-lead-csv-import.tsx \
+  src/components/placements/report-interactive-table.tsx \
+  src/components/placements/tpo-report-saved-filters.tsx \
+  src/components/placements/college-report-navigation.tsx \
+  src/components/tpo/tpo-batch-undo-control.tsx \
+  src/components/placements/placement-report-ui.tsx
+```
+
+**Responsive source scope:** the controls use the 44px target through 767px and 36px from 768px where locally overridden; shared Button/Select/FileUpload behavior otherwise inherits the central skin. TPO eligibility uses shared Tabs and DataTable with phone card-style rows, while the selected/round result wrappers expand clipped scroll regions in print using `print:max-h-none print:overflow-visible`. `ReportInteractiveTable` now emits a print-only text header alongside its interactive header Button so the shared print CSS's button hiding cannot blank paper table headings. Actual phone, tablet, printed pagination, PDF/email output and side-by-side rendering **not performed**.
+
+**Still OPEN:** G4 needs complete old-LMS wizard-specific state/value sources, report computed properties and repository-wide scan; G5 needs authentic print/PDF/certificate/receipt/offer-letter and provider-hosted email HTML, plus printed/browser visual output. These cannot be certified from checked-in SCSS alone.

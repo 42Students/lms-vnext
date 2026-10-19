@@ -25,9 +25,9 @@ export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label
   <p className="text-xs text-muted-foreground">Counts as placed</p>
   <div className="flex gap-2">
    <Button variant={value===true?"primary":"secondary"} type="button" disabled={busy} aria-pressed={value===true} onClick={()=>void update(true)}
-    className="min-h-11 px-3 sm:min-h-9">Yes</Button>
+    className="min-h-11 px-3 min-[768px]:min-h-9">Yes</Button>
    <Button variant={value===false?"primary":"secondary"} type="button" disabled={busy} aria-pressed={value===false} onClick={()=>void update(false)}
-    className="min-h-11 px-3 sm:min-h-9">No</Button>
+    className="min-h-11 px-3 min-[768px]:min-h-9">No</Button>
   </div>
   {value===null?<p className="text-xs text-muted-foreground">Not decided</p>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}

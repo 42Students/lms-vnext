@@ -13,12 +13,12 @@ export default async function BatchDetail({params}:{params:Promise<{batchId:stri
  const batch=await getTpoMessagingBatch(context,batchId);
  if(!batch)notFound();
  return <div className="min-w-0 space-y-6">
-  <PageHeader eyebrow="Engage · Campaigns" title="Delivery batch"
+  <PageHeader title="Delivery batch"
     description={batch.purpose+" · Provider acceptance is not recipient delivery."}/>
-  <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]">Back to history</Link>
+  <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text">Back to history</Link>
   <section className="border-b border-border py-5">
    <p className="text-sm text-body">{batch.finalizedAt?"Finalized":"Not finalized"} · {batch.actualReceipts} persisted receipts of {batch.total} intended</p>
-   <dl className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+   <dl className="mt-4 grid grid-cols-2 gap-4 min-[768px]:grid-cols-4">
     {([["Queued",batch.actualQueued],["Provider accepted",batch.actualSent],
       ["Failed",batch.actualFailed],["Suppressed",batch.actualSuppressed]] as const).map(([label,count])=>
      <div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>

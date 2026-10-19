@@ -1,5 +1,6 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Radio } from "@/components/ui/radio";
 
 import { useState } from "react";
@@ -348,15 +349,14 @@ export function QuizAttemptControl({
 
         <nav aria-label="Quiz question progress" className="mt-4 rounded-xl border border-border bg-surface p-3">
           <h3 className="text-sm font-semibold text-foreground">Progress</h3>
-          <details className="mt-2 lg:hidden">
-            <summary className="cursor-pointer text-sm text-primary-text">Questions</summary>
+          <Disclosure title="Questions" className="mt-2 lg:hidden [&>summary]:text-primary-text">
             <ol className="mt-2 flex flex-wrap gap-2">
               {quiz.questions.map((question,index)=><li key={question.id}>
                 <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle sm:min-h-9"
                   href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</a>
               </li>)}
             </ol>
-          </details>
+          </Disclosure>
           <ol className="mt-2 hidden flex-wrap gap-2 lg:flex">
             {quiz.questions.map((question,index)=><li key={question.id}>
               <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle sm:min-h-9"

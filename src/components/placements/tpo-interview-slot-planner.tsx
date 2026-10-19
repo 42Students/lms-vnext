@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {EmptyState} from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {useState} from "react";
@@ -80,7 +82,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <label className="grid gap-1 text-sm">New room<Input value={bulkRoom} onChange={e=>setBulkRoom(e.target.value)}
      className="min-h-11 md:min-h-9 "/></label>
    </div>
-   {fromRoll&&toRoll&&fromRoll.localeCompare(toRoll,"en",{numeric:true})>0?<p role="alert" className="mt-2 text-sm text-foreground">The ending roll must be after the starting roll.</p>:null}
+   {fromRoll&&toRoll&&fromRoll.localeCompare(toRoll,"en",{numeric:true})>0?<InlineNotice tone="error" message="The ending roll must be after the starting roll."/>:null}
    {fromRoll&&toRoll?<p role="status" className="mt-3 text-sm">
     {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
      r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
@@ -169,7 +171,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      </div>
     </article>;
    })}</div>
-   {!slots.length?<p className="mt-3 text-sm text-body">No interview slots generated for this round yet.</p>:null}
+   {!slots.length?<EmptyState title="No interview slots generated for this round yet."/>:null}
   </div>
   <ConfirmDialog open={confirmRequest!==null}
     onOpenChange={next=>{if(!next&&!busy)setConfirmRequest(null);}}
@@ -178,7 +180,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     description={confirmRequest?.description}
     confirmLabel="Confirm"
     onConfirm={()=>{if(confirmRequest){const body=confirmRequest.body;setConfirmRequest(null);void action(body);}}}/>
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
-  {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }

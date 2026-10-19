@@ -1,4 +1,5 @@
 import { Dropdown } from "@/components/ui/dropdown";
+import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { PageHeader } from "@/components/ui/page-header";
@@ -429,12 +430,9 @@ export async function PlacementDriveWorkspace({
       {deadlineState?.extendable?(
         <section id="drive-deadline-actions" aria-label="Set or extend deadline"
           className="border-b border-border pb-6">
-          <details>
-            <summary className="cursor-pointer font-semibold text-[var(--lms-link-text)]">
-              {deadlineState.applicationDeadline?"Extend deadline":"Set deadline"}
-            </summary>
+          <Disclosure title={deadlineState.applicationDeadline?"Extend deadline":"Set deadline"} className="[&>summary]:font-semibold [&>summary]:text-[var(--lms-link-text)]">
             <div className="mt-4"><TpoDriveDeadlineForm job={deadlineState}/></div>
-          </details>
+          </Disclosure>
         </section>
       ):null}
       {nextStep ? (

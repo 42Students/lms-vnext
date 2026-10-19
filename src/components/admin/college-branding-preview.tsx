@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Card } from "@/components/ui/card";
 import type { AdminCollegeBrandingPreview } from "@/modules/colleges/admin-branding-preview-model";
 
 function SignInStylePreview({
@@ -149,7 +150,7 @@ export function CollegeBrandingPreview({
             : "No branding record is stored. The illustration uses LMS colour and background defaults."}
         </p>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
           <ColorSwatch
             label="Primary colour"
             color={branding.primary}
@@ -162,7 +163,7 @@ export function CollegeBrandingPreview({
           />
         </div>
 
-        <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
+        <dl className="mt-5 grid min-w-0 gap-4 text-sm md:grid-cols-2">
           <div>
             <dt className="font-semibold text-foreground">Public logo</dt>
             <dd className="mt-1 text-body">
@@ -251,14 +252,14 @@ export function CollegeBrandingPreview({
           maths. This is not a live tenant-host login or a pixel-perfect legacy preview.
         </p>
         <div className="grid gap-5 lg:grid-cols-2">
-          <article className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
+          <Card as="article" className="p-4 sm:p-4">
             <h3 className="mb-3 text-sm font-semibold text-foreground">Desktop</h3>
             <SignInStylePreview branding={branding} mobile={false} />
-          </article>
-          <article className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
+          </Card>
+          <Card as="article" className="p-4 sm:p-4">
             <h3 className="mb-3 text-sm font-semibold text-foreground">Mobile</h3>
             <SignInStylePreview branding={branding} mobile />
-          </article>
+          </Card>
         </div>
       </section>
     </div>

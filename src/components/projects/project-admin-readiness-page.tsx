@@ -198,7 +198,7 @@ export async function ProjectAdminReadinessPage({
                 </div>
               </div>
 
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="mt-4 grid min-w-0 grid-cols-1 border-t border-border md:grid-cols-2 min-[1366px]:grid-cols-4">
                 <Metric
                   label="Progress"
                   value={
