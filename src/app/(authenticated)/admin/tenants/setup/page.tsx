@@ -76,7 +76,7 @@ export default async function SuperAdminTenantSetup({
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."
-   actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Tenant directory</Link>} />
+   actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Tenant directory</Link>} />
   <section aria-label="Tenant setup overview" className="grid gap-3 sm:grid-cols-3">
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Current step</p>
