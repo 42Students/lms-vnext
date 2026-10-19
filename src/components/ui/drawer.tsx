@@ -36,7 +36,7 @@ export function Drawer({ open, onOpenChange, title, description, children, foote
   useOverlayExit(ref, opener, open, 200);
   return <dialog ref={ref} id={id} data-slot="drawer" data-side={side} data-inline-desktop={inlineDesktop || undefined} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
     onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
-    onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}
+    onClose={() => { if (open) onOpenChange(false); if (opener.current?.isConnected) opener.current.focus(); }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
     style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px" } as CSSProperties}
     className={cx("fixed inset-x-0 top-[var(--lms-visual-top)] m-0 h-[var(--lms-visual-height)] max-h-none w-full max-w-none border-0 bg-surface p-0 text-foreground shadow-[-4px_0_24px_rgba(0,0,0,0.12)] backdrop:bg-[#1e363f]/10 md:top-[var(--lms-visual-top)] md:bottom-auto md:right-0 md:left-auto md:w-[min(600px,100vw)] md:border-l md:border-[var(--lms-canvas-border)]", inlineDesktop ? "sm:!static sm:!inset-auto sm:!block sm:!h-auto sm:!max-h-none sm:!w-full sm:!max-w-none sm:!border-0 sm:!bg-transparent sm:!shadow-none" : "", className)}>
