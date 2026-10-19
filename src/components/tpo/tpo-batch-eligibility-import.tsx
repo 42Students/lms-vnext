@@ -1,4 +1,5 @@
 "use client";
+import { Tabs } from "@/components/ui/tabs";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
@@ -116,12 +117,11 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
    {unresolved>0?<p role="alert" className="text-sm text-warning-text">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
-   <div role="tablist" aria-label="Import preview filters" className="flex flex-wrap gap-2">
-    {(["ALL","MATCHED","UNUSABLE"] as const).map(tab=><Button variant="ghost" className={previewTab===tab?"border-b-2 border-[var(--lms-primary)]":""} key={tab} type="button" role="tab"
-     aria-selected={previewTab===tab} onClick={()=>{setPreviewTab(tab);setPreviewPage(1);}}
-     >
-     {tab==="ALL"?"All":tab==="MATCHED"?"Matched":"Can't use"}</Button>)}
-   </div>
+   <Tabs ariaLabel="Import preview filters" renderPanel={false} controlledOnly
+    value={previewTab} onValueChange={next=>{setPreviewTab(next as "ALL"|"MATCHED"|"UNUSABLE");setPreviewPage(1);}}
+    items={[{value:"ALL",label:"All",count:preview.preview.length},
+      {value:"MATCHED",label:"Matched",count:preview.ready},
+      {value:"UNUSABLE",label:"Can't use",count:preview.skipped}]} />
    <ul className="space-y-1 text-xs">{preview.preview.map((row,i)=>({row,i}))
     .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
     .slice((previewPage-1)*8,previewPage*8)
