@@ -268,8 +268,9 @@ export function AcademicsOverview({
     {
       key: "capacity",
       header: "Capacity",
-      cell: (section) =>
-        section.capacity ?? "Unlimited",
+      cell: (section) => (
+        <span className="tabular-nums text-[var(--lms-body-text)]">{section.capacity ?? "Unlimited"}</span>
+      ),
     },
     {
       key: "actions",
