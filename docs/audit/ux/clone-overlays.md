@@ -171,7 +171,10 @@ Each checked file was re-read for remaining hand-built popup wrappers and paired
 - [x] `src/app/(authenticated)/tpo/students/page.tsx` — roster “More student tools” moved to shared Dropdown; other filter/outcome disclosures left inline.
 - [x] `src/components/shell/topbar/account-menu.tsx` — existing shared PopoverPanel; focus/outside/Escape handlers reviewed, no unshared modal.
 - [x] `src/components/shell/topbar/organization-switcher.tsx` — existing shared PopoverPanel; workspace permissions/controls remain intact.
-- [x] `src/components/shell/learner-notification-bell.tsx` — existing shared PopoverPanel and InlineNotice; no hand-built modal wrapper.
+- [x] `src/components/shell/learner-notification-bell.tsx` — one notification-content subtree now uses desktop PopoverPanel and native mobile Drawer (kept mounted through exit), with existing InlineNotice and controls.
+- [x] `src/components/tpo/tpo-bell-panel.tsx` — one notification list and action footer use legacy desktop notification PopoverPanel (12px source styling) or native mobile Drawer.
+- [x] `src/components/hr/hr-recruiter-bell.tsx` — desktop PopoverPanel and now persistently mounted mobile Drawer for the exit animation.
+- [x] `src/components/hr/recruiter-notification-bell.tsx` — existing shared native Drawer; no handcrafted overlay found.
 - [x] `src/components/tpo/tpo-mobile-footer.tsx` — existing shared BottomSheet for mobile destinations.
 - [x] `src/components/tpo/tpo-notice-undo-toast.tsx` — existing shared ToastAction, keeping the 30-second undo semantics.
 - [x] `src/components/ui/toast.tsx` — existing shared ToastProvider/ToastStack/ToastAction; source inspected, durations unchanged because no canonical legacy duration is proved.
@@ -197,3 +200,9 @@ These are expand/collapse content, filters, academic details, results, or forms;
 - [ ] Legacy toast timing/persistence and popup close animation source equivalence: no single canonical legacy value in the examined SCSS.
 - [ ] Checkout-wide command-line audit of dynamic JSX/class compositions and style precedence after the orchestrator runs the codemod; GitHub search is an index, not an exhaustive local grep.
 - [ ] Review device/browser performance of `Dropdown.inlineDesktop` across the 767→768 breakpoint and its nested More action dropdown.
+
+### Final source scan and caution
+
+- [x] Search-index review: the only `fixed inset-0` in public source is the noninteractive, aria-hidden confidentiality watermark. Shared `Dialog` consumers own all inspected `role="alertdialog"` usages. Existing nonmodal `PopoverPanel` and DOM selector literals are not modal candidates. Hand-built search listboxes identified in command search, TPO find, learner skill suggestions and SearchableSelect were moved to shared `PopoverListbox`.
+- [x] Paired JSX opening/closing tags re-read in the changed Dropdown, Tooltip, Popover, search listbox consumers, responsive drive actions, and three notification bell variants. No local execution was done; this is a source-only balance check.
+- [ ] Viewport/browser parity still requires the orchestrator: especially the new mobile notification Drawer breakpoint, scroll/focus, and layered popup close timing. Keep F1/F2 unchecked until measured.
