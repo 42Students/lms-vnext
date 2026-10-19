@@ -19,7 +19,7 @@ type Options = {
   periods: { id: string; name: string }[];
 };
 
-const fieldClass = "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-foreground";
+const fieldClass = "min-h-10 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground";
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">{label}{children}</label>;
 }
@@ -86,7 +86,7 @@ export function CollegeSlotManager({ options, row }: {
   return <div className="min-w-0">
     <button type="button" disabled={pending || (!editing && options.programs.length === 0)}
       onClick={() => setOpen(!open)}
-      className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+      className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
       {row ? "Edit slot" : "New elective slot"}
     </button>
     {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
@@ -120,11 +120,11 @@ export function CollegeSlotManager({ options, row }: {
       {error ? <p role="alert" className="sm:col-span-2 text-sm text-red-700">{error}</p> : null}
       <div className="flex gap-3 sm:col-span-2">
         <button type="submit" disabled={pending}
-          className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="min-h-10 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-semibold text-on-primary">
           {pending ? "Saving…" : editing ? "Confirm update" : "Confirm create"}
         </button>
         <button type="button" disabled={pending} onClick={() => setOpen(false)}
-          className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold">
+          className="min-h-10 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold">
           Cancel
         </button>
       </div>
