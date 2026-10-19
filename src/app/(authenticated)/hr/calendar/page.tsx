@@ -654,7 +654,7 @@ export default async function HrCalendarPage({
                               key={event.id}
                               href={href}
                               title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                              className="block rounded-[var(--lms-control-radius)] bg-primary-subtle px-2 py-2 text-xs text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-text min-h-9"
+                              className="block rounded-[var(--lms-control-radius)] bg-primary-subtle px-2 py-2 text-xs text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9"
                             >
                               <span className="block font-semibold">
                                 {eventTime(
