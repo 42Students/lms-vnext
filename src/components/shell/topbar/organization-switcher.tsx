@@ -27,12 +27,16 @@ export function TopbarOrganizationSwitcher({
   const canSwitch=Boolean(choices)||memberships.filter(item=>item.status==="ACTIVE").length>1;
   useEffect(()=>{
     if(!open)return;
-    root.current?.querySelector<HTMLElement>("input, select")?.focus();
+    const first = root.current?.querySelector<HTMLElement>(
+      '[data-slot="popover"] input:not(:disabled), [data-slot="popover"] select:not(:disabled), [data-slot="popover"] button:not(:disabled)'
+    );
+    (first ?? root.current?.querySelector<HTMLElement>('[data-slot="popover"]'))?.focus();
     const onPointer=(event:PointerEvent)=>{
       if(root.current&&!root.current.contains(event.target as Node))setOpen(false);
     };
     const onKey=(event:KeyboardEvent)=>{
-      if(event.key!=="Escape"||!root.current?.contains(event.target as Node))return;
+      if(event.defaultPrevented||event.key!=="Escape"||
+         !(event.target instanceof Node)||!root.current?.contains(event.target))return;
       event.preventDefault();
       setOpen(false);
       trigger.current?.focus();
@@ -59,7 +63,7 @@ export function TopbarOrganizationSwitcher({
       <span className={style.orgName}>{organizationName}</span>
       <ChevronIcon/>
     </Button>
-    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+organizationName} aria-describedby="lms-org-switcher-context" className={style.orgPopover}>
+    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+organizationName} aria-describedby="lms-org-switcher-context" tabIndex={-1} className={style.orgPopover}>
       <span id="lms-org-switcher-context" className="sr-only">Current workspace: {organizationName}</span>
       <p className={style.accountSectionHeading}>Switch workspace</p>
       {choices?<AdminScopeSwitcher choices={choices} scope={scope}/>:
