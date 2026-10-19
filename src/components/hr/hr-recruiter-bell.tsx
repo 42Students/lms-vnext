@@ -65,7 +65,7 @@ export function HrRecruiterBell(){
    if(rootRef.current && !rootRef.current.contains(event.target as Node))setOpen(false);
   };
   const key=(event:KeyboardEvent)=>{
-   if(event.key!=="Escape")return;
+   if(event.defaultPrevented||event.key!=="Escape")return;
    if(event.target instanceof Node && rootRef.current && !rootRef.current.contains(event.target))return;
    event.preventDefault();setOpen(false);triggerRef.current?.focus();
   };
@@ -117,7 +117,8 @@ export function HrRecruiterBell(){
   </Button>
   {mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} bodyClassName={style.hrNotificationDrawerBody} footer={panelFooter}>
    {panelBody}
-  </Drawer> : open ? <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}>
+  </Drawer> : open ? <PopoverPanel id="hr-topbar-desktop-notifications" label="Recruiter notifications" className={style.hrNotificationPopover}
+    onDismiss={()=>{setOpen(false);triggerRef.current?.focus();}}>
    <div className={style.hrNotificationHeader}>
     <h2>Recruiter notifications</h2>
     <Button variant="ghost" size="sm" type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}>Close</Button>
