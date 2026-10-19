@@ -134,6 +134,37 @@ export function DateInput({
     return minuteStep !== null && (time - stepBaseMinute) % minuteStep === 0 && insideRange;
   }
 
+  function calendarStepAllowed(candidate: string): boolean {
+    if (props.step === "any" || mode === "datetime-local") return true;
+    const step = Number(props.step ?? 1);
+    if (!Number.isInteger(step) || step <= 0) return true; // native constraint validation remains authoritative
+    const base = String(props.min ?? defaultValue ?? "");
+    if (mode === "month") {
+      const monthNumber = (raw: string): number | null => {
+        const match = /^(\d{4})-(\d{2})$/.exec(raw);
+        return match ? Number(match[1]) * 12 + Number(match[2]) - 1 : null;
+      };
+      return ((monthNumber(candidate) ?? 0) - (monthNumber(base) ?? 1970 * 12)) % step === 0;
+    }
+    if (mode === "week") {
+      const monday = weekStart(candidate);
+      if (!monday) return false;
+      const start = weekStart(base) ?? weekStart("1970-W01");
+      if (!start) return false;
+      const dayUTC = (date: Date) => Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+      return ((dayUTC(monday) - dayUTC(start)) / 604800000) % step === 0;
+    }
+    if (mode === "date") {
+      const dayNumber = (raw: string): number | null => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+        const [year, month, day] = raw.split("-").map(Number);
+        return Date.UTC(year, month - 1, day) / 86400000;
+      };
+      return ((dayNumber(candidate) ?? 0) - (dayNumber(base) ?? 0)) % step === 0;
+    }
+    return true;
+  }
+
   useEffect(() => {
     if (!open) return;
     function closeOutside(event: PointerEvent) {
@@ -230,7 +261,7 @@ export function DateInput({
             onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
             onKeyDown={mode === "date" || mode === "week" || mode === "datetime-local" ? handleCalendarKey : undefined}
             data-slot={mode === "time" ? "legacy-time-picker" : mode === "datetime-local" ? "legacy-datetime-picker" : mode === "month" ? "legacy-month-picker" : mode === "week" ? "legacy-week-picker" : "legacy-date-calendar"}
-            className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] !rounded-[12px] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)]">
+            className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] max-[767px]:w-[min(22rem,calc(100vw_-_2rem))] !rounded-[12px] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)]">
             {mode !== "time"
               ? <div className="mb-3 flex items-center justify-between gap-2">
                   <Button type="button" variant="ghost" size="icon-sm"
@@ -275,7 +306,8 @@ export function DateInput({
                     {monthNames.map((month, index) => {
                       const monthValue = `${viewMonth.getFullYear()}-${pad2(index + 1)}`;
                       const limited = (props.min != null && monthValue < String(props.min)) ||
-                        (props.max != null && monthValue > String(props.max));
+                        (props.max != null && monthValue > String(props.max)) ||
+                        !calendarStepAllowed(monthValue);
                       return <Button key={month} type="button" variant="ghost" size="sm" disabled={Boolean(limited)}
                         aria-pressed={selected === monthValue} onClick={() => choose(monthValue)}
                         className={cx("!rounded-[6px] !border-0 !px-1 max-[767px]:!min-h-11",
@@ -284,7 +316,7 @@ export function DateInput({
                       </Button>;
                     })}
                   </div>
-                : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} className="text-center">
+                : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} className="overflow-x-auto overscroll-x-contain text-center max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]">
               {weekdayLabels.map(day => <span key={day} aria-hidden="true" className="py-1 text-[12px] font-semibold text-[var(--lms-muted-text)]">{day}</span>)}
               {days.map(day => {
                 const iso = localISO(day);
@@ -292,13 +324,13 @@ export function DateInput({
                 const outsideMonth = day.getMonth() !== viewMonth.getMonth();
                 const minValue = mode === "datetime-local" ? dateTimeMin.slice(0, 10) : String(props.min ?? "");
                 const maxValue = mode === "datetime-local" ? dateTimeMax.slice(0, 10) : String(props.max ?? "");
-                const limited = Boolean((minValue && candidate < minValue) || (maxValue && candidate > maxValue));
+                const limited = Boolean((minValue && candidate < minValue) || (maxValue && candidate > maxValue)) || !calendarStepAllowed(candidate);
                 return <Button key={iso} type="button" variant="ghost" size="icon-sm"
                   data-calendar-day={iso} aria-label={`${day.toLocaleDateString(undefined, { dateStyle: "full" })}${weekMode ? `, ${candidate}` : ""}`}
                   aria-current={iso === today ? "date" : undefined} aria-pressed={mode === "datetime-local" ? draftDate === candidate : selected === candidate}
                   disabled={Boolean(limited)}
                   onClick={() => { if (mode === "datetime-local") setDraftDate(candidate); else choose(candidate); }}
-                  className={cx("!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px]",
+                  className={cx("!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px] max-[767px]:!min-h-11 max-[767px]:!h-11",
                     outsideMonth ? "!text-[var(--lms-neutral-400)]" : "",
                     (mode === "datetime-local" ? draftDate === candidate : selected === candidate) ? "!bg-[var(--lms-primary)] !text-white" :
                     iso === today ? "!text-[var(--lms-primary-text)] !underline" : "hover:!bg-[var(--lms-primary-subtle)]")}>
