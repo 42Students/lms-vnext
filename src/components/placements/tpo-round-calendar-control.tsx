@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -122,10 +123,10 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
           className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
       </label>
       <div className="flex flex-wrap gap-3">
-        <button disabled={pending} type="button" onClick={() => void submit("SCHEDULE")}
+        <Button variant="primary" disabled={pending} type="button" onClick={() => void submit("SCHEDULE")}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-primary-foreground">
           {round.status === "PENDING" ? "Confirm schedule" : "Confirm reschedule"}
-        </button>
+        </Button>
         <button disabled={pending} type="button" onClick={() => void submit("CANCEL")}
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
           Confirm cancellation
