@@ -98,7 +98,7 @@ export default async function LearnerAttendanceCalendarPage({
         </Select>
       </label>
       <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
-        <Button variant="secondary" type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">
+        <Button variant="primary" type="submit">
           Apply filters
         </Button>
         <Link href="/learn/attendance/calendar"
