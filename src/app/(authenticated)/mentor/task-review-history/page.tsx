@@ -37,7 +37,7 @@ export default async function MentorTaskReviewHistoryPage({
     <PageHeader eyebrow="Mentor · Task Board" title="Reviewed task submissions"
       description="Registered task decisions on projects currently assigned to you."
       actions={<Link href="/mentor/task-reviews"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0">
         Pending task reviews
       </Link>} />
     {!data.enabled ? <section role="status"
