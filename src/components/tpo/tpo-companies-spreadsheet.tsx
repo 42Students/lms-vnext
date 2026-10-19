@@ -30,7 +30,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
  const keys=useMemo(()=>columns.map(column=>column.key),[]);
  return <GridWorkspace rows={rows} columns={columns}
   rowKey={company=>company.companyId??"unlinked:"+company.name}
-  searchParam="search" searchMaxLength={150} searchPlaceholder="Company name or website"
+  searchMode="hidden" searchParam="search" searchMaxLength={150} searchPlaceholder="Company name or website"
   columnScope="local" columnStorageKey="tpo-company-directory-columns-v1"
   exportName="tpo-companies-page">
   {visible=>{
