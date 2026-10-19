@@ -21,13 +21,12 @@ import {
 export async function AdminOfferingLearningPage({
   context,
   offeringId,
-  eyebrow,
   backHref,
   deliveryId=null,
 }: {
   context: RequestContext;
   offeringId: string;
-  eyebrow: string;
+  eyebrow?: string;
   backHref: string;
   deliveryId?:string|null;
 }) {
@@ -62,7 +61,6 @@ export async function AdminOfferingLearningPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow={eyebrow}
         title={
           workspace.offering.courseName
         }
