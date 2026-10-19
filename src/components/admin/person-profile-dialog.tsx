@@ -235,7 +235,7 @@ export function PersonProfileDialog({
           <div className="space-y-6">
             {hasLearner ? (
               <fieldset className="grid gap-4 sm:grid-cols-2">
-                <legend className="mb-3 text-sm font-semibold text-foreground">
+                <legend className="mb-3 text-sm font-semibold text-[var(--lms-heading)]">
                   Learner profile
                 </legend>
                 <div>
@@ -275,7 +275,7 @@ export function PersonProfileDialog({
 
             {hasFaculty ? (
               <fieldset className="grid gap-4 sm:grid-cols-2">
-                <legend className="mb-3 text-sm font-semibold text-foreground">
+                <legend className="mb-3 text-sm font-semibold text-[var(--lms-heading)]">
                   Faculty profile
                 </legend>
                 <div className="sm:col-span-2">
