@@ -62,11 +62,11 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <Button variant="primary" type="button" disabled={busy||!date||!rooms.trim()} onClick={()=>void action({
       action:"GENERATE_DAY",startsAt:new Date(date+"+05:30").toISOString(),durationMinutes:minutes,
       gapMinutes:gap,slotsPerRoom:count,rooms:rooms.split(",").map(v=>v.trim()).filter(Boolean),
-    })} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+    })} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">
      Generate day</Button>
-    <button type="button" disabled={busy||!free.length} onClick={()=>setConfirmRequest({title:"Remove "+free.length+" unbooked interview slots?",description:"Existing bookings stay unchanged.",body:{action:"CLEAR_AVAILABLE"}})}
+    <Button variant="secondary" type="button" disabled={busy||!free.length} onClick={()=>setConfirmRequest({title:"Remove "+free.length+" unbooked interview slots?",description:"Existing bookings stay unchanged.",body:{action:"CLEAR_AVAILABLE"}})}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
-     Clear {free.length} unbooked slot(s)</button>
+     Clear {free.length} unbooked slot(s)</Button>
    </div>
   </div>
   <div className="border-t border-border pt-5">
@@ -85,9 +85,9 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
      r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
    </p>:null}
-   <button type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>setConfirmRequest({title:"Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"?",description:"Collision checks will skip blocked moves.",body:{action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom}})} className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+   <Button variant="secondary" type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>setConfirmRequest({title:"Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"?",description:"Collision checks will skip blocked moves.",body:{action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom}})} className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
     Previewed · Assign room
-   </button>
+   </Button>
   </div>
   {reschedules.length?<section className="space-y-3 border-b border-border pb-6">
    <h2 className="font-semibold">Pending reschedule requests · {reschedules.length}</h2>
@@ -109,10 +109,10 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      <Button variant="primary" type="button" disabled={busy||!requestTarget[req.id]||(requestReason[req.id]??"").trim().length<3}
       onClick={()=>void action({action:"MOVE_REQUEST",requestId:req.id,targetSlotId:requestTarget[req.id],
        reason:(requestReason[req.id]??"").trim()})}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground disabled:opacity-50">Move</Button>
-     <button type="button" disabled={busy||(requestReason[req.id]??"").trim().length<3}
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Move</Button>
+     <Button variant="secondary" type="button" disabled={busy||(requestReason[req.id]??"").trim().length<3}
       onClick={()=>void action({action:"KEEP_REQUEST",requestId:req.id,reason:(requestReason[req.id]??"").trim()})}
-      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">Keep existing slot</button>
+      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">Keep existing slot</Button>
     </div>
    </div>)}
   </section>:null}
@@ -127,7 +127,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <Button variant="primary" type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
      onClick={()=>void action({action:"CONFIRM_RECRUITER_PROPOSAL",proposalId:p.id,expectedVersion:p.version,
       venue:(venue[p.id]??p.meetingLocation??"").trim()})}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">
      Confirm recruiter proposal
     </Button>
    </div>)}
@@ -137,7 +137,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    <p className="mt-1 text-sm text-body">Booking, changing or cancelling a student slot sends a placement notification and records an audit event.</p>
    <div className="mt-3 space-y-3">{slots.map(slot=>{
     const student=roster.find(r=>r.applicationId===slot.applicationId);
-    return <article key={slot.id} className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+    return <article key={slot.id} className="space-y-2 border-b border-border py-3">
      <div className="flex flex-wrap items-center justify-between gap-3">
       <div><p className="font-semibold text-foreground">{format(slot.startsAt)} · {slot.room}</p>
        <p className="text-sm text-body">{slot.status==="BOOKED"?(student?.name??"Assigned learner"):"Available"} · Until {format(slot.endsAt)}</p></div>
@@ -146,26 +146,26 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
         className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
         <option value="">Choose student</option>{waiting.map(c=><option key={c.applicationId} value={c.applicationId}>{c.roll??""} {c.name??"Learner"}</option>)}
        </Select>
-       <Button variant="primary" type="button" disabled={busy||!pick[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground"
+       <Button variant="primary" type="button" disabled={busy||!pick[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary"
         onClick={()=>void action({action:"BOOK",slotId:slot.id,expectedVersion:slot.version,applicationId:pick[slot.id]})}>Book</Button>
       </div>:<div className="flex flex-wrap items-center gap-2">
        <Select aria-label="Move to available slot" value={move[slot.id]??""}
         onChange={e=>setMove(p=>({...p,[slot.id]:e.target.value}))} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
         <option value="">Move to free slot</option>{free.map(target=><option key={target.id} value={target.id}>{format(target.startsAt)} · {target.room}</option>)}
        </Select>
-       <button type="button" disabled={busy||!move[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50"
-        onClick={()=>void action({action:"MOVE",slotId:slot.id,targetSlotId:move[slot.id],expectedVersion:slot.version,reason:"Rescheduled by placement cell"})}>Move</button>
-       <button type="button" disabled={busy} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-danger px-3 text-sm text-foreground disabled:opacity-50"
-        onClick={()=>setConfirmRequest({title:"Cancel booked interview slot?",description:"Booking, changing or cancelling a student slot sends a placement notification and records an audit event.",body:{action:"CANCEL",slotId:slot.id,expectedVersion:slot.version,reason:"Cancelled by placement cell"}})}>Cancel</button>
+       <Button variant="secondary" type="button" disabled={busy||!move[slot.id]} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50"
+        onClick={()=>void action({action:"MOVE",slotId:slot.id,targetSlotId:move[slot.id],expectedVersion:slot.version,reason:"Rescheduled by placement cell"})}>Move</Button>
+       <Button variant="secondary" type="button" disabled={busy} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-danger px-3 text-sm text-foreground disabled:opacity-50"
+        onClick={()=>setConfirmRequest({title:"Cancel booked interview slot?",description:"Booking, changing or cancelling a student slot sends a placement notification and records an audit event.",body:{action:"CANCEL",slotId:slot.id,expectedVersion:slot.version,reason:"Cancelled by placement cell"}})}>Cancel</Button>
       </div>}
      </div>
      <div className="flex flex-wrap items-center gap-2">
       <label className="text-sm">Change room
        <Input value={roomChange[slot.id]??slot.room} onChange={e=>setRoomChange(p=>({...p,[slot.id]:e.target.value}))}
         className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/></label>
-      <button type="button" disabled={busy||(roomChange[slot.id]??slot.room)===slot.room}
+      <Button variant="secondary" type="button" disabled={busy||(roomChange[slot.id]??slot.room)===slot.room}
        onClick={()=>void action({action:"ASSIGN_ROOM",slotId:slot.id,expectedVersion:slot.version,room:roomChange[slot.id]})}
-       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50">Save room</button>
+       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50">Save room</Button>
      </div>
     </article>;
    })}</div>
