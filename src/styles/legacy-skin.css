@@ -179,7 +179,7 @@
  * Source states: components___antddesign.scss:153-169; 150ms ease.
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-button-primary) !important;
   border-color: var(--lms-button-primary) !important;
   border-radius: 9px !important;
@@ -198,7 +198,7 @@
  * old-lms-shell-spec.md:23 and globals.css:18 (measured darker #086873).
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled) {
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled) {
   background-color: var(--lms-button-primary-hover) !important;
   border-color: var(--lms-button-primary-hover) !important;
   color: var(--lms-on-primary) !important;
@@ -209,20 +209,20 @@
  * (3px teal 35% / 2px offset). Use halo paint, not geometric outline offsets.
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):disabled {
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):disabled {
   background-color: var(--lms-neutral-200) !important;
   border-color: var(--lms-neutral-200) !important;
   color: var(--lms-neutral-500) !important;
   box-shadow: none !important;
 }
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   box-shadow: 0 0 0 3px rgba(38, 186, 199, 0.35) !important;
 }
 /* Legacy reduced motion: components___antddesign.scss:184-189. */
 @media (prefers-reduced-motion: reduce) {
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-    :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
+    :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
     transition: none !important;
   }
 }
@@ -393,7 +393,7 @@
  * Keep native details/summary toggling and layout completely unchanged.
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(details):not(:where([data-unskin], [data-unskin] *)) {
+  :where(details:not([data-slot="dropdown-root"])):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-700) !important;
   background-color: var(--lms-white) !important;
   border-color: var(--lms-neutral-200) !important;
@@ -401,7 +401,7 @@
   transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(summary):not(:where([data-unskin], [data-unskin] *)) {
+  :where(details:not([data-slot="dropdown-root"]) > summary):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-700) !important;
   font-size: 14px !important;
   font-weight: 600 !important;
@@ -414,7 +414,7 @@
  * #1a95a1 accessible teal); old-lms-shell.css:45-48 (soft active/hover).
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
-  :where(summary:hover, details[open] > summary):not(:where([data-unskin], [data-unskin] *)) {
+  :where(details:not([data-slot="dropdown-root"]) > summary:hover, details:not([data-slot="dropdown-root"])[open] > summary):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-primary-text) !important;
   background-color: var(--lms-primary-subtle) !important;
 }
@@ -487,4 +487,50 @@
   :where(input, select, textarea, summary):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1),
     box-shadow 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* HOVERED INPUTS
+ * Legacy: components___variables.scss:91-92 ($btn-default #bfc9da);
+ * components___form.scss:117-143 (quiet resting form border, teal on focus).
+ * Read-only and disabled controls retain their own neutral border styling.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), textarea):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled):not(:read-only):not([aria-invalid="true"]) {
+  border-color: var(--lms-field-hover-border) !important;
+}
+/* Legacy: components___antddesign.scss:511-523 (select hover/focus theme),
+ * components___variables.scss:91 (muted hover border).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(select):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled):not([aria-invalid="true"]) {
+  border-color: var(--lms-field-hover-border) !important;
+}
+
+/* PRESSED PLAIN BUTTONS
+ * Legacy: components___antddesign.scss:165-169 (pressed uses darkened
+ * teal; translation is a layout transform so intentionally not reproduced).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):active:not(:disabled) {
+  background-color: var(--lms-button-primary-hover) !important;
+  border-color: var(--lms-button-primary-hover) !important;
+  color: var(--lms-on-primary) !important;
+}
+/* SELECTED NATIVE TABLE ROWS
+ * Legacy: components___variables.scss:10-13 (subtle teal active surface),
+ * old-lms-shell.css:45-48 (same active/hover visual family).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(tbody tr[aria-selected="true"]):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-primary-subtle) !important;
+}
+
+/* NATIVE DIALOG BACKDROP
+ * Legacy: components___antddesign.scss:143-146 (drawer mask uses
+ * rgba(30,54,63,.10)); role dialogs use their own chat-16 overlay/backdrop
+ * mechanisms and are intentionally unaffected.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(dialog):not(:where([data-unskin], [data-unskin] *))::backdrop {
+  background-color: rgba(30, 54, 63, 0.1) !important;
 }
