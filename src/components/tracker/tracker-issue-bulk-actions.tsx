@@ -76,7 +76,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
       <div className="flex flex-wrap items-end gap-3">
         <label className="grid gap-1 text-sm font-semibold">Set status to…
           <select value={status} onChange={event=>setStatus(event.target.value as BugStatus)}
-            disabled={busy} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3">
+            disabled={busy} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground">
             {BUG_STATUSES.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}
           </select>
         </label>
