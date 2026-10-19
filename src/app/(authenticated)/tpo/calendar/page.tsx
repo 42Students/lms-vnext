@@ -43,7 +43,7 @@ export default async function TpoCalendarPage({
     <p role="alert" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3 text-sm text-body">
       Enter a valid day, calendar view, event kind and company filter. No events were queried.
     </p>
-    <Link href="/tpo/calendar" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline">Reset calendar filters</Link>
+    <Link href="/tpo/calendar" className="inline-flex min-h-11 sm:min-h-9 items-center text-link underline lms-inline-link">Reset calendar filters</Link>
   </div>;
   return (
     <div className="space-y-4">
