@@ -77,7 +77,7 @@ export function RecruiterNotificationBell(){
    <div className="-mx-4 -mt-4 flex items-center justify-between gap-3 rounded-t-[12px] border-b border-[#e5e9f0] bg-[#fafbfc] px-4 py-3">
     <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[#1a1d21]">Notifications</h2>
     <button type="button" onClick={()=>{setIsOpen(false);triggerRef.current?.focus();}}
-     aria-label="Close notifications" className="min-h-9 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
+     aria-label="Close notifications" className="min-h-11 px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close</button>
    </div>
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
     <Button variant="ghost" type="button" onClick={()=>void load()}>Retry</Button>
@@ -87,8 +87,8 @@ export function RecruiterNotificationBell(){
      <Button variant="primary" className="w-full justify-start text-left" type="button" key={item.collegeId} onClick={()=>{
        requestGate.current.invalidate();setData(null);setError("");setCollegeId(item.collegeId);
       }}
-     >
-      {item.collegeName}</Button>)}</div>:null}
+      className="block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border p-3 text-left text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      {item.collegeName}</button>)}</div>:null}
    {data?.status==="READY"&&data.rows?.length===0?
      <p role="status" className="mt-4 text-sm text-muted-foreground">No notifications yet</p>:null}
    {data?.status==="READY"&&data.rows?.length?
@@ -101,7 +101,7 @@ export function RecruiterNotificationBell(){
       </Link></li>)}
     </ul></ScrollCue>:null}
    <Link href={href} onClick={()=>setIsOpen(false)}
-    className="mt-4 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
+    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all notifications</Link>
   </section>:null}
  </div>;
 }
