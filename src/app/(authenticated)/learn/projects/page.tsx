@@ -144,7 +144,7 @@ export default async function LearnerProjectsPage({
       <PageHeader title="Projects" description="Choose a project to open its workspace." />
 
       <LearnerProjectMobileFilters query={{ ...query, page }} />
-      <div className="hidden sm:block">
+      <div className="hidden md:block">
         <ProjectParticipantListControls
           basePath="/learn/projects"
           query={{ ...query, page }}
@@ -198,7 +198,7 @@ export default async function LearnerProjectsPage({
         emptyDescription={emptyState.description}
       />
 
-      <div className="[&_a]:inline-flex [&_a]:min-h-11 sm:min-h-9 [&_a]:items-center [&_a]:justify-center">
+      <div className="[&_a]:inline-flex [&_a]:min-h-11 md:[&_a]:min-h-9 [&_a]:items-center [&_a]:justify-center">
         <ProjectParticipantPagination
           basePath="/learn/projects"
           query={query}
