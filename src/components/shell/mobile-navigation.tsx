@@ -70,14 +70,14 @@ export function MobileNavigation({
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
-        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-lg font-semibold text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text lg:hidden"
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-lg font-semibold text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text md:hidden"
       >
         <span aria-hidden="true">☰</span>
       </button>
 
       {open ? (
         <div style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties}
-          className="fixed inset-0 z-50 h-[var(--lms-visual-height)] lg:hidden">
+          className="fixed inset-0 z-50 h-[var(--lms-visual-height)] md:hidden">
           <button
             type="button"
             aria-label="Close navigation"
@@ -89,7 +89,7 @@ export function MobileNavigation({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="absolute inset-y-0 left-0 flex max-h-[var(--lms-visual-height)] w-[min(20rem,88vw)] flex-col border-r border-[var(--lms-sidebar-border)] bg-surface shadow-xl"
+            className="absolute inset-y-0 left-0 flex max-h-[var(--lms-visual-height)] w-[min(16rem,88vw)] flex-col border-r border-[var(--lms-sidebar-border)] bg-surface shadow-xl"
           >
             <div className="flex min-h-20 items-center justify-between gap-4 border-b border-[var(--lms-sidebar-border)] px-5">
               <div className="inline-flex h-11 w-11 items-center justify-center" aria-label="42Students LMS">
