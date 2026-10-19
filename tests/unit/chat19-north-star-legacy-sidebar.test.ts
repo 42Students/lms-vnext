@@ -4,6 +4,7 @@ import {
  SHELL_NAV_ICON_KEYS,SHELL_SECTION_LABELS,TPO_SECTION_LABELS,superAdminItems,collegeAdminItems,
  shellNavIconKey,scopedShellNavigation,type ShellNavItem,
 } from "@/components/shell/shell-model";
+import {legacyAntPaths} from "@/components/shell/legacy-ant-paths";
 
 const source=(path:string)=>readFileSync(path,"utf8");
 const faculty:ShellNavItem={
@@ -30,6 +31,21 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   for(const row of [...superAdminItems,...collegeAdminItems]){
    expect(SHELL_NAV_ICON_KEYS[row.href]).toBeTruthy();
    expect(shellNavIconKey(row)).not.toBe("layers");
+  }
+ });
+ it("renders upstream Ant Design SVG silhouettes at their original React viewBox",()=>{
+  const iconUI=source("src/components/shell/shell-nav-icons.tsx");
+  expect(iconUI).toContain('viewBox="64 64 896 896"');
+  expect(iconUI).toContain('fill="currentColor"');
+  expect(iconUI).toContain("legacyAntPaths[name]");
+  expect(Object.keys(legacyAntPaths)).toHaveLength(24);
+  for(const route of ["/tpo/home","/tpo/batches","/tpo/recruiters",
+   "/tpo/placements","/tpo/team","/tpo/students","/tpo/requests",
+   "/tpo/verification","/tpo/announcements","/tpo/reports","/tpo/messages",
+   "/tpo/settings","/tpo/audit","/tpo/notifications",
+   "/hr/home","/hr/drives","/hr/conversations","/hr/company"]){
+   const name=SHELL_NAV_ICON_KEYS[route]!;
+   expect(legacyAntPaths[name]?.length,route).toBeGreaterThan(0);
   }
  });
  it("keeps Faculty and TPO navigation separate for an overlapping multi-role membership",()=>{
@@ -191,6 +207,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(nav).toContain('aria-label={badge&&count!==null?');
   expect(nav).toContain('${item.label}, ${count} pending');
   expect(nav).toContain("ShellNavGlyph");
+  expect(nav).toContain('loading="eager" draggable={false}');
   expect(nav).toContain("lms-sidebar-badge");
   expect(nav).toContain("legacySidebarItemActive");
  });

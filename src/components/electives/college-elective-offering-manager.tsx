@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
@@ -102,10 +103,10 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
   const selectable = (data?.deliveries ?? []).filter(row =>
     (editing && row.courseId === editing.courseId) || !offered.has(row.courseId));
   return <div className="min-w-0">
-    <button type="button" onClick={() => void open()}
-      className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link">
+    <Button variant="secondary" type="button" onClick={() => void open()}
+      >
       Manage offerings
-    </button>
+    </Button>
     {opened && <section aria-label="Elective course offerings"
       className="mt-2 min-w-64 max-w-xl space-y-3 border-t border-border pt-3">
       {loading && <p role="status">Loading eligible courses and groups…</p>}
@@ -123,10 +124,10 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
               Roster
             </Link>
             {offering.status === "ACTIVE" && <>
-              <button type="button" onClick={() => startEdit(offering)}
-                className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-link">Edit</button>
-              <button type="button" disabled={busy} onClick={() => void archive(offering)}
-                className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-error">Archive</button>
+              <Button variant="secondary" type="button" onClick={() => startEdit(offering)}
+                >Edit</Button>
+              <Button variant="secondary" type="button" disabled={busy} onClick={() => void archive(offering)}
+                className="text-error">Archive</Button>
             </>}
           </div>
         </div>)}
@@ -155,13 +156,13 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           {selectable.length === 0 && <p role="status" className="mt-2 text-sm">
             Create an active elective course delivery for this program before adding an offering.</p>}
           <div className="mt-3 flex flex-wrap gap-2">
-            <button type="button" disabled={busy || loading || !deliveryId || selectable.length === 0}
-              onClick={() => void save()} className="min-h-10 rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm text-on-primary disabled:opacity-50">
+            <Button variant="primary" type="button" disabled={busy || loading || !deliveryId || selectable.length === 0}
+              onClick={() => void save()} >
               {busy ? "Saving…" : editing ? "Save offering" : "Add offering"}
-            </button>
-            {editing && <button type="button" disabled={busy} onClick={() => {
+            </Button>
+            {editing && <Button variant="secondary" type="button" disabled={busy} onClick={() => {
               setEditing(null); setDeliveryId(data.deliveries.find(row => !offered.has(row.courseId))?.id ?? "");
-            }} className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Cancel edit</button>}
+            }} >Cancel edit</Button>}
           </div>
         </div>
       </>}

@@ -66,9 +66,9 @@ export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Cours
     onClick={()=>void apply(true)}
     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition hover:bg-primary-subtle disabled:opacity-50 sm:min-h-9">
     {pending?"Updating…":"Show to students"}</Button>
-   <Button type="button" variant="secondary" disabled={!selectedInScope.length||pending}
+   <Button variant="primary" type="button" disabled={!selectedInScope.length||pending}
     onClick={()=>void apply(false)}
-    className="min-h-11">
+    className="text-primary-text">
     Hide from students</Button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

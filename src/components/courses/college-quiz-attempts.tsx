@@ -1,4 +1,6 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
@@ -34,25 +36,25 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  if(!options.length||status==="DRAFT")return null;
  return <div className="mt-2 space-y-2">
   {options.length>1?<label className="grid gap-1 text-xs font-semibold">Section
-   <select value={chosen.deliveryId} disabled={loading} onChange={e=>{
+   <Select value={chosen.deliveryId} disabled={loading} onChange={e=>{
     setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
     className="min-h-11 rounded border border-border px-2">
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
-   </select></label>:null}
+   </Select></label>:null}
   <Button variant="secondary" type="button" disabled={loading} onClick={()=>opened?setOpened(false):void open()}
-   aria-expanded={opened} className="min-h-11 px-3">
+   aria-expanded={opened} className="text-primary-text">
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
   </Button>
   {opened?<div role="region" aria-label="Quiz submissions, scroll for more attempts" tabIndex={0}
    className="max-h-80 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-error">{error}
-    <Button variant="ghost" type="button"  disabled={loading} onClick={()=>void open(page)}>Retry</Button>
+    <Button variant="ghost" type="button" className="underline" disabled={loading} onClick={()=>void open(page)}>Retry</Button>
    </div>:null}
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
     <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student on this page
-     <input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
+     <Input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-11 rounded border border-border bg-background p-2" placeholder="Student name or email"/>
     </label>
     {learnerSearch.trim()&&!attempts.some(item=>(item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||(item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase()))?
@@ -88,10 +90,10 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
       <div className="flex items-center gap-3">
        <Button variant="secondary" type="button" disabled={loading||page<=1}
         onClick={()=>{setLearnerSearch("");void open(page-1);}}
-        className="min-h-11 px-3">Previous</Button>
+        className="text-primary-text">Previous</Button>
        <Button variant="secondary" type="button" disabled={loading||!hasMore}
         onClick={()=>{setLearnerSearch("");void open(page+1);}}
-        className="min-h-11 px-3">Next</Button>
+        className="text-primary-text">Next</Button>
       </div>
      </nav>:null}
   </div>:null}

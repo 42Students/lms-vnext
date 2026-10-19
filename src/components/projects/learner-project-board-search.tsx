@@ -19,12 +19,12 @@ export function LearnerProjectBoardSearch({
         <label className="flex-1 text-sm font-semibold text-foreground">
           Search tasks
           <Input name="taskSearch" type="search" maxLength={100} defaultValue={search}
-            placeholder="Task title or details" className="mt-1 min-h-11" />
+            placeholder="Task title or details" className="mt-1 min-h-9" />
         </label>
         <label className="text-sm font-semibold text-foreground">
           Priority
           <Select name="priority" defaultValue={priority}
-            className="mt-1 min-h-11">
+            className="mt-1 min-h-9">
             <option value="">All priorities</option>
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -35,7 +35,7 @@ export function LearnerProjectBoardSearch({
         <label className="text-sm font-semibold text-foreground">
           Status
           <Select name="taskStatus" defaultValue={status}
-            className="mt-1 min-h-11">
+            className="mt-1 min-h-9">
             <option value="">All statuses</option>
             <option value="TODO">To do</option>
             <option value="IN_PROGRESS">In progress</option>
@@ -45,7 +45,7 @@ export function LearnerProjectBoardSearch({
           </Select>
         </label>
         <label className="text-sm font-semibold text-foreground">Task order
-          <Select name="taskSort" defaultValue={taskSort} className="mt-1 min-h-11">
+          <Select name="taskSort" defaultValue={taskSort} className="mt-1 min-h-9">
             <option value="DEFAULT">Project order</option><option value="PRIORITY">Highest priority first</option>
             <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option>
           </Select>
@@ -53,7 +53,7 @@ export function LearnerProjectBoardSearch({
         <label className="text-sm font-semibold text-foreground">
           Sprint
           <Select name="sprintId" defaultValue={sprintId}
-            className="mt-1 min-h-11">
+            className="mt-1 min-h-9">
             <option value="">All sprints</option>
             {sprints.map(sprint => <option key={sprint.id} value={sprint.id}>{sprint.title}</option>)}
           </Select>
@@ -61,7 +61,7 @@ export function LearnerProjectBoardSearch({
         <label className="text-sm font-semibold text-foreground">
           Release
           <Select name="releaseId" defaultValue={releaseId}
-            className="mt-1 min-h-11">
+            className="mt-1 min-h-9">
             <option value="">All releases</option>
             {releases.map(release=>(
               <option key={release.id} value={release.id}>{release.title}</option>
@@ -69,18 +69,18 @@ export function LearnerProjectBoardSearch({
           </Select>
         </label>
         <label className="text-sm font-semibold text-foreground">Assignee
-          <Select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-1 min-h-11">
+          <Select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-1 min-h-9">
             <option value="">Everyone</option><option value="mine">Mine</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-11">Apply</Button>
-        <Link href={base} className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">Clear all</Link>
+        <Button type="submit" className="min-h-9">Apply</Button>
+        <Link href={base} className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">Clear all</Link>
       </form>
   );
   return (
     <section aria-label="Project Board filters" className="border-b border-border pb-5">
       <details>
-        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 text-sm font-semibold text-foreground">
+        <summary className="flex min-h-9 cursor-pointer items-center justify-between gap-2 text-sm font-semibold text-foreground">
           <span>Filters</span>
           <span className="text-muted-foreground">{activeCount} active</span>
         </summary>
@@ -93,8 +93,8 @@ export function LearnerProjectBoardSearch({
             aria-current={status===item.value ? "true" : undefined}
             href={learnerBoardStatusFilterHref(projectId, {taskSearch:search,priority,status,sprintId,releaseId,taskSort,mine}, item.value)}
             className={status===item.value
-              ? "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
-              : "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold text-body hover:border-primary"}>
+              ? "flex min-h-9 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
+              : "flex min-h-9 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold text-body hover:border-primary"}>
             <span>{item.label}</span><span>{statusCounts[item.value]}</span>
           </Link>
         ))}
@@ -105,8 +105,8 @@ export function LearnerProjectBoardSearch({
             {taskSearch:search,priority,status,sprintId,releaseId,taskSort,mine},item.value)}
             aria-current={priority===item.value ? "true" : undefined}
             className={priority===item.value
-              ? "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
-              : "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold text-body hover:border-primary"}>
+              ? "flex min-h-9 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
+              : "flex min-h-9 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold text-body hover:border-primary"}>
             <span>{item.label}</span><span>{priorityCounts[item.value]}</span>
           </Link>
         ))}

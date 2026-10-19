@@ -25,7 +25,7 @@ export default async function MentorCalendarPage({searchParams}:{
     projectState:raw.projectState,search:raw.search,period:raw.period,
   }));
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <h1 className="text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid meeting filters</h1>
+    <PageHeader title="Invalid meeting filters" />
     <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();

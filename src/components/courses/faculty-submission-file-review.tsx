@@ -84,7 +84,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
     <ul className="space-y-2">
       {files.map(file => {
         const state = fileStatusDescriptor(file.status);
-        return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2">
+        return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
           <span className="min-w-0 flex-1 break-words text-sm text-body"><span className="sr-only">Uploaded File: </span>{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={state.detail}><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
           {state.usable ? <Button size="sm" type="button" variant="secondary"

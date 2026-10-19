@@ -85,3 +85,25 @@ The lane was already descended from the current `main` (GitHub comparison: 0 beh
 | Live refresh | Conversation polling skips non-modal notification popups, avoiding unwanted refresh while recruiters are using them |
 
 **Verification:** Source-level JSX open/close-tag and truncation checks were performed on modified TSX files. The runtime app, tests, typecheck, lint, screenshots and CI were intentionally **not** run. Visual parity requires a later browser pass.
+
+## Owner checkpoint 4 — 2026-10-19
+
+**Target:** make the vNext overlay language indistinguishable from old LMS, without changing page contents or business mutations. Sources: `docs/design/legacy-styles/components___antddesign.scss`, `components___notification-drawer.scss`, and `components___common.scss`.
+
+**Shared primitives:** `dialog.tsx` and `drawer.tsx` now accept narrow visual class overrides, with an alertdialog role for destructive confirmations and an explicit route-owned history mode. Added a reusable cross icon and the scoped `legacy-overlays.css` overlay skin: old neutral-teal scrim, 12px notification panels, 6px dropdown corners, Ant-style 40px close affordances (44px mobile touch target), 16px/24px modal header, soft layered popup shadows, 180–200ms entrance animations and full reduced-motion opt-out. Mirrored the tooltip's 27px minimum and compact dropdown padding. Preserved toast persistence and the live viewport bounds.
+
+**Converted to shared Dialog/Drawer:**
+- TPO announcements delete alert, not-applied reminder preview, recruiter calendar move/new follow-up
+- TPO offer withdrawal, team message deletion, and team ask completion/cancellation
+- Mentor and learner project board task details (learner has route-owned Back handling)
+- Verification review side drawer (native focus and Escape semantics; dismissal disabled while saving)
+
+**Nonmodal popup skin:** HR recruiter bell, recruiter notifications and learner bell retain non-blocking interaction while inheriting old LMS popup geometry, shadows and animation. These remain nonmodal on purpose rather than becoming `showModal()` dialogs.
+
+**Source inventory exceptions requiring coordinated refactor rather than unsafe replacement:**
+- `src/components/ui/filter-bar.tsx`: mobile full-screen filter panel shares one mounted form/input subtree with the desktop inline filter bar; a naive Drawer conversion mounts duplicate GET fields and risks search/filter state loss
+- `src/components/shell/mobile-navigation.tsx`: left-side navigation overlay has custom width, history, mobile breakpoint and sidebar semantics; the generic right-side Drawer is not a drop-in replacement
+- `src/components/shell/topbar/account-menu.tsx` and nonmodal notification bells: popover menus should remain nonmodal and not block the page
+- `src/app/company-share/[token]/page.tsx`: `fixed inset-0` is a pointer-events-none confidentiality watermark, not a modal
+
+**Verification:** 19 modified TSX files were audited by static open/close JSX tag counting including JSX expression parsing. No application execution, typecheck, tests, lint, screenshot capture or CI was performed. Visual pixel parity still needs a browser comparison. Checkpoint-4 commits were pushed to `chatgpt/chat-16-b` in batches and reconciled with incoming main; other lane changes were not pushed to main.

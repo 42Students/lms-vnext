@@ -1,4 +1,5 @@
 import type {ShellNavIconName} from "./shell-model";
+import Image from "next/image";
 
 /** Inline, stroke-based icons: lucide-react is not installed in lms-vnext.
  * Using SVG instead of initial-letter boxes preserves the legacy icon rail. */
@@ -47,6 +48,11 @@ const paths:Record<ShellNavIconName,string>={
 
 };
 export function ShellNavGlyph({name}:{name:ShellNavIconName}){
+ const legacy=legacyAntPaths[name];
+ if(legacy)return <svg aria-hidden="true" focusable="false" viewBox="64 64 896 896"
+   width="20" height="20" fill="currentColor" className="h-5 w-5">
+  {legacy.map((d,i)=><path key={i} d={d}/>)}
+ </svg>;
  return <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"
    width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8"
    strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
@@ -61,4 +67,9 @@ export function ShellLogoMark(){
   <path d="M0 27.3826H17.2627V37H25.6174V27.3826V24.427V0L0 27.3826Z" fill="#9EE4E8"/>
   <path d="M25.6174 24.4274V8.20052C24.4082 7.88762 23.1638 7.72966 21.9144 7.73047C21.7449 7.73047 21.5774 7.73766 21.4092 7.74354V37.0018H25.6174V24.4274Z" fill="#26BAC7"/>
  </svg>;
+}
+
+/** The original 151×37 old LMS wordmark; distinct from the exact 38×36 rail mark. */
+export function ShellLogoWordmark(){
+  return <Image alt="" aria-hidden="true" src="/assets/images/legacy-42lms-logo.svg" width={151} height={37} className="block h-[37px] w-[151px] max-w-none" />;
 }

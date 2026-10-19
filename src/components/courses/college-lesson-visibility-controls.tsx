@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 
 import {useRouter} from "next/navigation";
 import {ScrollCue} from "@/components/ui/scroll-cue";
@@ -104,13 +105,13 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
    Select Lessons on this page. Saved visibility does not delete student progress.
   </p>
   <label className="mt-2 flex items-center gap-2">
-   <input type="checkbox" disabled={pending} checked={allChecked}
+   <Checkbox disabled={pending} checked={allChecked}
     onChange={event=>{setSelected(event.target.checked?items.map(item=>item.id):[]);setFailed([]);setMessage("");}}/>
    Select all on this page
   </label>
   <ScrollCue axis="y" label="Lessons available for bulk visibility" className="mt-2" viewportClassName="max-h-48"><div className="grid gap-2 sm:grid-cols-2">
    {items.map(item=><label key={item.id} className="flex min-w-0 items-center gap-2">
-    <input type="checkbox" checked={selected.includes(item.id)} disabled={pending}
+    <Checkbox checked={selected.includes(item.id)} disabled={pending}
      onChange={()=>toggle(item.id)}/>
     <span className="truncate" title={item.name}>{item.name}</span>
     <span className="text-xs text-muted-foreground">

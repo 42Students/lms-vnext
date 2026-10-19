@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {attendanceParentContactInputSchema} from "@/modules/attendance/parent-sms-model";
@@ -61,8 +62,8 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
   finally{lock.current=false;setPending(false);}
  }
  return <section aria-label="Verified guardian absence SMS" className="space-y-2 rounded-lg border border-border bg-surface p-3">
-  <button type="button" aria-expanded={open} onClick={()=>setOpen(v=>!v)}
-   className="min-h-10 rounded border border-border px-3 text-sm font-semibold">Guardian attendance SMS</button>
+  <Button variant="secondary" type="button" aria-expanded={open} onClick={()=>setOpen(v=>!v)}
+   >Guardian attendance SMS</Button>
   {open?<div className="grid gap-3 text-sm sm:grid-cols-2">
    <p className="sm:col-span-2">Only record a separately verified parent or guardian phone with documented consent. Never use the learner&apos;s alternate contact as a parent number.</p>
    <label>Student<select className="mt-1 block min-h-10 w-full rounded border border-border px-2"
@@ -89,12 +90,12 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
     <input type="checkbox" checked={verified} onChange={e=>setVerified(e.target.checked)}/>
     Parent phone verified independently
    </label>
-   <button type="button" disabled={!valid||pending} onClick={()=>void save()}
-    className="min-h-10 rounded bg-primary px-3 text-on-primary">Save verified contact</button>
-   <button type="button" disabled={pending||retrying} onClick={()=>void retry()}
-    className="min-h-10 rounded border border-border px-3">Retry queued guardian SMS (up to 25)</button>
-   <button type="button" disabled={pending||retrying||!membershipId} onClick={()=>void revoke()}
-    className="min-h-10 rounded border border-border px-3">Disable guardian SMS for selected learner</button>
+   <Button variant="primary" type="button" disabled={!valid||pending} onClick={()=>void save()}
+    className="min-h-10 rounded bg-primary px-3 text-on-primary">Save verified contact</Button>
+   <Button variant="secondary" type="button" disabled={pending||retrying} onClick={()=>void retry()}
+    className="min-h-10 rounded border border-border px-3">Retry queued guardian SMS (up to 25)</Button>
+   <Button variant="secondary" type="button" disabled={pending||retrying||!membershipId} onClick={()=>void revoke()}
+    className="min-h-10 rounded border border-border px-3">Disable guardian SMS for selected learner</Button>
    {success?<p role="status" className="sm:col-span-2">{success}</p>:null}
    {error?<p role="alert" className="sm:col-span-2">{error}</p>:null}
   </div>:null}

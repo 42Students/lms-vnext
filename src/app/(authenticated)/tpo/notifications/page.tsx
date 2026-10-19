@@ -46,7 +46,7 @@ export default async function TpoNotificationsPage({
   if (!parsed.success) {
     return (
       <section role="alert" className="space-y-3">
-        <h1 className=" text-[26px] font-semibold text-[var(--lms-heading)] sm:text-[30px]">Invalid notification filters</h1>
+        <PageHeader title="Invalid notification filters" />
         <Link href={TPO_NOTIFICATIONS_PATH} className="text-[var(--lms-teal-deep)] underline">
           Return to newest notifications
         </Link>

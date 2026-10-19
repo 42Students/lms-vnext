@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -39,7 +40,7 @@ export default async function MentorTeamCoveragePage({
     page:first(raw.page) ?? undefined,
   });
   if (duplicated || !parsed.success) return <section role="alert" className="space-y-3">
-    <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid team coverage filters</h1>
+    <PageHeader title="Invalid team coverage filters" />
     <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
   </section>;
 
@@ -158,18 +159,7 @@ export default async function MentorTeamCoveragePage({
                 </Link>
               </div>
             </article>)}</div>}
-        <nav aria-label="Team coverage pagination"
-          className="flex items-center justify-between gap-3">
-          <span className="text-sm text-muted-foreground">
-            Page {data.page} of {data.totalPages}
-          </span>
-          <div className="flex gap-3">
-            {data.page > 1 && <Link href={mentorTeamCoverageHref({...data.query,page:data.page-1})}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
-            {data.page < data.totalPages && <Link href={mentorTeamCoverageHref({...data.query,page:data.page+1})}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
-          </div>
-        </nav>
+        <Pagination label="Team coverage pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamCoverageHref({...data.query,page})}/>
       </>}
     <p className="text-xs leading-5 text-muted-foreground">
       Counts include currently active project memberships backed by active college

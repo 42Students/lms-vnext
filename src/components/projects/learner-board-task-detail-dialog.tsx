@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
 import { ProjectTaskComments } from "./project-task-comments";
 import { projectTaskVisibleFacts } from "@/modules/projects/project-task-visible-facts-model";
@@ -42,7 +41,7 @@ export function LearnerBoardTaskDetailDialog({
   const facts=projectTaskVisibleFacts(task,assigneeName);
   useEffect(()=>{ navigatingRef.current.reset(); },[task.id]);
   return (
-    <Dialog open={true} title={task.title} description="Project Board task" className="max-w-[38rem]"
+    <Dialog open={true} historyMode="route" title={task.title} description="Project Board task" className="max-w-[38rem]"
       onOpenChange={next=>{if(!next&&navigatingRef.current.shouldReturn())router.replace(returnHref);}}>
       {task.carriedFromSprintId?<p className="mt-2 text-xs font-semibold text-warning-text">
         Carried over

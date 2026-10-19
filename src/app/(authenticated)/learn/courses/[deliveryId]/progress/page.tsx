@@ -27,7 +27,7 @@ export default async function LearnerCourseProgressPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/home"}
-        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Course overview
       </Link>
       <PageHeader title="Course progress by lesson" />
@@ -45,7 +45,7 @@ export default async function LearnerCourseProgressPage({
         ))}
       </section>
       {!progress.learningPathPublished ? (
-        <section role="status" className="rounded-xl border border-border bg-surface p-5">
+        <section role="status" className="border-b border-border py-4">
           <h2 className="font-semibold text-foreground">Learning path not published</h2>
           <p className="mt-2 text-sm text-body">
             Your college has not published a learning path for this delivery.
@@ -53,7 +53,7 @@ export default async function LearnerCourseProgressPage({
           </p>
         </section>
       ) : progress.lessons.length === 0 ? (
-        <section role="status" className="rounded-xl border border-border bg-surface p-5">
+        <section role="status" className="border-b border-border py-4">
           <h2 className="font-semibold text-foreground">No published lessons</h2>
           <p className="mt-2 text-sm text-body">Lesson progress will appear after course content is published.</p>
         </section>
@@ -105,7 +105,7 @@ export default async function LearnerCourseProgressPage({
               <Link
                 href={"/learn/courses/" + encodeURIComponent(deliveryId) +
                   "/roadmap?lesson=" + encodeURIComponent(lesson.id)}
-                className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+                className="mt-4 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
                 Open in learning path →
               </Link>
             </article>

@@ -1,4 +1,6 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {useRouter,useSearchParams} from "next/navigation";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {useState} from "react";
@@ -47,25 +49,25 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
  }
  return <section className="min-w-0 space-y-3">
   <div className="flex flex-wrap gap-3">
-   <button type="button" className="rounded border px-3 py-2 text-sm" onClick={()=>router.refresh()}>Refresh</button>
-   {serverTab==="WAITING"&&waiting.length>0?<button type="button" className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text"
-    onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Review one by one ({waiting.length})</button>:null}
+   <Button variant="secondary" type="button"  onClick={()=>router.refresh()}>Refresh</Button>
+   {serverTab==="WAITING"&&waiting.length>0?<Button variant="secondary" type="button" className="text-primary-text"
+    onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Review one by one ({waiting.length})</Button>:null}
   </div>
-  {serverTab==="WAITING"?<button type="button" className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text"
-   onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</button>:null}
+  {serverTab==="WAITING"?<Button variant="secondary" type="button" className="text-primary-text"
+   onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</Button>:null}
   <section aria-label="Verification filters" className="grid gap-3 rounded-xl border border-border p-3 sm:grid-cols-2">
    <label className="text-sm font-semibold">Marksheets
-    <select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
+    <Select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
      className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3">
      <option value="ANY">Any</option><option value="MISSING">Missing</option><option value="PRESENT">All uploaded</option>
-    </select>
+    </Select>
    </label>
    <label className="text-sm font-semibold">Needs a closer look
-    <select value={filters.attention} onChange={e=>update("attention",e.target.value as TpoVerificationLocalFilters["attention"])}
+    <Select value={filters.attention} onChange={e=>update("attention",e.target.value as TpoVerificationLocalFilters["attention"])}
      className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3">
      <option value="ALL">All requests</option><option value="MISSING_DOCUMENT">Missing document</option>
      <option value="WAITING_OVER_WEEK">Waiting over a week</option>
-    </select>
+    </Select>
    </label>
    <p className="text-xs text-muted-foreground sm:col-span-3">Showing {visible.length} of {rows.length} records from the server-filtered authorized page. Status, section, batch and branch filters apply before pagination.</p>
   </section>

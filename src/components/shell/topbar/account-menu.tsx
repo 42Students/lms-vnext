@@ -42,10 +42,26 @@ export function TopbarAccountMenu({
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        trigger.current?.focus();
+        return;
+      }
+      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+      if (!(event.target instanceof HTMLElement) ||
+          !root.current?.contains(event.target) ||
+          event.target.matches("input, select, textarea")) return;
+      const actions = Array.from(root.current.querySelectorAll<HTMLElement>(
+        '[role="dialog"] a[href], [role="dialog"] button:not([disabled])'
+      )).filter(action => action.getClientRects().length > 0);
+      if (!actions.length) return;
+      const index = actions.indexOf(event.target);
       event.preventDefault();
-      setOpen(false);
-      trigger.current?.focus();
+      const next = event.key === "Home" ? 0 : event.key === "End" ? actions.length - 1
+        : event.key === "ArrowDown" ? (index + 1) % actions.length
+        : (index - 1 + actions.length) % actions.length;
+      actions[next]?.focus();
     };
     document.addEventListener("pointerdown", onPointer);
     document.addEventListener("keydown", onKey);
@@ -80,14 +96,18 @@ export function TopbarAccountMenu({
     });
   }
 
-  return <div className="relative shrink-0" ref={root}>
+  return <div className="relative shrink-0" ref={root}
+    onBlur={event => {
+      const next = event.relatedTarget;
+      if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
+    }}>
     <button type="button" ref={trigger} className={style.avatar}
-      aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open}
+      aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </button>
-    {open ? <div role="dialog" aria-label="Account menu" className={style.menu}>
+    {open ? <div id="lms-topbar-account-dialog" role="dialog" aria-modal={false} aria-label="Account menu" className={style.menu}>
       <div className="px-2 pb-2 text-left">
         <p className={style.accountHeading}>{roleLabel}</p>
         <p className={style.accountSubheading}>{organizationName}</p>
@@ -101,7 +121,7 @@ export function TopbarAccountMenu({
           <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
       </> : null}
       <hr className={style.menuDivider}/>
-      <button type="button" disabled={pending}
+      <button type="button" disabled={pending} aria-busy={pending}
         className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
         <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
       </button>

@@ -1,4 +1,5 @@
 "use client";
+import {Input} from "@/components/ui/input";
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -210,7 +211,7 @@ export function FacultyLessonVideoManager({
           value={contentPoints} onChange={event=>setContentPoints(event.target.value)}/>
       </label>
       <label className="text-sm font-semibold text-body">Upload Video
-        <input type="file" className="mt-1 block min-h-9 w-full text-xs"
+        <Input type="file" className="mt-1 min-h-11 w-full text-xs"
           accept={acceptAttributeFor("lesson-video")} disabled={busy}
           onChange={event=>{setFile(event.target.files?.[0]??null);event.currentTarget.value="";}}/>
       </label>
@@ -281,12 +282,12 @@ export function FacultyLessonVideoManager({
                 onClick={()=>saveTitle(video)}>Update Video</Button>
             </label>
             <label className="text-xs font-semibold text-body">Replace video
-              <input type="file" className="mt-1 block min-h-9 max-w-full text-xs" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
+              <Input type="file" className="mt-1 min-h-11 max-w-full text-xs" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
                 accept={acceptAttributeFor("lesson-video")}
                 onChange={event=>{const next=event.target.files?.[0];if(next&&window.confirm("Replace this video?"))upload(video,next);event.currentTarget.value="";}}/>
             </label>
             <label className="text-xs font-semibold text-body">Thumbnail
-              <input type="file" className="mt-1 block min-h-9 max-w-full text-xs" disabled={busy||!canEdit}
+              <Input type="file" className="mt-1 min-h-11 max-w-full text-xs" disabled={busy||!canEdit}
                 accept={acceptAttributeFor("lesson-video-thumbnail")}
                 onChange={event=>{thumbnail(video,event.target.files?.[0]??null);event.currentTarget.value="";}}/>
               <span className="block text-xs text-muted-foreground">{video.thumbnailStatus==="READY"?"Thumbnail ready":video.thumbnailStatus==="UPLOADING"?"Checking thumbnail":"No thumbnail"}</span>

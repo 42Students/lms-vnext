@@ -32,12 +32,12 @@ export function LearnerProjectMobileFilters({
             <Input type="search" name="search" maxLength={100}
               defaultValue={query.search ?? ""}
               placeholder="Search project title, course or slug"
-              className="min-h-11" />
+              className="min-h-9" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Project status
             <Select name="status" defaultValue={query.status ?? ""}
-              className="min-h-11">
+              className="min-h-9">
               <option value="">All statuses</option>
               {statuses.map(([value,label])=>(
                 <option key={value} value={value}>{label}</option>
@@ -47,7 +47,7 @@ export function LearnerProjectMobileFilters({
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Attention
             <Select name="attention" defaultValue={query.attention ?? ""}
-              className="min-h-11">
+              className="min-h-9">
               <option value="">All projects</option>
               <option value="LEARNER_ACTION">Needs my action</option>
               <option value="BLOCKED">Blocked</option>
@@ -56,7 +56,7 @@ export function LearnerProjectMobileFilters({
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Work attention
             <Select name="work" defaultValue={query.work ?? ""}
-              className="min-h-11">
+              className="min-h-9">
               <option value="">All work</option>
               <option value="BLOCKED">Has blocked tasks</option>
               <option value="NO_TASKS">No tracked tasks yet</option>
@@ -65,7 +65,7 @@ export function LearnerProjectMobileFilters({
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Sort projects
             <Select name="sort" defaultValue={query.sort ?? "RECENT"}
-              className="min-h-11">
+              className="min-h-9">
               <option value="RECENT">Recently updated</option>
               <option value="TITLE">Title A–Z</option>
               <option value="PROGRESS">Least progress first</option>
@@ -74,16 +74,16 @@ export function LearnerProjectMobileFilters({
           <label className="grid gap-1 text-sm font-semibold text-foreground">
             Results per page
             <Select name="pageSize" defaultValue={String(query.pageSize ?? 25)}
-              className="min-h-11">
+              className="min-h-9">
               {[10,25,50].map(value=>(
                 <option key={value} value={value}>{value}</option>
               ))}
             </Select>
           </label>
           <div className="grid grid-cols-2 gap-3">
-            <Button type="submit" className="min-h-11">Apply</Button>
+            <Button type="submit" className="min-h-9">Apply</Button>
             <Link href="/learn/projects"
-              className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-body">
+              className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-body">
               Clear
             </Link>
           </div>

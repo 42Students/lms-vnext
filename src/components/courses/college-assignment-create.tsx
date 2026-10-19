@@ -1,4 +1,5 @@
 "use client";
+import {Checkbox} from "@/components/ui/checkbox";
 
 import {useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -132,15 +133,15 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     Draft assignments are hidden until they are published.</p>
    <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
    <label className="flex items-center gap-2 text-sm sm:col-span-2">
-    <input type="checkbox" checked={keepOpen} disabled={pending}
+    <Checkbox checked={keepOpen} disabled={pending}
      onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving
    </label>
    <div className="flex flex-wrap gap-2 sm:col-span-2">
     <Button type="button" disabled={pending||!chosen||!title.trim()} onClick={()=>setConfirmCreate(true)}
-     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     className="min-h-11">
      {pending?"Creating…":"Create draft"}</Button>
     <Button type="button" variant="secondary" disabled={pending} onClick={close}
-     className="min-h-11 rounded border border-border px-4 text-sm">Cancel</Button>
+     className="min-h-11">Cancel</Button>
    </div>
   </div>:null}
   <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}

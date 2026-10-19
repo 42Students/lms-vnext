@@ -68,7 +68,7 @@ export function LearnerNotificationBell(){
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
      {count>99?"99+":count}</span>:null}
   </button>
-  {open?<section role="dialog" aria-modal="false" aria-label="Notifications"
+  {open?<section data-slot="notification-popover" role="dialog" aria-modal="false" aria-label="Notifications"
    className="absolute right-0 top-full z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,92vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between">
     <h2 className="font-semibold text-foreground">Notifications</h2>

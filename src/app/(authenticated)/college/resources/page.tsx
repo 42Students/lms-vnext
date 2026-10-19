@@ -26,7 +26,7 @@ export default async function CollegeResourcesPage({
         <PageHeader eyebrow="College Admin · Courses & Content" title="Resources" />
         <ErrorState title="Invalid resource filters"
           description="The title, status or page filter is invalid. No content was loaded."
-          action={<Link href="/college/resources" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline">Clear filters</Link>} />
+          action={<Link href="/college/resources" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>} />
       </div>
     );
   }
@@ -34,7 +34,7 @@ export default async function CollegeResourcesPage({
   return <main className="min-w-0 space-y-4">
     <CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} materialsEnabled={resourceMaterialsRuntimeEnabled()}/>
     <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",parsed.data)}
-      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       Export filtered resource metadata CSV
     </Link>
     <CollegeContentAggregate data={await listCollegeContentAggregate(context, "RESOURCE", parsed.data)} />

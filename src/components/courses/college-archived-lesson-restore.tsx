@@ -1,4 +1,5 @@
 "use client";
+import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -22,8 +23,8 @@ export function CollegeArchivedLessonRestore({id,name}:{id:string;name:string}){
   }finally{setPending(false);}
  }
  return <span className="inline-flex flex-col gap-1">
-  <button type="button" disabled={pending} onClick={()=>setConfirming(true)}
-   className="min-h-10 text-sm font-semibold text-primary-text underline">Restore</button>
+  <Button variant="ghost" type="button" disabled={pending} onClick={()=>setConfirming(true)}
+   className="min-h-11 !text-[var(--lms-primary-text)] underline">Restore</Button>
   <ConfirmDialog open={confirming} onOpenChange={setConfirming}
    title={"Restore "+name+"?"}
    description="Restoring makes the Lesson available in its active Learning Path. Historical progress and submissions are kept."

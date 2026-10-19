@@ -57,7 +57,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       <PageHeader eyebrow="College Admin · Courses & Content" title="Lessons" />
       <ErrorState title="Invalid lesson filters"
         description="The search, lesson status or page is invalid. No lesson data was loaded."
-        action={<Link href="/college/lessons" className="font-semibold text-link">Clear filters</Link>} />
+        action={<Link href="/college/lessons" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />
     </div>
   );
   const authoringOptions=await getCollegeLessonAuthoringOptions(context);
@@ -65,11 +65,11 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   return <div className="min-w-0 overflow-x-clip space-y-4">
     <CollegeLessonCreateControl options={authoringOptions} />
     <Link prefetch={false} download href={lessonsCsvHref(parsed.data)}
-      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
       Export filtered lessons CSV
     </Link>
     <Link href="/college/live-classes"
-      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
       View college live classes
     </Link>
     <CollegeLearningDirectory data={await listCollegeLessons(context, parsed.data)} courseChoices={courseChoices} />

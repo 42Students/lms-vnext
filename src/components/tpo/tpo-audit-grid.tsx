@@ -1,4 +1,7 @@
 "use client";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {useState} from "react";
@@ -34,7 +37,7 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  const columns:DataTableColumn<TpoAuditRow>[]=[
   {key:"selected",header:"Select",mobileLabel:"Select row",mobilePriority:"action",
    cell:row=><label className="inline-flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" aria-label={"Select "+row.title}
+    <Checkbox aria-label={"Select "+row.title}
      checked={selected.includes(row.kind+":"+row.id)}
      onChange={e=>setSelected(ids=>e.target.checked?[...ids,row.kind+":"+row.id]:ids.filter(id=>id!==row.kind+":"+row.id))}/>
     <span className="sm:sr-only">Select</span></label>},
@@ -56,32 +59,32 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  return <section aria-label="Audit history grid" className="min-w-0 space-y-3">
   <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
    <label className="text-sm">What happened
-    <input value={what} onChange={event=>setWhat(event.target.value)} type="search"
+    <Input value={what} onChange={event=>setWhat(event.target.value)} type="search"
      maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm" />
    </label>
    <label className="text-sm">Who
-    <input value={who} onChange={event=>setWho(event.target.value)} type="search"
+    <Input value={who} onChange={event=>setWho(event.target.value)} type="search"
      maxLength={120} className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm" />
    </label>
    <label className="text-sm">When
-    <select value={oldestFirst?"oldest":"newest"}
+    <Select value={oldestFirst?"oldest":"newest"}
      onChange={e=>setOldestFirst(e.target.value==="oldest")}
      className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border px-2 text-base sm:text-sm">
      <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
-    </select>
+    </Select>
    </label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={showAbout} onChange={e=>setShowAbout(e.target.checked)} />About
+    <Checkbox checked={showAbout} onChange={e=>setShowAbout(e.target.checked)} />About
    </label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={showDetail} onChange={e=>setShowDetail(e.target.checked)} />Detail
+    <Checkbox checked={showDetail} onChange={e=>setShowDetail(e.target.checked)} />Detail
    </label>
    <Button variant="secondary" type="button" onClick={()=>void copy()}
     className="min-h-11">Copy rows</Button>
    <Button variant="secondary" type="button" onClick={()=>{setWho("");setWhat("");setOldestFirst(false);setSelected([]);setShowAbout(true);setShowDetail(true);}}
     className="min-h-11">Reset grid</Button>
   </div>
-  <label className="inline-flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" aria-label="Select all visible rows"
+  <label className="inline-flex min-h-11 items-center gap-2 text-sm"><Checkbox aria-label="Select all visible rows"
    checked={visible.length>0&&visible.every(row=>selected.includes(row.kind+":"+row.id))}
    onChange={event=>setSelected(event.target.checked?visible.map(row=>row.kind+":"+row.id):[])}/>
    Select all visible rows</label>

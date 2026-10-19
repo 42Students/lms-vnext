@@ -17,7 +17,7 @@
   --lms-button-primary: #0a7c88;
   --lms-button-primary-hover: #086873;
   --lms-on-primary: #ffffff;
-  --lms-link-text: #0e7c87;
+  --lms-link-text: #26bac7;
   --lms-primary-hover: #1e9aa8;
   --lms-primary-text: #1a95a1;
   --lms-primary-subtle: #eff8fa;
@@ -335,8 +335,8 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
   --lms-space-4: 16px;
   --lms-space-5: 24px;
   --lms-space-6: 32px;
-  --lms-space-7: 48px;
-  --lms-space-8: 64px;
+  --lms-space-7: 40px;
+  --lms-space-8: 48px;
 }
 body {
   font-size: 14px;
@@ -638,9 +638,9 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   border-color: #bfc9da;
 }
 [data-slot="button"][data-variant="secondary"]:hover:not(:disabled) {
-  color: var(--lms-on-primary);
-  background: var(--lms-button-primary);
-  border-color: var(--lms-button-primary);
+  color: #ffffff;
+  background: var(--lms-primary);
+  border-color: var(--lms-primary);
 }
 [data-slot="button"][data-variant="ghost"]:hover:not(:disabled) {
   color: #1a95a1;
@@ -1093,3 +1093,31 @@ body {
   background: transparent;
   border-color: transparent;
 }
+
+/* Legacy components___form.scss:8-15 — native numeric input chrome is hidden. */
+[data-slot="input"][type="number"] { appearance: textfield; -moz-appearance: textfield; }
+[data-slot="input"][type="number"]::-webkit-inner-spin-button,
+[data-slot="input"][type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Specialist primitives inherit legacy input focus and invalid states. */
+[data-slot="date-range-picker"] [data-slot="date-input"],
+[data-slot="searchable-select"] [data-slot="input"],
+[data-slot="otp-input"],
+[data-slot="password-input"] [data-slot="input"] { min-width: 0; }
+[data-slot="file-upload"] [data-slot="input"]:focus-visible,
+[data-slot="input-group"]:focus-within,
+[data-slot="multi-select"]:focus-visible { outline: 2px solid rgba(38,186,199,.65); outline-offset: 2px; }
+[data-slot="file-upload"] [aria-invalid="true"]:focus-visible,
+[data-slot="multi-select"][aria-invalid="true"]:focus-visible { border-color: var(--lms-error); outline-color: var(--lms-error); box-shadow: 0 0 0 2px rgba(239,68,68,.2); }
+
+/* Old LMS responsive forms: the desktop control is 36px, touch controls >=44px. */
+@media (max-width: 767px) {
+  [data-slot="otp-input"], [data-slot="date-input"],
+  [data-slot="multi-select"], [data-slot="password-input"] [data-slot="button"],
+  [data-slot="file-upload"] [data-slot="input"], [data-slot="search-field"] [data-slot="button"] {
+    min-height: var(--lms-touch-target);
+  }
+}
+/* Keep browser selection affordances with native inputs and range slider. */
+[data-slot="range-slider"] input[type="range"] { accent-color: var(--lms-primary); }
+[data-slot="file-dropzone"]:focus-within { border-color: var(--lms-primary); }

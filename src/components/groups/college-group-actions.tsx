@@ -108,7 +108,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
     });
   }
 
-  const inputClass = "min-h-[var(--lms-control-height)] w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground";
+  const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground";
   return <>
     {group ? <span className="flex flex-wrap gap-2">
       {group.status !== "ARCHIVED" ? (

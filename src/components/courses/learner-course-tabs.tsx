@@ -28,8 +28,8 @@ export function LearnerCourseTabs({
               aria-current={active ? "page" : undefined}
               className={
                 active
-                  ? "border-b-2 border-primary px-4 py-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
-                  : "border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-body transition-colors hover:border-border hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
+                  ? "border-b-[3px] border-primary px-4 py-2.5 text-[13px] font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
+                  : "border-b-[3px] border-transparent px-4 py-2.5 text-[13px] font-semibold text-body transition-colors hover:border-border hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
               }
             >
               {tab.label}
