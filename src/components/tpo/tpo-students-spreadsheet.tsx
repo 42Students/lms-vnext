@@ -19,12 +19,13 @@ import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} 
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import dynamic from "next/dynamic";
 import type { TpoGrid } from "./grid/tpo-grid";
+import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 
 const TpoGridClient = dynamic(
   () => import("./grid/tpo-grid").then(module => module.TpoGrid),
   { ssr: false },
 ) as unknown as typeof TpoGrid;
-import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
+
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
@@ -169,6 +170,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  ];
  return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" tabIndex={0}
   onKeyDown={event=>{
+   if(event.defaultPrevented)return;
    const target=event.target;
    if(target instanceof HTMLElement&&target.closest("input,textarea,select,[contenteditable=true]"))return;
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
