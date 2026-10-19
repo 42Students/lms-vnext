@@ -121,3 +121,61 @@ Compared lane branch against baseline `371eb3168b5aa494ab29926e915003ee7a765d66`
 ## Follow-on: next portal in `north-star-sweep-7.md` — learner/course second pass
 
 After fast-forwarding `main` at `ee98b58c86df02c0513136baab6d35ef633fef59`, continued beyond chat-6's 37 admin pages into the next available portal inventory. This cross-portal pass is **visual-only** and does not claim to close chat-7's own checklist. Inspect first: learner course overview, assessment overview, course list/tabs, quiz attempt, roadmap item, rich response editor, discussions, and learner profile. Fixes target white-on-white links, outer duplicate canvas cards, dense record card stacks, inconsistent control radii, and heading typography. Leave existing user copy, permission checks, application actions, test coverage and shared UI unchanged.
+
+## Continuation record: latest-main reconciliation and follow-on portal
+
+- Safely fast-forwarded lane branch to `main` at `ee98b58c86df02c0513136baab6d35ef633fef59` before new edits (no writes to `main`). Worked exclusively on `chatgpt/chat-6-b`, tagging commits `[chat-6]`.
+- **chat-6 deeper review:** replaced card stacks with slim hairline lists in `admin-scoped-read-page` and inbound mail; removed duplicate presentation panels around placements operations, recruiter relationships and seasons; repaired old template hover/foreground utilities on drive actions; normalized responsive controls on organization create (including removing stray `-` utility) and adjacent admin workspaces.
+- **Next portal:** continued from `docs/audit/ux/north-star-sweep-7.md` into learner courses, assessments, quiz review, placement registration, applications, jobs, career calendar, project board and profile; also Super Admin courses/assignments/progress and authoring components. Source-level styling only (same elements, copy, handlers, routing and permission checks).
+- Specific correction in this final batch: learner `Show more courses` outline action no longer uses white text on a white surface; placement journey action links no longer contain the invalid `hover:bg-[var(...)]-subtle` variant or white-on-white foreground.
+- Diff before this closing commit: **9 lane commits and 46 changed source files**, plus this ledger. In the follow-on files, retained genuinely independent cards (Kanban columns, calendar cells, quiz questions, modal dialogs, status alerts), and preserved mobile 44px touch targets with 36px controls at `sm`.
+- **Remaining:** `north-star-sweep-7.md` has a much wider route/component inventory than this follow-on pass; this document does **not** mark all learner routes complete or claim pixel-perfect visual comparison. The owning chat-7 lane should reconcile its own status checklist after merging. No TypeScript compilation, browser rendering, test run or CI run was performed per owner instruction.
+
+### Follow-on changed source files (since latest-main pull)
+
+- `src/app/(authenticated)/admin/course-progress/page.tsx`
+- `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
+- `src/app/(authenticated)/learn/profile/page.tsx`
+- `src/components/admin/admin-scoped-read-page.tsx`
+- `src/components/admin/inbound-mail-list.tsx`
+- `src/components/admin/organization-create-form.tsx`
+- `src/components/attendance/learner-attendance-workspace.tsx`
+- `src/components/courses/admin-assessment-read-directory.tsx`
+- `src/components/courses/admin-course-create-panel.tsx`
+- `src/components/courses/admin-course-display-editor.tsx`
+- `src/components/courses/admin-course-overview.tsx`
+- `src/components/courses/admin-offering-learning-overview.tsx`
+- `src/components/courses/admin-offering-learning-page.tsx`
+- `src/components/courses/learner-assessment-overview.tsx`
+- `src/components/courses/learner-course-list.tsx`
+- `src/components/courses/learner-course-overview.tsx`
+- `src/components/courses/learner-course-workspace.tsx`
+- `src/components/courses/learner-quiz-attempt.tsx`
+- `src/components/courses/learner-rich-response-editor.tsx`
+- `src/components/courses/learner-roadmap-item-dialog.tsx`
+- `src/components/courses/super-admin-content-actions.tsx`
+- `src/components/courses/super-admin-content-authoring.tsx`
+- `src/components/placements/learner-applications-browse.tsx`
+- `src/components/placements/learner-career-calendar.tsx`
+- `src/components/placements/learner-career-rounds-workspace.tsx`
+- `src/components/placements/learner-general-requests.tsx`
+- `src/components/placements/learner-placement-jobs.tsx`
+- `src/components/placements/learner-placement-journey.tsx`
+- `src/components/placements/learner-placement-notification-settings.tsx`
+- `src/components/placements/learner-placement-offers.tsx`
+- `src/components/placements/learner-placement-preferences.tsx`
+- `src/components/placements/learner-placement-registration.tsx`
+- `src/components/placements/learner-placements-dashboard.tsx`
+- `src/components/placements/placement-drive-workspace.tsx`
+- `src/components/placements/placement-employer-relationships.tsx`
+- `src/components/placements/placement-operations-overview.tsx`
+- `src/components/placements/placement-recruiter-access.tsx`
+- `src/components/placements/placement-season-manager.tsx`
+- `src/components/profile/learner-profile-workspace.tsx`
+- `src/components/projects/learner-board-interactive.tsx`
+- `src/components/projects/learner-own-task-controls.tsx`
+- `src/components/projects/learner-project-activity.tsx`
+- `src/components/projects/learner-project-board-search.tsx`
+- `src/components/projects/learner-project-goals.tsx`
+- `src/components/projects/learner-project-mobile-filters.tsx`
+- `src/components/projects/learner-task-status-actions.tsx`
