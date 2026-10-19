@@ -1,4 +1,6 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Radio } from "@/components/ui/radio";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -81,7 +83,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
        {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
       </Select
       <label className="flex items-center gap-2 text-sm">
-       <input type="checkbox" checked={skips.includes(row.line)} disabled={busy}
+       <Checkbox checked={skips.includes(row.line)} disabled={busy}
         onChange={e=>{setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line));if(e.target.checked)setOverrides(p=>({...p,[row.line]:""}));}}/> Skip row
       </label>
      </div>
@@ -97,14 +99,14 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </details>
    <fieldset className="space-y-2 rounded border border-border bg-surface p-3 text-sm">
     <legend className="font-semibold">Students not in the file</legend>
-    <label className="flex gap-2"><input type="radio" checked={missingPolicy==="LEAVE_PENDING"}
+    <label className="flex gap-2"><Radio checked={missingPolicy==="LEAVE_PENDING"}
      onChange={()=>{setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/> Leave pending (do not change their result)</label>
-    <label className="flex gap-2"><input type="radio" checked={missingPolicy==="MARK_NOT_CLEARED"}
+    <label className="flex gap-2"><Radio checked={missingPolicy==="MARK_NOT_CLEARED"}
      onChange={()=>setMissingPolicy("MARK_NOT_CLEARED")}/> Mark everyone missing as Not cleared</label>
     {missingPolicy==="MARK_NOT_CLEARED"?<div className="space-y-2 text-foreground">
      <p>This also stages Not cleared for {preview.notInFile.length} currently eligible applicants missing from the file. Unmatched source rows must be resolved. Students are not told until results are applied.</p>
      <label className="flex items-center gap-2 text-sm font-semibold">
-      <input type="checkbox" checked={confirmMissingFailure} onChange={e=>setConfirmMissingFailure(e.target.checked)}/>
+      <Checkbox checked={confirmMissingFailure} onChange={e=>setConfirmMissingFailure(e.target.checked)}/>
       I reviewed the missing students and choose to stage Not cleared.
      </label>
     </div>:null}
