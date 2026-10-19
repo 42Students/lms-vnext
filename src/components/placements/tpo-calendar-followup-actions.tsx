@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { InlineNotice } from "@/components/ui/inline-notice";
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -137,7 +138,7 @@ export function TpoCalendarCreateFollowup({
           </div>
         </form>
       )}
-      <p role="status" aria-live="polite" className="mt-2 text-sm text-body">{message}</p>
+      {message?<InlineNotice tone={message===tpoCalendarFollowupSuccess("ADD")?"success":"error"} message={message}/>:null}
     </section>
   );
 }
@@ -222,7 +223,7 @@ export function TpoCalendarMoveFollowup({
       >
         {busy ? "Saving…" : "Done"}
       </Button>
-      <p role="status" aria-live="polite" className="w-full text-xs text-body">{message}</p>
+      {message?<InlineNotice tone={message===tpoCalendarFollowupSuccess("MOVE")||message===tpoCalendarFollowupSuccess("DONE")?"success":"error"} message={message}/>:null}
     </form>
   );
 }
