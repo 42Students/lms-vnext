@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { safeReturnTo } from "@/lib/return-to";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LoginForm } from "@/components/auth/login-form";
+import styles from "./login-shell.module.css";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { brandStyleVariables } from "@/modules/colleges/branding";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
@@ -109,143 +110,80 @@ export default async function HomePage({
   const desktopBackground = branding?.loginBackgroundUrl ?? null;
   const mobileBackground =
     branding?.loginBackgroundUrlMobile ?? desktopBackground;
-  const collegeMonogram = branding?.collegeName
-    ?.trim().split(/\s+/).slice(0, 2).map((word) => word.charAt(0))
-    .join("").toUpperCase() ?? null;
 
   return (
     <main
-      style={themeStyle}
-      className="relative isolate mx-auto flex min-h-dvh min-w-0 max-w-5xl items-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] sm:px-6 sm:py-16"
+      style={{ ...themeStyle, "--auth-primary": branding?.primaryColor ?? "#0a7c88" } as React.CSSProperties}
+      className={styles.viewport}
     >
       {desktopBackground ? (
-        <div
-          aria-hidden
-          className="fixed inset-0 -z-10 hidden bg-cover bg-center sm:block"
-          style={{ backgroundImage: cssUrl(desktopBackground) }}
-        />
+        <div aria-hidden="true" className={styles.desktopBackdrop}
+          style={{ backgroundImage: cssUrl(desktopBackground) }} />
       ) : null}
       {mobileBackground ? (
-        <div
-          aria-hidden
-          className="fixed inset-0 -z-10 bg-cover bg-center sm:hidden"
-          style={{ backgroundImage: cssUrl(mobileBackground) }}
-        />
+        <div aria-hidden="true" className={styles.mobileBackdrop}
+          style={{ backgroundImage: cssUrl(mobileBackground) }} />
       ) : null}
 
-      <section className="min-w-0 w-full rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-8">
-        {branding?.logoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={branding.logoUrl}
-            alt={branding.collegeName}
-            referrerPolicy="no-referrer"
-            className="h-14 w-auto max-w-full object-contain sm:max-w-[240px]"
-          />
-        ) : collegeMonogram ? (
-          <div className="flex items-center gap-3">
-            <span aria-hidden="true"
-              className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-primary bg-primary-subtle text-xl font-bold text-primary-text">
-              {collegeMonogram}
-            </span>
-            <span className="text-sm font-semibold text-foreground">{branding?.collegeName}</span>
-          </div>
-        ) : (
-          <p className="text-sm font-medium text-muted-foreground">
-            42LMS
-          </p>
-        )}
-        <h1 className="mt-2 break-words text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          {branding?.collegeName ?? "42LMS"}
-        </h1>
-        <p className="mt-4 max-w-2xl break-words text-base leading-7 text-body">
-          Sign in with the phone number or email registered with your
-          college. One account works across every college you belong to.
-        </p>
-
-        {message ? (
-          <div
-            role="alert"
-            className={
-              message.tone === "error"
-                ? "mt-6 rounded-xl border border-error bg-[var(--lms-error-subtle)] p-4"
-                : "mt-6 rounded-xl border border-warning bg-[var(--lms-warning-subtle)] p-4"
-            }
-          >
-            <p
-              className={
-                message.tone === "error"
-                  ? "m-0 text-sm font-semibold text-error"
-                  : "m-0 text-sm font-semibold text-warning"
-              }
-            >
-              {message.title}
-            </p>
-            <p className="mt-1 text-sm leading-6 text-body">
-              {message.description}
-            </p>
-          </div>
+      <header className={styles.brandHeader}>
+        <div className={styles.brandRow}>
+          {branding?.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={branding.logoUrl} alt={branding.collegeName}
+              referrerPolicy="no-referrer" className={styles.collegeLogo} />
+          ) : (
+            <span aria-hidden="true" className={styles.logoMark} />
+          )}
+          <span className={styles.wordmark} aria-label="42LMS">42<span className={styles.wordmarkAccent}>LMS</span></span>
+        </div>
+        {branding?.collegeName ? (
+          <p className={styles.collegeName}>{branding.collegeName}</p>
         ) : null}
+      </header>
 
-        <div className="mt-8">
+      <div className={styles.center}>
+        <section className={styles.card} aria-label="Sign in">
+          {message ? (
+            <div role="alert" className={`${styles.status} ${message.tone === "error" ? styles.statusError : styles.statusWarning}`}>
+              <p className={styles.statusTitle}>{message.title}</p>
+              <p className={styles.statusMessage}>{message.description}</p>
+            </div>
+          ) : null}
           {tenant.kind === "unavailable" ? (
-            <div role="alert" className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm text-body">
-              <h2 className="font-semibold">We couldn&apos;t confirm this college right now</h2>
-              <p className="mt-2">This address may be correct, but its settings didn&apos;t load. Try again in a moment, or use the main sign-in page.</p>
-              <a href="https://42lms.com/login" className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
-                Use the main sign-in page (42lms.com)
-              </a>
+            <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
+              <h1 className={styles.statusTitle}>We couldn&apos;t confirm this college right now</h1>
+              <p className={styles.statusMessage}>
+                This address may be correct, but its settings didn&apos;t load. Try again in a moment, or use the main sign-in page.
+              </p>
+              <a className={styles.statusLink} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
             </div>
           ) : tenant.kind === "unknown" ? (
-            <div className="rounded-xl bg-primary-subtle p-4 text-sm text-body">
-              <h2 className="font-semibold">This address isn&apos;t set up yet</h2>
-              <p className="mt-2">Ask your administrator to add this college&apos;s address in 42LMS, or use the main sign-in page.</p>
-              <a href="https://42lms.com/login" className="mt-3 inline-block font-semibold text-primary-text underline">
-                Use the main sign-in page (42lms.com)
-              </a>
+            <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
+              <h1 className={styles.statusTitle}>This address isn&apos;t set up yet</h1>
+              <p className={styles.statusMessage}>
+                Ask your administrator to add this college&apos;s address in 42LMS, or use the main sign-in page.
+              </p>
+              <a className={styles.statusLink} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
             </div>
           ) : (
             <LoginForm collegeName={branding?.collegeName ?? null}
-             defaultChannel={recruiterValue==="email"&&signin.email?"EMAIL":signin.primary}
-             allowedChannels={signin.email&&signin.phone?["EMAIL","PHONE"]:signin.email?["EMAIL"]:["PHONE"]}/>
+              defaultChannel={recruiterValue === "email" && signin.email ? "EMAIL" : signin.primary}
+              allowedChannels={signin.email && signin.phone ? ["EMAIL", "PHONE"] :
+                signin.email ? ["EMAIL"] : ["PHONE"]} />
           )}
-        </div>
+        </section>
+      </div>
 
-        <footer className="mt-8 flex min-w-0 flex-wrap items-center gap-x-5 gap-y-1 border-t border-border pt-4 text-xs text-muted-foreground">
-          <span>{tenant.kind==="college"?"Powered by 42LMS":
-            "© "+new Date().getFullYear()+" 42LMS · JRSPF Technologies Pvt. Ltd."}</span>
-            {branding?.supportEmail ? (
-              <a
-                className="inline-flex min-h-11 items-center break-all hover:text-primary-text focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]"
-                href={`mailto:${branding.supportEmail}`}
-              >
-                {branding.supportEmail}
-              </a>
-            ) : null}
-            {branding?.supportPhone ? (
-              <a
-                className="hover:text-primary-text"
-                href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}
-              >
-                {branding.supportPhone}
-              </a>
-            ) : null}
-            <a
-              className="hover:text-primary-text"
-              href={branding?.termsUrl ?? "/assets/static/terms-and-conditions-view.html"}
-              rel="noopener noreferrer"
-            >
-              Terms
-            </a>
-            <a
-              className="hover:text-primary-text"
-              href={branding?.privacyUrl ?? "/assets/static/privacy-policy-view.html"}
-              rel="noopener noreferrer"
-            >
-              Privacy
-            </a>
-          </footer>
-      </section>
+      <footer className={styles.footer}>
+        <span>{tenant.kind === "college" ? "Powered by 42LMS" :
+          "© " + new Date().getFullYear() + " 42LMS · JRSPF Technologies Pvt. Ltd."}</span>
+        <nav className={styles.footerLinks} aria-label="Sign-in footer">
+          {branding?.supportEmail ? <a href={`mailto:${branding.supportEmail}`}>{branding.supportEmail}</a> : null}
+          {branding?.supportPhone ? <a href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}>{branding.supportPhone}</a> : null}
+          <a href={branding?.privacyUrl ?? "/privacy-policy"} rel="noopener noreferrer">Privacy</a>
+          <a href={branding?.termsUrl ?? "/assets/static/terms-and-conditions-view.html"} rel="noopener noreferrer">Terms</a>
+        </nav>
+      </footer>
     </main>
   );
 }

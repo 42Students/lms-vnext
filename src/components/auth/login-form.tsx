@@ -314,7 +314,7 @@ export function LoginForm({
   }
 
   return (
-    <div className="w-full max-w-md" aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
+    <div className="login-form w-full max-w-md" aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
       <h2 className="m-0 text-2xl font-semibold text-foreground">
         {attempt?"Enter your code":"Sign in"}
       </h2>
