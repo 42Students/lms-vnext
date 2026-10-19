@@ -314,7 +314,7 @@ export function LoginForm({
   }
 
   return (
-    <div className="login-form w-full max-w-md" aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
+    <div className="login-form w-full max-w-md" data-step={attempt ? "code" : "contact"} aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
       <h2 className="m-0 text-2xl font-semibold text-foreground">
         {attempt?"Enter your code":"Sign in"}
       </h2>
@@ -356,7 +356,7 @@ export function LoginForm({
             aria-label="Sign in method"
             className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1"
           >
-            {(["PHONE", "EMAIL"] as const).filter(value=>allowedChannels.includes(value)).map((value) => (
+            {(["EMAIL", "PHONE"] as const).filter(value=>allowedChannels.includes(value)).map((value) => (
               <button
                 key={value}
                 type="button"

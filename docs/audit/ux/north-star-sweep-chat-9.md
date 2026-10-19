@@ -110,3 +110,16 @@ Owner: chat-9 · 2026-10-19 · branch `chatgpt/chat-9-b`
 **Source-level verification:** inspected rendered TSX source and counted opening/closing converted `Button`, `Select` tags; repaired the multi-line native `select`/shared `Select` mismatch in the Project audit filter. No automated typecheck, lint, unit test, CI, runtime execution, screenshots, or browser acceptance was performed as directed; **strict TypeScript cleanliness and pixel parity are not certified**.
 
 **Remaining checks:** independent browser comparison to old LMS, 320–390px viewport pass, acceptance of the 37 last-third routes, and reconciliation with upstream global token/sidebar/top-bar commits. Concurrent upstream commits arrived after initial branch sync, so this report does not certify integration with the latest `main`. Keep those issues visible rather than claiming full North Star completion.
+
+## Second-pass verification after chat-17 shell rollout (2026-10-19)
+
+- [x] Fast-forwarded `chatgpt/chat-9-b` to current `main` after confirming main contained prior chat-9 work (old head `f8dd4c4966`, main head at sync `ee999dda2fc7`); no force push or overwrite.
+- [x] Re-read the current NORTH STAR, old LMS shell rules/spec, pages anatomy, and legacy SCSS token, button, form, dropdown, antd and common references.
+- [ ] Re-inventory all 37 last-third Super Admin routes and the College/Super Admin Projects components following recent chat-17 shared-kit changes; separate static redirect/delegating routes from styled routes.
+- [ ] Replace remaining native bespoke buttons, inputs, selects, form shells, nested nonfunctional cards and local control overrides with actual shared kit, keeping role permissions, wording, dynamic content, touch/phone semantics and object-card exceptions intact.
+- [ ] Record exactly what is changed and what needs browser-level visual verification. Do not claim pixel-perfect compliance without screenshot diff.
+
+### Current ownership boundaries
+- Page shell and font tokens remain owned by chat-17; top bar chat-13; sidebar chat-19. Do not edit `src/components/ui/**`, `src/components/shell/**`, or `src/app/globals.css`.
+- Last-third includes /admin routes 75–111 in `docs/orchestrator/ui-ux/pages-admin.md`; Projects includes `src/app/(authenticated)/admin/projects/**`, `src/app/(authenticated)/college/projects/**` and pages' `src/components/projects/**` dependencies, plus owned tenant/settings/verification/admin components. Placement-specific routes remain in other lanes except the existing scoped student lookup.
+- Inspect literal color/spacing only where a role-local override fights the shared components; leave native controls where behavior depends on browser affordances (checkbox, radio, file input, live drag/drop).
