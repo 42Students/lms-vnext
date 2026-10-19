@@ -121,7 +121,7 @@ export function FacultyCourseRoster({
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-3">
         {[
           ["Students", learners.length],
           [rollLabel, missingRoll],
@@ -161,7 +161,7 @@ export function FacultyCourseRoster({
           >
             Download roster CSV (names and roll numbers)
           </Button>
-          <label className="w-full max-w-md text-xs font-semibold text-body">
+          <label className="w-full max-w-md text-[13px] leading-4 font-semibold text-body">
             Search students
             <Input
               className="mt-1.5"
@@ -209,19 +209,19 @@ export function FacultyCourseRoster({
                     </StatusBadge>
                     {deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
                       "/students/"+encodeURIComponent(learner.membershipId)}
-                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline sm:min-h-9">
+                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:underline md:min-h-[var(--lms-control-height)]">
                       View student details →
                     </Link>:null}
                   </div>
                 </div>},
               {key:"phone",header:"Phone",mobilePriority:"secondary" as const,
                 cell:(learner)=>learner.phoneE164?<a href={`tel:${learner.phoneE164}`}
-                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text sm:min-h-9"
+                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text md:min-h-[var(--lms-control-height)]"
                   aria-label={`Call ${nameOf(learner)}`}>{learner.phoneE164}</a>:
                   <span className="text-muted-foreground">No number</span>},
               {key:"email",header:"Email",mobilePriority:"secondary" as const,
                 cell:(learner)=>learner.email?<a href={`mailto:${learner.email}`}
-                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text sm:min-h-9"
+                  className="inline-flex min-h-11 items-center break-all font-semibold text-primary-text md:min-h-[var(--lms-control-height)]"
                   aria-label={`Email ${nameOf(learner)}`}>{learner.email}</a>:
                   <span className="text-muted-foreground">No email</span>},
             ]}
@@ -230,11 +230,12 @@ export function FacultyCourseRoster({
           {totalPages > 1 ? (
             <nav
               aria-label="Student roster pages"
-              className="flex items-center justify-between gap-3"
+              className="flex flex-wrap items-center justify-between gap-3"
             >
               <Button
                 variant="secondary"
-                size="sm"
+                size="md"
+                className="min-h-11 md:min-h-[var(--lms-control-height)]"
                 disabled={currentPage === 1}
                 onClick={() =>
                   setPage((value) =>
@@ -249,7 +250,8 @@ export function FacultyCourseRoster({
               </span>
               <Button
                 variant="secondary"
-                size="sm"
+                size="md"
+                className="min-h-11 md:min-h-[var(--lms-control-height)]"
                 disabled={
                   currentPage === totalPages
                 }
