@@ -277,7 +277,7 @@ export async function ProjectAdminAuditPage({
         </div>
       </form>
 
-      <section aria-label="Audit page summary" className="grid gap-3 sm:grid-cols-3">
+      <section aria-label="Audit page summary" className="grid divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {([
           {label:"Actions shown",value:result.groups.reduce((sum,g)=>sum+g.count,0)},
           {label:"People who made changes",value:new Set(result.groups.map(g=>g.latest.actor?.id)
@@ -285,7 +285,7 @@ export async function ProjectAdminAuditPage({
           {label:"Destructive actions",value:result.groups.filter(g=>
             /archive|delete|revoke|remove|unassign/i.test(g.latest.event.eventType))
             .reduce((sum,g)=>sum+g.count,0)},
-        ]).map(item=><div key={item.label} className="rounded-xl border border-border bg-surface p-4">
+        ]).map(item=><div key={item.label} className="p-4">
           <p className="text-xs font-semibold text-muted-foreground">{item.label}</p>
           <p className="mt-2 text-2xl font-semibold tabular-nums">{item.value}</p>
         </div>)}

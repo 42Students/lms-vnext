@@ -41,7 +41,7 @@ export async function ProjectAdminAtRiskPage({
       <ErrorState title="Invalid project filters"
         description="Check the risk, status, sort, search and page filters, or clear them to continue."
         action={<Link href={basePath + "/at-risk"}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">Clear filters</Link>} />
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>} />
     </div>;
   }
   const query: ProjectAdminCollectionQuery = parsed.data;

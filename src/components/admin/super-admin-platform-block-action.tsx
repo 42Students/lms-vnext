@@ -2,6 +2,8 @@
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {friendlyApiError} from "@/lib/friendly-error";
 export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;status:"ACTIVE"|"DISABLED"}){
  const router=useRouter();
@@ -34,13 +36,13 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
   <h2 className="font-semibold">Platform-wide account access</h2>
   <p className="mt-1 text-sm text-body">Unlike college suspension, a platform block prevents login across every college. This action requires an audit reason.</p>
   <label className="mt-3 grid gap-1 text-sm font-semibold text-body">Reason
-   <textarea value={reason} maxLength={1000} rows={2} disabled={pending}
-    onChange={event=>setReason(event.target.value)} className="rounded-[9px] border border-border bg-surface p-2"/>
+   <Textarea value={reason} maxLength={1000} rows={2} disabled={pending}
+    onChange={event=>setReason(event.target.value)} className="w-full"/>
   </label>
-  <button type="button" disabled={pending||reason.trim().length<4}
-   onClick={()=>void submit()} className="mt-3 min-h-10 rounded-[9px] border border-error px-4 font-semibold text-error disabled:opacity-50">
+  <Button type="button" variant={status==="ACTIVE"?"danger":"secondary"} disabled={pending||reason.trim().length<4}
+   onClick={()=>void submit()} className="mt-3">
    {pending?"Updating…":status==="ACTIVE"?"Block platform account":"Reactivate platform account"}
-  </button>
+  </Button>
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="mt-2 text-sm text-body">{notice}</p>:null}
  </section>;

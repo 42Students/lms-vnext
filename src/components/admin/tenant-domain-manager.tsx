@@ -401,9 +401,9 @@ export function TenantDomainManager({
         }}
       >
         {deleteTarget?.isPrimary ? <label className="grid gap-2 text-sm font-semibold text-body">Type the full primary hostname
-          <input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
+          <Input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
             onChange={event => setDeleteHostConfirmation(event.target.value)}
-            className="min-h-11 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-background px-3 text-foreground" />
+            className="w-full" />
         </label> : null}
       </ConfirmDialog>
     </div>
