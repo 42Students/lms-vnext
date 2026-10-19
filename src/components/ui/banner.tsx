@@ -16,7 +16,7 @@ const tones = {
 /** Slim legacy LMS notice strip with an inline recovery action. */
 export function Banner({ tone = "warning", action, className, children, role, ...props }: BannerProps) {
   return <aside {...props} data-slot="banner" role={role ?? (tone === "error" ? "alert" : "status")}
-    className={cx("flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-[9px] border px-4 py-2.5 text-[13px] leading-5", tones[tone], className)}>
+    className={cx("flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border px-4 py-2.5 text-[13px] leading-5", tones[tone], className)}>
     <div className="min-w-0 flex-1">{children}</div>
     {action ? <div className="flex shrink-0 flex-wrap items-center gap-2">{action}</div> : null}
   </aside>;

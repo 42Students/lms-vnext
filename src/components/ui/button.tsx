@@ -9,11 +9,11 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
 
 const variantClasses = {
   primary: "border-primary bg-primary text-on-primary hover:border-primary-hover hover:bg-primary-hover",
-  secondary: "border-border bg-surface text-foreground hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle",
-  ghost: "border-transparent bg-transparent text-foreground hover:bg-primary-subtle",
+  secondary: "border-[#bfc9da] bg-surface text-[#54505d] hover:border-[#26bac7] hover:bg-primary-subtle hover:text-[#1a95a1]",
+  ghost: "border-transparent bg-transparent text-[#54505d] hover:bg-primary-subtle hover:text-[#1a95a1]",
   danger: "border-error bg-error text-white hover:brightness-95",
 } as const;
-const sizeClasses = { sm: "min-h-9 px-3 text-[14px]", md: "min-h-9 px-3.5 text-[14px]" } as const;
+const sizeClasses = { sm: "min-h-9 px-3 text-[13px]", md: "min-h-9 px-3.5 text-[14px]" } as const;
 
 export function Button({ className, variant = "primary", size = "md", loading = false, type = "button", disabled, children, ...props }: ButtonProps) {
   return <button data-slot="button" data-variant={variant} type={type} disabled={disabled || loading} {...props}
