@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:string;manualStage:string;stage:string};onUpdated:()=>void}){
  const [open,setOpen]=useState(false),[action,setAction]=useState<"CONTACTED"|"NOT_NOW">("CONTACTED");
@@ -21,10 +22,10 @@ export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:stri
   finally{setBusy(false);}
  }
  return <div className="min-w-28 space-y-2">
-  <button type="button" aria-label={"Edit stage for "+lead.name}
-   className="text-primary-text underline" onClick={()=>setOpen(value=>!value)}>
+  <Button variant="ghost" type="button" aria-label={"Edit stage for "+lead.name}
+    onClick={()=>setOpen(value=>!value)}>
    {lead.stage.replaceAll("_"," ")} · Edit
-  </button>
+  </Button>
   {open?<div className="space-y-2">
    <label className="block text-xs">Stage
     <select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
@@ -36,10 +37,10 @@ export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:stri
     <input value={reason} maxLength={255} onChange={e=>setReason(e.target.value)}
      className="min-h-10 w-full rounded border border-border bg-surface px-2"/>
    </label>:null}
-   <button type="button" disabled={busy} onClick={()=>void save()}
-    className="min-h-10 rounded bg-primary px-3 text-xs text-on-primary">Apply</button>
-   <button type="button" disabled={busy} onClick={()=>setOpen(false)}
-    className="ml-2 min-h-10 text-xs text-primary-text">Cancel</button>
+   <Button variant="primary" type="button" disabled={busy} onClick={()=>void save()}
+    className="min-h-10 px-3">Apply</Button>
+   <Button variant="ghost" type="button" disabled={busy} onClick={()=>setOpen(false)}
+    className="ml-2 min-h-10">Cancel</Button>
   </div>:null}
   {error?<p role="alert" className="text-xs text-warning">{error}</p>:null}
  </div>;
