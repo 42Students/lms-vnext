@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -54,7 +55,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       {query.publication!=="ALL"?<input type="hidden" name="publication" value={query.publication}/>:null}
       <label className="grid min-w-0 flex-1 basis-56 gap-1 text-sm font-semibold text-body">
         Find learner submissions
-        <input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
+        <Input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
           className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-body text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"/>
       </label>
       <Button type="submit" variant="primary">Search</Button>
@@ -104,7 +105,7 @@ export default async function FacultyAssignmentSubmissionsPage({
         {data.items.map(row=>{
           const late=report.assignment.dueAt!==null&&
             row.submittedAt.getTime()>report.assignment.dueAt.getTime();
-          return <li key={row.id} className="rounded-xl border border-border bg-surface p-4">
+          return <li key={row.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <h2 className="font-semibold text-foreground">
               {row.learnerDisplayName||row.learnerEmail||"Learner"}
             </h2>
