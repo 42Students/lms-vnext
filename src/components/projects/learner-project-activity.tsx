@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 "use client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -39,17 +41,17 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <input type="hidden" name="tab" value="activity" />
       <label className="text-sm font-semibold text-foreground">Activity type
         <Select name="activityCategory" defaultValue={category}
-          className="mt-2 min-h-9">
+          className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal">
           {learnerProjectActivityCategories.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
         </Select>
       </label>
       <label className="text-sm font-semibold text-foreground">From (IST)
         <Input type="date" name="activityFrom" defaultValue={parsed.success ? parsed.data.from : ""}
-          className="mt-2 min-h-9" />
+          className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
       </label>
       <label className="text-sm font-semibold text-foreground">Through (IST)
         <Input type="date" name="activityTo" defaultValue={parsed.success ? parsed.data.to : ""}
-          className="mt-2 min-h-9" />
+          className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-normal" />
       </label>
       <Button type="submit" className="min-h-9 self-end">Apply</Button>
       <Link href={route + "?tab=activity"} className="inline-flex min-h-9 sm:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
