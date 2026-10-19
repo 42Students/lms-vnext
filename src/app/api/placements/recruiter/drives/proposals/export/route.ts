@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -31,7 +32,7 @@ export async function GET(request:Request){
  const csv=hrDriveProposalHistoryCsv(result.items);
  return new NextResponse(csv,{headers:{
   "Content-Type":"text/csv; charset=utf-8",
-  "Content-Disposition":'attachment; filename="recruiter-discussion-proposals.csv"',
+  "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiter-discussion-proposals", "csv") + '"',
   "Cache-Control":"private, no-store",
   "X-Export-Scope":"CURRENT_PAGE",
   "X-Export-Page":String(result.page),

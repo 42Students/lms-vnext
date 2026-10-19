@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -35,7 +36,7 @@ export async function GET(request: Request, { params }: RouteContext) {
     return new Response(exportResult.csv, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="recruiter-shared-applicants.csv"',
+        "Content-Disposition": 'attachment; filename="' + gridExportFilename("recruiter-shared-applicants", "csv") + '"',
         "Cache-Control": "private, no-store",
         "X-Export-Omitted": String(exportResult.omitted),
       },
