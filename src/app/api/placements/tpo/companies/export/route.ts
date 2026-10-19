@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -41,7 +42,7 @@ export async function GET(request:Request) {
   ].map(cell).join(","));
   return new Response("\uFEFF"+[header.map(cell).join(","),...records].join("\r\n")+"\r\n",{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="companies.csv"',
+    "Content-Disposition":'attachment; filename="' + gridExportFilename("companies", "csv") + '"',
     "Cache-Control":"private, no-store"},
   });
  } catch(error) {return apiErrorResponse(error);}
