@@ -45,7 +45,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
       (row.canPromote?"Ready for final offer checks":row.reasons.join("; "))+
       (row.promotionStatus?" · "+row.promotionStatus:"")},
    ]}/>
-  {preview.next&&preview.storageReady?<div className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-5">
+  {preview.next&&preview.storageReady?<div className="space-y-3 border-t border-border pt-4">
    <h2 className="font-semibold">Offer to next waitlisted: {preview.next.name} (rank {preview.next.rank})</h2>
    <p className="text-sm text-body">Review the ranked queue before release. The offer issuer rechecks held-offer rules, eligibility and response deadline.</p>
    <label className="grid gap-1 text-sm">Reason for promotion
