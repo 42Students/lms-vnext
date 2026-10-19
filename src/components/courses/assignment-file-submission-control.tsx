@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { MetricBar } from "@/components/ui/metric-bar";
 import {AssignmentMultipartPartsEditor,type AssignmentLinkPart} from "./assignment-multipart-parts-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
@@ -186,7 +187,7 @@ export function AssignmentFileSubmissionControl({
     </Button>:null}
     {busy && activeName ? <div className="space-y-2" role="status">
       <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
-      <progress aria-label="File upload progress" className="h-2 w-full" value={progress} max={100} />
+      <MetricBar label="File upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className="w-full" />
       <Button type="button" variant="secondary" onClick={() => active.current?.abort()}>Cancel upload</Button>
       <p className="text-xs text-muted-foreground">Your submission is being sent. Keep this window open until it finishes.</p>
     </div> : null}

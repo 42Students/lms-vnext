@@ -1,6 +1,7 @@
 "use client";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -98,16 +99,6 @@ type Item =
 
 function formatDate(value:string|null) {
   return learnerAssessmentDateLabel(value);
-}
-
-function Metric({
-  label,
-  value,
-}: {
-  label: string;
-  value: number;
-}) {
-  return <StatTile label={label} value={value} />;
 }
 
 const PAGE_SIZE = 20;
@@ -246,7 +237,7 @@ export function LearnerAssessmentOverview({
           </Disclosure>
         </section>
       ) : (<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <Metric
+        <StatTile
           label={
             kind === "ASSIGNMENT"
               ? "Assignments"
@@ -254,13 +245,13 @@ export function LearnerAssessmentOverview({
           }
           value={scopedAttentionItems.length}
         />
-        <Metric
+        <StatTile
           label="Courses"
           value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
         />
-        <Metric label="Needs action" value={actionCounts.pending} />
-        <Metric label="Overdue / missed" value={actionCounts.overdue} />
-        <Metric
+        <StatTile label="Needs action" value={actionCounts.pending} />
+        <StatTile label="Overdue / missed" value={actionCounts.overdue} />
+        <StatTile
           label={
             kind === "ASSIGNMENT"
               ? "Submitted"
@@ -271,16 +262,20 @@ export function LearnerAssessmentOverview({
       </div>
       )}
 
-      <div role="group" aria-label={kind === "ASSIGNMENT" ? "Assignment quick views" : "Quiz quick views"}
-        className="flex flex-wrap gap-2">
-        {quickCounts.map(quick => (
-          <Button key={quick.value} type="button" aria-pressed={stateFilter === quick.value}
-            onClick={() => { setStateFilter(value => value === quick.value ? "ALL" : quick.value); setPage(1); }}
-            variant="secondary" className="min-h-11 aria-pressed:!border-[var(--lms-primary)] aria-pressed:!bg-[var(--lms-primary-subtle)] aria-pressed:!text-[var(--lms-primary-text)]">
-            {LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label} ({quick.count})
-          </Button>
-        ))}
-      </div>
+      <NeedsDoingChips
+        label={kind === "ASSIGNMENT" ? "Assignment quick views:" : "Quiz quick views:"}
+        items={quickCounts.map(quick => ({
+          key: quick.value,
+          label: LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label ?? quick.value,
+          count: quick.count,
+          tone: "neutral",
+        }))}
+        selectedKey={stateFilter}
+        onSelect={(key) => {
+          setStateFilter(value => value === key ? "ALL" : key as LearnerAssessmentStateFilter);
+          setPage(1);
+        }}
+      />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
