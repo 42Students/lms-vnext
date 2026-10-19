@@ -10,6 +10,10 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -58,8 +62,8 @@ export type PlacementCompanyChoice = {
   memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[];existingRoles:Array<{jobId:string;title:string;status:string}>} | null;
 };
 
-const inputClass = "min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9";
-const textareaClass = "min-h-28 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
+const inputClass = "w-full";
+const textareaClass = "min-h-28 w-full";
 
 function splitList(value: string) {
   return value
@@ -783,7 +787,7 @@ export function PlacementJobCreateForm({
             <div className="space-y-3">
               <label className="block text-xs font-semibold text-body">
                 Find employer by name or website domain
-                <input type="search" value={companySearch} maxLength={100}
+                <Input type="search" value={companySearch} maxLength={100}
                   onChange={event=>setCompanySearch(event.target.value)}
                   placeholder="Search your companies"
                   className={inputClass+" mt-2"}/>
@@ -792,7 +796,7 @@ export function PlacementJobCreateForm({
               <span className="mb-1.5 block text-xs font-semibold text-body">
                 Employer
               </span>
-              <select
+              <Select
                 className={inputClass}
                 required
                 value={
@@ -821,7 +825,7 @@ export function PlacementJobCreateForm({
                       : ""}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
             {companySearch.trim()&&!companies.some(company=>
               (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
@@ -844,7 +848,7 @@ export function PlacementJobCreateForm({
                 <span className="mb-1.5 block text-xs font-semibold text-body">
                   Company name
                 </span>
-                <input
+                <Input
                   className={inputClass}
                   name="companyName"
                   value={newEmployerName}
@@ -857,7 +861,7 @@ export function PlacementJobCreateForm({
                 <span className="mb-1.5 block text-xs font-semibold text-body">
                   Primary domain
                 </span>
-                <input
+                <Input
                   className={inputClass}
                   name="companyDomain"
                   value={newEmployerDomain}
@@ -869,7 +873,7 @@ export function PlacementJobCreateForm({
                 <span className="mb-1.5 block text-xs font-semibold text-body">
                   Website
                 </span>
-                <input
+                <Input
                   className={inputClass}
                   name="companyWebsite"
                   type="url"
@@ -879,15 +883,14 @@ export function PlacementJobCreateForm({
               {matchingEmployer?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">
                 <p className="font-semibold">This may already be {matchingEmployer.name}</p>
                 <p className="mt-1 text-xs text-body">Reuse the existing college employer to keep recruiter and drive history together.</p>
-                <button type="button" onClick={()=>{setCompanyRelationshipId(matchingEmployer.relationshipId);setCompanyMode("EXISTING");setCompanySearch("");}}
+                <Button variant="secondary" type="button" onClick={()=>{setCompanyRelationshipId(matchingEmployer.relationshipId);setCompanyMode("EXISTING");setCompanySearch("");}}
                   className="mt-2 min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-3 font-semibold text-primary-text md:min-h-9">
                   Use {matchingEmployer.name}
-                </button>
+                </Button>
               </div>:null}
               <label className="flex items-center gap-2 self-end pb-2 text-sm text-body">
-                <input
+                <Checkbox
                   name="companyTrusted"
-                  type="checkbox"
                 />
                 Mark relationship as trusted
               </label>
@@ -910,7 +913,7 @@ export function PlacementJobCreateForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Job title
             </span>
-            <input
+            <Input
               className={inputClass}
               name="title"
               value={enteredDriveTitle}
@@ -925,7 +928,7 @@ export function PlacementJobCreateForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Description
             </span>
-            <textarea
+            <Textarea
               className={textareaClass}
               name="description"
               maxLength={15000}
@@ -936,7 +939,7 @@ export function PlacementJobCreateForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Employment type
             </span>
-            <select
+            <Select
               className={inputClass}
               name="employmentType"
               defaultValue="FULL_TIME"
@@ -950,14 +953,14 @@ export function PlacementJobCreateForm({
               <option value="CONTRACT">
                 Contract
               </option>
-            </select>
+            </Select>
             <span className="mt-1 block text-xs text-muted-foreground">Custom college job types and placed-counting rules are managed in placement settings, not this employment-type list. Skills the employer requires are not configured on this form yet.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Work mode
             </span>
-            <select
+            <Select
               className={inputClass}
               name="workMode"
               defaultValue="ONSITE"
@@ -971,14 +974,14 @@ export function PlacementJobCreateForm({
               <option value="REMOTE">
                 Remote
               </option>
-            </select>
+            </Select>
             <span className="mt-1 block text-xs text-muted-foreground">These describe work location, not a pool or campus-hosted interview event. Pool reporting time and travel arrangements must be coordinated separately.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Locations
             </span>
-            <input
+            <Input
               className={inputClass}
               name="locations"
               placeholder="Hyderabad, Bengaluru"
@@ -988,7 +991,7 @@ export function PlacementJobCreateForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Openings
             </span>
-            <input
+            <Input
               className={inputClass}
               name="openings"
               type="number"
@@ -1001,7 +1004,7 @@ export function PlacementJobCreateForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Minimum CTC (LPA)
             </span>
-            <input
+            <Input
               className={inputClass}
               name="minimumLpa"
               type="number"
@@ -1014,7 +1017,7 @@ export function PlacementJobCreateForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Maximum CTC (LPA)
             </span>
-            <input
+            <Input
               className={inputClass}
               name="maximumLpa"
               type="number"
@@ -1025,22 +1028,22 @@ export function PlacementJobCreateForm({
           </label>
           <label><span className="mb-1.5 block text-xs font-semibold text-body">
             Fixed CTC (LPA)
-          </span><input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.01"/></label>
+          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.01"/></label>
           <label><span className="mb-1.5 block text-xs font-semibold text-body">
             Variable CTC (LPA)
-          </span><input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.01"/></label>
+          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.01"/></label>
           <label><span className="mb-1.5 block text-xs font-semibold text-body">
             Stipend per month (INR)
-          </span><input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
+          </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
           <label className="flex items-center gap-3 text-sm font-semibold text-body">
-            <input name="isDream" type="checkbox" className="h-4 w-4 accent-primary"/>
+            <Checkbox name="isDream" className="h-4 w-4 accent-primary"/>
             Dream drive (college held-offer cap exception)
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Application mode
             </span>
-            <select
+            <Select
               className={inputClass}
               name="applicationMode"
               defaultValue="INTERNAL"
@@ -1054,14 +1057,14 @@ export function PlacementJobCreateForm({
               <option value="EXTERNAL_ONLY">
                 Employer form only
               </option>
-            </select>
+            </Select>
             <span className="mt-1 block text-xs text-muted-foreground">Hybrid accepts LMS or employer applications. Employer-form-only applications are completed outside LMS; on-campus slot scheduling is not set up by this selection.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Employer application URL
             </span>
-            <input
+            <Input
               className={inputClass}
               name="externalApplicationUrl"
               type="url"
@@ -1074,7 +1077,7 @@ export function PlacementJobCreateForm({
               <span className="mb-1.5 block text-xs font-semibold text-body">
                 Application deadline
               </span>
-              <input id="tpo-drive-application-deadline"
+              <Input id="tpo-drive-application-deadline"
                 className={inputClass}
                 name="applicationDeadline"
                 type="datetime-local"
@@ -1094,7 +1097,7 @@ export function PlacementJobCreateForm({
               />
             </label>
             <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). A newly selected date defaults to 11:59 PM; you can change the time.</span>
-            <button type="button" aria-controls="tpo-drive-application-deadline"
+            <Button variant="secondary" type="button" aria-controls="tpo-drive-application-deadline"
               className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9"
               onClick={()=>{
                 const form=formRef.current;
@@ -1112,7 +1115,7 @@ export function PlacementJobCreateForm({
                 }catch{
                   showToast({tone:"error",title:"Deadline not updated",description:"Enter a valid application deadline in IST."});
                 }
-              }}>Use 11:59 PM IST</button>
+              }}>Use 11:59 PM IST</Button>
           </div>
         </div>
       </section>
@@ -1126,64 +1129,64 @@ export function PlacementJobCreateForm({
           <fieldset className="sm:col-span-2 grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Pool drive logistics (optional, staff-reviewed)</legend>
             <label className="grid gap-1 text-sm">Host college
-              <input name="poolHostCollege" maxLength={160} className={inputClass} />
+              <Input name="poolHostCollege" maxLength={160} className={inputClass} />
             </label>
             <label className="grid gap-1 text-sm">Reporting time (IST)
-              <input name="poolReportingTime" type="datetime-local" className={inputClass} />
+              <Input name="poolReportingTime" type="datetime-local" className={inputClass} />
             </label>
             <label className="grid gap-1 text-sm">Travel instructions
-              <textarea name="poolTravelNote" maxLength={1000} rows={2} className={inputClass} />
+              <Textarea name="poolTravelNote" maxLength={1000} rows={2} className={inputClass} />
             </label>
             <p className="text-xs text-muted-foreground">Pool logistics are informational and do not create a round, venue booking or student travel authorization.</p>
           </fieldset>
           <fieldset className="sm:col-span-2 grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Separate employer registration</legend>
             <label className="flex items-center gap-2 text-sm">
-              <input name="studentsRegisterSeparately" type="checkbox" /> Students also register on the company's portal
+              <Checkbox name="studentsRegisterSeparately" /> Students also register on the company's portal
             </label>
             <label className="grid gap-1 text-sm">Portal name
-              <input name="portalName" maxLength={160} className={inputClass} />
+              <Input name="portalName" maxLength={160} className={inputClass} />
             </label>
             <label className="grid gap-1 text-sm">Portal link (HTTPS)
-              <input name="portalUrl" type="url" maxLength={2000} placeholder="https://..." className={inputClass} />
+              <Input name="portalUrl" type="url" maxLength={2000} placeholder="https://..." className={inputClass} />
             </label>
             <p className="text-xs text-muted-foreground">This records the employer's separate portal; it does not automatically register students. Keep the application mode and primary employer URL consistent.</p>
           </fieldset>
           <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Skills the company wants (up to 30, comma-separated; 50 characters each)
-            <textarea name="skillsWanted" maxLength={1590} rows={2} className={inputClass} />
+            <Textarea name="skillsWanted" maxLength={1590} rows={2} className={inputClass} />
             <span className="text-xs font-normal text-muted-foreground">Skill tags are informational until applicant matching explicitly uses them.</span>
           </label>
           <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Responsibilities
-            <textarea name="responsibilities" rows={4} maxLength={15000} className={inputClass}/>
+            <Textarea name="responsibilities" rows={4} maxLength={15000} className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold">Assessment URL
-            <input name="assessmentUrl" type="url" className={inputClass} placeholder="https://..."/>
+            <Input name="assessmentUrl" type="url" className={inputClass} placeholder="https://..."/>
           </label>
           <label className="grid gap-1 text-sm font-semibold">Assessment deadline (IST)
-            <input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
+            <Input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold sm:col-span-2">
             Important dates (up to 20; one Label | YYYY-MM-DDTHH:MM per line, IST)
-            <textarea name="importantDates" rows={3} className={inputClass}/>
+            <Textarea name="importantDates" rows={3} className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold">Preferred degree
-            <input name="preferredDegree" maxLength={160} className={inputClass}/>
+            <Input name="preferredDegree" maxLength={160} className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold">Specialization
-            <input name="preferredSpecialization" maxLength={160} className={inputClass}/>
+            <Input name="preferredSpecialization" maxLength={160} className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold">Graduation year
-            <input name="preferredGraduationYear" type="number" min={1990} max={2050} className={inputClass}/>
+            <Input name="preferredGraduationYear" type="number" min={1990} max={2050} className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold">Minimum GPA (informational)
-            <input name="preferredMinimumGpa" type="number" min={0} max={10} step="0.01" className={inputClass}/>
+            <Input name="preferredMinimumGpa" type="number" min={0} max={10} step="0.01" className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold">Preferred city
-            <input name="preferredCity" maxLength={160} className={inputClass}/>
+            <Input name="preferredCity" maxLength={160} className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold sm:col-span-2">
             Custom eligibility rules (up to 20; one Label | Value per line; informational)
-            <textarea name="customEligibilityRules" rows={3} className={inputClass}/>
+            <Textarea name="customEligibilityRules" rows={3} className={inputClass}/>
           </label>
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
@@ -1199,13 +1202,13 @@ export function PlacementJobCreateForm({
         </div>
         <div className="grid gap-5 pt-4">
           <label className="grid gap-1 text-sm font-semibold">Department · Target Audience
-            <select className={inputClass} value={departmentFilter} onChange={event=>{
+            <Select className={inputClass} value={departmentFilter} onChange={event=>{
               setDepartmentFilter(event.target.value);setSelectedProgramIds([]);
               setSelectedCohortIds([]);setSelectedSectionIds([]);
             }}>
               <option value="ALL">All departments</option>
               {departments.map(department=><option key={department} value={department}>{department}</option>)}
-            </select>
+            </Select>
             <span className="text-xs font-normal text-muted-foreground">
               Department selection targets every active program in that department.
               Choose specific programs, batches and classes below to narrow the audience.
@@ -1231,8 +1234,7 @@ export function PlacementJobCreateForm({
                         key={program.id}
                         className="flex items-start gap-2 text-sm text-body"
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={selectedProgramIds.includes(
                             program.id,
                           )}
@@ -1279,8 +1281,7 @@ export function PlacementJobCreateForm({
                         key={cohort.id}
                         className="flex items-start gap-2 text-sm text-body"
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={selectedCohortIds.includes(
                             cohort.id,
                           )}
@@ -1319,7 +1320,7 @@ export function PlacementJobCreateForm({
             <div className="grid gap-2 sm:grid-cols-2">
               {visibleSections.slice(0,500).map(section=><label key={section.id}
                 className="flex items-center gap-2 text-sm">
-                <input type="checkbox" checked={selectedSectionIds.includes(section.id)}
+                <Checkbox checked={selectedSectionIds.includes(section.id)}
                  disabled={!selectedSectionIds.includes(section.id)&&selectedSectionIds.length>=100}
                  onChange={()=>toggleId(section.id,selectedSectionIds,setSelectedSectionIds)}/>
                 {section.name} · {section.cohortName}
@@ -1330,13 +1331,13 @@ export function PlacementJobCreateForm({
             </div>
           </fieldset>
           <label className="block text-sm font-semibold text-body">Eligibility preset
-            <select className={inputClass} value={eligibilityPreset} onChange={event=>setEligibilityPreset(event.target.value as DriveEligibilityPreset)}>
+            <Select className={inputClass} value={eligibilityPreset} onChange={event=>setEligibilityPreset(event.target.value as DriveEligibilityPreset)}>
               <option value="OPEN">Open to all</option>
               <option value="CGPA_6">CGPA 6.0+</option>
               <option value="CGPA_7">CGPA 7.0+</option>
               <option value="PCT_60">60% throughout</option>
               <option value="PCT_70">70% throughout</option>
-            </select>
+            </Select>
             <span className="mt-1 block text-xs font-normal text-muted-foreground">Check your college CGPA-to-percentage rule before choosing a percentage threshold.</span>
           </label>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -1372,7 +1373,7 @@ export function PlacementJobCreateForm({
                 <span className="mb-1.5 block text-xs font-semibold text-body">
                   {label}
                 </span>
-                <input
+                <Input
                   className={inputClass}
                   name={name}
                   type="number"
@@ -1389,21 +1390,21 @@ export function PlacementJobCreateForm({
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Passing years
             </span>
-            <input
+            <Input
               className={inputClass}
               name="passingYears"
               placeholder="2026, 2027"
             />
           </label>
           <label className="flex items-center gap-2 text-sm font-semibold text-body sm:col-span-2">
-            <input name="requireVerifiedEvidence" type="checkbox" className="h-4 w-4 accent-primary"/>
+            <Checkbox name="requireVerifiedEvidence" className="h-4 w-4 accent-primary"/>
             Only students whose marks are verified
           </label>
           <label className="sm:col-span-2">
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Missing evidence
             </span>
-            <select
+            <Select
               className={inputClass}
               name="missingEvidencePolicy"
               defaultValue="ALLOW_WITH_FLAG"
@@ -1414,7 +1415,7 @@ export function PlacementJobCreateForm({
               <option value="REQUIRE_COMPLETE">
                 Require complete evidence
               </option>
-            </select>
+            </Select>
           </label>
           </div>
         </div>
@@ -1424,13 +1425,13 @@ export function PlacementJobCreateForm({
         <h2 className="font-semibold text-foreground">Interview rounds</h2>
         <label className="mt-3 block text-sm font-semibold text-body">
           Round template
-          <select name="roundPreset" value={roundPreset}
+          <Select name="roundPreset" value={roundPreset}
             onChange={event=>{
               if(isTpoRoundPresetKey(event.target.value)){setRoundPreset(event.target.value);markDirty();}
             }} className={inputClass}>
             {Object.entries(TPO_DRIVE_ROUND_PRESETS).map(([key,preset])=>
               <option key={key} value={key}>{preset.label}</option>)}
-          </select>
+          </Select>
         </label>
         <p role="status" className="mt-3 text-sm font-semibold text-body">{plannedTpoRoundRows(roundPreset).length} rounds planned</p>
         <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-body">
@@ -1453,7 +1454,7 @@ export function PlacementJobCreateForm({
           <Button type="submit" disabled={pending || !activeSeason || uncertainCreate}>
             {pending ? "Creating…" : "Create draft"}
           </Button>
-          <button
+          <Button variant="secondary"
             type="submit"
             value="review-publish"
             aria-label="Publish after reviewing the drive"
@@ -1461,22 +1462,22 @@ export function PlacementJobCreateForm({
             className="min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50 md:min-h-9"
           >
             Publish
-          </button>
+          </Button>
         </div>
       </section>
       {uncertainCreate?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
         The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline">Review Drives</Link> before retrying.
-        <button type="button" className="ml-3 font-semibold text-primary-text underline"
+        <Button variant="secondary" type="button" className="ml-3 font-semibold text-primary-text underline"
           onClick={()=>{try{localStorage.removeItem(uncertainKey);}catch{}setUncertainCreate(false);}}>
           I checked Drives — allow another attempt
-        </button>
+        </Button>
       </div>:null}
       {restoredBackup?<p role="status" className="text-sm text-body">A saved drive draft was restored from this browser. Review the values before submitting.</p>:null}
-      {dirty?<button type="button" onClick={()=>{
+      {dirty?<Button variant="secondary" type="button" onClick={()=>{
         clearedBackup.current=true;
         try{localStorage.removeItem(backupKey);}catch{}
         setRestoredBackup(false);
-      }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text md:min-h-9">Discard saved browser backup</button>:null}
+      }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text md:min-h-9">Discard saved browser backup</Button>:null}
       {partialJobId?<p role="alert" className="text-sm text-body">A draft exists. If setup did not finish, retry without changing the form or
         <a className="ml-1 font-semibold text-primary-text underline" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
         Do not submit a second drive.
