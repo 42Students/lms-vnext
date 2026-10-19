@@ -120,7 +120,7 @@ export function PlacementBulkAddApplicants({
               value={roleOptionId}
               onChange={(event) => setRoleOptionId(event.target.value)}
               disabled={busy}
-              className="mt-2 min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground"
+              className="mt-2 min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground md:min-h-9"
             >
               {roles.map((role) => (
                 <option key={role.id} value={role.id}>{role.title}</option>
@@ -137,14 +137,14 @@ export function PlacementBulkAddApplicants({
                 maxLength={80}
                 disabled={busy}
                 placeholder="Search names"
-                className="mt-2 min-h-10 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground"
+                className="mt-2 min-h-11 w-full rounded-[9px] border border-border bg-surface px-3 text-sm text-foreground md:min-h-9"
               />
             </label>
             <button
               type="button"
               onClick={() => void load(1)}
               disabled={busy}
-              className="min-h-10 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50"
+              className="min-h-11 rounded-[9px] border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50 md:min-h-9"
             >
               Search
             </button>
@@ -183,7 +183,7 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || candidates.page === 1}
                 onClick={() => void load(candidates.page - 1)}
-                className="min-h-10 rounded-[9px] border border-border px-3 font-medium text-foreground disabled:opacity-50"
+                className="min-h-11 rounded-[9px] border border-border px-3 font-medium text-foreground disabled:opacity-50 md:min-h-9"
               >
                 Previous
               </button>
@@ -191,7 +191,7 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || !candidates.hasMore}
                 onClick={() => void load(candidates.page + 1)}
-                className="min-h-10 rounded-[9px] border border-border px-3 font-medium text-foreground disabled:opacity-50"
+                className="min-h-11 rounded-[9px] border border-border px-3 font-medium text-foreground disabled:opacity-50 md:min-h-9"
               >
                 Next
               </button>
@@ -207,7 +207,7 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || selected.size === 0}
                 onClick={() => setSelected(new Map())}
-                className="min-h-10 rounded-[9px] border border-border bg-surface px-3 text-sm font-medium text-foreground disabled:opacity-50"
+                className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-sm font-medium text-foreground disabled:opacity-50 md:min-h-9"
               >
                 Clear
               </button>
@@ -215,7 +215,7 @@ export function PlacementBulkAddApplicants({
                 type="button"
                 disabled={busy || selected.size === 0 || !roleOptionId}
                 onClick={() => void submit()}
-                className="min-h-10 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50"
+                className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50 md:min-h-9"
               >
                 {busy ? "Working..." : "Review and confirm Add-to-Drive"}
               </button>
