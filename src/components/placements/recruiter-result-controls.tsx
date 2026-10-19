@@ -409,29 +409,29 @@ export function RecruiterResultControls({
                   <span className="text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</span>
                   {([
                     ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
-                  ] as const).map(([outcome,label])=><button key={outcome} type="button"
+                  ] as const).map(([outcome,label])=><Button key={outcome} type="button"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
                     disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
-                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-40">
+                    variant="secondary">
                     {label}
-                  </button>)}
-                  <button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
-                    onClick={undoDraftOutcome} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-40">
+                  </Button>)}
+                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
+                    onClick={undoDraftOutcome} variant="secondary">
                     Undo draft
-                  </button>
-                  <button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
-                    className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm font-[650] text-on-primary disabled:opacity-50"
+                  </Button>
+                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
+                    
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
-                  </button>
-                  <button type="button" disabled={bulkPending!==null||pendingKey!==null}
-                    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text disabled:opacity-50"
+                  </Button>
+                  <Button type="button" disabled={bulkPending!==null||pendingKey!==null}
+                    variant="secondary"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
                         []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}));}}>
                     {(selected[round.id]??[]).length?"Clear selection":"Select all eligible"}
-                  </button>
+                  </Button>
                 </div>:null}
                 <p className="mt-1 text-sm text-body">
                   {humanize(round.kind)} ·{" "}
