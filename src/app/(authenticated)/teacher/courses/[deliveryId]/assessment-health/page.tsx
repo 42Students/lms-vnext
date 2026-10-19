@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 
@@ -27,7 +28,7 @@ export default async function FacultyCourseAssessmentHealthPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Invalid Section report filters</h1>
-    <Link href="/teacher/courses" className="text-[var(--lms-teal-deep)] underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Back to courses</Link>
+    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to courses</Link>
   </section>;
   const context = await getCurrentRequestContext();
   const data = await getFacultyCourseAssessmentHealth(context,parsed.data);
@@ -37,10 +38,10 @@ export default async function FacultyCourseAssessmentHealthPage({
       description={[data.delivery.courseName,data.delivery.sectionName,
         data.delivery.academicPeriodName].join(" · ")}
       actions={<Link href={back + "/students"}
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Section students
       </Link>} />
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section className="border-b border-border pb-5">
       <h2 className="text-lg font-semibold text-foreground">Scope</h2>
       <p className="mt-1 text-sm text-body">
         {data.rosterSize} currently enrolled learners in this authorized Section.
@@ -50,16 +51,16 @@ export default async function FacultyCourseAssessmentHealthPage({
     <form action={facultyCourseHealthHref({...data.query,page:1}).split("?")[0]}
       method="get" className="flex flex-wrap items-end gap-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment type
-        <select name="kind" defaultValue={data.query.kind}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        <Select name="kind" defaultValue={data.query.kind}
+          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="ALL">All published assessments</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
-        </select>
+        </Select>
       </label>
       <Button type="submit" variant="primary">Filter</Button>
       <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
-        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
     </form>
     <p className="text-sm text-body">
       {data.total} published assessment{data.total === 1 ? "" : "s"} in this Section
@@ -92,7 +93,7 @@ export default async function FacultyCourseAssessmentHealthPage({
             ? "Unknown" : item.averagePercent + "%"}.
         </p>
         <Link href={item.href}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Open exact Section report →
         </Link>
       </article>)}</div>}
@@ -101,9 +102,9 @@ export default async function FacultyCourseAssessmentHealthPage({
       <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-3">
         {data.page > 1 && <Link href={facultyCourseHealthHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Previous</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
         {data.page < data.totalPages && <Link href={facultyCourseHealthHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Next</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">
