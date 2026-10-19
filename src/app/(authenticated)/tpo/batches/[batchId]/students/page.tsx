@@ -103,7 +103,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   Every change is confirmed and audited. Review skipped learners before retrying.</p>
  <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
  {!result.registrationAvailable?<p role="status" className="text-sm">Registration records unavailable.</p>:null}
- <form action={"/tpo/batches/"+batchId+"/students"} method="get" className="flex flex-wrap items-end gap-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+ <form action={"/tpo/batches/"+batchId+"/students"} method="get" className="flex flex-wrap items-end gap-2 border-b border-border py-3">
   <label className="text-sm">Class (on this page)<Select name="classId" defaultValue={view.data.classId??""} className="mt-1 block min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
     <option value="">All classes</option>
     {[...new Map(result.students.filter(s=>s.classId).map(s=>[s.classId!,s.className??"Unnamed class"])).entries()].map(([id,name])=><option key={id} value={id}>{name}</option>)}
