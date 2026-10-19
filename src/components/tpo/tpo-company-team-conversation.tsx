@@ -132,7 +132,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   }
  }
  return <section aria-label={"Company Team conversation for "+companyName}
-   className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   className="space-y-4 border-t border-border pt-4">
   <div className="flex flex-wrap items-start justify-between gap-3">
    <div>
     <h2 className="font-semibold text-foreground">Team · {companyName}</h2>
@@ -150,7 +150,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
       className="underline text-link px-0">Open in Team</Link>
    </div>
   </div>
-  {error?<p role="alert" className="text-sm text-danger">{error} <Button variant="ghost" className="underline text-link px-0"
+  {error?<p role="alert" className="text-sm text-error">{error} <Button variant="ghost" className="underline text-link px-0"
     type="button" onClick={()=>void load()}>Retry</Button></p>:null}
   {!data&&!error?<p role="status" className="text-sm text-body">Loading company Team conversation…</p>:null}
   {data?.status==="NOT_REGISTERED"?<p role="status" className="text-sm text-body">
@@ -159,7 +159,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   {data?.status==="READY"?<>
    {data.truncated?<p role="status" className="text-xs text-warning">Showing the latest 100 messages. Earlier history remains stored.</p>:null}
    {data.messages.some(m=>m.decision&&!m.deletedAt)?<aside aria-label="Pinned company Team decisions"
-     className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+     className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3 text-sm">
      <h3 className="font-semibold">Decided:</h3>
      {data.messages.filter(m=>m.decision&&!m.deletedAt).slice(-5).map(m=>
        <a key={m.id} href={"#company-team-"+m.id} className="block truncate text-primary-text underline">{m.body}</a>)}
@@ -167,7 +167,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">
     {data.messages.length===0?<li className="text-sm text-muted-foreground">
       Nothing here yet. Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date.
-    </li>:data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+    </li>:data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3">
       {(index===0||data.messages[index-1].dayKey!==m.dayKey)?<p className="mb-2 text-center text-xs font-semibold text-body">{m.dayLabel}</p>:null}
       <p className="text-xs text-muted-foreground">
         {m.authorMembershipId===actorMembershipId?"You":m.authorName??"Team member"} · {m.createdLabel}
