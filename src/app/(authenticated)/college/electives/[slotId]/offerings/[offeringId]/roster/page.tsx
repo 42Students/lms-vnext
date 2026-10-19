@@ -8,6 +8,9 @@ import { collegeMemberships, electiveOfferings, electiveSlots, membershipRoles, 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { getCollegeGroupDetail } from "@/modules/groups/admin-read-service";
 import { leaveGroup, moveElectiveMember } from "@/modules/groups/service";
 import { listElectiveOfferings } from "@/modules/electives/service";
@@ -115,7 +118,7 @@ export default async function ElectiveRoster({
       description="Student state, source, joining date and confirmed movement between offerings."
       actions={<Link href="/college/electives" className="font-semibold text-link">
         Back to Electives</Link>} />
-    <div className="flex flex-wrap gap-4 rounded-[8px] border border-border bg-surface p-4 text-sm">
+    <div className="flex flex-wrap gap-4 border-b border-border pb-4 text-sm">
       <span>Seats: {offering.capacity ?? "Unlimited"}</span>
       <span>Enrolled: {detail.counts.active}</span>
       <span>Waitlisted: {detail.counts.waitlisted}</span>
@@ -133,27 +136,26 @@ export default async function ElectiveRoster({
         {!archived && <form action={changeFaculty}>
           <input type="hidden" name="action" value="END" />
           <input type="hidden" name="assignmentId" value={item.id} />
-          <button className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-error">Remove faculty</button>
+          <Button variant="secondary" type="submit" className="text-error">Remove faculty</Button>
         </form>}
       </div>)}
       {!archived && <form action={changeFaculty} className="flex flex-wrap items-end gap-3">
         <input type="hidden" name="action" value="ASSIGN" />
         <label className="grid gap-1 text-sm">Faculty
-          <select name="membershipId" required defaultValue="" className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-2 text-base sm:text-sm">
+          <Select name="membershipId" required defaultValue="" >
             <option value="" disabled>Choose faculty</option>
             {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm">Role
-          <select name="role" className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-2 text-base sm:text-sm">
+          <Select name="role" >
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
-          </select>
+          </Select>
         </label>
-        <button disabled={faculty.length === 0}
-          className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
+        <Button variant="primary" type="submit" disabled={faculty.length === 0}>
           Assign faculty
-        </button>
+        </Button>
       </form>}
     </section>
     <section className="min-w-0 space-y-3" aria-label="Elective offering roster">
@@ -177,25 +179,25 @@ export default async function ElectiveRoster({
                 {targets.length > 0 && <form action={mutate} className="flex flex-wrap items-center gap-2">
                   <input type="hidden" name="action" value="MOVE" />
                   <input type="hidden" name="membershipId" value={member.membershipId} />
-                  <select name="targetOfferingId" required defaultValue=""
+                  <Select name="targetOfferingId" required defaultValue=""
                     aria-label="Move to another offering"
-                    className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-2 text-base sm:text-sm">
+                    >
                     <option value="" disabled>Move to another offering</option>
                     {targets.map(target => <option key={target.offeringId} value={target.offeringId}>
                       {target.courseName} ({target.courseCode})</option>)}
-                  </select>
+                  </Select>
                   <label className="inline-flex min-h-11 items-center gap-2">
-                    <input type="checkbox" name="confirm" value="yes" required /> Confirm
+                    <Checkbox name="confirm" value="yes" required /> Confirm
                   </label>
-                  <button className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-[var(--lms-teal-deep)]">Move</button>
+                  <Button variant="secondary" type="submit">Move</Button>
                 </form>}
                 <form action={mutate} className="flex flex-wrap items-center gap-2">
                   <input type="hidden" name="action" value="REMOVE" />
                   <input type="hidden" name="membershipId" value={member.membershipId} />
                   <label className="inline-flex min-h-11 items-center gap-2">
-                    <input type="checkbox" name="confirm" value="yes" required /> Confirm removal
+                    <Checkbox name="confirm" value="yes" required /> Confirm removal
                   </label>
-                  <button className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-3 text-foreground">Remove</button>
+                  <Button variant="secondary" type="submit" className="text-error">Remove</Button>
                 </form>
               </div> : "—" },
         ]}
