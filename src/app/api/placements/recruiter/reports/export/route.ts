@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -24,7 +25,7 @@ export async function GET(request:Request){
   }
   const csv=buildHrCompanyReportCsv(rows,first.matchedTotal);
   return new Response(csv.csv,{headers:{"Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="recruiter-report.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("recruiter-report", "csv") + '"',
    "Cache-Control":"private, no-store","X-Export-Omitted":String(csv.omitted)}});
  }catch(error){return apiErrorResponse(error);}
 }
