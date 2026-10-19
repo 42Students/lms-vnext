@@ -15,7 +15,9 @@ type GridWorkspaceProps<Row>={
  rows:readonly Row[];
  columns:readonly TpoGridColumn<Row>[];
  rowKey:(row:Row)=>string;
- children:ReactNode;
+ children:ReactNode|((visibleKeys:readonly string[])=>ReactNode);
+ columnScope?:"url"|"local";
+ columnStorageKey?:string;
  filters?:readonly TpoFilterField[];
  selection?:Selection;
  rollOf?:(row:Row)=>string|null|undefined;
@@ -26,6 +28,7 @@ type GridWorkspaceProps<Row>={
  searchPlaceholder?:string;
  searchParam?:string;
  filterTitle?:string;
+ searchMaxLength?:number;
 };
 
 const safeTsv=(value:unknown)=>{
