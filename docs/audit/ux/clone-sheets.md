@@ -262,6 +262,25 @@ Phone source path: custom forms and saved-view/selection lists are one column, w
 **STRICT TICK RULE:** E8 remains **[ ]**; no runtime, CI, viewport or end-to-end preview / XLSX verification occurred. Next area: `src/components/tpo/recruiter-leads-workspace.tsx` for the still-generic Engage/Leads DataTable and its GridWorkspace composition; afterward full icon/link source inventory. Branch edits stayed limited to chat-12-owned TPO files and audit.
 
 
+## 2026-10-19 chat-15 replacement — Recruiter Drives TpoGrid wiring (source-only)
+
+- [ ] `src/components/placements/hr-recruiter-drives-grid.tsx`: **new authorized client projection**, TpoGrid with columns Drive / Job type / Pay / Shared applicants / Offers / Deadline / Status / Next; existing row action destinations are carried through, including applicants, offers, unanswered college requests, open hiring flow, hire again, and conversation. No new server fetch or mutation.
+- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`: when `sheetScopeKey` is provided, display `HrRecruiterDrivesGrid` only from 768px upward; preserve the original full-featured cards on narrow screens and for other existing callers. Existing server-sorted attention ordering remains the source for both.
+- [ ] `src/app/(authenticated)/hr/drives/page.tsx`: passes `sheetScopeKey={context.user.id+":"+selectedCollege}`; existing exact employer/college authorization, request stage tabs, query-backed search/filter/sort, server CSV export route and pagination are untouched.
+
+| Legacy reference | New source | Source comparison | Tick? |
+| --- | --- | --- | --- |
+| `docs/design/old-lms-pages.md:6,10`: one canvas, hairline table and compact rows | `src/components/tpo/grid/tpo-grid.tsx` with Quartz, via `hr-recruiter-drives-grid.tsx` | Shared native engine on desktop; phone retains full old recruiter cards | No — computed visuals absent |
+| `docs/design/old-lms-pages.md:10`: Drive, Job type, Pay, Applied, Deadline, Status, row menu | `hr-recruiter-drives-grid.tsx` columns | Employer-safe **Shared applicants** substitutes broader TPO Applied metric; status/text and all direct actions remain | No — structural semantics differ |
+| `docs/design/legacy-styles/components___listing-page-header.scss:131-158`: mobile max 767px | `recruiter-placement-portfolio.tsx`: `hidden md:block` / `md:hidden` | Exact source breakpoint 768px; never render a second visible list | No — viewport screenshot pending |
+| Legacy export toolbar and filename contract | `hr/drives/page.tsx:147-153` existing `Export matching drives CSV` | Server-authorized download href retained; TpoGrid only supplies its copy/column chrome | No — legacy-grid filenames and UI not proven |
+| Employer scope and saved layout | `hr/drives/page.tsx`, `hr-recruiter-drives-grid.tsx` | Only already-authorized `pageResult.rows` handed to client; storage key includes user+college | No — live tenant switching untested |
+
+**Source scan:** the three touched/new files were fetched after the commits; `/<(button|input|select|textarea|table)(?=[\\s/>])/g` => 0 raw native controls each; `/#[0-9a-fA-F]{3,8}\\b/g` => 0 inline hex each. All paired JSX wrappers were inspected by source; no local TS compiler, app, CI, or browser executed. Existing legacy-grid directory not available through the connector at this checkpoint; exact old export filenames remain unverified. Existing package manifest lacks declared AG Grid packages despite native imports. **E8 remains [ ].**
+
+**Next E8 file:** `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` (applicant/offer/round sheet contract), after a runtime/dependency gate when permitted.
+
+
 ## chat-12 continued — Engage sheets and import previews (2026-10-19)
 
 Baseline: branch fast-forwarded to then-current main 2808e32a641e1e35f513755b840b6ef892c61163 before edits; branch only, no force-push. All checks below inspect fetched source; no app execution, CI, typecheck, or screenshot proof.
