@@ -227,7 +227,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
-    <Button variant="ghost" type="button" className="underline text-link px-0"
+    <Button variant="ghost" type="button" className="underline text-link lms-inline-link px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
       Open student panel
     </Button>
