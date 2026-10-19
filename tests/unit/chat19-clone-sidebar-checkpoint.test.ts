@@ -17,4 +17,10 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(legacy()).toContain("transition: width 0.15s cubic-bezier(0.2, 0, 0, 1)");
  expect(sidebar()).toContain("transition:width .15s cubic-bezier(.2,0,0,1)");
 });
+ it("pushes the full content column from 96 to 256 pixels",()=>{
+ const css=sidebar();
+ expect(css).toContain("padding-left:96px;");
+ expect(css).toContain("padding-left:256px;");
+ expect(css).toContain("~ .lms-shell-page");
+});
 });
