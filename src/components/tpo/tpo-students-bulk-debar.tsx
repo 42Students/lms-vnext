@@ -1,6 +1,6 @@
 "use client";
-import {Textarea} from "@/components/ui/textarea";
-import {Select} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useState} from "react";
@@ -83,16 +83,16 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
   <p className="text-sm">Uses the same students selected in the roster. Each student is checked and updated separately. Existing applications are not deleted.</p>
   <p role="status" className="text-sm">{picked.length} selected from the filtered roster (maximum {MAX} per batch).</p>
   <label className="grid max-w-xs gap-1 text-sm">Action
-   <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} >
+   <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
     <option value="DEBAR">Debar</option><option value="LIFT">Lift</option>
    </Select>
   </label>
   <label className="grid gap-1 text-sm">Reason (required)
-   <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500} disabled={pending} />
+   <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500} disabled={pending} className="min-h-20 rounded-[var(--lms-control-radius)] border border-border p-2"/>
   </label>
   {action==="DEBAR"?<>
    <label className="grid max-w-xs gap-1 text-sm">Until
-    <Select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} >
+    <Select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="DATE">A specific date (IST)</option><option value="DRIVES">A number of drives</option><option value="MANUAL">Lifted by placement team</option>
     </Select>
    </label>
