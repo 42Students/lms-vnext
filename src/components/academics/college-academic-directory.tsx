@@ -219,7 +219,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           <div className="flex items-end gap-2">
             <Button variant="primary" type="submit" >
               Filter
-            </button>
+            </Button>
             <Link href={path} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">
               Clear
             </Link>

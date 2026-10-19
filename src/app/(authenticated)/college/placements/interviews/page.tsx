@@ -68,12 +68,12 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     <label className="grid gap-1 text-sm">Company
      <select name="companyId" defaultValue={valid.data.companyId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       <option value="">All companies</option>{data.companies.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-     </Select>
+     </select>
     </label>
     <label className="grid gap-1 text-sm">Department
      <select name="departmentId" defaultValue={valid.data.departmentId??""} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       <option value="">All departments</option>{data.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-     </Select>
+     </select>
     </label>
     {([{name:"type",label:"Type",values:["ALL","INTERVIEW","GD"]},
       {name:"status",label:"Status",values:["ALL","SCHEDULED","COMPLETED","NO_SHOW","CANCELLED"]},
@@ -82,12 +82,12 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
      <select name={filter.name} defaultValue={String(valid.data[filter.name as "type"|"status"|"mode"])}
       className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       {filter.values.map(value=><option key={value} value={value}>{value==="ALL"?"All":value.replaceAll("_"," ")}</option>)}
-     </Select></label>)}
+     </select></label>)}
     <label className="grid gap-1 text-sm">Sort
      <select name="sort" defaultValue={valid.data.sort} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       <option value="UPCOMING">Upcoming first</option><option value="RECENT">Recent first</option>
       <option value="STUDENT">Student name</option>
-     </Select>
+     </select>
     </label>
     <div className="flex items-end gap-3"><button className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply filters</button>
      <Link href="/college/placements/interviews" className="min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center lms-inline-link">Clear</Link>
