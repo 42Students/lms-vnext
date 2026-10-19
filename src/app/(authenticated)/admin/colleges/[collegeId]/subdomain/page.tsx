@@ -29,7 +29,7 @@ export default async function CollegeWebAddress({ params }: {
  }));
  return <div className="min-w-0 space-y-6">
    <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`} className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-3 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">← College setup</Link>
-   <PageHeader eyebrow="Super Admin · Web address" title={college.name}
+   <PageHeader title={college.name}
      description="Manage this college's verified web addresses, including its subdomain. Only a verified address can become primary." />
    <ManagedCollegeSubdomain collegeId={college.id} initial={managed}/>
    <TenantDomainManager collegeId={college.id} domains={domains}/>
