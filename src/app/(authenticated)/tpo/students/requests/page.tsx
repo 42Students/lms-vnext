@@ -1,3 +1,4 @@
+import {Select} from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -248,7 +249,7 @@ export default async function TpoStudentRequestsPage({
       >
         <label className="flex flex-col gap-1 text-sm font-semibold text-body">
           Status
-          <select
+          <Select
             name="status"
             defaultValue={query.status ?? ""}
             className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
@@ -259,7 +260,7 @@ export default async function TpoStudentRequestsPage({
                 {humanize(status)}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
 
         <label className="flex flex-col gap-1 text-sm font-semibold text-body">
@@ -276,7 +277,7 @@ export default async function TpoStudentRequestsPage({
 
         <label className="flex flex-col gap-1 text-sm font-semibold text-body">
           Page size
-          <select
+          <Select
             name="pageSize"
             defaultValue={String(query.pageSize)}
             className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"
@@ -284,7 +285,7 @@ export default async function TpoStudentRequestsPage({
             <option value="25">25 requests</option>
             <option value="50">50 requests</option>
             <option value="100">100 requests</option>
-          </select>
+          </Select>
         </label>
 
         <div className="sm:col-span-3">
