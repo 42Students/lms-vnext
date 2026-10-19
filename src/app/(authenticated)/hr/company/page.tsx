@@ -80,7 +80,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                 <Link
                   key={grant.id}
                   href={"/hr/company?collegeId=" + encodeURIComponent(grant.collegeId)}
-                  className="rounded-lg border border-border bg-surface-secondary p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  className="rounded-lg border border-border bg-muted p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                 >
                   <div className="font-medium text-foreground">{grant.collegeName}</div>
                   <div className="mt-1 text-xs text-muted-foreground">Open Company & Team</div>
@@ -109,7 +109,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         />
         <Link
           href="/hr/profile"
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Your profile
         </Link>
@@ -161,7 +161,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
-                <span aria-hidden="true" className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface-secondary font-bold text-foreground">
+                <span aria-hidden="true" className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-border bg-muted font-bold text-foreground">
                   {result.company.name.trim().charAt(0).toUpperCase()}
                 </span>
                 <h2 className="text-lg font-semibold text-foreground">{result.company.name}</h2>
@@ -192,7 +192,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                 {label: "All visible drives", value: overview.total},
                 {label: "Live drives", value: overview.active},
                 {label: "Closed drives", value: overview.closed},
-              ].map(item=><div key={item.label} className="rounded-lg border border-border bg-surface-secondary p-3">
+              ].map(item=><div key={item.label} className="rounded-lg border border-border bg-muted p-3">
                 <span className="block text-xs text-muted-foreground">{item.label}</span>
                 <span className="mt-1 block text-xl font-bold tabular-nums text-foreground">{item.value}</span>
               </div>)}
@@ -240,7 +240,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               {teamPageResult.rows.map((member) => (
                 <div key={member.userId} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
                   <div className="flex items-start gap-3">
-                    <span aria-hidden="true" className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface-secondary text-sm font-semibold text-foreground">
+                    <span aria-hidden="true" className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-sm font-semibold text-foreground">
                       {(member.displayName||member.email||"R").trim().charAt(0).toUpperCase()}
                     </span>
                     <div>
