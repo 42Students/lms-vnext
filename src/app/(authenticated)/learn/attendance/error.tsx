@@ -1,5 +1,5 @@
 "use client";
-import { ErrorState } from "@/components/ui/error-state";
+import { PageHeader } from "@/components/ui/page-header";
 
 import { Button } from "@/components/ui/button";
 
@@ -10,8 +10,13 @@ export default function LearnerAttendanceError({
   reset: () => void;
 }) {
   return (
-    <ErrorState title={"Couldn't load attendance"} description={"Something went wrong loading attendance for this month. This is a load failure, not a zero-attendance result."}
-      action={<div className="flex flex-wrap items-center gap-3"><Button onClick={reset}>
+    <section className="px-3 py-10 text-center">
+      <PageHeader title={"Couldn't load attendance"} />
+      <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
+        Something went wrong loading attendance for this month. This is a load failure, not a zero-attendance result.
+      </p>
+      <div className="mt-5 flex justify-center">
+        <Button onClick={reset}>
           Retry
         </Button></div>} />
   );
