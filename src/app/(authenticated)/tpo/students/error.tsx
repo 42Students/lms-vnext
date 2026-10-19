@@ -11,9 +11,7 @@ export default function TpoStudentsError({
   reset: () => void;
 }) {
   return (
-    <section
-      role="alert"
-      className="space-y-3 py-6"
+    <Alert tone="error" className="text-center"
     >
       <PageHeader title={"Could not load students"} />
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
