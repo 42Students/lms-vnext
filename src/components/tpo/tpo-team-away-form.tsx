@@ -21,20 +21,20 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
   }catch(reason){setError(reason instanceof Error?reason.message:"Could not save away status. Try again.");}
   finally{pending.current=false;setBusy(false);}
  }
- return <form className="mt-3 space-y-2"
+ return <form className="mt-3 min-w-0 space-y-2 border-t border-border pt-3"
   onSubmit={event=>{event.preventDefault();
    if(!date)return;const parsed=new Date(date+"+05:30");
    if(!Number.isFinite(parsed.getTime())){setError("Choose when you will be back.");return;}
    void submit(parsed.toISOString());}}>
   <label className="grid gap-1 text-xs font-semibold">Away until (IST)
    <Input type="datetime-local" value={date} disabled={busy} onChange={event=>setDate(event.target.value)}
-    className="min-h-11 min-[768px]:min-h-9" />
+    className="min-h-11 md:min-h-9" />
   </label>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-body">{notice}</p>:null}
   <div className="flex flex-wrap gap-2">
-   <Button type="submit" variant="secondary" disabled={busy||!date} className="min-h-11 min-[768px]:min-h-9 text-xs">{busy?"Saving…":"Set away"}</Button>
-   {until?<Button type="button" variant="secondary" disabled={busy} className="min-h-11 min-[768px]:min-h-9 text-xs"
+   <Button type="submit" variant="secondary" disabled={busy||!date} className="min-h-11 md:min-h-9 text-xs">{busy?"Saving…":"Set away"}</Button>
+   {until?<Button type="button" variant="secondary" disabled={busy} className="min-h-11 md:min-h-9 text-xs"
     onClick={()=>void submit(null)}>Back now</Button>:null}
   </div>
  </form>;

@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {useState} from "react";
-import {StatusBadge} from "@/components/ui/status-badge";
 import dynamic from "next/dynamic";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
