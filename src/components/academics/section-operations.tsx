@@ -444,6 +444,7 @@ export function SectionOperations({
   const scheduleColumns = [
     {
       key: "event",
+      mobilePriority: "primary",
       header: "Event",
       cell: (row: ScheduleEvent) => (
         <div>
@@ -466,6 +467,7 @@ export function SectionOperations({
     },
     {
       key: "time",
+      mobilePriority: "secondary",
       header: "Time",
       cell: (row: ScheduleEvent) => (
         <span>
@@ -486,6 +488,7 @@ export function SectionOperations({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (row: ScheduleEvent) =>
