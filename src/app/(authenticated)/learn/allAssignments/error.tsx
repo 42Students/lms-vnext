@@ -11,14 +11,14 @@ export default function LearnerAssessmentsError({
   reset: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-surface p-8 text-center">
+    <div className="py-8 text-center">
       <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Assignments could not be loaded</h1>
       <p className="mt-2 text-sm text-body">
         This is a loading problem, not an empty list. Check your connection and try again.
       </p>
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Button onClick={reset}>Retry</Button>
-        <Link href="/learn/courses" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
+        <Link href="/learn/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text sm:min-h-9">
           {LEARNER_BACK_TO_COURSES}
         </Link>
       </div>
