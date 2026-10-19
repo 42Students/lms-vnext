@@ -32,7 +32,7 @@ export function ProjectDeliveryEvidenceDownload({projectId,fileId,name}:{
     } finally {setBusy(false);}
   }
   return <span className="inline-flex flex-col items-start gap-1">
-    <Button size="sm" variant="secondary" disabled={busy}
+    <Button variant="secondary" disabled={busy}
       onClick={()=>void download()}>{busy?"Opening file…":"Open attachment · "+name}</Button>
     {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
   </span>;

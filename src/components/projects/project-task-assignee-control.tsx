@@ -24,7 +24,7 @@ export function ProjectTaskAssigneeControl({projectId,taskId,taskTitle,assigneeM
     }catch(caught){setError(caught instanceof Error?caught.message:"Task update failed");}
     finally{setPending(false);}
   }
-  if(!editing)return <Button size="sm" variant="secondary" onClick={()=>setEditing(true)}>Assignee</Button>;
+  if(!editing)return <Button variant="secondary" onClick={()=>setEditing(true)}>Assignee</Button>;
   return <div className="flex flex-wrap items-center gap-2">
     <label className="text-xs font-semibold text-body">Assignee
       <Select value={selected} disabled={pending} onChange={e=>setSelected(e.target.value)}
@@ -33,8 +33,8 @@ export function ProjectTaskAssigneeControl({projectId,taskId,taskTitle,assigneeM
         {learners.map(person=><option key={person.membershipId} value={person.membershipId}>{person.displayName ?? "Learner"}</option>)}
       </Select>
     </label>
-    <Button size="sm" disabled={pending||selected===(assigneeMembershipId??"")} onClick={()=>void save()}>Save changes</Button>
-    <Button size="sm" variant="secondary" disabled={pending} onClick={()=>setEditing(false)}>Cancel</Button>
+    <Button disabled={pending||selected===(assigneeMembershipId??"")} onClick={()=>void save()}>Save changes</Button>
+    <Button variant="secondary" disabled={pending} onClick={()=>setEditing(false)}>Cancel</Button>
     {error&&<p role="alert" className="text-xs text-error">{error}</p>}
   </div>;
 }
