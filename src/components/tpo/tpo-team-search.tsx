@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef} from "react";
 import {useRouter} from "next/navigation";
+import {Input} from "@/components/ui/input";
 
 /** TPO-inbox-team-19: search Team conversations after two characters. */
 export function TpoTeamSearch({value}:{value:string}){
@@ -23,9 +24,9 @@ export function TpoTeamSearch({value}:{value:string}){
  },[]);
  return <label className="block text-sm font-semibold text-body">
   Search conversations
-  <input ref={ref} type="search" name="q" maxLength={120} defaultValue={value}
+  <Input ref={ref} type="search" name="q" maxLength={120} defaultValue={value}
    placeholder="Search (press /)"
-   className="mt-1 block min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3"
+   className="mt-1 min-h-11 sm:min-h-9 w-full"
    onChange={event=>{
     const query=event.currentTarget.value.trim();
     if(timer.current)clearTimeout(timer.current);
