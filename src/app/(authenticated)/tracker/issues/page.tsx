@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { Card } from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
@@ -149,36 +149,39 @@ export default async function TrackerIssuesPage({
         <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
           action={<Link href="/tracker/issues" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Reset</Link>}/>
       ) : (
-        <div className="grid gap-3">
-          {page.items.map((issue) => (
-            <Card as="article" key={issue.id}>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap gap-2">
-                    <StatusBadge>{issue.status.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
-                    <StatusBadge>{issue.severity.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
-                    <StatusBadge>{issue.environment}</StatusBadge>
-                  </div>
-                  <h2 className="mt-3 text-base font-semibold text-foreground">
-                    <Link className="inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
-                      {issue.publicId} · {issue.issueType}
-                    </Link>
-                  </h2>
-                  <p className="mt-1 line-clamp-2 text-sm text-body">{issue.description}</p>
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    {issue.reporterName} · {issue.accountRole} · {[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")} · {issue.createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
-                  </p>
-                </div>
-                <Link
-                  href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}
-                  className="inline-flex min-h-9 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                >
-                  Open issue
-                </Link>
-              </div>
-            </Card>
-          ))}
-        </div>
+        <DataTable
+          caption="Tracker issues"
+          rows={page.items}
+          getRowKey={issue => issue.id}
+          empty={<EmptyState title="No matching issues." description="Review and triage reported LMS issues." />}
+          columns={[
+            {key:"issue",header:"Issue",mobilePriority:"primary",cell:issue=><div className="min-w-0">
+              <Link className="inline-flex min-h-9 items-center break-all font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>{issue.publicId} · {issue.issueType}</Link>
+              <p className="mt-1 line-clamp-2 text-sm text-body">{issue.description}</p>
+            </div>},
+            {key:"status",header:"Status",mobilePriority:"secondary",cell:issue=>
+              <StatusBadge tone={issue.status==="CLOSED"?"success":issue.status==="NEW"?"warning":"info"}>
+                {issue.status.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}
+              </StatusBadge>},
+            {key:"severity",header:"Severity",mobilePriority:"secondary",cell:issue=>
+              <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":issue.severity==="MAJOR"?"warning":"neutral"}>
+                {issue.severity.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}
+              </StatusBadge>},
+            {key:"environment",header:"Environment",mobilePriority:"secondary",cell:issue=><StatusBadge>{issue.environment}</StatusBadge>},
+            {key:"reporter",header:"Reporter",mobilePriority:"secondary",cell:issue=>
+              <span>{issue.reporterName} · {issue.accountRole}</span>},
+            {key:"location",header:"Page / Screen / Section",mobilePriority:"secondary",cell:issue=>
+              <span>{[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")}</span>},
+            {key:"created",header:"Created (IST)",mobilePriority:"secondary",cell:issue=>
+              issue.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})},
+            {key:"action",header:"Action",mobilePriority:"action",cell:issue=>
+              <Link href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}
+                className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                Open issue
+              </Link>},
+          ]}
+        />
       )}
 
       {page.nextCursor ? (
