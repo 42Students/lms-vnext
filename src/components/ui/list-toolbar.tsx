@@ -43,7 +43,7 @@ export function ListToolbar({
   const viewControl = views ?? (onViewsClick ? <Button variant="secondary" size="sm" onClick={onViewsClick}>Views</Button> : null);
   const columnControl = columns ?? (onColumnsClick ? <Button variant="secondary" size="sm" onClick={onColumnsClick}>Columns</Button> : null);
   const exportControl = exportAction ?? (onExportClick ? <Button variant="secondary" size="sm" onClick={onExportClick}>Export</Button> : null);
-  return <section data-slot="list-toolbar" aria-label={label} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
+  return <section data-slot="list-toolbar" data-active-filters={activeFilters} aria-label={label} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
     <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
       {search ? <div className="flex min-w-0 w-full flex-1 basis-[220px] items-center gap-[var(--lms-space-2)] sm:max-w-[380px]"><div className="min-w-0 flex-1">{search}</div>{searchAction}</div> : searchAction ?? null}
       {filterControl || viewControl || columnControl || exportControl ? <div role="toolbar" aria-label={`${label} actions`}
@@ -52,7 +52,7 @@ export function ListToolbar({
       </div> : null}
     </div>
     {count !== null || bulkAction ? <div className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-2)] text-[12px] text-[var(--lms-neutral-500)]">
-      {count !== null ? <span className="tabular-nums">{count} {count === 1 ? "item" : "items"} in this view</span> : <span />}
+      {count !== null ? <span role="status" aria-live="polite" className="tabular-nums">{count} {count === 1 ? "item" : "items"} in this view</span> : <span />}
       {bulkAction}
     </div> : null}
   </section>;
