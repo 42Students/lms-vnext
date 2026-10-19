@@ -385,3 +385,61 @@ Previously recorded **87/87 queued TSX source scan** remains the verified full-q
 **STRICT TICK STATUS:** 10/87 confirmed no-presentation files [x]; 77/87 rendered visual files [ ] — need complete computed value rows (default/hover/active/focus/disabled/loading/error), 375px phone / 768px tablet / 1280px desktop comparison, and zero-regression JSX/TS check. Do not tick the remaining files on this source-only evidence. No app/test/CI executions.
 
 Exact next file: `src/components/hr/recruiter-calendar-legacy.module.css` for rendered 768-860px recruiter calendar parity, then `src/app/(authenticated)/hr/calendar/page.tsx` and `src/app/(authenticated)/hr/conversations/page.tsx`.
+
+
+## Continuation batch — specific HR recovery, recruiter board paint, tracker leaf controls
+
+At start of this batch main `d17473ae` contained most preceding chat-18 changes, while chat-18 retained later tracker changes and audit additions. Rebased without losing work using a two-parent expected-SHA Git tree merge `77a52f85`. Preserved **main's** upgraded `Disclosure` in HR Conversations and recruiter calendar markup; omitted both files from the stale-branch overwrite. Subsequent changes pushed ONLY on `chatgpt/chat-18-b`.
+
+### Exact source-level values and states
+
+| Property | Legacy source and exact value | Our source and value | Source check |
+| --- | --- | --- | --- |
+| Recruiter calendar grid | `lms2-fe@prod-2026/src/styles/components/_recruiter-v2.scss:141`: `repeat(7, minmax(150px, 1fr))`, gap 10px, bottom padding 6px | `src/components/hr/recruiter-calendar-legacy.module.css:27-33` now `.board[data-slot="calendar-grid"]` with those exact declarations, specificity 0-2-0 instead of 0-1-0 | Same declaration, overrides shared CalendarGrid's gap-1/7-column utility regardless of style order |
+| Event padding/default | `_recruiter-v2.scss:145`: 8px, white, 1px `#e3e8ef`, 8px radius, 2px vertical gap | `recruiter-calendar-legacy.module.css:60-73`: exact 8px, white, border/radius/gap | Source match |
+| Event hover | `_recruiter-v2.scss:145`: background `#f6f8fb` | `recruiter-calendar-legacy.module.css:74-77`: `#f6f8fb`; border `#cdd5e0` from corresponding legacy recruiter's muted border values | Default/hover source |
+| Event keyboard focus | Legacy shared form outline `#0a7c88` from `old-lms-shell-spec.md:23-24`; existing recruiter calendar focus used same primary | `recruiter-calendar-legacy.module.css:78-81`: 2px solid `#0a7c88`, offset 2px | Source token checked, computed CSS pending |
+| Current day active | `_recruiter-v2.scss:143`: `#2f6fed` border, 1px inset shadow | `recruiter-calendar-legacy.module.css:53-56`: exact declarations | Source match (distinct from TPO teal) |
+| Time label | `_recruiter-v2.scss:146`: `#4a5568`, 12px, tabular digits | `recruiter-calendar-legacy.module.css:82-86`: identical | Source match |
+| Tablet | `_recruiter-v2.scss:157-163`: calendar drops from 7 columns to one column at max-width 860px | `hr/calendar/page.tsx:497,521`: occupied-date agenda instead of seven-column grid through 860px; CSS module:109-113 one-column fallback; desktop 7-day grid from 861px | Source breakpoint proof; content layout differs (occupied dates only), so no strict tick |
+| Phone | `old-lms-shell.css:73-85`: max-width 767px, mobile targets minimum 44px | `recruiter-calendar-legacy.module.css:114-121` retains phone border and 44px mobile day, route navigation 44px | Source proof; no computed layout capture |
+| Route error hierarchy | `old-lms-pages.md:4-7`: single header above an inline slim error section on white canvas, not a second coloured card | `hr/activity/error.tsx:1-19`: replaces custom red Alert with shared `ErrorState`; other 6 HR error pages keep PageHeader title equal to normal route name; no nested canvas | Source anatomy corrected |
+| Route recovery button | `old-lms-shell-spec.md:23-24`: compact desktop 36px, `components___notification-drawer.scss:22-34`: mobile target >=44px | All six route recovery pages in `chat18-error-recovery.cjs` plus activity error have `min-h-11 md:min-h-9`; reset callback unchanged | Source declarations checked |
+| Notification inbox ordinary rows | `old-lms-pages.md:6`: one hairline list, no card per row | `hr/notifications/page.tsx:90-98`: `divide-y` list, no per-row corner, no card border, subtle hover remains | Source structure corrected |
+| Activity pagination | `old-lms-shell.css:73`, compact desktop 36px; mobile control target 44px | `hr/activity/page.tsx:73-79`: inline-flex min-height 44/36px, two links; href/page cursors unchanged | Source behaviour unchanged |
+| Company report filters | `components___listing-page-header.scss:131-164`: mobile full-width search/action and <=767px breakpoint | `hr/company/reports/page.tsx:218-271`: 2 selects width 100% on phones, md auto widths; Apply and Clear full width & 44px mobile / 36px desktop | Source responsive proof |
+| Tracker leaf action targets | `old-lms-shell.css:73-85`, `old-lms-shell-spec.md:23-24`: mobile 44px and desktop 36px | `independent-finding-copy-action.tsx`, `tracker-issue-copy-actions.tsx`, `audit-finding-status-action.tsx`, `tracker-quick-report-launcher.tsx`: shared Button, 44/36px; submission/clipboard/report drawer untouched | Source match |
+| Tracker Live Logs mobile search | `components___listing-page-header.scss:131-164`: full-width through 767px, 44px tall | `tracker-live-logs-explorer.tsx:171-174`: min-w-0 w-full basis-full through 767px, md inline, Input min-h-11 | Source match |
+| Known Errors narrow form | `old-lms-shell.css:73`: compact columns only above 767px | `known-errors-workspace.tsx:86`: 3 columns at `md`, stacked before 768px (previously stacked only below 640px) | Source breakpoint corrected |
+
+The repeated-error edits are captured by `scripts/codemods/chat18-error-recovery.cjs`; four independent tracker leaf actions by `chat18-tracker-leaf-actions.cjs`. Both use exact source guards and are idempotent; **not executed**.
+
+### Scope-wide source grep-equivalent proof on latest branch
+
+The current full 87-file queue was re-fetched in 9 GitHub batches (indices 0–9, 10–19, 20–29, 30–39, 40–49, 50–59, 60–69, 70–79, 80–86) **after** modifying the visible page/error/control sources. The exact source regexes were applied to all 87 files. Results:
+
+| Search expression | Total count | Written exemption |
+| --- | ---: | --- |
+| Opening native visible button, input, select, textarea, or table | 0 | None |
+| Native hidden input | 1 | `tracker/audit-findings/page.tsx:99` hidden `view` query field; no paint |
+| `#[0-9a-fA-F]{6}` in queued TSX | 0 | CSS-module hex is intentionally outside this TSX pattern |
+| `<h1` in queued TSX | 0 | Shared PageHeader owns h1 |
+| `border-b-2` in queued TSX | 0 | Shared Tabs used |
+| Literal `fixed inset-0` or dialog role text | 1 | `recruiter-conversation-live-refresh.tsx:15` contains a `document.querySelector` test for an open dialog; it **does not create a modal** |
+| New custom authored overlays | 0 | Dialogs/Drawers continue using shared primitives |
+
+**Repeatable grep equivalent**, saved as a read-only source assertion script `scripts/codemods/chat18-secondary-parity-check.cjs`. The script asserts 87 files and exemptions above, and verifies 10 legacy value/responsive source patterns. It was authored and committed but NOT run. Owner can run:
+
+```sh
+node scripts/codemods/chat18-secondary-parity-check.cjs
+node scripts/codemods/chat18-source-audit.cjs
+grep -rnE '<(button|input|select|textarea|table)([ >])|#[0-9a-fA-F]{6}|fixed inset-0|role="(dialog|alertdialog)"' 'src/app/(authenticated)/hr' 'src/app/(authenticated)/recruiter' 'src/app/(authenticated)/tracker' src/components/hr src/components/tracker
+```
+
+No app/test/CI runs; route JSX was read back manually. The error wrappers use legal self-closing ErrorState with JSX-valued `action` props; a naive regex splitting on the inner Button incorrectly reports unmatched ErrorState, so it is not presented as parser proof. Existing retry callbacks, query parameters, security scoping, IST formatting, and notifications were left intact.
+
+### Strict ticks and next exact file
+
+**10/87 complete (pure redirects/effects without owned paint), 77/87 visually rendered items remain unticked**. This turn supplied source-value, coverage and responsive *declaration* evidence but did not obtain the real computed CSS/default/hover/active/focus/disabled/loading/error matrices and phone/tablet/desktop old-vs-vNext captures needed for true pixel-perfect closure. We do not mark these items [x] on incomplete proof.
+
+**Next unticked queue item:** `src/app/(authenticated)/hr/activity/error.tsx` — computed inline ErrorState and recovery-button parity first; then `hr/activity/loading.tsx`, `hr/activity/page.tsx`, and recruiter calendar viewport comparison.
