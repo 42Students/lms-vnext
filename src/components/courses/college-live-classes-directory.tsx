@@ -1,3 +1,5 @@
+import { DateInput } from "@/components/ui/date-input";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
@@ -15,12 +17,12 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
     <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
       Session, lesson or course
-      <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
+      <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
         className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
       Course code (exact)
-      <input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
+      <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
         placeholder="e.g. CS101"
         className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
@@ -56,11 +58,11 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
       </Select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">From (IST)
-      <input type="date" name="from" defaultValue={data.from??""}
+      <DateInput mode="date" name="from" defaultValue={data.from??""}
         className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Through (IST)
-      <input type="date" name="to" defaultValue={data.to??""}
+      <DateInput mode="date" name="to" defaultValue={data.to??""}
         className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
     </label>
     <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
