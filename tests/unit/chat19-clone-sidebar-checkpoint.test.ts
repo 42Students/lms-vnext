@@ -112,4 +112,9 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(mobile).toContain("lastItem.focus()");
  expect(mobile).toContain("firstItem.focus()");
 });
+ it("does not tick B3 before repository-wide grep proof",()=>{
+ const report=read("docs/audit/ux/clone-sidebar.md");
+ expect(report).toContain("- [ ] **B3 sidebar**");
+ expect(report).toContain("coverage proof fails");
+});
 });
