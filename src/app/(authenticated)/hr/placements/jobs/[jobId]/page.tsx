@@ -1,4 +1,4 @@
-import { Tabs } from "@/components/ui/tabs";
+import { MetricBar } from "@/components/ui/metric-bar";
 import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { notFound, redirect } from "next/navigation";
@@ -390,10 +390,9 @@ export default async function HrPlacementJobPage({
               }).map(stage=><li key={stage.label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
                 <p className="text-xs font-semibold text-body">{stage.label}</p>
                 <p className="mt-1 text-xl font-bold tabular-nums text-foreground">{stage.count??"—"}</p>
-                <div role="img" aria-label={stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage"}
-                  className="mt-2 h-2 overflow-hidden rounded-full bg-border">
-                  <div className="h-full bg-primary" style={{width:(stage.ofPrevious??0)+"%"}}/>
-                </div>
+                <MetricBar className="mt-2" role="img"
+                  label={stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage"}
+                  value={stage.ofPrevious??0} maximum={100} unit="percent" />
                 <p className="mt-1 text-xs text-muted-foreground">{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"} · {stage.ofApplied===null?"Applied percentage unavailable":stage.ofApplied+"% of shared applicants"}</p>
               </li>)}
             </ol>
