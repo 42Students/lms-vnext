@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../components/ui/legacy-overlays.css";
+@import "../styles/legacy-skin.css";
 
 /*
  * LMS vNext color source of truth.
