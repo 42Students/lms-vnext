@@ -119,7 +119,7 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
       event.preventDefault();
       if (!rootRef.current) return;
       rootRef.current.open = true;
-      const options = Array.from(rootRef.current.querySelectorAll<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"]):not(:disabled), [data-slot="dropdown"] a[href]:not([aria-disabled="true"]), [data-slot="dropdown"] button:not(:disabled)')).filter(item => item.getClientRects().length > 0);
+      const options = Array.from(rootRef.current.querySelectorAll<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"]):not(:disabled), [data-slot="dropdown"] a[href]:not([aria-disabled="true"]), [data-slot="dropdown"] button:not(:disabled)')).filter(item => item.getClientRects().length > 0 && !item.closest("[hidden], [inert]"));
       (event.key === "ArrowUp" ? options.at(-1) : options[0])?.focus();
     }} className={cx("inline-flex min-h-9 cursor-pointer list-none items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-[background-color] duration-[200ms] ease-[ease] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden", mobileSheet ? "min-h-11" : "", inlineDesktop ? "md:hidden" : "", triggerClassName)}>{trigger}</summary>
     <div ref={panelRef} data-slot="dropdown"
@@ -129,7 +129,7 @@ export function Dropdown({ trigger, triggerClassName, children, label, align = "
         if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
         const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
           '[role="menuitem"]:not([aria-disabled="true"]):not(:disabled), a[href]:not([aria-disabled="true"]), button:not(:disabled)',
-        )).filter(item => item.getClientRects().length > 0);
+        )).filter(item => item.getClientRects().length > 0 && !item.closest("[hidden], [inert]"));
         if (!items.length) return;
         const index = items.indexOf(document.activeElement as HTMLElement);
         const target = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1 :
