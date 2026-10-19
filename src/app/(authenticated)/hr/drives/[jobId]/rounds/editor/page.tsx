@@ -25,7 +25,7 @@ export default async function HrRoundsEditorPage({params}:{
  }
  const endpoint="/api/placements/recruiter/drives/"+jobId+"/rounds";
  return <div className="min-w-0 max-w-full space-y-6">
-  <PageHeader title="Edit hiring rounds"
+  <PageHeader eyebrow="Recruiter · Hiring drive" title="Edit hiring rounds"
    description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."/>
   <nav className="flex flex-wrap gap-4 text-sm">
    <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive rounds</Link>

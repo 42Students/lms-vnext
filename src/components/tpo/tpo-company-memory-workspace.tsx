@@ -1,4 +1,6 @@
 "use client";
+
+import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -273,9 +275,8 @@ export function TpoCompanyMemoryWorkspace({
             {company.hiredPerYear.map(item=>(
               <li key={item.year} className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
                 <span>{item.year}</span>
-                <div className="h-3 overflow-hidden rounded-full bg-surface-secondary" role="img" aria-label={item.hired+" joined learners in "+item.year}>
-                  <div className="h-full rounded-full bg-primary" style={{width:(100*item.hired/Math.max(1,...company.hiredPerYear.map(row=>row.hired)))+"%"}}/>
-                </div>
+                <MetricBar size="default" role="img" label={item.hired+" joined learners in "+item.year}
+                  value={item.hired} maximum={Math.max(1,...company.hiredPerYear.map(row=>row.hired))} />
                 <strong className="text-right tabular-nums">{item.hired}</strong>
               </li>
             ))}

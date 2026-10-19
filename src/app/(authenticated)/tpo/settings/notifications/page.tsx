@@ -1,3 +1,4 @@
+import { StatTile } from "@/components/ui/stat-tile";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -135,17 +136,7 @@ export default async function TpoMyNotificationsPage({
             value: summary.read,
           },
         ].map((metric) => (
-          <article
-            key={metric.label}
-            className="border-b border-border px-1 py-4"
-          >
-            <p className="text-xs font-semibold text-muted-foreground">
-              {metric.label}
-            </p>
-            <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-              {metric.value}
-            </p>
-          </article>
+          <StatTile key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </section>
 

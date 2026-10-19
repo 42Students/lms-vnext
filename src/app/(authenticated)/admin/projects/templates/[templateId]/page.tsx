@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectsServiceError } from "@/modules/projects/errors";
@@ -61,10 +62,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
         }
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Link href="/admin/projects/templates"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
-              ← Template catalogue
-            </Link>
+            <PageBackLink href="/admin/projects/templates" label="Template catalogue" />
             <StatusBadge
               tone={
                 detail.template.status === "PUBLISHED"

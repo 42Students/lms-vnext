@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import { Button } from "@/components/ui/button";
 import type {LearnerVerificationState} from "@/modules/placements/learner-verification-status-model";
 import {learnerVerificationSubmitLabel} from "@/modules/placements/learner-verification-submit-label";
 import {learnerVerificationSubmissionFeedback} from "@/modules/placements/learner-verification-submit-feedback-model";
@@ -35,12 +36,12 @@ export function LearnerVerificationSubmit({
   }finally{setPending(false);}
  }
  return <div className="mt-4 min-w-0">
-  <Button variant="primary" type="button" disabled={pending||refreshRequired} onClick={submit}
-   className="max-w-full">
+  <Button type="button" disabled={pending||refreshRequired} onClick={submit}
+   className="min-h-11 sm:min-h-9 max-w-full">
    {pending?"Submitting…":learnerVerificationSubmitLabel(status)}
   </Button>
   {message?<p role="status" aria-live="polite" className="mt-2 break-words text-sm text-body">{message}</p>:null}
-  {refreshRequired?<Button variant="primary" type="button" onClick={()=>router.refresh()}
-    className="mt-3 text-primary-text">Refresh verification status</Button>:null}
+  {refreshRequired?<Button type="button" onClick={()=>router.refresh()}
+    variant="secondary" className="mt-3 min-h-11 sm:min-h-9">Refresh verification status</Button>:null}
  </div>;
 }

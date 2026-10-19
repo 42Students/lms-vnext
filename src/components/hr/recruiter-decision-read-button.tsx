@@ -28,7 +28,7 @@ export function RecruiterDecisionReadButton({id}:{id:string}){
   finally{lock.current=false;setBusy(false);}
  }
  return <div className="mt-2">
-  <Button type="button" variant="secondary" className="min-h-11" disabled={busy||complete} loading={busy} onClick={()=>void read()}>
+  <Button type="button" variant="secondary" className="min-h-9 max-sm:min-h-11" disabled={busy||complete} loading={busy} onClick={()=>void read()}>
    {complete?"Marked as read":busy?"Saving…":"Mark as read"}
   </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

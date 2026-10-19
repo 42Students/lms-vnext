@@ -41,7 +41,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const context = await getCurrentRequestContext();
   if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) redirect("/dashboard");
   const parsed = querySchema.safeParse({collegeId:(await searchParams).collegeId});
-  if (!parsed.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Today" />
+  if (!parsed.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Today" />
     <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
       action={<Link href="/hr/home" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose again</Link>} /></div>;
   const recruiter = context.recruiter;
@@ -53,7 +53,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     const byId=new Map(access.grants.map(item=>[item.id,item]));
     const visible=grants.filter(item=>byId.has(item.id));
     return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader title="Today" description={"College access for " + recruiter.companyName} />
+    <PageHeader eyebrow="Recruiter" title="Today" description={"College access for " + recruiter.companyName} />
     {visible.length === 0 ? <EmptyState title="Open this on your college&apos;s placement address" description="Your recruiter account works inside one college&apos;s placement site. Ask the placement cell that invited you to restore access." /> :
     <section className="grid gap-3 sm:grid-cols-2">{visible.map(grant => {
       const detail=byId.get(grant.id)!;

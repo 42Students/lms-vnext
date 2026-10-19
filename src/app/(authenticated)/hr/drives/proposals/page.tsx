@@ -24,7 +24,7 @@ export default async function RecruiterDriveProposalHistory({
  if(!input.success)notFound();
  const data=await listHrDriveProposals(context,input.data);
  return <div className="min-w-0 max-w-full space-y-5">
-  <PageHeader title="Sent drive proposals"
+  <PageHeader eyebrow="Recruiter · Drives" title="Sent drive proposals"
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
   <nav className="flex flex-wrap gap-3">
    <Link href="/hr/drives" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drives</Link>

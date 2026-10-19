@@ -1,4 +1,5 @@
-import { Tabs } from "@/components/ui/tabs";
+import { CalendarGrid } from "@/components/ui/calendar-grid";
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -242,11 +243,11 @@ export default async function HrCalendarPage({
   const query = await searchParams;
   if (Object.values(query).some(Array.isArray)) {
     return <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader title="Calendar" />
+      <PageHeader eyebrow="Recruiter" title="Calendar" />
       <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
         Invalid calendar filters.
       </p>
-      <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <Link href="/hr/calendar" className="inline-flex min-h-9 items-center text-primary-text underline">
         Clear filters
       </Link>
     </div>;
@@ -308,6 +309,7 @@ export default async function HrCalendarPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
+        eyebrow="Recruiter"
         title="Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
         actions={
@@ -348,45 +350,13 @@ export default async function HrCalendarPage({
         </section>
       ) : (
         <>
-          <section
-            aria-label="Recruiter calendar summary"
-            className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-2 xl:grid-cols-5"
-          >
-            {[
-              [
-                "Hiring rounds",
-                calendar.summary.rounds,
-              ],
-              [
-                "Application deadlines",
-                calendar.summary.deadlines,
-              ],
-              [
-                "All events",
-                eventCount,
-              ],
-              [
-                "Accessible drives",
-                calendar.authorizedJobCount,
-              ],
-              [
-                "Results due",
-                calendar.resultsDue.length,
-              ],
-            ].map(([label, value]) => (
-              <div
-                key={String(label)}
-                className="border-b border-border p-4 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
-              >
-                <p className="text-xs font-semibold text-muted-foreground">
-                  {label}
-                </p>
-                <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-                  {value}
-                </p>
-              </div>
-            ))}
-          </section>
+          <SummaryStrip label="Recruiter calendar summary" steps={[
+            {label:"Hiring rounds",value:calendar.summary.rounds},
+            {label:"Application deadlines",value:calendar.summary.deadlines},
+            {label:"All events",value:eventCount},
+            {label:"Accessible drives",value:calendar.authorizedJobCount},
+            {label:"Results due",value:calendar.resultsDue.length},
+          ]} />
 
           <section className="border-b border-border pb-4 sm:pb-5">
             <h2 className="text-base font-semibold text-foreground">Results due in this period</h2>
@@ -471,7 +441,7 @@ export default async function HrCalendarPage({
               method="get"
               className="mt-5 flex flex-wrap items-end gap-3 border-t border-border pt-5"
             >
-              <input
+              <Input
                 type="hidden"
                 name="view"
                 value={view}
@@ -558,7 +528,7 @@ export default async function HrCalendarPage({
                   </p>
                 ) : null}
               </div>
-              <div className="hidden min-w-[56rem] grid-cols-7 gap-2 md:grid">
+              <CalendarGrid className="hidden min-w-[56rem] gap-2 md:grid">
                 {[
                   "Mon",
                   "Tue",
@@ -659,7 +629,7 @@ export default async function HrCalendarPage({
                     </div>
                   );
                 })}
-              </div>
+              </CalendarGrid>
             </section>
           ) : null}
 

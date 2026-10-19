@@ -1,4 +1,6 @@
+import { StatTile } from "@/components/ui/stat-tile";
 "use client";
+import { Input } from "@/components/ui/input";
 
 import Link from "next/link";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
@@ -294,16 +296,7 @@ function Metric({
   value: string;
   tooltip?: string;
 }) {
-  return (
-    <div title={tooltip} className="rounded-xl border border-border bg-surface p-4">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-2 text-base font-semibold text-foreground">
-        {value}
-      </p>
-    </div>
-  );
+  return <div title={tooltip}><StatTile label={label} value={value} /></div>;
 }
 
 export function LearnerClassSchedule({
@@ -529,7 +522,7 @@ export function LearnerClassSchedule({
         {courseBasePath === "/learn/courses" ? (
           <div className="mt-4 flex flex-wrap items-end gap-3 border-t border-border pt-4">
             <label className="min-w-0 flex-1 text-xs font-semibold text-body">Find sessions
-              <input type="search" value={sessionSearch} maxLength={100}
+              <Input type="search" value={sessionSearch} maxLength={100}
                 onChange={event=>setSessionSearch(event.target.value)}
                 placeholder="Class title, faculty, location or course"
                 className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm font-normal text-foreground" />
@@ -539,12 +532,12 @@ export function LearnerClassSchedule({
               Clear search
             </button> : null}
             <label className="min-w-44 text-xs font-semibold text-body">Session kind
-              <select value={sessionKind} onChange={event=>setSessionKind(event.target.value as LearnerScheduleKind)}
+              <Select value={sessionKind} onChange={event=>setSessionKind(event.target.value as LearnerScheduleKind)}
                 className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm text-foreground">
                 <option value="ALL">All sessions</option>
                 <option value="COURSE">Course classes only</option>
                 <option value="SECTION">General section events</option>
-              </select>
+              </Select>
             </label>
             <button type="button" aria-pressed={upcomingOnly}
               onClick={()=>setUpcomingOnly(value=>!value)}

@@ -20,6 +20,7 @@ export default async function HrPlacementsPage() {
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
+        eyebrow="Recruiter"
         title="Drives"
         description="Only opportunities belonging to your employer and explicitly granted colleges appear here. College-private CRM notes and placement-cell actions are not exposed."
       />

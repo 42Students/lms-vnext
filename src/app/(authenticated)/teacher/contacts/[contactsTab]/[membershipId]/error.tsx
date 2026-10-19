@@ -4,14 +4,14 @@ export default function Error({ reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <section role="alert" className="border-b border-border bg-transparent py-6">
-    <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Unable to load Faculty contact detail</h1>
+  return <section role="alert" className="min-w-0 border-b border-border bg-transparent py-[var(--lms-space-5)]">
+    <PageHeader title={"Unable to load Faculty contact detail"} />
     <p className="mt-2 text-sm text-body">
       This request failed. The absence of results is not assumed.
     </p>
-    <button type="button" onClick={reset}
-      className="mt-4 rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+    <Button type="button" variant="secondary" type="button" onClick={reset}
+      className="mt-4 rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text">
       Retry
-    </button>
+    </Button>
   </section>;
 }

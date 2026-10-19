@@ -3,7 +3,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Radio } from "@/components/ui/radio";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { FileUpload } from "@/components/ui/file-upload";
+import { DataTable } from "@/components/ui/data-table";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -57,37 +58,46 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   <p className="text-sm text-body">Upload a CSV or Excel (.xlsx) result list. All supplied Application ID, email and roll identifiers must agree.
    Company portal IDs with no matching application are left unmatched. Contradictory IDs, email and roll must be reviewed; a manual match is audited. Nothing is applied to the round until the separate Apply results step.</p>
   <a href={url} download className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline">Download CSV template</a>
-  <label className="block text-sm font-semibold text-body">Company results file
-   <Input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}
-    className="mt-2 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground md:min-h-9"/>
-  </label>
+  <FileUpload label="Company results file"
+     accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+     disabled={busy} onFiles={files=>{setFile(files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/>
   <Button variant="secondary" type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
-   className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+   >
    {busy?"Checking…":"Preview matching results"}</Button>
   {preview?<div className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
    <h3 className="font-semibold">Import preview</h3>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
-   <div tabIndex={0} role="group" aria-label="Imported round preview, scroll for more rows" className="max-h-44 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
-    {preview.matched.map(row=><p key={row.line} className="border-b border-border px-2 py-2 text-sm last:border-b-0">
-     Row {row.line}: {row.name} · {row.outcome} {row.status?"· existing "+row.status:""}</p>)}
+   <div className="max-h-44 min-w-0 overflow-auto">
+    <DataTable<Match> caption="Imported round matched rows" rows={preview.matched}
+     getRowKey={row=>String(row.line)} empty={<p>No matching rows were found.</p>}
+     columns={[
+      {key:"line",header:"Row",cell:row=>row.line,mobilePriority:"primary"},
+      {key:"name",header:"Applicant",cell:row=>row.name,mobilePriority:"secondary"},
+      {key:"outcome",header:"Outcome",cell:row=>row.outcome,mobilePriority:"secondary"},
+      {key:"existing",header:"Existing",cell:row=>row.status?"existing "+row.status:"—",mobilePriority:"secondary"},
+     ]}/>
    </div>
    {preview.unmatched.length?<div className="space-y-2">
     <h4 className="font-semibold">Unmatched rows — review or skip</h4>
-    {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 border-b border-border py-3 sm:grid-cols-2">
-     <p className="text-sm">Row {row.line}: {row.identity||"No ID"} · {row.reason}</p>
-     <div className="flex flex-wrap gap-2">
-      <Select aria-label={"Match row "+row.line} className="min-h-11 md:min-h-9 flex-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"
-       value={overrides[row.line]??""} disabled={busy} onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
-       <option value="">Do not match this row</option>
-       {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
-      </Select>
-      <label className="flex items-center gap-2 text-sm">
-       <Checkbox checked={skips.includes(row.line)} disabled={busy}
-        onChange={e=>{setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line));if(e.target.checked)setOverrides(p=>({...p,[row.line]:""}));}}/> Skip row
-      </label>
-     </div>
-    </div>)}
+    <DataTable<Missing> caption="Unmatched round result rows" rows={preview.unmatched}
+      getRowKey={row=>String(row.line)} empty={<p>All result rows were matched.</p>}
+      columns={[
+       {key:"row",header:"Row",cell:row=>row.line,mobilePriority:"primary"},
+       {key:"identity",header:"Identity",cell:row=>row.identity||"No ID",mobilePriority:"secondary"},
+       {key:"reason",header:"Reason",cell:row=>row.reason,mobilePriority:"secondary"},
+       {key:"review",header:"Review",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
+         <Select aria-label={"Match row "+row.line} className="min-w-36 flex-1"
+           value={overrides[row.line]??""} disabled={busy}
+           onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
+           <option value="">Do not match this row</option>
+           {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
+         </Select>
+         <label className="flex items-center gap-2 text-sm">
+           <Checkbox checked={skips.includes(row.line)} disabled={busy}
+             onChange={e=>{setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line));if(e.target.checked)setOverrides(p=>({...p,[row.line]:""}));}}/> Skip row
+         </label>
+       </div>},
+      ]}/>
    </div>:null}
    <details className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
     <summary className="cursor-pointer font-semibold">Not in file ({preview.notInFile.length})</summary>
@@ -113,7 +123,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </fieldset>
    <Button variant="primary" type="button" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
     (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
+    >
     {busy?"Staging…":"Confirm and stage results"}</Button>
   </div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
@@ -123,8 +133,15 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     onConfirm={()=>{setConfirmOpen(false);void send("STAGE_IMPORT");}}/>
   {report?<div role="status" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
    <p className="font-semibold">{report.staged} results staged · {report.skipped} skipped · {report.unmatched} unmatched.</p>
-   <div tabIndex={0} role="group" aria-label="Round import outcomes, scroll for more" className="max-h-40 min-h-0 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">{report.results.map((r,i)=><p key={r.line+":"+r.applicationId+":"+i}>
-    {r.applicationId}: {r.status} {r.reason??""}</p>)}</div>
+   <div className="max-h-40 min-w-0 overflow-auto">
+    <DataTable<Report["results"][number]> caption="Round import outcomes" rows={report.results}
+      getRowKey={row=>row.line+":"+row.applicationId} empty={<p>No round import results were returned.</p>}
+      columns={[
+       {key:"application",header:"Application ID",cell:row=>row.applicationId,mobilePriority:"primary"},
+       {key:"status",header:"Status",cell:row=>row.status,mobilePriority:"secondary"},
+       {key:"reason",header:"Reason",cell:row=>row.reason??"—",mobilePriority:"secondary"},
+      ]}/>
+   </div>
    <p>Stage completed. Use the Apply results preview above to publish progression when the round is completed.</p>
   </div>:null}
   {error?<p role="alert" className="text-sm text-foreground">{error} Re-preview if the round has changed.</p>:null}

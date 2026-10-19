@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import { Button } from "@/components/ui/button";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 
 export function LearnerVerificationWithdraw({
@@ -36,25 +37,25 @@ export function LearnerVerificationWithdraw({
   }
  }
  return <div className="mt-3 space-y-2">
-  {!confirm?<Button variant="primary" type="button" onClick={()=>setConfirm(true)}
-   className="text-primary-text">
+  {!confirm?<Button type="button" onClick={()=>setConfirm(true)}
+   variant="secondary" className="min-h-11 sm:min-h-9">
    Withdraw
-  </Button>:<div role="group" aria-label="Withdraw" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
+  </Button>:<div role="group" aria-label="Withdraw" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-3">
    <p className="text-sm text-body">Withdraw</p>
    <div className="mt-3 flex flex-wrap gap-3">
-    <Button variant="primary" type="button" disabled={pending||stale} onClick={withdraw}
-     >
+    <Button type="button" disabled={pending||stale} onClick={withdraw}
+     variant="danger" className="min-h-11 sm:min-h-9">
      Withdraw
     </Button>
-    <Button variant="primary" type="button" disabled={pending} onClick={()=>setConfirm(false)}
-     className="text-primary-text">
+    <Button type="button" disabled={pending} onClick={()=>setConfirm(false)}
+     variant="secondary" className="min-h-11 sm:min-h-9">
      Cancel
     </Button>
    </div>
   </div>}
   {message?<p role="alert" className="text-sm text-body">{message}</p>:null}
-  {stale?<Button variant="primary" type="button" onClick={()=>router.refresh()}
-   className="text-primary-text">
+  {stale?<Button type="button" onClick={()=>router.refresh()}
+   variant="secondary" className="min-h-11 sm:min-h-9">
    Refresh verification status
   </Button>:null}
  </div>;

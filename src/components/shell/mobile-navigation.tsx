@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SidebarNav } from "./sidebar-nav";
-import { Button } from "@/components/ui/button";
 import {ShellLogoMark} from "./shell-nav-icons";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 import type { CSSProperties } from "react";
@@ -64,7 +63,7 @@ export function MobileNavigation({
 
   return (
     <>
-      <Button variant="secondary" size="icon"
+      <button
         ref={triggerRef}
         type="button"
         aria-label="Open navigation menu"
@@ -77,15 +76,15 @@ export function MobileNavigation({
           fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <path d="M4 6h16 M4 12h16 M4 18h16" />
         </svg>
-      </Button>
+      </button>
 
       {open ? (
         <div style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties}
           className="fixed inset-0 z-50 h-[var(--lms-visual-height)] md:hidden">
-          <Button variant="ghost"
+          <button
             type="button"
             aria-label="Close navigation"
-            className="!absolute !inset-0 !h-full !min-h-0 !w-full !max-w-none !rounded-none !border-0 !bg-black/45 !p-0"
+            className="absolute inset-0 h-full w-full bg-black/45"
             onClick={() => setOpen(false)}
           />
           <aside
@@ -99,7 +98,7 @@ export function MobileNavigation({
               <div className="inline-flex h-10 w-10 items-center justify-center" aria-label="42Students LMS">
                 <ShellLogoMark />
               </div>
-              <Button variant="secondary" size="icon"
+              <button
                 type="button"
                 aria-label="Close navigation"
                 onClick={() => setOpen(false)}
@@ -109,9 +108,9 @@ export function MobileNavigation({
                   fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                   <path d="M5 5l14 14 M19 5L5 19" />
                 </svg>
-              </Button>
+              </button>
             </div>
-            <div data-slot="mobile-sidebar-scroll" className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pt-2 pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
+            <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto pt-2 pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
               <SidebarNav
                 items={items}
                 onNavigate={() => setOpen(false)}

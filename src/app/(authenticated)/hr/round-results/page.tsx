@@ -19,12 +19,12 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
  const raw=await searchParams;
  const query=recruiterResultTableQuerySchema.safeParse({jobId:raw.jobId||undefined,
    roundId:raw.roundId||undefined,outcome:raw.outcome||undefined});
- if(!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Round Results" />
+ if(!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Round Results" />
    <ErrorState title="Invalid round filters" description="Choose a valid hiring drive, round and outcome filter."
     action={<Link href="/hr/round-results" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/></div>;
  if(!query.data.jobId) {
    const jobs=(await listOwnRecruiterPlacementJobs(context)).filter(item=>item.job.archivedAt===null);
-   return <div className="min-w-0 max-w-full space-y-6"><PageHeader title="Round Results"
+   return <div className="min-w-0 max-w-full space-y-6"><PageHeader eyebrow="Employer Recruiter" title="Round Results"
      description="Choose one of your employer's authorized published or closed hiring drives. Private college applications are never listed." />
     {jobs.length?<section className="grid gap-3 sm:grid-cols-2">{jobs.map(item=>
      <Link key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
@@ -53,7 +53,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
   PASS:counts?.pass??0,FAIL:counts?.fail??0,HOLD:counts?.hold??0,ABSENT:counts?.absent??0,
  };
  return <div className="min-w-0 max-w-full space-y-6">
-   <PageHeader title="Round Results"
+   <PageHeader eyebrow="Employer Recruiter" title="Round Results"
     description={workspace.company.name+" · "+workspace.college.name+" · "+workspace.job.title} />
    <nav aria-label="Round review navigation" className="flex flex-wrap gap-4 text-sm">
      <Link href="/hr/round-results" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose another drive</Link>

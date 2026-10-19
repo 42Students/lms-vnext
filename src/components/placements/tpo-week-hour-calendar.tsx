@@ -2,16 +2,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect,useMemo,useRef,useState} from "react";
 import {positionWeekEvents,type WeekGridEvent} from "@/modules/placements/tpo-week-grid-model";
-import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
+import {calendarLocalIstToOffset,calendarDueAtToIstLocal} from "@/modules/placements/tpo-calendar-followup-model";
 import {TpoCalendarMoveFollowup,type TpoCalendarLeadOption} from "./tpo-calendar-followup-actions";
-import {calendarDueAtToIstLocal} from "@/modules/placements/tpo-calendar-followup-model";
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
