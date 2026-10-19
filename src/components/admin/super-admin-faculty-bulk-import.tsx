@@ -85,7 +85,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
  };
  return <section className="space-y-3 border-t border-border pt-4">
   {dialog}
-  <h2 className="font-semibold">Bulk register faculty</h2>
+  <h2 className="font-semibold text-foreground">Bulk register faculty</h2>
   <p className="text-sm text-body">Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional). Existing identities are verified by the server.</p>
   <div className="flex flex-wrap items-center gap-3 print:hidden">
    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" onClick={downloadSample}>Download sample CSV</Button>
@@ -93,15 +93,15 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
      className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9"
      onFiles={files=>void fileSelected(files?.[0]??null)}/>
   </div>
-  {filename?<p className="text-xs text-muted-foreground print:hidden">File: {filename}</p>:null}
-  {count>0?<p role="status" className="text-sm print:hidden">{count} rows validated locally; review before creating.</p>:null}
+  {filename?<p className="text-xs text-muted-foreground">File: {filename}</p>:null}
+  {count>0?<p role="status" className="text-sm text-body">{count} rows validated locally; review before creating.</p>:null}
   {(issue||error)?<p role="alert" className="text-sm text-error">{error||issue}</p>:null}
   <Button type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}>
     {busy?"Importing…":"Validate and Create"}
   </Button>
   {results.length>0?<div className="space-y-2">
-   <p role="status" className="text-sm">{results.filter(x=>x.status==="CREATED").length} created, {results.filter(x=>x.status==="FAILED").length} failed, {results.filter(x=>x.status==="SKIPPED").length} skipped.</p>
-   <div className="max-h-80 overflow-auto print:max-h-none print:overflow-visible">
+   <p role="status" className="text-sm text-body">{results.filter(x=>x.status==="CREATED").length} created, {results.filter(x=>x.status==="FAILED").length} failed, {results.filter(x=>x.status==="SKIPPED").length} skipped.</p>
+   <div className="max-h-80 overflow-auto">
     <DataTable<Result> caption="Faculty bulk import results"
      rows={results} getRowKey={row=>String(row.row)}
      empty={<p>No faculty import results yet.</p>}

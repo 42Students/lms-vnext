@@ -1232,3 +1232,47 @@ Next discovered grep candidates:
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx` — inspect result/offer feedback
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx` — inspect inline notice and loading states
 
+
+
+## Chat-5 next-batch source passes — 36 files (2026-10-19)
+
+This list distinguishes completed **source migration** from STRICT F3/F4/F5 category parity: these 36 sources are fetched and migrated; all strict checkboxes stay **unticked** until exact old-LMS value equality, zero whole-repo bespoke grep (with exemptions), 320px/767px/tablet behavior, TS/JSX validation and visual proof. See the exact per-source table and value discrepancies in `docs/audit/ux/clone-states.md`. Do not claim zero remaining notices based on these bounded source checks.
+
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/page.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/page.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-applicant-review-form.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-company-feedback-form.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-company-interaction-form.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-drive-cancel-form.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-drive-change-requests.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-drive-clone-action.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-drive-close-preview-form.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-drive-deadline-form.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-drive-edit-form.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-drive-saved-views.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-drive-selection-manager.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-general-requests-panel.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-interview-slot-planner.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-joining-update-form.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-remind-non-applicants.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-report-invalid-filters.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-request-bulk-decision.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-request-decision-control.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-round-apply-control.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-round-calendar-control.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-round-check-in.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-round-reorder.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-round-result-entry-form.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-round-results-import.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-selection-import.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-trust-toggle.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+- [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx` — shared feedback source migrated and re-fetched; **strict pixel parity OPEN**
+
+**Next exact source:** `src/components/placements/tpo-sequential-request-review.tsx`, then `src/components/placements/tpo-recruiter-grant-controls.tsx`. Continue with remaining `src/components/placements/tpo-*.tsx` bespoke roles, then apply shared F3/F4/F5 components across other portals. Keep full route-state inventory unchanged until full grep and responsive proof. This batch used no app execution, TS build, CI, or tests.
