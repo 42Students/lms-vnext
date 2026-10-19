@@ -24,9 +24,9 @@
   border-bottom: 1px solid var(--lms-header-border);
   box-shadow: var(--lms-header-shadow);
 }
-.command { display:grid; grid-template-columns:auto minmax(220px,380px) 1fr; align-items:center; gap:12px; min-width:0; flex:1; }
-.commandNoNew { grid-template-columns:minmax(220px,380px) 1fr; }
-.search { position: relative; min-width: 0; width: 291px; max-width: 100%; }
+.command { display:grid; grid-template-columns:auto minmax(0,380px); align-items:center; gap:12px; min-width:0; flex:1; justify-content:start; }
+.commandNoNew { grid-template-columns:minmax(0,380px); }
+.search { position: relative; min-width: 0; width: min(291px, 100%); max-width: 100%; }
 .searchBox { display:flex; align-items:center; gap:9px; box-sizing:border-box; height:36px; width:100%; padding:0 10px; border:1px solid var(--lms-header-border); border-radius:var(--lms-control-radius); background:var(--topbar-search-bg); color:var(--topbar-muted); }
 .searchInput { min-width:0; width:100%; flex:1; padding:0; background:transparent; border:0; outline:none; font-family:inherit; font-size:12px; font-weight:400; line-height:1.4; color:var(--lms-heading); }
 .searchInput::placeholder { color:var(--topbar-placeholder); opacity:1; }
@@ -137,3 +137,7 @@
 @media (prefers-reduced-motion:reduce) {
   .new, .iconButton, .avatar, .suggestion, .menuItem { transition:none; }
 }
+
+/* Keep the command's two real children on measured tracks without reserving an empty column. */
+.searchBox button:focus-visible { outline:2px solid var(--lms-button-primary); outline-offset:2px; border-radius:4px; }
+.searchInput::-webkit-search-cancel-button { cursor:pointer; }
