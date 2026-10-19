@@ -500,3 +500,44 @@ Fetched **complete** latest branch bodies after the edits and checked:
 - No full-project grep, checked-out source program, computed responsive CSS, screenshot, or downloadable/export verification. Strict E7 subitems are still **[ ]** due to remaining chart, state and per-portal coverage.
 
 **Next exact untouched E7 target:** `src/components/courses/college-learner-progress-report.tsx` (per-learner progress bars and responsive summary) and `src/components/projects/project-workspace-readiness.tsx`; compare to old `_learn-courses.scss` and `_learn-projects.scss` before editing.
+
+
+## 2026-10-19 chat-2 additional progress/metric batch — five more file-level migrations
+
+**Completed scoped visual source migrations:** `src/components/courses/college-learner-progress-report.tsx`, `src/components/projects/project-workspace-readiness.tsx`, `src/components/projects/project-admin-workspace-list.tsx`, `src/components/courses/learner-course-list.tsx`, `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`. These are **not category-wide E7 strict ticks**. Read old LMS originals and fetched the entire new TSX/CSS files after editing. All JS event handlers, data filtering, value calculations and module access logic are retained. Shared `MetricBar` remains unchanged.
+
+### Exact original value vs new source table — progress and stage bars
+
+| Source element / state | Original old LMS style value | Current scoped vNext file and value | Source verdict |
+| --- | --- | --- | --- |
+| Course progress background | `lms2-fe@prod-2026/src/styles/components/_learn-courses.scss:2486-2492` — `$neutral-100=#f1f4f9` on every course dashboard track | `college-learner-progress-report.module.css:13-22` and `learner-course-progress.module.css:6-15` — `#f1f4f9` track | Exact token match |
+| Course progress fill | `_learn-courses.scss:2494-2500` — `$neutral-500=#6b7280` on all course dashboard fills | Both progress CSS modules' `> div` fill `#6b7280`; `college-learner-progress-report.tsx` and `learner-course-list.tsx` use scoped class | Exact token match |
+| Course read-only percentage text | Old course text uses `$neutral-900=#1a1d21`, caption12px/600 where displayed; progress count stays textual | `college-learner-progress-report.module.css:23-29` displays `#1a1d21`, 12px/600/tabular; model `row.progress` unchanged | Match ink/type; original specific DataTable cell layout not fully proved |
+| Course progress row width | `_learn-courses.scss` course-card progress is full width; other report cell widths are contextual | `learner-course-progress.module.css:6-15` full width; `college-learner-progress-report.module.css:6-13` report-cell 96px, wrapped narrow phone 72px at <=767 | Source layout preserved; report-cell width is a vNext exception, not legacy-derived |
+| Project progress group | `lms2-fe/src/styles/components/_learn-projects.scss:2057-2061` min-width220px, grid gap8 | `project-workspace-readiness.module.css:8-16`; all three mapped real task/sprint/release `MetricBar` rows in `project-workspace-readiness.tsx` | Match desktop geometry |
+| Project progress caption | `_learn-projects.scss:261-268,2680-2693` flex space-between, gap12px, 13px/600 muted `#6b7280`, strong 14px dark | `project-workspace-readiness.module.css:17-29`; `project-workspace-readiness.tsx` mapped row label/amount | Match |
+| Project progress fill and track | Old LMS common progress fill teal `#26bac7`, light cyan `#9ee4e8` at `_variables.scss:5-16` | `project-workspace-readiness.module.css:30-36`; `project-admin-workspace-list.tsx` imported same module for row's 96px progress meter | Match palette; full original per-progress meter width not separately specified |
+| Project <=767px | `_learn-projects.scss:5731-5734` removes min-width and sets width100% for progress | `project-workspace-readiness.module.css:37-44`; inline table progress separately shrinks to 72px phone | Exact group responsiveness; inline table is contextual exception |
+| Recruiter tally card | `lms2-fe/src/styles/components/_recruiter-v2.scss:132-134` tally fill `#f3f6fa`, radius10, 14px vertical padding, count26px/1.1 and caption12px `#66758d` | `recruiter-drive-funnel.module.css:7-31`; all `hr/placements/jobs/[jobId]/page.tsx` stage loop cards | Match fill/radius/count scale/ink; existing vNext 3-across card layout retained |
+| Recruiter chart progress | Original TPO report `_tpo-reports.scss:465-477`: 11px `#e7ecf2` rounded track; teal `#26bac7` fill, 2px nonzero width | `recruiter-drive-funnel.module.css:32-38`; one `MetricBar` loop site for all employer-visible stages | Match track and visual fill (real stage calculations unmodified) |
+| Recruiter 860px and phone | `_recruiter-v2.scss:157-164` medium breakpoint at 860px, compact layout | `recruiter-drive-funnel.module.css:39-52` medium card inset/count adjustment and <=767 phone fluid card | Source responsiveness exists, exact original card-arrangement parity not proved |
+
+### Coverage grep/source proof — all five latest file bodies, no local app execution
+
+| Reproducible scoped source search | Observed connector-backed result |
+| --- | --- |
+| `grep -o '<MetricBar' src/components/courses/college-learner-progress-report.tsx | wc -l` | **1**, class `styles.progressTrack` applied inside each DataTable progress cell |
+| `grep -o '<MetricBar' src/components/projects/project-workspace-readiness.tsx | wc -l` | **1 mapped site** over 3 real execution counters, class `styles.track` |
+| `grep -o '<MetricBar' src/components/projects/project-admin-workspace-list.tsx | wc -l` | **1 mapped site** for table rows, class `styles.inlineTrack` |
+| `grep -o '<MetricBar' src/components/courses/learner-course-list.tsx | wc -l` | **1 mapped site** over course cards, class `progressStyles.track` |
+| `grep -o '<MetricBar' 'src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx' | wc -l` | **1 mapped site** over employer-visible stages, class `funnelStyles.track` |
+| Raw native `<(button|select|input|textarea)` in these five files | **0** complete-file matches |
+| Literal malformed duplicate-quote-before-className, five files | **0** |
+| `<Select>` pairs in `college-learner-progress-report.tsx` | **2 open / 2 close** |
+| `<Link>` pairs in `learner-course-list.tsx` and HR drive page | **3/3** and **27/27** |
+| CSS-module class name audit | **3 + 4 + 3 + 1 + 5 distinct references, every class exists** |
+| New CSS responsive source declarations | College report <=767/reduced-motion; project progress <=767/reduced-motion (group and inline); learner course <=767/reduced-motion; recruiter drive <=860, <=767, reduced-motion |
+
+All `MetricBar` instances are **self-closing JSX**, not unmatched paired tags. `DataTable` is also self-closing where present. These are source string checks of full files, not TS typechecking, runtime assertions or actual touch/keyboard checks. No confidence claim is made for browser-computed geometry without the owner-run parity report.
+
+**Remaining E7 and G6 [ ]:** deep chart legend/tooltip parity, generic metric tile/summary-strip exhaustive coverage, progress metrics on all remaining pages and states, original/native `<progress>` in HR focused review, category-wide grep; keyboard/motion/phone/tablet screenshots and full component state comparison. **Next exact file:** `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` (graded report distribution bars), then `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx`. Compare original `_learn-report.scss` and original academic reporting stylesheet before changing any values.
