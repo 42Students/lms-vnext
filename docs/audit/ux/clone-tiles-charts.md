@@ -703,3 +703,20 @@ Complete remote files were read after edits. The following are **source-backed c
 **Scoped source grep results:** full 476-line TPO company detail fetched after write: `<MetricBar` **1**, hard-coded `style={{width:...` year-bar expressions **0**, `<Link>` **12/12**, raw native button/input/select/textarea **0**, malformed consecutive JSX quote-before-className **0**. All **four** `yearStyles` class references resolve to the module. CSS media selectors `max-width:767px` and reduced-motion exist. There is no app build, TypeScript run, actual employer-record data test, screenshot or full repository grep.
 
 **Next file if E7 work continues:** `src/components/courses/faculty-lesson-video-manager.tsx` (upload-meter paint) and `src/components/courses/assignment-file-submission-control.tsx` (multipart upload meter). Before changing them, verify whether upload-specific old LMS dimensions differ from current shared `MetricBar`; the source `_learn-assignments.scss` had no explicit matching upload-progress selector in inspected source, so do not guess. E7 umbrella remains **[ ]**.
+
+
+### 2026-10-20 employer focused-review progress extension
+
+`src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` now uses the existing shared `MetricBar` for the focused-review pager (no raw browser progress left). Its `src/components/hr/recruiter-drive-funnel.module.css .reviewTrack` derives from `lms2-fe@prod-2026/src/styles/components/_recruiter-v2.scss:114-119`.
+
+| State/value | Legacy | VNext | Verdict |
+| --- | --- | --- | --- |
+| Review pager bar flex | `_recruiter-v2.scss:117` `flex:1 1 120px`, min100px and zero margin | `.reviewTrack` flex1 1 120px, min100, margin0; mapped focused-review `MetricBar` | Match |
+| Track | Old recruiter Ant `Progress`, legacy LMS primary palette | 8px `#e7ecf2` track; teal `#26bac7` fill, rounded999 | Token match; Ant-computed height not inspected |
+| Counts and navigation | Legacy one-based progress position and total; previous/next | Existing `focusedNavigation.index+1`, `.total`, previous/next href unchanged | Source semantics match |
+| Phone <=767px | Must remain fluid and not shrink below readable bar width | Module media keeps min-width100 and flex; surrounding nav wraps | Source responsive guard; no browser proof |
+| Unavailable state | Pager only when navigation exists | Existing `focusedNavigation ? ... : null` unchanged | Match existing conditional state |
+
+Full HR detail source after write: `<MetricBar` **2** (hiring pipeline and focused review), native `<progress` **0**, `<Link>` **27 opening / 27 closing**, native button/input/select/textarea **0**, duplicate-quote-before-className **0**; `funnelStyles` classes `stage,label,count,track,note,reviewTrack` all resolve. Static scoped checks only; no compilation/browser/app execution.
+
+**Next untouched E7 file:** `src/components/courses/faculty-lesson-video-manager.tsx` (shared upload progress visual) or `src/components/courses/assignment-file-submission-control.tsx`; both already use `MetricBar`, so only change after original upload-specific styles have been found and compared; avoid made-up exact values. E7 category remains **[ ]**.
