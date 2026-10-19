@@ -491,3 +491,26 @@ Phone **375px** and small tablet **700px**: both selectable option rows stack, h
 `scripts/codemods/chat1-learner-rounds-responsive.cjs` added for the 4 previously source-migrated round/result files: idempotent source substitutions, dry-run default, TypeScript TSX parse guard. The Node codemod was **not run**, as per user dev-only/no-code-execution instruction.
 
 **Next exact file for continuation:** `src/app/(authenticated)/learn/my-placements/preparation/page.tsx` (remaining LRN-02 page type; inspect against existing proof before making any changes); after that `src/app/(authenticated)/learn/my-placements/support/page.tsx`. Full runtime screenshot/keyboard parity and whole-lane grep remain the reason all strict checklist items are open.
+
+## Learner support filters and preparation recovery — source pass (2026-10-20)
+
+`src/app/(authenticated)/learn/my-placements/support/page.tsx` now uses the existing **legacy 44px filter-pill geometry** for two filter navs (status/category), with selected teal background/white text, 14px medium/1.3 type, 8px radius, 16px horizontal inset, 150ms hover, 2px teal focus and horizontal scrolling through viewport 767px. The PageHeader extra eyebrow was removed and nested decision note is a hairline subsection, not another card.
+
+`src/app/(authenticated)/learn/my-placements/preparation/page.tsx` invalid-query recovery now uses the one-canvas `min-w-0` alert and a 44px tappable Clear filters link; its valid branch keeps existing shared Tabs, EmptyState, PageHeader and membership-scoped service.
+
+| Value/state | Legacy SCSS reference | vNext exact property | Source check |
+|---|---|---|---|
+| Support pill height | `components___learn-notifications.scss:88-98`: >=44px | `supportFilterPillClass`: `min-h-11` both phone and desktop | Match |
+| Pill dimensions | Same: 14px, 500, 1.3 line, 8px radius, 16px left/right pad | `text-[14px] font-medium leading-[1.3] rounded-lg px-4` | Match |
+| Selected pill | `components___learn-notifications.scss:117-125`: teal #26bac7 fill, white text | `aria-[current=page]:bg-[var(--lms-primary)]` + `text-[var(--lms-on-primary)]` + border | Match |
+| Pill hover/focus | `components___learn-notifications.scss:101-116`: 0.4-alpha teal border, 0.05 teal bg, 2px focus outline offset2px | `hover:border-[rgba(38,186,199,0.4)]`, `hover:bg-[rgba(38,186,199,0.05)]`, focus teal 2px/offset2px | Source match |
+| Mobile nav | `components___learn-notifications.scss:56-74`: <=767px horizontal overflow, >=768px wrap | `flex-nowrap overflow-x-auto`, `md:flex-wrap md:overflow-visible` | Match |
+| Preparations invalid route | `old-lms-pages.md:5-13`: one canvas, left state, 44px tap target | `role=alert`, `min-w-0 space-y-4`, `Clear filters` `min-h-11 md:min-h-9` | Match |
+
+**Full-file static inventory:** Support 85 lines, raw controls **0**, 6-digit hex **0**, deprecated small-breakpoint **0**, **1** PageHeader, **2** shared pill uses, **2** nav uses, **2/2** section tags; Preparation 79 lines, raw controls **0**, 6-digit hex **0**, deprecated small-breakpoint **0**, **2 conditional PageHeader source occurrences** (exactly one per rendered branch), **2/2** section tags.
+
+Source scans: `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/gi`, `/\\bsm:(min-h-9|grid-cols-2|grid-cols-3|p-5|p-6|flex-wrap)\\b/g`, open/close `<section>` and `</section>`. This is full GitHub-file text inspection, not execution of shell grep.
+
+Responsive source implications: **375px** and **700px** use one horizontal swipeable filter nav row, visible focus/44px targets; **768px+** wraps filter links within the available page width. The preparation error back link reaches 44px on phone and can use desktop height after 768px. No app rendering, screenshots, tests, TypeScript checking or CI in this turn; all 7 owner strict checklist items intentionally remain **unticked** pending executable proof.
+
+**Next exact file:** `src/app/(authenticated)/learn/my-placements/rules/page.tsx`, then `src/app/(authenticated)/learn/my-placements/placement/page.tsx` for remaining LRN-02 value/state verification. Other concurrent lanes may have modified main; sync with main before editing.
