@@ -181,7 +181,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     "/tpo/drive-day/" +
                     round.roundId
                   }
-                  className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-primary bg-primary px-3 text-sm font-semibold transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground md:min-h-9"
+                  className="inline-flex min-h-11 items-center justify-center rounded-[9px] border border-primary bg-primary px-3 text-sm font-[650] transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground md:min-h-9"
                 >
                   Open round
                 </Link>
