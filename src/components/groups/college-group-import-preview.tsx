@@ -1,4 +1,5 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
@@ -64,7 +65,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
           className="block min-h-11 max-w-full text-sm text-body" />
       </label>
       <label className="grid gap-2 text-sm font-semibold text-body">CSV contents
-        <textarea rows={8} maxLength={131072} value={csv}
+        <Textarea rows={8} maxLength={131072} value={csv}
           onChange={(event) => { setCsv(event.target.value); setResult(null); }}
           className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-mono text-sm text-foreground" />
       </label>
