@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { notFound, redirect } from "next/navigation";
@@ -34,13 +35,8 @@ export default async function TpoOfferLettersPage({
   return <div className="min-w-0 space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">← Back to drive</Link>
-    <header>
-      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">{job.title} · Offer letter evidence</h1>
-      <p className="mt-2 text-sm text-body">
-        Persisted offer records are listed below. An issued offer is not proof
-        that an offer letter was generated, sent, received or acknowledged.
-      </p>
-    </header>
+    <PageHeader title={job.title+" · Offer letter evidence"}
+      description="Persisted offer records are listed below. An issued offer is not proof that an offer letter was generated, sent, received or acknowledged." />
     <p role="status" className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
       Letter-issued and letter-acknowledged states are unavailable: the registered
       placement offer schema has no letter document, delivery or acknowledgement
