@@ -334,9 +334,9 @@ export function AcademicsOverview({
         />
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="admin-academic-programs-title">
         <div>
-          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <h2 id="admin-academic-programs-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Programs
           </h2>
           <p className="mt-1 text-sm text-body">
