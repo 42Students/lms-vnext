@@ -1,6 +1,10 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 import {parseAdminContentLocalMoment,type AdminContentTimeZone} from "@/modules/courses/super-admin-content-datetime-model";
@@ -113,37 +117,34 @@ export function SuperAdminContentActions({item}:{item:Content}){
  if(item.status==="ARCHIVED")return <p className="text-xs text-muted-foreground">Archived content is read-only.</p>;
  return <div className="space-y-2">
   <div className="flex flex-wrap gap-2">
-   <button type="button" disabled={busy} onClick={toggleEditor}
-    className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">Edit</button>
-   {item.status==="DRAFT"?<button type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
-    className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">Publish</button>:null}
-   <button type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
-    className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-error">Delete</button>
+   <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={toggleEditor} className="min-h-11 sm:min-h-9">Edit</Button>
+   {item.status==="DRAFT"?<Button type="button" size="sm" disabled={busy} onClick={()=>void transition("PUBLISH")} className="min-h-11 sm:min-h-9">Publish</Button>:null}
+   <Button type="button" size="sm" variant="danger" disabled={busy} onClick={()=>void transition("ARCHIVE")} className="min-h-11 sm:min-h-9">Delete</Button>
   </div>
-  {editing?<fieldset disabled={busy} className="grid gap-2 rounded border border-border p-3">
+  {editing?<fieldset disabled={busy} className="grid gap-3 border-t border-border pt-4">
    <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.
     Private files and existing published URLs are not exposed in this form.</p>
    <label className="grid gap-1 text-xs font-semibold">Title
-    <input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>
+    <Input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
+     className="min-h-11 sm:min-h-9"/></label>
    <label className="grid gap-1 text-xs font-semibold">Order
-    <input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>
+    <Input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}
+     className="min-h-11 sm:min-h-9"/></label>
    {["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)?
     <label className="grid gap-1 text-xs font-semibold">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Resource HTTPS link"}
-     <input type="url" maxLength={2048} value={replacementUrl} onChange={e=>setReplacementUrl(e.target.value)}
-      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/>
+     <Input type="url" maxLength={2048} value={replacementUrl} onChange={e=>setReplacementUrl(e.target.value)}
+      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-11 sm:min-h-9"/>
     </label>:null}
    {item.contentType==="RESOURCE"?<label className="grid gap-1 text-xs font-semibold">Notes
-    <textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
-     className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
+    <Textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
+     className="w-full"/>
    </label>:null}
    {item.contentType==="YOUTUBE"?<label className="grid gap-1 text-xs font-semibold">Video length (seconds)
-    <input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
-     className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>:null}
+    <Input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
+     className="min-h-11 sm:min-h-9"/></label>:null}
    {item.contentType==="LIVE_CLASS"?<>
     <label className="grid gap-1 text-xs font-semibold">Time Zone
-     <select className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9" value={timeZone}
+     <Select className="min-h-11 sm:min-h-9" value={timeZone}
       onChange={e=>{
        const zone=e.target.value as MeetingZone;
        if((startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone))&&
@@ -151,18 +152,17 @@ export function SuperAdminContentActions({item}:{item:Content}){
        setTimeZone(zone);setStartsAt(localDate(item.startsAt,zone));setEndsAt(localDate(item.endsAt,zone));
       }}>
       <option value="Asia/Kolkata">India Standard Time (IST)</option><option value="UTC">UTC</option>
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-xs font-semibold">Start Date and Time
-     <input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>
+     <Input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
+      className="min-h-11 sm:min-h-9"/></label>
     <label className="grid gap-1 text-xs font-semibold">End Date and Time
-     <input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-      className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:min-h-9"/></label>
+     <Input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
+      className="min-h-11 sm:min-h-9"/></label>
    </>:null}
-   <button type="button" disabled={busy} onClick={()=>void save()}
-    className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-[650] text-[var(--lms-on-primary)] sm:min-h-9">
-    {busy?"Saving…":"Save"}</button>
+   <Button type="button" disabled={busy} onClick={()=>void save()} className="min-h-11 sm:min-h-9">
+    {busy?"Saving…":"Save"}</Button>
   </fieldset>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
