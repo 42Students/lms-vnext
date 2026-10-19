@@ -204,7 +204,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
      </div>},
    ]}/>
  </div>
- <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Previous</Link>:null}
+ <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}
  {result.hasMore?<Link href={href(result.page+1)} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Next</Link>:null}</nav>
  </div>;
 }
