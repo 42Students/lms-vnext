@@ -1,8 +1,11 @@
-import { GracefulScreen } from "@/components/public/graceful-screen";
+import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 
-/** GR-13: friendly missing or deleted records in this role. */
+/** In the authenticated shell, errors use its single white page canvas. */
 export default function NotFound() {
-  return <GracefulScreen title="Page not found"
-    message="This page may have moved or is no longer available. Please return home."
-    homeHref="/admin" />;
+  return <section className="min-w-0 space-y-4">
+    <PageHeader title="Page not found" />
+    <p className="text-sm text-body">This page may have moved or is no longer available. Please return home.</p>
+    <Link href="/admin" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Go to home</Link>
+  </section>;
 }
