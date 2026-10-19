@@ -33,7 +33,7 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
  }
  return <section tabIndex={0} onKeyDown={keydown}
   aria-label="Batch student keyboard and mobile actions"
-  className="min-w-0 space-y-2 border-b border-border py-3">
+  className="min-w-0 space-y-2 border-b border-border py-3 print:hidden">
   <div className="flex flex-wrap items-center justify-between gap-2">
    <strong className="text-sm">Student actions · {valid.length} selected on this page</strong>
    <Button variant="secondary" type="button" aria-expanded={expanded} onClick={()=>setExpanded(v=>!v)}
@@ -41,19 +41,19 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
   </div>
   <p className="text-xs text-body">Focus this area: Ctrl/Cmd+A selects visible rows, Ctrl/Cmd+C copies selected names and roll numbers. Shortcuts never intercept an input field.</p>
   <div className={expanded?"flex flex-wrap gap-2":"hidden flex-wrap gap-2 md:flex"}>
-   <Button variant="secondary" type="button" onClick={selectVisible} className="min-h-11 px-3">Select visible</Button>
+   <Button variant="secondary" type="button" onClick={selectVisible} className="min-h-11 px-3 md:min-h-9">Select visible</Button>
    <Button variant="secondary" type="button" onClick={()=>{setSelected([]);setMessage("");}}
-    className="min-h-11 px-3">Clear selection</Button>
+    className="min-h-11 px-3 md:min-h-9">Clear selection</Button>
    <Button variant="secondary" type="button" disabled={!valid.length} onClick={()=>void copy()}
-    className="min-h-9 px-3">Copy selected</Button>
-   {downloadHref?<a href={downloadHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export filtered page CSV</a>:null}
+    className="min-h-11 px-3 md:min-h-9">Copy selected</Button>
+   {downloadHref?<a href={downloadHref} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export filtered page CSV</a>:null}
   </div>
   <label className="flex min-h-11 items-center gap-2 text-sm">
    <Checkbox checked={rows.length>0&&valid.length===rows.length}
     onChange={event=>event.target.checked?selectVisible():setSelected([])}/>
    Select all learners on this page
   </label>
-  <div className="grid max-h-44 min-w-0 grid-cols-1 gap-1 overflow-y-auto overscroll-contain md:grid-cols-2" aria-label="Visible batch learners">
+  <div className="grid max-h-44 min-w-0 grid-cols-1 gap-1 overflow-y-auto overscroll-contain md:grid-cols-2 print:max-h-none print:overflow-visible" aria-label="Visible batch learners">
    {rows.map(row=><label key={row.id} className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm">
     <Checkbox checked={valid.includes(row.id)}
      onChange={event=>setSelected(ids=>event.target.checked?
