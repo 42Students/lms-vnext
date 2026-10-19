@@ -141,4 +141,9 @@ Reference facts: `docs/design/old-lms-pages.md` prescribes one #fff canvas radiu
 
 ### Exact next file
 
-`src/components/attendance/faculty-attendance-workspace.tsx` — check whether the parent route or faculty course workspace owns PageHeader, then handle its screen-reader-only heading without duplicating headers. After that inspect `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` and indirect shared table/overlay components.
+`src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` — inspect `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` and indirect shared table/overlay components.
+
+### Follow-on migration
+
+- `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx` directly renders the attendance workspace without a parent `PageHeader`. Replaced that workspace's screen-reader-only `<h1>` with shared `PageHeader` retaining the visible description, course/section/period context, and Schedule Class action; self-closing `PageHeader` and matching `Button` tags manually reviewed. No JSX build or CI run. This closes that specific markup gap, but NOT category H under the STRICT TICK RULE.
+- Next inspect assignment submissions report's filter form (hidden-input exemptions, shared control styles), then quiz attempts report and Super Admin directory pages. Audit responsive changes against 767px/991px legacy breakpoints before checking any category.
