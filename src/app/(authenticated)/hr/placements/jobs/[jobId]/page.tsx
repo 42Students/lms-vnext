@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
@@ -499,7 +500,7 @@ export default async function HrPlacementJobPage({
           <input type="hidden" name="collegeId" value={workspace.college.id}/>
           <input type="hidden" name="jobId" value={workspace.job.id}/>
           <p className="text-sm text-body">No private drive discussion exists yet.</p>
-          <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open drive discussion</button>
+          <Button type="submit">Open drive discussion</Button>
         </form>}
       </section>:null}
       {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 border-b border-border pb-4 sm:pb-5">
