@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/badge";
+import { Banner } from "@/components/ui/banner";
 import { TpoJoiningUpdateForm } from "@/components/placements/tpo-joining-update-form";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
@@ -57,10 +59,10 @@ export default async function TpoDriveJoiningPage({
         ))}
       </section>
       {tracker.items.length === 0 ? (
-        <p role="status" className="text-sm text-body rounded-[var(--lms-control-radius)] border border-border bg-muted p-3">
+        <Banner tone="info">
           No currently accepted offers are recorded for this drive. Issued,
           declined and withdrawn offers cannot be assigned a joining outcome.
-        </p>
+        </Banner>
       ) : (
         <div className="space-y-4">
           {tracker.items.map((item) => (
@@ -76,9 +78,9 @@ export default async function TpoDriveJoiningPage({
                     Learner placement history →
                   </Link>
                 </div>
-                <span className="rounded-[var(--lms-control-radius)] border border-border px-3 py-1 text-sm font-semibold text-foreground">
+                <Badge tone={item.joiningStatus==="JOINED"?"success":item.joiningStatus==="DID_NOT_JOIN"?"error":item.joiningStatus==="DEFERRED"?"warning":"info"}>
                   {item.joiningStatus.replaceAll("_", " ")}
-                </span>
+                </Badge>
               </div>
               <p className="mt-3 text-sm text-body">
                 Current joining date: {item.joiningDate ?? "Not recorded"}

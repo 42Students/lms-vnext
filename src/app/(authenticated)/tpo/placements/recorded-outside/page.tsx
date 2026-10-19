@@ -3,6 +3,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
+import {Banner} from "@/components/ui/banner";
 import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form";
 import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
 import {listTpoOutsideDriveRecords} from "@/modules/placements/recorded-outside-participation-service";
@@ -23,9 +24,9 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
   <PageHeader eyebrow="TPO · Drive creation" title="Record an outside-platform drive"
    description="Document a drive that already happened outside LMS without publishing any job or learners."/>
   <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] md:min-h-9">Back to platform drive creation</Link>
-  {saved?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+  {saved?<Banner tone="success">
    External drive record saved. It was not published as a job.
-  </p>:null}
+  </Banner>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
   <section aria-label="Recorded outside drives" className="space-y-3 border-b border-border pb-6">
    <h2 className="font-semibold">Recorded outside drives</h2>
