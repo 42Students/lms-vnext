@@ -836,17 +836,16 @@ export function LearnerCourseWorkspace({
           };
 
           return (
-            <details
-              id={`lesson-${lesson.id}`}
-              key={lesson.id}
-              open={
+            <Disclosure id={`lesson-${lesson.id}`} key={lesson.id}
+              defaultOpen={
                 focusLessonId === lesson.id ||
                 (!focusLessonId && (workspace.nextItem?.lessonId === lesson.id ||
                   (!workspace.nextItem && lessonIndex === 0)))
               }
-              className="group rounded-xl border border-border bg-[var(--lms-neutral-50)]"
-            >
-              <summary className="cursor-pointer list-none px-4 py-4 md:px-5">
+              preserveSummary
+              summaryClassName="cursor-pointer list-none px-4 py-4 md:px-5"
+              title={<>
+
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
@@ -905,7 +904,9 @@ export function LearnerCourseWorkspace({
                     </span>
                   </div>
                 </div>
-              </summary>
+              
+              </>}
+              className="group rounded-xl border border-border bg-[var(--lms-neutral-50)]">
 
               <div className="border-t border-border bg-surface p-4 md:p-5">
                 {focusLessonId===lesson.id?<nav aria-label="Lesson navigation"
@@ -998,7 +999,7 @@ export function LearnerCourseWorkspace({
                   </div>
                 )}
               </div>
-            </details>
+            </Disclosure>
           );
         })}
       </div>
