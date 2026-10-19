@@ -52,31 +52,31 @@ export default async function MentorReviewHistoryPage({
         <input data-slot="input" type="hidden" name="decision" value={data.query.decision}/>
         <label className="grid gap-1 text-sm font-semibold text-body">Project title
           <input data-slot="input" name="search" type="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
-          <select data-slot="select" name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <select data-slot="select" name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Project lifecycle
-          <select data-slot="select" name="projectState" defaultValue={data.query.projectState} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <select data-slot="select" name="projectState" defaultValue={data.query.projectState} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">Any project state</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
             <option value="ARCHIVED">Archived</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Delivery submission version
-          <input data-slot="input" name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 w-36 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
+          <input data-slot="input" name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 sm:min-h-9 w-36 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
-          <select data-slot="select" name="order" defaultValue={data.query.order} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <select data-slot="select" name="order" defaultValue={data.query.order} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="NEWEST">Latest decision first</option><option value="OLDEST">Earliest decision first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded decision within
-          <select data-slot="select" name="window" defaultValue={data.query.window} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+          <select data-slot="select" name="window" defaultValue={data.query.window} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
           </select>
         </label>
