@@ -45,7 +45,7 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  <label className="grid gap-1 text-sm font-semibold">Assessment type
  <Select name="kind" defaultValue={data.query.kind} >
  <option value="ALL">All</option><option value="ASSIGNMENT">Assignments</option><option value="QUIZ">Quizzes</option>
- </select></label>
+ </Select></label>
  <Button type="submit" variant="primary">Filter</Button>
  <Link href={facultyReportHubHref({...data.query,kind:"ALL",page:1})} className="inline-flex min-h-9 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
  </form>

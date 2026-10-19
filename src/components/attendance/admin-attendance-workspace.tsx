@@ -602,8 +602,8 @@ export function AdminAttendanceWorkspace({
                   },
                 )}
               </tbody>
-            </Table>
-              
+            </table>
+              </ScrollCue>
           </section>
 
           <p className="text-xs leading-5 text-muted-foreground">
