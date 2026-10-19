@@ -1,4 +1,5 @@
 "use client";
+import { FileUpload } from "@/components/ui/file-upload";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -59,11 +60,9 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         Upload a CSV with one column named <code>email</code>. Maximum 500 rows and 128 KiB.
         Only currently active learners in this college are eligible.
       </p>
-      <label className="grid gap-2 text-sm font-semibold text-body">Select CSV file
-        <input type="file" accept=".csv,text/csv" onChange={(event) =>
-          void load(event.target.files?.[0] ?? null)}
-          className="block min-h-11 max-w-full text-sm text-body" />
-      </label>
+      <FileUpload label="Select CSV file" accept=".csv,text/csv"
+        onFiles={(files) => { void load(files?.[0] ?? null); }}
+        className="min-w-0" />
       <label className="grid gap-2 text-sm font-semibold text-body">CSV contents
         <Textarea rows={8} maxLength={131072} value={csv}
           onChange={(event) => { setCsv(event.target.value); setResult(null); }}
