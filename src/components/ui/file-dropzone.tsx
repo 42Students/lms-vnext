@@ -19,6 +19,7 @@ export type FileDropzoneProps = {
 /** Drag and picker both enforce the same client-side validation before delegation. */
 export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,showSelectedFiles=false,showImagePreview=false,disabled=false,helper,fallback,className}:FileDropzoneProps) {
   const [dragging,setDragging]=useState(false);
+  const [pickerResetToken,setPickerResetToken]=useState(0);
   const [dropError,setDropError]=useState<string|null>(null);
   const [droppedNames,setDroppedNames]=useState<string[]>([]);
   const [dropPreviewFile,setDropPreviewFile]=useState<File|null>(null);
@@ -36,6 +37,9 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     event.preventDefault();setDragging(false);if(disabled)return;
     const files=event.dataTransfer.files;
     if(!files.length)return;
+    // Drop and picker are mutually exclusive selections: remount the picker
+    // to clear any older visible FileList without resetting the parent's new drop.
+    setPickerResetToken(current=>current+1);
     if(!multiple&&files.length>1){droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError("Select only one file.");onFiles(null);return;}
     if(Array.from(files).some(file=>!fileSizeIsValid(file.size,maxBytes))){droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError("This file is larger than the allowed limit.");onFiles(null);return;}
     if(Array.from(files).some(file=>!fileMatchesAccept(file,accept))){droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError("This file type is not allowed.");onFiles(null);return;}
@@ -44,7 +48,7 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
   return <div data-slot="file-dropzone" onDragOver={event=>{if(!disabled && Array.from(event.dataTransfer.types).includes("Files")){event.preventDefault();setDragging(true);}}}
     onDragLeave={()=>setDragging(false)} onDrop={onDrop}
     className={cx("min-w-0 rounded-[var(--lms-control-radius)] border border-dashed border-[var(--lms-neutral-300)] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-150",dragging?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)]":"",disabled?"opacity-50":"",className)}>
-    <FileUpload label={label} onFiles={files=>{droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError(null);onFiles(files);}} accept={accept} multiple={multiple} maxBytes={maxBytes} progress={progress} showSelectedFiles={showSelectedFiles} showImagePreview={showImagePreview} disabled={disabled} helper={helper} fallback={fallback}/>
+    <FileUpload key={pickerResetToken} label={label} onFiles={files=>{droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError(null);onFiles(files);}} accept={accept} multiple={multiple} maxBytes={maxBytes} progress={progress} showSelectedFiles={showSelectedFiles} showImagePreview={showImagePreview} disabled={disabled} helper={helper} fallback={fallback}/>
     <p className="mt-2 text-[12px] text-[var(--lms-muted-text)]">Drag a file here or use the file picker.</p>
     {showSelectedFiles && droppedNames.length>0 && !disabled
       ? <ul aria-label="Dropped files" className="mt-2 space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
