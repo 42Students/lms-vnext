@@ -1,3 +1,4 @@
+import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { SuperAdminPeopleCsvControl } from "@/components/admin/super-admin-people-csv-control";
 import { superAdminPeopleExportHref } from "@/modules/people/admin-users-export-model";
@@ -126,6 +127,6 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   </div>:<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
   <Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminUsersHref({...data.query,page})}/>
-  <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">← Membership management</Link>
+  <PageBackLink href="/admin/people" label="Membership management" />
  </div>;
 }
