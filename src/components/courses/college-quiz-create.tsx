@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ChoiceInput } from "@/components/ui/choice-input";
 import { DateInput } from "@/components/ui/date-input";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
@@ -91,7 +92,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create quiz.");}
   finally{lock.current=false;setBusy(false);}
  }
- return <section className="space-y-3 rounded-lg border border-border bg-surface p-4">
+ return <section className="space-y-3 border-b border-border pb-4">
   <div className="flex flex-wrap items-center justify-between gap-2">
    <div><h2 className="font-semibold">Quizzes</h2>
     <p className="text-xs text-muted-foreground">Author questions for all eligible Sections or a specific Section.</p></div>
@@ -104,28 +105,28 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    <div className="grid gap-3 sm:grid-cols-2">
     <label className="grid gap-1 text-sm font-semibold">Course / Lesson
      <Select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
-      className="min-h-10 rounded border border-border p-2">
+      className="min-h-11">
       {lessons.map(x=><option key={x.id} value={x.id}>{x.courseCode} · {x.course} · {x.name}</option>)}
      </Select></label>
     <label className="grid gap-1 text-sm font-semibold">Audience
      <Select value={deliveryId} disabled={busy} onChange={e=>setDeliveryId(e.target.value)}
-      className="min-h-10 rounded border border-border p-2">
+      className="min-h-11">
       <option value="">All currently eligible sections</option>
       {sections.map(x=><option key={x.deliveryId} value={x.deliveryId}>
        {x.sectionName} ({x.sectionCode})</option>)}
      </Select></label>
     <label className="grid gap-1 text-sm font-semibold">Title
      <Input maxLength={255} required value={title} disabled={busy}
-      onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
+      onChange={e=>setTitle(e.target.value)} className="min-h-11"/></label>
     <label className="grid gap-1 text-sm font-semibold">Deadline (IST, required before publishing)
      <DateInput mode="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
-      className="min-h-10 rounded border border-border px-2"/></label>
+      className="min-h-11"/></label>
     <label className="grid gap-1 text-sm font-semibold">Maximum attempts
      <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
-      onChange={e=>setMaxAttempts(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
+      onChange={e=>setMaxAttempts(e.target.value)} className="min-h-11"/></label>
     <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Description
      <Textarea rows={2} maxLength={10000} value={description} disabled={busy}
-      onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/></label>
+      onChange={e=>setDescription(e.target.value)} className="min-h-11"/></label>
    </div>
    <p role="status" className="text-xs text-muted-foreground">Audience: {deliveryId?
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
@@ -144,7 +145,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      <Select value={question.type} disabled={busy} onChange={e=>{
       const type=e.target.value as Question["type"];
       replaceQuestion(i,{...question,type,options:question.options.map((o,j)=>({...o,correct:j===0}))});
-     }} className="min-h-10 rounded border border-border px-2">
+     }} className="min-h-11">
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
      </Select>
@@ -163,7 +164,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
         k===j:k===j?e.target.checked:o.correct}))})}/>
      <Input maxLength={2000} disabled={busy} value={option.text} placeholder={"Option "+(j+1)}
       onChange={e=>replaceQuestion(i,{...question,options:question.options.map((o,k)=>k===j?{...o,text:e.target.value}:o)})}
-      className="min-h-10 min-w-0 flex-1 rounded border border-border px-2"/>
+      className="min-h-11 min-w-0 flex-1"/>
      {question.options.length>2?<Button variant="secondary" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
       ...question,options:question.options.filter((_,k)=>k!==j)})}
       className="text-xs font-semibold text-error">Remove</Button>:null}
@@ -205,7 +206,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     }} >Cancel</Button>
    </div>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+  {error?<Alert tone="error">{error}</Alert>:null}
+  {notice?<Alert tone="success">{notice}</Alert>:null}
  </section>;
 }
