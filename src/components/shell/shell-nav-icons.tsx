@@ -42,9 +42,12 @@ export function ShellNavGlyph({name}:{name:ShellNavIconName}){
   <path d={paths[name]}/>
  </svg>;
 }
+/** Exact icon paths and fills from old lms2-fe/public/assets/images/logo.svg.
+ * Only the original 41px logomark is used; the wordmark is intentionally hidden. */
 export function ShellLogoMark(){
- return <svg aria-hidden="true" focusable="false" viewBox="0 0 40 38" width="38" height="36">
-  <path fill="#26bac7" d="M19 2 3 9v18l16 9 17-9V9L19 2Zm0 5 12 5v12l-12 7L8 24V12l11-5Z"/>
-  <path fill="#1a95a1" d="m11 15 8-4 9 4v5l-9 5-8-5v-5Zm8 1-3 1.5 3 1.5 3-1.5-3-1.5Z"/>
+ return <svg aria-hidden="true" focusable="false" viewBox="0 0 41 38" width="38" height="36" fill="none">
+  <path d="M34.3559 30.0236C35.8064 27.7119 36.5736 25.0405 36.5697 22.3151C36.5697 14.2602 30.0083 7.73047 21.9144 7.73047C21.7449 7.73047 21.5774 7.73766 21.4092 7.74354V37.0018H40.2958V30.0236H34.3559Z" fill="#266891"/>
+  <path d="M0 27.3826H17.2627V37H25.6174V27.3826V24.427V0L0 27.3826Z" fill="#9EE4E8"/>
+  <path d="M25.6174 24.4274V8.20052C24.4082 7.88762 23.1638 7.72966 21.9144 7.73047C21.7449 7.73047 21.5774 7.73766 21.4092 7.74354V37.0018H25.6174V24.4274Z" fill="#26BAC7"/>
  </svg>;
 }
