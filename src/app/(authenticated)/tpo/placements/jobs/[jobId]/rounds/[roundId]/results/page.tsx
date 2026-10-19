@@ -52,7 +52,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    <label className="text-sm">Result state
     <Select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9">
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
-    </Select
+    </Select>
    </label>
    <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-on-primary md:min-h-9">Filter</Button>
   </form>
