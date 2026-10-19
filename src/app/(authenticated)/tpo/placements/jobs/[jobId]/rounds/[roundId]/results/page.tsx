@@ -27,8 +27,8 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <Link href={"/tpo/placements/jobs/"+jobId} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline md:min-h-9">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}/>
-  <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Result counts">
-   {Object.entries(data.counts).map(([label,n])=><div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+  <section className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-4" aria-label="Result counts">
+   {Object.entries(data.counts).map(([label,n])=><div key={label} className="border-b border-border p-3 sm:border-r sm:border-b-0 sm:last:border-r-0">
     <p className="text-xs capitalize text-body">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
