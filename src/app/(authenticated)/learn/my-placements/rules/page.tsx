@@ -41,7 +41,7 @@ export default async function LearnerPlacementRulesPage({
           </span>
         </div>
         {!preparation.hasAcademicEvidence ? (
-          <p role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-4 text-sm text-body">
+          <p role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
             No academic evidence record is stored for your membership yet.
             Your eligibility for a particular published drive remains unknown until
             that drive checks its own criteria.
@@ -54,7 +54,7 @@ export default async function LearnerPlacementRulesPage({
         )}
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
           {preparation.criteria.map((criterion) => (
-            <li key={criterion.key} className="rounded-lg border border-border p-3">
+            <li key={criterion.key} className="rounded-xl border border-border p-3">
               <p className="text-sm font-semibold text-foreground">
                 <span aria-hidden="true">{criterion.recorded ? "✓" : "○"} </span>
                 {criterion.label}
