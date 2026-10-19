@@ -54,8 +54,8 @@ export default async function HrMessagesPage({searchParams}:{
        {value:"UNREAD", label:"Unread only", count:result.unread, href:"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly=true&q="+encodeURIComponent(query.data.q)},
      ]} />
    <form action="/hr/notifications" method="get" className="flex flex-wrap gap-2">
-     <input type="hidden" name="collegeId" value={result.collegeId} />
-     <input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
+     <Input type="hidden" name="collegeId" value={result.collegeId} />
+     <Input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
      <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
      <Input id="hr-notification-search" name="q" defaultValue={query.data.q} maxLength={120}
        placeholder="Search drive titles" className="min-w-48 flex-1" />
