@@ -18,7 +18,7 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
   return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Companies" title={data.company.name}
       description="Drive history and recorded joining outcomes within the selected college only." />
-    <Link href="/admin/companies" className="inline-flex min-h-11 items-center font-semibold text-primary-text">
+    <Link href="/admin/companies" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:bg-primary-subtle">
       ← Companies
     </Link>
     <section aria-label="Company history totals" className="grid gap-3 sm:grid-cols-3">
