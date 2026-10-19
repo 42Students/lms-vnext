@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import type {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
 import {DataTable} from "@/components/ui/data-table";
@@ -27,27 +29,27 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
   </div>
   <form action="/college/course-progress" method="get" className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Class
-    <select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
-     className="min-h-11 rounded-md border border-border bg-surface px-3">
+    <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
+     className="min-h-11">
      <option value="">Select Class</option>
      {[...sections].map(([id,name])=><option key={id} value={id}>{name}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Course
-    <select value={offeringId} onChange={event=>setOfferingId(event.target.value)}
+    <Select value={offeringId} onChange={event=>setOfferingId(event.target.value)}
      name="offeringId" disabled={!sectionId}
-     className="min-h-11 rounded-md border border-border bg-surface px-3">
+     className="min-h-11">
      <option value="">Select Course</option>
      {courses.map(item=><option key={item.offeringId} value={item.offeringId}>
       {item.courseCode} · {item.courseName}
      </option>)}
-    </select>
+    </Select>
    </label>
    <input type="hidden" name="deliveryId" value={deliveryId}/>
-   <button type="submit" disabled={!deliveryId}
-    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+   <Button type="submit" disabled={!deliveryId}
+    className="min-h-11">
     Show progress
-   </button>
+   </Button>
    <Link href="/college/course-progress"
     className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">
     Clear
