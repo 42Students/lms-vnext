@@ -1,6 +1,7 @@
 "use client";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -113,10 +114,10 @@ export function TpoBatchInvitationControl(props: Props) {
   if (props.invitedAt) {
     const deadlinePassed = props.deadlinePassed;
     const sameDeadline = date === (props.deadline?.slice(0,10) ?? "");
-    return <section aria-label="Registration deadline" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    return <section aria-label="Registration deadline" className="min-w-0 space-y-3 border-y border-border py-4">
       <h2 className="font-semibold">{deadlinePassed ? "Registration closed" : "Registration is open"}</h2>
       <label htmlFor="batch-move-date" className="block text-sm">Register by</label>
-      <Input className="max-w-xs" id="batch-move-date" aria-label="Registration deadline" type="date"
+      <Input className="min-h-11 max-w-xs md:min-h-9" id="batch-move-date" aria-label="Registration deadline" type="date"
         value={date} min={props.minDate} onChange={event => setDate(event.target.value)}
         />
       <div className="flex flex-wrap gap-2">
@@ -134,8 +135,8 @@ export function TpoBatchInvitationControl(props: Props) {
       {!deadlinePassed&&props.invitable>0?<fieldset id="batch-reminder" className="space-y-2 border-t border-border pt-3">
         <legend className="text-sm font-semibold">Remind eligible students</legend>
         <p className="text-sm">Eligible students of this batch who have not chosen Placements, Higher studies or Not interested get a reminder with the deadline.</p>
-        <label className="flex items-start gap-2 text-sm text-body">
-          <input type="checkbox" checked={remindReview} disabled={busy}
+        <label className="flex min-h-11 items-start gap-2 text-sm text-body">
+          <Checkbox checked={remindReview} disabled={busy}
             onChange={event=>setRemindReview(event.target.checked)}/>
           I reviewed the recipients. Send a reminder in the app; no SMS or email is claimed.
         </label>
@@ -155,10 +156,10 @@ export function TpoBatchInvitationControl(props: Props) {
        onConfirm={()=>{void saveDeadline(true).then(saved=>{if(saved)setConfirmClear(false);});}}/>
     </section>;
   }
-  return <section className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4" aria-label="Invite batch">
+  return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Invite batch">
     <h2 className="font-semibold">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</h2>
     <label className="block text-sm" htmlFor="batch-register-by">{TPO_INVITATION_COPY.dateLabel}</label>
-    <Input className="max-w-xs" id="batch-register-by" aria-label="Registration deadline" type="date" value={date} min={props.minDate}
+    <Input className="min-h-11 max-w-xs md:min-h-9" id="batch-register-by" aria-label="Registration deadline" type="date" value={date} min={props.minDate}
       onChange={event => setDate(event.target.value)}
        />
     <Button variant="primary" type="button" onClick={() => void invite()}
