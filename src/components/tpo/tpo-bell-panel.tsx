@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {Drawer} from "@/components/ui/drawer";
+import {PopoverPanel} from "@/components/ui/popover";
 import style from "@/components/shell/topbar/topbar.module.css";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -17,6 +18,9 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
  const [latest,setLatest]=useState<{items:BellItem[];unread:number}|null>(null);
  const [refreshing,setRefreshing]=useState(false);
  const refreshInFlight=useRef(false);
+ const root=useRef<HTMLDivElement>(null);
+ const trigger=useRef<HTMLButtonElement>(null);
+ const [mobile,setMobile]=useState(false);
  const displayedItems=latest?.items??items;
  const groupedItems=displayedItems.slice(0,20).reduce<{day:string;items:BellItem[]}[]>((groups,item)=>{
   const day=new Intl.DateTimeFormat("en-IN",{
@@ -54,6 +58,25 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   return ()=>{window.clearInterval(interval);window.removeEventListener("focus",check);
    document.removeEventListener("visibilitychange",check);};
  },[refresh]);
+ useEffect(()=>{
+  const mq=window.matchMedia("(max-width:767px)");
+  const update=()=>setMobile(mq.matches);
+  update();mq.addEventListener("change",update);
+  return ()=>mq.removeEventListener("change",update);
+ },[]);
+ useEffect(()=>{
+  if(!open||mobile||!compact)return;
+  const onPointer=(event:PointerEvent)=>{
+   if(root.current&&!root.current.contains(event.target as Node))setOpen(false);
+  };
+  const onKey=(event:KeyboardEvent)=>{
+   if(event.key!=="Escape"||!root.current?.contains(event.target as Node))return;
+   event.preventDefault();setOpen(false);trigger.current?.focus();
+  };
+  document.addEventListener("pointerdown",onPointer);
+  document.addEventListener("keydown",onKey);
+  return ()=>{document.removeEventListener("pointerdown",onPointer);document.removeEventListener("keydown",onKey);};
+ },[open,mobile,compact]);
  function changeOpen(next:boolean){setOpen(next);if(next)void refresh();}
  async function openItem(item:BellItem){
   if(pending)return;
@@ -88,8 +111,8 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));}
   finally{setPending(false);}
  }
- return <div className="relative min-w-0">
-  <Button variant="secondary" size="sm" type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending} disabled={pending} onClick={()=>changeOpen(!open)}
+ return <div ref={root} className="relative min-w-0">
+  <Button ref={trigger} variant="secondary" size="sm" type="button" aria-controls={open?(compact&&!mobile?"tpo-desktop-notifications":"tpo-mobile-notifications"):undefined} aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending} disabled={pending} onClick={()=>changeOpen(!open)}
    className={compact
     ? "relative inline-flex h-9 w-9 min-h-9 min-w-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"}>
