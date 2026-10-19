@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {useState} from "react";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -75,10 +76,10 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
    <label className="flex min-h-11 items-center gap-2 text-sm">
     <input type="checkbox" checked={showDetail} onChange={e=>setShowDetail(e.target.checked)} />Detail
    </label>
-   <button type="button" onClick={()=>void copy()}
-    className="min-h-11 rounded border border-border px-3 text-sm text-[var(--lms-teal-deep)]">Copy rows</button>
-   <button type="button" onClick={()=>{setWho("");setWhat("");setOldestFirst(false);setSelected([]);setShowAbout(true);setShowDetail(true);}}
-    className="min-h-11 rounded border border-border px-3 text-sm">Reset grid</button>
+   <Button variant="secondary" type="button" onClick={()=>void copy()}
+    className="min-h-11">Copy rows</Button>
+   <Button variant="secondary" type="button" onClick={()=>{setWho("");setWhat("");setOldestFirst(false);setSelected([]);setShowAbout(true);setShowDetail(true);}}
+    className="min-h-11">Reset grid</Button>
   </div>
   <label className="inline-flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" aria-label="Select all visible rows"
    checked={visible.length>0&&visible.every(row=>selected.includes(row.kind+":"+row.id))}
