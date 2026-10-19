@@ -312,13 +312,13 @@ function ContentCard({
         <div className="mt-4 flex flex-wrap gap-2">
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file`}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Open resource ↗
           </a>
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file?download=1`}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
             Download
           </a>
@@ -795,7 +795,7 @@ export function LearnerCourseWorkspace({
                 <li key={lesson.id}>
                   <Link
                     href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${activeFilter}&lesson=${encodeURIComponent(lesson.id)}#lesson-${encodeURIComponent(lesson.id)}`}
-                    className="flex min-h-11 sm:min-h-9 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-muted">
+                    className="flex min-h-11 md:min-h-9 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-muted">
                     <span className="min-w-0 break-words">{index+1}. {lesson.name}</span>
                     <span className="shrink-0 text-xs text-muted-foreground">{lesson.count} items</span>
                   </Link>
@@ -848,7 +848,7 @@ export function LearnerCourseWorkspace({
               }
               className="group rounded-xl border border-border bg-[var(--lms-neutral-50)]"
             >
-              <summary className="cursor-pointer list-none px-4 py-4 sm:px-5">
+              <summary className="cursor-pointer list-none px-4 py-4 md:px-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
@@ -909,7 +909,7 @@ export function LearnerCourseWorkspace({
                 </div>
               </summary>
 
-              <div className="border-t border-border bg-surface p-4 sm:p-5">
+              <div className="border-t border-border bg-surface p-4 md:p-5">
                 {focusLessonId===lesson.id?<nav aria-label="Lesson navigation"
                    className="mb-4 flex flex-wrap items-center gap-3 text-sm">
                   <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
