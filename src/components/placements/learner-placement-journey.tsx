@@ -373,19 +373,19 @@ export function LearnerPlacementJourney({
               </p>
               {learnerApplicationCardActivity(item).historyHref ? (
                 <Link href={learnerApplicationCardActivity(item).historyHref!}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4">
+                  className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-4">
                   Saved status history →
                 </Link>
               ):null}
             </div>
             {ownApplicationJobHref(item.jobId) ? <Link
               href={ownApplicationJobHref(item.jobId)!}
-              className="mt-4 mr-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-4 mr-4 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
               View published job and role options →
             </Link> : null}
             <Link
               href={`/learn/my-placements/applications?applicationId=${encodeURIComponent(item.applicationId)}`}
-              className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto sm:justify-start"
+              className="mt-4 inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto sm:justify-start"
             >
               View application details →
             </Link>
