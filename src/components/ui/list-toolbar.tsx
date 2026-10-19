@@ -5,6 +5,8 @@ import { cx } from "@/lib/class-names";
 export type ListToolbarProps = {
   /** Page-owned search form/control; this component never submits on its own. */
   search?: ReactNode;
+  /** Page-owned search submit button, usually associated with its GET form. */
+  searchAction?: ReactNode;
   /** Supply the actual working controls (e.g. <Button variant="secondary">Filters</Button>). */
   filters?: ReactNode;
   views?: ReactNode;
@@ -26,7 +28,7 @@ export type ListToolbarProps = {
  * Actions are slots so existing URL/state/permission rules stay with the owning page.
  */
 export function ListToolbar({
-  search, filters, views, columns, exportAction,
+  search, searchAction, filters, views, columns, exportAction,
   onFiltersClick, onViewsClick, onColumnsClick, onExportClick, filterCount,
   viewCount, bulkAction, className,
 }: ListToolbarProps) {
@@ -39,7 +41,7 @@ export function ListToolbar({
   const exportControl = exportAction ?? (onExportClick ? <Button variant="secondary" size="sm" onClick={onExportClick}>Export</Button> : null);
   return <section data-slot="list-toolbar" aria-label="List tools" className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
     <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
-      {search ? <div className="min-w-0 w-full flex-1 basis-[220px] sm:max-w-[380px]">{search}</div> : null}
+      {search ? <div className="flex min-w-0 w-full flex-1 basis-[220px] items-center gap-[var(--lms-space-2)] sm:max-w-[380px]"><div className="min-w-0 flex-1">{search}</div>{searchAction}</div> : null}
       {filterControl || viewControl || columnControl || exportControl ? <div role="toolbar" aria-label="Filters and table actions"
         className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         {filterControl}{viewControl}{columnControl}{exportControl}
