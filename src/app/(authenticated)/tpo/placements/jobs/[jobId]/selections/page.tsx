@@ -24,7 +24,7 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
    <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9" href={root+"/rounds"}>Review completed rounds</Link>
    <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9" href={root+"/offers"}>Open offer register</Link>
   </div>
-  {!data.storageReady?<div role="status" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">
+  {!data.storageReady?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 text-sm text-body">
     <strong>Selections are not available yet.</strong> {data.pendingMessage}
     No selections can be recorded or released until the migration is registered.
   </div>:data.job.status!=="PUBLISHED"?<p role="status" className="rounded border border-border p-5 text-sm">
