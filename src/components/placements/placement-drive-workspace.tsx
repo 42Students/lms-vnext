@@ -1,3 +1,4 @@
+import { Dropdown } from "@/components/ui/dropdown";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { PageHeader } from "@/components/ui/page-header";
@@ -299,11 +300,8 @@ export async function PlacementDriveWorkspace({
                 Extend deadline
               </Link>
             ) : null}
-            {isTpo ? <details className="relative self-start">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground md:min-h-9">
-                More ▾
-              </summary>
-              <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 shadow-[0_14px_16px_rgba(0,0,0,0.04)]">
+            {isTpo ? <Dropdown align="end" label="More drive actions" trigger="More ▾">
+              <div className="grid min-w-56 gap-2">
                 <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
                   className="min-h-9 rounded-[var(--lms-control-radius)] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9">
                   Export applicants
@@ -316,7 +314,7 @@ export async function PlacementDriveWorkspace({
                 {["CLOSED","CANCELLED"].includes(job.status)
                   ? <TpoDriveCloneAction jobId={jobId} label="Run it again" /> : null}
               </div>
-            </details>:null}
+            </Dropdown>:null}
             {isTpo && job.status === "DRAFT" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground md:min-h-9">

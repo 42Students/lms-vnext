@@ -1,5 +1,6 @@
 "use client";
 
+import { Dropdown } from "@/components/ui/dropdown";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
 import {Input} from "@/components/ui/input";
@@ -216,10 +217,9 @@ export function TpoCompanyMemoryWorkspace({
           ) : null}
         </div>
         <div className="flex flex-wrap gap-2">
-          <details className="relative">
-           <summary className={buttonStyle+" cursor-pointer"}>+ New</summary>
+          <Dropdown align="end" label={"New work for "+company.name} trigger="+ New">
            <nav aria-label={"New work for "+company.name}
-            className="absolute right-0 z-20 mt-1 w-60 space-y-1 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-2 shadow-[var(--lms-dropdown-shadow)]">
+            className="w-60 space-y-1">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
              className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
@@ -228,7 +228,7 @@ export function TpoCompanyMemoryWorkspace({
             <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
              className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">Follow-up</Link>
            </nav>
-          </details>
+          </Dropdown>
           {company.canonicalCompanyId?<Link className={buttonStyle}
             href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)}>
             Company link and trusted settings

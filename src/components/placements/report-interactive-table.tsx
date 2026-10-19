@@ -2,6 +2,7 @@
 
 import {useMemo,useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
+import { Dropdown } from "@/components/ui/dropdown";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -73,9 +74,8 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
       {[25,50,100,500,1000].map(n=><option key={n} value={n}>{n}</option>)}
      </Select>
     </label>
-    <details className="relative self-end rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
-     <summary className="inline-flex min-h-11 cursor-pointer items-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Column filters ({Object.values(columnFilters).filter(v=>v.trim()).length})</summary>
-     <div role="region" aria-label="Report column filters, scroll for more" tabIndex={0} className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[var(--lms-overlay-shadow)] sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-[var(--lms-control-radius)] sm:p-3">
+    <Dropdown mobileSheet align="end" label="Report column filters" trigger={"Column filters ("+Object.values(columnFilters).filter(v=>v.trim()).length+")"}>
+     <div role="region" aria-label="Report column filters, scroll for more" tabIndex={0} className="min-h-0 space-y-2">
       <Button variant="secondary" type="button" onClick={event=>{
         const disclosure=event.currentTarget.closest("details");
         disclosure?.removeAttribute("open");
@@ -90,10 +90,9 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
         />
       </label>)}
      </div>
-    </details>
-    <details className="relative self-end rounded-[var(--lms-control-radius)] border border-border p-2 text-sm">
-     <summary className="inline-flex min-h-11 cursor-pointer items-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Columns</summary>
-     <fieldset aria-label="Report columns, scroll for more" tabIndex={0} className="fixed inset-x-0 bottom-0 z-30 max-h-[70dvh] min-h-0 space-y-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)] rounded-t-xl border border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[var(--lms-overlay-shadow)] sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-72 sm:w-72 sm:rounded-[var(--lms-control-radius)] sm:p-3">
+    </Dropdown>
+    <Dropdown mobileSheet align="end" label="Report visible columns" trigger="Columns">
+     <fieldset aria-label="Report columns, scroll for more" tabIndex={0} className="min-h-0 space-y-2">
       <legend className="sr-only">Choose report columns</legend>
       <Button variant="secondary" type="button" onClick={event=>{
         const disclosure=event.currentTarget.closest("details");
@@ -108,7 +107,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
         onChange={e=>setHidden(current=>e.target.checked?current.filter(n=>n!==index):[...current,index])}/>
        {heading}</label>)}
      </fieldset>
-    </details>
+    </Dropdown>
     <Button variant="secondary" type="button" onClick={()=>void copy()} size="sm">Copy shown</Button>
     <Button variant="secondary" type="button" onClick={saveCsv} size="sm">Export shown CSV</Button>
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setColumnFilters({});setHidden([]);setSort(null);setDescending(false);setLimit(100);}}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { PopoverListbox } from "@/components/ui/popover";
 import {LearnerNotificationBell} from "./learner-notification-bell";
 import { LEARNER_COURSE_SEARCH_PLACEHOLDER } from "@/modules/courses/learner-course-copy-model";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -69,8 +70,13 @@ export function LearnerTopbarTools() {
             setOpen(true);
           }}
           onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              setOpen(false);
+            if (event.key === "Escape") { setOpen(false); return; }
+            if (open && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
+              const links = Array.from(event.currentTarget.parentElement?.querySelectorAll<HTMLElement>('[data-slot="popover-listbox"] a[href]') ?? []);
+              if (links.length) {
+                event.preventDefault();
+                (event.key === "ArrowUp" ? links.at(-1) : links[0])?.focus();
+              }
             }
           }}
           placeholder={LEARNER_COURSE_SEARCH_PLACEHOLDER}
@@ -78,9 +84,7 @@ export function LearnerTopbarTools() {
           autoComplete="off"
         />
         {open ? (
-          <div
-            role="listbox"
-            aria-label="Course search results"
+          <PopoverListbox label="Course search results" onDismiss={() => setOpen(false)}
             className="absolute left-0 top-[calc(100%+0.5rem)] z-50 max-h-96 w-[min(26rem,80vw)] overflow-y-auto rounded-xl border border-border bg-surface p-2 shadow-xl"
           >
             {loadFailed?<div className="p-2"><InlineNotice tone="error" message="Could not load courses. Please try again." onDismiss={()=>setLoadFailed(false)}/></div>:null}
@@ -108,7 +112,7 @@ export function LearnerTopbarTools() {
                 No courses found. Try a different search.
               </p>
             )}
-          </div>
+          </PopoverListbox>
         ) : null}
       </div>
 
