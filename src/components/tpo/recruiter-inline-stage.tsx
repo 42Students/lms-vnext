@@ -37,7 +37,7 @@ export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:stri
    </label>
    {action==="NOT_NOW"?<label className="block text-xs">Reason
     <Input value={reason} maxLength={255} onChange={e=>setReason(e.target.value)}
-     className="min-h-11 md:min-h-9 w-full rounded border border-border bg-surface px-2"/>
+     className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-9"/>
    </label>:null}
    <Button variant="primary" type="button" disabled={busy} onClick={()=>void save()}
     className="min-h-11 md:min-h-9 px-3">Apply</Button>
