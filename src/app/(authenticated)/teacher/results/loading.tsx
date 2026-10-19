@@ -1,5 +1,5 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function Loading() {
-  return <GracefulPageLoading label="Loading faculty results…" shape="directory" />;
+  return <GracefulPageLoading label={"Loading assessment results"} shape="directory" />;
 }
