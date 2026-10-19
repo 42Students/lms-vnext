@@ -87,7 +87,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     e instanceof FriendlyFetchError?e.message:friendlyApiError({}));}
   finally{actionInFlight.current=false;setBusy(false);}
  }
- return <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+ return <section className="min-w-0 space-y-3 border-t border-border pt-4">
   <h2 className="font-semibold">Import eligibility</h2>
   <Button variant="secondary" type="button" disabled={busy} onClick={()=>setImportOpen(true)}
    >

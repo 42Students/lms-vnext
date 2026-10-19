@@ -52,7 +52,7 @@ export default async function CollegeGroupsPage({
   });
   const filters = parseCollegeGroupsDirectoryParams(await searchParams);
   if (!filters) return <div className="min-w-0 space-y-4">
-    <PageHeader eyebrow="College Admin" title="Student groups" />
+    <PageHeader title="Student groups" />
     <ErrorState title="Invalid group filters"
       description="Choose a supported group type, status and page. Remove repeated or unrelated filters."
       action={<Link href="/college/groups" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold underline">Clear filters</Link>}/>
@@ -76,7 +76,6 @@ export default async function CollegeGroupsPage({
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
-        eyebrow="College Admin"
         title="Student groups"
         description={`Study groups, project teams and elective groups in ${result.collegeName}.`}
         actions={<CollegeGroupActions />}

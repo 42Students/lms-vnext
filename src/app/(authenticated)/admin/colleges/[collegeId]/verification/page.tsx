@@ -37,7 +37,7 @@ export default async function AdminCollegeVerification({
  const parsed=invalidPaging||Object.values(raw).some(Array.isArray)?null:verificationQueueFilters.safeParse(Object.fromEntries(
   Object.entries(raw).filter(([,v])=>v!==undefined&&v!==""),
  ));
- const header=<PageHeader eyebrow="Super Admin · Verification" title={college.name}
+ const header=<PageHeader title={college.name}
   description="College-scoped learner Education and Identity verification. Review only the currently selected college."/>;
  if(!parsed?.success)return <div className="min-w-0 space-y-5">{header}
   <div role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-error-subtle)] p-4 text-body">Invalid verification filters.

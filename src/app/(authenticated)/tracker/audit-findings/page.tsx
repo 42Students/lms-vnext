@@ -8,6 +8,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {redirect} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {Tabs} from "@/components/ui/tabs";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
@@ -37,7 +38,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    Bug reports are not substituted for independent audit findings.
   </p></div>;
  const [data,sync]=await Promise.all([listIndependentAuditFindings(ctx,parsed),readIndependentFindingSyncState(ctx)]);
- const selectClass="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
+
  const refusedColumns:DataTableColumn<NonNullable<typeof sync>["refusedFiles"][number]>[]=[
   {key:"path",header:"Source file",mobilePriority:"primary",cell:item=>
     <span className="block min-w-0 break-all font-mono text-xs">{item.path||"Unknown file"}</span>},
@@ -51,8 +52,8 @@ export default async function IndependentFindingsPage({searchParams}:{
     <p className="mt-1 max-w-md break-words text-body">{item.title}</p>
    </div>},
   {key:"area",header:"Area / Kind",mobilePriority:"secondary",cell:item=><span>{item.area} · {item.kind}</span>},
-  {key:"severity",header:"Severity",mobilePriority:"secondary",cell:item=><StatusBadge>{item.severity}</StatusBadge>},
-  {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge>{item.status.replaceAll("_"," ")}</StatusBadge>},
+  {key:"severity",header:"Severity",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.severity==="CRITICAL"?"error":item.severity==="HIGH"?"warning":"neutral"}>{item.severity}</StatusBadge>},
+  {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="VERIFIED"||item.status==="RELEASED_PROD"?"success":item.status==="NEW"||item.status==="NEEDS_INFO"?"warning":"info"}>{item.status.replaceAll("_"," ")}</StatusBadge>},
   {key:"assigned",header:"Assigned",mobilePriority:"secondary",cell:item=>item.assignee??"Unassigned"},
   {key:"reported",header:"Reported",mobilePriority:"secondary",cell:item=><span>{item.foundBy??"Unknown"} · {item.foundAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.foundAt):"Date not recorded"}</span>},
  ];
@@ -78,13 +79,13 @@ export default async function IndependentFindingsPage({searchParams}:{
     </p>:null}
    </section>:null}
   </section>
-  <nav aria-label="Finding views" className="flex flex-wrap gap-3 border-b border-border">
-   {(["OPEN","RELEASE","ALL"] as const).map(value=><Link key={value} aria-current={parsed.view===value?"page":undefined}
-     href={independentFindingHref({...parsed,view:value,page:1})}
-     className={parsed.view===value ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
-      {value==="OPEN"?"Open":value==="RELEASE"?"Release (critical & high)":"All"}
-    </Link>)}
-  </nav>
+  <Tabs renderPanel={false} ariaLabel="Finding views" value={parsed.view}
+   items={([
+     {value:"OPEN",label:"Open"},
+     {value:"RELEASE",label:"Release (critical & high)"},
+     {value:"ALL",label:"All"},
+   ] as const).map(item=>({...item,
+    href:independentFindingHref({...parsed,view:item.value,page:1})}))}/>
   <section aria-label="Finding status counts" className="flex flex-wrap items-center gap-2 text-sm">
    <p className="font-semibold">Critical open: {data.criticalOpen}</p>
    {FINDING_STATUSES.map(status=><Link key={status}
@@ -96,19 +97,19 @@ export default async function IndependentFindingsPage({searchParams}:{
   <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-5 sm:grid-cols-2 lg:grid-cols-3">
    <input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search
-    <Input name="q" defaultValue={parsed.q} maxLength={120} className={selectClass} placeholder="ID, title or summary"/></label>
+    <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
    <label className="text-sm font-semibold">Area
-    <Input name="area" defaultValue={parsed.area} maxLength={80} className={selectClass} placeholder="All areas"/></label>
+    <Input name="area" defaultValue={parsed.area} maxLength={80} placeholder="All areas"/></label>
    <label className="text-sm font-semibold">Status (multiple)
-    <Select name="status" multiple size={4} defaultValue={parsed.statuses} className={selectClass}>
+    <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
      {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
     </Select></label>
    <label className="text-sm font-semibold">Severity (multiple)
-    <Select name="severity" multiple size={4} defaultValue={parsed.severities} className={selectClass}>
+    <Select name="severity" multiple size={4} defaultValue={parsed.severities}>
      {FINDING_SEVERITIES.map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
    <label className="text-sm font-semibold">Kind (multiple)
-    <Select name="kind" multiple size={4} defaultValue={parsed.kinds} className={selectClass}>
+    <Select name="kind" multiple size={4} defaultValue={parsed.kinds}>
      {FINDING_KINDS.map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
    <div className="flex items-end gap-3">

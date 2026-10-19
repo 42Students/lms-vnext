@@ -25,7 +25,7 @@ export default async function CollegeBatchesPage({
   const parsed = collegeBatchDirectorySchema.safeParse(params);
   if (!parsed.success) {
     return <div className="space-y-4">
-      <PageHeader eyebrow="College Admin · Academic Setup" title="Batches" />
+      <PageHeader title="Batches" />
       <ErrorState title="Invalid batch filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
         action={<Link href="/college/batches" className="font-semibold text-link lms-inline-link">Clear filters</Link>} />

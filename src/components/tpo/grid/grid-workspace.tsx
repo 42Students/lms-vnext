@@ -18,6 +18,8 @@ type GridWorkspaceProps<Row>={
  children:ReactNode|((visibleKeys:readonly string[])=>ReactNode);
  columnScope?:"url"|"local";
  columnStorageKey?:string;
+ columnKeys?:readonly string[];
+ onColumnKeysChange?:(keys:string[])=>void;
  filters?:readonly TpoFilterField[];
  selection?:Selection;
  rollOf?:(row:Row)=>string|readonly string[]|null|undefined;
@@ -26,10 +28,16 @@ type GridWorkspaceProps<Row>={
  act?:(shown:readonly Row[],selected:readonly Row[],clear:()=>void)=>ReactNode;
  exportName?:string;
  xlsxHref?:string|null;
+ onExportCsv?:(selected:boolean)=>void;
+ onExportXlsx?:(selected:boolean)=>void;
+ onCopyRows?:()=>void;
  searchPlaceholder?:string;
  searchParam?:string;
  filterTitle?:string;
  searchMaxLength?:number;
+ searchMode?:"url"|"controlled"|"hidden";
+ searchValue?:string;
+ onSearchChange?:(next:string)=>void;
 };
 
 const safeTsv=(value:unknown)=>{
@@ -43,11 +51,13 @@ export function GridWorkspace<Row>({
  rows,columns,rowKey,children,filters=[],selection,rollOf,savedViews,extraActions,act,
  exportName="tpo-grid",xlsxHref,searchPlaceholder="Search name, roll no., anything",
  searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
- searchMaxLength=120,
+ searchMaxLength=120,searchMode="url",searchValue,onSearchChange,
+ columnKeys,onColumnKeysChange,onExportCsv,onExportXlsx,onCopyRows,
 }:GridWorkspaceProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const id=useId();
- const querySearch=params.get(searchParam)??"";
+ const querySearch=searchMode==="controlled"?(searchValue??""):
+  searchMode==="hidden"?"":params.get(searchParam)??"";
  const [typed,setTyped]=useState(querySearch);
  const [filterOpen,setFilterOpen]=useState(false);
  const [columnsOpen,setColumnsOpen]=useState(false);
@@ -66,7 +76,10 @@ export function GridWorkspace<Row>({
   }catch{/* Local storage is optional; default columns remain available. */}
  },[columnScope,columnStorageKey,keySignature]);
  const urlKeys=parseTpoGridColumns(params.get("columns")??undefined,permitted);
- const activeKeys=columnScope==="local"&&localKeys.length?localKeys:urlKeys.length&&columnScope==="url"?urlKeys:permitted;
+ const controlledKeys=columnKeys?columnKeys.filter(key=>permitted.includes(key)):null;
+ const activeKeys=controlledKeys?.length?controlledKeys:
+  columnScope==="local"&&localKeys.length?localKeys:
+  urlKeys.length&&columnScope==="url"?urlKeys:permitted;
  const chosen=chosenTpoGridColumns(columns,activeKeys.length?activeKeys:permitted)
    .filter(column=>!column.exportOnly);
  const pageIds=useMemo(()=>new Set(rows.map(rowKey)),[rows,rowKey]);
@@ -84,6 +97,7 @@ export function GridWorkspace<Row>({
  const searchKey=params.toString();
  const hasNarrowing=Boolean(querySearch.trim())||activeFilters.length>0;
  const clearNarrowing=()=>{
+  if(searchMode==="controlled"){onSearchChange?.("");return;}
   const updates:Record<string,string>={[searchParam]:""};
   for(const field of filters)updates[field.urlKey??"filter."+field.key]="";
   const next=updateTpoGridQuery(new URLSearchParams(params.toString()),updates);
@@ -91,14 +105,15 @@ export function GridWorkspace<Row>({
  };
  useEffect(()=>{setTyped(querySearch);},[querySearch]);
  useEffect(()=>{
-  if(typed.trim()===querySearch)return;
+  if(searchMode!=="url"||typed.trim()===querySearch)return;
   const timer=window.setTimeout(()=>{
    const next=updateTpoGridQuery(new URLSearchParams(searchKey),{[searchParam]:typed.trim()});
    router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
   },200);
   return ()=>window.clearTimeout(timer);
- },[typed,querySearch,searchKey,pathname,router,searchParam]);
+ },[typed,querySearch,searchKey,pathname,router,searchParam,searchMode]);
  const changeColumns=(keys:string[])=>{
+  if(onColumnKeysChange){onColumnKeysChange(keys);return;}
   if(columnScope==="local"){
    setLocalKeys(keys);
    if(columnStorageKey){try{window.localStorage.setItem(columnStorageKey,keys.join(","));}
@@ -123,6 +138,7 @@ export function GridWorkspace<Row>({
   }catch{setNotice("Could not prepare the CSV. Please try again.");}
  };
  const copyRows=async()=>{
+  if(onCopyRows){onCopyRows();return;}
   const lines=[chosen.map(column=>safeTsv(column.label)).join("\t"),
    ...exportedRows.map(row=>chosen.map(column=>safeTsv(column.read(row))).join("\t"))];
   try{await navigator.clipboard.writeText(lines.join("\r\n"));
@@ -156,14 +172,18 @@ export function GridWorkspace<Row>({
  };
  return <section className="min-w-0 space-y-3" aria-label="TPO grid workspace" data-tpo-grid-workspace>
   <div className="flex flex-wrap items-center gap-2" role="toolbar" aria-label="TPO table tools">
-   <div className="flex min-w-[190px] max-w-lg flex-1 items-center gap-2">
-    <Input aria-label="Search table" value={typed} maxLength={searchMaxLength}
-     placeholder={searchPlaceholder} onChange={event=>setTyped(event.target.value)}/>
+   {searchMode!=="hidden"?<div className="flex min-w-[190px] max-w-lg flex-1 items-center gap-2">
+    <Input aria-label="Search table" value={searchMode==="controlled"?querySearch:typed} maxLength={searchMaxLength}
+     placeholder={searchPlaceholder} onChange={event=>{
+     if(searchMode==="controlled")onSearchChange?.(event.target.value);
+     else setTyped(event.target.value);
+    }}/>
     <Button variant="secondary" type="button" onClick={()=>{
+     if(searchMode==="controlled"){onSearchChange?.(querySearch.trim());return;}
      const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{[searchParam]:typed.trim()});
      router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
     }}><Image src="/assets/images/common/search.svg" alt="" aria-hidden="true" width={19} height={19}/>Search</Button>
-   </div>
+   </div>:null}
    {filters.length?<Button variant="secondary" type="button" aria-expanded={filterOpen}
     aria-controls={id+"-filters"} onClick={()=>setFilterOpen(value=>!value)}>
     Filters{activeFilters.length?" ("+activeFilters.length+")":""}
@@ -200,8 +220,14 @@ export function GridWorkspace<Row>({
    <TpoGridColumnChooser columns={columns} selected={activeKeys.length?activeKeys:permitted} onChange={changeColumns}/>
   </div>:null}
   {exportOpen?<div id={id+"-export"} className="flex flex-wrap items-center gap-2">
-   <Button variant="secondary" type="button" onClick={downloadCsv}
-    disabled={!rows.length}>Export {selectedPage.length?"selected":"visible"} CSV</Button>
+   <Button variant="secondary" type="button" onClick={()=>{
+    if(onExportCsv)onExportCsv(selectedPage.length>0);
+    else downloadCsv();
+   }} disabled={!rows.length}>Export {selectedPage.length?"selected":"visible"} CSV</Button>
+   {onExportXlsx?<Button variant="secondary" type="button" disabled={!rows.length}
+    onClick={()=>onExportXlsx(selectedPage.length>0)}>
+    Export {selectedPage.length?"selected":"visible"} Excel
+   </Button>:null}
    {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link lms-inline-link">Export selected XLSX</a>:null}
    <span className="text-xs text-muted-foreground">Exports contain only rows on this page{selectedPage.length?" that are selected":""}; server-side Excel uses existing permissions.</span>
   </div>:null}

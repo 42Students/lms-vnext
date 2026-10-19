@@ -11,6 +11,7 @@ import { listCollegeDriveApplicationFilters } from "@/modules/placements/college
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {Tabs} from "@/components/ui/tabs";
 
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
   params: Promise<{jobId:string}>;
@@ -37,7 +38,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     {key:"screening",header:"Screening",cell:row=>row.screening??"Not recorded"},
   ];
   return <div className="space-y-6">
-    <PageHeader eyebrow="College Admin · Placements" title={"Applications · " + data.drive.title}
+    <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Application filters" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -85,18 +86,13 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       </label>
       <Button type="submit" className="self-end">Filter</Button>
     </form>
-    <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2">
-      {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
-        <Link key={stage} href={driveApplicationsHref(jobId,{...query,stage,page:1})}
-          aria-current={query.stage===stage?"page":undefined}
-          className={"inline-flex min-h-[var(--lms-control-height)] items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold "+
-            (query.stage===stage?"border-primary bg-primary-subtle text-link":"border-border text-body")}>
-          {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
-          <span className="tabular-nums">{stage==="ALL"?
-            Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):
-            data.stageCounts[stage]??0}</span>
-        </Link>)}
-    </nav>
+    <Tabs ariaLabel="Application pipeline stages" renderPanel={false} value={query.stage}
+      items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>({
+        value:stage,
+        label:stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase(),
+        count:stage==="ALL"?Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):data.stageCounts[stage]??0,
+        href:driveApplicationsHref(jobId,{...query,stage,page:1}),
+      }))}/>
     <div className="flex flex-wrap justify-between gap-3 text-sm">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}

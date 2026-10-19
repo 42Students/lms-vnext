@@ -29,7 +29,6 @@ export default async function CollegeAttendanceSettingsPage() {
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
-        eyebrow="College Admin · Academics"
         title="Attendance policy"
         description={`Set the attendance eligibility threshold and correction window for ${college.name}.`}
         actions={

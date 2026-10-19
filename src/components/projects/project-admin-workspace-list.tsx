@@ -104,7 +104,7 @@ export function ProjectAdminWorkspaceList({
     empty={<EmptyState title={emptyTitle} description={emptyDescription}/>}
   />;
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-2 min-[1366px]:grid-cols-3">
       {items.map((item) => (
         <article
           key={item.id}

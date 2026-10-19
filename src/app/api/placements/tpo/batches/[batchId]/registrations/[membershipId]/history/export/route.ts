@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoLearnerRegistrationHistory} from "@/modules/placements/tpo-learner-registration-history-service";
@@ -15,7 +16,7 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   const rows=filterTpoRegistrationEvents(evidence.events,filters);
   return new Response("\uFEFF"+serializeTpoRegistrationEventHistoryCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-registration-event-history.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-registration-event-history", "csv") + '"',
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Scope":"current-learner-latest-100-events",

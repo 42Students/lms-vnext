@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoBatchHistory} from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -17,7 +18,7 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   const rows=filterTpoBatchHistoryOutcome(filterTpoBatchHistoryKind(evidence.events,filters.kind),filters.after);
   return new Response("\uFEFF"+serializeTpoCohortHistoryCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="tpo-batch-decision-history.csv"',
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-batch-decision-history", "csv") + '"',
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Scope":"latest-100-batch-class-learner-events",

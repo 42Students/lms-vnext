@@ -115,7 +115,6 @@ export default async function CollegeAttendancePage({
   return (
     <div className="min-w-0 overflow-x-clip space-y-6">
       <PageHeader
-        eyebrow="College Admin · Academics"
         title="Attendance"
         description={`College-wide attendance oversight for ${options.college.name}, including unmarked sessions and admin corrections.`}
         actions={

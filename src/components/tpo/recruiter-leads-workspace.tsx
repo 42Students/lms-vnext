@@ -16,7 +16,7 @@ import {
 } from "@/modules/placements/tpo-recruiter-attention-model";
 import { RecruiterLeadCsvImport } from "./recruiter-lead-csv-import";
 import {RecruiterRosterDisplayControls} from "./recruiter-roster-display-controls";
-import {ENGAGE_DEFAULT_COLUMNS,normalizeEngageColumns,sortEngageRows,
+import {ENGAGE_COLUMNS,ENGAGE_DEFAULT_COLUMNS,normalizeEngageColumns,sortEngageRows,
  type EngageColumn,type EngageSort} from "@/modules/placements/tpo-recruiter-table-view-model";
 import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
@@ -32,6 +32,8 @@ import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
+import {GridWorkspace} from "./grid/grid-workspace";
+import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 
 type Lead = {
   id: string;
@@ -57,6 +59,25 @@ type Lead = {
   nextFollowupAt:string|null;
   inviteStatus:string;
 };
+
+type RosterGridRow=Lead & {drivesRan:number|null};
+const RECRUITER_GRID_COLUMNS:readonly TpoGridColumn<RosterGridRow>[]=[
+ {key:"Contact",label:"Contact",read:lead=>lead.name||"Unnamed contact"},
+ {key:"Company",label:"Company",read:lead=>lead.companyName??""},
+ {key:"Status",label:"Status",read:lead=>lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"},
+ {key:"Stage",label:"Stage",read:lead=>RECRUITER_STAGE_LEGACY_LABELS[lead.stage]},
+ {key:"Owner",label:"Owner",read:lead=>lead.ownerName??""},
+ {key:"Last activity",label:"Last activity",read:lead=>lead.lastActivityAt??"",sortKind:"date"},
+ {key:"Next follow-up",label:"Next follow-up",read:lead=>lead.nextFollowupAt??"",sortKind:"date"},
+ {key:"Company drives",label:"Company drives",read:lead=>lead.drivesRan,sortKind:"number"},
+ {key:"Invite",label:"Invite",read:lead=>lead.inviteStatus.replaceAll("_"," ")},
+ {key:"Added",label:"Added",read:lead=>lead.createdAt,sortKind:"date"},
+ {key:"Flags",label:"Flags",read:lead=>lead.chips.map(chip=>RECRUITER_ATTENTION_LABELS[chip]).join("; ")},
+ {key:"Source",label:"Source",read:lead=>lead.source??"Manual"},
+ {key:"Email",label:"Email",read:lead=>lead.emailNorm},
+ {key:"Phone",label:"Phone",read:lead=>lead.phoneNorm},
+ {key:"Actions",label:"Actions",read:lead=>lead.recruiterUserId?"Joined":"Invite"},
+];
 
 type CompanySummary = {
   key: string;
@@ -839,7 +860,7 @@ export function RecruiterLeadsWorkspace({
           ):null}
           {view !== "companies" ? (
             <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
+              {view==="board"?<div className="flex flex-wrap gap-2">
                 <button type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","csv")}>Export CSV</button>
                 <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
                   onClick={()=>exportRows("selected","csv")}>Export selected ({visible.filter(row=>selectedIds.includes(row.id)).length})</button>
@@ -850,8 +871,8 @@ export function RecruiterLeadsWorkspace({
                 {selectedIds.length>0?<button type="button" className={buttonStyle}
                   onClick={()=>setSelectedIds([])}>Clear selection</button>:null}
                 {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
-              </div>
-              <RecruiterSavedViewControls columns={visibleColumns}/>
+              </div>:null}
+              {view==="board"?<RecruiterSavedViewControls columns={visibleColumns}/>:null}
               {visible.some(row=>selectedIds.includes(row.id))?<button type="button" className={buttonStyle}
                 disabled={visible.filter(row=>selectedIds.includes(row.id)).length>100}
                 onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).map(row=>row.id).join(",")))}>
@@ -963,7 +984,16 @@ export function RecruiterLeadsWorkspace({
               )}
             </section>
           ) : view === "table" ? (
-            <div className="space-y-3">
+            <GridWorkspace rows={sortedVisible} columns={RECRUITER_GRID_COLUMNS}
+              rowKey={lead=>lead.id} selection={{selected:selectedIds,onChange:setSelectedIds}}
+              columnKeys={visibleColumns}
+              onColumnKeysChange={keys=>changeVisibleColumns(normalizeEngageColumns(
+               keys.filter(key=>ENGAGE_COLUMNS.includes(key as EngageColumn))))}
+              searchMode="hidden" exportName="recruiter-leads"
+              savedViews={<RecruiterSavedViewControls columns={visibleColumns}/>}
+              onExportCsv={selected=>exportRows(selected?"selected":"shown","csv")}
+              onExportXlsx={selected=>exportRows(selected?"selected":"shown","xlsx")}
+              onCopyRows={()=>void copyRows()}>
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
                 sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}/>
               <label className="inline-flex min-h-11 items-center gap-2 text-sm">
@@ -1026,7 +1056,7 @@ export function RecruiterLeadsWorkspace({
                    .filter(column=>column.key==="Select"||visibleColumns.includes(column.key as EngageColumn))}/>
               </div>
 
-            </div>
+            </GridWorkspace>
           ) : (
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (

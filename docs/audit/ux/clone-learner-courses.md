@@ -1,7 +1,7 @@
 # H — Learner / Courses / Super Admin course-content clone audit
 
 Owner lane: `chat-7` · Branch: `chatgpt/chat-7-b` · Status: IN PROGRESS
-Baseline: `origin/main` commit `fa87ca9ad870d63fafab0200e8b6f4d16b568c58` (2026-10-19); branch fast-forwarded from `36399005c0b87aa0f8bbbd5563581c653b881a52`.
+Baseline: `origin/main` commit `55a3efe0a5917631ab26e17e158a29f6e5282e25` (2026-10-19); branch fast-forwarded from `9b714ab008909e3645c31faa12534d3db3355d59` before source edits.
 Rules: `docs/design/ui-clone-checklist.md` WORK STYLE and STRICT TICK RULE.
 Legacy sources: `docs/design/legacy-styles/`, `docs/design/old-lms-shell.css`, `docs/design/old-lms-pages.md`.
 
@@ -31,10 +31,10 @@ Source: GitHub recursive trees on the branch base (not a local `rg` run). Files 
 
 - [x] `src/components/courses/college-quiz-questions-editor.tsx` — migrated 1 raw select, 1 textarea, 3 inputs (including the dynamic radio/checkbox choice) to shared controls; verified matching `<Select>` / `</Select>` names by source inspection. Commit `911e8106e4cc23f1e9060eac30387880fb076847`; value/state proof and responsive proof still open for overall H5.
 - [x] `src/components/courses/college-learner-progress-report.tsx` — replaced raw hidden input with shared `Input`, removed duplicate Button import. Commit `62a70dc724622438e79c115c3426a33731549edb`.
-- [ ] `src/components/courses/learner-course-discussion.tsx:647-666` — raw textarea with `composerRef` controls focus and Enter/Shift+Enter. Shared `TextareaProps` currently lacks a `ref` prop (`src/components/ui/textarea.tsx:4`); needs compatible ref contract from chat-17 before replacement without breaking behavior.
-- [ ] `src/components/courses/learner-quiz-attempt.tsx:349,367,455` — internal h1 headings: review whether they are page headings or quiz content before migrating; preserve semantics.
-- [ ] `src/components/courses/admin-course-actions.tsx` and `admin-course-create-panel.tsx` — `#1677FF` stored course card color fallback; check color API invariant / central course card default before changing data semantics. Do not replace a persisted hex value with a CSS variable string without API proof.
-- [ ] `src/components/courses/college-learner-progress-report.tsx` — wrapper `rounded-xl border ... p-5` and nested stat tile wrappers require page-canvas context review, no content restructure.
+- [ ] `src/components/courses/learner-course-discussion.tsx:113,313,494,499,573,649-667` — **ref compatibility corrected** (`13bf70e`): shared `Textarea` remains in place, with `focusComposer()` resolving the labeled DOM control by stable id and preserving keyboard submit/focus; full legacy style and interaction-state proof for H2 remains open.
+- [ ] `src/components/courses/learner-quiz-attempt.tsx:348,363-368,446-452` — source inspected: title h1 comes from shared `PageHeader`, review and active-attempt back actions now live in header; entire route / responsive and state proof remains open (`727e20e`, `498704a`, `122edca`).
+- [ ] `src/components/courses/admin-course-actions.tsx` and `admin-course-create-panel.tsx` — current main source no longer has a literal `#1677FF` fallback (inspected both complete files). `cardColor` is persisted data and editable as `#RRGGBB`; do not turn it into a CSS variable without API review. Global course-scope hex grep and H6 coverage still open.
+- [ ] `src/components/courses/college-learner-progress-report.tsx:25-87` — current outer section is a flat divider (not a second canvas), summary stat cards now use shared `StatTile` and progress uses shared `MetricBar`; clear/export actions use control-radius tokens (`74a4d8b`, `5aca112`, `a6887a7`, `5507bbc`). Full contextual and responsive proof still open.
 - [ ] All learner route pages — check shared `PageHeader`, one canvas, no extra nested outer card, phone/tablet response, raw controls and theme token exceptions; prioritize courses, quizzes, assignments, lessons, discussion and attendance, then placement and account pages.
 - [ ] Super Admin courses / course-progress / lessons routes — verify page head and form/table shared primitives against old LMS.
 
@@ -303,6 +303,33 @@ Source: GitHub recursive trees on the branch base (not a local `rg` run). Files 
 ### Initial partial source-grep results (not a tick)
 
 Checked full contents of 99 course TSX files using tag-pattern equivalents of the above `rg` commands; initial findings: 1 unconverted focus-ref textarea, 3 quiz-attempt `h1`, 2 stored `#1677FF` card-color fallbacks. The quiz-editor raw controls and course-progress hidden input were converted on this branch. Learner page scan is not yet exhaustive; no zero count is claimed across 247 files. `role="dialog"`, `fixed inset-0`, tabling and nested wrappers remain pending an all-path exhaustive scan. Legacy listing header `components___listing-page-header.scss:53-59` uses a 28px/600 title while the cross-portal PageHeader currently sets 30px on md+ (`src/components/ui/page-header.tsx:34-39`), so global header parity cannot be signed here.
+
+## 2026-10-19 bounded continuation — source-only parity and judgement cases
+
+**Branch sync:** `chatgpt/chat-7-b` was 1,193 commits behind `main` and had no divergent commits; successfully fast-forwarded to `55a3efe0a5917631ab26e17e158a29f6e5282e25` through the branch ref before writing. All writes remained on `chatgpt/chat-7-b`.
+
+**Eleven file commits (pushed via GitHub contents API, no CI, tests, local server, screenshots, or repository code execution):** `13bf70e` discussion focus; `084dc65` shared segmented course filter; `727e20e` review PageHeader; `498704a` timed PageHeader actions; `122edca` full-width timed header; `24abd1c` accessible assessment filter group; `74a4d8b` progress Clear link; `5aca112` progress MetricBar; `a6887a7` progress Export link; `5507bbc` shared progress StatTiles; `544f688` accessible labelled progress-stat group.
+
+### Value and state evidence for edited surfaces (source comparison, not an H tick)
+
+| Property or state | Old LMS source:line and value | vNext source:line and value | Result |
+|---|---|---|---|
+| Header desktop layout | `legacy-styles/components___listing-page-header.scss:26-35` flex, start, space-between, 24px gap, border-bottom | `src/components/ui/page-header.tsx:25-29` md:flex row/space-between/gap-6; border-bottom | Layout match at md+; desktop heading font mismatch noted below |
+| Header mobile layout | `legacy-styles/components___listing-page-header.scss:130-154` <=767px column, gap8, actions column | `src/components/ui/page-header.tsx:28-49` column until md=768, gap-2, full-width actions | Source-rule match; viewport render not checked |
+| Header title font mobile | `legacy-styles/components___listing-page-header.scss:137` 20px | `src/components/ui/page-header.tsx:28,31-34` 20px via scoped CSS variable | Match by source |
+| Header title font desktop | `legacy-styles/components___listing-page-header.scss:52-59` 28px/600, line-height1.3 | `src/components/ui/page-header.tsx:28,31-34` 30px/600, line-height1.35 | **Not identical;** shared PageHeader owned by chat-9/chat-17, no modification in this lane |
+| Page shell background | `legacy-styles/components___variables.scss:31,52` #f1f4f9 | `src/app/globals.css:33,63` #f1f4f9 via --lms-neutral-100 | Match in light theme |
+| Canvas border, radius, padding | `old-lms-pages.md:7` #e5e9f0, 12px, 24px | `src/components/ui/page-canvas.tsx:17-22` plus `src/app/globals.css:322,327-328` #e5e9f0/12px/24px | Source-rule match, outer layout owned by chat-9 |
+| Course filter radius and border | `legacy-styles/components___variables.scss:30` #e5e9f0; `old-lms-pages.md:8` teal filter state | `src/components/ui/segmented-control.tsx:17-24` shared border token, control radius; `learner-course-list.tsx:214-227` now consumes it | Partial, exact active background mismatch below |
+| Segmented selected color | `legacy-styles/components___variables.scss:10,13` #26bac7 primary, #eff8fa subtle | `src/components/ui/segmented-control.tsx:23` --lms-button-primary, `src/app/globals.css:17` #0a7c88 | **Different teal**; shared skin owned by chat-17, H2/H3 open |
+| Teal progress fill and track | `legacy-styles/components___variables.scss:10,14` #26bac7 and #9ee4e8 | `src/components/ui/metric-bar.tsx:31,37`, `globals.css:14,24`, used `college-learner-progress-report.tsx:87` | Source-token match |
+| Course progress stat card border | `legacy-styles/components___variables.scss:30` #e5e9f0 | `src/components/ui/stat-tile.tsx:31-34` border --lms-canvas-border, consumed at `college-learner-progress-report.tsx:69` | Source-token match; tile sizes/phone proof open |
+| Course progress links radius | `old-lms-pages.md:7` white canvas and standard controls; `legacy-styles/components___listing-page-header.scss:106-127` outlined, hover teal | `college-learner-progress-report.tsx:56,74` border, control radius, hover/focus tokens | Interactions explicitly represented; computed source value/state proof incomplete |
+| Discussion form keyboard behavior | `legacy-styles/components___form.scss:23-36` only :focus-visible retains keyboard outline | `src/components/ui/textarea.tsx:6-9` focus-visible outline, `learner-course-discussion.tsx:113,649-667` ref-free focus + unchanged Enter/Shift+Enter | Semantic contract fixed; responsive/style full comparison open |
+
+**Edited-source inspection** (without running requested no-code/no-CI checks): scoped `learner-course-list.tsx` no longer contains its former three-button course-type control; it imports `SegmentedControl`. Scoped `learner-course-discussion.tsx` contains zero `composerRef` references after migration. `learner-quiz-attempt.tsx` has matching opening and closing tags in the two edited header blocks, by source re-read. Both course admin card-color files were inspected and contain no `#1677FF` literal. These are **not** replacement evidence for whole-scope `rg` output counts.
+
+**Remaining strict proof:** run the commands in Coverage inventory on ALL 247 TSX paths, record actual result counts/paths for raw JSX controls, modals/tables/hex/title blocks, compare every affected state and phone/tablet behavior to legacy SCSS, confirm single canvas within authenticated layout and obtain orchestrator viewport verification. Do not tick H1-H6 until all four strict requirements hold. Next: `src/components/courses/learner-assessment-overview.tsx` for the assessment quick-view value/state sweep, then `src/components/courses/learner-course-workspace.tsx` and Super Admin content routes.
 
 ## Items — STRICT TICK RULE
 

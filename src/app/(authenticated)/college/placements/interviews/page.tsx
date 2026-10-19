@@ -50,7 +50,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   </div>},
  ];
  return <div className="space-y-5">
-  <PageHeader eyebrow="College Admin · Placements" title="Interviews"
+  <PageHeader title="Interviews"
    description="Interview appointments across drives in the selected college."/>
   {!data.ready?<p role="status" className="rounded-[8px] border border-border p-5 text-sm text-warning-text">
     Candidate interview appointment storage is not registered. No schedule or conflict counts are inferred from round-level placeholders.

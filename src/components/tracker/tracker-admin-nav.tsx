@@ -23,10 +23,7 @@ export function TrackerAdminNav() {
       <Tabs renderPanel={false} ariaLabel="42 Tracker" className="min-w-0 flex-1"
         value={pathname.startsWith("/tracker/issues")?"issues":pathname==="/tracker"?"report":
           pathname.startsWith("/tracker/logs")?"logs":pathname.startsWith("/tracker/audit-findings")?"audit":""}
-        items={[{value:"issues",label:"Issues",href:"/tracker/issues"},
-          {value:"report",label:"Report Issue",href:"/tracker"},
-          {value:"logs",label:"Logs",href:"/tracker/logs"},
-          {value:"audit",label:"Audit findings",href:"/tracker/audit-findings"}]}/>
+        items={pages}/>
       <TrackerThemeToggle />
     </div>
     <span id="tracker-content" tabIndex={-1} className="sr-only">Tracker page content</span>
