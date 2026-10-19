@@ -7,6 +7,7 @@ import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platfo
 import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -111,15 +112,15 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       {editorData?<TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
        collegeId={context.adminScope?.collegeId??undefined}
        ready={editorData.ready} entries={editorData.entries}/>:(
-       <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
+       <Banner tone="warning">
         {editorResult&&!editorResult.ok
           ?"Tenant settings editor is temporarily unavailable. Existing settings were not changed."
           :"Clear the Super Admin safety scope to access global setting overrides, or select an individual college to edit its scoped settings."}
-       </p>)}
+       </Banner>)}
       {attendanceResult&&!attendanceResult.ok?
-        <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm text-body">
+        <Banner tone="warning">
           Attendance policy is temporarily unavailable. Existing settings were not changed.
-        </p>:null}
+        </Banner>:null}
       {attendancePolicy?<SuperAdminAttendanceSettingsEditor
         collegeId={attendancePolicy.college.id}
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
