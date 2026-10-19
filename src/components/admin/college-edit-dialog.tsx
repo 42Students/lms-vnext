@@ -118,6 +118,7 @@ export function CollegeEditDialog({
             </Button>
             <Button
               disabled={pending || !name.trim()}
+              loading={pending}
               onClick={save}
             >
               {pending ? "Saving…" : "Save changes"}
@@ -125,7 +126,7 @@ export function CollegeEditDialog({
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div aria-busy={pending} className="grid gap-4 sm:grid-cols-2">
           {([
            ["Address",addressLine1,setAddressLine1,255],
            ["Address line 2",addressLine2,setAddressLine2,255],
@@ -133,7 +134,7 @@ export function CollegeEditDialog({
            ["Pin Code",postalCode,setPostalCode,32],
           ] as const).map(([field,value,setter,maxLength])=><label key={field}
            className="grid gap-1 text-xs font-semibold text-body">{field}
-           <Input value={value} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
+           <Input value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
           </label>)}
 
           <div className="sm:col-span-2">
@@ -145,6 +146,8 @@ export function CollegeEditDialog({
             </label>
             <Input
               id={`college-name-${college.id}`}
+              autoComplete="organization"
+              disabled={pending}
               value={name}
               onChange={(event) =>
                 setName(event.target.value)
@@ -161,6 +164,8 @@ export function CollegeEditDialog({
             </label>
             <Input
               id={`college-city-${college.id}`}
+              autoComplete="address-level2"
+              disabled={pending}
               value={city}
               onChange={(event) =>
                 setCity(event.target.value)
@@ -177,6 +182,8 @@ export function CollegeEditDialog({
             </label>
             <Input
               id={`college-state-${college.id}`}
+              autoComplete="address-level1"
+              disabled={pending}
               value={state}
               onChange={(event) =>
                 setState(event.target.value)
@@ -193,6 +200,7 @@ export function CollegeEditDialog({
             </label>
             <Input
               id={`college-country-${college.id}`}
+              disabled={pending}
               value={country}
               onChange={(event) =>
                 setCountry(event.target.value)

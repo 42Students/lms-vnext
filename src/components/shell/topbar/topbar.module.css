@@ -259,62 +259,211 @@
   }
 }
 
-/* Exact profile switcher containment inside the legacy 280px menu. */
-.menu > div { max-width:100%; }
-.menu :global(#admin-scope-switcher),
-.menu :global(#admin-college-search) { max-width:100%; }
-.menu :global(.sm\:w-64) { width:100%; max-width:100%; }
-/* Notification drawer SCSS: 12px panel, #e5e9f0 hairline and 16px/20px title padding. */
-.recruiterBell > div > section,
-.learnerBell > div > section {
+.topbarNotificationDrawer {
+  border:1px solid #e5e9f0;
+  border-radius:12px;
+  background:#fff;
   box-shadow:0 4px 24px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
 }
-.recruiterBell > div > section > div:first-child,
-.learnerBell > div > section > div:first-child {
-  border-bottom-color:var(--lms-canvas-border);
+
+@media (min-width:768px) {
+  .topbarNotificationDrawer {
+    top:72px !important;
+    right:12px !important;
+    bottom:auto !important;
+    left:auto !important;
+    width:min(420px,calc(100vw - 24px)) !important;
+    max-height:min(520px,calc(100vh - 120px)) !important;
+    height:min(520px,calc(100vh - 120px)) !important;
+    margin:0 !important;
+    overflow:hidden;
+  }
 }
+
+.topbarNotificationDrawer [data-slot="drawer-header"] {
+  flex:none;
+  padding:16px 20px;
+  border-bottom:1px solid #e5e9f0;
+  background:#fafbfc;
+  border-radius:12px 12px 0 0;
+}
+
+.topbarNotificationDrawer [data-slot="drawer-header"] h2 {
+  margin:0;
+  color:#18212f;
+  font-size:18px;
+  font-weight:600;
+  line-height:1.3;
+  letter-spacing:-.02em;
+}
+
+.topbarNotificationBody {
+  min-height:0;
+  overscroll-behavior:contain;
+  padding:12px 0;
+  scrollbar-width:none;
+}
+.topbarNotificationBody::-webkit-scrollbar { display:none; }
+
+.topbarNotificationBody > ul {
+  list-style:none;
+  margin:0;
+  padding:0 12px;
+}
+
+.topbarNotificationBody [role="status"],
+.topbarNotificationBody [role="alert"] {
+  padding:20px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.topbarNotificationBody li button:hover {
+  background:#fafbfc;
+  border-color:#e5e9f0;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+
+.topbarNotificationBody li button:active {
+  background:rgba(0,0,0,.06);
+  box-shadow:none;
+}
+.topbarNotificationBody li button:focus-visible {
+  outline:1px solid #6b7280;
+  outline-offset:1px;
+}
+
+@media (max-width:767px) {
+  .topbarNotificationDrawer {
+    top:0 !important;
+    right:0 !important;
+    left:0 !important;
+    width:100vw !important;
+    max-width:100vw !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    border-radius:0;
+  }
+  .topbarNotificationDrawer [data-slot="drawer-header"] {
+    padding:calc(16px + env(safe-area-inset-top,0px)) 16px 16px;
+    border-radius:0;
+  }
+  .topbarNotificationBody { padding:12px 16px calc(24px + env(safe-area-inset-bottom,0px)); }
+  .topbarNotificationBody > ul { padding:0; }
+}
+
+.orgSwitcher { position:relative; min-width:0; flex:none; }
+.orgTrigger {
+  display:inline-flex; align-items:center; justify-content:space-between; gap:8px;
+  min-height:38px; max-width:260px; border:1px solid #e7ecf2;
+  border-radius:9px; padding:0 9px; background:#fff;
+  box-shadow:none; color:#334155; cursor:pointer;
+}
+
+.orgTrigger .orgName {
+  display:block; min-width:0; max-width:234px;
+  color:#334155; font-size:12px; font-weight:600;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+
+.orgTrigger:hover { background:#fafbfc; border-color:#e7ecf2; }
+
+.orgTrigger:active { background:rgba(0,0,0,.035); }
+
+.orgTrigger:focus-visible {
+  outline:2px solid var(--lms-button-primary); outline-offset:2px;
+}
+
+.orgPopover {
+  position:absolute; right:0; top:calc(100% + 9px); z-index:70;
+  width:min(280px,calc(100vw - 24px)); max-height:min(520px,calc(100dvh - 88px));
+  overflow:auto; overscroll-behavior:contain; box-sizing:border-box;
+  border:1px solid #e7ecf2; border-radius:6px;
+  padding:16px; background:#fff;
+  box-shadow:9px 11px 28px rgba(0,0,0,.1);
+}
+
+@media (min-width:768px) and (max-width:1199px) {
+  .orgSwitcher { min-width:170px; max-width:190px; }
+  .orgTrigger { max-width:190px; width:100%; }
+  .orgTrigger .orgName { max-width:160px; }
+}
+
+@media (max-width:767px) {
+  .orgSwitcher { display:none; }
+  .orgPopover { right:12px; width:calc(100vw - 24px); border-radius:14px; }
+}
+
+.orgPopover :global(#admin-scope-switcher),
+.orgPopover :global(#membership-switcher) {
+  min-height:38px;
+  border-radius:9px;
+  border-color:#e7ecf2;
+  box-shadow:none;
+}
+
+.orgPopover label { color:#334155; }
+.orgPopover [role="alert"] { padding:8px 0; font-size:12px; }
+
+.orgPopover :global(select):focus-visible,
+.orgPopover :global(input):focus-visible {
+  outline:2px solid var(--lms-button-primary);
+  outline-offset:2px;
+}
+
+.orgPopover :global(select):disabled,
+.orgPopover :global(input):disabled {
+  opacity:.55; cursor:not-allowed;
+  background:#fafbfc;
+}
+
 @media (prefers-reduced-motion:reduce) {
-  .dropdown,.menu,.createOptions { animation:none; transition:none; }
+  .orgTrigger,.orgPopover { animation:none; transition:none; }
 }
 
-/* TPO's existing compact bell keeps the same 16px warm-red count as legacy badges. */
-.actions > div > button > span[aria-hidden="true"] {
-  background:#ff7576; color:#fff; border:2px solid #fff;
-  top:-6px; right:-6px; min-width:16px; min-height:16px;
-  font-size:10px; line-height:1.2;
+/* Shared Input keeps the 36px legacy header combobox, not ordinary form height. */
+.searchBox .searchInput[data-slot="input"] {
+  min-height:0; height:100%; padding:0; border:0; border-radius:0;
+  background:transparent; box-shadow:none; outline:none;
+  font-size:12px; line-height:1.4;
 }
-.recruiterBell > div > section > div:first-child,
-.learnerBell > div > section > div:first-child {
-  padding-bottom:16px;
-  border-bottom:1px solid var(--lms-canvas-border);
+.searchBox .searchInput[data-slot="input"]:focus-visible {
+  box-shadow:none; border:0; outline:none;
 }
 
-/* Exact profile switcher containment inside the legacy 280px menu. */
-.menu > div { max-width:100%; }
-.menu :global(#admin-scope-switcher),
-.menu :global(#admin-college-search) { max-width:100%; }
-.menu :global(.sm\:w-64) { width:100%; max-width:100%; }
-/* Notification drawer SCSS: 12px panel, #e5e9f0 hairline and 16px/20px title padding. */
-.recruiterBell > div > section,
-.learnerBell > div > section {
-  box-shadow:0 4px 24px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
+.topbarNotificationDrawer::backdrop { background:rgba(0,0,0,.08); }
+
+@keyframes topbarNotificationPanelIn {
+  from { opacity:0; transform:translateY(-8px); }
+  to { opacity:1; transform:translateY(0); }
 }
-.recruiterBell > div > section > div:first-child,
-.learnerBell > div > section > div:first-child {
-  border-bottom-color:var(--lms-canvas-border);
+
+@media (min-width:768px) and (prefers-reduced-motion:no-preference) {
+  .topbarNotificationDrawer[open] { animation:topbarNotificationPanelIn .2s ease-out; }
 }
+
+@keyframes topbarNotificationBackdropIn { from { opacity:0; } to { opacity:1; } }
+@media (prefers-reduced-motion:no-preference) {
+  .topbarNotificationDrawer[open]::backdrop { animation:topbarNotificationBackdropIn .15s ease-out; }
+}
+
 @media (prefers-reduced-motion:reduce) {
-  .dropdown,.menu,.createOptions { animation:none; transition:none; }
+  .topbarNotificationDrawer[open],
+  .topbarNotificationDrawer[open]::backdrop { animation:none; transition:none; }
 }
 
-/* TPO's existing compact bell keeps the same 16px warm-red count as legacy badges. */
-.actions > div > button > span[aria-hidden="true"] {
-  background:#ff7576; color:#fff; border:2px solid #fff;
-  top:-6px; right:-6px; min-width:16px; min-height:16px;
-  font-size:10px; line-height:1.2;
+@media (prefers-reduced-motion:no-preference) {
+  .dropdown { animation:topbarNotificationPanelIn .2s ease-out; }
 }
-.recruiterBell > div > section > div:first-child,
-.learnerBell > div > section > div:first-child {
-  padding-bottom:16px;
-  border-bottom:1px solid var(--lms-canvas-border);
+
+@media (min-width:768px) and (max-width:900px) {
+  .topbarNotificationDrawer { max-width:calc(100vw - 24px) !important; }
+  .orgPopover { width:min(280px,calc(100vw - 24px)); }
 }
+
+.topbarNotificationState { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px 20px; text-align:center; font-size:14px; line-height:1.5; color:var(--lms-body-text); }
+
+.topbarNotificationState > p { margin:0; }
+.topbarNotificationState > p + p { max-width:260px; color:var(--lms-muted-text); }
+
+@media (max-width:767px) { .topbarNotificationState { min-height:88px; padding:32px 16px; } }
