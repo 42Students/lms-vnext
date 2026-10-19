@@ -32,11 +32,11 @@ export default async function FacultyAssessmentResultsPage({
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex flex-wrap gap-2">
         <Link href="/teacher/response-followups"
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
           Response follow-ups
         </Link>
         <Link href="/teacher/allAssignments"
-          className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
           All Assignments
         </Link>
       </div>} />
