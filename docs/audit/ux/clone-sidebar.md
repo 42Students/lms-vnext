@@ -67,3 +67,24 @@ grep -RnlE '#[0-9a-fA-F]{3,8}|rounded-(lg|xl|md)' src/components/shell --include
 ## JSX and responsive verification limits
 
 Review the exact source opening/closing names for every edited JSX component. No CI, typecheck, build or browser was run per owner instruction. Phone, tablet, desktop are compared by rules (`max-width:767px`, `min-width:768px`), not with screenshots. Section J later owns visual side-by-side checks.
+
+
+## Latest B3 value proof after corrections
+
+| Property / state | Legacy source line | vNext source line | Value and strict assessment |
+|---|---|---|---|
+| initial TPO section text size | `old-lms-shell.css:50` | `sidebar-legacy.css:50-53` | **0px**, corrected to match collapsed mode |
+| TPO section expanded | `old-lms-shell.css:52-53` | `sidebar-legacy.css:62-70` | **12px**, visible after hover or focus; focus expansion is an accessibility addition |
+| role footer inset | `old-lms-shell.css:22` | `sidebar-legacy.css:229`, `app-shell.tsx:84` | **25px 16px**, equal declarations |
+| SVG size and flex | `old-lms-shell.css:33-35` | `sidebar-legacy.css:133-145`, `shell-nav-icons.tsx` | **24px box / 20px glyph**, same CSS dimensions |
+| TPO scrollbar | `old-lms-shell.css:41-43` | `sidebar-legacy.css:234-250` | **thin / 4px / rgba(107,114,128,.28)** in hover/focus |
+| mobile drawer width | `legacy-styles/components___antddesign.scss:305-308` | `mobile-navigation.tsx:95` | **82vw capped at 300px**; percentage basis may vary by parent, so not fully proved |
+| mobile drawer header | `legacy-styles/components___antddesign.scss:314-325` | `mobile-navigation.tsx:97-111` | 52px + safe area, 10px top/bottom, 16px left / 4px right; exact computed layout unproved |
+| mobile drawer body | `legacy-styles/components___antddesign.scss:348-359` | `mobile-navigation.tsx:113`, `sidebar-legacy.css:187-194` | 8px top, 12px horizontal, 24px + bottom safe-area; scrolling checks pending |
+| TPO footer More action | no old mobile footer specification in `old-lms-shell.css:1-101` | `src/components/tpo/tpo-mobile-footer.tsx:29-31` | shared Button, expanded/pressed state; **unmatched legacy source** |
+| duplicate footer implementation | no analogous separate legacy source | `src/components/shell/tpo-mobile-footer.tsx` (re-export) | duplicate removed; does not prove visual parity |
+| route announcer | no recorded old visual rule | `route-announcer.tsx:16-34` | requestAnimationFrame, polite screen-reader status and focus transfer; visual progress state **unproved** |
+
+**Do not tick B3:** relative legacy desktop flow vs fixed+padding implementation, historical icon build/version, mobile mask/layout, all routes/responsive screenshots, and full-repository grep proof remain unresolved.
+
+**Do not tick B4:** legacy top route-loader and mobile footer values are not all provided, page-loader overlay differs from modern route-specific skeletons, and learner transitions defined in `legacy-styles/components___learn-layout.scss:49-86,568-585` are not yet matched by the vNext shell. No speculative loader or transition was inserted.
