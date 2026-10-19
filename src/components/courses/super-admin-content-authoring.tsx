@@ -20,7 +20,7 @@ export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:
     <select value={selected?.id??""} onChange={e=>setLessonId(e.target.value)}
      className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9">
      {lessons.map(x=><option value={x.id} key={x.id}>{x.courseCode} · {x.courseName} · {x.name}</option>)}
-    </Select>
+    </select>
    </label>
    {selected?<FacultyLessonAuthoring key={selected.id} lessonId={selected.id}
      deliveryId={null} audience="OFFERING" nextContentSequence={selected.nextContentSequence}

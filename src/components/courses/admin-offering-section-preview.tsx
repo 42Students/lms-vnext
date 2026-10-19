@@ -33,7 +33,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
      {data.options.map(item=><option value={item.deliveryId} key={item.deliveryId}>
       {item.sectionName} ({item.sectionCode})
      </option>)}
-    </Select>
+    </select>
    </label>
    <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover sm:min-h-9">View Section</button>
   </form>
