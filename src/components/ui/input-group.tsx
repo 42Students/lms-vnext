@@ -4,6 +4,9 @@ import { cx } from "@/lib/class-names";
 export type InputGroupProps = Omit<ComponentPropsWithRef<"div">, "children"> & {
   prefix?: ReactNode;
   suffix?: ReactNode;
+  /** Set true when the adornment is a focusable action, not a decorative icon. */
+  prefixInteractive?: boolean;
+  suffixInteractive?: boolean;
   children: ReactNode;
   /** A visible field label belongs outside this group; this names grouped controls. */
   label?: string;
@@ -14,7 +17,7 @@ export type InputGroupProps = Omit<ComponentPropsWithRef<"div">, "children"> & {
  * Legacy: components___form.scss:117-143 (.ln-in2, 10px, teal/red focus).
  * Prefix/suffix stay decorative; the input retains its own accessible name.
  */
-export function InputGroup({ prefix, suffix, children, className, label, ...props }: InputGroupProps) {
+export function InputGroup({ prefix, suffix, prefixInteractive = false, suffixInteractive = false, children, className, label, ...props }: InputGroupProps) {
   return (
     <div {...props} data-slot="input-group" role={label ? "group" : props.role}
       aria-label={label ?? props["aria-label"]}
@@ -28,11 +31,11 @@ export function InputGroup({ prefix, suffix, children, className, label, ...prop
         "has-[:read-only]:bg-[var(--lms-neutral-50)]",
         className,
       )}>
-      {prefix ? <span data-slot="input-prefix" aria-hidden="true" className="shrink-0 text-[13px] text-[var(--lms-muted-text)]">{prefix}</span> : null}
+      {prefix ? <span data-slot="input-prefix" aria-hidden={prefixInteractive ? undefined : true} className="shrink-0 text-[13px] text-[var(--lms-muted-text)]">{prefix}</span> : null}
       <div className="min-w-0 flex-1 [&_[data-slot=input]]:border-0 [&_[data-slot=input]]:bg-transparent [&_[data-slot=input]]:px-0 [&_[data-slot=input]]:shadow-none [&_[data-slot=input]]:outline-none">
         {children}
       </div>
-      {suffix ? <span data-slot="input-suffix" aria-hidden="true" className="shrink-0 text-[13px] text-[var(--lms-muted-text)]">{suffix}</span> : null}
+      {suffix ? <span data-slot="input-suffix" aria-hidden={suffixInteractive ? undefined : true} className="shrink-0 text-[13px] text-[var(--lms-muted-text)]">{suffix}</span> : null}
     </div>
   );
 }
