@@ -17,7 +17,7 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
    </div>)}</dl>:null}
   {detail.proofUrl?<a href={detail.proofUrl} target="_blank" rel="noopener noreferrer"
    className="inline-flex min-h-11 items-center text-primary-text underline">Review submitted proof link</a>:
-   detail.requiresProof?<p role="alert" className="text-warning-text">No proof attached</p>:null}
+   detail.requiresProof?<p role="alert" className="text-[var(--lms-gold-accent)]">No proof attached</p>:null}
  </div>;
 }
 export function TpoGeneralRequestsPanel(){
