@@ -172,10 +172,16 @@ export function TpoGrid<Row>({
   changeSelected(result.selected);
  };
  const copyVisible=()=>{
-  const chosen=new Set(selection?.selected??[]);
-  const currentIds=new Set(currentVisibleIds());
-  const visible=rows.filter(row=>currentIds.has(rowKey(row)));
-  const copied=chosen.size?visible.filter(row=>chosen.has(rowKey(row))):visible;
+  // Respect AG Grid's currently filtered AND sorted order. Reading original rows
+  // here silently copied a different order from the one users saw on screen.
+  const byId=new Map(rows.map(row=>[rowKey(row),row] as const));
+  const visible=currentVisibleIds().flatMap(id=>{
+   const row=byId.get(id);
+   return row===undefined?[]:[row];
+  });
+  const selectedIds=new Set(selection?.selected??[]);
+  const selectedVisible=visible.filter(row=>selectedIds.has(rowKey(row)));
+  const copied=selectedVisible.length?selectedVisible:visible;
   if(!navigator.clipboard?.writeText){setNotice("Clipboard unavailable. Use Export CSV instead.");return;}
   void navigator.clipboard.writeText(gridClipboardTsv(display,copied,true))
    .then(()=>setNotice("Copied "+copied.length+" authorized row(s) as TSV."))
