@@ -1,0 +1,8 @@
+/*
+ * Legacy company intelligence bar:
+ * lms2-fe@prod-2026/src/styles/components/_tpo-intelligence-light.scss:346-348.
+ * $light-cyan: #9ee4e8; $clrThird: #26bac7 in _variables.scss.
+ */
+.branchBar > div {
+  background: linear-gradient(90deg, #9ee4e8, #26bac7) !important;
+}
