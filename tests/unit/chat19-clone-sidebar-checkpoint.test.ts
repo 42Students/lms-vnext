@@ -58,4 +58,12 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  expect(css).toContain("letter-spacing:.105em;");
  expect(css).toContain("text-transform:uppercase;");
 });
+ it("pins collapsed counts above the glyph then restores inline expanded counts",()=>{
+ expect(legacy()).toContain("transform: scale(0.72);");
+ const css=sidebar();
+ expect(css).toContain("transform:scale(.72);");
+ expect(css).toContain("top:4px;");
+ expect(css).toContain("left:50%;");
+ expect(css).toContain("margin-left:auto;");
+});
 });
