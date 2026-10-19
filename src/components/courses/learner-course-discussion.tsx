@@ -109,7 +109,8 @@ export function LearnerCourseDiscussion({
   const [unseenCount, setUnseenCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const composerRef = useRef<HTMLTextAreaElement | null>(null);
+  // The shared Textarea does not forward a ref; retain reply/compose focus by id.
+  const focusComposer = () => document.getElementById("course-discussion-message")?.focus();
   const postLocked = useRef(false);
   const historyFlight = useRef(createLearnerDiscussionHistoryFlight());
   const latestRefreshId = useRef(0);
@@ -309,7 +310,7 @@ export function LearnerCourseDiscussion({
       forceBottomOnNextLoad.current = true;
       await load(true);
       window.requestAnimationFrame(() =>
-        composerRef.current?.focus(),
+        focusComposer(),
       );
     } catch(e) {
       setModerationError(e instanceof FriendlyFetchError&&e.status===409?
@@ -490,12 +491,12 @@ export function LearnerCourseDiscussion({
                   <Button type="button" size="sm" variant="secondary"
                     onClick={()=>{
                       setDraft("Welcome! Use this space for questions about the course.");
-                      composerRef.current?.focus();
+                      focusComposer();
                     }}>Post a welcome message</Button>
                   <Button type="button" size="sm" variant="secondary"
                     onClick={()=>{
                       setDraft("This week we are focusing on: ");
-                      composerRef.current?.focus();
+                      focusComposer();
                     }}>Share this week&apos;s focus</Button>
                 </div>
               </div>
@@ -569,7 +570,7 @@ export function LearnerCourseDiscussion({
                       variant="ghost" className="mt-2 min-h-9 !text-[var(--lms-primary-text)] underline"
                       onClick={() => {
                         setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
-                        composerRef.current?.focus();
+                        focusComposer();
                       }}>
                       Reply
                     </Button> : null}
@@ -646,7 +647,6 @@ export function LearnerCourseDiscussion({
             Write a message
           </label>
           <Textarea
-            ref={composerRef}
             id="course-discussion-message"
             value={draft}
             onChange={(event) => setDraft(event.target.value)}

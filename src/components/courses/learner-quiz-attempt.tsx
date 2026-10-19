@@ -360,10 +360,12 @@ export function LearnerQuizAttempt() {
   if (review || !attemptable) {
     return (
       <section className="min-w-0 space-y-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <PageHeader eyebrow="Quiz review" title={quiz.quiz.title} />
-            <p className="mt-2 text-sm text-body">
+        <PageHeader
+          title={quiz.quiz.title}
+          description="Quiz review"
+          actions={<Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 text-primary-text sm:min-h-9">← Back</Button>}
+        />
+        <p className="mt-2 text-sm text-body">
               {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
                 ? learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
                 : latestAttempt
@@ -373,10 +375,7 @@ export function LearnerQuizAttempt() {
                 : duePassed || quiz.quiz.status === "CLOSED"
                   ? "Not attempted before this quiz closed."
                   : "No attempt is available to review."}
-            </p>
-          </div>
-          <Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)]">← Back</Button>
-        </div>
+        </p>
         {deadlineMissing && !latestAttempt ? (
           <p role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
             Unavailable · Quiz deadline is not configured. Ask your faculty to set a due date.
@@ -444,20 +443,17 @@ export function LearnerQuizAttempt() {
           ? `You have ${answerProgress.total-answerProgress.answered} unanswered question${answerProgress.total-answerProgress.answered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
           : "Submit this quiz attempt? You cannot edit this attempt after submission."}
         confirmLabel="Submit" onConfirm={() => void submit()} />
-      <div className="border-b border-border pb-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="m-0 text-xs font-semibold text-muted-foreground">
-              Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
-            </p>
-            <PageHeader title={quiz.quiz.title} />
-            <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
-            {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
-              <p role="status" className="mt-2 rounded-md border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
-            ) : null}
-          </div>
-          <Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)]">Back</Button>
-        </div>
+      <div className="pb-4">
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">
+          Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
+        </p>
+        <PageHeader title={quiz.quiz.title}
+          actions={<Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 text-primary-text sm:min-h-9">Back</Button>}
+        />
+        <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
+        {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
+          <p role="status" className="mt-2 rounded-[var(--lms-control-radius)] border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
+        ) : null}
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-body" aria-live="polite">
           <span>{answerProgress.answered} answered · {answerProgress.total-answerProgress.answered} unanswered</span>
           {answerProgress.firstUnanswered!==null ? (

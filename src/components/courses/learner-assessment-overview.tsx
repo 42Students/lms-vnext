@@ -271,7 +271,7 @@ export function LearnerAssessmentOverview({
       </div>
       )}
 
-      <nav aria-label={kind === "ASSIGNMENT" ? "Assignment quick views" : "Quiz quick views"}
+      <div role="group" aria-label={kind === "ASSIGNMENT" ? "Assignment quick views" : "Quiz quick views"}
         className="flex flex-wrap gap-2">
         {quickCounts.map(quick => (
           <Button key={quick.value} type="button" aria-pressed={stateFilter === quick.value}
@@ -280,7 +280,7 @@ export function LearnerAssessmentOverview({
             {LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label} ({quick.count})
           </Button>
         ))}
-      </nav>
+      </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
