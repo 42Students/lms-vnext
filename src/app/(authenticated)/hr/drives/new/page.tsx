@@ -74,7 +74,7 @@ export default async function RecruiterRequestDrivePage({
         <section className="grid gap-3 sm:grid-cols-2">
           {grants.map((grant) => (
             <Link key={grant.id} href={"/hr/drives/new?collegeId=" + encodeURIComponent(grant.collegeId)}
-              className="rounded-xl border border-border bg-surface p-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+              className="rounded-xl border border-border bg-surface p-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
               {grant.collegeName}
             </Link>
           ))}
@@ -102,15 +102,15 @@ export default async function RecruiterRequestDrivePage({
     <PageHeader eyebrow="Recruiter" title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
     <Link href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)}
-      className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+      className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
       ← Back to drives
     </Link>
     <Link href={hrSentProposalsHref(collegeId)}
-      className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+      className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
       View previously sent discussion proposals
     </Link>
     <Link href={"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(collegeId)}
-      className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
+      className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-text">
       Record an outside-platform drive
     </Link>
     <HrDriveDraftForm
