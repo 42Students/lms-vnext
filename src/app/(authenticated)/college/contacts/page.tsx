@@ -7,6 +7,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
+import {Tabs} from "@/components/ui/tabs";
 import {FilterBar} from "@/components/ui/filter-bar";
 import {Pagination} from "@/components/ui/pagination";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -36,14 +37,12 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <PageHeader eyebrow="College Admin · People" title="Contacts"
    description="Read-only college contacts. Student contact details are masked; account management is separate."
    actions={<div className="flex flex-wrap gap-2"><Link href="/college/students" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold">Student accounts</Link><Link href="/college/faculty" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold">Faculty accounts</Link><Link href="/college/faculty-assignment" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold">Teaching assignments</Link></div>}/>
-  <nav aria-label="Contacts categories" className="flex flex-wrap gap-2">
-   <Link href={collegeContactsTabHref(filter,"ALL")} aria-current={filter.tab==="ALL"?"page":undefined}
-     className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm">All contacts</Link>
-   <Link href={collegeContactsTabHref(filter,"FACULTY")} aria-current={filter.tab==="FACULTY"?"page":undefined}
-     className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm">Faculty contacts</Link>
-   <Link href={collegeContactsTabHref(filter,"STUDENT")} aria-current={filter.tab==="STUDENT"?"page":undefined}
-     className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm">Student contacts</Link>
-  </nav>
+  <Tabs ariaLabel="Contacts categories" renderPanel={false} value={filter.tab}
+   items={[
+    {value:"ALL",label:"All contacts",href:collegeContactsTabHref(filter,"ALL")},
+    {value:"FACULTY",label:"Faculty contacts",href:collegeContactsTabHref(filter,"FACULTY")},
+    {value:"STUDENT",label:"Student contacts",href:collegeContactsTabHref(filter,"STUDENT")},
+   ]}/>
   {filter.membershipId&&<div role="status" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border bg-surface p-3 text-sm">
    <span>Showing the bookmarked contact record only.</span>
    <Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-[var(--lms-link-text)] underline">Show matching contact directory</Link>
