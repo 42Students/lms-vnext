@@ -140,6 +140,7 @@ export function CollegeCreateForm({
         <Input
           id="college-code"
           autoCapitalize="none"
+          spellCheck={false}
           disabled={pending}
           value={code}
           onChange={(event) => setCode(event.target.value.toLowerCase())}
