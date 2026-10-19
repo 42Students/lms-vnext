@@ -244,7 +244,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
           initialTargets={[]} options={targetOptions}/>
         </fieldset>:null}
        <p className="text-xs text-muted-foreground">Save fails if the notice changed since this page was loaded.</p>
-       <Button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-foreground">Save notice edits</Button>
+       <Button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary">Save notice edits</Button>
       </form>
      </TpoNoticeComposerDialog>:null}
     {tab.data==="yours"?<TpoNoticeDeleteConfirm id={row.id} version={row.version}/>:null}

@@ -21,7 +21,7 @@ export default async function TpoEveryonePage({searchParams}:{
  return <div className="space-y-5">
   <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 sm:min-h-9 items-center text-[var(--lms-link-text)]">← Team conversations</Link>
   <header className="space-y-2">
-   <h1 className=" text-[26px] font-semibold text-[#172033] sm:text-[30px]">{TPO_EVERYONE_TITLE}</h1>
+   <h1 className="text-[26px] font-semibold text-[#172033] sm:text-[30px]">{TPO_EVERYONE_TITLE}</h1>
    <p className="text-sm text-body">{TPO_EVERYONE_DESCRIPTION}</p>
   </header>
   {result.status==="FAILED"?<section role="alert" className="rounded-xl border border-border p-4">
