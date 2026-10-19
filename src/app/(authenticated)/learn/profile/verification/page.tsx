@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verification-live-refresh";
 import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verification-notice-model";
@@ -22,7 +23,7 @@ export default async function LearnerVerificationPage() {
   return <div className="min-w-0 space-y-6">
     <Link href="/learn/profile" className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Profile</Link>
     <LearnerVerificationLiveRefresh />
-    <header><h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">Profile verification</h1>
+    <header><PageHeader title="Profile verification" />
       <p className="mt-2 text-sm text-body">Your own Education and Identity review status. A saved detail does not mean it is verified.</p>
     </header>
     <section aria-labelledby="own-private-receipts" className="border-t border-border pt-5">
