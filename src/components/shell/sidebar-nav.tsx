@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {cx} from "@/lib/class-names";
-import {scopedShellNavigation,shellNavIconKey,SHELL_SECTION_LABELS,
+import {scopedShellNavigation,shellNavIconKey,
  TPO_SECTION_LABELS,type ShellNavItem} from "./shell-model";
 import {ShellNavGlyph} from "./shell-nav-icons";
 import {legacySidebarItemActive} from "./legacy-sidebar-active-model";
@@ -15,11 +15,13 @@ import {superAdminLegacyGroupForPath} from "@/modules/people/super-admin-legacy-
 import {collegeLegacyGroupForPath} from "@/modules/people/college-legacy-tabs-model";
 import "./sidebar-legacy.css";
 
+/** Only TPO displays uppercase group words in the legacy shell.
+ * Recruiter, learner, faculty and admin lists separate groups with hairlines. */
 function sectionLabel(item:ShellNavItem):string|null{
- if(!item.group)return null;
- if(item.href.startsWith("/tpo/") && item.group in TPO_SECTION_LABELS)
-  return TPO_SECTION_LABELS[item.group as keyof typeof TPO_SECTION_LABELS];
- return SHELL_SECTION_LABELS[item.group];
+ if(!item.group||!item.href.startsWith("/tpo/"))return null;
+ return item.group in TPO_SECTION_LABELS
+  ?TPO_SECTION_LABELS[item.group as keyof typeof TPO_SECTION_LABELS]
+  :null;
 }
 function tpoItemCount(href:string,counts:TpoShellCounters):number|null{
  if(href==="/tpo/requests")return counts.requests;
@@ -81,10 +83,13 @@ export function SidebarNav({
    const count=tpoCounts?tpoItemCount(item.href,tpoCounts):null;
    const badge=count===null?null:shellUnreadBadge(count);
    return <Fragment key={item.href}>
-    {startsNewGroup&&!compact&&label?
-     <div className="lms-nav-heading" role="separator" aria-label={label}>
-      <span className="lms-nav-heading-text">{label}</span>
-     </div>:null}
+    {startsNewGroup&&!compact
+     ?label
+      ?<div className="lms-nav-heading" role="separator" aria-label={label}>
+        <span className="lms-nav-heading-text">{label}</span>
+       </div>
+      :index>0?<div className="lms-nav-group-rule" role="separator" />:null
+     :null}
     <Link href={item.href}
      aria-label={badge&&count!==null?`${item.label}, ${count} pending`:item.label}
      title={item.label}
