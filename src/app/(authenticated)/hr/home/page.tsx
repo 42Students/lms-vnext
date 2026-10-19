@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
@@ -221,7 +222,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
           className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
-          {row.job.id===mostSharedLiveId&&liveDrives.length>1&&(liveDriveCounts[row.job.id]?.sharedApplicants??0)>0?<span className="mt-1 inline-block rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-body">Most shared applicants in this preview</span>:null}
+          {row.job.id===mostSharedLiveId&&liveDrives.length>1&&(liveDriveCounts[row.job.id]?.sharedApplicants??0)>0?<Badge  tone="neutral" className="mt-1">Most shared applicants in this preview</Badge>:null}
           <span className="mt-1 block text-xs text-muted-foreground">
             {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
           </span>
@@ -258,9 +259,9 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           <span className="block break-words font-medium text-foreground">{item.roundName}</span>
           <span className="mt-1 block text-sm text-body">{item.jobTitle} · {when(item.dueAt)} IST</span>
-          <span className="mt-2 inline-flex rounded-full border border-border px-2 py-1 text-xs font-semibold text-foreground">
+          <Badge  tone="neutral" className="mt-2">
             {HR_DEADLINE_URGENCY_LABELS[hrResultDeadlineUrgency(item.dueAt,now)]}
-          </span>
+          </Badge>
         </Link>)}</div> : <p className="mt-3 text-sm text-muted-foreground">No upcoming results deadlines are recorded for this college this week.</p>}
     </section>
     <section aria-label="Unread placement-cell conversations"
