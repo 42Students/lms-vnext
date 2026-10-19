@@ -5,6 +5,7 @@ import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 export function TpoCompanyFeedbackForm({
   companyId,
@@ -83,8 +84,8 @@ export function TpoCompanyFeedbackForm({
         >
         {busy ? "Saving note..." : reviewing?"Confirm note save":"Review and save note"}
       </Button>
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
-      {saved ? <p role="status" className="text-sm text-body">Note saved. The timeline is refreshing.</p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
+      {saved ? <InlineNotice tone="success" message="Note saved. The timeline is refreshing."/> : null}
     </section>
   );
 }

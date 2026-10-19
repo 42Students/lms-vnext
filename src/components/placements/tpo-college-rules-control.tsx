@@ -5,6 +5,7 @@ import {TPO_RULE_LIMITS,tpoRuleBoundsValid} from "@/modules/placements/tpo-rule-
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 
 type Rules = {
   countsAsPlacedAt: string;
@@ -80,7 +81,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         The placed numbers (Home, Students, Reports) follow the first rule as soon as you save; the offer rules apply to offers released from then on.
       </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        {dirty?<p role="status" className="sm:col-span-2 text-sm text-[var(--lms-gold-accent)]">Unsaved changes</p>:null}
+        {dirty?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="info" message="Unsaved changes"/></div>:null}
         <label className="grid gap-1 text-sm font-semibold text-body">
           A student counts as placed when the offer is
           <Select value={form.countsAsPlacedAt} disabled={busy}
@@ -110,7 +111,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         className="mt-4 min-h-11 md:min-h-9">
         {busy ? "Saving..." : "Review and confirm rules"}
       </Button>
-      {error ? <p role="alert" className="mt-2 text-sm text-error">{error}</p> : null}
+      {error ? <InlineNotice tone="error" message={error}/> : null}
     </section>
   );
 }
