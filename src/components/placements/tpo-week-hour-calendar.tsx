@@ -189,11 +189,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     })}
    </div>
   </div>
-  {move?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-    onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();setMove(null);}}}>
-    <section role="dialog" aria-modal="true" aria-label="Move recruiter follow-up"
-      className="w-full max-w-lg border-b border-border pb-6">
-      <h2 className="text-lg font-semibold">Move follow-up</h2>
+  {move?<Dialog open={Boolean(move)} onOpenChange={next=>{if(!next)setMove(null);}} title="Move follow-up" className="max-w-lg">
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
       <button type="button" onClick={()=>setMove(null)}
         className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Close</button>
