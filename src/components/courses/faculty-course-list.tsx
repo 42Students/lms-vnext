@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
@@ -221,12 +222,8 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
       ))}
       </div>
       )}
-      <nav aria-label="Faculty Courses pages" className="flex flex-wrap items-center justify-between gap-3">
-        {pagination.page > 1 ? <Link href={facultyCourseListHref({...query,page:pagination.page-1})}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Previous</Link> : <span />}
-        {pagination.page < pagination.totalPages ? <Link href={facultyCourseListHref({...query,page:pagination.page+1})}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">Next</Link> : null}
-      </nav>
+      <Pagination label="Faculty Courses pages" page={pagination.page} pageCount={pagination.totalPages}
+        hrefForPage={page=>facultyCourseListHref({...query,page})} />
     </div>
   );
 }
