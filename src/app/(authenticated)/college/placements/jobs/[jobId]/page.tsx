@@ -23,7 +23,6 @@ export default async function CollegePlacementDrivePage({
     <PlacementDriveWorkspace
       context={context}
       jobId={jobId}
-      eyebrow="College Admin"
     />
   );
 }

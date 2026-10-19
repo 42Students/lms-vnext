@@ -112,6 +112,18 @@
   height: 10px;
   background: #1a1d21;
 }
+/* docs/design/legacy-styles/components___antddesign.scss:66-79 */
+@media (max-width: 767px) {
+  [data-slot="info-popover"] [role="tooltip"] {
+    max-width: calc(100vw - 32px);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  [data-slot="info-popover"] [role="tooltip"] .ant-table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
 @media (max-width: 639px) {
   [data-slot="dropdown-root"][data-mobile-sheet="true"][open]::before {
     content: "";
@@ -185,6 +197,22 @@
 [data-slot="popover"] {
   box-shadow: 9px 11px 28px rgba(0, 0, 0, .1);
 }
+/* docs/design/legacy-styles/components___dropdown.scss:96-126: profile menu variant */
+#lms-topbar-account-dialog {
+  width: min(280px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  min-height: 150px;
+  padding: 16px 24px;
+  border-radius: 6px;
+  box-shadow: 9px 11px 28px rgba(0, 0, 0, .1);
+}
+@media (max-width: 767px) {
+  #lms-topbar-account-dialog {
+    width: calc(100vw - 24px);
+    border-radius: 14px;
+    padding: 16px;
+  }
+}
 [data-slot="popover-listbox"] { border-radius: 12px; }
 [data-slot="popover-listbox"] { box-shadow: 0 4px 24px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04); }
 [data-slot="popover-listbox"] { max-width: min(420px, calc(100vw - 24px)); }
@@ -199,7 +227,15 @@
 @media (prefers-reduced-motion: reduce) {
   [data-slot="popover-listbox"] { animation: none !important; transition: none !important; }
 }
-[data-slot="toast-stack"] { max-width: min(420px, calc(100vw - 32px)); }
+/* Closest old-LMS notification surface (no canonical toast SCSS):
+   docs/design/legacy-styles/components___notification-drawer.scss:113-121. */
+[data-slot="toast-stack"] {
+  max-width: min(420px, calc(100vw - 32px));
+  --lms-toast-shadow: 0 4px 24px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .04);
+}
+[data-slot="toast-action"] {
+  --lms-toast-shadow: 0 4px 24px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .04);
+}
 [data-slot="toast-stack"] > section { border-radius: 12px; background: #fff; }
 [data-slot="toast-stack"] > section { overflow-wrap: anywhere; }
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:hover { background: rgba(0,0,0,.035); }
@@ -224,11 +260,24 @@
   letter-spacing: -.02em;
   color: var(--lms-neutral-900);
 }
+/* docs/design/legacy-styles/components___notification-drawer.scss:192-223 */
+[data-slot="notification-popover"] :is(ul, ol) a[href] {
+  border-radius: 8px;
+  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
 [data-slot="notification-popover"] :is(ul, ol) a[href]:hover {
-  background: rgba(0, 0, 0, .035);
+  background: var(--lms-neutral-50);
+  border-color: var(--lms-neutral-200);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
 }
 [data-slot="notification-popover"] :is(ul, ol) a[href]:active {
   background: rgba(0, 0, 0, .06);
+  box-shadow: none;
+}
+[data-slot="notification-popover"] :is(ul, ol) a[href]:focus-visible {
+  outline: 1px solid var(--lms-neutral-500);
+  outline-offset: 1px;
 }
 [data-slot="notification-popover"] :is(ul, ol) {
   scrollbar-width: none;

@@ -18,7 +18,7 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
  const params=await searchParams,q=typeof params.q==="string"?params.q.trim():"";
  const data=q.length>=3?await lookupCollegeStudentPlacement(await getCurrentRequestContext(),q):null;
  return <div className="space-y-5">
-  <PageHeader eyebrow="College Admin · Placements" title="Student placement lookup"
+  <PageHeader title="Student placement lookup"
    actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Analytics</Link>}/>
   <form action="/college/placements/student-lookup" role="search" className="rounded-[8px] border border-border bg-surface p-5">
    <label className="grid max-w-xl gap-2 text-sm font-semibold">Name, roll number or email

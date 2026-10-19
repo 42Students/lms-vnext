@@ -24,7 +24,7 @@ export function TpoTeamThreadDetails({threadId,topic,counterpart,createdDate,dec
  return <section className="space-y-2">
   <Button variant={open?"primary":"secondary"} type="button" onClick={toggle} aria-expanded={open}
    aria-controls={"team-details-"+threadId}
-   className="min-h-11 sm:min-h-9">
+   className="min-h-11 rounded-[8px] text-sm font-medium min-[768px]:min-h-9">
    {open?"Hide details":"Details"}
   </Button>
   {open?<aside id={"team-details-"+threadId} aria-label="Conversation details"

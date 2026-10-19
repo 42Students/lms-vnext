@@ -8,7 +8,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
 import {TpoGridFilterPanel,type TpoFilterField} from "@/components/tpo/tpo-grid-filter-panel";
-import {chosenTpoGridColumns,exportTpoGridCsv,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import {chosenTpoGridColumns,exportTpoGridCsv,tpoGridExportColumns,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {gridExportFilename} from "@/modules/placements/grid-export-filename";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
@@ -84,6 +84,7 @@ export function GridWorkspace<Row>({
   urlKeys.length&&columnScope==="url"?urlKeys:permitted;
  const chosen=chosenTpoGridColumns(columns,activeKeys.length?activeKeys:permitted)
    .filter(column=>!column.exportOnly);
+ const exportColumns=tpoGridExportColumns(columns,chosen);
  const pageIds=useMemo(()=>new Set(rows.map(rowKey)),[rows,rowKey]);
  const selectedPage=rows.filter(row=>selection?.selected.includes(rowKey(row)));
  const clearPageSelection=()=>{
@@ -129,7 +130,7 @@ export function GridWorkspace<Row>({
  const downloadCsv=()=>{
   if(!rows.length){setNotice("There are no rows on this page to export.");return;}
   try{
-   const csv=exportTpoGridCsv(chosen,exportedRows);
+   const csv=exportTpoGridCsv(exportColumns,exportedRows);
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const link=document.createElement("a");
@@ -141,8 +142,8 @@ export function GridWorkspace<Row>({
  };
  const copyRows=async()=>{
   if(onCopyRows){onCopyRows();return;}
-  const lines=[chosen.map(column=>safeTsv(column.label)).join("\t"),
-   ...exportedRows.map(row=>chosen.map(column=>safeTsv(column.read(row))).join("\t"))];
+  const lines=[exportColumns.map(column=>safeTsv(column.label)).join("\t"),
+   ...exportedRows.map(row=>exportColumns.map(column=>safeTsv(column.read(row))).join("\t"))];
   try{await navigator.clipboard.writeText(lines.join("\r\n"));
    setNotice("Copied "+exportedRows.length+" row(s) as tab-separated columns.");
   }catch{setNotice("Clipboard access is blocked. Use CSV export instead.");}

@@ -1,6 +1,7 @@
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { MetricBar } from "@/components/ui/metric-bar";
-import { DataTable } from "@/components/ui/data-table";
+import { HrCompanyReportsGrid } from "@/components/hr/hr-company-reports-grid";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -177,33 +178,12 @@ export default async function RecruiterCompanyReportsPage({
         </div>}
       />
 
-      {report.choices.length > 1 ? (
-        <nav
-          aria-label="Choose report college"
-          className="flex flex-wrap gap-2"
-        >
-          {report.choices.map((grant) => (
-            <Link
-              key={grant.id}
-              href={recruiterCompanyReportsHref({
-                collegeId: grant.collegeId,
-              })}
-              aria-current={
-                grant.collegeId === collegeId
-                  ? "page"
-                  : undefined
-              }
-              className={
-                grant.collegeId === collegeId
-                  ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-                  : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-              }
-            >
-              {grant.collegeName}
-            </Link>
-          ))}
-        </nav>
-      ) : null}
+      {report.choices.length > 1 ? <NeedsDoingChips label="College:"
+        selectedKey={collegeId}
+        items={report.choices.map(grant=>({
+          key:grant.collegeId,label:grant.collegeName,
+          href:recruiterCompanyReportsHref({collegeId:grant.collegeId}),
+        }))}/> : null}
 
       <Tabs renderPanel={false} ariaLabel="Company sections" value="reports"
         items={[{value:"company",label:"Company",href:`${companyBase}&tab=company`},
@@ -329,38 +309,16 @@ export default async function RecruiterCompanyReportsPage({
             description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."
           />
         ) : (
-          <DataTable
-            caption="Company Reports table"
-            rows={jobs}
-            getRowKey={job=>job.id}
-            empty={<EmptyState title="No matching drives"
-              description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."/>}
-            columns={[
-              {key:"drive",header:"Drive",mobilePriority:"primary",
-                cell:(job)=><div>
-                  <Link href={"/hr/placements/jobs/"+encodeURIComponent(job.id)}
-                    className="inline-flex min-h-9 items-center break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{job.title}</Link>
-                  <p className="mt-1 text-xs text-muted-foreground">{job.employmentType.replaceAll("_"," ")}</p>
-                </div>},
-              {key:"status",header:"Status",mobilePriority:"secondary",
-                cell:(job)=><StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge>},
-              {key:"published",header:"Published",mobilePriority:"secondary",
-                cell:(job)=>formatDate(job.publishedAt)},
-              {key:"applied",header:"Applications",mobilePriority:"secondary",
-                cell:(job)=>job.applications},
-              {key:"submitted",header:"Submitted",mobilePriority:"secondary",
-                cell:(job)=>job.submittedApplications},
-              {key:"withdrawn",header:"Withdrawn",mobilePriority:"secondary",
-                cell:(job)=>job.withdrawnApplications},
-              {key:"offered",header:"Offered",mobilePriority:"secondary",
-                cell:(job)=>job.outstandingOffers+job.acceptedOffers+job.declinedOffers},
-              {key:"accepted",header:"Accepted offers",mobilePriority:"secondary",
-                cell:(job)=>job.acceptedOffers},
-              {key:"declined",header:"Declined",mobilePriority:"secondary",
-                cell:(job)=>job.declinedOffers},
-              {key:"joined",header:"Joined",mobilePriority:"secondary",
-                cell:(job)=>job.joinedOffers},
-            ]}
+          <HrCompanyReportsGrid
+            scopeKey={[context.user.id,collegeId].join(":")}
+            rows={jobs.map(job=>({
+              id:job.id,title:job.title,employmentType:job.employmentType,
+              status:job.status,published:formatDate(job.publishedAt),
+              applications:job.applications,submittedApplications:job.submittedApplications,
+              withdrawnApplications:job.withdrawnApplications,
+              outstandingOffers:job.outstandingOffers,acceptedOffers:job.acceptedOffers,
+              declinedOffers:job.declinedOffers,joinedOffers:job.joinedOffers,
+            }))}
           />
         )}
 

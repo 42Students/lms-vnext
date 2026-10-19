@@ -34,12 +34,14 @@ export default async function SuperAdminCourseProgressPage({
   const summary = adminProgressStats(data.items);
   return <div className="min-w-0 space-y-5">
     <PageHeader title="Course Progress"
-      description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners." />
+      description="Read-only recorded learner content activity by offering. This is not a completion rate, attendance summary, or count of eligible learners."
+      actions={<a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
+     className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export course-progress.csv</a>}
+    />
     <p className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
     </p>
-    <a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export course-progress.csv</a>
+    
     <form className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}

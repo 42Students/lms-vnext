@@ -52,18 +52,6 @@ function nextFilter(workspace: Workspace) {
   return "lectures";
 }
 
-function Metric({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string | number;
-  detail: string;
-}) {
-  return <StatTile label={label} value={value} detail={detail} />;
-}
-
 export function LearnerCourseOverview({
   deliveryId,
   workspace,
@@ -427,22 +415,22 @@ export function LearnerCourseOverview({
       ) : null}
 
       <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-32 grid gap-4 border-t border-border pt-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric
+        <StatTile
           label="Overall"
           value={progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
           detail={`${summary.itemsCompleted} of ${summary.itemsTotal} learning items complete.`}
         />
-        <Metric
+        <StatTile
           label="Lessons"
           value={`${summary.lessonsCompleted}/${summary.lessonsTotal}`}
           detail="Completed lessons."
         />
-        <Metric
+        <StatTile
           label="Assignments"
           value={`${summary.assignmentsCompleted}/${summary.assignmentsTotal}`}
           detail="Submitted assignments."
         />
-        <Metric
+        <StatTile
           label="Quizzes"
           value={`${summary.quizzesCompleted}/${summary.quizzesTotal}`}
           detail="Completed quizzes."

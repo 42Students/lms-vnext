@@ -11,10 +11,13 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
-import { DataTable } from "@/components/ui/data-table";
+import { HrJobSelectionGrid } from "@/components/hr/hr-job-selection-grid";
+import { HrJobOffersGrid } from "@/components/hr/hr-job-offers-grid";
+import { HrRoundResultsGrid } from "@/components/hr/hr-round-results-grid";
 import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
 import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
@@ -348,7 +351,7 @@ export default async function HrPlacementJobPage({
                 {driveOverview.deadlineState==="DUE_SOON"?"Applications close soon":driveOverview.deadlineState==="PASSED"?"Application deadline passed":driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
-          <section aria-label="What students see" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+          <section aria-label="What students see" className="border-b border-border pb-4 sm:pb-5">
             <h3 className="font-semibold text-foreground">What students see</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Student-facing draft facts are shown for reference. Exact publication and application access are controlled by the placement cell.
@@ -375,7 +378,7 @@ export default async function HrPlacementJobPage({
             </dl>
           </section>
           <section aria-labelledby="recruiter-shared-funnel-title"
-            className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
+            className="border-b border-border pb-4 sm:pb-5">
             <h3 id="recruiter-shared-funnel-title" className="font-semibold text-foreground">Hiring pipeline</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
@@ -402,7 +405,7 @@ export default async function HrPlacementJobPage({
               className={step.state==="CURRENT"
                 ?"rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-3 text-sm font-semibold text-primary-text"
                 :"rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary px-3 py-3 text-sm text-body"}>
-              <span className="block text-xs">{step.state==="COMPLETE"?"Done":step.state==="CURRENT"?"Current":"Upcoming"}</span>
+              <StatusBadge tone={step.state==="COMPLETE"?"success":step.state==="CURRENT"?"info":"neutral"}>{step.state==="COMPLETE"?"Done":step.state==="CURRENT"?"Current":"Upcoming"}</StatusBadge>
               <span className="mt-1 block">{step.label}</span>
             </li>)}
           </ol>
@@ -639,14 +642,14 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xl font-bold text-foreground">{item.value}</p>
             </div>)}
           </div>
-          <section className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+          <section className="space-y-2 border-b border-border pb-4 sm:pb-5">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
             {driveOverview.readOnly ? <p role="status" className="text-sm text-body">
               This drive is finished, so a selection list can no longer be sent.
             </p> : null}
             <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, letter-of-intent and offer issue workflows remain with the placement team.</p>
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
-              <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
+              <Badge key={applicant.id} tone="success">{applicant.name || "Candidate"}</Badge>)}</div> : null}
           </section>
           <Tabs renderPanel={false} ariaLabel="Offer status" value={filters.offerState}
             items={HR_OFFER_STATES.map(status=>({value:status,
@@ -654,24 +657,22 @@ export default async function HrPlacementJobPage({
                 status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status),
               href:"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+status+returnQuery}))}/>
           {(filters.offerState==="ALL"||["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState))?
-            <section aria-label="Placement-cell selection history" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+            <section aria-label="Placement-cell selection history" className="space-y-3 border-b border-border pb-4 sm:pb-5">
               <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
               <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
-                            <DataTable
-                caption="Placement-cell selection history"
-                rows={selectionRows}
-                getRowKey={item => item.id}
-                empty={<p role="status" className="text-sm text-muted-foreground">No selections have been recorded in this status.</p>}
-                columns={[
-                  { key: "candidate", header: "Candidate", mobilePriority: "primary", cell: item => item.name ?? "Unnamed applicant" },
-                  { key: "role", header: "Role", mobilePriority: "secondary", cell: item => item.role },
-                  { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: item => item.annualCtcInr == null ? "—" :
-                    (item.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
-                  { key: "status", header: "Status", mobilePriority: "secondary", cell: item =>
-                    <StatusBadge tone={item.status==="VERIFIED"?"success":item.status==="REVOKED"?"error":"warning"}>{item.status === "SELECTED" ? "With the placement cell" :
-                      item.status === "VERIFIED" ? "Verified, awaiting release" : "Selection cancelled"}</StatusBadge> },
-                ]}
-              />
+              {selectionRows.length ? <HrJobSelectionGrid
+                scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id].join(":")}
+                rows={selectionRows.map(item=>({
+                  id:item.id,candidate:item.name??"Unnamed applicant",role:item.role,
+                  ctcLpa:item.annualCtcInr==null?"—":
+                    (item.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2}),
+                  ctcSort:item.annualCtcInr,
+                  status:item.status==="SELECTED"?"With the placement cell":
+                    item.status==="VERIFIED"?"Verified, awaiting release":"Selection cancelled",
+                }))}
+              />:<p role="status" className="text-sm text-muted-foreground">
+                No selections have been recorded in this status.
+              </p>}
               <p className="text-xs text-muted-foreground">
                {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
               </p>
@@ -682,26 +683,22 @@ export default async function HrPlacementJobPage({
                 className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next selections</Link>:null}
               </nav>
             </section>:null}
-          {offers.length ? <DataTable
-            caption="Offers for shared applicants at this college"
-            rows={offers}
-            getRowKey={offer => offer.id}
-            empty={<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>}
-            columns={[
-              { key: "candidate", header: "Candidate", mobilePriority: "primary", cell: offer =>
-                <>{offer.name || "Unnamed applicant"}<span className="block text-xs font-normal text-muted-foreground">{offer.role}</span></> },
-              { key: "kind", header: "Type", mobilePriority: "secondary", cell: offer => offer.kind === "LOI" ? "Letter of intent" : "Offer" },
-              { key: "ctc", header: "CTC (LPA)", mobilePriority: "secondary", cell: offer => offer.annualCtcInr == null ? "—" :
-                (offer.annualCtcInr / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) },
-              { key: "status", header: "Status", mobilePriority: "secondary", cell: offer => <StatusBadge tone={offer.status==="ACCEPTED"?"success":offer.status==="DECLINED"?"error":"info"}>{recruiterOfferStatusLabel(offer.status)}</StatusBadge> },
-              { key: "deadline", header: "Reply by", mobilePriority: "secondary", cell: offer => offer.expiresAt ?
-                new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(offer.expiresAt) : "Not set" },
-              { key: "joining", header: "Joining", mobilePriority: "secondary", cell: offer =>
-                <>{offer.joiningStatus === "JOINED" ? "Joined" :
-                  offer.joiningStatus === "DEFERRED" ? "Deferred" :
-                  offer.joiningStatus === "DID_NOT_JOIN" ? "Did not join" : "Not recorded"}
-                  <span className="block text-xs text-muted-foreground">{offer.joiningDate ?? "Date not set"}</span></> },
-            ]}
+          {offers.length ? <HrJobOffersGrid
+            scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id].join(":")}
+            rows={offers.map(offer=>({
+              id:offer.id,candidate:offer.name||"Unnamed applicant",role:offer.role,
+              kind:offer.kind==="LOI"?"Letter of intent":"Offer",
+              ctcLpa:offer.annualCtcInr==null?"—":
+                (offer.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2}),
+              ctcSort:offer.annualCtcInr,status:recruiterOfferStatusLabel(offer.status),
+              deadline:offer.expiresAt?new Intl.DateTimeFormat("en-IN",{
+                timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+              }).format(offer.expiresAt):"Not set",
+              joining:offer.joiningStatus==="JOINED"?"Joined":
+                offer.joiningStatus==="DEFERRED"?"Deferred":
+                offer.joiningStatus==="DID_NOT_JOIN"?"Did not join":"Not recorded",
+              joiningDate:offer.joiningDate??"Date not set",
+            }))}
           /> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>:null}
           {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
@@ -822,21 +819,14 @@ export default async function HrPlacementJobPage({
                 items={outcomeOptions.map(option=>({value:option.value,label:option.label,count:option.count,
                   href:hrInlineRoundResultsHref(workspace.job.id,inlineResults.round.id,option.value)}))}/>
                 {inlineResults.rows.length
-                  ? <div className="grid gap-3 md:grid-cols-2">
-                      {inlineResults.rows.map(candidate => (
-                        <article key={candidate.key} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
-                          <p className="break-words font-semibold text-foreground">{candidate.name}</p>
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            <StatusBadge tone={candidate.outcome==="PASS"?"success":candidate.outcome==="FAIL"?"error":candidate.outcome==="HOLD"?"warning":"neutral"}>{candidate.outcome ?? "UNRECORDED"}</StatusBadge>
-                            <StatusBadge tone={candidate.status==="APPLIED"?"success":candidate.status==="STAGED"?"warning":"neutral"}>{candidate.status}</StatusBadge>
-                          </div>
-                          {candidate.scorePercent != null
-                            ? <p className="mt-2 text-sm text-body">Score: {candidate.scorePercent}%</p> : null}
-                          {candidate.waitlistRank != null
-                            ? <p className="mt-1 text-sm text-body">Waitlist rank: {candidate.waitlistRank}</p> : null}
-                        </article>
-                      ))}
-                    </div>
+                  ? <HrRoundResultsGrid
+                      scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id,inlineResults.round.id].join(":")}
+                      rows={inlineResults.rows.map(candidate=>({
+                        key:candidate.key,name:candidate.name,outcome:candidate.outcome,
+                        status:candidate.status,scorePercent:candidate.scorePercent,
+                        waitlistRank:candidate.waitlistRank,
+                      }))}
+                    />
                   : <p className="text-sm text-muted-foreground">No shared candidates match this result filter.</p>}
               </> : null}
           </> : <p className="text-sm text-muted-foreground">No active hiring rounds are configured for this drive.</p>}

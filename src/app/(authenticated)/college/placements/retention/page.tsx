@@ -14,7 +14,7 @@ export default async function CollegeRetentionPage(){
   {key:"changed",header:"Last changed",cell:row=>fmt.format(row.lastChange)},
  ];
  return <div className="space-y-6">
-  <PageHeader eyebrow="College Admin · Placements" title="Data retention report"
+  <PageHeader title="Data retention report"
    description="Rejected or withdrawn applications idle for 180+ days."
    actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 inline-flex items-center lms-inline-link">Analytics</Link>}/>
   <section className="border-t border-border pt-5">
