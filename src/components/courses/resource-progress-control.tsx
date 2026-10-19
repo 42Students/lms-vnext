@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
@@ -81,7 +82,7 @@ export function ResourceProgressControl({
             ? "Saving…"
             : "Mark as complete"}
       </Button>
-      {complete ? <p role="status" className="mt-2 text-xs text-success">Marked as complete</p> : null}
+      {complete ? <Badge role="status" tone="success" className="mt-2">Marked as complete</Badge> : null}
       <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
         title={contentType === "LIVE_CLASS" ? "Attended this session?" : "Finished with these materials?"}
         description="Mark this learning item as complete?"
