@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
-import { Button } from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 import {createRecruiterBellRequestGate} from "@/modules/placements/recruiter-bell-model";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,createHrBellMutationGate,parseHrBellResponse,type HrBellResponse} from "@/modules/placements/hr-recruiter-bell-model";
@@ -76,17 +76,17 @@ export function HrRecruiterBell(){
  },[open]);
  const unread=state?.unread??0;
  return <div className="relative">
-  <Button variant="secondary" ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
+  <Button ref={triggerRef} type="button" aria-label={"Notifications, "+unread+" new"}
    aria-expanded={open} aria-haspopup="dialog"
    onClick={()=>setOpen(value=>!value)}
-   className="relative min-h-11 gap-1 rounded-[8px] px-3">
-   Notifications {unread>0?<span className="ml-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#ff7576] px-1 text-[10px] leading-3 text-white">{unread>99?"99+":unread}</span>:null}
+   variant="secondary" className="relative">
+   Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
   </Button>
-  {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-[1050] mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[400px] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-[var(--lms-overlay-shadow)]">
-   <div className="-mx-4 -mt-4 flex items-center justify-between gap-2 rounded-t-[12px] border-b border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-4 py-3">
-    <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-foreground)]">Notifications</h2>
-    <Button variant="ghost" type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
-     className="min-h-11 px-3 text-primary-text">Close</Button>
+  {open?<section ref={panelRef} role="dialog" aria-modal="false" aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 w-[400px] max-w-[calc(100vw-2rem)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
+   <div className="flex items-center justify-between gap-2">
+    <h2 className="font-semibold">Notifications</h2>
+    <Button type="button" onClick={()=>{setOpen(false);triggerRef.current?.focus();}}
+     variant="ghost">Close</Button>
    </div>
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
    {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
@@ -99,9 +99,9 @@ export function HrRecruiterBell(){
       <span className="flex-1">{item.label}</span><span className="text-xs text-muted-foreground">{relativeHrBellTime(item.at,now)}</span>
      </Link></li>)}</ul></ScrollCue>}
    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
-    {unread>0?<Button variant="secondary" type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
-      className="min-h-11 px-3">{loading?"Saving…":"Mark all read"}</Button>:null}
+    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">More</Link>
+    {unread>0?<Button type="button" disabled={loading} onClick={()=>void markAll()}
+      variant="secondary">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
    {saveError?<p role="alert" className="mt-2 text-xs text-error">{saveError}</p>:null}
   </section>:null}
