@@ -160,7 +160,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
     <input type="hidden" name="page" value={String(data.query.page)} />
     <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
-    <Button type="submit" variant="primary" variant="secondary" className="self-end">Refresh</Button>
+    <Button type="submit" variant="secondary" className="self-end">Refresh</Button>
   </form>
   {applicationFilters?<p role="status" className="text-sm text-body">
     {data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL"
