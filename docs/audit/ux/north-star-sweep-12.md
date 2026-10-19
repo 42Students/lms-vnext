@@ -112,3 +112,19 @@ After the initial sweep and its merge into main, fast-forwarded `chatgpt/chat-12
 - Respected intentional standalone object styles (pills, branded previews, grouped table boxes, overlays) rather than deleting their content structures. Most changes were narrow replacements of literal `rounded-[9px]` with `rounded-[var(--lms-control-radius)]`, literal `rounded-xl` with the 12px canvas/card token, legacy heading `#172033` with `var(--lms-heading)`, and link literals with semantic `text-link`.
 - Current unmerged delta at this checkpoint: **26 commits ahead**, **613 behind**, **26 changed files**; changed-file groups Reports: 0, Placements/drives: 20, Other TPO routes: 1, TPO components: 5. Parallel lanes continued merging into `main` while this one authored commits. Do not force-update the branch; perform a normal merge/reconciliation of `main` before the orchestrator merges further.
 - Source changes only; no tests, TypeScript checker, app execution, CI, browser screenshot or pixel comparison. Audit mark means **source-inspected/changed**, not runtime-certified.
+
+## Continuation — chat-12 focused third-pass source styling (2026-10-19)
+
+- Fast-forwarded `chatgpt/chat-12-b` cleanly to then-current `main` at `f7dd3e81786adf00538daebf63a075046d159b4c` before editing; no force update and no writes to `main`.
+- **30 verified styling commits across 30 unique route/component files**, all prefixed `[chat-12]`; GitHub source writes only. Changes include:
+- find/page.tsx, find/error.tsx, batches/page.tsx
+- tpo-team-forms, tpo-team-rename, tpo-team-search, tpo-team-message-actions
+- tpo-students-bulk-add, tpo-student-quick-panel, tpo-students-drive-visibility, tpo-student-saved-views, tpo-student-nudge-panel, tpo-student-note-editor, tpo-timed-debar-control
+- tpo-batch-rule-editor, tpo-batch-facet-filters, tpo-batch-workspace-tabs, tpo-batch-student-saved-views, tpo-batch-student-bulk-notes, tpo-batch-instant-search, tpo-batch-decision-control, tpo-batch-inline-decision, tpo-batch-invitation-control
+- tpo-company-create-form, tpo-company-visibility-editor
+- tpo-grid-column-chooser, tpo-spreadsheet-grid, tpo-grid-filter-panel, tpo-bulk-action-preview, tpo-inbox-search
+- Collapsed TPO finder search-result cards into one bordered list per result category with hairline row dividers; switched its error fallback to the shared secondary `Button`. Retained results, route links, form state, and ARIA semantics.
+- Removed duplicate `Select`/`Button` styling on batch directory controls to inherit shared 9px/36px component behavior. Normalized first-third TPO roster/student/company/batch/team editor actions to 36px, using `--lms-control-radius` (9px) and separate content surfaces using `--lms-canvas-radius` (12px).
+- Preserved semantic pill styles, independent dialog/panel content, grouped tables, checkbox/touch targets not explicitly targeted, conditional renders, and all interaction/state behavior.
+- Applied source-level assertions on each changed token occurrence, examined closings for truncated `</Select` tags, and avoided bracket/cast edits. **No TypeScript compiler, tests, CI, dev server, browser/pixel diff or runtime execution**. Compile and visual parity remain unverified.
+- Branch relation at tracker write: **ahead `30`**, **behind `0`** relative to current `main`; main may continue advancing concurrently, so use regular merge/reconciliation, never force-update.
