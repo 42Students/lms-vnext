@@ -76,7 +76,7 @@ export default async function SuperAdminTenantSetup({
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes."
-   actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Tenant directory</Link>} />
+   actions={<Link href="/admin/tenants" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-3.5 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)] ">← Tenant directory</Link>} />
   <section aria-label="Tenant setup overview" className="grid gap-3 sm:grid-cols-3">
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Current step</p>
@@ -93,11 +93,11 @@ export default async function SuperAdminTenantSetup({
   </section>
   <nav aria-label="Tenant Setup steps" className="flex flex-wrap gap-2 border-b border-border">
    <Link href={tabLink("STRUCTURE")} aria-current={tab==="STRUCTURE"?"page":undefined}
-    className={"inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] px-3 text-sm font-semibold "+ (tab==="STRUCTURE"?active:inactive)}>
+    className={"inline-flex min-h-[var(--lms-control-height)]  items-center border-b-[3px] px-3 text-sm font-semibold "+ (tab==="STRUCTURE"?active:inactive)}>
     1. Tenant structure
    </Link>
    <Link href={tabLink("LAUNCH")} aria-current={tab==="LAUNCH"?"page":undefined}
-    className={"inline-flex min-h-11 sm:min-h-9 items-center border-b-[3px] px-4 text-sm font-semibold "+(tab==="LAUNCH"?active:inactive)}>
+    className={"inline-flex min-h-[var(--lms-control-height)]  items-center border-b-[3px] px-4 text-sm font-semibold "+(tab==="LAUNCH"?active:inactive)}>
     2. Launch setup
    </Link>
   </nav>
@@ -140,7 +140,7 @@ export default async function SuperAdminTenantSetup({
      <p className="mt-2 text-xs text-muted-foreground">First page only. Archived colleges remain marked; no implicit restoration.</p>
     </div>
    </section>
-   <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Continue to launch setup →</Link>
+   <Link href={tabLink("LAUNCH")} className="inline-flex min-h-[var(--lms-control-height)]  items-center font-semibold text-primary-text underline">Continue to launch setup →</Link>
   </>:college?<>
    <h2 className="text-lg font-semibold">{college.name} · Launch setup</h2>
    <p role="status" className="border-b border-border py-4 text-sm text-body">
@@ -152,7 +152,7 @@ export default async function SuperAdminTenantSetup({
      {label:"Sign-in",href:"/signin",description:"Review login methods and account access."},
      {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
     ].map(card=><Link key={card.label} href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
-     className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 hover:border-primary">
+     className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] p-4 hover:border-primary">
      <h3 className="font-semibold text-primary-text">{card.label}</h3>
      <p className="mt-2 text-sm text-body">{card.description}</p>
     </Link>)}
@@ -167,7 +167,7 @@ export default async function SuperAdminTenantSetup({
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-foreground">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>
-      <Link href={step.href} className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Open workspace →</Link>
+      <Link href={step.href} className="mt-3 inline-flex min-h-[var(--lms-control-height)]  items-center text-sm font-semibold text-primary-text underline">Open workspace →</Link>
      </li>)}
     </ol>
    </section>
@@ -175,7 +175,7 @@ export default async function SuperAdminTenantSetup({
   </>:<section role="status" className="border-b border-border py-5">
     <h2 className="font-semibold">No college selected</h2>
     <p className="mt-2 text-sm text-body">No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant.</p>
-    <Link href={tabLink("STRUCTURE")} className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Create or select a college →</Link>
+    <Link href={tabLink("STRUCTURE")} className="mt-3 inline-flex min-h-[var(--lms-control-height)]  items-center font-semibold text-primary-text underline">Create or select a college →</Link>
   </section>}
  </div>;
 }
