@@ -461,3 +461,30 @@
   color: var(--lms-neutral-400) !important;
   font-size: 14px !important;
 }
+
+/* TEXT SELECTION
+ * Legacy accent/fill: components___variables.scss:10-13
+ * (#26bac7 primary, #eff8fa soft teal); old-lms-shell.css:45-48
+ * (same active-item fill). Pure selection paint, no text metrics.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(*):not(:where([data-unskin], [data-unskin] *))::selection {
+  color: var(--lms-neutral-900) !important;
+  background-color: var(--lms-primary-subtle) !important;
+}
+
+/* SCROLLBAR PAINT
+ * Legacy: components___common.scss:294-311 (light-gray thumb #c4c4c4,
+ * transparent body / generally hidden chrome); components___variables.scss:48.
+ * Existing global overflow and scrollbar visibility policies are untouched.
+ * Explicit .lms-scrollbar-thin areas still decide whether a thumb is shown.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(*):not(:where([data-unskin], [data-unskin] *)) {
+  scrollbar-color: var(--lms-scrollbar-thumb) transparent;
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(*):not(:where([data-unskin], [data-unskin] *))::-webkit-scrollbar-thumb {
+  background-color: var(--lms-scrollbar-thumb) !important;
+  border-radius: 1px;
+}
