@@ -311,6 +311,7 @@ export function SectionOperations({
   const rosterColumns = [
     {
       key: "learner",
+      mobilePriority: "primary",
       header: "Learner",
       cell: (row: RosterRow) => (
         <span className="font-semibold text-foreground">
@@ -320,6 +321,7 @@ export function SectionOperations({
     },
     {
       key: "status",
+      mobilePriority: "secondary",
       header: "Section history",
       cell: (row: RosterRow) => (
         <StatusBadge tone={statusTone(row.status)}>
@@ -335,6 +337,7 @@ export function SectionOperations({
     },
     {
       key: "actions",
+      mobilePriority: "action",
       header: <span className="sr-only">Actions</span>,
       className: "text-right",
       cell: (row: RosterRow) =>
