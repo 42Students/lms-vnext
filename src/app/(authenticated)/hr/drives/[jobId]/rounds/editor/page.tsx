@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {Card} from "@/components/ui/card";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
@@ -60,7 +61,7 @@ export default async function HrRoundsEditorPage({params}:{
    {rounds.length===0?<p role="status" className="border-y border-border py-4 text-sm text-body">
     This drive has no hiring rounds. Add a round using the form above.
    </p>:null}
-   {rounds.map(round=><article key={round.id} className="space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+   {rounds.map(round=><Card as="article" key={round.id} className="space-y-3">
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
      <span className="flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge>{round.status}</StatusBadge></span></div>
     {round.editable?<form action={endpoint} method="post" className="grid gap-3 sm:grid-cols-2">
@@ -86,7 +87,7 @@ export default async function HrRoundsEditorPage({params}:{
       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Review round removal
     </Link>:null}
-   </article>)}
+   </Card>)}
   </section>
  </div>;
 }
