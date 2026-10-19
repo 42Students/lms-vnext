@@ -73,8 +73,10 @@ export function topbarCommands(
   )).map(({ label, href }) => ({ label, href }));
 }
 
-export function topbarInitials(identityUid: string): string {
-  const raw = identityUid.includes("@") ? identityUid.split("@")[0]! : identityUid;
+export function topbarInitials(identityUid: string, fallback = "42"): string {
+  // OAuth/Firebase opaque UIDs are not names. Only derive personal initials
+  // when the identity is an address; otherwise use the visible role label.
+  const raw = identityUid.includes("@") ? identityUid.split("@")[0]! : fallback;
   const words = raw.replace(/[._-]+/g, " ").trim().split(/\s+/)
     .filter(part => /^[a-z]/i.test(part));
   if (!words.length) return "42";
