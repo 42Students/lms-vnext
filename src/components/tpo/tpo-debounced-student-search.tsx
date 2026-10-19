@@ -21,5 +21,5 @@ export function TpoDebouncedStudentSearch({initial}:{initial:string}){
     router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
    },350);
   }}
-  className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>;
+  className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground md:min-h-9"/>;
 }
