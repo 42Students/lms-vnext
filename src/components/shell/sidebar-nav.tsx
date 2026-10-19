@@ -20,7 +20,8 @@ import "./sidebar-legacy.css";
 function sectionLabel(item:ShellNavItem,portal:string):string|null{
  // A College Admin's one "Placement cell" shortcut points at /tpo/home;
  // its college sidebar must not suddenly acquire a TPO section heading.
- if(portal!=="tpo"||!item.group||!item.href.startsWith("/tpo/"))return null;
+ if(portal!=="tpo"||!item.group||!item.href.startsWith("/tpo/")||
+    (item.href==="/tpo/home"&&item.label==="Placement cell"))return null;
  return item.group in TPO_SECTION_LABELS
   ?TPO_SECTION_LABELS[item.group as keyof typeof TPO_SECTION_LABELS]
   :null;
