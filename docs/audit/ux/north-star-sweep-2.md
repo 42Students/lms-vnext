@@ -58,3 +58,19 @@ Public and people: `src/components/placements/tpo-recruiter-grant-controls.tsx`,
 - [x] Read NORTH STAR reference and inspected the listed initial TPO page/component sources.
 - [x] Page-by-page source sweep and supporting component sweep (source-only; no runtime assertions).
 - [ ] Owner-run visual screenshot verification (intentionally not run by this lane).
+
+## Continued sweep — chat-2 (2026-10-19)
+- [x] `src/components/placements/tpo-round-reorder.tsx` — primary/secondary shared buttons and divider-style reordered rows
+- [x] `src/components/placements/tpo-calendar-followup-actions.tsx` — shared `Input`, `Select`, `Button` with complete JSX closing tags
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx` — shared date/search/select/message controls, canonical popup and calendar radii; custom grid cell buttons deliberately retained
+- [x] `src/components/placements/college-interview-appointments.tsx` — shared primary/secondary buttons and textarea with canonical 9px radius
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx` — flat hairline-separated progress summary instead of redundant cards
+- [x] `src/components/tpo/tpo-team-away-form.tsx` — shared date field, primary/secondary buttons and canonical radius
+- [x] `src/components/tpo/tpo-team-handover.tsx` — shared selector, white-on-teal handover button and error token
+- [x] `src/components/tpo/tpo-team-forms.tsx` — shared selector/input/textarea/checkbox/buttons; removed inner form card
+- [x] `src/components/tpo/recruiter-invite-landing.tsx` — literal radii replaced with the control token
+- [x] `src/components/tpo/tpo-communication-settings-editors.tsx` — remove legacy fallback radius literals
+
+**Main integration:** latest `main` at `a5d88d7cdfce161100ec7233f1d009e8e5b199d4` was merged into `chatgpt/chat-2-b` in commit `adf89b77`, keeping the lane ledger, required shared `Button` imports and round-preview radius. Only the lane branch was updated.
+
+**JSX integrity check:** every changed file was re-read from the pushed branch. Shared `<Select>` and `<Button>` opening/closing counts match; no truncated `</Select`, `</Button` or `</Textarea` closing tags, no obsolete `</select>` after component conversion, and no missing shared-component imports were found in the inspected files. Self-closing `Input`, `Textarea` and `Checkbox` fields stay self-closing. No application code, TypeScript compiler, tests, screenshots or CI were executed; integration/visual validation remains for the owner.
