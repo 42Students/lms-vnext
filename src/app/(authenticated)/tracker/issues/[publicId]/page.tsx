@@ -99,8 +99,8 @@ export default async function TrackerIssueDetailPage({
 
       <section className="space-y-4 border-b border-border pb-5">
         <div className="flex flex-wrap gap-2">
-          <StatusBadge>{issue.status}</StatusBadge>
-          <StatusBadge>{issue.severity}</StatusBadge>
+          <StatusBadge tone={issue.status==="CLOSED"?"success":issue.status==="NEW"?"warning":"info"}>{issue.status}</StatusBadge>
+          <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":issue.severity==="MAJOR"?"warning":"neutral"}>{issue.severity}</StatusBadge>
           <StatusBadge>{issue.environment}</StatusBadge>
           {issue.resolution ? <StatusBadge>{issue.resolution}</StatusBadge> : null}
         </div>
