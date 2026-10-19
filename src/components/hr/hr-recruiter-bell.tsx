@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
-import {Button} from "@/components/ui/button";
 import {createRecruiterBellRequestGate} from "@/modules/placements/recruiter-bell-model";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,createHrBellMutationGate,parseHrBellResponse,type HrBellResponse} from "@/modules/placements/hr-recruiter-bell-model";
