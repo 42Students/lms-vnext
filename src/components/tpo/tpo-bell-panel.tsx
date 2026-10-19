@@ -95,7 +95,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
     </span>:null}
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
   </Button>
-  <Drawer open={open} onOpenChange={changeOpen} title="Notifications"
+  <Drawer open={open} onOpenChange={changeOpen} className={compact ? style.topbarNotificationDrawer : undefined} title="Notifications"
    description="Most recent notifications from your own college.">
 
    {refreshing?<p role="status" className="text-xs text-muted-foreground">Refreshing notifications…</p>:null}
