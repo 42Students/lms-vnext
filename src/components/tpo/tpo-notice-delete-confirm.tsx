@@ -25,14 +25,12 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
      onSubmit={event=>{if(pending.current)event.preventDefault();else pending.current=true;}}>
      <input type="hidden" name="expectedVersion" value={version}/>
      <input type="hidden" name="action" value="DELETE"/>
-     <button ref={confirmButton} type="submit"
-      className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+     <Button ref={confirmButton} type="submit" variant="danger">
       Delete announcement
-     </button>
-     <button type="button" onClick={dismiss}
-      className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground">
+     </Button>
+     <Button variant="secondary" type="button" onClick={dismiss}>
       Cancel
-     </button>
+     </Button>
     </form>
   </Dialog>}
  </div>;
