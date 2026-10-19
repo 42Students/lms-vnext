@@ -8,7 +8,7 @@ import {
 } from "@/modules/placements/super-admin-placement-nav-model";
 
 function NavLinks({ links }: { links: readonly { href: string; label: string }[] }) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "/";
   return <>{links.map(link => {
     const active = pathname === link.href || pathname.startsWith(link.href + "/");
     return <Link key={link.href} href={link.href} aria-current={active ? "page" : undefined}
@@ -19,7 +19,7 @@ function NavLinks({ links }: { links: readonly { href: string; label: string }[]
 }
 
 export function SuperAdminPlacementOversightNav() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "/";
   const additionalActive = SUPER_ADMIN_PLACEMENT_OVERSIGHT_ADDITIONAL.some(link =>
     pathname === link.href || pathname.startsWith(link.href + "/")
   );
