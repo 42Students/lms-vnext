@@ -15,7 +15,7 @@ export default async function CollegeContactDetail({params}:{params:Promise<{mem
  return <div className="min-w-0 overflow-x-clip space-y-5">
   <PageHeader eyebrow="College Admin · Contacts" title={contact.name}
    description="College-scoped public contact details. Private learner identity and contact data are not displayed."
-   actions={<Link href="/college/contacts" className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">Back to contacts</Link>}/>
+   actions={<Link href="/college/contacts" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Back to contacts</Link>}/>
   <section aria-label="Contact record" className="min-w-0 space-y-3 border-t border-border pt-5">
    <p className="text-sm"><strong>Roles:</strong> {contact.roles.join(", ")||"None recorded"}</p>
    <p className="text-sm"><strong>College membership:</strong> {contact.status}</p>
