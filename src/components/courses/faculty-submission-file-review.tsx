@@ -1,3 +1,6 @@
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageLoading } from "@/components/ui/page-loading";
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -78,9 +81,9 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
 
   return <section aria-label="Submitted files" className="mt-3 space-y-2">
     <p className="text-sm font-semibold text-foreground">Submitted files</p>
-    {loading ? <p role="status" className="text-sm text-muted-foreground">Loading submitted files…</p> : null}
+    {loading ? <PageLoading label="Loading submitted files" variant="row" count={2} /> : null}
     {!loading && !error && files.length === 0 ?
-      <p role="status" className="text-sm text-muted-foreground">No submitted files are available.</p> : null}
+      <EmptyState title="No submitted files" description="No submitted files are available." /> : null}
     <ul className="space-y-2">
       {files.map(file => {
         const state = fileStatusDescriptor(file.status);
@@ -94,6 +97,6 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
         </li>;
       })}
     </ul>
-    {error ? <p role="alert" className="text-sm font-semibold text-error">{error}</p> : null}
+    {error ? <Alert tone="error">{error}</Alert> : null}
   </section>;
 }
