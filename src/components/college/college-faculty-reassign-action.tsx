@@ -48,7 +48,7 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
             {candidates.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
           </select>
         </label>
-        {replacementMembershipId?<p role="status" className="rounded border border-border bg-muted p-3 text-sm">{teachingReassignPrompt(facultyName,candidates.find(person=>person.id===replacementMembershipId)?.label??"Faculty",role)}</p>:null}
+        {replacementMembershipId?<p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-muted p-3 text-sm">{teachingReassignPrompt(facultyName,candidates.find(person=>person.id===replacementMembershipId)?.label??"Faculty",role)}</p>:null}
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-wrap justify-end gap-2">
           <button type="button" disabled={pending} onClick={()=>setOpen(false)}
