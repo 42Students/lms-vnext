@@ -1,4 +1,5 @@
 "use client";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -189,10 +190,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     {items.length?<ol className="space-y-2">
       {items.map(item=><li key={item.id} id={"log-"+item.requestId}
         className="rounded-lg border border-border p-3 text-sm">
-        <details>
-          <summary className="inline-flex min-h-9 cursor-pointer items-center font-semibold">
-            {new Date(item.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} · {item.event} · {item.path}
-          </summary>
+        <Disclosure title={new Date(item.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" · "+item.event+" · "+item.path}>
           <p className="mt-2 whitespace-pre-wrap break-words text-body">{item.message}</p>
           <p className="mt-2 text-xs text-muted-foreground">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
           <div className="mt-3 flex flex-wrap gap-3">
@@ -214,7 +212,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
             </>:<Link href="/tracker/logs#known-errors"
               className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Open Known Errors</Link>}
           </div>
-        </details>
+        </Disclosure>
       </li>)}
     </ol>:<p role="status" className="text-sm text-body">No live errors loaded.</p>}
     {nextPage?<Button variant="secondary" type="button" onClick={()=>void load(true)} disabled={pending||exporting}
