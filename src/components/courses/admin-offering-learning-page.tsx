@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { notFound } from "next/navigation";
 import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
@@ -74,12 +74,7 @@ export async function AdminOfferingLearningPage({
             .academicPeriodName
         }
         actions={
-          <Link
-            href={backHref}
-            className="inline-flex min-h-11 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
-          >
-            Back to Courses
-          </Link>
+          <PageBackLink href={backHref} label="Back to Courses" />
         }
       />
       <AdminOfferingSectionTabs/>
