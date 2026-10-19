@@ -184,9 +184,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    {result.items.length?<ol className="divide-y divide-[#e5e9f0] border-y border-[#e5e9f0]">
     {visibleRows.map(row=><li key={row.id} className="rounded-[8px] px-2 py-4 transition-colors hover:bg-[#fafbfc] first:pt-3 last:pb-3">
      <Link href={"/hr/conversations/"+row.id}
-      className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
+      className="block min-h-11 break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<span aria-label={row.unread+" unread messages"}
-      className="mt-2 inline-flex rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">
+      className="mt-2 inline-flex rounded-full bg-[#eff8fa] px-2 py-1 text-xs font-semibold text-[#1a95a1]">
       {row.unread} new
      </span>:null}
      {row.preview?<p className="mt-2 break-words text-sm text-body">
