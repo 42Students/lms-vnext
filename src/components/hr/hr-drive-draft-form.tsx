@@ -10,6 +10,7 @@ import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
@@ -279,7 +280,7 @@ export function HrDriveDraftForm({
           </label>
           <label className="grid gap-1 text-sm text-body sm:col-span-2">
             Job description
-            <Textarea rows={5} value={draft.description} maxLength={5000}
+            <Textarea className="min-h-28" rows={5} value={draft.description} maxLength={5000}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
           </label>
           <label className="grid gap-1 text-sm text-body">
