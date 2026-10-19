@@ -5,6 +5,7 @@ import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import {getSuperAdminMembershipDetail} from "@/modules/people/admin-membership-detail-service";
 export default async function MembershipDetail({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
@@ -25,7 +26,7 @@ export default async function MembershipDetail({params}:{params:Promise<{members
   <div className="flex flex-wrap gap-2">
    <StatusBadge tone={detail.platformStatus==="ACTIVE"?"success":"neutral"}>Platform {detail.platformStatus}</StatusBadge>
    <StatusBadge tone={detail.membershipStatus==="ACTIVE"?"success":"neutral"}>Membership {detail.membershipStatus}</StatusBadge>
-   {detail.roles.map(role=><StatusBadge key={role}>{role}</StatusBadge>)}
+   {detail.roles.map(role=><Badge key={role} tone="neutral">{role}</Badge>)}
   </div>
   {isSuperAdmin(context)&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
     <SuperAdminPlatformBlockAction userId={detail.userId} status={detail.platformStatus}/>:null}
