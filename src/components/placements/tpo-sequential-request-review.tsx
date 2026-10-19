@@ -31,7 +31,7 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
   <h2 className="font-semibold">Review one by one</h2>
   {!sequence.length?<button type="button" disabled={!requests.length} onClick={()=>{
    setSequence(requests.map(item=>item.id));setPosition(0);setDecided(0);setMessage("");
-  }} className="min-h-10 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+  }} className="min-h-10 rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    Start with the first of {requests.length}
   </button>:current?<div className="space-y-3 rounded-md border border-border p-3">
    <p role="status" className="text-sm font-semibold">{position+1} of {sequence.length} · {decided} decided</p>
@@ -43,13 +43,13 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
     onSuccess={()=>advance(true)} />
    <div className="flex flex-wrap gap-2">
     <button type="button" onClick={()=>advance(false)}
-     className="min-h-10 rounded border border-border px-4 text-sm font-semibold">{position+1===sequence.length?"Finish":"Next"}</button>
+     className="min-h-10 rounded-[9px] border border-border px-4 text-sm font-semibold">{position+1===sequence.length?"Finish":"Next"}</button>
     <button type="button" onClick={stop}
      className="min-h-10 rounded-[9px] border border-border px-4 text-sm font-semibold">Stop and return to queue</button>
    </div>
   </div>:<div className="space-y-2">
    <p role="status" className="text-sm">This request is no longer pending on the visible page.</p>
-   <button type="button" onClick={()=>advance(false)} className="min-h-10 rounded border border-border px-4">Next</button>
+   <button type="button" onClick={()=>advance(false)} className="min-h-10 rounded-[9px] border border-border px-4">Next</button>
    <button type="button" onClick={stop} className="ml-2 min-h-10 rounded-[9px] border border-border px-4">Finish</button>
   </div>}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
