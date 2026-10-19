@@ -170,7 +170,7 @@ export default async function TpoTeamPage({searchParams}:{
       visibleConversations.length?<ul className="mt-3 space-y-2">{visibleConversations.map(row=>
        <li key={row.id} className="border-b border-border py-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
-         <Link className="min-w-0 break-words font-semibold text-link lms-inline-link" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
+         <Link className="min-w-0 break-words font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
          {row.unreadCount>0 ? <Badge aria-label={row.unreadCount+" unread updates"}
            tone="neutral">
           {row.unreadCount} unread
