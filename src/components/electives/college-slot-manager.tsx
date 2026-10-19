@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 "use client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -105,7 +106,7 @@ export function CollegeSlotManager({ options, row }: {
           <option value="">No period linked</option>
           {options.periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </Select></Field>
-        <Field label="Semester number"><Input required type="number" min={1} max={Math.min(12, limit)}
+        <Field label="Semester number"><input required type="number" min={1} max={Math.min(12, limit)}
           className={fieldClass} value={term} onChange={event => setTerm(event.target.value)} /></Field>
         <Field label="Academic year (optional, YYYY-YY)"><Input maxLength={9}
           placeholder="2026-27" className={fieldClass} value={year}
