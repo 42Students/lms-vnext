@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <PageHeader title="College availability" />
     <ErrorState title="College availability access denied"
       description="Only an active Super Admin can read global project template assignments."
-      action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>} />
+      action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />} />
   </div>;
   const raw = await searchParams;
   const parsed = templateCollegeAvailabilityQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
@@ -51,7 +52,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   return <div className="min-w-0 space-y-5">
     <PageHeader title={data.template.title}
       description="Availability within the current safety scope. Existing workspaces retain their pinned versions."
-      actions={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Template catalogue</Link>} />
+      actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />} />
     <SuperAdminTemplateTabs templateId={id.data} active="colleges" />
     <form method="get" className="grid gap-3 border-b border-border pb-4 sm:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">College name or code
