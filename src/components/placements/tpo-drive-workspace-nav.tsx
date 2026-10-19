@@ -1,6 +1,5 @@
+import { Select } from "@/components/ui/select";
 "use client";
-import { Dropdown } from "@/components/ui/dropdown";
-
 import { Select } from "@/components/ui/select";
 
 import Link from "next/link";
@@ -43,8 +42,11 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
           </Link>
         );
       })}
-      <Dropdown align="end" label="More drive sections" trigger="More sections ▾">
-        <div className="grid min-w-52 gap-1">
+      <details className="relative min-w-fit">
+        <summary className="flex min-h-11 md:min-h-9 cursor-pointer list-none items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          More sections ▾
+        </summary>
+        <div className="absolute right-0 z-30 mt-1 grid min-w-52 gap-1 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-2 shadow-[0_14px_16px_rgba(0,0,0,0.04)]">
           {tpoDriveMoreTabs(jobId).map(tab=>(
             <Link key={tab.href} href={tab.href}
               aria-current={pathname===tab.href.split("#")[0]?"page":undefined}
@@ -53,7 +55,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
             </Link>
           ))}
         </div>
-      </Dropdown>
+      </details>
       </div>
     </nav>
   );

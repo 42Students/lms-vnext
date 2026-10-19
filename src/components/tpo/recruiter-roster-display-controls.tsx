@@ -1,6 +1,6 @@
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select } from "@/components/ui/select";
 "use client";
-import { Dropdown } from "@/components/ui/dropdown";
-
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import {ENGAGE_COLUMNS,type EngageColumn,type EngageSort} from "@/modules/placements/tpo-recruiter-table-view-model";
@@ -25,14 +25,15 @@ export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,as
    <Checkbox checked={ascending} onChange={e=>onAscending(e.target.checked)}/>
    Ascending
   </label>
-  <Dropdown align="end" label="Roster columns" trigger="Columns">
-   <div className="max-h-72 min-w-52 space-y-2 overflow-auto">
+  <details className="relative">
+   <summary className="min-h-10 cursor-pointer rounded-md border border-border px-4 py-2 text-sm font-semibold">Columns</summary>
+   <div className="absolute right-0 z-20 mt-1 max-h-72 min-w-52 space-y-2 overflow-auto rounded-lg border border-border bg-surface p-3 shadow-lg">
     {ENGAGE_COLUMNS.map(column=><label key={column} className="flex items-center gap-2 text-sm">
       <Checkbox checked={columns.includes(column)} disabled={column==="Contact"}
        onChange={e=>onColumns(e.target.checked?[...columns,column]:columns.filter(x=>x!==column))}/>
       {column}
     </label>)}
    </div>
-  </Dropdown>
+  </details>
  </section>;
 }

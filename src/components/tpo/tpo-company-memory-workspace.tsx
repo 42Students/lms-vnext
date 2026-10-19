@@ -1,6 +1,6 @@
 "use client";
-import { Dropdown } from "@/components/ui/dropdown";
 
+import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -216,9 +216,10 @@ export function TpoCompanyMemoryWorkspace({
           ) : null}
         </div>
         <div className="flex flex-wrap gap-2">
-          <Dropdown align="end" label={"New work for "+company.name} trigger="+ New">
+          <details className="relative">
+           <summary className={buttonStyle+" cursor-pointer"}>+ New</summary>
            <nav aria-label={"New work for "+company.name}
-            className="w-60 space-y-1">
+            className="absolute right-0 z-20 mt-1 w-60 space-y-1 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-2 shadow-[var(--lms-dropdown-shadow)]">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
              className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
@@ -227,7 +228,7 @@ export function TpoCompanyMemoryWorkspace({
             <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
              className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">Follow-up</Link>
            </nav>
-          </Dropdown>
+          </details>
           {company.canonicalCompanyId?<Link className={buttonStyle}
             href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)}>
             Company link and trusted settings
@@ -274,9 +275,8 @@ export function TpoCompanyMemoryWorkspace({
             {company.hiredPerYear.map(item=>(
               <li key={item.year} className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
                 <span>{item.year}</span>
-                <div className="h-3 overflow-hidden rounded-full bg-surface-secondary" role="img" aria-label={item.hired+" joined learners in "+item.year}>
-                  <div className="h-full rounded-full bg-primary" style={{width:(100*item.hired/Math.max(1,...company.hiredPerYear.map(row=>row.hired)))+"%"}}/>
-                </div>
+                <MetricBar size="default" role="img" label={item.hired+" joined learners in "+item.year}
+                  value={item.hired} maximum={Math.max(1,...company.hiredPerYear.map(row=>row.hired))} />
                 <strong className="text-right tabular-nums">{item.hired}</strong>
               </li>
             ))}

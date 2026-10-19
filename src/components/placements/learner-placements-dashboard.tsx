@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
@@ -178,12 +179,8 @@ export function LearnerPlacementsDashboard({
           <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>
         </div>
         {applicationFunnel===null ? <p role="status" className="mt-2 text-sm text-body">Application stages are currently unavailable. They have not been counted as zero.</p>
-          : <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {applicationFunnel.stages.map(stage=><div key={stage.key} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-3">
-              <p className="text-2xl font-bold tabular-nums text-foreground">{stage.count}</p>
-              <p className="mt-1 text-xs font-semibold text-body">{stage.label}</p>
-            </div>)}
-          </div>}
+          : <SummaryStrip className="mt-3" label="Application stages"
+              steps={applicationFunnel.stages.map(stage=>({label:stage.label,value:stage.count}))} />
         <p className="mt-2 text-xs text-muted-foreground">Based on your saved application and screening stages; not offer or hiring outcomes.</p>
       </section>
       {display.urgentAssessment ? (

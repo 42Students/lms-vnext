@@ -1,2 +1,12 @@
 "use client";
-export default function ErrorView({reset}:{error:Error&{digest?:string};reset:()=>void}){return <main role="alert" className="space-y-4 p-5"><h2 className="font-semibold">Announcements unavailable</h2><p className="text-sm text-body">This is a read error, not evidence of an empty notice board.</p><button type="button" onClick={reset} className="min-h-11 rounded-md border border-border px-4">Retry</button></main>;}
+
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+
+export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState
+    title="Announcements unavailable"
+    description="This is a read error, not evidence of an empty notice board."
+    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
+  />;
+}

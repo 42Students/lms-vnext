@@ -1,6 +1,7 @@
 "use client";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { BoardColumn } from "@/components/ui/board-column";
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {useRouter,useSearchParams} from "next/navigation";
@@ -188,8 +189,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
   <div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0}
     className="overflow-x-auto overscroll-x-contain pb-3 [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"><div className="flex min-w-max gap-3">
-   {lanes.map(lane=><section key={lane.id} aria-label={lane.label}
-    className="w-72 shrink-0 rounded-xl border border-border bg-surface-subtle p-3"
+   {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
     <h2 className="flex justify-between font-semibold"><span>{lane.label}</span><span>{lane.tasks.length}</span></h2>
@@ -254,7 +254,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     })}
     {!lane.tasks.length?<li className="py-4 text-center text-xs text-muted-foreground">No tasks</li>:null}
     </ul>
-   </section>)}
+   </BoardColumn>)}
   </div></div>
   {matching.length>visible.length?<Button variant="secondary" type="button"
     className="min-h-11 px-4"
