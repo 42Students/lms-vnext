@@ -20,7 +20,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
  return <div className="space-y-6">
   <PageHeader eyebrow="TPO · Interview rounds" title="Interview schedule readiness"
    description="Pending and scheduled round-level interviews. Candidate-specific slots are not recorded here."/>
-  <Link href="/tpo/calendar" className="text-sm font-semibold text-link hover:underline">← Calendar</Link>
+  <Link href="/tpo/calendar" className="text-sm font-semibold text-link hover:underline lms-inline-link">← Calendar</Link>
   <form action="/tpo/calendar/interviews" method="get"
     className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="text-sm font-semibold text-body">Search company, drive or round
@@ -41,8 +41,8 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
   </section>
   <p role="status" className="text-sm text-body">Interview rounds page {data.page}: {data.rows.length} actionable results. Pages are drawn from the persisted round book.</p>
   <nav aria-label="Interview round pages" className="flex flex-wrap gap-3">
-   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link">Previous 200</Link>:null}
-   {data.limited?<Link href={href(data.page+1)} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link">Next 200</Link>:null}
+   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link">Previous 200</Link>:null}
+   {data.limited?<Link href={href(data.page+1)} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link">Next 200</Link>:null}
   </nav>
   {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found."/>:
    <section aria-label="Interview rounds" className="divide-y divide-border border-y border-border">
@@ -51,7 +51,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
     <p className="mt-1 text-sm text-body">{r.name} · {r.state.replaceAll("_"," ")} · {r.mode??"Mode not recorded"}</p>
     <p className="mt-1 text-sm text-body">{r.scheduledAt?new Date(r.scheduledAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Start not scheduled"} IST · {r.venue??"Venue not recorded"}</p>
     <p className="mt-1 text-xs text-body">Duration: {r.durationMinutes??"Not recorded"} minutes</p>
-    <Link href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link hover:underline">
+    <Link href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link hover:underline lms-inline-link">
       View round and candidate readiness →
     </Link>
     {r.status==="SCHEDULED"&&r.updatedAt?
