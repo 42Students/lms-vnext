@@ -417,7 +417,7 @@ unperformed under checklist J.
 
 | State | Old LMS reference | Current implementation | Outcome |
 |---|---|---|---|
-| TPO expanded section labels only | `old-lms-shell.css:49-53`: sections for TPO sidebar | `sidebar-nav.tsx:20-25,87`: `sectionLabel(item,sidebarPortal)` requires portal `tpo` | Match; College Admin Placement cell shortcut no longer produces false TPO heading |
+| TPO expanded section labels only | `old-lms-shell.css:49-53`: sections for TPO sidebar | `sidebar-nav.tsx:20-25,87`: `sectionLabel(item,sidebarPortal)` requires portal `tpo` and excludes the College Admin `Placement cell` cross-link | Match; no false TPO heading on `/college/*` or `/tpo/home` shortcut |
 | Non-TPO grouping | Other role menus in `old-lms-shell.css:49-53` have no TPO labels | `sidebar-nav.tsx:89-95`: a hairline for group break without TPO heading | Structure match; visual pending |
 | Collapsed section separator | `old-lms-shell.css:50-51`: 22px and 1px #f1f4f9 | `sidebar-legacy.css:54-61,205-227`: same | Match |
 | Desktop expansion | `old-lms-shell.css:13,18`: relative 96→256px flex push in 150ms | `sidebar-legacy.css:6-25`: same; focus-within additionally expands | Match with a11y enhancement |
