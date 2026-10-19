@@ -39,7 +39,7 @@ export default async function MentorTaskReviewsPage({
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid task review filters</h1>
-    <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+    <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">
       Clear filters
     </Link>
   </section>;
@@ -118,7 +118,7 @@ export default async function MentorTaskReviewsPage({
         <Button type="submit" variant="primary">
           Filter
         </Button>
-        <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">
           Clear
         </Link>
       </form>
@@ -164,9 +164,9 @@ export default async function MentorTaskReviewsPage({
       <nav aria-label="Task review pagination" className="flex items-center justify-between gap-3">
         <p className="text-sm text-body">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
-          {data.page > 1 && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          {data.page > 1 && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link"
             href={mentorTaskReviewHref({...data.query, page: data.page - 1})}>Previous</Link>}
-          {data.page < data.totalPages && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          {data.page < data.totalPages && <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link"
             href={mentorTaskReviewHref({...data.query, page: data.page + 1})}>Next</Link>}
         </div>
       </nav>
