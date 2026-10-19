@@ -439,7 +439,7 @@ export function LearnerYouTubePlayer({
 
   if (!videoId) {
     return (
-      <div className="mt-4 rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4">
+      <div className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
         <p className="m-0 text-sm font-semibold text-error">
           This YouTube URL cannot be played
           inline.
