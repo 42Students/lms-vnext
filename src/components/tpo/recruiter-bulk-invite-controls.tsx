@@ -53,7 +53,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const failed=results.filter(row=>!row.url&&!row.emailed);
  const retryableFailed=failed.filter(item=>rows.some(row=>row.id===item.id&&!bulkInviteDisposition(row)));
  const linkLines=results.filter(row=>row.url).map(row=>row.name+" ("+row.email+")\t"+row.url).join("\n");
- return <section className="rounded-lg border border-border bg-surface p-4" aria-label="Invite selected recruiters">
+ return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Invite selected recruiters">
   <Button variant="secondary" type="button" 
    disabled={busy||rows.length===0} onClick={()=>{setReviewSnapshot(null);setNotice("");setOpen(value=>!value);}}>
    Invite selected recruiters ({rows.length})
@@ -69,9 +69,9 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    <ul className="max-h-40 space-y-1 overflow-auto text-sm">
     {rows.map(row=><li key={row.id}>{row.name} · {bulkInviteDisposition(row)??"Ready"}</li>)}
    </ul>
-   {reviewSnapshot===eligibleSnapshot&&eligible.length>0?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+   {reviewSnapshot===eligibleSnapshot&&eligible.length>0?<div role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
       Confirm issuing {eligible.length} new one-time invitation links. {eligible.filter(row=>Boolean(row.inviteSentAt)).length} previous link(s) will stop working.
-      <button type="button" className="ml-3 underline" onClick={()=>{setReviewSnapshot(null);setNotice("");}}>Cancel</button>
+      <Button variant="ghost" type="button" className="lms-inline-link ml-3 min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" onClick={()=>{setReviewSnapshot(null);setNotice("");}}>Cancel</Button>
     </div>:null}
    <Button type="button" disabled={busy||eligible.length===0||eligible.length>100}
     
