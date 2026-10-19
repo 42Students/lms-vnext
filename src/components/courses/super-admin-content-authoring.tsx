@@ -17,7 +17,7 @@ export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:
   {!lessons.length?<p className="text-sm text-muted-foreground">Create a course offering, learning path and lesson before adding content.</p>:<>
    <label className="grid gap-1 text-sm font-semibold text-body">Lesson
     <select value={selected?.id??""} onChange={e=>setLessonId(e.target.value)}
-     className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+     className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9">
      {lessons.map(x=><option value={x.id} key={x.id}>{x.courseCode} · {x.courseName} · {x.name}</option>)}
     </select>
    </label>
