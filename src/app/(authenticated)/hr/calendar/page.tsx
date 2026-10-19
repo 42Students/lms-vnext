@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -415,15 +416,11 @@ export default async function HrCalendarPage({
                 </p>
               </div>
 
-              <nav aria-label="Calendar event types" className="flex flex-wrap gap-3 border-b border-border">
-                {HR_CALENDAR_CATEGORIES.map(option=><Link key={option}
-                  href={calendarHref(anchor,view,option)}
-                  aria-current={category===option?"page":undefined}
-                  className={category===option ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"}>
-                  {option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
-                    option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds"}
-                </Link>)}
-              </nav>
+              <Tabs renderPanel={false} ariaLabel="Calendar event types" value={category}
+                items={HR_CALENDAR_CATEGORIES.map(option=>({value:option,
+                  label:option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
+                    option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
+                  href:calendarHref(anchor,view,option)}))}/>
               <nav
                 aria-label="Calendar views"
                 className="flex flex-wrap gap-3 border-b border-border"
