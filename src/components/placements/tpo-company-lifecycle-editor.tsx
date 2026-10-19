@@ -90,7 +90,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
           </button>
         )}
       </div>
-      {reviewAction?<div role="group" aria-label="Confirm company change" className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+      {reviewAction?<div role="group" aria-label="Confirm company change" className="rounded-lg border border-border bg-muted p-3 text-sm">
         <p className="text-body">Confirm: {reviewAction==="EDIT_TRUST"
           ?company.isTrusted?"remove trust from ":"mark trusted ":""+(reviewAction==="ARCHIVE"?"archive ":"restore ")}{company.name}?
           This changes only this college&apos;s relationship and is audited.</p>

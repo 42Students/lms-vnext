@@ -77,7 +77,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         The placed numbers (Home, Students, Reports) follow the first rule as soon as you save; the offer rules apply to offers released from then on.
       </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        {dirty?<p role="status" className="sm:col-span-2 text-sm text-warning-text">Unsaved changes</p>:null}
+        {dirty?<p role="status" className="sm:col-span-2 text-sm text-[var(--lms-gold-accent)]">Unsaved changes</p>:null}
         <label className="grid gap-1 text-sm font-semibold text-body">
           A student counts as placed when the offer is
           <select value={form.countsAsPlacedAt} disabled={busy}
@@ -97,7 +97,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
           </label>
         ))}
       </div>
-      <section role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+      <section role="status" className="mt-4 rounded-lg border border-border bg-muted p-3 text-sm text-body">
         <p>A student may hold {Number.isFinite(held)?held:0} offers (released or accepted) before the next rule applies.</p>
         <p className="mt-1">After that, another offer needs a CTC at least {form.upliftPct}% higher than their best offer, or a Dream drive. Internships never count.</p>
         <p className="mt-2 font-semibold">For example</p>
