@@ -8,10 +8,12 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDetailsElement>, "children">
   children: ReactNode;
   label?: string;
   align?: "start" | "end";
+  /** Mobile sheet variant preserves the same single details root. */
+  mobileSheet?: boolean;
 };
 
 /** Native disclosure handles Enter/Space without a JavaScript dependency. */
-export function Dropdown({ trigger, children, label, align = "start", className, ...props }: DropdownProps) {
+export function Dropdown({ trigger, children, label, align = "start", mobileSheet = false, className, ...props }: DropdownProps) {
   const rootRef = useRef<HTMLDetailsElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
