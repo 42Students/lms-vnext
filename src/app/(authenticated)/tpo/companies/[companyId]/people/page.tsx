@@ -18,7 +18,7 @@ export default async function TpoCompanyPeoplePage({
   if (!company) notFound();
   return (
     <div className="space-y-5">
-      <Link className="text-sm font-semibold text-link"
+      <Link className="text-sm font-semibold text-link lms-inline-link"
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
       </Link>
