@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -30,19 +31,19 @@ export default async function FacultyResponseFollowUpsPage({
     <PageHeader eyebrow="Faculty · Assessments" title="Response follow-ups"
       description="Published assessments past their due date with missing responses from learners in your current teaching Sections."
       actions={<Link href="/teacher/results"
-        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
         Results overview
       </Link>} />
     <form action="/teacher/response-followups" method="get"
-      className="flex flex-wrap items-end gap-3">
+      className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
+          className="w-full min-w-0" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="w-full min-w-0">
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
@@ -50,7 +51,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
         <Select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="w-full min-w-0">
           <option value="">All current Sections</option>
           {data.sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
             {section.courseCode} · {section.courseName} · {section.sectionName}
@@ -59,7 +60,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sort
         <Select name="sort" defaultValue={data.query.sort}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="w-full min-w-0">
           <option value="RECENT_DUE">Most recently due</option>
           <option value="OLDEST_DUE">Oldest overdue first</option>
           <option value="TITLE">Assessment title</option>
@@ -67,7 +68,7 @@ export default async function FacultyResponseFollowUpsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Assessments per page
         <Select name="pageSize" defaultValue={data.query.pageSize}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+          className="w-full min-w-0">
           <option value="5">5</option><option value="10">10</option>
         </Select>
       </label>
@@ -118,15 +119,8 @@ export default async function FacultyResponseFollowUpsPage({
           Open authorized Section report →
         </Link>
       </article>)}</div>}
-    <nav aria-label="Assessment follow-up pages" className="flex items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
-      <div className="flex gap-3">
-        {data.page > 1 && <Link href={facultyResponseFollowUpHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>}
-        {data.page < data.totalPages && <Link href={facultyResponseFollowUpHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Next</Link>}
-      </div>
-    </nav>
+    <Pagination label="Assessment follow-up pages" page={data.page}
+      pageCount={data.totalPages} hrefForPage={page=>facultyResponseFollowUpHref({...data.query,page})} />
     <p className="text-xs leading-5 text-muted-foreground">
       Missing means no persisted submission or quiz attempt for a currently enrolled learner.
       It does not establish misconduct, failure or a notification being sent. No messages are sent

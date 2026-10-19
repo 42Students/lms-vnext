@@ -1,3 +1,4 @@
+import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -76,34 +77,14 @@ export default async function FacultyContactsPage({
         title={selected.label}
       />
 
-      <nav
-        aria-label="Contact types"
-        className="flex flex-wrap gap-2"
-      >
-        {Object.entries(tabs).map(
-          ([key, tab]) => {
-            const active = key === contactsTab;
-            return (
-              <Link
-                key={key}
-                href={`/teacher/contacts/${key}`}
-                aria-current={
-                  active ? "page" : undefined
-                }
-                className={
-                  active
-                    ? "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary border border-primary bg-primary px-4 text-sm font-semibold text-foreground"
-                    : "inline-flex min-h-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text"
-                }
-              >
-                {tab.label}
-              </Link>
-            );
-          },
-        )}
-      </nav>
+      <Tabs ariaLabel="Contact types" value={contactsTab} renderPanel={false}
+        items={Object.entries(tabs).map(([key, tab]) => ({
+          value: key,
+          label: tab.label,
+          href: `/teacher/contacts/${key}`,
+        }))} />
 
-      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <section className="border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
