@@ -29,7 +29,17 @@ export default async function SuperAdminCourseProgressPage({
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its course progress." />
   </div>;
-  const [data,filters] = await Promise.all([listCollegeCourseProgress(context, parsed),getSuperAdminLearningFilterOptions(context)]);
+  const [dataResult,filtersResult] = await Promise.allSettled([
+    listCollegeCourseProgress(context, parsed),
+    getSuperAdminLearningFilterOptions(context),
+  ]);
+  if (dataResult.status === "rejected") return <div className="min-w-0 space-y-5">
+    <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
+    <ErrorState title="Course progress unavailable" description="Recorded progress could not be loaded. Your filters have not changed."
+      action={<Link href={adminLearningHref("PROGRESS", parsed)} className="font-semibold text-primary-text">Retry loading course progress</Link>} />
+  </div>;
+  const data = dataResult.value;
+  const filters = filtersResult.status === "fulfilled" ? filtersResult.value : { courses: [], cohorts: [] };
   const summary = adminProgressStats(data.items);
   return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress"
@@ -42,7 +52,7 @@ export default async function SuperAdminCourseProgressPage({
     <form className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
-          className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11 sm:min-h-9" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Offering status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 rounded-[9px] border border-border bg-surface px-3 text-foreground">
@@ -50,7 +60,7 @@ export default async function SuperAdminCourseProgressPage({
         </Select>
       </label>
       <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
-      <Button type="submit" className="min-h-11 sm:min-h-9 self-end rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary">Filter</Button>
+      <Button type="submit" className="self-end">Filter</Button>
     </form>
     {filtersResult.status==="rejected"?<p role="status"
       className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
@@ -87,9 +97,9 @@ export default async function SuperAdminCourseProgressPage({
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">
         {data.query.page > 1 ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page - 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-[14px] font-semibold text-primary-text sm:min-h-9">Previous</Link> : null}
         {data.query.page < data.totalPages ? <Link href={adminLearningHref("PROGRESS", { ...data.query, page: data.query.page + 1 })}
-          className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Next</Link> : null}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-[14px] font-semibold text-primary-text sm:min-h-9">Next</Link> : null}
       </div>
     </nav>
     <Link href="/admin/courses" className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text">← Courses</Link>
