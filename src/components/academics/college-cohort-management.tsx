@@ -1,6 +1,5 @@
 "use client";
-import { Input } from "@/components/ui/input";
-
+import { Button } from "@/components/ui/button";
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -146,7 +145,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         </div>
         <div className="sm:col-span-2 lg:col-span-5">
           <Button variant="primary" disabled={pending||dateInvalid} type="submit"
-            className="min-h-[var(--lms-control-height)] ">
+            >
             {pending ? "Creating…" : "Create batch"}
           </Button>
         </div>
@@ -242,13 +241,13 @@ export function CollegeCohortRowActions({ row, periods }: {
     <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={pending || blocked}
       onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+      >
       Edit
     </Button>
     {row.status === "ACTIVE" && <Button variant="secondary" type="button"
       disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
       onClick={graduate}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+      >
       Mark graduated
     </Button>}
     <Button variant="secondary" type="button" disabled={pending || row.status!=="PLANNED" ||
@@ -256,7 +255,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       title={row.activeSections>0 || row.activeEnrolledLearners>0
         ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
         : row.status!=="PLANNED" ? "Only planned batches can be removed." : "Remove this unlinked planned batch"}
-      className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-50">
+      >
       Remove
     </Button>
     </div>
@@ -308,11 +307,11 @@ export function CollegeCohortRowActions({ row, periods }: {
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex flex-wrap justify-end gap-3">
           <Button variant="secondary" disabled={pending} type="button" onClick={close}
-            className="min-h-[var(--lms-control-height)] ">
+            >
             Cancel
           </Button>
           <Button variant="primary" disabled={pending || !hasUnsavedCollegeCohortEdit(original, draft)} type="submit"
-            className="min-h-[var(--lms-control-height)] ">
+            >
             {pending ? "Saving…" : "Save changes"}
           </Button>
         </div>
