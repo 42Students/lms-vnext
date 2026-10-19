@@ -164,7 +164,7 @@ export default async function SuperAdminPeoplePage({
         </Select>
        </label>
        <PageSizeSelect name="pageSize" defaultValue={pageSize} options={[10,20,50]} />
-       <Button type="submit">Search</Button>
+       <Button type="submit" className="min-h-11 sm:min-h-[var(--lms-control-height)]">Search</Button>
        <Link href="/admin/people" className="inline-flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
