@@ -1,6 +1,6 @@
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { MetricBar } from "@/components/ui/metric-bar";
-import { DataTable } from "@/components/ui/data-table";
+import { HrCompanyReportsGrid } from "@/components/hr/hr-company-reports-grid";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -330,38 +330,16 @@ export default async function RecruiterCompanyReportsPage({
             description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."
           />
         ) : (
-          <DataTable
-            caption="Company Reports table"
-            rows={jobs}
-            getRowKey={job=>job.id}
-            empty={<EmptyState title="No matching drives"
-              description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."/>}
-            columns={[
-              {key:"drive",header:"Drive",mobilePriority:"primary",
-                cell:(job)=><div>
-                  <Link href={"/hr/placements/jobs/"+encodeURIComponent(job.id)}
-                    className="inline-flex min-h-9 items-center break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{job.title}</Link>
-                  <p className="mt-1 text-xs text-muted-foreground">{job.employmentType.replaceAll("_"," ")}</p>
-                </div>},
-              {key:"status",header:"Status",mobilePriority:"secondary",
-                cell:(job)=><StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge>},
-              {key:"published",header:"Published",mobilePriority:"secondary",
-                cell:(job)=>formatDate(job.publishedAt)},
-              {key:"applied",header:"Applications",mobilePriority:"secondary",
-                cell:(job)=>job.applications},
-              {key:"submitted",header:"Submitted",mobilePriority:"secondary",
-                cell:(job)=>job.submittedApplications},
-              {key:"withdrawn",header:"Withdrawn",mobilePriority:"secondary",
-                cell:(job)=>job.withdrawnApplications},
-              {key:"offered",header:"Offered",mobilePriority:"secondary",
-                cell:(job)=>job.outstandingOffers+job.acceptedOffers+job.declinedOffers},
-              {key:"accepted",header:"Accepted offers",mobilePriority:"secondary",
-                cell:(job)=>job.acceptedOffers},
-              {key:"declined",header:"Declined",mobilePriority:"secondary",
-                cell:(job)=>job.declinedOffers},
-              {key:"joined",header:"Joined",mobilePriority:"secondary",
-                cell:(job)=>job.joinedOffers},
-            ]}
+          <HrCompanyReportsGrid
+            scopeKey={[context.user.id,collegeId].join(":")}
+            rows={jobs.map(job=>({
+              id:job.id,title:job.title,employmentType:job.employmentType,
+              status:job.status,published:formatDate(job.publishedAt),
+              applications:job.applications,submittedApplications:job.submittedApplications,
+              withdrawnApplications:job.withdrawnApplications,
+              outstandingOffers:job.outstandingOffers,acceptedOffers:job.acceptedOffers,
+              declinedOffers:job.declinedOffers,joinedOffers:job.joinedOffers,
+            }))}
           />
         )}
 
