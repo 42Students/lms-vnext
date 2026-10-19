@@ -35,7 +35,7 @@ export function LegacyTopbar({
   const pathname = usePathname() ?? "/";
   const config = topbarConfigForPath(pathname);
   return <header className={style.bar} aria-label="Application top bar">
-    <div className="shrink-0 lg:hidden">
+    <div className="shrink-0 md:hidden">
       <ShellWidgetBoundary name="Mobile navigation" fallbackHref="/dashboard">
         <MobileNavigation items={navigation}/>
       </ShellWidgetBoundary>
