@@ -52,7 +52,6 @@ export function LearnerPlacementJobDetail({
       <section className="min-w-0" aria-labelledby="drive-title">
         <PageHeader
           id="drive-title"
-          eyebrow="Published campus drive"
           title={summary.title}
           description={summary.companyName}
           actions={
@@ -87,14 +86,14 @@ export function LearnerPlacementJobDetail({
           <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Applications close</dt>
             <dd className="mt-1 font-semibold text-foreground">{learnerJobDeadlineLabel(item.job.applicationDeadline)}</dd></div>
         </dl>
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-5 flex min-w-0 flex-wrap gap-3">
           <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={initialSaved}/>
-          <a href="#job-role-options" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+          <a href="#job-role-options" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] transition-colors duration-150 hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9">
             {summary.appliedCount ? "View my application" : "See roles & application"} ↓
           </a>
           {website ? (
             <a href={website} target="_blank" rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-5 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-5 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9">
               Company website ↗
             </a>
           ) : null}
