@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import styles from "./legacy-project-board.module.css";
 import { BoardColumn } from "@/components/ui/board-column";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
@@ -16,18 +17,18 @@ export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
  return <section aria-label="Project Board lanes" className="space-y-3">
   <p className="text-sm text-body">Tasks are grouped by their saved status. Open a task to work on it.</p>
   <div role="region" aria-label="Project board columns; scroll sideways to see all task lanes" tabIndex={0}
-    className="overflow-x-auto overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-   <div className="flex min-w-max gap-3">
-    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label} width="compact">
-      <h2 className="flex items-center justify-between font-semibold text-foreground">
+    className={styles.scrollRegion+" min-w-0 overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>
+   <div className={styles.track}>
+    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label} width="compact" className={styles.lane}>
+      <h2 className={styles.header+" flex min-w-0 items-center justify-between font-semibold text-foreground"}>
        <span>{lane.label}</span><Badge tone="neutral" className="tabular-nums">{lane.tasks.length}</Badge>
       </h2>
-      <ul className="mt-3 space-y-2">
+      <ul className={styles.body+" mt-3 space-y-2"}>
        {lane.tasks.map(task=>{
         const info=learnerBoardCardMetadata(task,sprints);
         return <li key={task.id}>
          <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
-          className="block min-h-9 rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm text-primary-text hover:bg-muted">
+          className={styles.card+" block min-h-11 rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm text-primary-text hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"}>
           <span className="block break-words font-semibold">{task.title}</span>
           <span className="mt-2 block text-xs text-muted-foreground">{info.priority} · {info.sprintTitle}</span>
          </Link>
