@@ -71,7 +71,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <PageHeader title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
   {driveLookupResult && !driveLookupResult.ok?
-    <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-sm text-body">
+    <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
       Hiring drive details are temporarily unavailable. You can still read and reply to this authorized conversation.
     </p>:null}
   {matchingDrive?<Link href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
@@ -84,7 +84,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
   {changeRequestResult && !changeRequestResult.ok?
-    <p role="status" className="rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-3 text-sm text-body">
+    <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body">
       Change request updates are temporarily unavailable. Messages remain available; refresh to try again.
     </p>:null}
   {changeRequests?.party==="COMPANY" && changeRequests.requests.length>0?
@@ -115,9 +115,9 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     </section>:null}
   <ol aria-label="Employer and placement cell messages" className="divide-y divide-border border-y border-border">
    {messages.map(message=><li key={message.id}
-    className="rounded-[var(--lms-control-radius)] px-4 py-3 transition-colors duration-200 hover:bg-[var(--lms-neutral-50)]">
+    className="rounded-[var(--lms-control-radius)] px-4 py-3 transition-colors duration-200 hover:bg-surface-subtle">
     <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {dateTime(message.createdAt)} IST</p>
-    {message.proposal?<div className="mt-2 rounded-[var(--lms-control-radius,9px)] border border-border bg-muted p-3 text-xs text-body">
+    {message.proposal?<div className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-xs text-body">
       <p className="font-semibold text-foreground">Drive proposal · sent as discussion message</p>
       <p>Role: {message.proposal.title}</p>
       <p>Proposal reference: {message.proposal.referenceId}</p>
