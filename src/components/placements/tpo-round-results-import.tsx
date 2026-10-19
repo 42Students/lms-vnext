@@ -74,7 +74,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </div>
    {preview.unmatched.length?<div className="space-y-2">
     <h4 className="font-semibold">Unmatched rows — review or skip</h4>
-    {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 sm:grid-cols-2">
+    {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 border-b border-border py-3 sm:grid-cols-2">
      <p className="text-sm">Row {row.line}: {row.identity||"No ID"} · {row.reason}</p>
      <div className="flex flex-wrap gap-2">
       <Select aria-label={"Match row "+row.line} className="min-h-11 md:min-h-9 flex-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"
