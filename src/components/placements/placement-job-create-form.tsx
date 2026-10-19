@@ -1197,7 +1197,7 @@ export function PlacementJobCreateForm({
             Configure explainable numeric requirements now. Program/cohort scoping can remain empty when the opportunity is open across the college.
           </p>
         </div>
-        <div className="grid gap-5 p-5">
+        <div className="grid gap-5 pt-4">
           <label className="grid gap-1 text-sm font-semibold">Department · Target Audience
             <select className={inputClass} value={departmentFilter} onChange={event=>{
               setDepartmentFilter(event.target.value);setSelectedProgramIds([]);
