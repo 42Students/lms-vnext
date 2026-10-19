@@ -182,6 +182,7 @@ Priority: HR drive draft, applicant review, offers, rounds, drives, company repo
 - [ ] `src/components/hr/recruiter-profile-details-editor.tsx`
 - [ ] `src/components/hr/recruiter-request-cancel-button.tsx`
 - [ ] `src/components/hr/recruiter-request-feedback.tsx`
+- [ ] `src/components/hr/hr-round-editor-grid.tsx` (new scoped desktop hiring-round metadata grid; native runtime and pixel states pending)
 - [ ] `src/components/hr/recruiter-round-inline-editor.tsx`
 
 ### 5. `src/components/tracker` — 17 TSX files
@@ -474,3 +475,29 @@ The new `src/components/hr/hr-job-applicants-grid.tsx` displays only the existin
 The updated applicant page was re-fetched: 0 native control/table tags, 0 hex literals, 0 raw `h1`, matching 53/53 div open-close and 3/3 fragment open-close counts. New `hr-job-applicants-grid.tsx` similarly has zero raw controls, zero hex, and zero custom overlays. No local app, TS/CI, viewport screenshot or live tenant verification was run. E8 and the job page stay [ ] under the strict tick rule.
 
 **Exact next file:** `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`.
+
+
+## chat-15 continuation — HR round editor, confirmation and tracker state judgments (2026-10-19)
+
+**Baseline:** Synced the existing lane with newer origin/main using a two-parent merge commit and retained the applicant-sheet audit. The main branch continues to receive other lanes' commits. Edits below touched no `src/components/ui`, `package.json`, auth or server workflows.
+
+| File / state | Legacy source property | vNext source property | Source outcome / missing proof |
+| --- | --- | --- | --- |
+| `hr/drives/[jobId]/rounds/editor/page.tsx`: round list | `docs/design/old-lms-pages.md:6,10`: single canvas; compact bordered rows; no cards for ordinary rows | Removed nested `Card` wrappers; mobile editors render border-b hairlines, desktop `HrRoundEditorGrid` / separate inline edit forms | Structural match, still needs rendered row heights, focus and export checks |
+| `hr/drives/[jobId]/rounds/editor/page.tsx`: breakpoint | `docs/design/legacy-styles/components___listing-page-header.scss:131-158`: mobile max 767px | Desktop `hidden md:block`, phone `md:hidden`; editing forms `md:grid-cols-2` | Source 768px boundary matches; no physical tablet/phone screenshot |
+| `hr/drives/[jobId]/rounds/editor/page.tsx`: back navigation | `src/components/ui/page-back-link.tsx` cites `learn-layout.scss:361-383`, 44px touch and mobile icon-only | `PageBackLink` to same original drive rounds URL; second Drives destination retained | Delegated shared styles; live focus not tested |
+| `hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`: Keep action | Same legacy back affordance | Shared `PageBackLink` labelled Keep round; server optimistic token, exact action/round fields, danger button unchanged | Mobile source inherits shared 44px hit size; live keyboard and dialog proof missing |
+| `recruiter/not-found.tsx`: go home | Shared back affordance + one-canvas heading | Shared `PageBackLink` to original `/recruiter`; `PageHeader` and message unchanged | Source matches, mobile UI not verified |
+| `hr-round-editor-grid.tsx`: desktop round rows | `old-lms-pages.md:10` bordered worksheet with columns, actions | Read-only TpoGrid with sequence/name/kind/mode/duration/status/editability; in-page Edit round anchor and existing Review round removal route | AG Grid running/cell focus/column widths still unverified |
+| `tracker/*`: copy/saved-view/bulk feedback | `old-lms-pages.md:11-12`: shared slim notices, and `components___common.scss:20-29` responsive gutters | Shared `InlineNotice` success/error/info on four components; exact notice text, clipboard and bulk concurrency guards retained | Source shared style; screenshot and state parity missing |
+
+**Source grep-equivalent checks after re-fetching all eight updated/new TSX files:**
+`/<(button|select|input|textarea|table)(?=[\\s/>])/g` => **0 per file**;
+`/#[0-9a-fA-F]{3,8}\\b/g` => **0 per file**;
+`/<h1(?=[\\s>])/g` => **0 per file**;
+`/fixed inset-0|role=["'](?:dialog|alertdialog)["']/g` => **0 per file**.
+For the round editor, paired `div` 3/3, `article` 1/1, `form` 2/2, `Button` 2/2. For the removal confirmation, `div` 3/3, `form` 1/1, `Button` 1/1. For tracker components, all visible wrappers and Button openings/closings were matched in the fetched source. This is static source equivalent, not a CLI grep, TypeScript execution, or evidence of computed pixel values. Shared component props unchanged and only one rendered sheet/list visible at a given viewport.
+
+**Strict tick outcome:** none of these visible pages/components were ticked because complete default/hover/active/focus/disabled/error/loading value matching and physical mobile/tablet render proof are not available. See clone-sheets.md for E8. No CI/tests/build/app run.
+
+**Next HR file:** `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx` and its recruiter alias, then `src/components/tracker/tracker-live-logs-explorer.tsx` large sheet parity.
