@@ -63,7 +63,7 @@ export function TpoCompanyCreateForm() {
     <>
       <button
         type="button"
-        className="inline-flex min-h-9 items-center rounded-[var(--radius)] bg-primary px-4 text-sm font-[650] text-on-primary"
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary"
         onClick={() => { setOpen(true); setReviewing(false); setError(""); }}
       >
         Add company
@@ -84,7 +84,7 @@ export function TpoCompanyCreateForm() {
             <label className="block text-sm font-semibold text-foreground">
               Company name
               <input required minLength={2} maxLength={200}
-                className="mt-1 min-h-9 w-full rounded-[var(--radius)] border border-border bg-surface px-3"
+                className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
                 value={form.name} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, name: event.target.value }));}}/>
             </label>
@@ -92,25 +92,25 @@ export function TpoCompanyCreateForm() {
               Website URL (optional)
               <input type="url" maxLength={500}
                 placeholder="https://company.example"
-                className="mt-1 min-h-9 w-full rounded-[var(--radius)] border border-border bg-surface px-3"
+                className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
                 value={form.websiteUrl} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, websiteUrl: event.target.value }));}}/>
             </label>
             <label className="block text-sm font-semibold text-foreground">
               Primary domain (optional)
               <input maxLength={255} placeholder="company.example"
-                className="mt-1 min-h-9 w-full rounded-[var(--radius)] border border-border bg-surface px-3"
+                className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
                 value={form.primaryDomain} disabled={pending}
                 onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, primaryDomain: event.target.value }));}}/>
             </label>
-            {reviewing?<p role="status" className="rounded-[var(--radius)] border border-border p-3 text-sm text-body">
+            {reviewing?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
               Create or link {form.name.trim()} to this college?
               Existing canonical companies will be reused where identity matches.
               This creates an auditable college relationship.
             </p>:null}
             {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
             <button type="submit" disabled={pending}
-              className="min-h-9 rounded-[var(--radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+              className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
               {pending ? "Saving relationship…" : reviewing ? "Confirm company creation" : "Review and create company"}
             </button>
           </form>
