@@ -6,7 +6,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 type Selection={journeyState?:string;branchId?:string;batchId?:string;search?:string;
  pageSize:number;columns?:string};
@@ -28,9 +28,9 @@ function hrefFor(query:Selection){
  if(query.pageSize!==25)p.set("pageSize",String(query.pageSize));
  return "/tpo/students"+(p.size?"?"+p.toString():"");
 }
-export function TpoStudentSavedViews(){
+export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
  const router=useRouter(),params=useSearchParams();
- const [open,setOpen]=useState(false);
+ const [open,setOpen]=useState(embedded);
  const [rows,setRows]=useState<View[]>([]);
  const [name,setName]=useState("");
  const [pinned,setPinned]=useState(false);
@@ -48,6 +48,7 @@ export function TpoStudentSavedViews(){
   }catch(e){setError(e instanceof Error?e.message:"Could not load saved views");}
   finally{setBusy(false);}
  }
+ useEffect(()=>{if(embedded)void load();},[embedded]);
  async function send(input:Record<string,unknown>){
   setBusy(true);setError("");setNotice("");
   try{
