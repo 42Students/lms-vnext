@@ -1,5 +1,6 @@
 "use client";
 import { EmptyState } from "@/components/ui/empty-state";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -187,7 +188,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         Report for Claude
       </Button>
     </div>
-    {notice?<p role={notice.startsWith("Could not")?"alert":"status"} className="text-sm text-body">{notice}</p>:null}
+    {notice?<InlineNotice tone={/could not|unavailable|failed/i.test(notice)?"error":"info"} message={notice}/>:null}
     {items.length?<ol className="divide-y divide-border border-y border-border">
       {items.map(item=><li key={item.id} id={"log-"+item.requestId}
         className="py-4 text-sm">
