@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
+import {Pagination} from "@/components/ui/pagination";
 import {CollegeContentCsvExport} from "./college-content-csv-export";
 import {CollegeContentPreview} from "./college-content-preview";
 import {collegeLiveClassHref} from "@/modules/courses/college-live-classes-model";
@@ -94,14 +95,8 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
         </Link>
       </article>)}</div>}
   </section>
-  <nav aria-label="Live class pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-    <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
-    <div className="flex gap-2">
-      {data.query.page>1?<Link href={collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page:data.query.page-1})}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Previous</Link>:null}
-      {data.query.page<data.totalPages?<Link href={collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page:data.query.page+1})}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Next</Link>:null}
-    </div>
-  </nav>
+  <Pagination page={data.query.page} pageCount={data.totalPages}
+    hrefForPage={page=>collegeLiveClassHref({...data.query,view:data.view,from:data.from,to:data.to,page})}
+    label="Live class pagination" showBoundaryLinks={false}/>
  </div>;
 }
