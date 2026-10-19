@@ -467,3 +467,5 @@
 .topbarNotificationState > p + p { max-width:260px; color:var(--lms-muted-text); }
 
 @media (max-width:767px) { .topbarNotificationState { min-height:88px; padding:32px 16px; } }
+
+.topbarNotificationDrawer [data-slot="drawer-footer"] { padding:12px 20px; background:var(--lms-neutral-50); border-top:1px solid #e5e9f0; }
