@@ -177,6 +177,9 @@
 [data-slot="popover-listbox"] a[href]:hover { background: rgba(0,0,0,.035); }
 [data-slot="popover-listbox"] a[href]:active { background: rgba(0,0,0,.06); }
 [data-slot="popover-listbox"] a[href]:focus-visible { outline: 2px solid var(--lms-primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) {
+  [data-slot="popover-listbox"] { animation: lms-legacy-popup-enter .2s ease-out both; }
+}
 [data-slot="notification-popover"] > div:first-child {
   margin: -16px -16px 12px;
   padding: 16px 20px;
