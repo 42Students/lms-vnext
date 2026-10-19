@@ -67,7 +67,7 @@
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody td):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-neutral-700) !important;
-  background-color: transparent !important;
+  background-color: var(--lms-white) !important;
   font-size: 13px !important;
   border-bottom-color: var(--lms-neutral-200) !important;
 }
@@ -668,4 +668,13 @@
     :where(tbody tr:active):not(:where([data-unskin], [data-unskin] *)) {
     background-color: var(--lms-primary-subtle) !important;
   }
+}
+
+/* Legacy: components___common.scss:840-853. Normal table cells are white,
+ * but hovered cells explicitly clear their fill to reveal the teal row paint.
+ * Selected/focused rows use the same visual layering without geometry changes.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(tbody tr:hover td, tbody tr:focus-within td, tbody tr[aria-selected="true"] td):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: transparent !important;
 }
