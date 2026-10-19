@@ -170,6 +170,7 @@ export function CollegeCreateForm({
       </div>
       <Button
         type="submit"
+        className="min-h-11 md:min-h-9"
         loading={pending}
         disabled={
           pending ||
@@ -180,7 +181,7 @@ export function CollegeCreateForm({
       >
         {pending ? "Creating…" : "Create College"}
       </Button>
-      {restored?<p role="status" className="text-xs text-body">Draft restored</p>:null}
+      {restored?<Alert tone="info" className="lg:col-span-4">Draft restored</Alert>:null}
       {error ? (
         <Alert tone="error" className="lg:col-span-4">
           {error}

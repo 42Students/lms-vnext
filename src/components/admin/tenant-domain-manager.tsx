@@ -204,6 +204,7 @@ export function TenantDomainManager({
             </p>
           </div>
           <Button
+            className="min-h-11 md:min-h-9"
             disabled={creating || !host.trim()}
             onClick={createDomain}
           >
@@ -270,6 +271,7 @@ export function TenantDomainManager({
                       <Button
                         variant="secondary"
                         size="sm"
+                        className="min-h-11 md:min-h-9"
                         disabled={busy}
                         onClick={() =>
                           void runAction(
@@ -288,6 +290,7 @@ export function TenantDomainManager({
                       <Button
                         variant="secondary"
                         size="sm"
+                        className="min-h-11 md:min-h-9"
                         disabled={busy}
                         onClick={() => setPrimaryTarget(domain)}
                       >
@@ -299,6 +302,7 @@ export function TenantDomainManager({
                     <Button
                       variant="ghost"
                       size="sm"
+                      className="min-h-11 md:min-h-9"
                       disabled={busy}
                       onClick={() =>
                         setDeleteTarget(domain)

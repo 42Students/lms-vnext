@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 export type SummaryProject={
@@ -15,6 +16,7 @@ type Choice={id:string;name:string;code:string};
 const style="mt-1 w-full";
 export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProject}){
  const router=useRouter();
+ const {askConfirm,dialog}=useConfirmFlow();
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [classes,setClasses]=useState<Choice[]>([]);
  const [form,setForm]=useState({
@@ -37,7 +39,7 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
  async function save(){
   if(!form.title.trim()||busy)return;
   if(form.startDate&&form.endDate&&form.endDate<form.startDate){setError("End date must be after start date.");return;}
-  if(!window.confirm("Save workspace summary changes?"))return;
+  if(!(await askConfirm("Save workspace summary changes?")))return;
   setBusy(true);setError("");
   try {
    const res=await fetch("/api/projects/"+encodeURIComponent(p.id),{
@@ -104,5 +106,6 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
     className="ml-2">Cancel</Button>
   </div>:null}
   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+  {dialog}
  </section>;
 }

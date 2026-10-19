@@ -385,3 +385,30 @@
     transition: none !important;
   }
 }
+
+
+/* Legacy confirm-specific modal. docs/design/legacy-styles/components___antddesign.scss:899-906
+ * The Ant confirm content itself (not the body alone) has 15px 15px 5px padding;
+ * its action row starts 21px after the preceding content. Do not widen these
+ * rules to every dialog, whose separate heading/footer retain normal spacing. */
+.lms-legacy-confirm-dialog > div {
+  padding: 15px 15px 5px;
+}
+.lms-legacy-confirm-dialog [data-slot="dialog-header"] {
+  padding: 0;
+  border: 0;
+}
+.lms-legacy-confirm-dialog [data-slot="dialog-footer"] {
+  margin-top: 21px;
+  padding: 0;
+  border: 0;
+}
+/* Legacy mobile modal buttons: components___antddesign.scss:1036-1072. */
+@media (max-width: 767px) {
+  .lms-legacy-confirm-dialog [data-slot="dialog-footer"] {
+    gap: 8px;
+  }
+  .lms-legacy-confirm-dialog [data-slot="dialog-footer"] button {
+    min-height: 44px;
+  }
+}
