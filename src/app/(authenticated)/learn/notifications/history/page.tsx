@@ -44,22 +44,22 @@ export default async function LearnerNotificationHistoryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href="/learn/notifications"
-        className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-9 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Notifications
       </Link>
       <PageHeader eyebrow="Learner · Notifications"
         title="Personal notification history"
         description="Browse your recorded personal notifications beyond the latest inbox items. College announcements use the main Notifications page."
       />
-      <nav aria-label="Notification history filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
+      <nav aria-label="Notification history filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible">
         <Link href="/learn/notifications/history"
           aria-current={!page.unreadOnly ? "page" : undefined}
-          className={!page.unreadOnly ? "inline-flex min-h-11 items-center rounded-[8px] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover sm:min-h-9" : "inline-flex min-h-11 items-center rounded-[8px] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle sm:min-h-9"}>
+          className={!page.unreadOnly ? "inline-flex min-h-11 items-center rounded-[8px] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover min-[768px]:min-h-9" : "inline-flex min-h-11 items-center rounded-[8px] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle min-[768px]:min-h-9"}>
           All personal
         </Link>
         <Link href="/learn/notifications/history?unread=1"
           aria-current={page.unreadOnly ? "page" : undefined}
-          className={page.unreadOnly ? "inline-flex min-h-11 items-center rounded-[8px] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover sm:min-h-9" : "inline-flex min-h-11 items-center rounded-[8px] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle sm:min-h-9"}>
+          className={page.unreadOnly ? "inline-flex min-h-11 items-center rounded-[8px] border border-primary bg-primary px-4 text-sm font-medium text-on-primary hover:bg-primary-hover min-[768px]:min-h-9" : "inline-flex min-h-11 items-center rounded-[8px] border border-border bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-primary-subtle min-[768px]:min-h-9"}>
           Unread only
         </Link>
       </nav>
@@ -78,7 +78,7 @@ export default async function LearnerNotificationHistoryPage({
         {page.nextCursor ? (
           <Link
             href={learnerNotificationHistoryHref(page.nextCursor, page.unreadOnly)}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
           >
             Older notifications →
           </Link>
@@ -88,7 +88,7 @@ export default async function LearnerNotificationHistoryPage({
         {page.isOlderPage ? (
           <Link
             href={learnerNotificationHistoryHref(null, page.unreadOnly)}
-            className="inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
+            className="inline-flex min-h-9 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline"
           >
             Return to newest
           </Link>
