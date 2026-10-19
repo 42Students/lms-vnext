@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import {TpoOptionalEmailsEditor} from "@/components/tpo/tpo-optional-emails-editor";
 import {TpoSmsCapEditor} from "@/components/tpo/tpo-communication-settings-editors";
@@ -25,7 +26,7 @@ export default async function TpoStudentNoticesSettings(){
   hasMore:announcements.status==="READY"&&announcements.hasMore});
  return <div className="min-w-0 space-y-5">
   <TpoSettingsNav active="notices"/>
-  <h1 className="m-0 text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Student Notices &amp; Preparation</h1>
+  <PageHeader title="Student Notices & Preparation" />
   <p className="text-sm text-body">Use registered placement announcements and preparation settings. This page does not enable email/SMS delivery, bulk learner targeting or unregistered configuration switches.</p>
   <section className="space-y-3 border-t border-border pt-5">
    <h2 className="font-semibold">College placement notices</h2>
