@@ -40,7 +40,7 @@ export function TpoMobileFooter(){
    <nav aria-label="More TPO destinations" className="grid grid-cols-2 gap-2">
     {moreLinks.map(([label,href])=><Link key={href} href={href}
      onClick={()=>setMoreOpen(false)}
-     className="inline-flex min-h-11 items-center rounded-md border border-border px-3 py-3 text-sm font-semibold text-primary-text">{label}</Link>)}
+     className="inline-flex min-h-11 items-center rounded-[8px] border border-border px-3 py-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)]">{label}</Link>)}
    </nav>
   </BottomSheet>
  </>;
