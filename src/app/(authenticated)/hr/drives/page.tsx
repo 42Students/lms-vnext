@@ -7,6 +7,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterPlacementPortfolio } from "@/components/placements/recruiter-placement-portfolio";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Input } from "@/components/ui/input";
@@ -52,16 +53,18 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     deadline:first(raw.deadline)||undefined,page:first(raw.page)||undefined,
     sort:first(raw.sort)||undefined,
   });
-  if (!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" />
+  if (!query.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Drives" />
     <ErrorState title="Invalid drive filters" description="Review the college, lifecycle and search text."
       action={<Link href="/hr/drives" className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} /></div>;
   const grants = context.recruiter.grants;
   if (query.data.collegeId && !grants.some(grant => grant.collegeId === query.data.collegeId)) notFound();
   const selectedCollege = query.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
-  if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" description="Choose an authorized college to open its hiring drives." />
+  if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Drives" description="Choose an authorized college to open its hiring drives." />
     {grants.length === 0 ? <EmptyState title="No active college access" description="Your placement-cell relationship must be active before any drives are visible." /> :
-    <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
-      className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-5 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{grant.collegeName}</Link>)}</section>}</div>;
+    <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant=>({
+      key:grant.collegeId,label:grant.collegeName,
+      href:recruiterDrivesHref({...query.data,collegeId:grant.collegeId}),
+    }))}/>}</div>;
   const returnTo=recruiterDrivesHref({...query.data,collegeId:selectedCollege});
   const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
   const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
@@ -96,7 +99,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     countRecruiterAnswerableDriveRequests(selectedCollege,pageResult.rows.map(row=>row.job.id)),
   ]);
   return <div className="min-w-0 max-w-full space-y-6">
-    <PageHeader eyebrow="Recruiter" title="Drives"
+    <PageHeader title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
         className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -173,7 +176,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           <option value="TITLE">Title A–Z</option>
         </Select>
       </label>
-      <Button type="submit">Search</Button>
+      <Button type="submit" variant="secondary">Search</Button>
       <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="py-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>
     </form>
     {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
@@ -185,9 +188,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         return <li key={req.id} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <p className="font-semibold text-foreground">{title}</p>
           <p className="mt-1"><StatusBadge tone={req.status==="REJECTED"||req.status==="CANCELLED"?"error":req.status==="SENT_BACK"?"warning":req.status==="DRAFT"?"success":"info"}>{requestStageLabel(req.status)}</StatusBadge></p>
-          {req.status==="SENT_BACK"?<p className="mt-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
+          {req.status==="SENT_BACK"?<Alert tone="warning" className="mt-2">
             Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}
-          </p>:null}
+          </Alert>:null}
           <p className="mt-2 text-xs text-muted-foreground">Requested {req.createdAt.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
           {editable?<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&"+(req.status==="SENT_BACK"?"fix":"edit")+"="+encodeURIComponent(req.id)}
             className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
