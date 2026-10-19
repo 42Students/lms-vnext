@@ -6,8 +6,8 @@ export default function CollegePeopleError({reset}:{error:Error&{digest?:string}
   return <ErrorState title="People directory unavailable"
     description="No membership data could be loaded. Retry or clear filters."
     action={<div className="flex min-w-0 flex-wrap gap-3">
-      <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
+      <Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>
       <Link href="/college/people/manage"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>
     </div>} />;
 }
