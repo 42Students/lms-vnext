@@ -2,7 +2,8 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {Drawer} from "@/components/ui/drawer";
-import { PopoverPanel } from "@/components/ui/popover";
+import {PopoverPanel} from "@/components/ui/popover";
+import {TopbarNotificationEmpty} from "@/components/shell/topbar/notification-empty";
 import style from "@/components/shell/topbar/topbar.module.css";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -135,10 +136,8 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   finally{setPending(false);}
  }
 
- const panelFooter = <div role="group" aria-label="Notification inbox actions" className="flex flex-wrap gap-3"><Button variant="secondary" type="button" disabled={refreshing||pending} loading={refreshing} onClick={()=>void refresh()} className="min-h-11">Refresh</Button><Link className="min-h-11 inline-flex items-center text-sm underline" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
-    {unread>0?<Button variant="secondary" type="button" className="min-h-11" onClick={()=>void markAll()} disabled={pending} loading={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}</div>;
- const panelBody = <>   {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
-   {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style.topbarNotificationState}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="space-y-0">
+   {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
+   {!refreshing&&displayedItems.length===0&&!error?<TopbarNotificationEmpty title="Nothing yet" description="Things that happen on your drives and recruiters show up here."/> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="space-y-0">
     {groupedItems.map((group,index)=><li key={group.day+"-"+index} className="list-none">
     <p className="px-3 pb-2 pt-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.day}</p>
     <ul role="list" aria-label={"Notifications for "+group.day} className="space-y-0">
