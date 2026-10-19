@@ -417,3 +417,48 @@ git grep -nE 'aria-modal|data-closing|prefers-reduced-motion' -- src/components/
 **F1 [ ], F2 [ ] still unticked**: index-source proof is not a checkout grep, no real phone/tablet focus and animation verification, no full variant/style audit for all consumers, no canonical legacy toast timing or modal exit animation equivalence. Do not promote source-file checkboxes to category completion.
 
 **Next:** `src/components/ui/searchable-select.tsx` and `src/components/ui/disclosure.tsx`, followed by shared `src/components/ui/dropdown.tsx` focus/exit corner cases in nested menus.
+
+
+## Chat-16 F2 continuation — form popup and keyboard state (2026-10-19)
+
+### Source values and state proofs
+
+| Element/state | Legacy SCSS file:line & exact value | vNext file:line & value | Source result |
+| --- | --- | --- | --- |
+| Search dropdown top | `docs/design/legacy-styles/components___form.scss:64-69`, `top:calc(100% + 5px)` | `src/components/ui/searchable-select.tsx:141-143`, same | Match |
+| Search dropdown width | `components___form.scss:64-68`, `width:100%` | `searchable-select.tsx:143` width full, `legacy-overlays.css:419-420` max width 100% scoped to form, excluding generic 420px cap | Match |
+| Search dropdown min/max height | `components___form.scss:70-71`, `120px` / `200px` | `searchable-select.tsx:143` and `legacy-overlays.css:421-422` same | Match |
+| Search dropdown shadow | `components___form.scss:74`, `0 14px 16px rgba(0,0,0,.04)` | `legacy-overlays.css:423`, same scoped only to searchable form | Match |
+| Search dropdown radius | `components___form.scss:76`, `12px` | `src/components/ui/popover.tsx:62`, scoped `legacy-overlays.css:219`, 12px | Match |
+| Search dropdown top padding | `components___form.scss:75`, `5px` | `searchable-select.tsx:143` `pt-[5px]` | Match |
+| Search dropdown scrollbar | `components___form.scss:77-79`, Firefox/IE hidden scrollbar and WebKit hidden | `legacy-overlays.css:424-429`, same | Match |
+| Search option min height / insets | `components___form.scss:82-86`: 44px, 5px 10px | `searchable-select.tsx:149` `min-h-11`, `py-[5px]`, `px-[10px]` | Match |
+| Search option hover/active background | `components___form.scss:88-91`: hover `#d1f1f1` (no independent active styling in source) | `searchable-select.tsx:149`: hover and highlighted active `#d1f1f1` | Hover matches; highlighted active is an extension |
+| Search option transition | `components___form.scss:82`: background 200ms ease-in-out | `legacy-overlays.css:430-433`: 200ms ease-in-out | Match |
+| Search dropdown z-index | `components___form.scss:69`: 9 | `searchable-select.tsx:143` `var(--lms-z-dropdown)` `src/app/globals.css:837`: 100 | **Intentional layered-overlay difference; exact legacy parity unproved** |
+| Search unavailable option | Legacy SCSS lacks canonical disabled option paint | `searchable-select.tsx:45-46,119-123,134,149`: disabled option excluded from keyboard/Enter/ARIA descendant, actual button disabled/opacity | Functional source safety verified; visual parity unproved |
+| Tooltip box and arrow | `components___antddesign.scss:48-64`: `#1a1d21`, 8px radius, 27px min, 6/16 padding, 12/16 text, 10px arrow right -2px | `legacy-overlays.css:98-115`, `tooltip.tsx:67` | Static values match, glyph still needs device screenshot |
+| Tooltip keyboard toggle | Old details/Ant behavior not documented as a keyboard algorithm in bundled SCSS | `tooltip.tsx:47-64`: keyboard and assistive click `detail=0` toggles, touch/pen toggles from pointerdown, mouse hover/focus persists, Escape restores summary | Source behavior reviewed; live focus verification missing |
+| Dropdown hidden menu selection | Old SCSS describes hover/size not the algorithm | `dropdown.tsx:117-145`: Arrow/Home/End skip hidden/inert/disabled entries, Escape restores summary, outside pointer/focus dismisses | Source functionality reviewed; requires browser |
+| Modal route focus cleanup | Legacy focus path unspecified | `dialog.tsx:41`, `drawer.tsx:39`, `bottom-sheet.tsx:30`: detached opener not focused; `use-overlay-exit.ts:21-30` shares guard | Source path reviewed; route-navigation test pending |
+
+### Static breakpoint expressions
+
+| Width | SearchableSelect | Tooltip | Dropdown.mobileSheet |
+| --- | --- | --- | --- |
+| 375px | 100% of parent with max-height200, min-height120, 44px option target; no `sm` handoff on search popup | viewport minus32, flow positioning, keyboard/touch trigger min44 | bottom full width/safe area, scrim, max70dvh |
+| 640px | same option geometry; menu scroll bounded | phone width and flow, not yet absolute | still sheet (fix retained across 640–767) |
+| 767px | same option geometry | viewport minus32; SCSS `max-width:767px` rule still active | still sheet and scrim |
+| 768px | same form list geometry | `md:` absolute anchored popup max260px | `md:` anchored action popup, scrim removed |
+| 1024px | listbox follows input parent width, max height200; keyboard/Enter guarded | desktop anchored tip, hover/focus/keyboard | desktop anchored 6px-radius popup |
+
+### File-level source work
+
+- [x] `src/components/ui/searchable-select.tsx` — old form dropdown height/row source values, controlled-state active-option validation, no Enter on disabled/replaced option, paired PopoverListbox/Input/Button markup; source proof only.
+- [x] `src/components/ui/legacy-overlays.css` — scoped searchable-listbox override for width, shadow, scrollbar and row transitions; other notifications untouched.
+- [x] `src/components/ui/tooltip.tsx` — keyboard/assistive click toggles while hover/pen behaviors remain distinct; balanced native `<details>`/summary/tooltip.
+- [x] `src/components/ui/dropdown.tsx` — both option scans exclude hidden/inert nodes; retained mobile/desktop media handoff and paired details/summary/menu.
+
+**F1 [ ], F2 [ ] remain unticked.** GitHub-indexed candidate checks are bounded, not a checkout grep. Exact legacy dropdown z-index, popover exit timing, toast timeout policy, all consumer responsive/hover/disabled states and actual browser behavior are still open.
+
+**Next file for F2:** `src/components/ui/popover.tsx` — finish disabled/listbox keyboard interaction audit; then `src/components/ui/menu.tsx` and `src/components/ui/toast.tsx` for row/notification state completeness.
