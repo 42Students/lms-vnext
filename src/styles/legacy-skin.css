@@ -505,3 +505,22 @@
   :where(select):not(:where([data-unskin], [data-unskin] *)):hover:not(:disabled):not([aria-invalid="true"]) {
   border-color: var(--lms-field-hover-border) !important;
 }
+
+/* PRESSED PLAIN BUTTONS
+ * Legacy: components___antddesign.scss:165-169 (pressed uses darkened
+ * teal; translation is a layout transform so intentionally not reproduced).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):active:not(:disabled) {
+  background-color: var(--lms-button-primary-hover) !important;
+  border-color: var(--lms-button-primary-hover) !important;
+  color: var(--lms-on-primary) !important;
+}
+/* SELECTED NATIVE TABLE ROWS
+ * Legacy: components___variables.scss:10-13 (subtle teal active surface),
+ * old-lms-shell.css:45-48 (same active/hover visual family).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(tbody tr[aria-selected="true"]):not(:where([data-unskin], [data-unskin] *)) {
+  background-color: var(--lms-primary-subtle) !important;
+}
