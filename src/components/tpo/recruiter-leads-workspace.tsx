@@ -1,4 +1,5 @@
 "use client";
+import { Tabs } from "@/components/ui/tabs";
 
 import Link from "next/link";
 import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
@@ -686,19 +687,17 @@ export function RecruiterLeadsWorkspace({
                 {STAGES.map(x => <option value={x} key={x}>{x === "ALL" ? "All stages" : RECRUITER_STAGE_LEGACY_LABELS[x]}</option>)}
               </select>
             </label>
-            <nav role="tablist" aria-label="Engage views" className="flex flex-wrap items-center gap-2">
-              {([["table","Table"],["board","Board"],["companies","Companies ("+companies.length+")"],["campaigns","Emails"]] as const).map(([key,label])=>
-                <button type="button" role="tab" key={key} aria-selected={key===view}
-                  className={key===view?"min-h-11 rounded-md bg-primary px-3 text-sm font-semibold text-on-primary":"min-h-11 rounded-md border border-border px-3 text-sm text-body"}
-                  onClick={()=>{
-                    const params=new URLSearchParams(window.location.search);
-                    if(key==="campaigns"){params.set("view","campaigns");
-                      window.location.assign("/tpo/recruiters?"+params.toString());return;}
-                    if(key==="table")params.delete("view");else params.set("view",key);
-                    window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
-                    setView(key);
-                  }}>{label}</button>)}
-            </nav>
+            <Tabs ariaLabel="Engage views" controlledOnly renderPanel={false} value={view}
+              items={[{value:"table",label:"Table"},{value:"board",label:"Board"},
+                {value:"companies",label:"Companies",count:companies.length},{value:"campaigns",label:"Emails"}]}
+              onValueChange={next=>{
+                const params=new URLSearchParams(window.location.search);
+                if(next==="campaigns"){params.set("view","campaigns");
+                  window.location.assign("/tpo/recruiters?"+params.toString());return;}
+                if(next==="table")params.delete("view");else params.set("view",next);
+                window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
+                setView(next as "table"|"board"|"companies");
+              }}/>
           </div>
           <div className="space-y-3">
             <button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
