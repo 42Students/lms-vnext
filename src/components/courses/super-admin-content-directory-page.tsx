@@ -126,8 +126,8 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    <Button type="submit" className="self-end">Filter</Button>
   </form>
   <p className="text-sm text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · up to 25 per page</p>
-  {data.items.length?<div className="grid gap-3 md:grid-cols-2">
-   {data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
+  {data.items.length?<div className="divide-y divide-border border-y border-border">
+   {data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 py-4">
     <div className="flex flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
      <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="DRAFT"?"warning":"neutral"}>{item.status}</StatusBadge>
