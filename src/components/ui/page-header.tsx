@@ -25,7 +25,7 @@ export function PageHeader({ eyebrow, title, id, description, actions, needsDoin
   const heading = (
     <header
       data-slot="page-header"
-      className="flex min-w-0 flex-col items-stretch gap-2 pb-[var(--lms-space-4)] md:flex-row md:items-start md:justify-between md:gap-6 [--lms-page-header-title-size:20px] md:[--lms-page-header-title-size:30px]"
+      className="mb-2 flex w-full min-w-0 flex-col items-stretch gap-2 border-b border-[var(--lms-canvas-border)] pb-4 md:mb-4 md:flex-row md:items-start md:justify-between md:gap-6 [--lms-page-header-title-size:20px] md:[--lms-page-header-title-size:30px]"
     >
       <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 md:flex-row md:items-baseline md:gap-4">
         <h1
@@ -46,7 +46,7 @@ export function PageHeader({ eyebrow, title, id, description, actions, needsDoin
         ) : null}
       </div>
       {actions ? (
-        <div className="flex w-full min-w-0 flex-col items-stretch justify-start gap-2 md:ml-auto md:w-auto md:max-w-[60%] md:shrink-0 md:flex-row md:flex-wrap md:items-center md:justify-end">
+        <div className="mt-1 flex w-full min-w-0 flex-col items-stretch justify-start gap-2 md:ml-auto md:mt-0 md:w-auto md:shrink-0 md:flex-row md:flex-wrap md:items-center md:justify-end md:gap-4 md:pt-2">
           {actions}
         </div>
       ) : null}
