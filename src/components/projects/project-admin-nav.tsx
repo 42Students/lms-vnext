@@ -47,10 +47,10 @@ export function ProjectAdminNav({
                 : undefined
             }
             className={
-              "whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition " +
+              "whitespace-nowrap border-b-[3px] px-3 py-2 text-[14px] font-semibold transition " +
               (suffix === activePath
                 ? "bg-primary text-primary-foreground"
-                : "text-body hover:bg-muted hover:text-foreground")
+                 : "border-transparent text-body hover:bg-primary-subtle hover:text-primary-text")
             }
           >
             {label}
