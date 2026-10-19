@@ -28,9 +28,9 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     event.preventDefault();setDragging(false);if(disabled)return;
     const files=event.dataTransfer.files;
     if(!files.length)return;
-    if(!multiple&&files.length>1){setDroppedNames([]);setDropError("Select only one file.");return;}
-    if(Array.from(files).some(file=>!fileSizeIsValid(file.size,maxBytes))){setDroppedNames([]);setDropError("This file is larger than the allowed limit.");return;}
-    if(Array.from(files).some(file=>!fileMatchesAccept(file,accept))){setDroppedNames([]);setDropError("This file type is not allowed.");return;}
+    if(!multiple&&files.length>1){droppedRef.current=false;setDroppedNames([]);setDropError("Select only one file.");onFiles(null);return;}
+    if(Array.from(files).some(file=>!fileSizeIsValid(file.size,maxBytes))){droppedRef.current=false;setDroppedNames([]);setDropError("This file is larger than the allowed limit.");onFiles(null);return;}
+    if(Array.from(files).some(file=>!fileMatchesAccept(file,accept))){droppedRef.current=false;setDroppedNames([]);setDropError("This file type is not allowed.");onFiles(null);return;}
     setDropError(null);setDroppedNames(Array.from(files,file=>file.name));droppedRef.current=true;onFiles(files);
   }
   return <div data-slot="file-dropzone" onDragOver={event=>{if(!disabled){event.preventDefault();setDragging(true);}}}
