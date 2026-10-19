@@ -1,0 +1,17 @@
+/*
+ * Old LMS element skin (authenticated content only).
+ * Owner: chat-17. Imported exactly once by src/app/globals.css.
+ *
+ * Source of truth:
+ * docs/design/legacy-styles/components___{variables,common,form,button,
+ * accessibility,antddesign,typo}.scss and docs/design/old-lms-shell.css.
+ *
+ * Every rule is scoped to authenticated main/canvas descendants. [data-unskin]
+ * excludes both its own element and its entire subtree. This stylesheet only
+ * assigns visual properties; it NEVER changes page layout/geometry (margin,
+ * padding, sizing, positioning, display, flex, grid, or row height).
+ *
+ * Selector :where() avoids an unnecessary specificity war; !important is
+ * limited to paint/type declarations that must beat page Tailwind utilities.
+ * Role-specific shared components can opt out with [data-unskin].
+ */
