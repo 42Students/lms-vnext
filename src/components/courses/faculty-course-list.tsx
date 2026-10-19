@@ -86,18 +86,18 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           <label className="grid gap-1 text-sm font-semibold text-body">Search courses
             <Input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Course, code, Section or academic period"
-              className="text-base" />
+              className="text-base sm:text-sm" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Academic period
             <Select name="period" defaultValue={query.period}
-              className="text-base">
+              className="text-base sm:text-sm">
               <option value="">All assigned periods</option>
               {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
             </Select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Section
             <Select name="section" defaultValue={query.section}
-              className="text-base">
+              className="text-base sm:text-sm">
               <option value="">All sections ({sections.length})</option>
               {sections.map(section=><option key={section.id} value={section.id}>
                 {section.name} ({section.count})
@@ -106,7 +106,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Teaching role
             <Select name="role" defaultValue={query.role}
-              className="text-base">
+              className="text-base sm:text-sm">
               <option value="">All assigned roles</option>
               {COURSE_TEACHING_ROLES.map(role => <option key={role} value={role}>{role.replaceAll("_"," ")}</option>)}
             </Select>
@@ -114,7 +114,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Button type="submit" variant="primary">Apply filters</Button>
-          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+          <Link href="/teacher/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
           </p>
@@ -132,7 +132,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
           data-testid="teacher.courses.card.open"
-          className="group flex min-h-64 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]"
+          className="group flex min-h-64 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition hover:border-primary hover:bg-primary-subtle/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="flex items-start justify-between gap-3">
             <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-lg border border-border bg-primary-subtle">
@@ -143,7 +143,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">
                 {course.courseCode}
               </p>
-              <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
+              <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-[var(--lms-heading)]">
                 {course.courseName}
               </h2>
             </div>
