@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
@@ -50,7 +51,7 @@ export default async function HrRoundsEditorPage({params}:{
     <label className="grid gap-1 text-sm text-body">Duration (minutes)
      <Input name="durationMinutes" type="number" min={1} max={1440} className="w-full"/>
     </label>
-    <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:col-span-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Add round</button>
+    <Button type="submit" className="sm:col-span-2">Add round</Button>
    </form>
   </section>
   <section className="space-y-3">
@@ -77,7 +78,7 @@ export default async function HrRoundsEditorPage({params}:{
         <option value="">Not scheduled</option><option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
        </Select>
       </label>
-      <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Save changes</button>
+      <Button type="submit">Save changes</Button>
      </form>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
     {round.editable?<Link
       href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
