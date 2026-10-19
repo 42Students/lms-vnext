@@ -890,3 +890,172 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 **Entire-file scoped grep:** raw lowercase `button/input/select/textarea/table` = `0/0/0/0/0`, hex literals `0`, shared Button opens/closes `2/2`. No raw visible controls or local color hex introduced; both JSX label and Button pairs remained balanced in the checked-in source. Reproduce (not executed): `grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' src/components/tpo/tpo-campaign-compose.tsx` (expected no hits). Responsive proof is 44px phone/36px desktop **source class comparison**, not phone screenshot or tablet physical test. Print-only content is static, line breaks preserved by the existing preview block.
 
 **G4 and G5 category boxes remain [ ]**. A full old-LMS email client rendering, external ZeptoMail template HTML, printable PDFs and run-time/no-regression proof are still unavailable.
+
+## chat-6 continuation: email, print and safe CSV controls (source-only pass)
+
+This section is scoped to **11 source files read back after their commits**. Historical source measurements are matched to available legacy CSS only, and **G4/G5 strict category tick remains [ ]**. No app, compiler, CI, browser, phone/tablet screenshot, PDF render or email provider HTML fetch was run.
+
+### Work queue
+- [x] Source pass: `src/components/tpo/tpo-optional-emails-editor.tsx` — Print-only On/Off summary for optional student emails; Checkbox edits and PATCH concurrency guard preserved.
+- [x] Source pass: `src/app/(authenticated)/tpo/settings/notices/page.tsx` — Student Notices/Preparation settings navigation hidden on paper; Badge import restored and five links use teal/3px focus.
+- [x] Source pass: `src/components/tpo/tpo-communication-settings-editors.tsx` — SMS limit and recruiter-duration static print summaries; signature preview and save controls separated; PATCH unchanged.
+- [x] Source pass: `src/components/tpo/tpo-campaign-compose.tsx` — Fixed incomplete JSX expression in Save draft label; preview and editable campaign stay separate on paper.
+- [x] Source pass: `src/components/tpo/tpo-safe-csv-download.tsx` — Guarded CSV validates content type and nonempty payload; export pending/error unchanged; 44/36px and delayed URL release.
+- [x] Source pass: `src/components/tpo/tpo-student-clipboard-actions.tsx` — Paste/copy student roster controls use shared Button and Textarea, hidden on printed reports.
+- [x] Source pass: `src/components/tpo/tpo-batch-student-keyboard-actions.tsx` — Batch learner keyboard/clipboard/CSV toolbar has 44/36px targets and print exclusion; keyboard bindings retained.
+- [x] Source pass: `src/components/tpo/tpo-batch-student-saved-views.tsx` — Saved batch CSV links have visible brand focus and 44/36px targets; entire saved-view control area excluded on print.
+- [x] Source pass: `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx` — Offer-letter evidence is a status table, not a letter generator; return link omitted on paper.
+- [x] Source pass: `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx` — Offer evidence/current status and history remain printable; two internal navigation links hidden on paper.
+- [x] Source pass: `src/components/admin/inbound-mail-list.tsx` — Inbound mail message preview no longer line-clamped on paper; read/triage buttons hidden or shared-sized.
+- [ ] **Next exact source:** `src/components/auth/device-list.tsx` for the follow-on Super Admin/auth/shared-admin control pass; G4/G5 historical template and global scan remain separate open work.
+
+### Legacy and vNext property matrices
+Reference: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` = 44px mobile target at max-width 767px; `docs/design/ui-clone-checklist.md:46-47` = 36px, 9px radius, 14px/650 desktop controls; `docs/design/legacy-styles/components___accessibility.scss:18-21` = 2px solid teal with 3px offset; `docs/design/old-lms-pages.md:9` = compact tables and report layout. Shared components are imported but **not edited** in this pass.
+
+#### `src/components/tpo/tpo-optional-emails-editor.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/components/tpo/tpo-optional-emails-editor.tsx:58`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/components/tpo/tpo-optional-emails-editor.tsx:58`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/components/tpo/tpo-optional-emails-editor.tsx:none`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/components/tpo/tpo-optional-emails-editor.tsx:59` alert, `:60` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/components/tpo/tpo-optional-emails-editor.tsx:50, 58` print-hidden lines; `:55` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Print-only On/Off summary for optional student emails; Checkbox edits and PATCH concurrency guard preserved | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/app/(authenticated)/tpo/settings/notices/page.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/app/(authenticated)/tpo/settings/notices/page.tsx:36, 41, 63, 66, 67`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/app/(authenticated)/tpo/settings/notices/page.tsx:36, 41, 63, 66, 67`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/app/(authenticated)/tpo/settings/notices/page.tsx:36, 41, 63, 66, 67`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/app/(authenticated)/tpo/settings/notices/page.tsx:none` alert, `:34, 40, 44, 61` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/app/(authenticated)/tpo/settings/notices/page.tsx:29, 36, 41, 63, 65, 66, 67` print-hidden lines; `:none` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Student Notices/Preparation settings navigation hidden on paper; Badge import restored and five links use teal/3px focus | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/components/tpo/tpo-communication-settings-editors.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/components/tpo/tpo-communication-settings-editors.tsx:45, 50, 89, 121, 128`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/components/tpo/tpo-communication-settings-editors.tsx:45, 50, 89, 121, 128`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/components/tpo/tpo-communication-settings-editors.tsx:none`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/components/tpo/tpo-communication-settings-editors.tsx:51, 90, 129` alert, `:52, 91, 130` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/components/tpo/tpo-communication-settings-editors.tsx:42, 45, 50, 76, 82, 87, 89 (+2)` print-hidden lines; `:47, 75, 125` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | SMS limit and recruiter-duration static print summaries; signature preview and save controls separated; PATCH unchanged | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/components/tpo/tpo-campaign-compose.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/components/tpo/tpo-campaign-compose.tsx:15, 89, 134, 137, 141`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/components/tpo/tpo-campaign-compose.tsx:15, 89, 134, 137, 141`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/components/tpo/tpo-campaign-compose.tsx:134, 137`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/components/tpo/tpo-campaign-compose.tsx:88, 95, 96, 140, 146` alert, `:84, 87, 91, 140, 145` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/components/tpo/tpo-campaign-compose.tsx:79, 89, 100, 106, 110, 115, 126 (+3)` print-hidden lines; `:83, 114` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Fixed incomplete JSX expression in Save draft label; preview and editable campaign stay separate on paper | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/components/tpo/tpo-safe-csv-download.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/components/tpo/tpo-safe-csv-download.tsx:39`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/components/tpo/tpo-safe-csv-download.tsx:39`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/components/tpo/tpo-safe-csv-download.tsx:none`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/components/tpo/tpo-safe-csv-download.tsx:42` alert, `:none` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/components/tpo/tpo-safe-csv-download.tsx:37` print-hidden lines; `:none` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Guarded CSV validates content type and nonempty payload; export pending/error unchanged; 44/36px and delayed URL release | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/components/tpo/tpo-student-clipboard-actions.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/components/tpo/tpo-student-clipboard-actions.tsx:28, 31, 38, 40`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/components/tpo/tpo-student-clipboard-actions.tsx:28, 31, 40`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/components/tpo/tpo-student-clipboard-actions.tsx:none`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/components/tpo/tpo-student-clipboard-actions.tsx:44` alert, `:46` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/components/tpo/tpo-student-clipboard-actions.tsx:26` print-hidden lines; `:none` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Paste/copy student roster controls use shared Button and Textarea, hidden on printed reports | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/components/tpo/tpo-batch-student-keyboard-actions.tsx:40, 44, 46, 48, 49, 51, 57`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/components/tpo/tpo-batch-student-keyboard-actions.tsx:44, 46, 48, 49`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/components/tpo/tpo-batch-student-keyboard-actions.tsx:49`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/components/tpo/tpo-batch-student-keyboard-actions.tsx:none` alert, `:64` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/components/tpo/tpo-batch-student-keyboard-actions.tsx:36` print-hidden lines; `:none` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Batch learner keyboard/clipboard/CSV toolbar has 44/36px targets and print exclusion; keyboard bindings retained | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/components/tpo/tpo-batch-student-saved-views.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/components/tpo/tpo-batch-student-saved-views.tsx:62, 73, 75, 87, 95`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/components/tpo/tpo-batch-student-saved-views.tsx:62, 73, 95`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/components/tpo/tpo-batch-student-saved-views.tsx:95`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/components/tpo/tpo-batch-student-saved-views.tsx:102` alert, `:101` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/components/tpo/tpo-batch-student-saved-views.tsx:61` print-hidden lines; `:none` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Saved batch CSV links have visible brand focus and 44/36px targets; entire saved-view control area excluded on print | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx:41`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx:41`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx:41`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx:none` alert, `:none` status; `:48` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx:41` print-hidden lines; `:none` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Offer-letter evidence is a status table, not a letter generator; return link omitted on paper | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx:23, 31`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx:23, 31`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx:23, 31`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx:none` alert, `:none` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx:23, 31` print-hidden lines; `:none` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Offer evidence/current status and history remain printable; two internal navigation links hidden on paper | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+#### `src/components/admin/inbound-mail-list.tsx`
+| State/property | Legacy source and actual value | vNext file:line and source value | Outcome |
+|---|---|---|---|
+| Phone target | `pages___admin-list-pages.scss:8,193-214`: **44px through 767px** | `src/components/admin/inbound-mail-list.tsx:53, 65`: `min-h-11` where present | Source matches when locally specified; no device measurement |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: **36px**, 9px radius, 14px/650 | `src/components/admin/inbound-mail-list.tsx:53, 65`: `md:min-h-9` or shared inherited control | Some controls inherit defaults; no computed CSS confirmation |
+| Keyboard focus | `components___accessibility.scss:18-21`: **2px teal / 3px offset** | `src/components/admin/inbound-mail-list.tsx:none`: explicit 3px outline offset on styled links where present | Other controls inherit shared focus and require visual check |
+| Status/empty/error | `old-lms-pages.md:9`: compact borders and semantic pills | `src/components/admin/inbound-mail-list.tsx:none` alert, `:42, 69` status; `:none` shared table where applicable | Source-only; exact legacy error/loading/empty visuals unproven |
+| Print/PDF/email | No actual authenticated email/offer/PDF print templates checked into legacy styles | `src/components/admin/inbound-mail-list.tsx:53` print-hidden lines; `:none` print-only static text | Screen-print source separation; **G5 output parity not verified** |
+| Behavior | No complete historical matching interaction recording | Inbound mail message preview no longer line-clamped on paper; read/triage buttons hidden or shared-sized | Event handlers retained except safe Blob URL cleanup; runtime verification outstanding |
+
+### Coverage proof — scoped lexical grep
+
+| Whole source file | Raw button/input/select/textarea/table | Hard-coded hex | Shared Button open/close | Label open/close |
+|---|---|---:|---:|---:|
+| `src/components/tpo/tpo-optional-emails-editor.tsx` | 0/0/0/0/0 | 0 | 1/1 | 1/1 |
+| `src/app/(authenticated)/tpo/settings/notices/page.tsx` | 0/0/0/0/0 | 0 | 0/0 | 0/0 |
+| `src/components/tpo/tpo-communication-settings-editors.tsx` | 0/0/0/0/0 | 0 | 3/3 | 3/3 |
+| `src/components/tpo/tpo-campaign-compose.tsx` | 0/0/0/0/0 | 0 | 2/2 | 5/5 |
+| `src/components/tpo/tpo-safe-csv-download.tsx` | 0/0/0/0/0 | 0 | 1/1 | 0/0 |
+| `src/components/tpo/tpo-student-clipboard-actions.tsx` | 0/0/0/0/0 | 0 | 3/3 | 1/1 |
+| `src/components/tpo/tpo-batch-student-keyboard-actions.tsx` | 0/0/0/0/0 | 0 | 4/4 | 2/2 |
+| `src/components/tpo/tpo-batch-student-saved-views.tsx` | 0/0/0/0/0 | 0 | 6/6 | 3/3 |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx` | 0/0/0/0/0 | 0 | 0/0 | 0/0 |
+| `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx` | 0/0/0/0/0 | 0 | 0/0 | 0/0 |
+| `src/components/admin/inbound-mail-list.tsx` | 0/0/0/0/0 | 0 | 2/2 | 0/0 |
+
+Command to reproduce on a checkout (**not executed**):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+  'src/components/tpo/tpo-optional-emails-editor.tsx' \\
+  'src/app/(authenticated)/tpo/settings/notices/page.tsx' \\
+  'src/components/tpo/tpo-communication-settings-editors.tsx' \\
+  'src/components/tpo/tpo-campaign-compose.tsx' \\
+  'src/components/tpo/tpo-safe-csv-download.tsx' \\
+  'src/components/tpo/tpo-student-clipboard-actions.tsx' \\
+  'src/components/tpo/tpo-batch-student-keyboard-actions.tsx' \\
+  'src/components/tpo/tpo-batch-student-saved-views.tsx' \\
+  'src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx' \\
+  'src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx' \\
+  'src/components/admin/inbound-mail-list.tsx'
+```
+
+**Responsive source evidence:** mobile width up to 767px uses `min-h-11` when locally specified (44px); `md:min-h-9` at 768px+ (36px). Source value comparison does not prove actual touch target dimensions or computed font/hover/focus CSS. `print:hidden` suppresses interactive controls. Saved email preferences, campaign subject/message and template examples have static text on paper while editing stays interactive on screen. Offer-letter **evidence** is not an actual PDF/offer letter and remains labelled unavailable where underlying records are missing. Provider-hosted ZeptoMail OTP/recruiter campaign HTML remains external and uninspected.
+
+**Important source repair:** the previously stored `src/components/tpo/tpo-campaign-compose.tsx` Save draft button had an incomplete JSX expression `{busy?"Saving…":"Save draft"`; this pass explicitly repaired it to `{busy?"Saving…":"Save draft"}`. `src/app/(authenticated)/tpo/settings/notices/page.tsx` referenced `Badge` without an import, which was added from shared UI. These fixes are source-verified only; no compiler/CI was run.
+
+**Still open, no strict G4/G5 tick:** repository-wide grep, all state/value tables, tablet/small-phone computed geometry, authenticated print preview and exact external PDF/certificate/receipt/offer/email HTML.
