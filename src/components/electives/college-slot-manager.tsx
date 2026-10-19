@@ -1,5 +1,7 @@
 "use client";
 
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
@@ -93,30 +95,30 @@ export function CollegeSlotManager({ options, row }: {
     {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface p-4 sm:grid-cols-2">
       {row?<p role="note" className="sm:col-span-2 text-xs text-muted-foreground">Academic identity is locked after creation. Changing existing learner picks, credits or choice limits is checked by the server before saving.</p>:null}
       {!row ? <>
-        <Field label="Program"><select required className={fieldClass} value={programId}
+        <Field label="Program"><Select required className={fieldClass} value={programId}
           onChange={event => setProgramId(event.target.value)}>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select></Field>
-        <Field label="Academic period (optional)"><select className={fieldClass} value={periodId}
+        </Select></Field>
+        <Field label="Academic period (optional)"><Select className={fieldClass} value={periodId}
           onChange={event => setPeriodId(event.target.value)}>
           <option value="">No period linked</option>
           {options.periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select></Field>
-        <Field label="Semester number"><input required type="number" min={1} max={Math.min(12, limit)}
+        </Select></Field>
+        <Field label="Semester number"><Input required type="number" min={1} max={Math.min(12, limit)}
           className={fieldClass} value={term} onChange={event => setTerm(event.target.value)} /></Field>
-        <Field label="Academic year (optional, YYYY-YY)"><input maxLength={9}
+        <Field label="Academic year (optional, YYYY-YY)"><Input maxLength={9}
           placeholder="2026-27" className={fieldClass} value={year}
           onChange={event => setYear(event.target.value)} /></Field>
       </> : null}
-      <Field label="Slot name"><input required maxLength={150} className={fieldClass}
+      <Field label="Slot name"><Input required maxLength={150} className={fieldClass}
         value={name} onChange={event => setName(event.target.value)} /></Field>
-      <Field label="Description"><input maxLength={1000} className={fieldClass}
+      <Field label="Description"><Input maxLength={1000} className={fieldClass}
         value={description} onChange={event => setDescription(event.target.value)} /></Field>
-      <Field label="Credits"><input type="number" required min={0} max={30}
+      <Field label="Credits"><Input type="number" required min={0} max={30}
         className={fieldClass} value={credits} onChange={event => setCredits(event.target.value)} /></Field>
-      <Field label="Minimum choices"><input type="number" required min={0} max={100}
+      <Field label="Minimum choices"><Input type="number" required min={0} max={100}
         className={fieldClass} value={minPick} onChange={event => setMinPick(event.target.value)} /></Field>
-      <Field label="Maximum choices"><input type="number" required min={1} max={100}
+      <Field label="Maximum choices"><Input type="number" required min={1} max={100}
         className={fieldClass} value={maxPick} onChange={event => setMaxPick(event.target.value)} /></Field>
       {error ? <p role="alert" className="sm:col-span-2 text-sm text-red-700">{error}</p> : null}
       <div className="flex gap-3 sm:col-span-2">
