@@ -6,6 +6,7 @@ import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
 import {parseRecruiterPrivateReviewReceipt,isConfirmedRecruiterPrivateReview,
  type RecruiterPrivateReviewReceipt} from "@/modules/placements/recruiter-private-rating-receipt-model";
 type Review=RecruiterPrivateReviewReceipt;
@@ -89,12 +90,12 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   <p className="text-xs text-muted-foreground">{note.length}/1000 characters</p>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   <div className="flex flex-wrap gap-2">
-   <Button variant="primary" type="submit" disabled={!ready||!dirty||pending}
-   >
+   <Button type="submit" disabled={!ready||!dirty||pending}
+    >
     {pending?"Saving…":"Save private review"}</Button>
-   <Button variant="primary" type="button" disabled={!ready||pending||(rating===null&&!note)}
+   <Button type="button" disabled={!ready||pending||(rating===null&&!note)}
     onClick={()=>void save(undefined,true)}
-   >
+    variant="secondary">
     Clear rating and note</Button>
   </div>
  </form>;
