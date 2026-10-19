@@ -270,3 +270,58 @@ The five committed source files were fetched back from GitHub after writes. JSX 
 | `src/components/courses/learner-course-list.tsx` | Converted Semester Details, All Courses and Credits Breakdown native `details` elements to shared `Disclosure` | **3** balanced `<Disclosure>` pairs, **0** native `<details>` in this file. Kept each title, scrollable list, recorded-credit totals and conditional rendering; native keyboard disclosure behavior remains in the shared component. Browser CSS/keyboard verification still required. |
 
 Legacy clickable-chip state matrix is not fully proven beyond the explicitly matched mobile padding/min-height rule. Do not tick E4 or E5. Prior audit instruction to inspect `placement-calendar-workspace.tsx` is complete at the source-migration level; exact next file: `src/components/tpo/recruiter-lead-detail-workspace.tsx` (remaining dynamic variable-class controls), then `src/components/placements/learner-applications-browse.tsx` pager semantics review. Source commits are already on the lane branch, not on main. `E1–E5` and `E8` remain [ ] pending strict coverage, visual/behavior and missing dependency/source checks. No app/code execution or CI was performed.
+
+## Replacement lane — second source-file batch, 2026-10-19
+
+This continuation merged the latest inspected main commit (0744985) into the lane branch while preserving lane-only work and audit history. Main was not written. The evidence below is **GitHub-fetched source regex inspection only** (not locally executed shell grep, a compiler run, or browser verification).
+
+### Completed source-file conversions / static coverage
+
+| File | Work completed; existing behavior retained | Full-file source grep-equivalent results |
+|---|---|---|
+| src/components/tpo/recruiter-lead-detail-workspace.tsx | 18 raw buttons converted to shared Button, 3 selects to Select, 6 inputs to Input, 4 textareas to Textarea. Overdue label to StatusBadge; activity and call-outcome groups remain 2 shared FilterChip pairs. Saved, disabled, form submission, invite/copy, follow-up and navigation behavior preserved; anchor/link button geometry now tokenized. Obsolete input/primary style constants removed. | Raw JSX button/input/select/textarea/details **0/0/0/0/0**; Button **18 opens/18 closes**, Select **3/3**, FilterChip **2/2**, StatusBadge **1/1**; Input **6 self-closing**, Textarea **4 self-closing**; border-b-2 **0**, rounded-full **0**. |
+| src/components/placements/learner-applications-browse.tsx | Hand-built Previous/Next replaced by shared Pagination; status/view search/segment filters and authorized paged data unchanged. Uses the existing sanitized updateLearnerApplicationUrl for page links with scroll=false, restoring previous router.push scroll behavior. | One self-closing Pagination; old Application results pages nav **0**; raw button/input/select/textarea/details **0**; existing Button **11 opens/11 closes**. |
+| src/components/verification/VerificationFilterPanel.tsx | More-filters native details/summary replaced with Disclosure, keeping three date preset chips, all filter controls and apply callbacks. | Native details/summary **0/0**; Disclosure **1/1**; FilterChip **3/3**; Button **2/2**. |
+| src/components/courses/college-lesson-visibility-controls.tsx | Bulk lesson visibility details/summary replaced with Disclosure; selection, failed-row retry, update guards, server behavior and scrolling list retained. | Native details/summary **0/0**; Disclosure **1/1**; Button **4/4**. |
+| src/components/projects/learner-project-mobile-filters.tsx | Mobile Search & filters accordion moved to Disclosure with a ReactNode title that retains the active-count badge; GET form, search, selects, Apply and Clear are unchanged. | Native details/summary **0/0**; Disclosure **1/1**; Button **1/1**; Select **5/5**; parent sm:hidden preserved. |
+| src/components/ui/pagination.tsx | Optional scroll property defaults true and is forwarded to all five Link render variants; existing callers are unchanged. | scroll={scroll} **5** source instances; raw buttons/details **0**. |
+| src/components/ui/disclosure.tsx | ReactNode title replaces string-only type without changing defaultOpen, semantic details, summary markup, keyboard behavior or existing strings. | One native details element intentionally **inside** the shared Disclosure primitive, no extra bespoke page instance. |
+
+Reproduce the source grep in the repository (shell commands **not executed by this lane**):
+
+    grep -nE '<(button|input|select|textarea|details|summary)([[:space:]>])' src/components/tpo/recruiter-lead-detail-workspace.tsx src/components/placements/learner-applications-browse.tsx src/components/verification/VerificationFilterPanel.tsx src/components/courses/college-lesson-visibility-controls.tsx src/components/projects/learner-project-mobile-filters.tsx
+    grep -nE '<(Button|FilterChip|Disclosure|Pagination)([[:space:]>])|</(Button|FilterChip|Disclosure)>|scroll=\{false\}' src/components/tpo/recruiter-lead-detail-workspace.tsx src/components/placements/learner-applications-browse.tsx src/components/verification/VerificationFilterPanel.tsx src/components/courses/college-lesson-visibility-controls.tsx src/components/projects/learner-project-mobile-filters.tsx
+
+### Exact legacy-to-vNext property/state comparisons
+
+| Property / state | Legacy source, value | Current source, value | Result |
+|---|---|---|---|
+| E2 active page border | legacy-styles/components___antddesign.scss:233-239 — $clrThird | ui/pagination.tsx:66-69 — var(--lms-primary) | Token equality not fully proven |
+| E2 phone page target/radius | components___antddesign.scss:242-256 — 44×44px, 8px radius through 767px | ui/pagination.tsx:54 — min-h-11, min-w-11, rounded-[8px] until md (768px) | Geometry and breakpoint match |
+| E2 phone numeric line-height | components___antddesign.scss:255 — 42px | ui/pagination.tsx:54 — flex center with leading-5 (20px) | **Mismatch**, leave E2 open |
+| E2 visible page numbers | components___antddesign.scss:272-280 — active only, hide jump controls on phone | ui/pagination.tsx:60-82 — inactive numbers/boundaries hidden below md | Source rule matches |
+| E2 URL and scroll preservation | Previously learner-applications-browse.tsx:356-368 — updateQuery uses router.push with scroll:false | learner-applications-browse.tsx:357-361 uses updateLearnerApplicationUrl + scroll=false; ui/pagination.tsx:59-84 forwards scroll to all Link variants | Static behavior matched, browser not checked |
+| E4 neutral status shape | components___common.scss:995-1005 — radius 6px, padding 2/15px, min-width 90px, font 12px/700, fill #fafbfc, ink #84828b | ui/status-badge.tsx:17 — same geometry and font; fill --lms-neutral-50, ink --lms-neutral-400 | Color token equality pending; neutral ink previously differed |
+| E4 clickable chip phone target/padding | components___antddesign.scss:1092-1100 — min-height 44px, 12px horizontal padding through 767px | ui/filter-chip.tsx:27-36 — min-h-11 and px-[12px] until md, desktop px-[15px] | Exact phone size/padding match; tone states still open |
+| E5 disclosure keyboard | Legacy native details/summary and Ant collapse; Enter/Space expected | ui/disclosure.tsx:11-19 retains native details/summary | Semantics retained; browser not checked |
+| E5 accordion phone touch | components___antddesign.scss:1081-1100 — 44px clickable-element floor, not a specific Ant collapse metric | ui/disclosure.tsx:14 — min-h-11 (44px); learner-project-mobile-filters.tsx:23 retains 48px original summary minimum | Accessibility floor met; **full collapse value table missing** |
+| E5 focus/hover/motion | Legacy Ant collapse computed states not available in inspected SCSS | ui/disclosure.tsx:14-17 — 2px primary focus ring, subtle hover, motion-reduce | **Unproven**, leave E5 open |
+
+### Responsive source proof and regression limits
+
+- **Phone up to 767px:** Pagination link hitboxes are 44px with 8px radius, only active number/Previous/Next appear. Recruiter controls use min-h-11 (44px); FilterChip uses 44px min height. Mobile-only project filters remain under sm:hidden with their original 48px summary.
+- **Tablet 768–1599px:** Pagination changes to 36px controls and numeric links reappear; recruiter action controls use md:min-h-9 (36px). Project mobile section remains hidden at sm and above. Shared Tabs gap stays 20px and horizontally scrollable.
+- **Wide at least 1600px:** Tabs keep the legacy 40px gap; this batch does not change authorized tables/rows/page layout.
+- **Failure/behavior states:** recruiter submit/disable, invite, follow-ups, validation and messages unchanged; learner withdrawal and URL debounce untouched; Disclosure forms and selectors unchanged. JSX open/close pairs were re-fetched and checked statically.
+- **Verification limits:** browser computed styles, keyboard interactions, TypeScript strict typecheck, CI, application runtime and repository-wide grep were **not** run. Source migration does not imply pixel parity.
+
+### Strict category tick status and next queue
+
+- [ ] E1 tables — exhaustive value/state/coverage proof still missing.
+- [ ] E2 pagination — legacy 42px line-height differs; all-page coverage and runtime proof missing.
+- [ ] E3 tabs — exhaustive route/state coverage still open.
+- [ ] E4 statuses/chips — neutral status ink/tone/focus exactness and all-page coverage open.
+- [ ] E5 accordions/steppers — exact Ant collapse computed values and all-instance census open.
+- [ ] E8 AG Grid — both TPO callers use next/dynamic with ssr:false and native Quartz source exists, but the checked package.json still omits ag-grid-community and ag-grid-react; user prohibits package.json edits. No build/visual proof.
+
+**Next exact file:** src/components/placements/tpo-drive-cancel-form.tsx for a source-state audit and any remaining display patterns; then the broader hand-rolled disclosure and tab inventory. No unchecked category was prematurely ticked.
