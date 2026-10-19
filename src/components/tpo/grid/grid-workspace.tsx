@@ -9,7 +9,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {TpoGridColumnChooser} from "@/components/tpo/tpo-grid-column-chooser";
 import {TpoGridFilterPanel,type TpoFilterField} from "@/components/tpo/tpo-grid-filter-panel";
 import {chosenTpoGridColumns,exportTpoGridCsv,tpoGridExportColumns,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
-import {gridExportFilename} from "@/modules/placements/grid-export-filename";
+import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
 type GridWorkspaceProps<Row>={
@@ -51,7 +51,7 @@ const safeTsv=(value:unknown)=>{
  * search persists in its URL, and copy/paste/export never fetch broader datasets. */
 export function GridWorkspace<Row>({
  rows,columns,rowKey,children,filters=[],externalFilters,selection,rollOf,savedViews,extraActions,act,
- exportName="tpo-grid",xlsxHref,searchPlaceholder="Search name, roll no., anything",
+ exportName="export",xlsxHref,searchPlaceholder="Search name, roll no., anything",
  searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
  searchMaxLength=120,searchMode="url",searchValue,onSearchChange,
  columnKeys,onColumnKeysChange,onExportCsv,onExportXlsx,onCopyRows,
@@ -134,7 +134,7 @@ export function GridWorkspace<Row>({
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const link=document.createElement("a");
-    link.href=url;link.download=gridExportFilename(exportName,"csv");
+    link.href=url;link.download=legacyGridExportFilename(exportName,"csv");
     document.body.appendChild(link);link.click();link.remove();
    }finally{URL.revokeObjectURL(url);}
    setNotice("Exported "+exportedRows.length+" authorized row(s) from this page.");

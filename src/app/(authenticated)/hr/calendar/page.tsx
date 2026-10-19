@@ -1,4 +1,5 @@
 import { CalendarGrid } from "@/components/ui/calendar-grid";
+import calendarStyles from "@/components/placements/legacy-calendar-theme.module.css";
 import { Tabs } from "@/components/ui/tabs";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
@@ -538,10 +539,10 @@ export default async function HrCalendarPage({
                   "Fri",
                   "Sat",
                   "Sun",
-                ].map((label) => (
+                ].map((label,index) => (
                   <div
                     key={label}
-                    className="py-3 text-center text-xs font-bold uppercase text-muted-foreground"
+                    className={"py-3 text-center text-xs font-bold uppercase text-muted-foreground "+(index===6?calendarStyles.calendarSunday:"")}
                   >
                     {label}
                   </div>
@@ -573,9 +574,10 @@ export default async function HrCalendarPage({
                     >
                       <p
                         className={
-                          isToday
+                          (isToday
                             ? "text-xs font-bold text-primary-text"
-                            : "text-xs font-semibold text-foreground"
+                            : "text-xs font-semibold text-foreground") +
+                          (!isToday && new Date(day+"T12:00:00Z").getUTCDay()===0?" "+calendarStyles.calendarSunday:"")
                         }
                       >
                         {shortDayLabel(day)}
