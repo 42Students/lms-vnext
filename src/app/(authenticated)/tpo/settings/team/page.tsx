@@ -111,7 +111,7 @@ export default async function TpoPlacementTeamPage() {
         ].map(([label, value]) => (
           <div
             key={label}
-            className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
+            className="border-b border-border px-1 py-4"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {label}
