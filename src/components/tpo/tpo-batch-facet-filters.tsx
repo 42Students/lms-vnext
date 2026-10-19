@@ -1,4 +1,5 @@
 "use client";
+import { Disclosure } from "@/components/ui/disclosure";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -33,8 +34,7 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
   ...selected.finalYears.map(value=>({key:"final-year",label:String(value),remove:()=>toggleYear(value)}))];
  const count=filterTpoBatchFacets(rows,selected).length;
  const facetCount=(next:TpoBatchFacetQuery)=>filterTpoBatchFacets(rows,next).length;
- return <details className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
-  <summary className="min-h-10 cursor-pointer text-sm font-semibold">Filters · State, Department, Program, Final year</summary>
+ return <Disclosure title="Filters · State, Department, Program, Final year" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
   <form action="/tpo/batches" method="get" className="mt-3 space-y-3">
    {Object.entries(baseQuery).filter(([,value])=>Boolean(value)).map(([key,value])=>
     <input key={key} type="hidden" name={key} value={value}/>)}
@@ -83,5 +83,5 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
     <Button type="submit" >Show {count}</Button>
    </div>
   </form>
- </details>;
+ </Disclosure>;
 }
