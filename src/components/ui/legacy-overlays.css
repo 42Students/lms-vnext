@@ -121,6 +121,12 @@
     padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   }
 }
+@media (max-width: 639px) {
+  [data-slot="dropdown-root"][data-mobile-sheet="true"] > [data-slot="dropdown"] {
+    max-height: min(70dvh, calc(100dvh - env(safe-area-inset-top, 0px)));
+    overscroll-behavior: contain;
+  }
+}
 [data-slot="menu"] [role="menuitem"][aria-disabled="true"] {
   cursor: not-allowed;
   pointer-events: none;
