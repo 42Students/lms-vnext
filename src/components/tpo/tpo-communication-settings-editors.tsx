@@ -1,6 +1,9 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
+import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
 
 type ResponseBody={error?:string;version?:string};
 function saveError(body:ResponseBody){
@@ -35,9 +38,9 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
    "Drive cancelled","Application deadline today","Debarred or marked absent",
   ].map(label=><span key={label} className="rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">{label}</span>)}</div>
   <label className="block text-sm font-semibold">Monthly limit on optional SMS
-   <input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
+   <Input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
-    className="mt-2 block min-h-11 sm:min-h-9 w-40 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground"/>
+    className="mt-2 min-h-11 sm:min-h-9 w-40"/>
   </label>
   <p className="text-xs text-muted-foreground">SMS used this month: unavailable until delivery usage is connected. Saving a limit does not enable SMS delivery.</p>
   <button type="button" onClick={()=>void save()} disabled={busy||saved===value||value<0||value>100000||!Number.isInteger(value)}
@@ -67,10 +70,10 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
  }
  return <section className="space-y-4 border-t border-border pt-5">
   <label className="block text-sm font-semibold">Email signature
-   <textarea rows={3} maxLength={300} value={value} disabled={busy}
+   <Textarea rows={3} maxLength={300} value={value} disabled={busy}
     placeholder={"Training and Placement Cell\nYour college's name"}
     onChange={event=>setValue(event.target.value)}
-    className="mt-2 block w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 py-2 text-foreground"/>
+    className="mt-2 w-full"/>
   </label>
   <p className="text-right text-xs text-muted-foreground">{value.length}/300</p>
   <div className="rounded-[var(--lms-control-radius)] border border-dashed border-border p-4">
@@ -109,11 +112,11 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
  return <section className="space-y-3 border-t border-border pt-5">
   <h2 className="font-semibold">Recruiter access lasts</h2>
   <label className="block text-sm">Access granted to a recruiter lasts
-   <select value={[3,6,12,24].includes(months)?months:6}
+   <Select value={[3,6,12,24].includes(months)?months:6}
     onChange={event=>setMonths(Number(event.target.value))} disabled={busy}
-    className="mt-2 block min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3">
+    className="mt-2 min-h-11 sm:min-h-9">
     {[3,6,12,24].map(value=><option key={value} value={value}>{value} months</option>)}
-   </select>
+   </Select>
   </label>
   <p className="text-xs text-muted-foreground">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
   <button type="button" onClick={()=>void save()} disabled={busy||saved===months}
