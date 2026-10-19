@@ -1,0 +1,235 @@
+/* Auth-only shell. Measurements follow docs/design/legacy-styles/pages___login.scss
+   and the 2026-10-19 North Star; shared app chrome belongs to other lanes. */
+.viewport {
+  --auth-primary: #0a7c88;
+  --auth-ink: #172033;
+  --auth-body: #54505d;
+  --auth-border: #e5e9f0;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background: #f1f4f9;
+  color: var(--auth-ink);
+  font-family: Inter, Lato, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.viewport::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(to right, rgba(169, 181, 204, .16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(169, 181, 204, .16) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(135deg, #000 10%, transparent 72%);
+}
+.desktopBackdrop, .mobileBackdrop {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+}
+.desktopBackdrop::after, .mobileBackdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(241, 244, 249, .82);
+}
+.mobileBackdrop { display: none; }
+.brandHeader {
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 32px clamp(24px, 5vw, 72px);
+}
+.brandRow {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 11px;
+}
+.logoMark {
+  position: relative;
+  display: block;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 10px;
+  background: #0a7c88;
+  transform: rotate(-8deg);
+}
+.logoMark::before, .logoMark::after {
+  position: absolute;
+  content: "";
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  background: #9ee4e8;
+  transform: rotate(8deg);
+}
+.logoMark::before { top: 7px; left: 7px; }
+.logoMark::after { right: 7px; bottom: 7px; background: white; }
+.collegeLogo {
+  display: block;
+  max-width: min(220px, 60vw);
+  height: 44px;
+  object-fit: contain;
+  object-position: left center;
+}
+.wordmark {
+  color: #172033;
+  font-size: 23px;
+  font-weight: 750;
+  letter-spacing: -.055em;
+  line-height: 1;
+}
+.wordmarkAccent { color: #0a7c88; }
+.collegeName {
+  margin: 0;
+  color: var(--auth-body);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.center {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px 52px;
+}
+.card {
+  width: min(100%, 468px);
+  min-width: 0;
+  padding: 40px 42px 38px;
+  border: 1px solid #e5e9f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(23, 32, 51, .07), 0 3px 10px rgba(23, 32, 51, .025);
+}
+.card :global(.login-form) { width: 100%; max-width: none; }
+.card :global(.login-form > h2) {
+  color: #172033;
+  font-family: inherit;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: 40px;
+}
+.card :global(.login-form > p) {
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 22px;
+}
+.card :global([role="tablist"]) {
+  gap: 4px;
+  border-radius: 10px;
+  padding: 4px;
+  background: #f1f4f9;
+}
+.card :global([role="tab"]) {
+  min-height: 40px;
+  border-radius: 8px;
+  color: #54505d;
+  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+.card :global([role="tab"][aria-selected="true"]) {
+  background: #fff;
+  color: var(--auth-primary);
+  box-shadow: 0 1px 4px rgba(23, 32, 51, .10);
+}
+.card :global(label span:first-child) { color: #172033; }
+.card :global(input[name="contact"]), .card :global(input[name="code"]),
+.card :global(input[name="secondCode"]) {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #e9eff9;
+  border-radius: 10px;
+  background: #fff;
+  color: #0a0517;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: .2px;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.card :global(input:focus-visible) {
+  border-color: var(--auth-primary);
+  outline: 2px solid var(--auth-primary);
+  outline-offset: 1px;
+}
+.card :global(button[type="submit"]) {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--auth-primary);
+  border-radius: 9px;
+  background: var(--auth-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 20px;
+  box-shadow: none;
+  transition: background-color .15s ease, box-shadow .15s ease;
+}
+.card :global(button[type="submit"]:hover:not(:disabled)) { filter: brightness(.92); }
+.card :global(button[type="submit"]:focus-visible) {
+  outline: 3px solid rgba(10, 124, 136, .25);
+  outline-offset: 2px;
+}
+.card :global(button[type="submit"]:disabled) { opacity: .55; cursor: not-allowed; }
+.card :global(button:not([type="submit"])):focus-visible,
+.footer a:focus-visible {
+  outline: 2px solid var(--auth-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.card :global(button:not([type="submit"])), .card :global(a) {
+  text-underline-offset: 3px;
+}
+.card :global(button:not([type="submit"]):not([role="tab"])),
+.card :global(a) { color: var(--auth-primary); }
+.card :global(button:disabled:not([type="submit"])) { color: #a9a7ae; }
+.status { margin-bottom: 24px; border-radius: 10px; padding: 14px 16px; font-size: 14px; line-height: 22px; }
+.statusWarning { border: 1px solid #f3d1a0; background: #fffbeb; color: #92400e; }
+.statusError { border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; }
+.statusTitle { margin: 0 0 4px; font-weight: 650; }
+.statusMessage { margin: 0; }
+.statusLink { display: inline-block; margin-top: 12px; color: var(--auth-primary); font-weight: 650; text-decoration: underline; }
+.footer {
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px 20px;
+  padding: 20px clamp(24px, 5vw, 72px) 28px;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 20px;
+}
+.footerLinks { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+.footer a { color: #54505d; text-decoration: none; }
+.footer a:hover { color: var(--auth-primary); text-decoration: underline; }
+@media (max-width: 640px) {
+  .brandHeader { padding: 20px 22px; }
+  .brandRow { gap: 9px; }
+  .wordmark { font-size: 21px; }
+  .collegeName { width: 100%; }
+  .center { align-items: start; padding: 28px 14px 36px; }
+  .card { padding: 30px 24px; border-radius: 12px; }
+  .card :global(.login-form > h2) { font-size: 27px; line-height: 36px; }
+  .desktopBackdrop { display: none; }
+  .mobileBackdrop { display: block; }
+  .footer { padding: 16px 22px 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card :global(button), .card :global(input), .card :global([role="tab"]) { transition: none; }
+}

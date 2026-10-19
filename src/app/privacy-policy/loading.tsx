@@ -1,6 +1,6 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+import { PublicPageLoading } from "@/components/public/public-page-loading";
 
-/** GR-19: loading is bounded by a visible recovery action. */
+/** Branded public loading with a bounded reload action on slow requests. */
 export default function Loading() {
-  return <GracefulPageLoading />;
+  return <PublicPageLoading label="Loading privacy policy..." />;
 }
