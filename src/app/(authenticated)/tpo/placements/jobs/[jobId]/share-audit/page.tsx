@@ -21,7 +21,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  const parsed=parseCompanyShareAuditQuery({kind:rawKind,page:rawPage});
  const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
  if(!parsed.success)return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
-  <h1 className="text-lg font-semibold text-[30px] text-[#172033]">Invalid share-audit filters</h1>
+  <h1 className="text-[30px] font-semibold text-[#172033]">Invalid share-audit filters</h1>
   <p className="text-sm text-body">Choose a valid event kind and page number. No access history was loaded.</p>
   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Clear filters</Link>
  </section>;

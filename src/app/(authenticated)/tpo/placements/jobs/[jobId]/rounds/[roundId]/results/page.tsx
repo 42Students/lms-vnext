@@ -54,9 +54,9 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    <button type="submit" className="min-h-11 rounded-[9px] bg-primary px-4 text-primary-foreground md:min-h-9">Filter</button>
   </form>
   <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
-  {visibleRows.length===0?<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:
+  {visibleRows.length===0?<p role="status" className="rounded-[9px] border border-border bg-muted p-3 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:
    <section className="grid gap-3" aria-label="Round result entries">
-    {visibleRows.map(row=><article key={row.applicationId} className="rounded-xl border border-border bg-surface p-4">
+    {visibleRows.map(row=><article key={row.applicationId} className="border-b border-border py-4">
      <div className="mb-3">
       <h2 className="font-semibold text-foreground">{row.student??"Name unavailable"}</h2>
       <p className="text-sm text-body">{row.role} · {row.resultStatus??"No result"} · {row.outcome??"No outcome"}</p>
