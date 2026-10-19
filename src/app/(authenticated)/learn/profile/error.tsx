@@ -11,7 +11,7 @@ export default function LearnerProfileError({
 }) {
   return (
     <section role="alert" className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
-      <h1 className="text-lg font-semibold text-foreground">
+      <h1 className="font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         Unable to load your profile
       </h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
@@ -19,7 +19,7 @@ export default function LearnerProfileError({
       </p>
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Button className="min-h-11" onClick={reset}>Retry</Button>
-        <Link href="/learn/courses" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Courses</Link>
+        <Link href="/learn/courses" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Courses</Link>
       </div>
     </section>
   );
