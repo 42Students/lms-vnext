@@ -292,7 +292,7 @@ export function FacultyAssessmentOverview({
       )}
 
       {totalPages > 1 ? (
-        <nav aria-label="Assessment pages" className="flex items-center justify-between gap-3">
+        <nav aria-label="Assessment pages" className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)]">
           <Button variant="secondary"
             type="button"
             disabled={currentPage <= 1}
