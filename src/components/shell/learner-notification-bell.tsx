@@ -73,8 +73,8 @@ export function LearnerNotificationBell(){
    className="absolute right-0 top-full z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,92vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between">
     <h2 className="font-semibold text-foreground">Notifications</h2>
-    <button type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
-      className="min-h-11 px-2 text-sm text-primary-text">Close</button>
+    <Button variant="ghost" type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
+      className="min-h-11 px-2 text-sm text-primary-text">Close</Button>
    </div>
    {error?<div className="mt-2 space-y-2"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
     <button type="button" className="inline-flex min-h-11 items-center text-sm text-primary-text underline" onClick={()=>void refresh()}>Retry notifications</button>
