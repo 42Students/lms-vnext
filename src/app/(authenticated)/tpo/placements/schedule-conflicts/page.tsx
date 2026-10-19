@@ -62,7 +62,7 @@ export default async function TpoScheduleConflictsPage({
             {[7, 14, 30, 60, 90].map((days) => (
               <option key={days} value={days}>{days} days</option>
             ))}
-          </Select
+          </Select>
         </label>
         <Button variant="primary" type="submit"
           className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-primary-foreground">
