@@ -90,7 +90,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         <p className="rounded-lg border border-warning bg-surface-subtle p-3 text-sm text-body">
           Marked absent. If this is wrong, tell the placement cell.
           <Link href="/learn/my-placements/placement#requests"
-            className="ml-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline">
+            className="ml-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-[var(--lms-teal-deep)] underline">
             Wrong? Tell the placement cell
           </Link>
         </p>
