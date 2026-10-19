@@ -10,6 +10,7 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
+import { ListToolbar } from "@/components/ui/list-toolbar";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseProjectAdminSubmissionsQuery,projectAdminUnsubmittedHref,projectAdminSubmissionHref } from "@/modules/projects/admin-submissions-query-model";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
@@ -140,6 +141,7 @@ export async function ProjectAdminSubmissionsPage({
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading workspaces</Link>}/>:null}
       {unsubmitted?<section className="space-y-3 border-b border-border pb-5">
         <ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/>
+        <ListToolbar label="Unsubmitted workspaces" viewCount={unsubmitted.total} />
         <h2 className="font-semibold">Not submitted · {unsubmitted.total} workspaces</h2>
         <DataTable
           caption="Unsubmitted project workspaces"
@@ -186,6 +188,7 @@ export async function ProjectAdminSubmissionsPage({
         query={query}
         includeSubmissionStatus
       />
+      <ListToolbar label="Project submissions" viewCount={result.total} />
       <ProjectSubmissionsPageExport rows={result.items.map(submission=>({
         workspace:submission.projectTitle,
         version:submission.version,
