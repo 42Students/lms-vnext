@@ -1,3 +1,4 @@
+import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoActorAudit } from "@/modules/placements/tpo-actor-audit-service";
@@ -15,7 +16,7 @@ export async function GET(request: Request) {
     return new Response("\uFEFF" + tpoActorAuditCsv(data.rows), {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="tpo-actor-entity-audit.csv"',
+        "Content-Disposition": 'attachment; filename="' + gridExportFilename("tpo-actor-entity-audit", "csv") + '"',
         "Cache-Control": "private, no-store, max-age=0",
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",
