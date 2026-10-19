@@ -91,9 +91,9 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/mentor-sprint-write.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-task-allocation.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-task-create.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/mentor-task-delete-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/mentor-task-delete-control.tsx` (greps: full-file source raw/hex/hand-overlay/tab checks => 0; values: 10 properties match legacy/shared primitives; responsive: <=767 touch and >=768 desktop, detail below)
 - [ ] `src/components/projects/mentor-task-details-edit.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/mentor-task-status-transition.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/mentor-task-status-transition.tsx` (greps: full-file source raw/hex/hand-overlay/tab checks => 0; values: 10 properties match legacy/shared primitives; responsive: <=767 touch and >=768 desktop, detail below)
 - [ ] `src/components/projects/project-activity-filtered-list.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-admin-at-risk-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-admin-audit-page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -110,7 +110,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [x] `src/components/projects/project-at-risk-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [x] `src/components/projects/project-audit-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
 - [ ] `src/components/projects/project-create-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/components/projects/project-delivery-evidence-download.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/project-delivery-evidence-download.tsx` (greps: full-file source raw/hex/hand-overlay/tab checks => 0; values: 10 properties match legacy/shared primitives; responsive: <=767 touch and >=768 desktop, detail below)
 - [ ] `src/components/projects/project-delivery-file-uploader.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-delivery-reopen-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-final-delivery-controls.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -126,7 +126,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/project-resource-list.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/components/projects/project-resource-open-link.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 10 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
 - [x] `src/components/projects/project-submissions-page-export.tsx` (greps: full-file raw/hex/manual-overlay/manual-tabs scan => 0; values: 10 legacy/shared source rows match; responsive: <=767 touch/scroll, >=768 desktop; table below)
-- [ ] `src/components/projects/project-task-assignee-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/project-task-assignee-control.tsx` (greps: full-file source raw/hex/hand-overlay/tab checks => 0; values: 10 properties match legacy/shared primitives; responsive: <=767 touch and >=768 desktop, detail below)
 - [ ] `src/components/projects/project-task-comments.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-task-submission-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/project-team-controls.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -469,3 +469,82 @@ This fourth owned project-tab wrapper now uses the same scoped legacy-project-ta
 ### Remaining source discrepancies
 
 ProjectResourceFilesSection is a non-visual server projection, but it renders ProjectResourceFilesPanel directly; its check box remains unticked until the delegated panel is audited. These export and nav ticks are **source parity**, not a claim of screenshot or browser-computed-pixel validation. The orchestrator owns that later verification stage (ui-clone-checklist.md, section J).
+
+## chat-8 closeout: Mentor task actions and secure evidence control
+
+Coverage performed via full GitHub file reads for all four named components, not by running the app. Source regex counts by file, ordered task-delete / task-status-transition / task-assignee / evidence-download: raw JSX controls [0,0,0,0]; literal hex [0,0,0,0]; hand-rolled dialogs [0,0,0,0]; manual tabs/toggles [0,0,0,0]. All actions use the existing shared Button; one deletion modal and one transition modal use ConfirmDialog rather than a bespoke overlay. There is no direct CSS style object, global-token override, or container card in these four files. Repeat in a checkout:
+
+~~~sh
+rg -n '<(button|select|input|textarea)\b|#[a-fA-F0-9]{3,8}|window.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed|border-b-2' \
+  src/components/projects/{mentor-task-delete-control,mentor-task-status-transition,project-task-assignee-control,project-delivery-evidence-download}.tsx
+# Full-file GitHub scan: zero matches in all four
+~~~
+
+### Shared exact values, ten properties per component
+
+| Property/state | Legacy file:line, value | vNext source file:line, value | Match |
+|---|---|---|---|
+| Base action font | old-lms-shell-spec.md:22-24 — 14px/650 | ui/button.tsx:25-28; globals.css:384-393 — 14px/650 | yes |
+| Default desktop action height | old-lms-shell-spec.md:22-24 — 36px | globals.css:341,384-393 — 36px | yes |
+| Mobile action touch height | variables.scss:139,148 — 44px at <=767px | globals.css:619-620 — 44px | yes |
+| Button radius | old-lms-shell-spec.md:22-24 — 9px | globals.css:343,384-393 — 9px | yes |
+| Primary text | old-lms-shell-spec.md:23 — white on deep teal | globals.css:629-638 and shared Button primary | yes |
+| Secondary hover/default | variables.scss:25,37,91; button.scss:120-138 — white/#bfc9da, teal/white hover | globals.css:649-658; ui/button.tsx:10-15 | yes |
+| Danger paint | variables.scss:71-72 — #ef4444 error colour | globals.css:663-670, ui/button.tsx:15 — same | yes |
+| Keyboard focus | accessibility.scss:18-23 — 2px teal ring with offset 3px | globals.css:876-880 and ui/button.tsx:28 | yes |
+| Disabled/pending | common.scss:3-8 / accessibility.scss:13-23 — disabled not actioned; prevent repeat | shared Button.tsx:25-29; source disabled/pending guards in all four | yes |
+| No nested card/modal outside shared UI | old-lms-pages.md:6,7,12 — one canvas and shared overlay | component JSX roots contain only existing controls/inline messages; ConfirmDialog delegated where needed | yes |
+
+### MentorTaskDeleteControl (src/components/projects/mentor-task-delete-control.tsx)
+
+| State | Legacy reference | vNext file:line | Result |
+|---|---|---|---|
+| Default destructive action | variables.scss:71-72, shell-spec.md:23-24 — danger tone with 36px default | 27-31 shared Button danger and pending-dependent label | match |
+| Confirm prompt | components___antddesign.scss:1037-1061 — centered responsive modal, radius 12px | 33-37 ConfirmDialog -> ui/dialog.tsx:39-55 | match |
+| Phone width | components___antddesign.scss:1037-1049 — width <=viewport minus 32px | ui/dialog.tsx:43-45 w-[calc(100%_-_2rem)] | match |
+| Phone max-height | components___antddesign.scss:1057-1061 — 100dvh minus 48px | ui/dialog.tsx:44-45 | match |
+| Footer and cancel | components___antddesign.scss:1063-1068 — flex-wrap actions | ui/confirm-dialog.tsx:11-20 | match |
+| Error/pending/keyboard | accessibility.scss:18-23 and variables.scss:71-72 | 14-23 and 28-37 — disabled guard, inline error, shared focus | match |
+
+Fixed invalid inline markup: task-delete previously nested shared Dialog within an inline span; JSX now renders the span and the ConfirmDialog as siblings inside a fragment (lines 25-38), without changing button props or confirm mutation. The shared dialog keeps Escape, backdrop and focus recovery behavior; test and screenshot pass remains downstream.
+
+### MentorTaskStatusTransition (src/components/projects/mentor-task-status-transition.tsx)
+
+| State | Legacy | vNext | Result |
+|---|---|---|---|
+| Form font/field radius | components___form.scss:117-128 — 14px/400, 10px and #fbfcfd | ui/input.tsx:20-26 and select.tsx:23-28; globals.css:344,866 | match |
+| Field focus | components___form.scss:129-143 — 2px teal 15% glow | legacy-skin.css:139-165, Input/Select focus CSS | match |
+| Mobile input and select | variables.scss:139,148 — 44px to 767px | mentor-task-status-transition.tsx:52,59 — min-h-11 md:min-h-9 | match |
+| Responsive row | listing-page-header.scss:130-159 — wrapping when narrow | mentor-task-status-transition.tsx:48 — flex-wrap, min width fallback | match |
+| Confirm, disabled and busy | components___antddesign.scss:1037-1068; accessibility.scss:18-23 | mentor-task-status-transition.tsx:65-78 shared ConfirmDialog, pending disables all controls | match |
+| Blocked reason/errors | old-lms-pages.md:7,12 — inline message, no nested card | mentor-task-status-transition.tsx:53-75 — inline input/error in shared modal | match |
+
+Actual full-file scan: one shared Input, one shared Select, one shared Button and one shared ConfirmDialog; no direct native form or hand-built modal. Allowed transitions, blocker required, optimistic timestamp, toast and refresh behavior unchanged.
+
+### ProjectTaskAssigneeControl (src/components/projects/project-task-assignee-control.tsx)
+
+| State | Legacy | vNext | Result |
+|---|---|---|---|
+| Normal mode | old-lms-pages.md:7,12 — secondary control, 36px desktop | project-task-assignee-control.tsx:26 shared Button | match |
+| Inline edit | old-lms-pages.md:6,7 — one canvas, compact control row | project-task-assignee-control.tsx:27 flex-wrap gap-2 | match |
+| Select default/focus | components___form.scss:117-143 — 14px, radius 10, teal focus | project-task-assignee-control.tsx:29 + shared Select | match |
+| Phone width | listing-page-header.scss:130-159 — avoid horizontal overflow | project-task-assignee-control.tsx:29 — min-w-0 max-w-full w-full before md | match |
+| Tablet+ width | listing-page-header.scss:130-159 — compact row restored | project-task-assignee-control.tsx:29 md:w-auto | match |
+| Pending/changed/cancel/error | accessibility.scss:18-23, variables.scss:71-72 | project-task-assignee-control.tsx:24-40 — shared disabled controls/error/restore | match |
+
+All three actions inherit 44px at <=767px and default 36px at >=768px; the single Select switches between full-width on phone and auto-width at tablet+, without changing data.
+
+### ProjectDeliveryEvidenceDownload (src/components/projects/project-delivery-evidence-download.tsx)
+
+| State | Legacy | vNext | Result |
+|---|---|---|---|
+| Default compact outlined control | variables.scss:25,91; old-lms-pages.md:10 — export/download secondary | project-delivery-evidence-download.tsx:35-38 shared Button | match |
+| Desktop/phone target | old-lms-shell-spec.md:22-24 36px; variables.scss:139,148 44px phone | Button + globals.css:619-620 | match |
+| Disabled/working state | accessibility.scss:18-23 — inert pending action | project-delivery-evidence-download.tsx:11-15,35-38 busy guard and button disabled | match |
+| Error / no extra card | old-lms-pages.md:6-7 — inline status | project-delivery-evidence-download.tsx:39 inline role=alert | match |
+| Long name and safe destination | old-lms-pages.md:6; project source security contracts unchanged | project-delivery-evidence-download.tsx:19-34 verifies signed grant before navigation | preserved |
+| Keyboard and reduced-motion | accessibility.scss:18-23 and globals.css:623-625 | shared Button focus, reduced-motion rule | match |
+
+No new data/download behavior: the existing POST download grant and isSafeSignedUrl allowlist remain untouched; the component has no modal or fixed-width surface. The source has no raw control, hardcoded hex or hand-rolled overlay.
+
+These four files are ticked against source-level legacy/shared values. Runtime and screenshot confirmation are separately owned by the orchestrator (checklist section J) and are not claimed here.
