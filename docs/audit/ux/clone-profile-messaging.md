@@ -42,3 +42,22 @@ Items are in workflow order; `[ ]` means full STRICT TICK RULE evidence is **not
 ## Source-edit log
 
 - Initial audit queue created before UI edits. Keep every item unticked until all four STRICT TICK RULE gates are met.
+
+## Turn 1 source-edit checkpoint (2026-10-19)
+
+**Commits before this checkpoint: 35** (= 1 initial inventory + 34 page edits). Every commit was created directly on `chatgpt/chat-11-b`, with a `[chat-11]` prefix. The page edits removed *only* the extra `PageHeader eyebrow="..."` presentation prop, except `hr/drives/[jobId]/messages/page.tsx`, which also removed a redundant duplicate `Button` import. Preserved each existing page's title, inline description, actions, forms, authorization, data, routes, and section order. Nothing under `src/components/ui/**` changed.
+
+**Page-head value proof, limited to the one changed detail:**
+
+| Property | Old LMS reference | vNext reference and checked result |
+| --- | --- | --- |
+| Head layout | `docs/design/old-lms-pages.md:6`: title + inline subtitle + right actions, no separate eyebrow | `src/components/ui/page-header.tsx:20-48`: one head row; `src/app/(authenticated)/hr/conversations/page.tsx:70-73` renders title + description without eyebrow |
+| Canvas | `docs/design/old-lms-pages.md:5`: white, 12px radius, 1px #e5e9f0, 24px padding on #f1f4f9 | `src/components/ui/page-canvas.tsx:14-28`: shared canvas inherits tokens; remains owned by chat-17 and is not locally duplicated by these edits |
+| Example settings head | `docs/design/old-lms-pages.md:6` | `src/app/(authenticated)/admin/settings/page.tsx:76-85`: `PageHeader` title, inline description, right action; eyebrow removed |
+| Notification item geometry **not yet proven** | `docs/design/legacy-styles/components___notification-drawer.scss:8-27`: 12px panel, 8px small radius, 44px tap min, 767px breakpoint | **Pending** full list-item/hover/unread/read/mobile comparison across pages; cannot tick G3 |
+
+**Readback/source-pattern check:** all **34 edited TSX files** fetched from the lane branch after their writes (17 + 17 files). Scoped regex equivalents of `grep -r` reported **0** remaining `eyebrow=`, **0** raw `<button>`, **0** raw `<select>`, **0** raw `<textarea>`, **0** literal CSS hex values, and **10** raw `<input>` elements (all hidden form fields in recruiter conversations/drive/notifications, not styled controls). Shared component opening/closing tag counts were unchanged during edits. The recruiter drive-messages page now has one import of `Button`. These results cover only the *34 changed sources*, **not** every G2/G3 page/component, nor full repo greps or full compile validation.
+
+**Still open:** complete exact SCSS property/state tables for settings, profile, message bubbles, composer, row, unread, empty, error, focus, disabled; remaining imported-component sweeps; full repository grep with exemptions; phone/tablet/browser visual comparisons. Neither G2 nor G3 is eligible for a STRICT TICK RULE checkmark.
+
+**Exact next source to inspect:** `src/app/(authenticated)/mentor/notifications/page.tsx` (then `src/components/activity/learner-notifications-inbox.tsx` and recruiter conversation composer).
