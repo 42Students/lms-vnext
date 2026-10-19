@@ -115,7 +115,7 @@ export function CreateLearningPathPanel({
   return (
     <form
       onSubmit={submit}
-      className="rounded-xl border border-border bg-surface p-5"
+      className="border-b border-border pb-5"
     >
       <h2 className="m-0 text-lg font-semibold text-foreground">
         Create shared Learning Path
@@ -422,7 +422,7 @@ export function CreateLessonForm({
   return (
     <form
       onSubmit={submit}
-      className="rounded-lg border border-dashed border-border bg-surface p-4"
+      className="border-b border-border pb-4"
     >
       <p className="m-0 text-sm font-semibold text-foreground">
         Add Lesson
