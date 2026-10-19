@@ -15,7 +15,7 @@ export default function LearnerCoursesError({
   const isList=pathname==="/learn/courses";
   return (
     <div className="rounded-xl border border-border bg-surface p-8 text-center">
-      <h1 className="m-0 text-xl font-semibold text-foreground">
+      <h1 className="m-0 font-semibold text-[var(--lms-heading)] text-[30px] leading-9">
         {isList?"Failed to load courses. Please try again.":"Could not load course lessons"}
       </h1>
       <p className="mt-2 text-sm text-body">
