@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
+import {Dialog} from "@/components/ui/dialog";
 
 /** TPO-inbox-team-52 / GR-35: named confirmation without a browser-native prompt. */
 export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
@@ -17,15 +18,8 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
   <Button ref={trigger} variant="secondary" type="button" onClick={()=>setOpen(true)}>
    Delete
   </Button>
-  {open?<div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <section role="alertdialog" aria-modal="true" aria-labelledby={"delete-title-"+id}
-    aria-describedby={"delete-desc-"+id}
-    onKeyDown={event=>{if(event.key==="Escape")dismiss();}}
-    className="w-full max-w-md rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 shadow-[var(--lms-popover-shadow,0_12px_32px_rgba(25,35,55,.12))]">
-    <h2 id={"delete-title-"+id} className="font-semibold text-foreground">Delete this announcement?</h2>
-    <p id={"delete-desc-"+id} className="mt-3 text-sm text-body">
-     Students stop seeing it, and its notices are taken back.
-    </p>
+  {<Dialog open={open} onOpenChange={next=>{if(!next)dismiss();else setOpen(true);}} role="alertdialog" className="max-w-md"
+   title="Delete this announcement?" description="Students stop seeing it, and its notices are taken back.">
     <form method="post" action={"/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle"}
      className="mt-5 flex flex-wrap gap-3"
      onSubmit={event=>{if(pending.current)event.preventDefault();else pending.current=true;}}>
@@ -40,7 +34,6 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
       Cancel
      </button>
     </form>
-   </section>
-  </div>:null}
+  </Dialog>}
  </div>;
 }
