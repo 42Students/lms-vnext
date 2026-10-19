@@ -25,7 +25,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     assignment:raw.assignment,view:raw.view,page:raw.page,pageSize:raw.pageSize,
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid activity filters" />
+    <PageHeader title={"Invalid activity filters"} />
     <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
   </section>;
   const data = await getMentorPortfolioActivity(context, parsed.data);
