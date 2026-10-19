@@ -21,7 +21,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
  }
  const courses=choices.filter(option=>option.sectionId===sectionId);
  const deliveryId=courses.find(option=>option.offeringId===offeringId)?.deliveryId??"";
- return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+ return <section className="space-y-4 border-b border-border pb-5">
   <div>
    <h2 className="text-lg font-semibold text-foreground">Course Progress</h2>
    <p className="text-sm text-muted-foreground">
