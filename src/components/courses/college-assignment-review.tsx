@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -85,17 +86,17 @@ export function CollegeAssignmentReview({
    <FacultyAssignmentReview key={selected.deliveryId} reviewScope="COLLEGE"
     assignmentId={assignmentId} deliveryId={selected.deliveryId}
     maxPoints={maxPoints} status={status as "DRAFT"|"PUBLISHED"} filesEnabled={filesEnabled}/>
-   {status==="PUBLISHED"?<button type="button" disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
-    className="min-h-11 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
+   {status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
+    className="text-primary-text">
     {bulkBusy?"Publishing…":"Publish grades"}
-   </button>:null}
+   </Button>:null}
   </div>
   {bulkBusy?<p role="status" className="text-xs text-muted-foreground">Publishing graded submissions for this Section. {progress} Do not close this page.</p>:null}
   {bulkStatus?<p role="status" className="text-xs text-muted-foreground">{bulkStatus}</p>:null}
-  {retryAllowed&&status==="PUBLISHED"?<button type="button" disabled={bulkBusy}
+  {retryAllowed&&status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy}
    onClick={()=>void publishAllGrades(selected.deliveryId,failedIds.length?failedIds:null)}
-   className="min-h-11 rounded border border-border px-3 text-xs font-semibold text-primary-text">
+   className="text-primary-text">
    {failedIds.length?"Retry "+failedIds.length+" failed":"Retry failed"}
-  </button>:null}
+  </Button>:null}
  </div>;
 }
