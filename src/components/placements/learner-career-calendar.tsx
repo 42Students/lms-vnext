@@ -152,8 +152,8 @@ export function LearnerCareerCalendar({
               aria-pressed={view === option}
               onClick={() => changeCalendar({view:option})}
               className={view === option
-                ? "min-h-11 rounded-md bg-primary px-3 text-sm font-semibold capitalize text-on-primary"
-                : "min-h-11 rounded-md border border-border bg-surface px-3 text-sm font-semibold capitalize text-body hover:text-primary-text"}
+                ? "min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-3 text-[14px] font-[650] capitalize text-on-primary sm:min-h-9"
+                : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[14px] font-semibold capitalize text-body sm:min-h-9 hover:text-primary-text"}
             >
               {option}
             </button>
