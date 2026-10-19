@@ -41,7 +41,7 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
    The system rechecks every contact before attempting delivery.
   </p>}
   <button type="button" disabled={!ready||busy||recipients===0}
-   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50"
+   className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-white disabled:opacity-50"
    onClick={()=>setConfirmOpen(true)}>{busy?"Sending…":"Send campaign"}</button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
     title={"Send to up to "+recipients+" selected recruiter emails?"}

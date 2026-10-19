@@ -34,7 +34,7 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
         description="Unique learners with accepted offers and confirmed joins by current branch and season."
         actions={report.season ? <a
           href={"/api/placements/reports/placed-branch?" + csvParams}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
           Download CSV
         </a> : null}
       />
@@ -55,7 +55,7 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
             {report.jobs.map((item) => <option key={item.id} value={item.id}>{item.companyName} · {item.title}</option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary sm:col-span-2"
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-[650] text-on-primary sm:col-span-2"
           disabled={!report.season}>Apply filters</button>
       </form>
       {!report.season ? <EmptyState title="No placement season" description="No results can be inferred without a recorded season." /> : (

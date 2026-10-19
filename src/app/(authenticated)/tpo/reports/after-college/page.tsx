@@ -51,7 +51,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
       <option value="">All branches</option>
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
      </select></label>
-    <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-white">Filter</button>
+    <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] bg-primary px-4 font-[650] text-white">Filter</button>
     <Link href="/tpo/reports/after-college" className="text-[var(--lms-link-text)] underline">Clear</Link>
     <a href={"/api/placements/tpo/reports/after-college?"+query.toString()}
       className="text-[var(--lms-link-text)] underline">Download CSV</a>

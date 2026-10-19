@@ -60,7 +60,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
   {changed?<p role="status" className="mt-2 text-sm text-warning-text">Unsaved round order changes. Save or undo before leaving this page.</p>:null}
   <div className="mt-3 flex flex-wrap gap-2">
    <button type="button" disabled={!readiness.allowed||busy||!changed} onClick={()=>void save()}
-    className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50 text-primary-foreground">
+    className="min-h-11 md:min-h-9 rounded bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50 text-primary-foreground">
     {busy?"Saving…":"Save round order"}</button>
    <button type="button" disabled={busy||!changed} onClick={()=>{setIds(readiness.rounds.map(round=>round.id));clearDirty();setError(null);}}
     className="min-h-11 md:min-h-9 rounded border border-border px-4 text-sm disabled:opacity-50">Undo</button>

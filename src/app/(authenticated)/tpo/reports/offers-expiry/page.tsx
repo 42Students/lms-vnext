@@ -27,7 +27,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
         actions={process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
-          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+          className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[9px] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
           Export CSV
         </a> : null}
       />
@@ -48,7 +48,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
               <option key={value} value={value}>{value} days</option>)}
           </select>
         </label>
-        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-semibold text-on-primary">
+        <button type="submit" className="min-h-11 sm:min-h-9 rounded-[9px] border border-primary bg-primary px-4 font-[650] text-on-primary">
           Apply window
         </button>
       </form>

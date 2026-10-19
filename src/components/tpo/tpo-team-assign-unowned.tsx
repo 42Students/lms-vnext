@@ -43,7 +43,7 @@ export function TpoTeamAssignUnowned({drives,companies,members}:{
     </select>
    </label>
    <button type="button" disabled={busy||!assignee} onClick={()=>setConfirmOpen(true)}
-    className="min-h-11 rounded-md bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+    className="min-h-11 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
     {busy?"Assigning…":"Assign work"}
    </button>
   </div>
