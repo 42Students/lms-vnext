@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
@@ -29,8 +30,8 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
    <h2 className="font-semibold text-foreground">Drive conversation</h2>
    <p className="mt-2 text-sm text-body">Open or resume the conversation tied to this authorized employer drive.</p>
    <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
-    <input type="hidden" name="collegeId" value={result.workspace.college.id}/>
-    <input type="hidden" name="jobId" value={result.workspace.job.id}/>
+    <Input type="hidden" name="collegeId" value={result.workspace.college.id}/>
+    <Input type="hidden" name="jobId" value={result.workspace.job.id}/>
     <Button type="submit">Open drive discussion</Button>
    </form>
   </section>
