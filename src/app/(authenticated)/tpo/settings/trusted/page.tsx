@@ -48,7 +48,7 @@ export default async function TpoTrustedCompaniesPage() {
       {!data.explicitDomainsAvailable ? (
         <section
           role="status"
-          className="rounded-xl border border-border bg-surface p-5"
+          className="- border-t border-border pt-5"
         >
           <h2 className="font-semibold text-foreground">
             Trusted-domain allowlist unavailable
