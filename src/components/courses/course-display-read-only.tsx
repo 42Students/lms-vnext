@@ -37,7 +37,7 @@ export function CourseDisplayReadOnly({
           <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
             What you&apos;ll learn
           </p>
-          <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+          <ul className="mt-2 grid gap-2 md:grid-cols-2">
             {takeaways.map((takeaway, index) => (
               <li
                 key={`${index}:${takeaway}`}
