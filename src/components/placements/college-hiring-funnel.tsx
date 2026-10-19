@@ -1,3 +1,4 @@
+import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Input } from "@/components/ui/input";
 import { StatTile } from "@/components/ui/stat-tile";
 import { MetricBar } from "@/components/ui/metric-bar";
@@ -108,13 +109,10 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    {data.companyRows.length>0?
     <section aria-label="Company-wise report totals" className="rounded-lg border border-border bg-surface-secondary p-4">
      <h3 className="font-semibold text-foreground">All drives · Totals</h3>
-     <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3 lg:grid-cols-5">
-      {[["Total",data.totalApplications] as const,...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
-       .map(([name,value])=><div key={name} className="min-w-0">
-        <dt className="text-body">{name}</dt>
-        <dd className="font-semibold tabular-nums text-foreground">{value.toLocaleString("en-IN")}</dd>
-       </div>)}
-     </dl>
+     <SummaryStrip className="mt-3" label="Company-wise report totals"
+      steps={[["Total",data.totalApplications] as const,
+        ...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
+        .map(([name,value])=>({label:name,value}))} />
     </section>:null}
   </section>
  </div>;
