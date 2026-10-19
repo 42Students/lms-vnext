@@ -63,7 +63,7 @@ type OfferOption = {
 };
 
 const textareaClass =
-  "min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-[14px] text-foreground outline-none transition-colors placeholder:text-[var(--lms-placeholder)] focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-[var(--lms-placeholder)] focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 function legacyRequestStatus(value:RequestItem["status"]):string{
  return value==="PENDING"?"Waiting for the placement cell":
@@ -511,7 +511,7 @@ export function LearnerPlacementRequests({
           )}
         </div>
 
-        <div className="rounded-lg border border-border bg-muted p-4">
+        <div className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Offer deadline extension
           </h3>
@@ -614,7 +614,7 @@ export function LearnerPlacementRequests({
             {requests.map((item) => (
               <article
                 key={item.id}
-                className="rounded-lg border border-border bg-muted p-4"
+                className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
