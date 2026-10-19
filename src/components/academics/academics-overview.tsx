@@ -343,7 +343,7 @@ export function AcademicsOverview({
             Department-owned academic programs.
           </p>
         </div>
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Academic programs" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={programColumns}
           rows={workspace.programs}
           getRowKey={(program) => program.id}
