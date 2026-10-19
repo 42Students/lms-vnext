@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -11,7 +12,7 @@ export default function FacultyAssignmentReportError({
 }) {
   return (
     <section className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
-      <h1 className="font-semibold text-[30px] text-[var(--lms-heading)]">Unable to load Assignment Report</h1>
+      <PageHeader title={"Unable to load Assignment Report"} />
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         We could not load the report. Check that you still have an active teaching assignment for this Section.
       </p>

@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import {Avatar} from "@/components/ui/avatar";
 import { Tabs } from "@/components/ui/tabs";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
@@ -92,16 +93,19 @@ export default async function TpoTeamPage({searchParams}:{
       {([["WORK","Most assigned duties"],["OVERDUE","Overdue first"],["NAME","Name"]] as const).map(([value,label])=>
        <Link key={value} href={"/tpo/team?tab=people&sort="+value}
         aria-current={peopleSort===value?"page":undefined}
-        className={peopleSort===value?"rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary":"rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-body"}>
+        className={(peopleSort===value?"rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary":"rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-body")+" focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>
         {label}
        </Link>)}
       {!workload?.ready?<span className="text-xs text-muted-foreground">Ask workload is not available yet.</span>:null}
     </nav>
     {people.length?<ul className="grid gap-3 sm:grid-cols-2">
       {people.map(member=><li key={member.membershipId} className="min-w-0 border-b border-border py-4">
-       <h2 className="break-words font-semibold text-foreground">{member.displayName}
+       <div className="flex items-center gap-3">
+        <Avatar name={member.displayName} size="sm" className="!h-[38px] !w-[38px] !rounded-[10px] [&_img]:!rounded-[10px]"/>
+        <h2 className="min-w-0 break-words font-semibold text-foreground">{member.displayName}
          {member.membershipId===context.membership?.id?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs">You</span>:null}
         </h2>
+       </div>
        {awayByMember.get(member.membershipId)?<p className="mt-2 text-xs text-warning-text">
         Away until {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})
          .format(awayByMember.get(member.membershipId)!)} IST
@@ -123,7 +127,7 @@ export default async function TpoTeamPage({searchParams}:{
          <dd className="font-semibold">
           {label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":
            <Link href={href} title={"Open "+label.toLowerCase()+" records"}
-            className="text-link underline underline-offset-2">{count}</Link>}
+            className="text-link underline underline-offset-2 lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{count}</Link>}
          </dd>
         </div>)}
        </dl>:null}
@@ -166,7 +170,7 @@ export default async function TpoTeamPage({searchParams}:{
       visibleConversations.length?<ul className="mt-3 space-y-2">{visibleConversations.map(row=>
        <li key={row.id} className="border-b border-border py-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
-         <Link className="min-w-0 break-words font-semibold text-link lms-inline-link" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
+         <Link className="min-w-0 break-words font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
          {row.unreadCount>0 ? <Badge aria-label={row.unreadCount+" unread updates"}
            tone="neutral">
           {row.unreadCount} unread

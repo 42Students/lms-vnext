@@ -4,12 +4,13 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import "./route-transition.css";
 
-/** The legacy learner and admin page body enters over 250ms.
+/** The legacy learning page body enters over 250ms; learner-only exit fades.
  * Keep the topbar/sidebar outside this wrapper. Query-only changes retain
  * the same key so a filter or pagination update never remounts its form. */
 export function RouteTransition({children}:{children:ReactNode}) {
  const pathname=usePathname();
  const learnerRoute=pathname==="/learn"||pathname.startsWith("/learn/");
+ const facultyRoute=pathname==="/teacher"||pathname.startsWith("/teacher/");
  const [leaving,setLeaving]=useState(false);
  const recoveryTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  useEffect(()=>{
@@ -36,6 +37,7 @@ export function RouteTransition({children}:{children:ReactNode}) {
   };
  },[pathname,learnerRoute]);
  useEffect(()=>{setLeaving(false);},[pathname]);
- return <div key={pathname} data-slot="route-content" data-route-portal={learnerRoute?"learner":"other"} data-route-transitioning={leaving?"true":undefined}
+ return <div key={pathname} data-slot="route-content" data-route-portal={learnerRoute?"learner":"other"} data-route-entry={learnerRoute||facultyRoute?"true":undefined}
+   data-route-transitioning={learnerRoute&&leaving?"true":undefined} aria-busy={learnerRoute&&leaving?true:undefined}
    className="lms-shell-route-content">{children}</div>;
 }

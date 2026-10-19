@@ -25,7 +25,6 @@ export default async function CollegeProjectAtRiskRoute({
     <ProjectAdminAtRiskPage
       collegeId={collegeId}
       basePath="/college/projects"
-      eyebrow="College Admin Projects"
       searchParams={await searchParams}
     />
   );
