@@ -1,4 +1,5 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 
 import { Button } from "@/components/ui/button";
 
@@ -13,9 +14,7 @@ export default function TpoStudentsError({
       role="alert"
       className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-6 py-10 text-center"
     >
-      <h1 className="text-lg font-semibold text-foreground">
-        Could not load students
-      </h1>
+      <PageHeader title={"Could not load students"} />
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         College-wide learner and placement data could not be
         retrieved. This failure is not interpreted as zero
