@@ -52,10 +52,10 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     </label>
     <div className="flex flex-wrap gap-2">
      <Button type="button" disabled={busy||!label.trim()} onClick={()=>setPendingAction(state.currentHost?"CHANGE":"ALLOT")}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm text-on-primary disabled:opacity-50">
+      className="min-h-11 sm:min-h-9">
       {state.currentHost?"Change":"Allot"}</Button>
      {state.currentHost&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>setPendingAction("REMOVE")}
-      className="min-h-11 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm">Remove</Button>}
+      className="min-h-11 sm:min-h-9">Remove</Button>}
     </div>
     <p className="text-xs text-muted-foreground">A managed address is routed only when the configured wildcard DNS and TLS infrastructure is operational.</p>
    </>}
