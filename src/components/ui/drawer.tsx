@@ -73,6 +73,7 @@ export function ResponsiveFilterDrawer({
     const media = typeof window.matchMedia === "function"
       ? window.matchMedia("(min-width: 640px)") : null;
     const closeOnDesktop = () => {
+      if (!open) return;
       if (media?.matches ?? window.innerWidth >= 640) {
         onOpenChange(false);
         // The launcher is hidden at desktop sizes; do not force focus on it.
@@ -85,7 +86,7 @@ export function ResponsiveFilterDrawer({
       media?.removeEventListener("change", closeOnDesktop);
       window.removeEventListener("resize", closeOnDesktop);
     };
-  }, [launcher, onOpenChange]);
+  }, [launcher, onOpenChange, open]);
 
   return <Drawer id={id} open={open} onOpenChange={onOpenChange}
     inlineDesktop title={title} description={undefined}
