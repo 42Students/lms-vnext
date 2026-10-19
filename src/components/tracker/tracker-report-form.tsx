@@ -111,7 +111,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   }
 
   if (created) return (
-    <section className="space-y-4 rounded-xl border border-border bg-surface p-6" aria-live="polite">
+    <section className="space-y-4 rounded-[var(--lms-radius-card)] border border-border bg-surface p-6" aria-live="polite">
       <p className="text-sm font-semibold text-success">Issue reported</p>
       <h2 className="text-xl font-semibold">{created}</h2>
       <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
