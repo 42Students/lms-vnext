@@ -407,6 +407,7 @@ function SubmissionGradeCard({
             <Button
               size="sm"
               type="button"
+              className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={
                 saving || publishing || !draftState.canPublish
@@ -568,6 +569,7 @@ export function FacultyAssignmentReview({
         <div className="flex gap-2">
           <Button
             size="sm"
+            className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={loading}
             onClick={()=>void load()}
