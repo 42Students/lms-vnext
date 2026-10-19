@@ -21,6 +21,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const [query, setQuery] = useState("");
   const [courses, setCourses] = useState<LearnerCourse[]>([]);
   const [courseError, setCourseError] = useState(false);
+  const [courseLoading, setCourseLoading] = useState(config.portal === "learn");
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const input = useRef<HTMLInputElement>(null);
