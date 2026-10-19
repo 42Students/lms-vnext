@@ -150,7 +150,7 @@ export function TpoBulkRoundResultRecorder({
             <label className="block text-sm font-semibold text-body">Find unmarked learner
               <input type="search" maxLength={100} value={search} onChange={event=>setSearch(event.target.value)}
                placeholder="Search name, roll or application ID"
-               className="mt-1 block min-h-11 md:min-h-9 w-full rounded border border-border bg-surface px-3 text-foreground"/>
+               className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 text-foreground"/>
             </label>
             <div className="flex flex-wrap gap-3 text-sm">
               <button type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
@@ -162,8 +162,8 @@ export function TpoBulkRoundResultRecorder({
               <summary className="cursor-pointer text-sm font-semibold">Paste application IDs from a spreadsheet</summary>
               <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
               <textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
-                className="mt-2 block w-full rounded border border-border bg-surface p-2 text-sm"/>
-              <button type="button" disabled={busy} className="mt-2 min-h-11 md:min-h-9 rounded border border-border px-3 text-sm"
+                className="mt-2 block w-full rounded-[9px] border border-border bg-surface p-2 text-sm"/>
+              <button type="button" disabled={busy} className="mt-2 min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 text-sm"
                 onClick={()=>{
                   const resolved=resolveBulkRoundLearnerTokens(pastedIds,available);
                   if(resolved.error){setError(resolved.error);return;}
@@ -227,10 +227,10 @@ export function TpoBulkRoundResultRecorder({
             First waitlist rank (in checkbox selection order)
             <input type="number" min={1} max={100000} value={firstWaitlistRank}
               onChange={e=>setFirstWaitlistRank(Number(e.target.value))}
-              className="mt-1 block min-h-11 md:min-h-9 w-40 rounded border border-border bg-surface px-3"/>
+              className="mt-1 block min-h-11 md:min-h-9 w-40 rounded-[9px] border border-border bg-surface px-3"/>
             <span className="mt-1 block text-xs font-normal text-body">Chosen learners are assigned consecutive ranks. Check existing waitlisted results to avoid duplicate ranks.</span>
           </label>:null}
-          {selected.length>0?<div role="status" className="rounded-[9px] border border-border bg-surface-subtle p-3 text-sm text-body">
+          {selected.length>0?<div role="status" className="rounded-[9px] border border-border bg-muted p-3 text-sm text-body">
             <p className="font-semibold">Result staging preview</p>
             <p>{pendingTotal} total staged outcomes · {selected.length} explicitly selected · {failUnselected?unselected.length:0} additional Not cleared.</p>
             <p>{selected.length} unmarked applicant(s) selected · {outcome==="PASS"?"Cleared":outcome==="FAIL"?"Not cleared":outcome==="HOLD"?"Waitlisted":"Marked absent"}.</p>
@@ -269,7 +269,7 @@ export function TpoBulkRoundResultRecorder({
             const url=URL.createObjectURL(new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}));
             const link=document.createElement("a");link.href=url;
             link.download="round-"+roundId+"-bulk-results.csv";link.click();URL.revokeObjectURL(url);
-          }} className="min-h-11 md:min-h-9 rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
+          }} className="min-h-11 md:min-h-9 rounded-[9px] border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
             Export per-learner staging report (CSV)
           </button>
           <p className="font-semibold">Per-learner outcomes</p>
