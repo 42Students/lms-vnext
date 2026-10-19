@@ -59,7 +59,14 @@ for (const file of files) {
               (/(?:^|\s)rounded-\S+/.test(before)) &&
               (/(?:^|\s)border(?:\s|$)/.test(before) ||
                /(?:^|\s)bg-primary(?:\s|$)/.test(before))) {
-            const after = before.replace(/(^|\s)sm:min-h-9(?=\s|$)/g, "$1md:min-h-9");
+            let after = before.replace(/(^|\s)sm:min-h-9(?=\s|$)/g, "$1md:min-h-9");
+            if (after !== before && /(?:^|\s)border(?:\s|$)/.test(after) &&
+                /(?:^|\s)py-2(?:\s|$)/.test(after) &&
+                !/(?:^|\s)md:py-0(?:\s|$)/.test(after)) {
+              // 20px line-height + 16px vertical padding + 2px border
+              // overflows the 36px desktop minimum by 2px.
+              after += " md:py-0";
+            }
             if (before !== after) replacements.push({
               start: classAttr.initializer.getStart(sf),
               end: classAttr.initializer.getEnd(),
