@@ -70,7 +70,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     ? result.unreadInView+" unread across "+result.items.filter(row=>row.unread>0).length+" conversation(s) on this page"
     : "Conversations with the placement cell, one per drive, plus a general one."}/>
   <Link href="/hr/notifications" className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Notification inbox</Link>
-  {result.status!=="READY"?<section className="space-y-3 rounded-xl border border-border p-4">
+  {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
    {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
     className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-9">{g.collegeName}</Link>)}
@@ -80,11 +80,11 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
      </p>:null}
    {decisionNotices.length>0?<section aria-label="Drive request decisions"
-     className="rounded-xl border border-border bg-surface p-4">
+     className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Drive request decisions</h2>
     <p className="mt-1 text-xs text-muted-foreground">Approval, changes requested and declined decisions for your own requests.</p>
     <ul className="mt-3 space-y-3">{decisionNotices.map(item=><li key={item.id}
-      className="rounded-lg border border-border p-3">
+      className="border-b border-border py-3 last:border-b-0">
       <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
       <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
       <p className="mt-1 text-xs text-muted-foreground">{when(item.createdAt)} IST</p>
@@ -101,7 +101,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    <section className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
-    {generalThread?<details className="mt-3 rounded-lg border border-border p-3">
+    {generalThread?<details className="mt-3 border-b border-border py-3">
       <summary className="cursor-pointer text-sm font-semibold text-primary-text">Message the placement cell · General</summary>
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
       {generalThread.preview&&!generalHistory&&!generalHistoryResult?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
@@ -113,7 +113,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         </p>:null}
       {generalHistory?<ScrollCue axis="y" label="General placement-cell messages" className="mt-3" viewportClassName="max-h-72"><ol aria-label="General placement-cell messages" className="space-y-2">
         {[...generalHistory.messages].reverse().map(message=><li key={message.id}
-          className="rounded-lg border border-border bg-surface-subtle p-3 text-sm">
+          className="border-b border-border py-3 text-sm last:border-b-0">
           <p className="mb-1 text-xs font-semibold text-muted-foreground">
             {message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {when(message.createdAt)} IST
           </p>
@@ -130,9 +130,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </p>:null}
     {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <input name="collegeId" type="hidden" value={result.collegeId}/>
-      <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        Open general conversation
-      </button>
+      <Button type="submit">Open general conversation</Button>
     </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
@@ -141,14 +139,13 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     <input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <input type="hidden" name="scope" value={parsed.data.scope}/>
     <label className="text-sm text-body">Order
-     <select name="sort" defaultValue={parsed.data.sort} className="mt-1 min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
-     </select>
+     </Select>
     </label>
     <label className="flex-1 text-sm text-body">Search by drive or message
-     <input name="q" maxLength={120} defaultValue={parsed.data.q}
-      className="mt-1 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-    <button type="submit" className="self-end rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-9">Search</button>
+     <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1"/></label>
+    <Button type="submit" variant="secondary" className="self-end">Search</Button>
    </form>
    <nav aria-label="Conversation kind" className="flex flex-wrap gap-2">
     {HR_CONVERSATION_KINDS.map(item=><Link key={item.value}
@@ -179,14 +176,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,
       sort:parsed.data.sort,scope:parsed.data.scope,page:result.page,
      })}/>
-     <button type="submit" className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-      Mark visible unread conversations as read
-     </button>
+     <Button type="submit" variant="secondary">Mark visible unread conversations as read</Button>
      <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
     </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
-   {result.items.length?<ol className="space-y-3">
-    {visibleRows.map(row=><li key={row.id} className="rounded-xl border border-border bg-surface p-4">
+   {result.items.length?<ol className="divide-y divide-border border-y border-border">
+    {visibleRows.map(row=><li key={row.id} className="py-4 first:pt-3 last:pb-3">
      <Link href={"/hr/conversations/"+row.id}
       className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-9">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<span aria-label={row.unread+" unread messages"}
@@ -198,7 +193,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      </p>:null}
      <p className="mt-2 text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
     </li>)}
-   </ol>:<p role="status" className="rounded-xl border border-border p-5 text-body">No matching conversations with the placement cell for this college.</p>}
+   </ol>:<p role="status" className="border-y border-border py-5 text-body">No matching conversations with the placement cell for this college.</p>}
    <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Previous</Link>:null}

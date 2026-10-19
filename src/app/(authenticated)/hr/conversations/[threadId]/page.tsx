@@ -87,7 +87,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
       Change request updates are temporarily unavailable. Messages remain available; refresh to try again.
     </p>:null}
   {changeRequests?.party==="COMPANY" && changeRequests.requests.length>0?
-    <section aria-label="Drive change request updates" className="rounded-xl border border-border bg-surface p-4">
+    <section aria-label="Drive change request updates" className="border-b border-border pb-4">
       <h2 className="text-sm font-semibold text-foreground">Change requests · {changeRequests.requests.length}</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
       <ScrollCue axis="y" label="Drive change request updates" className="mt-3" viewportClassName="max-h-56"><ol className="space-y-2">
@@ -112,9 +112,9 @@ export default async function RecruiterConversationDetail({params,searchParams}:
         Review requests, answers and decisions
       </Link>
     </section>:null}
-  <ol aria-label="Employer and placement cell messages" className="space-y-3">
+  <ol aria-label="Employer and placement cell messages" className="divide-y divide-border border-y border-border">
    {messages.map(message=><li key={message.id}
-    className="rounded-xl border border-border bg-surface p-4">
+    className="py-4">
     <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {dateTime(message.createdAt)} IST</p>
     {message.proposal?<div className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-xs text-body">
       <p className="font-semibold text-foreground">Drive proposal · sent as discussion message</p>
@@ -129,7 +129,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
    </li>)}
   </ol>
-  {!result.messages.length?<p role="status" className="rounded-xl border border-border p-5 text-body">No messages on this page.</p>:null}
+  {!result.messages.length?<p role="status" className="border-y border-border py-5 text-body">No messages on this page.</p>:null}
   <RecruiterConversationReplyForm threadId={result.thread.id}/>
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
