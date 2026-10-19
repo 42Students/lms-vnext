@@ -144,7 +144,7 @@ function ContentItem({
           {item.notes}
         </p>
       ) : null}
-      {youtubeEmbed?<div className="mt-3 aspect-video w-full max-w-2xl overflow-hidden rounded-lg border border-border">
+      {youtubeEmbed?<div className="mt-3 aspect-video w-full max-w-2xl overflow-hidden rounded-[var(--lms-control-radius)] border border-border">
         <iframe title={"Preview "+item.title} src={youtubeEmbed}
           className="h-full w-full" loading="lazy" referrerPolicy="strict-origin-when-cross-origin"
           allow="encrypted-media; picture-in-picture" allowFullScreen/>
@@ -456,7 +456,7 @@ export function FacultyCourseWorkspace({
             )}
           </StatusBadge>
         </div>
-        <div className="mt-4 rounded-lg bg-[var(--lms-neutral-50)] px-3 py-2 text-xs leading-5 text-muted-foreground">
+        <div className="mt-4 rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)] px-3 py-2 text-xs leading-5 text-muted-foreground">
           Your class includes course-wide learning materials and content
           added specifically for these students.
         </div>
@@ -464,22 +464,22 @@ export function FacultyCourseWorkspace({
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")}
-          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Lessons" value={summary.lessons}
             detail="Open your Blueprint lessons →"/>
         </Link>
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=LECTURES"}
-          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Content" value={summary.contents}
             detail="Browse lectures and section materials →"/>
         </Link>
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=ASSESSMENTS"}
-          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Assignments" value={summary.assignments}
             detail="Browse lesson assignments →"/>
         </Link>
         <Link href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/quizzes"}
-          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Quizzes" value={summary.quizzes}
             detail="Review quizzes and learner results →"/>
         </Link>
@@ -541,7 +541,7 @@ export function FacultyCourseWorkspace({
               {label}
             </Link>)}
           </nav>
-          {selectedLessonId?<nav aria-label="Lesson navigation" className="flex flex-wrap items-center gap-3 rounded-lg border border-border p-3">
+          {selectedLessonId?<nav aria-label="Lesson navigation" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
             <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline">
               Back to Blueprint
             </Link>
@@ -668,7 +668,7 @@ export function FacultyCourseWorkspace({
                       />
 
                       {itemCount === 0 ? (
-                        <div className="mt-3 rounded-lg border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
+                        <div className="mt-3 rounded-[var(--lms-control-radius)] border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
                           {selectedLessonId&&contentFilter==="ALL"?"No lesson content yet":contentFilter==="ALL"?"No active content or assessments in this lesson.":"No lesson content matches this filter."}
                         </div>
                       ) : (
