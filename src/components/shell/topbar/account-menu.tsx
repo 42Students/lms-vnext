@@ -44,25 +44,28 @@ export function TopbarAccountMenu({
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
     };
     const onKey = (event: KeyboardEvent) => {
+      // Other menus may be open elsewhere in the shell; this listener owns
+      // only the account panel and never overrides an inner listbox's key.
+      if (event.defaultPrevented || !(event.target instanceof HTMLElement) ||
+          !root.current?.contains(event.target)) return;
       if (event.key === "Escape") {
         event.preventDefault();
         setOpen(false);
         trigger.current?.focus();
         return;
       }
-      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
-      if (!(event.target instanceof HTMLElement) ||
-          !root.current?.contains(event.target) ||
-          event.target.matches("input, select, textarea")) return;
+      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key) ||
+          event.target.closest('input, select, textarea, [contenteditable="true"], [role="listbox"]')) return;
       const actions = Array.from(root.current.querySelectorAll<HTMLElement>(
-        '[data-slot="popover"] a[href], [data-slot="popover"] button:not([disabled])'
-      )).filter(action => action.getClientRects().length > 0);
+        '[data-slot="popover"] a[href]:not([aria-disabled="true"]), [data-slot="popover"] button:not(:disabled):not([aria-disabled="true"])'
+      )).filter(action => action.getClientRects().length > 0 &&
+        !action.closest('[hidden], [inert], [aria-disabled="true"]'));
       if (!actions.length) return;
       const index = actions.indexOf(event.target);
       event.preventDefault();
       const next = event.key === "Home" ? 0 : event.key === "End" ? actions.length - 1
         : event.key === "ArrowDown" ? (index + 1) % actions.length
-        : (index - 1 + actions.length) % actions.length;
+        : index < 0 ? actions.length - 1 : (index - 1 + actions.length) % actions.length;
       actions[next]?.focus();
     };
     document.addEventListener("pointerdown", onPointer);
