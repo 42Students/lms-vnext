@@ -16,29 +16,14 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
  projectId:string;task:Task;sprintTitle:string|null;members:Member[];
  submissions:Submission[];activity:Event[];onClose:()=>void;readOnly:boolean;
 }){
- const ref=useRef<HTMLDialogElement>(null);
- const opener=useRef<HTMLElement|null>(null);
- useEffect(()=>{
-  const el=ref.current;if(!el)return;
-  opener.current=document.activeElement instanceof HTMLElement?document.activeElement:null;
-  if(!el.open)el.showModal();
-  return ()=>{if(el.open)el.close();opener.current?.focus();};
- },[task.id]);
+
  const author=members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned";
  const recent=activity.filter(event=>event.subjectId===task.id);
  const creator=recent.find(event=>event.eventType==="projects.task.created")?.actorDisplayName;
  const editor=recent.filter(event=>event.eventType==="projects.task.details_updated")
    .sort((a,b)=>new Date(b.occurredAt).getTime()-new Date(a.occurredAt).getTime())[0]?.actorDisplayName;
  const attempts=submissions.filter(row=>row.taskId===task.id);
- return <dialog ref={ref} aria-labelledby="mentor-board-task-title" onClose={onClose}
-  onCancel={event=>{event.preventDefault();ref.current?.close();}}
-  className="fixed inset-0 m-auto max-h-[90dvh] w-[min(95vw,42rem)] overflow-y-auto overscroll-contain rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50">
-  <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-border bg-surface pb-3">
-   <div><p className="text-xs font-semibold uppercase text-muted-foreground">Mentor · Task details</p>
-    <h2 id="mentor-board-task-title" className="text-lg font-semibold">{task.title}</h2></div>
-   <button type="button" onClick={()=>ref.current?.close()}
-    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">Close</button>
-  </div>
+ return <Dialog open={true} onOpenChange={next=>{if(!next)onClose();}} title={task.title} description="Mentor · Task details" className="max-w-[42rem]">
   <p className="mt-3 text-xs text-muted-foreground">Scroll for more task details and activity.</p>
    <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
    {([{label:"Status",value:task.status},{label:"Priority",value:task.priority},
@@ -90,5 +75,5 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
    <ProjectTaskComments projectId={projectId} taskId={task.id}
     updatedAt={new Date(task.updatedAt).toISOString()} canPost={!readOnly}/>
   </section>
- </dialog>;
+ </Dialog>;
 }
