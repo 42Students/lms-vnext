@@ -25,7 +25,7 @@ export default async function MentorReportsPage({searchParams}:{
   });
   if(duplicated||!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="font-semibold text-[30px] font-semibold leading-[1.35] tracking-[-0.02em] text-[var(--lms-heading)]">Invalid Mentor report filters</h1>
-    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>
+    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
   </section>;
   const data=await getMentorReports(await getCurrentRequestContext(),parsed.data);
   const statusMetrics=[
@@ -125,7 +125,7 @@ export default async function MentorReportsPage({searchParams}:{
         <Button type="submit" variant="primary">
           Filter
         </Button>
-        <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+        <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/mentor/reports/export?"+
