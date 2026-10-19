@@ -460,3 +460,13 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-track {
   background-color: transparent;
 }
+
+/* vNext-only tracker dark theme: globals.css:168-181 defines #75dce3 focus
+   teal and #164e57 selection tint, replacing legacy light tokens only while
+   the opt-in tracker theme is active. Without these overrides, selected table
+   rows become #eff8fa (light mode), obscuring pale dark-theme text. This
+   changes no layout, no standard LMS appearance, and no React components. */
+:root[data-tracker-theme="dark"] {
+  --lms-micro-focus: var(--lms-primary-text);
+  --lms-micro-selected: var(--lms-primary-subtle);
+}
