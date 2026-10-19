@@ -146,6 +146,12 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             setMobileOpen(false);
             return;
           }
+          if (event.key === "Backspace" && !event.ctrlKey && !event.metaKey) {
+            event.preventDefault();
+            setQuery(value => value.slice(0, -1));
+            input.current?.focus();
+            return;
+          }
           if (!event.ctrlKey && !event.metaKey && !event.altKey &&
               event.key.length === 1) {
             event.preventDefault();
