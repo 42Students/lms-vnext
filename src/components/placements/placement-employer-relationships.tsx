@@ -166,8 +166,8 @@ export function PlacementEmployerRelationships({
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border px-5 py-4">
+    <section className="border-b border-border pb-6">
+      <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Companies
         </h2>
@@ -198,7 +198,7 @@ export function PlacementEmployerRelationships({
             return (
               <div
                 key={item.relationshipId}
-                className="grid gap-4 px-5 py-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(16rem,0.8fr)_auto]"
+                className="grid gap-4 py-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(16rem,0.8fr)_auto]"
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
