@@ -68,7 +68,7 @@ export function HrDriveDraftForm({
   const submittedRef=useRef(false);
   const submittingRef=useRef(false);
   const result = hrDriveDraftSchema.safeParse(draft);
-  const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]";
+  const inputClass = "min-h-9 w-full rounded-[9px] border border-border bg-surface px-3 py-2 text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]";
   const selectOptions = [
     ["FULL_TIME", "Full-time"], ["INTERNSHIP", "Internship"], ["INTERNSHIP_FULL_TIME", "Internship + full-time"], ["CONTRACT", "Contract"],
   ] as const;
@@ -230,11 +230,11 @@ export function HrDriveDraftForm({
     <p className="text-sm text-body">Your request was saved. The placement cell will review and set the dates before it can open to students.</p>
     <div className="flex flex-wrap gap-3">
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] underline">Open the request</a>
+        className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-primary-text underline">Open the request</a>
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] underline">Go to Drives</a>
+        className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-primary-text underline">Go to Drives</a>
       <a href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] underline">Request another</a>
+        className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-primary-text underline">Request another</a>
     </div>
   </section>;
 
@@ -260,7 +260,7 @@ export function HrDriveDraftForm({
            }
          }}/>
        {sourceJobTitle ? (
-        <p className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-body">
+        <p className="rounded-[9px] border border-border bg-surface-secondary p-3 text-sm text-body">
           Hire again · copied from: <strong>{sourceJobTitle}</strong>. Changes here do not update the existing drive.
         </p>
       ) : null}
@@ -392,7 +392,7 @@ export function HrDriveDraftForm({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Hiring rounds</h2>
           <button type="button" disabled={draft.rounds.length >= 12}
-            className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+            className="min-h-9 rounded-[9px] border border-border px-3 text-sm text-primary-text disabled:opacity-50"
             onClick={() => setDraft((current) => ({
               ...current, rounds: [...current.rounds, { kind: "INTERVIEW", name: "Interview" }],
             }))}>
@@ -401,7 +401,7 @@ export function HrDriveDraftForm({
         </div>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
           {HR_DRIVE_ROUND_PRESETS.map(preset=><button key={preset.id}
-            type="button" className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)]"
+            type="button" className="min-h-9 rounded-[9px] border border-border px-3 text-sm text-primary-text"
             onClick={()=>{setDraft(current=>applyHrRoundPreset(current,preset.id));setShowPreview(false);}}>
             {preset.label}
           </button>)}
@@ -430,20 +430,20 @@ export function HrDriveDraftForm({
               </label>
               <div className="flex items-end gap-2">
                 <button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
-                  className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+                  className="min-h-9 rounded-[9px] border border-border px-3 text-sm text-primary-text disabled:opacity-50"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</button>
                 <button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
-                  className="min-h-11 rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+                  className="min-h-9 rounded-[9px] border border-border px-3 text-sm text-primary-text disabled:opacity-50"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</button>
               </div>
               <button type="button" disabled={draft.rounds.length>=12}
                 aria-label={"Duplicate "+round.name}
-                className="self-end rounded-md border border-border px-3 py-3 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+                className="self-end rounded-[9px] border border-border px-3 py-3 text-sm text-primary-text disabled:opacity-50"
                 onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
                 Duplicate
               </button>
               <button type="button" disabled={draft.rounds.length <= 1}
-                className="self-end rounded-md border border-border px-3 py-3 text-sm text-body disabled:opacity-50"
+                className="self-end rounded-[9px] border border-border px-3 py-3 text-sm text-body disabled:opacity-50"
                 onClick={() => setDraft((current) => ({
                   ...current, rounds: current.rounds.filter((_, i) => i !== index),
                 }))}>Remove</button>
@@ -457,23 +457,23 @@ export function HrDriveDraftForm({
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <button type="button" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+          <button type="button" className="min-h-9 rounded-[9px] bg-primary px-4 text-sm font-semibold text-on-primary"
             onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</button>
           <button type="button" disabled={!result.success||submitting}
             aria-busy={submitting}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
+            className="min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </button>
           <button type="button" disabled={!result.success}
-            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50"
+            className="min-h-9 rounded-[9px] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
             onClick={() => void copyPreview()}>Copy validated draft</button>
           <button type="button" disabled={submitting}
-            className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)] disabled:opacity-50"
+            className="min-h-9 rounded-[9px] border border-border px-4 text-sm text-primary-text disabled:opacity-50"
             onClick={saveForThisTab}>Save unsent draft</button>
-          <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-[var(--lms-teal-deep)]"
+          <button type="button" className="min-h-9 rounded-[9px] border border-border px-4 text-sm text-primary-text"
             onClick={()=>restoreFromThisTab()}>Restore saved draft</button>
-          <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-body"
+          <button type="button" className="min-h-9 rounded-[9px] border border-border px-4 text-sm text-body"
             onClick={() => {
               if(hrDraftContainsWork(draft)){setDraftDecision("CLEAR");return;}
               try{window.sessionStorage.removeItem(storageKey);window.localStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
@@ -481,7 +481,7 @@ export function HrDriveDraftForm({
             }}>Start over</button>
         </div>
         {showPreview && !result.success ? (
-          <div role="alert" className="mt-4 rounded-md border border-border p-3 text-sm text-body">
+          <div role="alert" className="mt-4 rounded-[9px] border border-border p-3 text-sm text-body">
             <strong>Review the draft:</strong>
             <ul className="mt-2 list-disc pl-5">
               {result.error.issues.map((issue, index) => (
@@ -491,14 +491,14 @@ export function HrDriveDraftForm({
           </div>
         ) : null}
         {/* Live locally held student-facing draft preview; never imply publication. */}
-          <div className="mt-4 space-y-2 rounded-md bg-surface-secondary p-4 text-sm text-body">
+          <div className="mt-4 space-y-2 rounded-[9px] bg-surface-secondary p-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
             <p>{draft.location} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
             {draft.driveMode==="OFF_CAMPUS"?
               <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
                 ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer" target="_blank"
-                  className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{result.data.externalApplicationUrl}</a>
+                  className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">{result.data.externalApplicationUrl}</a>
                 : "Not specified"}</p>:null}
             <h4 className="font-semibold text-foreground">Planned hiring process</h4>
             <ol className="list-inside list-decimal space-y-1">
@@ -519,7 +519,7 @@ export function HrDriveDraftForm({
               ))}
             </dl>
             {hrDraftCompensationWarnings(draft).length>0?
-              <div role="status" className="rounded-md border border-border bg-surface p-3 text-sm">
+              <div role="status" className="rounded-[9px] border border-border bg-surface p-3 text-sm">
                 <h5 className="font-semibold text-foreground">Compensation details to review</h5>
                 <ul className="mt-2 list-disc space-y-1 pl-5">
                   {hrDraftCompensationWarnings(draft).map(note=><li key={note}>{note}</li>)}

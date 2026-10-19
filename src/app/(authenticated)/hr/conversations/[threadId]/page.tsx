@@ -35,7 +35,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
    return <div className="min-w-0 max-w-full space-y-5"><PageHeader eyebrow="Recruiter" title="Messages"/>
     <ErrorState title="No access to this college"
      description="Your access to this college has ended or was removed. Ask the placement cell to give it again."
-     action={<Link href="/hr/home" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Return to Today</Link>}/>
+     action={<Link href="/hr/home" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Return to Today</Link>}/>
    </div>;
   }
   if(error instanceof TpoMessagingError)notFound();
@@ -74,11 +74,11 @@ export default async function RecruiterConversationDetail({params,searchParams}:
       Hiring drive details are temporarily unavailable. You can still read and reply to this authorized conversation.
     </p>:null}
   {matchingDrive?<Link href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
-   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+   className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Open drive: {matchingDrive.job.title}
   </Link>:null}
   <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
-   className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to conversations</Link>
+   className="inline-flex min-h-9 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to conversations</Link>
   <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
@@ -108,7 +108,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
         </li>)}
       </ol></ScrollCue>
       <Link href={"/recruiter/drives/"+encodeURIComponent(result.thread.jobId!)+"?tab=requests"}
-        className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Review requests, answers and decisions
       </Link>
     </section>:null}
@@ -122,7 +122,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
       <p>Proposal reference: {message.proposal.referenceId}</p>
       <p>Not a submitted approval request or a published drive.</p>
       <Link href={hrSentProposalsHref(result.thread.collegeId)}
-       className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+       className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
        View sent proposal history
       </Link>
      </div>:null}
@@ -133,13 +133,13 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <RecruiterConversationReplyForm threadId={result.thread.id}/>
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Newest messages</Link>:null}
+    className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Newest messages</Link>:null}
    {result.page<result.pages&&result.pages>2?<Link href={hrConversationDetailHref(threadId,result.pages)}
-    className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Oldest messages</Link>:null}
+    className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Oldest messages</Link>:null}
    {result.page<result.pages?<Link href={hrConversationDetailHref(threadId,result.page+1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Older</Link>:null}
+    className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Older</Link>:null}
    {result.page>1?<Link href={hrConversationDetailHref(threadId,result.page-1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Newer</Link>:null}
+    className="inline-flex min-h-9 items-center rounded-[var(--radius)] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Newer</Link>:null}
   </nav>
  </div>;
 }

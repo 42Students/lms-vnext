@@ -27,12 +27,12 @@ export default async function HrRoundRemovalConfirm({params}:{
   </div>
   <div className="flex flex-wrap gap-3">
    <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
-    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Keep round</Link>
+    className="inline-flex min-h-9 items-center rounded-[9px] border border-border px-4 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">Keep round</Link>
    <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"}>
     <input type="hidden" name="action" value="REMOVE"/>
     <input type="hidden" name="roundId" value={round.id}/>
     <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+    <button type="submit" className="min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
      Confirm remove
     </button>
    </form>

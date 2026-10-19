@@ -95,7 +95,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
      className="rounded-[var(--radius)] border border-border px-4 py-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{g.collegeName}</Link>)}
    </nav>:null}
-   <section className="rounded-xl border border-border bg-surface p-4">
+   <section className="border-b border-border pb-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
     {generalThread?<details className="mt-3 rounded-lg border border-border p-3">

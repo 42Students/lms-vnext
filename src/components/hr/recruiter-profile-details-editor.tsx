@@ -76,13 +76,13 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
      <input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
       value={form[key]} disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?160:100}
       onChange={e=>update(key,e.target.value)}
-      className="min-h-11 rounded border border-border bg-surface px-3"/>
+      className="min-h-9 rounded border border-border bg-surface px-3"/>
     </label>)}
   </div>
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
   {dirty?<p role="status" className="text-sm font-semibold">Unsaved changes</p>:null}
   <button type="submit" disabled={busy||!dirty}
-   className="min-h-11 rounded bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+   className="min-h-9 rounded bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
    {busy?"Saving…":"Save changes"}</button>
   {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm">{feedback}</p>:null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"

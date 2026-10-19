@@ -27,7 +27,7 @@ export function RecruiterDecisionReadButton({id}:{id:string}){
  }
  return <div className="mt-2">
   <button type="button" disabled={busy||complete} onClick={()=>void read()}
-   className="min-h-11 rounded-md border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+   className="min-h-9 rounded-[9px] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-focus-ring)]">
    {complete?"Marked as read":busy?"Saving…":"Mark as read"}
   </button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

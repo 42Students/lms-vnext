@@ -71,7 +71,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   <label className="grid gap-1 text-sm text-body">Your rating
    <select value={rating===null?"":String(rating)} disabled={!ready||pending}
     onChange={event=>setRating(event.target.value===""?null:Number(event.target.value))}
-    className="min-h-11 rounded-md border border-border bg-surface px-3">
+    className="min-h-9 rounded-[9px] border border-border bg-surface px-3">
     <option value="">Not rated</option>
     {[1,2,3,4,5].map(value=><option key={value} value={value}>{value} / 5</option>)}
    </select>
@@ -79,17 +79,17 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   <label className="grid gap-1 text-sm text-body">Your note
    <textarea value={note} maxLength={1000} rows={3} disabled={!ready||pending}
     onChange={event=>setNote(event.target.value)}
-    className="w-full rounded-md border border-border bg-surface p-3"/>
+    className="w-full rounded-[9px] border border-border bg-surface p-3"/>
   </label>
   <p className="text-xs text-muted-foreground">{note.length}/1000 characters</p>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   <div className="flex flex-wrap gap-2">
    <button type="submit" disabled={!ready||!dirty||pending}
-    className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+    className="min-h-9 rounded-[9px] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
     {pending?"Saving…":"Save private review"}</button>
    <button type="button" disabled={!ready||pending||(rating===null&&!note)}
     onClick={()=>void save(undefined,true)}
-    className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+    className="min-h-9 rounded-[9px] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
     Clear rating and note</button>
   </div>
  </form>;
