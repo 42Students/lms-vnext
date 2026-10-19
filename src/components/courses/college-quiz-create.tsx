@@ -156,7 +156,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <Textarea value={question.prompt} maxLength={5000} disabled={busy} placeholder="Question prompt"
      aria-label={"Question "+(i+1)+" prompt"} onChange={e=>replaceQuestion(i,{...question,prompt:e.target.value})}
      className="min-h-24 w-full"/>
-    {question.options.map((option,j)=><label key={j} className="flex items-center gap-2 text-sm">
+    {question.options.map((option,j)=><label key={j} className="flex min-h-11 items-center gap-2 text-sm">
      <ChoiceInput type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
       name={"quiz-correct-"+i} checked={option.correct} disabled={busy}
       aria-label={"Correct answer "+(j+1)} onChange={e=>replaceQuestion(i,{...question,
@@ -167,31 +167,31 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       className="min-h-11 min-w-0 flex-1"/>
      {question.options.length>2?<Button variant="secondary" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
       ...question,options:question.options.filter((_,k)=>k!==j)})}
-      className="text-xs font-semibold text-error">Remove</Button>:null}
+      className="min-h-11 text-xs font-semibold text-error md:min-h-9">Remove</Button>:null}
     </label>)}
     <div className="flex flex-wrap gap-3">
      <Button variant="ghost" type="button" disabled={busy||i===0} onClick={()=>moveQuestion(i,-1)}
-      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question up</Button>
+      className="min-h-11 text-sm font-semibold text-primary-text disabled:opacity-40 md:min-h-9">Move question up</Button>
      <Button variant="ghost" type="button" disabled={busy||i===questions.length-1} onClick={()=>moveQuestion(i,1)}
-      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question down</Button>
+      className="min-h-11 text-sm font-semibold text-primary-text disabled:opacity-40 md:min-h-9">Move question down</Button>
      <Button variant="ghost" type="button" disabled={busy||question.options.length>=20}
       onClick={()=>replaceQuestion(i,{...question,options:[...question.options,{text:"",correct:false}]})}
-      className="text-sm font-semibold text-primary-text">+ Add option</Button>
+      className="min-h-11 text-sm font-semibold text-primary-text md:min-h-9">+ Add option</Button>
      {questions.length>1?<Button variant="secondary" type="button" disabled={busy}
       onClick={()=>setQuestions(rows=>rows.filter((_,k)=>k!==i))}
-      className="text-sm font-semibold text-error">Remove question</Button>:null}
+      className="min-h-11 text-sm font-semibold text-error md:min-h-9">Remove question</Button>:null}
     </div>
    </fieldset>)}
    <Button variant="secondary" type="button" disabled={busy||questions.length>=100}
     onClick={()=>setQuestions(rows=>[...rows,empty()])}
     className="min-h-11 md:min-h-9">
     + Add question</Button>
-   <label className="flex items-center gap-2 text-sm">
+   <label className="flex min-h-11 items-center gap-2 text-sm">
     <Checkbox disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
     Create another quiz after saving
    </label>
    <div className="flex flex-wrap gap-2">
-    <Button variant="primary" type="button" disabled={busy} onClick={()=>void create()}
+    <Button variant="primary" type="button" disabled={busy} onClick={()=>void create()} className="min-h-11 md:min-h-9"
      >
      {busy?"Saving…":"Create quiz draft"}</Button>
     <Button variant="secondary" type="button" disabled={busy} onClick={()=>{
@@ -203,7 +203,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       setOpened(false);setTitle("");setDescription("");setDueAt("");setDeliveryId("");
       setMaxAttempts("1");setShuffleQuestions(false);setShuffleOptions(false);
       setQuestions([empty()]);setError("");
-    }} >Cancel</Button>
+    }} className="min-h-11 md:min-h-9">Cancel</Button>
    </div>
   </div>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
