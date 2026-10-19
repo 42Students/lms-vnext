@@ -8,6 +8,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {redirect} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {Tabs} from "@/components/ui/tabs";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
@@ -78,13 +79,13 @@ export default async function IndependentFindingsPage({searchParams}:{
     </p>:null}
    </section>:null}
   </section>
-  <nav aria-label="Finding views" className="flex flex-wrap gap-3 border-b border-border">
-   {(["OPEN","RELEASE","ALL"] as const).map(value=><Link key={value} aria-current={parsed.view===value?"page":undefined}
-     href={independentFindingHref({...parsed,view:value,page:1})}
-     className={parsed.view===value ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
-      {value==="OPEN"?"Open":value==="RELEASE"?"Release (critical & high)":"All"}
-    </Link>)}
-  </nav>
+  <Tabs renderPanel={false} ariaLabel="Finding views" value={parsed.view}
+   items={([
+     {value:"OPEN",label:"Open"},
+     {value:"RELEASE",label:"Release (critical & high)"},
+     {value:"ALL",label:"All"},
+   ] as const).map(item=>({...item,
+    href:independentFindingHref({...parsed,view:item.value,page:1})}))}/>
   <section aria-label="Finding status counts" className="flex flex-wrap items-center gap-2 text-sm">
    <p className="font-semibold">Critical open: {data.criticalOpen}</p>
    {FINDING_STATUSES.map(status=><Link key={status}
