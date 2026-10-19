@@ -469,7 +469,7 @@ export default async function HrPlacementJobPage({
           Messages
         </Link>
       </nav>
-      {discussionTab?<section aria-label="Drive discussion" className="space-y-4 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 sm:p-5">
+      {discussionTab?<section aria-label="Drive discussion" className="space-y-4 border-b border-border pb-4 sm:pb-5">
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
         <p className="text-sm text-body">Private hiring-drive conversation with the placement cell. The company cannot read other recruiters&apos; conversations.</p>
