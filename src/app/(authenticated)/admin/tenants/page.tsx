@@ -53,7 +53,7 @@ export default async function TenantDirectory({searchParams}:{
    actions={<div className="flex flex-wrap items-center justify-end gap-2">
     <TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
     <Link href="/admin/tenants/create"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">
       Create an organization and its colleges
     </Link>
    </div>} />
