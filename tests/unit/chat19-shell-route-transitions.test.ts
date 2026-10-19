@@ -29,4 +29,8 @@ describe("chat-19 old-LMS route transition parity",()=>{
  expect(legacy()).toContain("opacity: 0.78");
  expect(css()).toContain("opacity:.78");
 });
+ it("keeps legacy 6px and 0.998 route exit movement",()=>{
+ expect(legacy()).toContain("translateY(6px) scale(0.998)");
+ expect(css()).toContain("translateY(6px) scale(.998)");
+});
 });
