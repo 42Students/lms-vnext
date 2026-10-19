@@ -22,7 +22,7 @@ export default async function CollegeElectivesPage({
   if (!context.membership) redirect("/dashboard");
   const moduleAccess=await resolveOptionalModuleAccess(context);
   if(!moduleAccess.electives.enabled)return <main role="status" className="space-y-3 border-b border-border pb-5">
-    <h1 className="text-xl font-semibold">Electives is turned off for this college</h1>
+    <PageHeader title="Electives is turned off for this college" />
     <p className="text-sm text-body">Your college administrator can ask 42Students to switch Electives back on.
       Existing elective records are kept; this page cannot create or change electives while the module is off.</p>
     <Link href="/college" className="text-sm font-semibold text-link underline">Return to college dashboard</Link>
@@ -43,7 +43,7 @@ export default async function CollegeElectivesPage({
   return <div className="space-y-4">
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={electiveCsvHref(data.query)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
       Export filtered electives CSV
     </Link>
     <p className="text-xs text-muted-foreground">Exports up to {ELECTIVES_EXPORT_CAP} matching elective slots; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
