@@ -31,7 +31,7 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
    description="Reach recruiter leads in your college with a saved and auditable audience snapshot."/>
   <Link href="/tpo/recruiters/campaigns" className="text-sm text-link underline">← Campaign history</Link>
   {ready?<TpoCampaignCompose deliveryReady={deliveryReady} selectedLeadIds={selectedLeadIds}/>:
-   <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-5 text-sm text-body">
+   <p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-5)] text-sm text-body">
     {CAMPAIGN_DRAFT_UNAVAILABLE}
    </p>}
  </div>;
