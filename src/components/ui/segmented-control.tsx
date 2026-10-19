@@ -8,13 +8,14 @@ export type SegmentedControlProps = {
   label: string;
   name?: string;
   disabled?:boolean;
+  error?: boolean;
   className?:string;
 };
 /** Radio semantics preserve arrow-key navigation and form accessibility. */
-export function SegmentedControl({options,value,onChange,label,name,disabled=false,className}:SegmentedControlProps) {
+export function SegmentedControl({options,value,onChange,label,name,disabled=false,error=false,className}:SegmentedControlProps) {
   const id=useId();
-  return <fieldset data-slot="segmented-control" aria-label={label} disabled={disabled}
-    className={cx("flex min-w-0 flex-wrap gap-1 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-1",className)}>
+  return <fieldset data-slot="segmented-control" aria-label={label} aria-invalid={error || undefined} disabled={disabled}
+    className={cx("flex min-w-0 flex-wrap gap-1 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-1 aria-invalid:border-[var(--lms-error)]",className)}>
     <legend className="sr-only">{label}</legend>
     {options.map(option=><label key={option.value} className="relative inline-flex min-h-9 cursor-pointer items-center has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
       <input type="radio" name={name??id} value={option.value} checked={value===option.value} disabled={disabled||option.disabled}
