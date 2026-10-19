@@ -476,3 +476,5 @@
 .topbarNotificationBody ul[aria-label^="Notifications for "] { padding:0; margin:0; list-style:none; }
 
 .topbarNotificationBody ul[aria-label="Recent placement notifications"] > li > p { margin:0; padding:12px 12px 8px; color:var(--lms-muted-text); font-size:12px; font-weight:600; }
+
+.topbarNotificationError { display:flex; align-items:center; justify-content:center; min-height:44px; padding:32px 20px; color:var(--lms-error-text); font-size:14px; text-align:center; }
