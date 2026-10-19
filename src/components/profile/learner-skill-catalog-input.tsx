@@ -1,5 +1,7 @@
 "use client";
 import {useEffect,useId,useRef,useState} from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type Item={id:string;name:string;displayName:string;category:string|null};
 export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange:(value:string)=>void}){
@@ -28,7 +30,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
  },[value]);
  return <div className="sm:col-span-2">
   <label htmlFor={id} className="text-xs font-semibold text-body">Skill</label>
-  <input id={id} value={value} maxLength={160} autoComplete="off"
+  <Input id={id} value={value} maxLength={160} autoComplete="off"
    onChange={event=>{selectedSkill.current=null;setStatus("loading");setItems([]);setActiveIndex(-1);onChange(event.target.value);}}
    onKeyDown={event=>{
      if(status!=="ready"||items.length===0)return;
@@ -42,7 +44,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    role="combobox" aria-autocomplete="list" aria-expanded={status==="ready"&&items.length>0}
    aria-controls={id+"-choices"}
    aria-activedescendant={activeIndex>=0?`${id}-choice-${activeIndex}`:undefined}
-   className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] sm:min-h-9"/>
+   className="mt-1 min-h-11 sm:min-h-9 w-full"/>
   {status==="loading"?<p role="status" className="mt-1 text-xs text-muted-foreground">Searching skills…</p>:null}
   {status==="ready"&&items.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">
     No catalog suggestions found. You can still save your own skill name.
@@ -51,12 +53,12 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    Skill catalog temporarily unavailable. You can save the entered skill name.
   </p>:null}
   {status==="ready"&&items.length>0?<ul id={id+"-choices"} role="listbox"
-    className="mt-2 max-h-48 space-y-1 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border bg-surface p-1">
+    className="mt-2 max-h-48 space-y-1 overflow-y-auto rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-1">
     {items.map((item,index)=><li id={id+"-choice-"+index} key={item.id} role="option" aria-selected={activeIndex===index||item.displayName===value}>
-      <button type="button" className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary"
+      <Button type="button" variant="ghost" className="min-h-11 sm:min-h-9 w-full justify-start text-left text-sm"
        onClick={()=>{selectedSkill.current=item.displayName;onChange(item.displayName);setItems([]);setActiveIndex(-1);}}>
        {item.displayName}{item.category?<span className="ml-2 text-xs text-muted-foreground">{item.category}</span>:null}
-      </button>
+      </Button>
     </li>)}
   </ul>:null}
  </div>;
