@@ -326,3 +326,9 @@ Commits on `chatgpt/chat-9-b` carry the `[chat-9]` prefix. Read the legacy
 No code, CI, typecheck, lint or visual browser execution was run. Source-level
 checks were limited to complete JSX closing tags and inspected replacements;
 pixel-perfect visual acceptance and strict TypeScript compilation remain unverified.
+
+Additional source-only acceptance: removed the PageHeader bottom rule so chips and tabs
+flow from the page head through whitespace rather than an invented separating hairline.
+Re-fetched all nine touched TSX/JSX files and checked for incomplete closing tags,
+including the `</Select>` regression pattern; none were found. This is not a parser,
+compiler or browser visual test.
