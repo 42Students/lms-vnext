@@ -550,7 +550,7 @@ export function SectionOperations({
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Capacity
           </p>
-          <p className="mt-2 font-semibold text-foreground">
+          <p className="mt-2 font-semibold tabular-nums text-[var(--lms-body-text)]">
             {section.capacity ?? "Unlimited"}
           </p>
         </div>
