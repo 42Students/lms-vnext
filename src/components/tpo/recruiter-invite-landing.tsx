@@ -22,7 +22,7 @@ type Invite = {
 };
 type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined";
 
-const actionLink="inline-flex min-h-9 w-full items-center justify-center rounded-[9px] border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const actionLink="inline-flex min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export function RecruiterInviteLanding({ token }: { token: string }) {
   const [state, setState] = useState<State>("loading");
@@ -186,7 +186,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         Contact details are shared only as the placement cell allows.
       </p>
 
-      <div className="mt-5 rounded-[9px] border border-border bg-surface-secondary p-4 text-sm text-body">
+      <div className="mt-5 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4 text-sm text-body">
         <p><strong>Contact:</strong> {invite.contactName}</p>
         {invite.designation ? <p><strong>Designation:</strong> {invite.designation}</p> : null}
       </div>
