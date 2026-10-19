@@ -91,7 +91,7 @@ export default async function MentorNotificationsPage({
   return <div className="min-w-0 max-w-full space-y-8">
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
-    {failedSources.length ? <div role="alert" className="rounded-xl border border-border bg-surface p-4">
+    {failedSources.length ? <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
       <h2 className="font-semibold text-foreground">Some notification sources are unavailable</h2>
       <p className="mt-1 text-sm text-body">
         Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
@@ -113,21 +113,21 @@ export default async function MentorNotificationsPage({
         className="flex flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
         <label className="grid gap-1 text-sm font-semibold">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}
-            className="min-h-11 sm:min-h-9 max-w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 sm:min-h-9 max-w-full rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention order
           <Select name="attentionOrder" defaultValue={attentionOrder.data}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
           </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention type
           <Select name="kind" defaultValue={kind.data}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-surface px-3">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>
             <option value="STALLED">Stalled</option>
             <option value="REQUESTED">Meeting requests</option>
@@ -170,7 +170,7 @@ export default async function MentorNotificationsPage({
         baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
         confirmMarkAll /> : null}
       {inbox?.cursor.invalid
-        ? <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
+        ? <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 text-sm text-foreground">
             The notification page link is invalid.{" "}
             <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
               className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -182,7 +182,7 @@ export default async function MentorNotificationsPage({
               emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
             {nextHref ? <div className="flex justify-center">
               <Link href={nextHref}
-                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 Older notifications
               </Link>
             </div> : null}
