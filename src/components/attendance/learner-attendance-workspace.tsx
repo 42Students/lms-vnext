@@ -301,7 +301,7 @@ export function LearnerAttendanceWorkspace({
           </label>
 
           <div className="flex flex-wrap items-end gap-2">
-            <Button
+            <Button className="max-md:min-h-11"
               size="sm"
               variant="secondary"
               aria-label="Previous month"
@@ -329,12 +329,12 @@ export function LearnerAttendanceWorkspace({
               />
             </label>
             {learnerAttendanceCanReturnToMonth(filters.month,defaultMonth) ? (
-              <Button size="sm" variant="secondary"
+              <Button className="max-md:min-h-11" size="sm" variant="secondary"
                 onClick={() => changeMonth(parseMonth(defaultMonth))}>
                 This month
               </Button>
             ) : null}
-            <Button
+            <Button className="max-md:min-h-11"
               size="sm"
               variant="secondary"
               aria-label="Next month"
@@ -447,7 +447,7 @@ export function LearnerAttendanceWorkspace({
         </h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {summaries.map((item) => (
-            <Button variant="secondary"
+            <Button className="max-md:min-h-11" variant="secondary"
               key={item.deliveryId}
               type="button"
               onClick={() =>
@@ -511,7 +511,7 @@ export function LearnerAttendanceWorkspace({
           </Select>
         </label>
         {(historyFilter !== "ALL" || historyOrder !== "NEWEST") ? (
-          <Button variant="secondary" type="button" onClick={() => router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false})}
+          <Button className="max-md:min-h-11" variant="secondary" type="button" onClick={() => router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false})}
             >
             Reset history filters
           </Button>
