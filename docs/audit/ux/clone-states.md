@@ -199,3 +199,50 @@ rg -n 'w-full|break-words|flex-wrap' 'src/app/(authenticated)/tpo/reports/'{offe
 - [ ] **Strict F3/F5 visual-parity tick deferred:** full old error-container spacing/border proof, real 320px/767px browser comparison, and whole-repository zero-instance census are not complete. Do not equate the source checklist with full visual parity.
 
 **Next source file:** `src/app/(authenticated)/tpo/reports/ctc/error.tsx` — inspect existing fallback before changing anything; keep report-specific copy and the retry action.
+
+
+## Replacement lane bounded turn — 2026-10-19 (branch-only source work)
+
+**Synchronization:** `chatgpt/chat-5-b` had zero commits ahead and 1,565 behind `main`. Fast-forwarded that branch (without force and without writing `main`) from `323be5784b0f40732bec3c76fe431753d338a526` to `12ee0a58fd9af5e0e1f1ad975155f864966cb6c0` using an expected-head lease, then made source edits. No local git checkout, application execution, tests, lint, TypeScript check, CI or browser screenshots were run. File-content searches below were conducted using GitHub code search on `main` and explicit GitHub file reads on the lane branch; **these are not whole-repository grep results**.
+
+### Changed-file source checks
+
+| Group | Source files changed | Fetched-source check after changes | Responsive source proof and limitations |
+| --- | ---: | --- | --- |
+| TPO report/placements `error.tsx` line-break repairs | 6: `reports/{ctc,accreditation,failure-reasons,branch-season}/error.tsx`, `reports/error.tsx`, `placements/error.tsx` | 6/6 re-fetched; literal `\\n` occurrence count **0**; 6/6 retain `onClick={reset}`, `ErrorState`, and report-specific failure copy | Existing shared ErrorState is fluid via `min-w-0`, `break-words`; actual 320px/767px screenshots missing |
+| TPO job error fallback panels | 5: `jobs/[jobId]/{edit,letters,closeout,candidate-schedule}/error.tsx` and `jobs/[jobId]/offers/[offerId]/error.tsx` | 5 matching `<Alert tone="error">` and **5** matching `</Alert>`; original recovery actions present 5/5; raw `<button` on offer error now **0**; bespoke `<section role="alert"` now **0** in these five | Shared Alert: `min-w-0 max-w-full flex-col break-words`; retry remains reachable and edits retain their existing links; visual/tablet comparison still missing |
+| TPO round-result table | 1: `jobs/[jobId]/rounds/[roundId]/results/page.tsx` | 3 `<Alert` / 3 `</Alert>`, 1 `<EmptyState`; invalid-filter clear link, capped result notices, status totals and filter form retained | Shared Alert/EmptyState use fluid widths; no screenshot yet |
+| TPO loading placeholders | 10: `reports/{by-branch,by-company}`, `settings/{rules,season,team,branding,recruiters}`, `students/requests`, `announcements`, `team/[threadId]`, each `loading.tsx` | 10/10 re-fetched; literal `animate-pulse` **0**; each uses `Skeleton` with preserved placeholder heights and original grid breakpoint classes where present; existing accessible loading labels retained or provided | Original loader dimensions preserved in CSS px by optional shared Skeleton `height`/`width` (new API); original `sm:grid-cols-2`, `lg:grid-cols-5`, `xl:grid-cols-5` breakpoints retained on grid routes. **Not** a browser proof of legacy spinner shape or computed shimmer |
+| More TPO placement empty/capped notices | 4: `jobs/[jobId]/{shortlist,about,interview-slots}/page.tsx`, `schedule-conflicts/page.tsx` | Shared EmptyState counts **1/2/1/1 = 5**; two of these pages also use paired warning Alerts (**2** openings / **2** closings); original wording retained | EmptyState uses `min-w-0`, text wrap and `sm:` padding; shortlists and tables still use existing DataTable empty props. No computed mobile layout measurement |
+
+Shared component changes: `src/components/ui/skeleton.tsx` now accepts optional numeric `height` and `width` and passes them only to the inner placeholder as inline CSS pixel lengths, preserving the default variant dimensions for every existing caller. `src/components/ui/empty-state.tsx` now permits absent `description`; existing nonempty descriptions still render unchanged, and title-only empty states no longer render blank paragraphs. Both files were re-fetched after update.
+
+**Exact scoped source counts:** On the ten changed loading files, matching `animate-pulse` occurrences = **0** and `<Skeleton` occurrences = **32** (per-source JSX occurrences, not rendered blocks; five-item arrays render more). On the five changed error panels, `<Alert` count = **5**, `</Alert>` count = **5**, and raw `<section role="alert"` count = **0**. On the six repaired error sources, literal backslash-n = **0**. On the round-results page `<Alert`/closing = **3/3**. These are **fetched-file equivalent counts**, not executions of `grep` or `rg`.
+
+Suggested reproducible local commands, **not executed here**:
+```sh
+git ls-tree -r --name-only chatgpt/chat-5-b src/app | grep -E '(^|/)(loading|error|not-found)\.tsx$' | sort
+rg -l 'animate-pulse|bg-muted|bg-surface-secondary' src/app -g loading.tsx | sort
+rg -l '<(section|div|p)[^>]*role="(status|alert)"' src/app src/components -g '*.tsx' | sort
+rg -l '<(Banner|Alert|EmptyState|ErrorState|Skeleton|GracefulPageLoading)\b' src/app -g '*.tsx' | sort
+```
+
+### Legacy values versus component source (STRICT TICK RULE: mixed matches, **category ticks still open**)
+
+| F item / property | Exact legacy reference | vNext source value | Evidence / result |
+| --- | --- | --- | --- |
+| F3 error tone foreground | `docs/design/legacy-styles/components___variables.scss:71` — `#ef4444` | `src/app/globals.css:51` — `--lms-error: #ef4444`; `src/components/ui/alert.tsx:11` uses error token | Semantic hue equal; inherited text shade remains to verify |
+| F3 error background | `legacy-styles/components___variables.scss:72` — `rgba(239,68,68,0.10)` | `globals.css:52`; `alert.tsx:11` references `--lms-error-subtle` | Canonical fill token equal |
+| F3 error border | Legacy precise alert border opacity not identified in scanned source | `alert.tsx:11` — `rgba(239,68,68,0.25)` | **OPEN** — no equality proof |
+| F3 info-strip anatomy | `docs/design/old-lms-pages.md:7` — slim pale-yellow strip, info dot, outlined action | `src/components/ui/banner.tsx:15-19` — default warning, 6px dot, optional action region, vertical padding 10px | **OPEN** — exact SCSS geometry and action hover/focus still unproved |
+| F4 neutral loading fill | `legacy-styles/components___variables.scss:31` — `#f1f4f9` | `src/components/ui/skeleton.tsx:23` uses `--lms-neutral-100` with matching source token in `globals.css` | Token equal; animation timing and dotted-spinner parity **OPEN** |
+| F4 placeholder dimensions | No matching legacy loader dimensions proven for each TPO page | Ten route loaders use `Skeleton height={...}` and optional width; original *vNext bespoke* placeholder dimensions carried over | Source geometry preserved; **not** equality with old-LMS screenshot |
+| F5 empty/error responsiveness | `legacy-styles/components___common.scss:20-24`: mobile `max-width:767px`; `legacy-styles/components___accessibility.scss:11-20`: 2px keyboard focus, offset 3px | `src/components/ui/empty-state.tsx:6-9` wraps, `sm:` padding; `alert.tsx:17` max-width-full; buttons inherit focus via shared Button | Fluid mobile source, no fixed overflow in converted wrappers; **OPEN** actual 320px, 767px, tablet and focus-offset measured parity |
+
+### Strict checklist and grep-derived Work queue
+
+- [ ] **F3 Alerts/Banners and inline notices** (missing: exact border and radius/tone tables across hover/focus/disabled, whole-repo bespoke-state grep counts, 320px/767px/tablet browser proof). Existing `inline-notice.tsx` still uses its own raw dismissal button; review with the forms/buttons lane before touching global Button.
+- [ ] **F4 Loading/skeleton/spinner** (missing: all 511 loading routes rechecked against current tree, repository-wide zero bespoke loaders, legacy dotted spinner animation values and browser proof).
+- [ ] **F5 Empty/error and exceptional states** (missing: all 512 error/18 not-found routes recounted after moving main, 403/404/500/maintenance/session/offline matrix, full project status-panel and empty-state grep proof, visual breakpoint proof).
+
+**Next unticked from GitHub source-search for bespoke TPO placement feedback:** `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx` (invalid filter `<p role="alert">` and a Suspense grid `<p role="status">`; preserve the `PageHeader`, the Clear applicant filters link, and all grid/data semantics). Other known candidates after that: `jobs/[jobId]/share-audit/page.tsx`, `jobs/[jobId]/rounds/[roundId]/slots/page.tsx`, `jobs/[jobId]/about/page.tsx` activity fallback, and all public maintenance/offline/session pages. Github code search on main showed `animate-pulse` in ten migrated TPO loading files plus the non-loader `tpo/batches/[batchId]/page.tsx` `target:animate-pulse` (the latter is an interaction style, not a loading placeholder; exempt pending separate animation audit). The complete `src` count is **unknown**, never zero by assumption.
