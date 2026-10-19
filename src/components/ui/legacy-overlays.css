@@ -125,6 +125,13 @@
 [data-slot="notification-popover"] :is(ul, ol) a[href]:active {
   background: rgba(0, 0, 0, .06);
 }
+[data-slot="notification-popover"] :is(ul, ol) {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+[data-slot="notification-popover"] :is(ul, ol)::-webkit-scrollbar {
+  display: none;
+}
 [data-slot="notification-popover"] {
   max-width: min(420px, calc(100vw - 24px));
   max-height: min(520px, calc(100dvh - 120px));
