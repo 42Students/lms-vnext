@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -65,28 +66,28 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
      <input name="q" defaultValue={valid.data.q} maxLength={100} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm"/>
     </label>
     <label className="grid gap-1 text-sm">Company
-     <select name="companyId" defaultValue={valid.data.companyId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     <Select name="companyId" defaultValue={valid.data.companyId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       <option value="">All companies</option>{data.companies.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-     </select>
+     </Select>
     </label>
     <label className="grid gap-1 text-sm">Department
-     <select name="departmentId" defaultValue={valid.data.departmentId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     <Select name="departmentId" defaultValue={valid.data.departmentId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       <option value="">All departments</option>{data.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-     </select>
+     </Select>
     </label>
     {([{name:"type",label:"Type",values:["ALL","INTERVIEW","GD"]},
       {name:"status",label:"Status",values:["ALL","SCHEDULED","COMPLETED","NO_SHOW","CANCELLED"]},
       {name:"mode",label:"Mode",values:["ALL","ON_CAMPUS","VIRTUAL"]}]
     ).map(filter=><label key={filter.name} className="grid gap-1 text-sm">{filter.label}
-     <select name={filter.name} defaultValue={String(valid.data[filter.name as "type"|"status"|"mode"])}
+     <Select name={filter.name} defaultValue={String(valid.data[filter.name as "type"|"status"|"mode"])}
       className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       {filter.values.map(value=><option key={value} value={value}>{value==="ALL"?"All":value.replaceAll("_"," ")}</option>)}
-     </select></label>)}
+     </Select></label>)}
     <label className="grid gap-1 text-sm">Sort
-     <select name="sort" defaultValue={valid.data.sort} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
+     <Select name="sort" defaultValue={valid.data.sort} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 text-base sm:text-sm">
       <option value="UPCOMING">Upcoming first</option><option value="RECENT">Recent first</option>
       <option value="STUDENT">Student name</option>
-     </select>
+     </Select>
     </label>
     <div className="flex items-end gap-3"><button className="min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Apply filters</button>
      <Link href="/college/placements/interviews" className="min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary inline-flex items-center">Clear</Link>
