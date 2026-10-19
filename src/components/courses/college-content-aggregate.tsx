@@ -30,7 +30,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         title={title}
         actions={
           <Link href="/college/lessons"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Lessons
           </Link>
         }
@@ -158,7 +158,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
             Filter
           </Button>
           <Link href={path}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Clear
           </Link>
         </form>
@@ -184,7 +184,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </p>
         ) : (
           <>
-            <div className="divide-y divide-border sm:hidden print:hidden">
+            <div className="divide-y divide-border md:hidden">
               {data.items.map(item => (
                 <article key={item.id} className="min-w-0 space-y-2 p-4" aria-label={item.title}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -213,7 +213,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                 </article>
               ))}
             </div>
-            <div className="hidden min-w-0 sm:block print:block">
+            <div className="hidden min-w-0 md:block">
               <DataTable
                 caption={title+" catalogue"}
                 rows={data.items}
