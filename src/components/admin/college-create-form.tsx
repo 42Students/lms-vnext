@@ -89,6 +89,7 @@ export function CollegeCreateForm({
   return (
     <form
       onSubmit={submit}
+      aria-busy={pending}
       className="grid gap-3 lg:grid-cols-[1fr_1fr_12rem_auto] lg:items-end border-t border-border pt-4"
     >
       <div>
@@ -100,6 +101,7 @@ export function CollegeCreateForm({
         </label>
         <Select
           id="college-organization"
+          disabled={pending}
           value={organizationId}
           onChange={(event) => setOrganizationId(event.target.value)}
           required
@@ -120,6 +122,7 @@ export function CollegeCreateForm({
         </label>
         <Input
           id="college-name"
+          disabled={pending}
           value={name}
           onChange={(event) => setName(event.target.value)}
           required
@@ -136,6 +139,10 @@ export function CollegeCreateForm({
         </label>
         <Input
           id="college-code"
+          aria-describedby="college-code-help"
+          autoCapitalize="none"
+          spellCheck={false}
+          disabled={pending}
           value={code}
           onChange={(event) => setCode(event.target.value.toLowerCase())}
           required minLength={3} maxLength={63} pattern="[a-z0-9-]{3,63}"
@@ -144,7 +151,7 @@ export function CollegeCreateForm({
         />
       </div>
       <div className="space-y-3 lg:col-span-4">
-       <details className="rounded-[var(--lms-canvas-radius,12px)] border border-border p-3">
+       <details className="rounded-[var(--lms-canvas-radius)] border border-border p-3">
         <summary className="cursor-pointer text-sm font-semibold">Address details (optional)</summary>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
          {([
@@ -153,15 +160,16 @@ export function CollegeCreateForm({
           ["Landmark",landmark,setLandmark,255],["Pin Code",postalCode,setPostalCode,32],
           ["Country",country,setCountry,128],
          ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-1 text-xs font-semibold">
-          {label}<Input value={value} onChange={e=>setter(e.target.value)} maxLength={maxLength}
+          {label}<Input value={value} disabled={pending} onChange={e=>setter(e.target.value)} maxLength={maxLength}
            className="min-h-[var(--lms-control-height)] sm:min-h-[var(--lms-control-height)] w-full"/>
          </label>)}
         </div>
        </details>
-       <p className="text-xs text-muted-foreground">Unique ID / Code identifies this college across links and integrations. Choose it carefully; it is not editable after creation.</p>
+       <p id="college-code-help" className="text-xs text-muted-foreground">Unique ID / Code identifies this college across links and integrations. Choose it carefully; it is not editable after creation.</p>
       </div>
       <Button
         type="submit"
+        loading={pending}
         disabled={
           pending ||
           !organizationId ||

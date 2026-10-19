@@ -42,32 +42,33 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    showToast({title:"Bulk Import failed",tone:"error"});}
   finally{inFlightRef.current=false;setBusy(false);}
  }
- return <section className="space-y-3 border-t border-border pt-4">
-  <Button type="button" variant="secondary"
+ return <section aria-busy={busy} className="space-y-3 border-t border-border pt-4">
+  <Button type="button" variant="secondary" disabled={busy}
+   aria-expanded={open} aria-controls={open?"admin-college-bulk-import-panel":undefined}
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
-  {open?<div className="space-y-3">
+  {open?<div id="admin-college-bulk-import-panel" className="space-y-3">
    <label className="grid gap-1 text-sm">Organization
-    <Select value={organizationId}
+    <Select value={organizationId} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
    <label className="grid gap-1 text-sm">CSV (name, code, city, state, country)
-    <Textarea rows={5} maxLength={150000} value={csv}
+    <Textarea rows={5} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
-     className="font-mono"
+     className="font-mono" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
      placeholder="name,code,city,state,country"/>
    </label>
-   <p className="text-sm text-muted-foreground">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
+   <p id="admin-college-bulk-format" className="text-sm text-muted-foreground">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
    {valid>0?<p role="status" className="text-sm">{valid} colleges ready</p>:null}
    {(error||validation)?<p role="alert" className="text-sm text-error">{error||validation}</p>:null}
    <div className="flex flex-wrap gap-2">
-    <Button type="button" disabled={busy||!valid} onClick={()=>{confirmedVersionRef.current=versionRef.current;setConfirmImport(true);}}
+    <Button type="button" loading={busy} disabled={busy||!valid} onClick={()=>{confirmedVersionRef.current=versionRef.current;setConfirmImport(true);}}
      >
      {busy?"Importing…":"Import colleges"}</Button>
     <Button type="button" variant="secondary" disabled={busy}
      onClick={()=>csv?setConfirmDiscard(true):discard()}>Discard draft</Button>
    </div>
-   {results.length>0?<div className="max-h-80 overflow-auto"><h3 className="font-semibold">Import results</h3>
+   {results.length>0?<div role="region" aria-label="College import results" className="max-h-80 overflow-auto"><h3 className="font-semibold">Import results</h3>
     <DataTable caption="College bulk import results" rows={results} getRowKey={row=>String(row.line)}
      empty={<p role="status" className="text-sm text-body">No import results have been recorded.</p>}
      columns={[

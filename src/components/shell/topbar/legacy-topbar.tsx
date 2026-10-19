@@ -14,6 +14,7 @@ import { topbarConfigForPath } from "./portal-config";
 import { TopbarCommandSearch } from "./command-search";
 import { TopbarNotifications } from "./notification-actions";
 import { TopbarAccountMenu } from "./account-menu";
+import { TopbarOrganizationSwitcher } from "./organization-switcher";
 import { PlusIcon } from "./icons";
 import { TpoQuickCreate } from "./tpo-quick-create";
 import style from "./topbar.module.css";
@@ -58,7 +59,9 @@ export function LegacyTopbar({
       </ShellWidgetBoundary>
     </div>
     <div className={style.accountArea}>
-      <p className={style.orgName} title={organizationName}>{organizationName}</p>
+      <TopbarOrganizationSwitcher organizationName={organizationName}
+        memberships={memberships} activeMembershipId={activeMembershipId}
+        choices={adminScopeChoices} scope={adminScope}/>
       <ShellWidgetBoundary name="Account actions" fallbackHref="/account/security">
         <TopbarAccountMenu identityUid={identityUid} roleLabel={roleLabel}
           organizationName={organizationName} variant={accountVariant}

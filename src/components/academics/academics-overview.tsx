@@ -65,7 +65,7 @@ export function AcademicsOverview({
           <p className="m-0 font-semibold text-foreground">
             {program.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
+          <p className="mt-1 text-xs font-semibold text-primary-text">
             {program.code}
           </p>
         </div>
@@ -110,7 +110,7 @@ export function AcademicsOverview({
           <p className="m-0 font-semibold text-foreground">
             {period.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
+          <p className="mt-1 text-xs font-semibold text-primary-text">
             {period.code}
           </p>
         </div>
@@ -163,7 +163,7 @@ export function AcademicsOverview({
           <p className="m-0 font-semibold text-foreground">
             {cohort.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
+          <p className="mt-1 text-xs font-semibold text-primary-text">
             {cohort.code}
           </p>
         </div>
@@ -222,7 +222,7 @@ export function AcademicsOverview({
           <p className="m-0 font-semibold text-foreground">
             {section.name}
           </p>
-          <p className="mt-1 text-xs font-semibold text-[var(--lms-teal-deep)]">
+          <p className="mt-1 text-xs font-semibold text-primary-text">
             {section.code}
           </p>
         </div>
@@ -318,32 +318,32 @@ export function AcademicsOverview({
           }))}
       />
 
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="admin-academic-periods-title">
         <div>
-          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <h2 id="admin-academic-periods-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Academic periods
           </h2>
           <p className="mt-1 text-sm text-body">
             College calendar windows with explicit lifecycle.
           </p>
         </div>
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Academic periods" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={periodColumns}
           rows={workspace.periods}
           getRowKey={(period) => period.id}
         />
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="admin-academic-programs-title">
         <div>
-          <h2 className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <h2 id="admin-academic-programs-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
             Programs
           </h2>
           <p className="mt-1 text-sm text-body">
             Department-owned academic programs.
           </p>
         </div>
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Academic programs" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={programColumns}
           rows={workspace.programs}
           getRowKey={(program) => program.id}
@@ -359,7 +359,7 @@ export function AcademicsOverview({
             Program intakes with progression stored as learner history.
           </p>
         </div>
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Cohorts and batches" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={cohortColumns}
           rows={workspace.cohorts}
           getRowKey={(cohort) => cohort.id}
@@ -375,7 +375,7 @@ export function AcademicsOverview({
             Period-specific roster boundaries. Open a Section for learners, Faculty responsibilities and schedule.
           </p>
         </div>
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
+        <DataTable caption="Academic sections" empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>}
           columns={sectionColumns}
           rows={workspace.sections}
           getRowKey={(section) => section.id}

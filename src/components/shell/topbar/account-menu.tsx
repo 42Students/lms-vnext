@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {Button} from "@/components/ui/button";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { AdminScope } from "@/modules/identity/context";
@@ -101,12 +102,12 @@ export function TopbarAccountMenu({
       const next = event.relatedTarget;
       if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
     }}>
-    <button type="button" ref={trigger} className={style.avatar}
+    <Button variant="ghost" size="icon-sm" type="button" ref={trigger} className={style.avatar}
       aria-label="Open account menu" aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "lms-topbar-account-dialog" : undefined}
       onClick={() => setOpen(value => !value)}
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
-    </button>
+    </Button>
     {open ? <div id="lms-topbar-account-dialog" role="dialog" aria-modal={false} aria-label="Account menu" className={style.menu}>
       <div className="px-2 pb-2 text-left">
         <p className={style.accountHeading}>{roleLabel}</p>
@@ -121,10 +122,10 @@ export function TopbarAccountMenu({
           <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
       </> : null}
       <hr className={style.menuDivider}/>
-      <button type="button" disabled={pending} aria-busy={pending}
+      <Button variant="ghost" type="button" disabled={pending} aria-busy={pending}
         className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
         <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
-      </button>
+      </Button>
       {error ? <p role="alert" className="px-2 pt-2 text-xs text-error">{error}</p> : null}
     </div> : null}
   </div>;
