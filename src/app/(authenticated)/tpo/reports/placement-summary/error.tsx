@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 
 export default function ErrorPage({
@@ -9,10 +10,8 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
-      <h1 className="text-lg font-semibold text-foreground">
-        Couldn&apos;t load Reports · Placement Summary
-      </h1>
+    <section role="alert" className="space-y-3 py-6">
+      <PageHeader title={"Couldn't load Reports · Placement Summary"} />
       <p className="mt-2 text-sm text-body">
         The requested records could not be retrieved. A load failure does not
         mean there are no records or that a reported total is zero.
