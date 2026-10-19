@@ -123,3 +123,9 @@ Responsive source proof: from viewport widths 320–767px the `max-md:min-h-11` 
 **Strict-tick decision:** keep LRN-04 open: these **three files are source-complete for the targeted visual elements**, but one global LRN-04 checklist item encompasses other uninspected learner components. Real phone/tablet screenshots, computed interactions, keyboard navigation and full all-files grep are still required. Do not claim pixel-level completion from static evidence alone.
 
 **Exact next file:** `src/components/placements/learner-placement-journey.tsx`, then `src/components/placements/learner-placement-job-detail.tsx`.
+
+### Post-batch branch synchronization
+
+Branch `chatgpt/chat-1-b` was reapplied onto `main` at `2808e32a641e1e35f513755b840b6ef892c61163` using a force-with-lease update followed by individual source-file commits (GitHub connector equivalent of replaying own changes). At verification: **5 ahead, 0 behind**; only this audit, the lane-owned breakpoint codemod, and the three learner placement components differ from main. The previous learner page/header sweep was already integrated on main by the orchestrator, so it was deliberately not rewritten.
+
+The three new components remain **source-complete, not screenshot-verified**; LRN-04 global remains unticked. No application, tests, parser, browser or CI executed by chat-1.
