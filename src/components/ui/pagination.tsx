@@ -58,7 +58,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
       <span role="status" className="px-1 text-[12px] font-medium text-[var(--lms-neutral-500)] md:sr-only">Page {current} of {total}</span>
       {showBoundaryLinks && firstShown > 1 ? <>
         {firstHref ? <Link href={firstHref} className={cx(buttonClass, "hidden md:inline-flex")} aria-label={`Page 1 of ${total}`}>1</Link> :
-          <span aria-disabled="true" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>1</span>}
+          <span aria-disabled="true" aria-label="First page unavailable" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>1</span>}
         {firstShown > 2 ? <span aria-hidden="true" className="hidden px-1 text-[var(--lms-neutral-500)] md:inline-flex">…</span> : null}
       </> : null}
       {pageLinks.map(({item,href}) => item === current ?
@@ -75,7 +75,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
       {showBoundaryLinks && lastShown < total ? <>
         {lastShown < total - 1 ? <span aria-hidden="true" className="hidden px-1 text-[var(--lms-neutral-500)] md:inline-flex">…</span> : null}
         {lastHref ? <Link href={lastHref} className={cx(buttonClass, "hidden md:inline-flex")} aria-label={`Page ${total} of ${total}`}>{total}</Link> :
-          <span aria-disabled="true" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>{total}</span>}
+          <span aria-disabled="true" aria-label="Last page unavailable" className={cx(buttonClass, "hidden opacity-50 md:inline-flex")}>{total}</span>}
       </> : null}
       {!nextHref ?
         <span aria-disabled="true" className={cx(buttonClass, "cursor-not-allowed opacity-50")}>Next</span> :
