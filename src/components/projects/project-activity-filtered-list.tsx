@@ -1,4 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {useState,useRef} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {mentorActivityCategory, mentorActivityLabel, mentorActivityRelativeTime} from "@/modules/projects/mentor-activity-display-model";
@@ -62,48 +66,48 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  });
  const resetFilters=()=>{setSearch("");setResourceAction("ALL");setType("");setRange("ALL");setFromDate("");setToDate("");};
  return <section className="space-y-3">
-  <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border p-3">
+  <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid gap-1 text-sm font-semibold">Search activity
-    <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-     placeholder="Search activity" className="min-h-10 rounded border border-border bg-background px-3"/>
+    <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
+     placeholder="Search activity" className="w-full"/>
    </label>
    {resourceAudit?<label className="grid gap-1 text-sm font-semibold">Resource change
-    <select value={resourceAction} onChange={event=>setResourceAction(event.target.value)}
-     className="min-h-10 rounded border border-border bg-background p-2">
+    <Select value={resourceAction} onChange={event=>setResourceAction(event.target.value)}
+     className="w-full">
      <option value="ALL">All resource changes</option>
      {(["Added","Edited","Saved","Removed"] as const).map(action=><option key={action} value={action}>{action}</option>)}
-    </select>
+    </Select>
    </label>:null}
    <label className="grid gap-1 text-sm font-semibold">Type
-    <select value={type} onChange={event=>setType(event.target.value)}
-      className="min-h-10 rounded border border-border bg-background p-2">
+    <Select value={type} onChange={event=>setType(event.target.value)}
+      className="w-full">
      <option value="">All activity</option>
      {categories.map(kind=><option key={kind} value={kind}>{mentorActivityLabel(kind)}</option>)}
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold">Date range
-    <select value={range} onChange={event=>setRange(event.target.value)}
-      className="min-h-10 rounded border border-border bg-background p-2">
+    <Select value={range} onChange={event=>setRange(event.target.value)}
+      className="w-full">
      <option value="ALL">All time</option><option value="1">Today</option>
      <option value="7">Last 7 days</option><option value="30">Last 30 days</option>
-    </select>
+    </Select>
    </label>
    <label className="grid gap-1 text-sm font-semibold">From date
-    <input type="date" value={fromDate} max={toDate||now.slice(0,10)}
+    <Input type="date" value={fromDate} max={toDate||now.slice(0,10)}
       onChange={event=>setFromDate(event.target.value)}
-      className="min-h-10 rounded border border-border bg-background px-2"/>
+      className="w-full"/>
    </label>
    <label className="grid gap-1 text-sm font-semibold">To date
-    <input type="date" value={toDate} min={fromDate||undefined} max={now.slice(0,10)}
+    <Input type="date" value={toDate} min={fromDate||undefined} max={now.slice(0,10)}
       onChange={event=>setToDate(event.target.value)}
-      className="min-h-10 rounded border border-border bg-background px-2"/>
+      className="w-full"/>
    </label>
-   <button type="button" onClick={resetFilters}
-      className="min-h-10 text-sm font-semibold text-primary-text underline">Clear filters</button>
+   <Button variant="secondary" type="button" onClick={resetFilters}
+      className="">Clear filters</Button>
   </div>
   <p className="text-xs text-muted-foreground">{filtered.length} events · Times shown in your device timezone.</p>
   {!filtered.length
-    ? <p className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
+    ? <p className="border-b border-border py-4 text-sm text-muted-foreground">
       {items.length===0
        ? "No project activity yet. Task moves, sprint updates and resource changes will appear here."
        : (type||search||resourceAction!=="ALL") && (fromDate||toDate||range!=="ALL")
@@ -113,7 +117,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
         : "No activity recorded from this source yet."}
     </p>
     : <div role="feed" aria-label="Project activity" className="space-y-2">
-      {filtered.map(event=><article key={event.id} className="rounded-xl border border-border bg-surface p-4">
+      {filtered.map(event=><article key={event.id} className="border-b border-border py-4">
        <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
          <p className="font-semibold">{event.summary}</p>
@@ -126,16 +130,16 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
          </p>
         </div>
         <div className="flex flex-wrap gap-2">
-         <span className="rounded-md border border-border px-2 py-1 text-xs">{mentorActivityLabel(event.eventType)}</span>
-         <span className="rounded-md border border-border px-2 py-1 text-xs">{mentorActivityCategory(event.eventType)}</span>
+         <StatusBadge tone="neutral">{mentorActivityLabel(event.eventType)}</StatusBadge>
+         <StatusBadge tone="neutral">{mentorActivityCategory(event.eventType)}</StatusBadge>
         </div>
        </div>
       </article>)}
      </div>}
-  {hasMore?<button type="button" disabled={busy} onClick={()=>void loadMore()}
-   className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+  {hasMore?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void loadMore()}
+   className="">
    {busy?"Loading activity…":"Load more activity"}
-  </button>:null}
+  </Button>:null}
   {loadError?<p role="alert" className="text-sm text-error">{loadError}</p>:null}
  </section>;
 }
