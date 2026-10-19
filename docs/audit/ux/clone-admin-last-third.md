@@ -12,8 +12,8 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/admin/placements/analytics/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/applications/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/calendar/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/drives/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/placements/calendar/page.tsx` — source-level patch applied; Missing computed width and 375px/768px proof (still unticked)
+- [ ] `src/app/(authenticated)/admin/placements/drives/page.tsx` — source-level patch applied; Missing statuses and full row rendering proof (still unticked)
 - [ ] `src/app/(authenticated)/admin/placements/hiring/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/interviews/[roundId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/interviews/page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -28,7 +28,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/admin/placements/new/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/offers/[offerId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/offers/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/admin/placements/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/admin/placements/page.tsx` — source-level patch applied; Missing phone/tablet overflow proof (still unticked)
 - [ ] `src/app/(authenticated)/admin/placements/retention/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/admin/placements/screenings/page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -74,7 +74,7 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 - [ ] `src/app/(authenticated)/college/projects/at-risk/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/audit/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/create/page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/app/(authenticated)/college/projects/page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/app/(authenticated)/college/projects/page.tsx` — source-level patch applied; Missing banner state snapshots and scoped grep (still unticked)
 - [ ] `src/app/(authenticated)/college/projects/readiness/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/reassign-mentor/page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/app/(authenticated)/college/projects/submissions/page.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -87,20 +87,20 @@ Branch: `chatgpt/chat-10-b`. Owner: chat-10. Last sourced from `main` commit `1f
 
 ### Admin/college-owned Projects UI (30 components)
 - [ ] `src/components/projects/admin-project-section-page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx` — source-level patch applied; Missing picker keyboard/mobile/surface proof (still unticked)
 - [ ] `src/components/projects/college-project-mentor-dialog.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/college-project-student-roster-dialog.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/college-project-student-roster-dialog.tsx` — source-level patch applied; Missing checked/indeterminate/disabled browser proof (still unticked)
 - [ ] `src/components/projects/college-project-summary-editor-full.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/college-project-summary-editor.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/project-admin-at-risk-page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/project-admin-at-risk-page.tsx` — source-level patch applied; Missing full chip-state and responsive proof (still unticked)
 - [ ] `src/components/projects/project-admin-audit-page.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/project-admin-collection-controls.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/project-admin-collection-controls.tsx` — source-level patch applied; Missing scripted DOM keyboard and pagination boundary proof (still unticked)
 - [ ] `src/components/projects/project-admin-missing-college.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-admin-nav.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/project-admin-readiness-page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/project-admin-readiness-page.tsx` — source-level patch applied; Missing full statuses and keyboard/phone proof (still unticked)
 - [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-admin-submission-review.tsx` — value/state/responsive/hand-rolled-element audit pending
-- [ ] `src/components/projects/project-admin-submissions-page.tsx` — value/state/responsive/hand-rolled-element audit pending
+- [ ] `src/components/projects/project-admin-submissions-page.tsx` — source-level patch applied; Missing complete unsubmitted table scan (still unticked)
 - [ ] `src/components/projects/project-admin-workspace-list.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-admin-workspace-page-export.tsx` — value/state/responsive/hand-rolled-element audit pending
 - [ ] `src/components/projects/project-template-catalogue-export.tsx` — value/state/responsive/hand-rolled-element audit pending
@@ -205,3 +205,41 @@ These were remote source reads and writes, **not** local script execution, CI, a
 Portal navigation cross-check: `src/components/projects/project-admin-nav.tsx` intentionally suppresses its own tabs for the two owned base paths. This is not a missing-nav change: `src/app/(authenticated)/admin/layout.tsx` and `src/app/(authenticated)/college/layout.tsx` both mount the route-aware legacy group Tabs components, so this lane deliberately did not create duplicate tab strips.
 
 This continuation has eleven separately committed, remote re-read TSX files plus the initial audit update. No code, app, test, codemod, screenshot, or CI was executed. Work queue checkboxes remain open under STRICT TICK RULE. Next inspect `src/app/(authenticated)/admin/placements/calendar/page.tsx` and Projects admin/college helpers, with special attention to duplicated tabs and fallback state.
+
+
+## Replacement continuation — verified remote source sweep (2026-10-20 IST)
+
+- Fast-forward of `chatgpt/chat-10-b` from `697396c27f7b552850a61ba9dcc527b5ea971fd0` to `36460671b6456b21e3bc67e0944c15053dce4d9c`: branch was 983 behind and 0 ahead of `main`. No historical scoped changes were discarded.
+- 11 `[chat-10]` source commits created directly on this feature branch; GitHub commits write to the branch immediately. The 10 distinct files below were read before the edit and re-read from the branch afterward. Repeated status widgets use the shared UI components; no shared component or legacy-skin files were touched.
+- The value source is `docs/design/old-lms-pages.md` and referenced legacy SCSS; shared controls own the exact geometry. Unverified below means **not ticked**: repository grep, simulated browser, computed CSS values, 375px/768px snapshots, accessibility interactions and runtime TypeScript/JSX checks remain for the orchestrator.
+
+| File and current source line | Matched legacy pattern / evidence | Scoped change | Missing STRICT TICK proof |
+| --- | --- | --- | --- |
+| `src/app/(authenticated)/admin/placements/calendar/page.tsx:25` | `old-lms-shell-spec.md:21-23` one responsive canvas | Source re-read confirms requested symbol/pattern | Missing computed width and 375px/768px proof |
+| `src/app/(authenticated)/admin/placements/page.tsx:19,38` | `old-lms-shell-spec.md:21-23` continuous canvas | Source re-read confirms requested symbol/pattern | Missing phone/tablet overflow proof |
+| `src/app/(authenticated)/college/projects/page.tsx:130` | `old-lms-pages.md:10` slim notice; `src/components/ui/banner.tsx:11-17` tokens | Source re-read confirms requested symbol/pattern | Missing banner state snapshots and scoped grep |
+| `src/components/projects/admin-readiness-workspace-picker.tsx:28` | `old-lms-pages.md:10` status pills; `src/components/ui/status-badge.tsx:15` shared tokens | Source re-read confirms requested symbol/pattern | Missing picker keyboard/mobile/surface proof |
+| `src/components/projects/project-admin-collection-controls.tsx:220` | `ui-clone-checklist.md:18-22` disabled/focus state requirements | Source re-read confirms requested symbol/pattern | Missing scripted DOM keyboard and pagination boundary proof |
+| `src/components/projects/college-project-student-roster-dialog.tsx:99` | `ui-clone-checklist.md:70` checkbox state; shared checkbox is source owner | Source re-read confirms requested symbol/pattern | Missing checked/indeterminate/disabled browser proof |
+| `src/components/projects/project-admin-at-risk-page.tsx:82` | `old-lms-pages.md:7` compact action-count chips; `src/components/ui/filter-chip.tsx` shared chip | Source re-read confirms requested symbol/pattern | Missing full chip-state and responsive proof |
+| `src/components/projects/project-admin-readiness-page.tsx:139` | `old-lms-pages.md:10` table status pills | Source re-read confirms requested symbol/pattern | Missing full statuses and keyboard/phone proof |
+| `src/components/projects/project-admin-submissions-page.tsx:153` | `old-lms-pages.md:10` status pills in tables | Source re-read confirms requested symbol/pattern | Missing complete unsubmitted table scan |
+| `src/app/(authenticated)/admin/placements/drives/page.tsx:61` | `old-lms-pages.md:10` compact status pills in table rows | Source re-read confirms requested symbol/pattern | Missing statuses and full row rendering proof |
+
+### Source-level spot-checks, not global grep counts
+```text
+src/app/(authenticated)/admin/placements/calendar/page.tsx:25 contains min-w-0 space-y-6
+src/app/(authenticated)/admin/placements/page.tsx:19,38 contains min-w-0 space-y-6
+src/app/(authenticated)/college/projects/page.tsx:130 contains <Banner tone="warning">Template names
+src/components/projects/admin-readiness-workspace-picker.tsx:28 contains <StatusBadge tone={item.status
+src/components/projects/project-admin-collection-controls.tsx:220 contains tabIndex={page <= 1
+src/components/projects/college-project-student-roster-dialog.tsx:99 contains <Checkbox className="size-4"
+src/components/projects/project-admin-at-risk-page.tsx:82 contains At-risk quick filters
+src/components/projects/project-admin-readiness-page.tsx:139 contains cell:release=><StatusBadge
+src/components/projects/project-admin-submissions-page.tsx:153 contains cell:row=><StatusBadge
+src/app/(authenticated)/admin/placements/drives/page.tsx:61 contains <StatusBadge tone={row.job.status
+```
+The ten matches above are **only known changed occurrences** and are not claimed to be exhaustive raw-control, custom-pill or custom-card counts. No commands from `Scans required before checking anything` were run. Source-side string substitutions and remote re-reads are not executable tests. Keep all work-queue checkboxes unmarked until an actual full-file verification and orchestrator screenshots.
+
+### Exact continuation
+- [ ] `src/components/projects/project-admin-workspace-list.tsx`: review card-vs-list layout, responsive overflow, interactive archive control, status geometry and item-level empty states against legacy source, then continue through the remaining admin and college Projects helpers. Audit `src/components/projects/project-admin-submissions-page.tsx` for any remaining card-in-card metric summaries.
