@@ -1,4 +1,6 @@
 import { Pagination } from "@/components/ui/pagination";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
+import { StatusBadge } from "@/components/ui/status-badge";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -36,23 +38,16 @@ export default async function MentorProjectTimelinePage({
       className="border-b border-border pb-5">
       Projects access is disabled; no timeline was loaded.
     </section>:<>
-      <nav aria-label="Release status filters" className="flex flex-wrap gap-2">
-        {(["ALL","PLANNED","IN_PROGRESS","SHIPPED"] as const).map(status=>
-          <Link key={status} href={mentorTimelineHref({
-            ...data.query,releaseStatus:status,page:1,
-          })} aria-current={data.query.releaseStatus===status?"page":undefined}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 sm:min-h-9 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-            {status.replaceAll("_"," ")}
-          </Link>)}
-      </nav>
-      <nav aria-label="Sprint status filters" className="flex flex-wrap gap-2">
-        {(["ALL","PLANNED","ACTIVE","COMPLETED"] as const).map(status=>
-          <Link key={status} href={mentorTimelineHref({...data.query,sprintStatus:status,page:1})}
-            aria-current={data.query.sprintStatus===status?"page":undefined}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 sm:min-h-9 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-            {status==="ALL"?"All Sprint states":status}
-          </Link>)}
-      </nav>
+      <NeedsDoingChips label="Release status filters:" selectedKey={data.query.releaseStatus}
+        items={(["ALL","PLANNED","IN_PROGRESS","SHIPPED"] as const).map(status=>({
+          key: status, label: status.replaceAll("_"," "),
+          href: mentorTimelineHref({...data.query,releaseStatus:status,page:1}),
+        }))} />
+      <NeedsDoingChips label="Sprint status filters:" selectedKey={data.query.sprintStatus}
+        items={(["ALL","PLANNED","ACTIVE","COMPLETED"] as const).map(status=>({
+          key: status, label: status==="ALL"?"All Sprint states":status,
+          href: mentorTimelineHref({...data.query,sprintStatus:status,page:1}),
+        }))} />
       <p className="text-sm text-body">
         {data.total} registered release{data.total===1?"":"s"} match.
       </p>
@@ -65,7 +60,7 @@ export default async function MentorProjectTimelinePage({
             <h2 className="font-semibold text-foreground">
               Release {release.sequence+1}: {release.title}
             </h2>
-            <span className="text-xs font-semibold">{release.status}</span>
+            <StatusBadge tone={release.status==="SHIPPED"?"success":release.status==="IN_PROGRESS"?"info":"neutral"}>{release.status}</StatusBadge>
           </div>
           {release.sprints.length===0
             ?<p className="mt-3 text-sm text-body">No registered Sprints in this Release.</p>
@@ -75,7 +70,7 @@ export default async function MentorProjectTimelinePage({
                   <h3 className="font-semibold text-foreground">
                     Sprint {sprint.sequence+1}: {sprint.title}
                   </h3>
-                  <span className="text-xs font-semibold">{sprint.status}</span>
+                  <StatusBadge tone={sprint.status==="COMPLETED"?"success":sprint.status==="ACTIVE"?"info":"neutral"}>{sprint.status}</StatusBadge>
                 </div>
                 <p className="mt-1 text-sm text-body">
                   {sprint.doneCount} / {sprint.taskCount} registered tasks Done
