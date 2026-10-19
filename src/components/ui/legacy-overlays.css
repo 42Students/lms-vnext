@@ -96,6 +96,13 @@
 [data-slot="dropdown"] a[href]:active:not([aria-disabled="true"]) {
   background: rgba(0, 0, 0, .06);
 }
+[data-slot="notification-popover"] > div:first-child {
+  margin: -16px -16px 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--lms-neutral-200);
+  border-radius: 12px 12px 0 0;
+  background: var(--lms-neutral-50);
+}
 [data-slot="notification-popover"] > div:first-child > h2 {
   margin: 0;
   font-size: 18px;
