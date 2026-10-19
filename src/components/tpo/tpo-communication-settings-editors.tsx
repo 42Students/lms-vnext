@@ -41,11 +41,11 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
   <label className="block text-sm font-semibold">Monthly limit on optional SMS
    <Input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
-    className="mt-2 min-h-9 w-40"/>
+    className="mt-2 min-h-11 w-40 sm:min-h-9"/>
   </label>
   <p className="text-xs text-muted-foreground">SMS used this month: unavailable until delivery usage is connected. Saving a limit does not enable SMS delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value||value<0||value>100000||!Number.isInteger(value)}
-   className="min-h-9">Save</Button>
+   className="min-h-11 sm:min-h-9">Save</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
@@ -77,13 +77,13 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
     className="mt-2 w-full"/>
   </label>
   <p className="text-right text-xs text-muted-foreground">{value.length}/300</p>
-  <div className="rounded-[var(--lms-control-radius)] border border-dashed border-border p-4">
+  <div className="rounded-[var(--lms-canvas-radius,12px)] border border-dashed border-border p-4">
    <p className="mb-2 text-sm text-muted-foreground">How the end of an invite looks</p>
    <p className="whitespace-pre-line text-sm text-body">{value.trim()||"No signature yet"}</p>
   </div>
   <p className="text-xs text-muted-foreground">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value}
-   className="min-h-9">Save</Button>
+   className="min-h-11 sm:min-h-9">Save</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
@@ -115,13 +115,13 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
   <label className="block text-sm">Access granted to a recruiter lasts
    <Select value={[3,6,12,24].includes(months)?months:6}
     onChange={event=>setMonths(Number(event.target.value))} disabled={busy}
-    className="mt-2 min-h-9">
+    className="mt-2 min-h-11 sm:min-h-9">
     {[3,6,12,24].map(value=><option key={value} value={value}>{value} months</option>)}
    </Select>
   </label>
   <p className="text-xs text-muted-foreground">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===months}
-   className="min-h-9">Save</Button>
+   className="min-h-11 sm:min-h-9">Save</Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
