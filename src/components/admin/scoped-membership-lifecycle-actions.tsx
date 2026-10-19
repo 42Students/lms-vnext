@@ -37,7 +37,7 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
    <Button variant="secondary" type="button" onClick={()=>setOpen(current=>!current)} disabled={busy}
     className="">Suspend</Button>
    {open?<div className="space-y-2">
-    <label className="grid gap-1 text-xs font-semibold text-body">Reason for suspension
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Reason for suspension
      <Textarea value={reason} maxLength={1000} rows={2}
       onChange={event=>setReason(event.target.value)}
       className="w-full"/>
