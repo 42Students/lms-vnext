@@ -217,6 +217,7 @@ export function ProjectMentorReassignment({
               >
                 <input
                   type="checkbox"
+                  className="size-4 accent-[var(--lms-button-primary)]"
                   checked={selected.includes(
                     workspace.id,
                   )}
