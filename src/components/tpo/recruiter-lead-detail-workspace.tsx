@@ -1,5 +1,10 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { FilterChip } from "@/components/ui/filter-chip";
 
 import {Dialog} from "@/components/ui/dialog";
@@ -403,7 +408,7 @@ export function RecruiterLeadDetailWorkspace({
           <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-primary-text underline">
             Go to Engage
           </Link>
-          <button type="button" className={button} onClick={() => void load()}>Retry</button>
+          <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => void load()}>Retry</Button>
         </div>
       ) : (
         <>
@@ -417,13 +422,13 @@ export function RecruiterLeadDetailWorkspace({
                  href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</a>:null}
                <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
                {lead.recruiterUserId?<Link className={button} href="/tpo/messages">Team talk</Link>:null}
-               <button type="button" className={button} onClick={openEdit}>Edit details</button>
+               <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={openEdit}>Edit details</Button>
               {lead.manualStage === "NEW" ? (
-                <button type="button" className={button} disabled={saving} onClick={() => void mutate(
+                <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={saving} onClick={() => void mutate(
                   base + "/contacted", "POST", { collegeId },
-                )}>Mark contacted</button>
+                )}>Mark contacted</Button>
               ) : null}
-              <button type="button" className={button} onClick={() => setNotNowOpen(true)}>Not now</button>
+              <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => setNotNowOpen(true)}>Not now</Button>
             </div>
             }
           />
@@ -477,27 +482,27 @@ export function RecruiterLeadDetailWorkspace({
               <dl className="space-y-2 text-sm">
                 <div><dt className="text-muted-foreground">Email</dt>
                   <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<a href={"mailto:" + lead.emailNorm} className="text-primary-text underline">{lead.emailNorm}</a>
-                    : <button type="button" className="text-primary-text underline" onClick={openEdit}>Add email</button>}</dd></div>
+                    : <Button type="button" variant="link" className="min-h-11 md:min-h-9" onClick={openEdit}>Add email</Button>}</dd></div>
                 <div><dt className="text-muted-foreground">Phone</dt>
                   <dd>{lead.phoneNorm ? lead.unsubscribedAt?<span>{lead.phoneNorm} · opted out</span>:<a href={"tel:" + lead.phoneNorm} className="text-primary-text underline">{lead.phoneNorm}</a>
-                    : <button type="button" className="text-primary-text underline" onClick={openEdit}>Add phone</button>}</dd></div>
+                    : <Button type="button" variant="link" className="min-h-11 md:min-h-9" onClick={openEdit}>Add phone</Button>}</dd></div>
                 <div><dt className="text-muted-foreground">Source</dt><dd>{lead.source || "Added by hand"}</dd></div>
               </dl>
               {!lead.recruiterUserId ? (
                 <div id="recruiter-invite" className="space-y-2 border-t border-border pt-3">
                   <label className="block text-xs">Personal note (optional)
-                    <textarea className={input + " mt-1"} rows={2}
+                    <Textarea className="mt-1 min-h-11 md:min-h-9" rows={2}
                       maxLength={500} value={invitePersonalNote} disabled={saving}
                       onChange={event=>setInvitePersonalNote(event.target.value)}/>
                   </label>
-                  <button
+                  <Button
                     type="button"
-                    className={button}
+                    variant="secondary" className="min-h-11 md:min-h-9"
                     disabled={saving||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
                     onClick={() => void createInviteLink()}
                   >
                     {lead.inviteSentAt ? "Create new invite link" : "Create invite link"}
-                  </button>
+                  </Button>
                   <p className="text-xs text-muted-foreground">
                     The link expires after seven days. Creating a new link invalidates the previous one.
                     Automatic email delivery is not available; use the email draft or copy the message.
@@ -507,8 +512,8 @@ export function RecruiterLeadDetailWorkspace({
                   {inviteLink ? (
                     <label className="block text-xs">
                       Invite link
-                      <input
-                        className={input + " mt-1 font-mono text-xs"}
+                      <Input
+                        className="mt-1 font-mono text-xs"
                         value={inviteLink}
                         readOnly
                         onFocus={event => event.currentTarget.select()}
@@ -520,28 +525,28 @@ export function RecruiterLeadDetailWorkspace({
                       Valid until {formatDateTimeIst(inviteExpiresAt)}.
                     </p>
                     <label className="block text-xs">Invitation preview
-                      <textarea rows={8} readOnly value={inviteMessage} onFocus={event=>event.currentTarget.select()}
-                        className={input+" mt-1 whitespace-pre-wrap"} />
+                      <Textarea rows={8} readOnly value={inviteMessage} onFocus={event=>event.currentTarget.select()}
+                        className="mt-1 whitespace-pre-wrap" />
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      <button type="button" className={button}
+                      <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
                         onClick={()=>void navigator.clipboard.writeText(inviteMessage).then(
                           ()=>setInviteNotice("Invitation message copied."),
                           ()=>setInviteNotice("Copy the message from the preview.")
-                        )}>Copy message</button>
-                      <button type="button" className={button}
+                        )}>Copy message</Button>
+                      <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
                         onClick={()=>void navigator.clipboard.writeText(inviteLink).then(
                           ()=>setInviteNotice("Invite link copied."),
                           ()=>setInviteNotice("Copy the link from its input.")
-                        )}>Copy link</button>
+                        )}>Copy link</Button>
                       {lead.emailNorm?<a className={button}
                         href={"mailto:"+lead.emailNorm+"?subject="+encodeURIComponent("Placement Cell recruiter invitation")+
                           "&body="+encodeURIComponent(inviteMessage)}>
                         Also email it (open draft)</a>:null}
-                      <button type="button" className={button} onClick={()=>{
+                      <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
                         if(!window.confirm("Close invitation preview? The one-time token and message will not be shown again."))return;
                         setInviteLink("");setInviteMessage("");setInviteNotice("");setInviteExpiresAt("");
-                      }}>Close preview</button>
+                      }}>Close preview</Button>
                     </div>
                   </div>:null}
                   {inviteNotice ? (
@@ -565,10 +570,10 @@ export function RecruiterLeadDetailWorkspace({
                     onClick={()=>{setLogType(type);setLogOutcome("");}}>{type==="CALL"?"Call":type==="EMAIL"?"Email":type==="MEETING"?"Meeting":"Note"}</FilterChip>)}
                 </div>
                 <label className="block text-sm">Type
-                  <select className={input + " mt-1"} value={logType}
+                  <Select className="mt-1 min-h-11 md:min-h-9" value={logType}
                     onChange={e => {setLogType(e.target.value as typeof logType);setLogOutcome("");}}>
                     {ACTIVITY_TYPES.map(type => <option value={type} key={type}>{type}</option>)}
-                  </select>
+                  </Select>
                 </label>
                 {logType==="CALL"?<div className="flex flex-wrap gap-2" role="group" aria-label="Call outcome">
                   {["Connected","No answer","Busy","Wrong number","Not interested"].map(outcome=>
@@ -576,21 +581,21 @@ export function RecruiterLeadDetailWorkspace({
                     onClick={()=>setLogOutcome(outcome)}>{outcome}</FilterChip>)}
                 </div>:null}
                 <label className="block text-sm">Outcome
-                  {logType==="CALL"?<select className={input + " mt-1"} required
+                  {logType==="CALL"?<Select className="mt-1 min-h-11 md:min-h-9" required
                     value={logOutcome} onChange={e=>setLogOutcome(e.target.value)}>
                     <option value="">Choose a call outcome</option>
                     {["Connected","No answer","Busy","Wrong number","Not interested"].map(value=>
                       <option key={value} value={value}>{value}</option>)}
-                  </select>:<input className={input+" mt-1"} maxLength={30}
+                  </Select>:<Input className="mt-1 min-h-11 md:min-h-9" maxLength={30}
                     value={logOutcome} onChange={e=>setLogOutcome(e.target.value)}/>}
                 </label>
                 <label className="block text-sm">Notes
-                  <textarea className={input + " mt-1"} maxLength={2000} rows={3} value={logNote}
+                  <Textarea className="mt-1 min-h-11 md:min-h-9" maxLength={2000} rows={3} value={logNote}
                     onChange={e => setLogNote(e.target.value)} />
                 </label>
-                <button className={primary} type="submit" disabled={saving||(logType==="CALL"&&!logOutcome)||(logType==="NOTE"&&!logNote.trim())}>
+                <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving||(logType==="CALL"&&!logOutcome)||(logType==="NOTE"&&!logNote.trim())}>
                   {saving ? "Saving…" : "Log activity"}
-                </button>
+                </Button>
               </form>
               <h3 className="font-semibold">Timeline</h3>
               {activities.length ? (
@@ -622,24 +627,24 @@ export function RecruiterLeadDetailWorkspace({
               onSubmit={e => void addFollowup(e)}>
               <div className="flex flex-wrap gap-2 md:col-span-3">
                 {([["Tomorrow",1],["In 3 days",3],["In a week",7]] as const).map(([label,days])=>
-                  <button type="button" key={label} className={button} onClick={()=>{
+                  <Button type="button" key={label} variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
                     const dt=new Date();dt.setDate(dt.getDate()+days);
                     dt.setHours(10,0,0,0);
                     const pad=(n:number)=>String(n).padStart(2,"0");
                     setFollowAt(dt.getFullYear()+"-"+pad(dt.getMonth()+1)+"-"+pad(dt.getDate())+"T"+pad(dt.getHours())+":"+pad(dt.getMinutes()));
-                  }}>{label}</button>)}
+                  }}>{label}</Button>)}
               </div>
               <label className="block text-sm">Due date and time
-                <input className={input + " mt-1"} type="datetime-local" required
+                <Input className="mt-1 min-h-11 md:min-h-9" type="datetime-local" required
                   value={followAt} onChange={e => setFollowAt(e.target.value)} />
               </label>
               <label className="block text-sm">Next step
-                <input className={input + " mt-1"} maxLength={500}
+                <Input className="mt-1 min-h-11 md:min-h-9" maxLength={500}
                   value={followNote} onChange={e => setFollowNote(e.target.value)} />
               </label>
-              <button className={primary} type="submit" disabled={saving}>
+              <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving}>
                 Add follow-up
-              </button>
+              </Button>
             </form>
             {followups.length ? (
               <ul className="space-y-2">
@@ -648,14 +653,14 @@ export function RecruiterLeadDetailWorkspace({
                     <div>
                       <time className="font-medium" dateTime={f.dueAt}>{formatDateTimeIst(f.dueAt)}</time>
                       {!f.doneAt && new Date(f.dueAt).getTime()<openedAt.getTime()?
-                        <span className="ml-2 rounded border border-warning px-2 py-0.5 text-xs text-warning">Overdue</span>:null}
+                        <StatusBadge tone="warning" className="ml-2">Overdue</StatusBadge>:null}
                       <p className="text-muted-foreground">{f.note || "No note"}</p>
                     </div>
                     {f.doneAt ? <span className="text-muted-foreground">Done</span> : (
-                      <button className={button} type="button" disabled={saving} onClick={() => void mutate(
+                      <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={() => void mutate(
                         "/api/placements/tpo/follow-ups/" + encodeURIComponent(f.id) + "/done",
                         "POST", { collegeId },
-                      )}>Mark done</button>
+                      )}>Mark done</Button>
                     )}
                   </li>
                 ))}
@@ -669,16 +674,16 @@ export function RecruiterLeadDetailWorkspace({
                 {(["name", "email", "phone", "designation", "companyName"] as const).map(name => (
                   <label key={name} className="block text-sm">
                     {name === "companyName" ? "Company name" : name[0].toUpperCase() + name.slice(1)}
-                    <input className={input + " mt-1"} value={edit[name]}
+                    <Input className="mt-1 min-h-11 md:min-h-9" value={edit[name]}
                       autoFocus={name==="name"} required={name === "name"}
                       onChange={e => setEdit(current => ({ ...current, [name]: e.target.value }))} />
                   </label>
                 ))}
                 <label className="block text-sm">Found through
-                  <select className={input + " mt-1"} value={edit.source}
+                  <Select className="mt-1 min-h-11 md:min-h-9" value={edit.source}
                     onChange={e => setEdit(current => ({ ...current, source: e.target.value }))}>
                     {SOURCES.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
-                  </select>
+                  </Select>
                 </label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 {duplicateLead?<p role="status" className="text-sm">
@@ -686,8 +691,8 @@ export function RecruiterLeadDetailWorkspace({
                   className="font-semibold text-primary-text underline">Open {duplicateLead.name}</Link>
                 </p>:null}
                 <div className="flex justify-end gap-2">
-                  <button className={button} type="button" disabled={saving} onClick={closeEdit}>Cancel</button>
-                  <button className={primary} type="submit" disabled={saving}>Save</button>
+                  <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={closeEdit}>Cancel</Button>
+                  <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving}>Save</Button>
                 </div>
               </form>
           </Dialog>
@@ -696,17 +701,17 @@ export function RecruiterLeadDetailWorkspace({
             title="Not now" dismissible={!saving}>
               <form className="space-y-4" onSubmit={e => void markNotNow(e)}>
                 <label className="block text-sm">Reason
-                  <textarea className={input + " mt-1"} maxLength={255} rows={3}
+                  <Textarea className="mt-1 min-h-11 md:min-h-9" maxLength={255} rows={3}
                     value={notNowReason} autoFocus onChange={e => setNotNowReason(e.target.value)} />
                 </label>
                 <label className="block text-sm">Revisit on
-                  <input className={input + " mt-1"} type="date" value={revisitDate}
+                  <Input className="mt-1 min-h-11 md:min-h-9" type="date" value={revisitDate}
                     onChange={e => setRevisitDate(e.target.value)} />
                 </label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 <div className="flex justify-end gap-2">
-                  <button className={button} type="button" disabled={saving} onClick={closeNotNow}>Cancel</button>
-                  <button className={primary} type="submit" disabled={saving}>Mark not now</button>
+                  <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" disabled={saving} onClick={closeNotNow}>Cancel</Button>
+                  <Button variant="primary" className="min-h-11 md:min-h-9" type="submit" disabled={saving}>Mark not now</Button>
                 </div>
               </form>
           </Dialog>
