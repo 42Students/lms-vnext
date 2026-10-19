@@ -353,3 +353,35 @@ Codemods saved (not executed): scripts/codemods/chat18-recruiter-bell-sizes.cjs 
 STRICT TICK RULE: 10/87 non-rendering files completed previously; 77/87 rendered visual files remain OPEN because we cannot establish computed hover/focus/disabled parity and real 375px/768px/1280px viewport comparisons from connector source alone. Source-patched files are **not** marked as pixel-perfect completed. App/test/CI execution remains forbidden by owner. Do not tick visual entries without the missing proofs.
 
 Exact next file for the following bounded turn: src/components/hr/recruiter-calendar-legacy.module.css (reconcile 768-860 tablet rendering and remaining computed palette values), then src/app/(authenticated)/hr/calendar/page.tsx, and src/app/(authenticated)/hr/conversations/page.tsx.
+
+
+## Additional chat-18 tracker secondary state and responsive sweep
+
+Latest-main integration: latest main 36460671 added a recruiter calendar `<CalendarGrid variant="hairline">` change. Preserved this concurrent chat-15 improvement, and reapplied only our separate 861px recruiter board cutoff plus 44px phone control changes. GitHub tree-level two-parent merge is `6daa6808`; at that merge the lane was 12 ahead/0 behind, with no unrelated file overwritten. Subsequent tracker changes are strictly within the chat-18 queue.
+
+### Responsive value table
+
+| Element and state | Legacy reference | vNext source value / action | Proof level |
+| --- | --- | --- | --- |
+| General phone hit target | docs/design/legacy-styles/components___notification-drawer.scss:22-34 `$nd-touch-min:44px`; docs/design/legacy-styles/components___listing-page-header.scss:131-164 44px mobile search/action | `min-h-11` = 44px below 768px on controls throughout the files below | Source height and breakpoint |
+| Desktop action size | docs/design/old-lms-shell-spec.md:25-27: 36px ordinary topbar/buttons | `md:min-h-9` = 36px for tablet/desktop controls; defaults and hover delegated to shared Button | Local source dimensions |
+| Known Errors commands | old-lms-pages.md:9-11 compact un-nested detail/row presentation | known-errors-workspace.tsx has 10 small shared Buttons with phone 44px/desktop 36px, and 44px tracker issue link; no additional card wrappers | All 11 changed declarations re-read |
+| Tracker nav skip link | old-lms-shell.css:73 phone cutoff and keyboard focus treatment in legacy-styles/components___accessibility.scss | tracker-admin-nav.tsx skip-to-content focus link 44px on phone, 36px desktop; existing Tabs and focus destination preserved | Source only |
+| Tracker theme pressed state | docs/design/ui-clone-checklist.md:I statefulness; legacy mobile hit target | tracker-theme-toggle.tsx retains shared Button, aria-pressed and light/dark action; local min-height now 44px/36px | Source and semantics preserved |
+| Finding mutation CTA | old-lms-pages.md:4-11 single-canvas forms | independent-finding-actions.tsx Save details remains shared Button inside section (no new wrapper), 44px phone/36px desktop | Source only; optimistic action untouched |
+| Tracker workflow actions | old-lms-pages.md:4-11 continuous form, 767px mobile behavior | tracker-workflow-panel.tsx workflow save/retest Buttons and commit links use 44/36px; checkbox row has 44/36px minimum height; mutation logic unchanged | Source semantics and dimensions |
+| Live logs filters and recovery | legacy-styles/components___listing-page-header.scss:85-102,131-164 controls/search and mobile sizes | tracker-live-logs-explorer.tsx now has phone-sized Select/search, refresh/download/report/older actions, six ghost action links and three contextual links (16 local 44px declarations); list remains border-y/divide-y | Source state/responsive proof; drawer/dialog inherited |
+| Bulk issue selection | old-lms-pages.md:9-11 table/list and mobile button behavior | tracker-issue-bulk-actions.tsx selection, apply, Select this page/Clear and checkbox labels now 44px, tablet breakpoint at md | Existing selection semantics unchanged |
+| Saved issue views | old-lms-pages.md:6-10 chips and toolbar | tracker-issue-saved-views.tsx save/open/delete view actions 44/36px, view name input min-height 44px; view destinations unchanged | Source dimensions |
+| Nearby issue logs | old-lms-pages.md:9-11 hairline rows, compact action | tracker-issue-logs-panel.tsx load and open contextual log action 44/36px; divide-y list unchanged | Source only |
+| Telegram controls | old-lms-pages.md:4-11 uncluttered banner/actions | tracker-telegram-manual-panel.tsx four shared alert controls 44px mobile, md 36px, dialog stats 2 columns only at 768px+; Dialog/ConfirmDialog behavior preserved | Source only |
+
+The repeated tracker-target changes are recorded as guarded, idempotent codemods in scripts/codemods/chat18-tracker-touch-targets.cjs (four files) and chat18-tracker-secondary-actions.cjs (four files). Both were committed with the resulting TSX but never run. Known Errors and live-log edits were single-file scoped fixes. These paths do not belong to shared primitives or the other lanes.
+
+Read-back check: the ten named tracker files were fetched after editing, checked for open/close of div/section/ol/li/Button/Link, no author-owned raw controls added; multiline self-closing Input and ConfirmDialog tags were inspected separately rather than falsely flagging them as unmatched. This is NOT a parser/compiler run. No browser, screenshots or device comparison was available.
+
+Previously recorded **87/87 queued TSX source scan** remains the verified full-queue baseline: zero visible raw controls, zero six-digit TSX hex, zero page-owned h1, zero hand-coded border-b-2 tabs, one exempt hidden input and one non-rendering dialog selector string. Subsequent edits added only shared Button/Select/Input props; they do not introduce new native control/overlay tags. The complete source grep and viewport measurements are still required from the owner for final strict closure.
+
+**STRICT TICK STATUS:** 10/87 confirmed no-presentation files [x]; 77/87 rendered visual files [ ] — need complete computed value rows (default/hover/active/focus/disabled/loading/error), 375px phone / 768px tablet / 1280px desktop comparison, and zero-regression JSX/TS check. Do not tick the remaining files on this source-only evidence. No app/test/CI executions.
+
+Exact next file: `src/components/hr/recruiter-calendar-legacy.module.css` for rendered 768-860px recruiter calendar parity, then `src/app/(authenticated)/hr/calendar/page.tsx` and `src/app/(authenticated)/hr/conversations/page.tsx`.
