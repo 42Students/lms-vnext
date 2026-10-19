@@ -65,6 +65,12 @@ export function RecruiterPlacementPortfolio({
         : "CTC not specified",
       sharedApplicants,
       offers:counts?.[id]?.offers??0,
+      applicantsHref:"/recruiter/drives/"+encodeURIComponent(id)+"?tab=applicants"+
+        (returnTo?"&returnTo="+encodeURIComponent(returnTo):""),
+      offersHref:"/recruiter/drives/"+encodeURIComponent(id)+"?tab=offers"+
+        (returnTo?"&returnTo="+encodeURIComponent(returnTo):""),
+      requestsHref:"/recruiter/drives/"+encodeURIComponent(id)+"?tab=requests"+
+        (returnTo?"&returnTo="+encodeURIComponent(returnTo):""),
       deadlineLabel:job.applicationDeadline?
         new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(job.applicationDeadline):
         "Not recorded",
