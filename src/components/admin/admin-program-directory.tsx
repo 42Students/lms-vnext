@@ -183,13 +183,13 @@ export function AdminProgramDirectory({
       </form>
       <section className="space-y-3" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="min-w-56 flex-1">
+          <div className="w-full min-w-0 flex-1 sm:min-w-56">
             <label htmlFor="admin-program-search" className="mb-1 block text-xs font-semibold text-body">Search programs or departments</label>
             <Input id="admin-program-search" value={search}
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
               placeholder="Search program, code or department" />
           </div>
-          <div className="flex flex-wrap items-end gap-2">
+          <div className="flex w-full flex-wrap items-end gap-2 sm:w-auto">
             <PageSizeSelect id="admin-program-page-size" label="Rows per page"
               options={[10, 25, 50, 100]} value={pageSize}
               onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
