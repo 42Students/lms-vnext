@@ -33,7 +33,7 @@ export default async function HrMessagesPage({searchParams}:{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(d);
  return <div className="min-w-0 max-w-full space-y-6">
-  <PageHeader eyebrow="Recruiter" title="Notifications"
+  <PageHeader title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."
    actions={<Link href="/hr/conversations" className="inline-flex min-h-9 max-sm:min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      Open recruiter conversations
@@ -42,7 +42,7 @@ export default async function HrMessagesPage({searchParams}:{
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    {result.choices.map(grant=><Link key={grant.id}
     href={"/hr/notifications?collegeId="+encodeURIComponent(grant.collegeId)}
-    className="block rounded-[var(--lms-control-radius,9px)] border border-border p-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 sm:min-h-9">{grant.collegeName}</Link>)}
+    className="block rounded-[var(--lms-control-radius)] border border-border p-3 text-primary-text transition-colors duration-200 hover:border-primary hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-h-11 sm:min-h-9">{grant.collegeName}</Link>)}
   </section>:<>
    {result.choices.length>1?<NeedsDoingChips label="College:"
      selectedKey={result.collegeId}
