@@ -19,7 +19,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
 }){
  const ctx=await getCurrentRequestContext(), raw=await searchParams;
  if(!ctx.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
-  <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
+  <PageHeader title="All drives"/>
   <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
  </div>;
  requireSuperAdminSelectedCollege(ctx,"placements.manage");
@@ -27,7 +27,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  // forged college/scope selectors and contradictory link parameters.
  const parsed=adminDriveDirectoryQuerySchema.safeParse(raw);
  if(!parsed.success)return <div className="min-w-0 space-y-4">
-  <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
+  <PageHeader title="All drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
    action={<Link href="/admin/placements/drives" className="text-primary-text">Clear filters</Link>}/>
  </div>;
@@ -37,7 +37,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   .then(value=>({ok:true as const,value}))
   .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
  if(!loaded.ok)return <div className="min-w-0 space-y-4">
-  <PageHeader eyebrow="Super Admin · Placements" title="All drives"/>
+  <PageHeader title="All drives"/>
   <ErrorState
    title={loaded.denied?"Drive access denied":"Drives unavailable"}
    description={loaded.denied
@@ -72,12 +72,13 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     Open drive →</Link>},
  ];
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Placements" title="All drives"
-   description="Review and open every persisted non-archived drive in the selected college." />
+  <PageHeader title="All drives"
+   description="Review and open every persisted non-archived drive in the selected college."
+   actions={<Link href="/admin/placements/new"
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">Create drive →</Link>} />
   <div className="flex flex-wrap gap-3">
    <Link href="/admin/placements" className="text-sm font-semibold text-primary-text">← Placement overview</Link>
    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Look up a student&apos;s placement status →</Link>
-    <Link href="/admin/placements/new" className="text-sm font-semibold text-primary-text">Create drive →</Link>
   </div>
   <form action="/admin/placements/drives" method="get"
    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">

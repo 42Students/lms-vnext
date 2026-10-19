@@ -32,12 +32,11 @@ export default async function CollegeProjectsPage({
   const context = await getCurrentRequestContext();
   const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId) {
-    return <div className="space-y-4"><PageHeader title="Workspaces"
-     description="Select a college to continue."/>
-     <p role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
-      Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page.
-     </p>
-     <Link href="/dashboard" className="inline-flex min-h-[var(--lms-control-height)] items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Back to dashboard</Link>
+    return <div className="space-y-4">
+      <PageHeader title="Workspaces" description="Select a college to continue."/>
+      <ErrorState title="No college selected"
+        description="Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page."
+        action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
     </div>;
   }
 
@@ -126,7 +125,6 @@ export default async function CollegeProjectsPage({
          {value:"table",label:"List",href:viewHref("table")},
          {value:"archived",label:"Archived workspaces",href:"/college/projects?status=ARCHIVED"},
         ]}/>
-       <ProjectAdminWorkspacePageExport items={items}/>
       </div>
       {!templatesResult.ok && <p role="status" className="border-b border-border pb-3 text-sm text-body">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</p>}
       <ProjectAdminFilters query={query} />

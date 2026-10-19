@@ -10,6 +10,8 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {EmptyState} from "@/components/ui/empty-state";
+import {ErrorState} from "@/components/ui/error-state";
+import {Banner} from "@/components/ui/banner";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
@@ -21,12 +23,15 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   programId:raw.programId||undefined,cohortId:raw.cohortId||undefined,
   appliedFrom:raw.appliedFrom||undefined,appliedTo:raw.appliedTo||undefined,
  });
- if(!parsed.success)return <div className="space-y-4"><PageHeader eyebrow="Super Admin · Placements" title="Analytics"/>
-  <p role="alert">Invalid analytics filters. Check the selected dates or filters.</p>
-  <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center text-primary-text underline">Clear all</Link></div>;
+ if(!parsed.success)return <div className="space-y-4">
+  <PageHeader title="Analytics"/>
+  <ErrorState title="Invalid analytics filters"
+   description="Check the selected dates or filters."
+   action={<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Clear all</Link>}/>
+ </div>;
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Placements" title="Placement Analytics"
+  <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
   <EmptyState title="Select a college to continue" description="Choose a college in the Super Admin scope selector before reviewing placement analytics."/>
  </div>;
@@ -68,7 +73,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <option value="">All {label.toLowerCase()}</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</Select></label>
  );
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="Super Admin · Placements" title="Placement Analytics"
+  <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
   <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold">Drive or company
@@ -90,9 +95,9 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
     className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text">Export report (CSV) →</a>
   </div>
-  {data.truncated?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+  {data.truncated?<Banner tone="warning">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
-  </p>:null}
+  </Banner>:null}
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
    <div key={key} className="min-w-0 border-b border-border px-1 py-3"><dt className="text-sm capitalize text-muted-foreground">{hiringMetricLabel(key)}</dt>
     <dd className="mt-1 text-2xl font-semibold tabular-nums">{totals[key]}</dd></div>)}</dl>

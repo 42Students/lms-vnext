@@ -9,7 +9,7 @@ const roots = [
   "src/app/(authenticated)/hr",
   "src/app/(authenticated)/recruiter",
 ];
-const allow = new Set(["Recruiter", "Employer Recruiter"]);
+const allow = new Set(["Recruiter", "Employer Recruiter", "Recruiter · Hiring drive"]);
 const apply = process.argv.includes("--apply");
 
 function walk(dir, found=[]) {

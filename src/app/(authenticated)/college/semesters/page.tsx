@@ -23,7 +23,7 @@ export default async function CollegeSemestersPage({
   const parsed = collegeSemesterDirectorySchema.safeParse(params);
   if (!parsed.success) {
     return <main className="min-w-0 space-y-4">
-      <PageHeader eyebrow="College Admin · Academic Setup" title="Semesters" />
+      <PageHeader title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
         action={<Link href="/college/semesters" className="inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>} />

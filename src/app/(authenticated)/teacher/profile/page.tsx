@@ -17,24 +17,24 @@ export default async function FacultyProfilePage() {
   ];
 
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-[var(--lms-space-5)]">
       <PageHeader
         title="Profile"
       />
       <nav aria-label="Profile shortcuts" className="flex flex-wrap items-center gap-3">
-        <Link href="/teacher/profile/details" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Edit About &amp; profile sections →</Link>
+        <Link href="/teacher/profile/details" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">Edit About &amp; profile sections →</Link>
         <Link href="/teacher/profile/teaching"
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
         Current teaching assignments →
         </Link>
         <Link href="/teacher/profile/contacts"
-        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:min-h-[var(--lms-control-height)]">
         Contact details and editing availability
         </Link>
       </nav>
-      <section aria-label="Faculty profile details" className="border-b border-border py-5">
+      <section aria-label="Faculty profile details" className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-5)]">
         <h2 className="text-base font-semibold text-foreground">About</h2>
-        <dl className="mt-5 grid gap-5 sm:grid-cols-2">
+        <dl className="mt-[var(--lms-space-5)] grid min-w-0 gap-[var(--lms-space-5)] md:grid-cols-2">
           {fields.map(({ label, value }) => (
             <div key={label}>
               <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

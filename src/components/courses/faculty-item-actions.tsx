@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { courseApiError } from "./learner-course-api";
 
 type Action = "PUBLISH" | "CLOSE" | "ARCHIVE";
@@ -32,31 +33,15 @@ export function FacultyItemActions({
     useState<Action | null>(null);
   const [error, setError] =
     useState<string | null>(null);
+  const [confirmAction, setConfirmAction] = useState<Action | null>(null);
+  const warning = contentType==="RESOURCE"
+    ? "Remove this Resource? The lesson entry will be hidden; stored files are retained."
+    : contentType==="VIDEO" ? "Delete the video"
+    : contentType==="YOUTUBE" ? "Delete the YouTube video"
+    : contentType==="LIVE_CLASS" ? "Delete the live class"
+    : "Archive this item? Historical records will be retained.";
 
   async function run(action: Action) {
-    if (
-      action === "ARCHIVE" &&
-      !window.confirm(
-        contentType==="RESOURCE"?
-          "Remove this Resource? The lesson entry will be hidden; stored files are retained.":
-          contentType==="VIDEO"?"Delete the video":
-          contentType==="YOUTUBE"?"Delete the YouTube video":
-          contentType==="LIVE_CLASS"?"Delete the live class":
-          "Archive this item? Historical records will be retained.",
-      )
-    ) {
-      return;
-    }
-
-    if (
-      action === "CLOSE" &&
-      !window.confirm(
-        "Close this quiz? Learners will not be able to submit any more attempts.",
-      )
-    ) {
-      return;
-    }
-
     setError(null);
     setActive(action);
 
@@ -86,6 +71,7 @@ export function FacultyItemActions({
       );
     } finally {
       setActive(null);
+      setConfirmAction(null);
     }
   }
 
@@ -94,19 +80,21 @@ export function FacultyItemActions({
   }
 
   return (
+    <>
     <div className="mt-3">
       <div className="flex flex-wrap gap-2">
         {actions.map((action) => (
           <Button
             key={action}
             size="sm"
+            className="min-h-11 sm:min-h-[var(--lms-control-height)]"
             variant={
               action === "ARCHIVE"
                 ? "ghost"
                 : "secondary"
             }
             disabled={active !== null}
-            onClick={() => run(action)}
+            onClick={() => action === "PUBLISH" ? void run(action) : setConfirmAction(action)}
           >
             {active === action
               ? "Saving…"
@@ -123,5 +111,18 @@ export function FacultyItemActions({
         </p>
       ) : null}
     </div>
+    <ConfirmDialog
+      open={confirmAction!==null}
+      onOpenChange={open=>{if(!open && active===null)setConfirmAction(null);}}
+      title={confirmAction==="CLOSE"?"Close quiz":"Archive content"}
+      description={confirmAction==="CLOSE"
+        ? "Close this quiz? Learners will not be able to submit any more attempts."
+        : warning}
+      confirmLabel={confirmAction==="CLOSE"?"Close quiz":"Archive"}
+      confirmVariant="danger"
+      pending={active!==null}
+      onConfirm={()=>{if(confirmAction)void run(confirmAction);}}
+    />
+    </>
   );
 }

@@ -3,13 +3,12 @@ import { MenuSeparator } from "@/components/ui/menu";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
-import {Input} from "@/components/ui/input";
+import {Avatar} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
-import {DataTable} from "@/components/ui/data-table";
+import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
 
 import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
-import {companyDriveCsv} from "@/modules/placements/tpo-company-drive-export-model";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 
@@ -194,10 +193,6 @@ export function TpoCompanyMemoryWorkspace({
   }
 
   const latest = company.timeline[0] ?? null;
-  const statusLabel=(status:string)=>({PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",CANCELLED:"Cancelled"} as Record<string,string>)[status]??status;
-  const visibleDrives=company.drives.filter(drive=>
-    [drive.jobTitle,drive.status,String(new Date(drive.createdAt).getFullYear())]
-      .join(" ").toLowerCase().includes(driveSearch.trim().toLowerCase()));
 
   return (
     <section className="space-y-5" aria-label={"Company Memory for " + company.name}>
@@ -213,7 +208,7 @@ export function TpoCompanyMemoryWorkspace({
            <nav aria-label={"New work for "+company.name}
             className="w-60 space-y-1">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
+             className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
              className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New drive for {company.name}</Link>
             <MenuSeparator />
@@ -296,8 +291,10 @@ export function TpoCompanyMemoryWorkspace({
               <div className="mt-3 divide-y divide-border">
                 {company.people.map(person => (
                   <div key={person.id} className="flex items-center justify-between gap-3 py-3">
-                    <div>
-                      <Link className="font-medium text-link hover:underline lms-inline-link"
+                    <div className="flex min-w-0 items-center gap-3">
+                      <Avatar name={person.name} size="sm" className="!h-[38px] !w-[38px] !rounded-[10px] [&_img]:!rounded-[10px]"/>
+                      <div className="min-w-0">
+                      <Link className="font-medium text-link hover:underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
                       </Link>
@@ -312,6 +309,7 @@ export function TpoCompanyMemoryWorkspace({
                           person.inviteClickedAt?"Invite opened, not joined yet":
                           person.inviteSentAt?"Invite sent, not opened":"No invite sent"}
                       </p>
+                      </div>
                     </div>
                     <Badge  tone="neutral">{person.stage==="DRIVE_PLANNED"?"Drive planned":person.stage==="NOT_NOW"?"Not now":person.stage==="RECRUITED"?"Recruited":person.stage==="JOINED"?"Joined":person.stage==="INVITED"?"Invited":person.stage==="CONTACTED"?"Contacted":"New"}</Badge>
                   </div>
@@ -331,7 +329,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
                   <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<currentTimeMs()?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
-                  <Link className="text-sm text-link underline lms-inline-link"
+                  <Link className="text-sm text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}
               </ul>}
@@ -341,40 +339,12 @@ export function TpoCompanyMemoryWorkspace({
         <div className="space-y-5">
           <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">Drives</h2>
-            <Button variant="secondary" type="button" className="mt-3"
-              disabled={visibleDrives.length===0}
-              onClick={()=>{
-                const blob=new Blob([companyDriveCsv(visibleDrives)],{type:"text/csv;charset=utf-8"});
-                const url=URL.createObjectURL(blob);
-                const link=document.createElement("a");
-                link.href=url;
-                link.download=company.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,70)+"-drives.csv";
-                document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
-              }}>
-              Export drives CSV
-            </Button>
-            <label className="mt-3 block text-sm text-body">Search drives
-              <Input className="mt-1"
-                type="search" value={driveSearch} onChange={e=>setDriveSearch(e.target.value)}
-                placeholder="Search role, status or year"/>
-            </label>
-            {company.drives.length === 0 ? (
-              <p className="mt-3 text-sm text-muted-foreground">No drives yet.</p>
-            ) : (
+            {company.drives.length===0?
+              <p className="mt-3 text-sm text-muted-foreground">No drives yet.</p>:
               <div className="mt-3">
-                <DataTable rows={visibleDrives} getRowKey={drive=>drive.id}
-                  caption="Company drives" empty={<p>No matching drives.</p>}
-                  columns={[
-                    {key:"role",header:"Role",mobilePriority:"primary",cell:drive=>
-                      <Link className="inline-flex min-h-9 items-center font-semibold text-link hover:underline lms-inline-link"
-                        href={"/tpo/placements/jobs/" + encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>},
-                    {key:"status",header:"Status",mobilePriority:"secondary",cell:drive=>statusLabel(drive.status)},
-                    {key:"year",header:"Year",mobilePriority:"secondary",cell:drive=>new Intl.DateTimeFormat("en-IN",{year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(drive.createdAt))},
-                    {key:"applied",header:"Applied",mobilePriority:"secondary",cell:drive=>drive.applied+" · "+drive.offers+" offers"},
-                    {key:"created",header:"Created",mobilePriority:"secondary",cell:drive=>dateLabel(drive.createdAt)},
-                  ]}/>
-              </div>
-            )}
+                <TpoCompanyMemoryDriveGrid companyName={company.name} drives={company.drives}
+                  search={driveSearch} onSearchChange={setDriveSearch}/>
+              </div>}
           </section>
 
           <section className="border-b border-border py-4">

@@ -119,7 +119,7 @@ export function LearnerNotificationsInbox({
     <section className="space-y-5" aria-label="Learner notifications inbox">
       <p role="status" className="text-sm text-body min-[768px]:hidden">{mobileSummary}</p>
       <nav aria-label="Filter notifications by type" className="min-w-0">
-        <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible">
+        <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
           {learnerNotificationCategories.map(({ key, label }) => (
             <Button
               key={key}
@@ -175,7 +175,7 @@ export function LearnerNotificationsInbox({
       </p>
 
       {sourceStatus.state==="PARTIAL" ? (
-        <div role="alert" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 text-sm text-body">
+        <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
           <p className="font-semibold text-foreground">Announcements not refreshed</p>
           <p className="mt-1">{sourceStatus.notice}</p>
           <Button size="sm" variant="secondary" onClick={()=>router.refresh()}>
@@ -184,7 +184,7 @@ export function LearnerNotificationsInbox({
         </div>
       ):null}
       {!announcementsEnabled && (active === "all" || active === "general") ? (
-        <div role="status" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 text-sm text-body">
+        <div role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
           College announcements are temporarily unavailable while their
           database rollout is being verified. Personal notifications remain available.
         </div>
@@ -233,7 +233,7 @@ export function LearnerNotificationsInbox({
               <Link
                 href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text sm:w-auto"
+                className="inline-flex min-h-11 min-[768px]:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text min-[768px]:w-auto"
               >
                 {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
               </Link>
