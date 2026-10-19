@@ -60,10 +60,10 @@ export default async function SuperAdminLessonsPage({
     <form className="grid gap-3 py-1 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"
-          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+          className="min-h-11 sm:min-h-9" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
-        <Select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+        <Select name="status" defaultValue={data.query.status} className="min-h-11 sm:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
       </label>
@@ -81,8 +81,8 @@ export default async function SuperAdminLessonsPage({
         Lesson creation options are temporarily unavailable. Existing lessons remain visible.
       </p>}
     {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
-    {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-      {data.items.map(lesson => <article key={lesson.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+    {data.items.length ? <div className="divide-y divide-border border-y border-border">
+      {data.items.map(lesson => <article key={lesson.id} className="min-w-0 py-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words text-base font-semibold text-foreground">{lesson.name}</h2>
           <StatusBadge tone={lesson.status === "ACTIVE" ? "success" : "neutral"}>{lesson.status}</StatusBadge>
