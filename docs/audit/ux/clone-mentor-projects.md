@@ -21,7 +21,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx` (greps: full-source raw controls, hex, manual modal and tabs=0; values: 19-row table and conditional states below; responsive: 320/767/768px metadata, links and history)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx` (greps: complete source, raw controls/hex/native overlay/tabs=0; values: 20 exact shared/legacy rows including open/confirm/error states; responsive: scoped 767px modal actions + fluid text; table below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -740,3 +740,35 @@ Whole source scan after the edit: src/app/(authenticated)/mentor/projects/[proje
 | Pagination | old-lms-pages.md:10 shared list pagination, touch pages | timeline/page.tsx:83, Pagination.tsx:44-84 with 44px previous/next on phone | yes |
 
 Responsive source proof: At 320px/767px, PageHeader stacks, the action is min44px, chips wrap and each interactive chip remains min44px via the local CSS max-width767 rule. Release heading/status uses flex-wrap, nested sprints are hairline-separated list rows with no padded card-in-card and no fixed width. At 768px and larger, PageHeader actions align right, chips use compact desktop height, and the action is 36px. Tab/overlay/field grep output is zero. Enabled/disabled, zero/nonzero items, zero/nonzero sprints, status badge tones, valid/invalid filters, optional progress and Next.js pagination hrefs are unchanged. No runtime screenshots or CI executed.
+
+## Completed: authorized Mentor final-delivery version detail
+
+File: src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx (115 lines; whole source inspected after changes).
+
+Grep equivalent (GitHub full-file source scan; no local command execution): rg -n '<(button|input|select|textarea)\b|#[[:xdigit:]]{3,8}|window.confirm|role="dialog"|fixed inset-0|role="tab"|aria-pressed' against this file => **0 matches**. Shared PageHeader appears once, external links are real anchor elements with target=_blank and rel="noopener noreferrer", no raw form or manually styled dialog exists. The authorization service is unchanged; any source/demo/attachment link is passed through safeProjectExternalHref before rendering. There are no loading, disabled-submit, mutation, editable form or local modal states applicable to this server-only read screen.
+
+| Property/state | Old LMS exact reference | Current page/shared exact value | Match |
+|---|---|---|---|
+| Outer canvas | old-lms-shell-spec.md:18-20, #fff, 1px #e5e9f0, radius12, padding24 | inherited single canvas, page root min-w-0 max-w-full without own card | yes |
+| Main title desktop | old-lms-shell-spec.md:26-27, 30px/600/#172033 | ui/page-header.tsx:27-35 and globals.css:327 | yes |
+| Main title phone | listing-page-header.scss:130-143, stacked 20px through 767 | PageHeader stacks until md and has font-size20px | yes |
+| Subtitle | old-lms-pages.md:7, inline muted desktop | PageHeader joins mentor context and project name/status into muted subtitle | yes |
+| Head border | listing-page-header.scss:26-35, 1px #e5e9f0 / padding-bottom16 | PageHeader border-b and pb-4 | yes |
+| Header secondary face | old-lms-shell-spec.md:24 #fff, neutral text, 1px border, radius9 | Link data-unskin, bg-white, border-border, --lms-control-radius, font-[650] | yes |
+| Header secondary hover | listing-page-header.scss:123-127 teal text/border + rgba(38,186,199,.05) fill | Link explicit hover teal and same 5% tint | yes |
+| Header link height | old-lms-shell-spec.md:24 36px desktop; variables.scss:139 >=44px touch | min-h-11 md:min-h-9, no extraneous vertical padding | yes |
+| Header focus | accessibility.scss:18-23 teal outline2/offset | focus-visible:outline-2 and focus-visible:outline-offset-2 | yes |
+| Section surfaces | old-lms-pages.md:6,11 continuous canvas separated by hairlines | 5 sections with border-b canvas and padding --lms-space-5, no nested object cards | yes |
+| Body font/ink | variables.scss:25 #54505d, 14px | text-sm text-body / globals.css:73,844 | yes |
+| Metadata label | variables.scss:27 #6b7280, small | dt text-xs text-muted-foreground | yes |
+| Metadata grid phone | listing-page-header.scss:130-159 single column <=767 | dl grid min-w-0, md:grid-cols-2 so 1 column at 320/767 | yes |
+| Metadata grid tablet/desktop | listing-page-header.scss:149-165 restores horizontal placement >=768 | dl 2 columns beginning at md (768px) | yes |
+| Free-text overflow | legacy _learn-projects.scss:1063-1079 overflow-wrap:anywhere for user descriptions | summary, feedback, notes use whitespace-pre-wrap break-words; all within max-w-full | yes |
+| Inline external controls | accessibility.scss:18-23 keyboard focus, variables.scss:10 #26bac7 | safe links underline, focus-visible and min-h-11 md:min-h-9 | yes |
+| Attachment row hairlines | legacy components___common.scss:700-713, #e5e9f0, 1px | attachments list border-y/divide-y canvas token and py-space-3 12px | yes |
+| Timeline history row density | common.scss:720-726 12px each edge | history list now border-y/divide-y canvas token; 4 conditional row paths py-space-3 | yes |
+| Empty/not-recorded states | old-lms-pages.md:6,11-12 inline factual states, no implied records | all 10 metadata fields provide explicit missing-value fallbacks; empty attachment section, absent URLs and missing activity history have plain text | yes |
+
+**Responsive / data-state proof:** 320px and 767px render one metadata column and a stacked PageHeader, with a 44px header action, text links capable of wrapping, and all dynamic note and attachment names using break-words/break-all. At 768px+ metadata becomes 2 columns and header action shrinks to the measured 36px. The attachment and event lists remain hairline rows at every viewport width and never create an extra canvas. Submitted/created/locked/reopened/reviewed timestamps render only when present, formatted with en-IN Asia/Kolkata; the empty history case remains an explicit message. No URLs bypass the existing safe-link function; existing project access and read-only review behavior preserved.
+
+The old LMS specific project overflow rule is in 42Students/lms2-fe, branch prod-2026, src/styles/components/_learn-projects.scss:1063-1079; the shared shell and tokens are grounded in the vNext docs/design legacy sources. No screenshot, local UI or CI execution was performed.
