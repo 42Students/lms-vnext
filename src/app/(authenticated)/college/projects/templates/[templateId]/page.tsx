@@ -32,7 +32,7 @@ export default async function CollegeProjectTemplateDetailPage({
       />
       <Link
         href="/college/projects/templates"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="inline-flex min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
         ← Template catalogue
       </Link>
