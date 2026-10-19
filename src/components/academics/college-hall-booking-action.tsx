@@ -1,6 +1,7 @@
+"use client";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-"use client";
+
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 type Classroom={id:string;name:string;cohortName:string;periodStart:string;periodEnd:string;updatedAt:string};
