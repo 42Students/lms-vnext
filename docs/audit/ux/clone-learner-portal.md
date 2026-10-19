@@ -356,3 +356,52 @@ Responsive proof by source: at **375px and 700px**, all action targets are at le
 **Responsive source proof:** calendar module `@media(max-width:767px)` and `@media(min-width:768px)` are unchanged; 44px controls under 768px, 20px heading under 768px, 116px calendar-day grid cells, 2px deep-teal inset focus, 150/200ms transitions and `prefers-reduced-motion:reduce` remain. This is layout-rule inspection, not a phone screenshot. The per-day grid button is exempt only because shared inline-flex Button chrome would change its complex child flow; `learner-career-calendar.module.css:187-206` documents the dimension-sensitive native button.
 
 **Next file:** `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx` (source inventory and missing nested loading/error parity), followed by `src/components/placements/learner-placement-job-detail.tsx` computed-style review. No builds, screenshot runner or CI were executed by this lane.
+
+## Nested jobs, learner placement home, verification, and dashboard — 2026-10-20 source evidence
+
+This batch makes targeted pixel-clone **source** updates to **nine** scoped files (two nested `loading.tsx` included; nested job error already existed). It does **not** change placement records, access checks, active jobs, learner project scopes, API calls or existing business decisions.
+
+### Legacy value comparison
+
+| Property / UI state | Legacy source and exact value | vNext file and source value | Status |
+|---|---|---|---|
+| Page head | `old-lms-pages.md:5-13` / `old-lms-shell-spec.md`: one white canvas; one page title + optional right actions, no extra eyebrow | `learner-placement-job-detail.tsx` removes `eyebrow="Published campus drive"`; historical-only `jobs/[jobId]/page.tsx` receives a conditional single `PageHeader`, but regular detail retains its existing PageHeader | Source structure match; rendered titles not measured |
+| Drive action primary | `components___variables.scss:44+`: button solid #0a7c88, hover #086873, 36px desktop / 44px touch on mobile | `learner-placement-job-detail.tsx`: `--lms-button-primary`, `--lms-button-primary-hover`, `min-h-11 md:min-h-9` | Exact source tokens |
+| Focus | `components___accessibility.scss:19-38`: teal 2px outline, 2px offset | Drive internal/external anchors `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]` | Exact outline source; keyboard visual unverified |
+| Link hover & motion | `components___learn-notifications.scss:88-124`: teal hover, 150ms ease and focus treatment | Drive actions `transition-colors duration-150`, primary hover token, `motion-reduce:transition-none` | Source match |
+| Mobile page breakpoint | `components___learn-notifications.scss:9-10`: 767px max mobile | Placement home, dashboard and verification page use `md:` rather than Tailwind `sm:`; 640–767px stays phone layout | Source match |
+| Touch size | `components___learn-notifications.scss:88-99`: minimum 44px <=767px | Placement home: 11 `min-h-11` values; dashboard: 13; detail: 8; historical journey: 2; error: 2 | Source matches target sizes; parent constraints unmeasured |
+| Section canvas | `old-lms-pages.md:5-13`: avoid card-inside-card; hairline separators, white canvas | Placement home verification/notices and dashboard functional sections use `border-b border-border` instead of redundant nested card wrappers | Structural source match |
+| Block alerts | `components___learn-notifications.scss` warnings use slim pale tint rather than large white tile | Placement debar cue now `border-l-2 border-warning bg-warning-subtle p-4 md:p-5`; historic closed/cancelled notice uses pale status inset | Source match, computed shade unverified |
+| Responsive card spacing | `components___learn-notifications.scss:210-221`: 16px mobile, 24px >=768px | Verification Education/Identity panels `p-4 md:p-6`; dashboard lead panel `p-4 md:p-6` | Source match |
+| Error layout | `old-lms-pages.md:5-13`: no nested center-aligned page card, visible retry and back | `jobs/[jobId]/error.tsx` flattened to `min-w-0 space-y-4`; shared PageHeader, Button retry, 44px back link | Source match |
+| Loading placeholder | `old-lms-pages.md`: one broad directory canvas, hairline content, no boxed dashboard per subsection | Nested job and application `loading.tsx` now use shared `GracefulPageLoading shape="directory"`, labels retained | Source-level; animation/presentation untested |
+| History / archive | Preserve existing learner-only status and no inferred selection outcome | `learner-own-drive-journey.tsx` uses border-b sections with no extra cards and maintains direct own-application links with mobile 44px height | Source no-regression; live links unverified |
+
+### Grep-style full-file proof
+
+GitHub connector returned full content for each file after the changes. Counts below are **source regex counts, not local shell grep or a browser**.
+
+| File | Raw HTML controls | Hex values | Deprecated `sm:` for audited properties | `min-h-11` targets | `md:` tokens | JSX section / Button open-close |
+|---|---:|---:|---:|---:|---:|---|
+| `jobs/[jobId]/page.tsx` | 0 | 0 | 0 | 1 | 1 | 0/0 sections |
+| `jobs/[jobId]/loading.tsx` | 0 | 0 | 0 | 0 | 0 | 0/0 sections |
+| `jobs/[jobId]/error.tsx` | 0 | 0 | 0 | 2 | 2 | 1/1 section, 1/1 Button |
+| `applications/[applicationId]/loading.tsx` | 0 | 0 | 0 | 0 | 0 | 0/0 sections |
+| `learner-own-drive-journey.tsx` | 0 | 0 | 0 | 2 | 5 | 2/2 sections |
+| `learner-placement-job-detail.tsx` | 0 | 0 | 0 | 8 | 22 | 6/6 sections |
+| `my-placements/page.tsx` | 0 | 0 | 0 | 11 | 14 | 5/5 sections |
+| `profile/verification/page.tsx` | 0 | 0 | 0 | 3 | 4 | 3/3 sections |
+| `learner-placements-dashboard.tsx` | 0 | 0 | 0 | 13 | 23 | 6/6 sections |
+
+Source scans: raw `/<(button|input|select|textarea)(?=\\s|>)/g`; six-digit hex `/#[0-9a-f]{6}\\b/gi`; old breakpoints `/\\bsm:(min-h-9|grid-cols-2|grid-cols-3|p-4|p-5|p-6|flex-row|items-center|justify-between|text-2xl)\\b/g`; `<section` vs `</section>` and `<Button` vs `</Button>`. **All zero failures in this selected-file scan.**
+
+Responsive source proof:
+- **375px phone:** one-column grid/stacking, 44px touch links, section separator rather than nested cards; historical title and return link visible when no active job feed.
+- **700px small tablet:** mobile layout continues; corrected `sm:` usages do not switch at 640px.
+- **768px tablet:** `md:` grid, 24px inner card padding, 36px optional desktop links, placement source text wraps.
+- **1024px desktop:** existing `lg:` role breakdown grid and independent placement stat objects retained.
+
+**Strict tick remains open** for LRN-02/04/05/06. Full all-page zero-instance grep, render/computed colour, hover/disabled/loading/error states, phone/tablet screenshots, link/keyboard test, and TypeScript compile are not available in this turn. No code, codemod, tests, or CI executed, and no prior report of commit counts should be interpreted as visual pixel parity.
+
+**Next file:** `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`, then `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`, as pending LRN-02 page-wise inventory. They may require no edits if the current shared components already meet the value table.
