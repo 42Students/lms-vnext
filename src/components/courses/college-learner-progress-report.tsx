@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import type {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
 import {DataTable} from "@/components/ui/data-table";
+import { MetricBar } from "@/components/ui/metric-bar";
 import {EmptyState} from "@/components/ui/empty-state";
 
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
@@ -85,7 +86,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
      {key:"roll",header:"Roll number",mobilePriority:"secondary" as const,cell:(row)=>row.rollNumber??"—"},
      {key:"progress",header:"Progress",mobilePriority:"secondary" as const,
       cell:(row)=><div className="flex flex-wrap items-center gap-2">
-       <progress max={100} value={row.progress} className="w-24" aria-label={row.name+" progress"}/>
+       <MetricBar label={row.name+" progress"} role="progressbar" value={row.progress} maximum={100} unit="percent" className="w-24" />
        <span className="tabular-nums">{row.progress}%</span>
       </div>},
      {key:"videos",header:"Videos",mobilePriority:"secondary" as const,cell:(row)=>row.videoDone+"/"+report.totalVideos},
