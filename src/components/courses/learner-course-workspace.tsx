@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
 import {learnerAssessmentSubmittedLinkHref} from "@/modules/courses/learner-assessment-submitted-link-model";
 import {learnerRoadmapHeadline} from "@/modules/courses/learner-roadmap-headline-model";
@@ -921,28 +922,28 @@ export function LearnerCourseWorkspace({
                     ) : (
                       <StatusBadge tone="neutral">Not started</StatusBadge>
                     )}
-                    <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                    <Badge  tone="neutral">
                       {lessonProgress.completed} of {lessonProgress.total} complete
-                    </span>
+                    </Badge>
                     {contentCounts.lectures > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.lectures} lecture{contentCounts.lectures === 1 ? "" : "s"}
-                      </span>
+                      </Badge>
                     ) : null}
                     {contentCounts.resources > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.resources} resource{contentCounts.resources === 1 ? "" : "s"}
-                      </span>
+                      </Badge>
                     ) : null}
                     {contentCounts.assessments > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.assessments} assessment{contentCounts.assessments === 1 ? "" : "s"}
-                      </span>
+                      </Badge>
                     ) : null}
                     {contentCounts.liveSessions > 0 ? (
-                      <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
+                      <Badge  tone="neutral">
                         {contentCounts.liveSessions} live
-                      </span>
+                      </Badge>
                     ) : null}
                     <span aria-hidden="true" className="text-primary-text group-open:rotate-90">
                       ›
