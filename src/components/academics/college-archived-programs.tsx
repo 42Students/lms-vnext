@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { Button } from "@/components/ui/button";
 import { useState, useTransition } from "react";
@@ -12,7 +13,7 @@ export function CollegeArchivedPrograms({ programs }: {
   const [busy, start] = useTransition();
   const [error, setError] = useState("");
   return <section className="border-t border-border pt-4">
-    <Button variant="secondary" type="button" onClick={() => setOpen(value => !value)}
+    <Button variant="ghost" type="button" onClick={() => setOpen(value => !value)}
       className="font-semibold text-primary-text">
       {open ? "Hide archived programs" : "Show archived programs"} ({programs.length}{programs.length === 100 ? "+" : ""})
     </Button>
@@ -23,7 +24,7 @@ export function CollegeArchivedPrograms({ programs }: {
         className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
         <p className="text-sm text-body">{program.name} ({program.code}) · {program.departmentName}</p>
         <Button variant="secondary" type="button" disabled={busy}
-          className="rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm font-semibold text-primary-text"
+          className="text-primary-text"
           onClick={() => {
             if (!window.confirm(`Restore ${program.name}? Its active name and code must remain unique.`)) return;
             setError("");
