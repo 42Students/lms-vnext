@@ -66,6 +66,9 @@ function walk(dir, out) {
       if (entry.name === "node_modules" || entry.name === "__tests__") continue;
       walk(full, out);
     } else if (entry.isFile() && entry.name.endsWith(".tsx")) {
+      // Placement public links and recruiter invite landing are not authenticated page titles.
+      if (full.includes(path.sep + "components" + path.sep) &&
+          (entry.name.startsWith("public-") || entry.name === "recruiter-invite-landing.tsx")) continue;
       if (!ONLY || full.replace(/\\/g, "/").includes(ONLY)) out.push(full);
     }
   }
@@ -139,6 +142,9 @@ function propFromChildren(node, sf) {
 }
 function headingProps(h1, sf) {
   if (!safeAttrs(h1, ["className", "id"])) return null;
+  const cls = attributes(h1).find((attr) => nameOf(attr) === "className");
+  if (cls && cls.initializer && ts.isStringLiteral(cls.initializer) &&
+      /(?:^|\\s)(?:sr-only|hidden|invisible|opacity-0)(?:\\s|$)/.test(cls.initializer.text)) return null;
   const title = propFromChildren(h1, sf);
   if (!title) return null;
   let id = "";
