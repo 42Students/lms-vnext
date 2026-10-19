@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { FileUpload } from "@/components/ui/file-upload";
 import { DataTable } from "@/components/ui/data-table";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -134,7 +135,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
       getRowKey={row=>row.line+":"+row.applicationId} empty={<p>No round import results were returned.</p>}
       columns={[
        {key:"application",header:"Application ID",cell:row=>row.applicationId,mobilePriority:"primary"},
-       {key:"status",header:"Status",cell:row=>row.status,mobilePriority:"secondary"},
+       {key:"status",header:"Status",cell:row=><StatusBadge tone={/fail|error|reject/i.test(row.status)?"error":/skip|unmatch|pending/i.test(row.status)?"warning":"success"}>{row.status}</StatusBadge>,mobilePriority:"secondary"},
        {key:"reason",header:"Reason",cell:row=>row.reason??"—",mobilePriority:"secondary"},
       ]}/>
    </div>
