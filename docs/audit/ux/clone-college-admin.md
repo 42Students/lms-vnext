@@ -299,7 +299,7 @@
 - [ ] `src/components/academics/section-operations.tsx`
 - [ ] `src/components/college/college-admin-profile-editor.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-department-insights.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
-- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
+- [ ] `src/components/college/college-faculty-assignment-actions.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-faculty-csv-import.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-faculty-lifecycle-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/components/college/college-faculty-reassign-action.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
@@ -1235,3 +1235,21 @@ Shared component references from inspected source: `src/components/admin/managed
 **Strict ticks:** 0 of these four, and 0 total in the queue. Complete route ownership grep, every-state exact pixel/property matches, live tablet/phone focus and modal interactions, and TSX parse are still outstanding. Corrected shared Skeleton variant to documented `row`, preserving type compatibility at source level. All input and dialog source changes were read back after writing.
 
 **Next exact file:** `src/components/college/college-faculty-assignment-actions.tsx` (then Student CSV import, Student register form, faculty teaching workflows).
+
+### Replacement chat-4 Faculty Assignment Create/End source audit — 2026-10-19
+
+**Full-file grep and tag scan:** `/<(button|input|select|textarea|table)\b/g` => 0; `/#[a-f0-9]{3,8}\b/gi` => 0; `/<h1\b/g` => 0; `/fixed inset-0|role=["']dialog["']/g` => 0. Shared `<Select>` opening/closing: 7/7; `<Alert>` 6/6; `<div>` 3/3. This is a scoped full-file readback, not a runtime parser or global grep.
+
+| Property/state | Legacy value and file | vNext value and source | Strict result |
+| --- | --- | --- | --- |
+| Form controls | legacy-styles/components___form.scss:117-143: input/select radius 10px, 14px/20px, 0.2px letter-spacing; :focus-visible ring 2px teal | college-faculty-assignment-actions.tsx:102 shared Select seven selectors, Checkbox for course selection | **Shared components; exact form label/box grid measured legacy values lacking** |
+| Page canvas / hierarchy | old-lms-pages.md:6: one white canvas, sections separated by thin borders, no nested page canvas | Component section border-t; title h2 subordinate to parent page title; no extra PageCanvas | **Anatomy matches; actual padding/heading 28/30 typography upstream** |
+| Course choices empty | old-lms-pages.md:6,11: empty copy on same canvas | college-faculty-assignment-actions.tsx:154 uses shared EmptyState in scrollable choice fieldset, original copy unchanged | **Shared empty state; unknown exact legacy empty state padding** |
+| Validation, partial outcome, and truncation | old-lms-pages.md:11: status/warning/error banners inline, not handmade panels | college-faculty-assignment-actions.tsx:169 warning truncation, Alert(error) for failed assign and Alert(success) for partially completed result | **Shared status treatment; strict warning red/yellow values unverified** |
+| Destructive end confirmation | old-lms-pages.md:6: central modal, no hand-rolled inline overlay | college-faculty-assignment-actions.tsx:212 shared ConfirmDialog, danger variant, pending guard, server DELETE unchanged | **Shared overlay; old exact confirm footer/focus unknown** |
+| CTA default/hover/focus/disabled/loading | old-lms-shell-spec.md:22-24: 36px/9px/14px/650 teal-white primary, secondary white hairline; components___button.scss:13-24 hover transition 150ms, disabled line 49-51 | college-faculty-assignment-actions.tsx:164 and ui/button.tsx:10-29 shared variants with loading and disabled | **Token source match; legacy hover/active/danger state pixel comparison incomplete** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: stacked mobile through 767px, interactive 44px touch; >=768px row | college-faculty-assignment-actions.tsx:100: one-column <768, 2 columns >=768, 4 >=1024, actions min-h-11 md:min-h-9 | **Source breakpoint matches; tablet live layout and table-card switch not validated** |
+
+**Strict box remains unchecked.** Raw controls/hex/inline modal patterns are absent locally, but complete legacy field-by-field visual values for all states, old LMS per-dialog details, repo-wide zero grep, actual phone/tablet browser comparison, TypeScript typecheck and accessibility interaction replay are not available. Under Section H's rule these gaps must remain open; do not infer certification from source-only work.
+
+**Exact next file:** `src/components/college/college-student-csv-import.tsx`, then `src/components/college/college-student-register-form.tsx`, followed by other Student/Faculty/People queue entries.
