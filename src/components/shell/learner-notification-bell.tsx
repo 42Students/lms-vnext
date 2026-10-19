@@ -61,14 +61,14 @@ export function LearnerNotificationBell(){
   return ()=>document.removeEventListener("keydown",escape);
  },[open]);
  return <div className="relative shrink-0" ref={root}>
-  <button ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" new":"Notifications"}
+  <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" new":"Notifications"}
     aria-haspopup="dialog" aria-expanded={open}
     onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
     className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
     <span aria-hidden="true">🔔</span>
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
      {count>99?"99+":count}</span>:null}
-  </button>
+  </Button>
   {open?<section data-slot="notification-popover" role="dialog" aria-modal="false" aria-label="Notifications"
    className="absolute right-0 top-full z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,92vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between">
