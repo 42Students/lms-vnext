@@ -3,6 +3,7 @@
 import { MetricBar } from "@/components/ui/metric-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FilterChip } from "@/components/ui/filter-chip";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -258,11 +259,11 @@ export function LearnerCourseList({
                <option value="RECENT">Most recently active</option>
             </Select>
           </label>
-          <Button type="button" aria-pressed={continueOnly}
+          <FilterChip type="button" aria-pressed={continueOnly}
             onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}
-            variant={continueOnly ? "primary" : "secondary"} className="min-h-11">
+            className="min-h-11">
             Continue learning only
-          </Button>
+          </FilterChip>
         </div>
         {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
           <Button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
