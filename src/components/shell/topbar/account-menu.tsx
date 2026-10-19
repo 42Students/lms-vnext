@@ -13,6 +13,7 @@ import { accountActionCopy, type AccountMenuVariant } from "../college-account-c
 import { topbarInitials } from "./portal-config";
 import { ChevronIcon } from "./icons";
 import style from "./topbar.module.css";
+import { PopoverPanel } from "@/components/ui/popover";
 
 export function TopbarAccountMenu({
   identityUid, roleLabel, organizationName, variant,
@@ -107,7 +108,7 @@ export function TopbarAccountMenu({
       title={roleLabel + " · " + organizationName}>
       <span className={style.avatarInner}>{topbarInitials(identityUid, roleLabel)}</span>
     </button>
-    {open ? <div id="lms-topbar-account-dialog" role="dialog" aria-modal={false} aria-label="Account menu" className={style.menu}>
+    {open ? <PopoverPanel id="lms-topbar-account-dialog" label="Account menu" className={style.menu}>
       <div className="px-2 pb-2 text-left">
         <p className={style.accountHeading}>{roleLabel}</p>
         <p className={style.accountSubheading}>{organizationName}</p>
@@ -126,6 +127,6 @@ export function TopbarAccountMenu({
         <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
       </button>
       {error ? <p role="alert" className="px-2 pt-2 text-xs text-error">{error}</p> : null}
-    </div> : null}
+    </PopoverPanel> : null}
   </div>;
 }
