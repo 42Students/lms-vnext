@@ -8,10 +8,12 @@ export type DropdownProps = Omit<HTMLAttributes<HTMLDetailsElement>, "children">
   children: ReactNode;
   label?: string;
   align?: "start" | "end";
+  /** Bottom sheet on phones, anchored dropdown on larger screens. */
+  mobileSheet?: boolean;
 };
 
 /** Native disclosure handles Enter/Space without a JavaScript dependency. */
-export function Dropdown({ trigger, children, label, align = "start", className, ...props }: DropdownProps) {
+export function Dropdown({ trigger, children, label, align = "start", mobileSheet = false, className, ...props }: DropdownProps) {
   const rootRef = useRef<HTMLDetailsElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -20,6 +22,13 @@ export function Dropdown({ trigger, children, label, align = "start", className,
     if (!root || !panel) return;
     const positionPanel = () => {
       if (!root.open) return;
+      if (mobileSheet && window.innerWidth < 640) {
+        panel.style.top = "auto";
+        panel.style.bottom = "0";
+        panel.style.transform = "none";
+        panel.style.maxHeight = "70dvh";
+        return;
+      }
       panel.style.top = "calc(100% + 5px)";
       panel.style.bottom = "auto";
       panel.style.transform = "none";
@@ -72,7 +81,7 @@ export function Dropdown({ trigger, children, label, align = "start", className,
       document.removeEventListener("focusin", onFocusIn);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, []);
+  }, [mobileSheet]);
   return <details ref={rootRef} data-slot="dropdown-root" className={cx("group relative inline-block min-w-0 align-middle", className)} {...props}>
     <summary aria-label={label} onKeyDown={event => {
       if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
