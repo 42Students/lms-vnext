@@ -22,7 +22,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx` (greps: complete source, raw controls/hex/native overlay/tabs=0; values: 20 exact shared/legacy rows including open/confirm/error states; responsive: scoped 767px modal actions + fluid text; table below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
@@ -77,7 +77,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/components/projects/mentor-delivery-lock-control.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-lane-board.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/components/projects/mentor-meeting-history.tsx` (greps: file source scan raw-controls/hex/dialog/hand-tabs => 0; values: 10 local-state rows match delegated legacy/shared tokens; responsive: phone/tablet/desktop source paths checked; detail below)
-- [ ] `src/components/projects/mentor-meeting-notes-editor.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/components/projects/mentor-meeting-notes-editor.tsx` (greps: complete source, raw controls/hex/native overlay/tabs=0; values: 20 exact shared/legacy rows including open/confirm/error states; responsive: scoped 767px modal actions + fluid text; table below)
 - [ ] `src/components/projects/mentor-meeting-reschedule.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-meetings-calendar.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/components/projects/mentor-product-backlog.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -677,3 +677,39 @@ The global shared canvas, PageHeader, Button, EmptyState, Pagination and Dialog 
 **review-completeness/page.tsx (83 lines):** Invalid query shows a shared header and a 44px return link, disabled-access shows status, enabled-empty shows shared EmptyState, nonempty shows one border-y + divide-y review list (12px rows) with review decision + feedback metadata. At 320/767px metadata grid stays one column, 768px+ two columns (md:grid-cols-2). Shared Pagination handles page window and disabled destinations; optional IST timestamps are only shown when recorded. All links preserve existing safe project-specific destinations and no write actions are added.
 
 Full device and screenshot parity remains section J orchestrator work, not asserted as executed here.
+
+## Completed: Mentor meeting notes screen + interactive editor
+
+The two complete TSX files and the owned project-only touch CSS module were inspected after the source edits. Scan counts:
+- mentor-meeting-notes-editor.tsx, 79 lines: 0 raw button/input/select/textarea JSX, 0 literal hex, 0 native confirmations, 0 fixed-inset overlays or role="dialog", 0 homemade tabs; 3 shared Button, 1 shared Textarea, 1 shared Dialog and 2 shared ConfirmDialog. The discard guard remains in place.
+- mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx, 42 lines: 0 raw controls, hex, manual overlay or hand tab; 1 PageHeader and one secondary button-shaped Link, with data-unskin exemption so default 500-weight teal text-link rules do not override its measured secondary button paint.
+- legacy-project-touch-actions.module.css, 17 lines: 0 literal hex; one <=767px media rule scoped to the owned editor/closeout components. At <=767px it sets descendant shared Button min-height:44px, including shared dialog/confirmation footer controls. From 768px the global shared Button 36px returns. The editor uses a display:contents wrapper, so existing page layout and dialog render order are unchanged.
+
+Replay in the orchestrator checkout: rg -n '<(button|input|select|textarea)\b|#[[:xdigit:]]{3,8}|window.confirm|role="dialog"|fixed inset-0|role="tab"|aria-pressed' on the two TSX paths; expected 0 matches for both. This is **source inspection**, not a claim the command, browser or CI ran locally in this chat.
+
+| Property/state (all 20) | Old LMS reference exact value | vNext implementation exact value | Verdict |
+|---|---|---|---|
+| One page canvas | old-lms-shell-spec.md:18-20 white #fff, neutral-200 hairline, 12px radius and 24px padding | inherited PageCanvas, globals.css:339,345-346,364-370; page root plain div | match |
+| Main page h1 | old-lms-shell-spec.md:26-27 30px/600/#172033 | page-header.tsx:27-35 and globals.css:327 | match |
+| Phone page h1 | listing-page-header.scss:130-143 20px below 768px, stacked | page-header.tsx:27-35 20px / stacked until md | match |
+| Subtitle desktop | old-lms-pages.md:7 inline baseline, gray | PageHeader:23,30,39-45 joins existing eyebrow + title description only as subtitle | match |
+| Page head hairline | listing-page-header.scss:26-35 1px #e5e9f0 and 16px bottom pad | page-header.tsx:28 border-b, pb-4 | match |
+| Header button text | old-lms-shell-spec.md:23-24 14px/650 and neutral | notes/page.tsx:18 14px, font-[650], body-text #54505d with data-unskin | match |
+| Header button face | old-lms-shell-spec.md:24 secondary white, border, radius9 | notes/page.tsx:18 bg-white, border canvas, --lms-control-radius=9px | match |
+| Header button hover | listing-page-header.scss:123-127 teal border/ink, 5% teal fill | notes/page.tsx:18 hover:bg-[rgba(38,186,199,0.05)] with teal border/text | match |
+| Header button mobile/desktop height | variables.scss:139,148 44px through767px; shell-spec.md:24 36px desktop | notes/page.tsx:18 min-h-11 md:min-h-9 | match |
+| Section hairline | old-lms-pages.md:6,11 neutral-200 | notes/page.tsx:20 border-b canvas token | match |
+| Section bottom padding | variables.scss spacing 24px | notes/page.tsx:20 --lms-space-5=24px | match |
+| Body font and ink | variables.scss:25 #54505d 14px | notes/page.tsx:22-24, globals.css:73,844 | match |
+| Empty outcome state | old-lms-pages.md:6,12 contextual text, no blank card | notes/page.tsx:26-28 inline muted fallback | match |
+| Edit button | old-lms-shell-spec.md:23-24 secondary 14px/650, 36px desktop | editor.tsx:47-49 shared Button secondary | match |
+| Edit dialog | antddesign.scss:1037-1061 viewport-32px mobile, radius12, scroll at max-height viewport-48px | editor.tsx:51-68 delegates Dialog; ui/dialog.tsx:39-55 | match |
+| Form field type and font | components___form.scss:117-128 14px/400, 10px radius, #fbfcfd, 0.2px tracking | editor.tsx:54-57 shared Textarea, legacy-skin.css:105-132 and globals.css:420-445 | match |
+| Field focus | form.scss:130-143 2px teal 15% focus glow | legacy-skin.css:140-164 inherited by Textarea | match |
+| Footer desktop and touch | shell-spec.md:23-24 36px; variables.scss:139,148 mobile 44px | editor.tsx:60-64 shared Button; legacy-project-touch-actions.module.css:10-15 <=767px min44 | match |
+| Save/discard confirm | antddesign.scss:1037-1068 responsive shared dialog, wrap footer | editor.tsx:66-78 uses two ConfirmDialog, both descendants of project scoped touch wrapper | match |
+| Keyboard/disabled/errors | accessibility.scss:18-23 focus outline 2px; old-lms-pages.md:12 inline errors | editor.tsx:23-45 valid/pending/discard guard; errors role=alert; shared Button has focus and pending | match |
+
+Per-state proof: Non-editable meeting status shows a plain note that only completed meetings in active projects are editable; no editor mounts (notes/page.tsx:29-34). Editable + empty initial outcome shows “Record outcome notes”; populated initial value shows “Edit outcome notes.” Dialog form is required, max 4000 characters, 7 rows and locally min-height 128px (existing editor-specific size preserved); save disabled until changed/valid, Review notes triggers the second confirmation, cancel/unsaved close is mediated by useProjectEditorDiscardGuard, success refreshes, API failure shows an inline alert and toast. No sensitive notes appear in project activity history.
+
+Phone (320px and 767px): PageHeader stacks; project action is 44px, dialog width viewport-minus-32px, body scrolls within viewport-minus-48px; all editor, confirm and discard footer actions remain >=44px via scoped CSS. Textarea has max-w-full and notes preview uses break-words/whitespace-pre-wrap. Tablet (768px+) restores 36px buttons and inline PageHeader actions. These are static responsive proofs; section J screenshot verification remains the orchestrator's separate stage.
