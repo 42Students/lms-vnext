@@ -259,3 +259,18 @@ Every row refers to a full source file, not to an arbitrary commit. The checked 
 
 - [ ] Browser pixel comparison, role interaction checks, TS typecheck, tests and CI remain explicitly outstanding.
 - [ ] **Next file:** `src/components/admin/super-admin-learning-filter-fields.tsx`, then Super Admin Academics / Lectures remaining nested widgets.
+
+
+### Academic setup navigation and faculty assignment completion
+
+| File | Exact legacy values + source location | Static grep and phone/tablet proof |
+| --- | --- | --- |
+| [x] `src/components/admin/super-admin-learning-filter-fields.tsx` | `:9,14` form labels 13px/600 match `components___form.scss:110-112`, controls inherit shared `Select` field palette and 10px radius (`components___form.scss:120`). | Native control `0`; hex `0`; inline styles `0`; `<Select>` 2/2. Both Selects 44px ≤767px/36px ≥768px. |
+| [x] `src/components/admin/super-admin-faculty-assignment-create.tsx` | `:70-134` all course/class/faculty/role labels and legend now 13px/600 body/heading token; selector chrome from shared `Select` and multi-course `Checkbox`. | Native control `0`; hex `0`; inline styles `0`; `<Button>` 5/5, `<Select>` 4/4. Six explicit 768px overrides, form/grid stacked on phone, multi-course selection scrollable, submit and edit pending states unchanged. |
+| [x] `src/components/admin/academic-setup-steps.tsx` | Existing six-step sequence retained; next/previous/overview controls now white outlined 9px radius `globals.css:343`, teal hover `globals.css:30`, 2px keyboard outline. | Native control `0`; hex `0`; inline styles `0`. Five step affordances now 44px min ≤767px and 36px ≥768px. Flex-wrap navigation retained. |
+| [x] `src/components/admin/academic-module-scope-inventory.tsx` | Academic hierarchy header uses `--lms-heading` `globals.css:327`; show/hide buttons shared `Button`, pagination links 9px radius, semantic teal hover/focus. | Native control `0`; hex `0`; inline styles `0`; `<Button>` 2/2. Four touch overrides 44px ≤767px/36px ≥768px; DataTable and bounded scroll untouched. |
+
+**Grep proof (source scan of branch, not local execution):** `rg -o '<(button|select|input|textarea)\\b' <file> | wc -l` = `0` for each of four; `rg -o '#[0-9A-Fa-f]{3,8}\\b' <file> | wc -l` = `0`; inline `style={` = `0`; shared `Button` / `Select` opening and closing counts match above. **Source breakpoints:** `old-lms-shell.css:73` ≤767px mobile and `pages___admin-list-pages.scss:193`, `components___variables.scss:139` =44px; `globals.css:341`=36px. Explicit controls now use `min-[768px]`, not Tailwind's earlier 640px `sm` threshold. No scope, auth, data, mutation, or command behavior was changed.
+
+- [ ] Screenshot pixel matching, true computed CSS and interaction QA, TypeScript builds, tests and CI all remain unverified by owner policy.
+- [ ] **Next file:** `src/components/admin/super-admin-student-bulk-access.tsx` (Super Admin first-third people/academic components), then `src/components/admin/super-admin-student-import-history.tsx`.
