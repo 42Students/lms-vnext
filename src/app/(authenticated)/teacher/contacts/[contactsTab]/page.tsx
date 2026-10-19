@@ -103,7 +103,7 @@ export default async function FacultyContactsPage({
         )}
       </nav>
 
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">

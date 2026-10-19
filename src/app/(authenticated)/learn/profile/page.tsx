@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {learnerProfileSectionRecoveryNotice,learnerProfileResolveSection} from "@/modules/people/learner-profile-section-recovery-model";
@@ -41,14 +42,14 @@ export default async function LearnerProfilePage({
         title="Profile"
       />
       <LearnerVerificationLiveRefresh/>
-      <section aria-label="Profile verification summary" className="border-b border-border py-4">
+      <section aria-label="Profile verification summary" className="rounded-xl border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Profile verification</h2>
-          <span className="rounded-full border border-border px-3 py-1 text-sm font-semibold text-foreground">
+          <Badge  tone="neutral">
             {verification&&["VERIFIED","UPDATE_PENDING"].includes(verification.education.status)&&
               ["VERIFIED","UPDATE_PENDING"].includes(verification.identity.status)
               ?"Verified profile":"Not verified yet"}
-          </span>
+          </Badge>
         </div>
         {verification? <div className="mt-3 space-y-2 text-sm text-body">
           {(["education","identity"] as const).map(section=>{
@@ -65,7 +66,7 @@ export default async function LearnerProfilePage({
               You changed this after it was verified. The verified details stay in use until you send the changes for review.
             </p>:null}
         </div>:<p role="status" className="mt-2 text-sm text-body">Verification status is temporarily unavailable.</p>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review verification status</Link>
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review verification status</Link>
       </section>
       {sectionNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{sectionNotice}</p> : null}
       <section aria-label="Academic identity" className="border-b border-border pb-5">
@@ -100,14 +101,14 @@ export default async function LearnerProfilePage({
         )}
       </section>
       <Link href="/learn/profile/academic-record"
-        className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         View my academic record →
       </Link>
       <Link href="/learn/profile/data-access"
-        className="inline-flex min-h-9 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Who has my data →
       </Link>
-      <section aria-label="Verification status" className="border-b border-border py-4 sm:py-6">
+      <section aria-label="Verification status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Education and identity verification</h2>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
         {verification?<div className="mt-4 space-y-3">
@@ -127,7 +128,7 @@ export default async function LearnerProfilePage({
         </div>:<p role="status" className="mt-3 text-sm text-body">
           Verification requirements are temporarily unavailable. Open the verification page to retry.
         </p>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">View my verification status →</Link>
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">View my verification status →</Link>
       </section>
       <section aria-label="Coding profiles" className="min-w-0 border-b border-border pb-5">
         <h2 className="text-base font-semibold text-foreground">Coding platform profiles</h2>
@@ -145,8 +146,8 @@ export default async function LearnerProfilePage({
         )}
         <p className="mt-2 text-xs text-muted-foreground">Save GitHub under Social profiles; add other coding sites as URL-type entries under Additional information using the exact platform name.</p>
         <div className="flex flex-wrap gap-4">
-          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Edit GitHub →</Link>
-          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-9 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Edit coding links →</Link>
+          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Edit GitHub →</Link>
+          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text underline">Edit coding links →</Link>
         </div>
       </section>
       <LearnerProfileWorkspace

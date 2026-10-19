@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useRef,useState } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
@@ -74,9 +75,9 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <p className="text-sm text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
   {error?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-error">
    <p>{error}</p>
-   {needsReload?<button type="button" onClick={()=>{
+   {needsReload?<Button variant="secondary" type="button" onClick={()=>{
     setReloadOpen(true);
-   }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground sm:min-h-9">Reload latest profile</button>:null}
+   }} className="min-h-11 px-4 sm:min-h-9">Reload latest profile</Button>:null}
   </div>:null}
   {pending&&savingSection?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-foreground">
     Saving {facultyProfileSaveSectionLabel(savingSection)}…</p>:null}

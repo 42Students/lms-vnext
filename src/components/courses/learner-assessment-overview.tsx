@@ -1,6 +1,5 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
@@ -212,7 +211,7 @@ export function LearnerAssessmentOverview({
   if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
     return <div role="alert" className="rounded-lg border border-border bg-surface p-4">
       <p>Couldn&apos;t load your class, so quizzes can&apos;t be shown.</p>
-      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
+      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
     </div>;
   }
   if (items.length === 0) {
@@ -236,7 +235,7 @@ export function LearnerAssessmentOverview({
     <div className="space-y-5">
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 border-b border-border pb-4 text-sm font-semibold text-body">
-          <span className="rounded-full border border-border px-3 py-1">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</span>
+          <Badge  tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
           <details className="min-w-0 rounded-lg border border-border px-3 py-1">
             <summary className="cursor-pointer text-primary-text">{submittedQuizzes.length} Submitted</summary>
             {submittedQuizzes.length>0 ? (
@@ -283,7 +282,7 @@ export function LearnerAssessmentOverview({
         {quickCounts.map(quick => (
           <Button key={quick.value} type="button" aria-pressed={stateFilter === quick.value}
             onClick={() => { setStateFilter(value => value === quick.value ? "ALL" : quick.value); setPage(1); }}
-            variant="secondary" className="min-h-9 aria-pressed:!border-[var(--lms-primary)] aria-pressed:!bg-[var(--lms-primary-subtle)] aria-pressed:!text-[var(--lms-primary-text)]">
+            variant="secondary" className="min-h-11 aria-pressed:!border-[var(--lms-primary)] aria-pressed:!bg-[var(--lms-primary-subtle)] aria-pressed:!text-[var(--lms-primary-text)]">
             {LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label} ({quick.count})
           </Button>
         ))}
@@ -294,7 +293,7 @@ export function LearnerAssessmentOverview({
           <Input type="search" value={search} maxLength={100}
             onChange={event => {setSearch(event.target.value);setPage(1);}}
             placeholder="Title, lesson or course"
-            className="min-h-9" />
+            className="min-h-11" />
         </label>
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -349,7 +348,7 @@ export function LearnerAssessmentOverview({
         <Button type="button" onClick={() => {
           setCourseId("");setSearch("");setStateFilter("ALL");setSort("DUE");setPage(1);
           if(initialCourseId)router.push(learnerAssessmentCourseHref(kind,null));
-        }} variant="secondary" className="min-h-9">
+        }} variant="secondary" className="min-h-11">
           Clear assessment filters
         </Button>
       ) : null}
@@ -399,9 +398,9 @@ export function LearnerAssessmentOverview({
                   const state=quizOverviewActionState(item,currentNowMs);
                   return <div className="flex flex-wrap gap-2">
                     <Link href={`/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review?"&review=true":""}`}
-                      className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">{state.action}</Link>
+                      className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">{state.action}</Link>
                     <Link href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
-                      className="inline-flex min-h-9 sm:min-h-9 items-center font-semibold text-primary-text underline">Attempt history</Link>
+                      className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">Attempt history</Link>
                   </div>;
                 }},
             ]}
@@ -496,14 +495,14 @@ export function LearnerAssessmentOverview({
                             `${item.deliveryId}:${item.id}`,
                           )
                         }
-                        className="min-h-9 w-full sm:w-auto"
+                        className="min-h-11 w-full sm:w-auto"
                       >
                         {state.action}
                       </Button>
                     ) : (
                       <Link
                         href={href}
-                        className="inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
+                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover sm:w-auto"
                       >
                         {state.action}
                       </Link>
@@ -511,7 +510,7 @@ export function LearnerAssessmentOverview({
                     {item.kind === "QUIZ" ? (
                       <Link
                         href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-9 sm:min-h-9 sm:w-auto"
+                        className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center text-xs font-semibold text-primary-text underline sm:min-h-11 sm:min-h-9 sm:w-auto"
                       >
                         Attempt history
                       </Link>
@@ -544,12 +543,12 @@ export function LearnerAssessmentOverview({
             <>
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
-              className="inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text sm:w-auto"
+              className="inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary-text sm:w-auto"
             >
               Open in Learning Path
             </Link>
             <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
-              className="mt-2 inline-flex min-h-9 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:underline sm:ml-2 sm:mt-0 sm:w-auto">
+              className="mt-2 inline-flex min-h-11 sm:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-primary-text hover:underline sm:ml-2 sm:mt-0 sm:w-auto">
               Full assignment details
             </Link>
             </>
@@ -693,7 +692,7 @@ export function LearnerAssessmentOverview({
                     deliveryId={selectedAssignment.deliveryId}
                   />
                 ) : <Button type="button" disabled aria-disabled="true"
-                  variant="secondary" className="mt-3 min-h-9">
+                  variant="secondary" className="mt-3 min-h-11">
                   {selectedAssignment.dueAt?"Submission closed":"Unavailable"}
                 </Button>}
               </>
@@ -711,7 +710,7 @@ export function LearnerAssessmentOverview({
             type="button"
             disabled={currentPage <= 1}
             onClick={() => setPage((value) => Math.max(1, value - 1))}
-            variant="secondary" className="min-h-9"
+            variant="secondary" className="min-h-11"
           >
             Previous
           </Button>
@@ -722,7 +721,7 @@ export function LearnerAssessmentOverview({
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
-            variant="secondary" className="min-h-9"
+            variant="secondary" className="min-h-11"
           >
             Next
           </Button>

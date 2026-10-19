@@ -47,7 +47,7 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
    <Button variant="primary" type="button" disabled={busy} onClick={()=>void submit()}
     >
     {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}</Button>
-   <Button variant="ghost" className="underline" type="button" disabled={busy} onClick={()=>setConfirmation(null)}
+   <Button variant="ghost" className="underline" type="button" disabled={busy} onClick={()=>{setConfirmation(null);setError("");}}
     >{confirmation==="CANCEL"?"Keep it":"Not now"}</Button>
   </Dialog>}
  </div>;

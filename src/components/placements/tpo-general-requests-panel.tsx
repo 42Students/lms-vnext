@@ -52,7 +52,7 @@ export function TpoGeneralRequestsPanel(){
  return <section aria-label="Other student requests" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold">Other student requests · {pendingRows.length} waiting</h2>
   <p className="text-sm">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
-  <button type="button" onClick={()=>void load()} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Refresh other requests</button>
+  <Button variant="secondary" type="button" onClick={()=>void load()} className="min-h-11 px-3">Refresh other requests</Button>
   {error?<p role="alert" className="text-error">{error}</p>:null}
   {message?<p role="status">{message}</p>:null}
   {!rows.length?<p role="status" className="text-sm">No other requests to review.</p>:
@@ -62,8 +62,8 @@ export function TpoGeneralRequestsPanel(){
     <p className="text-xs">{row.status.replaceAll("_"," ")}</p>
     <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
     {row.decisionNote?<p>Decision: {row.decisionNote}</p>:null}
-    {row.status==="PENDING"?<button type="button" disabled={pending} className="mt-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text"
-      onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</button>:null}
+    {row.status==="PENDING"?<Button variant="secondary" type="button" disabled={pending} className="mt-2 min-h-11 px-3"
+      onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</Button>:null}
    </li>)}</ul>}
   <Dialog open={selection!==null} onOpenChange={open=>{if(!open&&!pending)setSelection(null);}}
    title={"Review "+(selection?.kind.replaceAll("_"," ").toLowerCase()??"request")}

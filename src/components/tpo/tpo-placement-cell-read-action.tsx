@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -27,10 +28,10 @@ export function TpoPlacementCellReadAction({id}:{id:string}){
   }
  }
  return <div className="mt-3 space-y-1">
-  <button type="button" disabled={busy} onClick={()=>void markRead()}
-   className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>void markRead()}
+   className="min-h-9 px-3">
    {busy?"Saving…":"Mark as read for our placement cell"}
-  </button>
+  </Button>
   {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-body">{notice}</p>:null}
  </div>;

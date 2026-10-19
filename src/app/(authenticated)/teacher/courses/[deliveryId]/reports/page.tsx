@@ -1,3 +1,4 @@
+import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -25,17 +26,17 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  ["Quizzes",data.breakdown.quizzes],
  ["Published assignments",data.breakdown.publishedAssignments],
  ["Published quizzes",data.breakdown.publishedQuizzes]] as const).map(([title,n])=>
- <section key={title} className="rounded-xl border border-border bg-surface p-4">
+ <section key={title} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
  <h2 className="text-xs font-semibold text-muted-foreground">{title}</h2>
  <p className="mt-2 text-xl font-semibold tabular-nums">{n}</p></section>)}</div>
  <div className="grid gap-3 sm:grid-cols-2">
- <section className="rounded-xl border border-border bg-surface p-5">
+ <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
  <h2 className="font-semibold">Attendance</h2>
  <p className="mt-2 text-sm text-body">{data.attendance.scheduled} scheduled sessions;
  {" "}{data.attendance.marked} marked. Unmarked attendance is unknown, not zero.</p>
  <Link href={root+"/attendanceDetail"} className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open attendance report →</Link>
  </section>
- <section className="rounded-xl border border-border bg-surface p-5">
+ <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
  <h2 className="font-semibold">Published gradebook</h2>
  <p className="mt-2 text-sm text-body">Published assessment counts are not a final grade. Individual published scores are shown only in the gradebook.</p>
  <Link href={root+"/gradebook"} className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open gradebook →</Link>
@@ -51,7 +52,7 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  {data.health.items.length===0?<EmptyState title="No published assessment reports"
  description="This Section has no published assessments matching the filter. Private or ungraded work is not fabricated."/>
  :<div className="grid gap-3">{data.health.items.map(item=>
- <article key={item.kind+item.id} className="rounded-xl border border-border bg-surface p-4">
+ <article key={item.kind+item.id} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
  <h2 className="font-semibold">{item.title}</h2>
  <p className="mt-1 text-sm text-body">{item.kind} · {item.responded}/{item.eligible} recorded responses · {item.outstanding} not responded</p>
  <p className="mt-1 text-xs text-muted-foreground">Graded average: {item.averagePercent===null?"Unknown":item.averagePercent+"%"}</p>

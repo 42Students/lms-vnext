@@ -69,7 +69,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       description="No registered published Assignment or Quiz matches this Section and filter. Draft work and unsupported legacy results are not counted." />
     : <div className="grid gap-3">{data.items.map(item =>
       <article key={item.kind + ":" + item.id}
-        className="rounded-xl border border-border bg-surface p-4">
+        className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-semibold text-foreground">{item.title}</h2>
           <span className="text-xs font-semibold text-body">{item.kind}</span>

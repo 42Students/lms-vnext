@@ -1,9 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 import Link from "next/link";
+import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { LearnerCourseCardImage } from "./learner-course-card-image";
 import {learnerCourseImageResetKey} from "@/modules/courses/learner-course-image-reset-key-model";
 import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card-due-label-model";
@@ -180,7 +181,7 @@ export function LearnerCourseList({
                   setSortMode("NAME");
                   setVisibleLimit(reset.visibleLimit);
                 }}
-                className="mt-1.5 min-h-9"
+                className="mt-1.5 w-full"
                 aria-label="Select semester"
               >
                 {periods.map((period) => (
@@ -201,14 +202,14 @@ export function LearnerCourseList({
                   setVisibleLimit(PAGE_SIZE);
                 }}
                 placeholder="Search courses…"
-                className="mt-1.5 min-h-9"
+                className="mt-1.5 min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
               />
             </label>
           </div>
 
           {electiveCount > 0 ? (
             <div
-              className="grid min-h-9 sm:min-h-9 w-full grid-cols-3 gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-1 sm:inline-flex sm:w-auto"
+              className="grid min-h-9 w-full grid-cols-3 gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-1 sm:inline-flex sm:w-auto"
               aria-label="Filter by course type"
             >
               {[
@@ -216,15 +217,14 @@ export function LearnerCourseList({
                 ["core", `Regular ${coreCount}`],
                 ["elective", `Electives ${electiveCount}`],
               ].map(([value, label]) => (
-                <Button
-                  key={value}
+                <Button variant="ghost" key={value}
                   type="button"
                   aria-pressed={effectiveTypeFilter === value}
                   onClick={() => {
                     setTypeFilter(value as "all" | "core" | "elective");
                     setVisibleLimit(PAGE_SIZE);
                   }}
-                  variant="secondary" className="min-h-9 min-w-0 px-2 text-xs aria-pressed:!border-[var(--lms-primary)] aria-pressed:!bg-[var(--lms-primary-subtle)] aria-pressed:!text-[var(--lms-primary-text)] sm:px-3"
+                  variant="secondary" className="min-h-11 min-w-0 px-2 text-xs aria-pressed:!border-[var(--lms-primary)] aria-pressed:!bg-[var(--lms-primary-subtle)] aria-pressed:!text-[var(--lms-primary-text)] sm:px-3"
                 >
                   {label}
                 </Button>
@@ -237,7 +237,7 @@ export function LearnerCourseList({
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Term access
             <Select value={termState} onChange={e=>{setTermState(e.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-9">
+              className="w-full">
               <option value="ALL">All term courses</option>
               <option value="CURRENT">Currently active</option>
               <option value="HISTORY">Past semester (read-only)</option>
@@ -246,7 +246,7 @@ export function LearnerCourseList({
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Learning progress
             <Select value={progressFilter} onChange={event=>{setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-9">
+              className="w-full">
               <option value="ALL">Any progress</option>
               <option value="NOT_STARTED">Not started</option>
               <option value="IN_PROGRESS">In progress</option>
@@ -257,47 +257,49 @@ export function LearnerCourseList({
           <label className="grid min-w-44 gap-1 text-xs font-semibold text-body">
             Sort Courses
             <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setVisibleLimit(PAGE_SIZE);}}
-              className="min-h-9">
+              className="w-full">
               <option value="NAME">Course name</option><option value="PROGRESS">Least progress first</option>
               <option value="DUE">Next assessment due</option>
                <option value="RECENT">Most recently active</option>
             </Select>
           </label>
-          <Button type="button" aria-pressed={continueOnly}
+          <Button variant="secondary" type="button" aria-pressed={continueOnly}
             onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}
-            variant="secondary" className="min-h-9 aria-pressed:!border-[var(--lms-primary)] aria-pressed:!bg-[var(--lms-primary-subtle)] aria-pressed:!text-[var(--lms-primary-text)]">
+            className={continueOnly
+              ? "min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
+              : "min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary"}>
             Continue learning only
           </Button>
         </div>
         {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
-          <Button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
-            variant="secondary" className="mt-3 min-h-9">
+          <Button variant="secondary" type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
+            className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
             Clear Course filters
           </Button>
         ) : null}
         <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
           {periodRows[0]?.course.programName ? (
-            <span className="rounded-full bg-muted px-3 py-1.5">
+            <Badge  tone="neutral">
               {periodRows[0].course.programName}
-            </span>
+            </Badge>
           ) : null}
           {selectedPeriod ? (
-            <span className="rounded-full bg-muted px-3 py-1.5">
+            <Badge  tone="neutral">
               {selectedPeriod.name}
-            </span>
+            </Badge>
           ) : null}
-          <span className="rounded-full bg-muted px-3 py-1.5">
+          <Badge  tone="neutral">
             {periodRows.length} {periodRows.length === 1 ? "Course" : "Courses"}
-          </span>
+          </Badge>
           {creditSummary.recordedCount > 0 ? (
-            <span className="rounded-full bg-muted px-3 py-1.5">
+            <Badge  tone="neutral">
               {creditSummary.credits} recorded credits
               {creditSummary.missingCount > 0
                 ? ` · ${creditSummary.missingCount} course credit values unavailable`
                 : ""}
-            </span>
+            </Badge>
           ) : creditSummary.missingCount > 0 ? (
-            <span className="rounded-full bg-muted px-3 py-1.5">Credits not recorded</span>
+            <Badge  tone="neutral">Credits not recorded</Badge>
           ) : null}
         </div>
         <div className="mt-3 flex flex-wrap gap-2 text-xs">
@@ -335,7 +337,7 @@ export function LearnerCourseList({
       {rows.some(row => row.unavailable) ? (
         <p role="alert" className="rounded-lg border border-warning bg-surface p-4 text-sm text-body">
           Some course records have incomplete or duplicate information. Unavailable cards cannot be opened.
-          <Button type="button" onClick={() => window.location.reload()} variant="ghost" className="ml-2 !text-[var(--lms-primary-text)] underline">Retry</Button>
+          <Button variant="secondary" type="button" onClick={() => window.location.reload()} className="ml-2 font-semibold text-primary-text underline">Retry</Button>
         </p>
       ) : null}
       <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length, periodRows.length)}</p>
@@ -416,16 +418,16 @@ export function LearnerCourseList({
                       </p>
 
                       <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                        <span className="rounded-full bg-muted px-2.5 py-1">
+                        <Badge  tone="neutral">
                           {row.course.sectionName}
-                        </span>
-                        {row.course.cohortName ? <span className="rounded-full bg-muted px-2.5 py-1">
+                        </Badge>
+                        {row.course.cohortName ? <Badge  tone="neutral">
                           Batch: {row.course.cohortName}
-                        </span> : null}
+                        </Badge> : null}
                         {row.course.credits ? (
-                          <span className="rounded-full bg-muted px-2.5 py-1">
+                          <Badge  tone="neutral">
                             {row.course.credits} Credits
-                          </span>
+                          </Badge>
                         ) : null}
                       </div>
 
@@ -489,13 +491,13 @@ export function LearnerCourseList({
                           readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
                           nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
                         })!}
-                        className="mt-2 flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-foreground">
+                        className="mt-2 flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-warning px-3 text-sm font-semibold text-foreground">
                         Open overdue assignment: {row.firstOverdue.title}
                       </Link>
                     ) : null}
                     {learnerCourseNextItemHref(row) ? (
                       <Link href={learnerCourseNextItemHref(row)!}
-                        className="mt-2 flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text hover:bg-muted">
+                        className="mt-2 flex min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text hover:bg-muted">
                         Continue at next learning item →
                       </Link>
                     ) : null}
@@ -506,10 +508,10 @@ export function LearnerCourseList({
           </div>
           {visibleRows.length > visibleLimit ? (
             <div className="text-center">
-              <Button
+              <Button variant="secondary"
                 type="button"
                 onClick={() => setVisibleLimit((value) => value + PAGE_SIZE)}
-                variant="secondary" className="min-h-9"
+                className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
               >
                 Show more courses ({visibleRows.length - visibleLimit} remaining)
               </Button>

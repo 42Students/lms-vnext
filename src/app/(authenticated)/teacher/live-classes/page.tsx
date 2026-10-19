@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -50,8 +49,8 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
       {c.courseName} · {c.sectionName}
      </option>)}
     </Select></label>
-   <Button type="submit" variant="primary">Filter</Button>
-   <Link href="/teacher/live-classes" className="inline-flex min-h-9 items-center p-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+   <Button variant="primary" type="submit" className="min-h-9 px-4 py-2">Filter</Button>
+   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
   </form>
   <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"

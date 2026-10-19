@@ -11,7 +11,7 @@ const shape = {
   line: "h-4 w-full",
   card: "h-40 w-full rounded-[var(--lms-radius-card)]",
   kpi: "h-28 w-full rounded-[var(--lms-radius-card)]",
-  row: "h-24 w-full rounded-[var(--lms-radius-sm)]",
+  row: "h-12 w-full rounded-[var(--lms-control-radius)]",
   form: "h-16 w-full rounded-[var(--lms-radius-control)]",
 } as const;
 

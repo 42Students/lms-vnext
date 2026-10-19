@@ -1,4 +1,5 @@
 "use client";
+import { Select } from "@/components/ui/select";
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 type Classroom={id:string;name:string;cohortName:string;periodStart:string;periodEnd:string;updatedAt:string};
@@ -38,14 +39,14 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:
       <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="grid gap-1 text-sm font-semibold">Class
-          <select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
+          <Select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
             <option value="">Select class</option>
             {classes.map(c=><option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
-          </select></label>
+          </Select></label>
         <label className="grid gap-1 text-sm font-semibold">Faculty (optional)
-          <select className={field} value={facultyId} onChange={e=>setFacultyId(e.target.value)}>
+          <Select className={field} value={facultyId} onChange={e=>setFacultyId(e.target.value)}>
             <option value="">None</option>{faculty.map(f=><option key={f.id} value={f.id}>{f.displayName||"Unnamed Faculty"}</option>)}
-          </select></label>
+          </Select></label>
         <label className="grid gap-1 text-sm font-semibold">Title
           <input className={field} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}/></label>
         <label className="grid gap-1 text-sm font-semibold">Date (IST)

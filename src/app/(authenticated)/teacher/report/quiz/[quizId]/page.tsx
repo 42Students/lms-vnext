@@ -115,7 +115,7 @@ export default async function FacultyQuizReportPage({
           ["Questions", metrics.questionCount],
           ["Due date", quiz.dueAt ? facultyReportIstTimestamp(quiz.dueAt) : "—"],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-xl border border-border bg-surface p-4">
+          <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </div>
@@ -192,7 +192,7 @@ export default async function FacultyQuizReportPage({
             {questions.map((question, index) => (
               <li
                 key={question.id}
-                className="rounded-lg bg-surface-subtle p-4"
+                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -250,7 +250,7 @@ export default async function FacultyQuizReportPage({
             {notAttemptedLearners.map((learner) => (
               <li
                 key={learner.membershipId}
-                className="rounded-lg bg-surface-subtle p-3"
+                className="rounded-[var(--lms-control-radius)] bg-surface-subtle p-3"
               >
                 <p className="m-0 text-sm font-semibold text-foreground">
                   {facultyReportLearnerName(learner.displayName)}
