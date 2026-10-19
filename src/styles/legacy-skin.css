@@ -254,3 +254,58 @@
     transition: none !important;
   }
 }
+
+/* TYPOGRAPHY
+ * Running-old-LMS measurement: old-lms-shell-spec.md:26-28 (Inter;
+ * h1 30px/600/#172033), echoed by old-lms-pages.md:6-8.
+ * Legacy tokens: components___variables.scss:176-190 (weights and type scale).
+ * Font only; existing page spacing, line boxes and structure remain untouched.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h1):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-heading) !important;
+  font-family: inherit !important;
+  font-size: 30px !important;
+  font-weight: 600 !important;
+}
+/* Legacy: components___typo.scss:13-25 (.h2 sizes 20/22/30);
+ * components___variables.scss:24,178 (heading ink and semibold).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h2):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-900) !important;
+  font-family: inherit !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+}
+/* Legacy: components___typo.scss:28-40 (.h3 sizes 16/18/20);
+ * components___variables.scss:24,178.
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h3):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-900) !important;
+  font-family: inherit !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+/* Legacy: components___variables.scss:24,176-189
+ * (default text hierarchy 16/14/13; all headings semibold).
+ */
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h4):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-900) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h5):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-900) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+:where(main, [data-slot="canvas"], [data-slot="page-canvas"])
+  :where(h6):not(:where([data-unskin], [data-unskin] *)) {
+  color: var(--lms-neutral-700) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
