@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -68,13 +69,13 @@ export function MentorSprintCreate({
       </>}>
       <div className="grid gap-4">
         <label className="grid gap-1 text-sm font-semibold text-body">Ships in release
-          <select data-slot="select" value={chosenReleaseId} disabled={busy}
+          <Select value={chosenReleaseId} disabled={busy}
             onChange={event=>setChosenReleaseId(event.target.value)}
             className="min-h-9 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] text-foreground">
             {releases.length?releases.filter(release=>release.status!=="SHIPPED").map(release=>
               <option key={release.id} value={release.id}>{release.title}</option>):
               <option value={releaseId}>Current release</option>}
-          </select>
+          </Select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint title
           <Input maxLength={200} value={title}
