@@ -2,8 +2,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
-import { Button } from "@/components/ui/button";
-import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
+import {Button} from "@/components/ui/button";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {recruiterBellAriaLabel,recruiterBellPreview,createRecruiterBellRequestGate,type RecruiterBellItem}
  from "@/modules/placements/recruiter-bell-model";
@@ -65,31 +64,31 @@ export function RecruiterNotificationBell(){
  },[isOpen]);
  const href="/hr/notifications"+(data?.collegeId?"?collegeId="+encodeURIComponent(data.collegeId):"");
  return <div className="relative">
-  <Button variant="secondary" ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
+  <Button ref={triggerRef} type="button" onClick={()=>{setIsOpen(!isOpen);if(!isOpen)void load();}}
     aria-expanded={isOpen} aria-haspopup="dialog"
     aria-label={recruiterBellAriaLabel(data?.unread??null)}
-    className="relative min-h-11 min-w-11 rounded-[8px] px-2">
-    <ShellNavGlyph name="bell" />
+    variant="secondary" className="relative min-w-9 !px-2">
+    <span aria-hidden="true">🔔</span>
     {data?.unread&&data.unread>0?<span aria-hidden="true"
       className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-full bg-[#ff7576] px-1 text-[10px] leading-3 text-white">
       {data.unread>99?"99+":data.unread}</span>:null}
   </Button>
   {isOpen?<section ref={popoverRef} role="dialog" aria-modal="false" aria-label="Notifications"
-    className="absolute right-0 top-full z-[1050] mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,94vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-[var(--lms-overlay-shadow)]">
-   <div className="-mx-4 -mt-4 flex items-center justify-between gap-3 rounded-t-[12px] border-b border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-4 py-3">
-    <h2 className="text-[18px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-foreground)]">Notifications</h2>
-    <Button variant="ghost" type="button" onClick={()=>{setIsOpen(false);triggerRef.current?.focus();}}
-     aria-label="Close notifications" className="min-h-11 px-3 text-primary-text">Close</Button>
+    className="absolute right-0 top-full z-50 mt-2 w-[min(25rem,94vw)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
+   <div className="flex items-center justify-between gap-3">
+    <h2 className="font-semibold text-foreground">Notifications</h2>
+    <Button type="button" onClick={()=>setIsOpen(false)}
+     aria-label="Close notifications" variant="ghost">Close</Button>
    </div>
    {error?<div role="alert" className="mt-3 text-sm text-error">{error}
-    <Button variant="ghost" type="button" onClick={()=>void load()} className="ml-2 min-h-9 text-primary-text underline">Retry</Button>
+    <Button type="button" onClick={()=>void load()} variant="ghost" className="ml-2 underline">Retry</Button>
    </div>:null}
    {data?.status==="CHOOSE_COLLEGE"?
     <div className="mt-3 space-y-2 text-sm">{data.choices?.map(item=>
-     <Button variant="secondary" type="button" key={item.collegeId} onClick={()=>{
+     <Button type="button" key={item.collegeId} onClick={()=>{
        requestGate.current.invalidate();setData(null);setError("");setCollegeId(item.collegeId);
       }}
-      className="min-h-11 w-full justify-start p-3 text-left">
+      variant="secondary" className="w-full justify-start text-left">
       {item.collegeName}</Button>)}</div>:null}
    {data?.status==="READY"&&data.rows?.length===0?
      <p role="status" className="mt-4 text-sm text-muted-foreground">No notifications yet</p>:null}
