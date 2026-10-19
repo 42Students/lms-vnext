@@ -48,7 +48,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
     </label>)}
   </details>
   <button type="button" disabled={busy} onClick={()=>void save()}
-   className="min-h-11 rounded-md bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">{busy?"Saving…":"Save"}</button>
+   className="min-h-11 rounded-[9px] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">{busy?"Saving…":"Save"}</button>
   {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message} onDismiss={()=>setMessage("")}/>:null}
  </section>;
 }
