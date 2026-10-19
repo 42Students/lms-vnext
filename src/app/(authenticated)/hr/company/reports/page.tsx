@@ -226,7 +226,7 @@ export default async function RecruiterCompanyReportsPage({
             value={collegeId}
           />
 
-          <label className="grid min-w-44 gap-1 text-sm font-semibold text-body">
+          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body md:w-auto md:min-w-44">
             Drive status
             <Select
               name="status"
@@ -245,7 +245,7 @@ export default async function RecruiterCompanyReportsPage({
             </Select>
           </label>
 
-          <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">
+          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body md:w-auto md:min-w-32">
             Rows per page
             <Select
               name="pageSize"
@@ -258,13 +258,13 @@ export default async function RecruiterCompanyReportsPage({
             </Select>
           </label>
 
-          <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply filters</Button>
+          <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
 
           <Link
             href={recruiterCompanyReportsHref({
               collegeId,
             })}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto"
           >
             Clear filters
           </Link>
