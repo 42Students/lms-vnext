@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
@@ -49,10 +50,10 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
      </Select>
     </label>
     <label className="grid gap-1 text-sm">Applied from
-     <input type="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
+     <Input type="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
     </label>
     <label className="grid gap-1 text-sm">Applied to
-     <input type="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
+     <Input type="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded border border-border bg-surface px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] text-base sm:text-sm"/>
     </label>
     <div className="flex gap-3 sm:col-span-2 lg:col-span-5">
      <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Apply filters</button>
