@@ -39,12 +39,12 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
      else if(event.key==="ArrowUp"){event.preventDefault();setActiveIndex(index=>index<=0?items.length-1:index-1);}
      else if(event.key==="Enter"&&activeIndex>=0&&items[activeIndex]){
        event.preventDefault();selectedSkill.current=items[activeIndex]!.displayName;onChange(items[activeIndex]!.displayName);setItems([]);setActiveIndex(-1);
-     }else if(event.key==="Escape"){setItems([]);setActiveIndex(-1);}
+     }else if(event.key==="Escape"){event.preventDefault();event.stopPropagation();setItems([]);setActiveIndex(-1);}
    }}
    placeholder="Search and select skills..."
-   role="combobox" aria-autocomplete="list" aria-expanded={status==="ready"&&items.length>0}
-   aria-controls={id+"-choices"}
-   aria-activedescendant={activeIndex>=0?`${id}-choice-${activeIndex}`:undefined}
+   role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={status==="ready"&&items.length>0}
+   aria-controls={status==="ready"&&items.length>0?id+"-choices":undefined}
+   aria-activedescendant={status==="ready"&&activeIndex>=0&&activeIndex<items.length?`${id}-choice-${activeIndex}`:undefined}
    className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
   {status==="loading"?<p role="status" className="mt-1 text-xs text-muted-foreground">Searching skills…</p>:null}
   {status==="ready"&&items.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">
