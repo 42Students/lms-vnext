@@ -162,25 +162,25 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {emptyMessages.classes?<p role="status" className="border-b border-border py-3 text-sm text-body">{emptyMessages.classes}</p>:null}
     {emptyMessages.templates?<p role="alert" className="border-b border-border py-3 text-sm text-body">{emptyMessages.templates}</p>:null}
     <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
-      <label className="block space-y-1 text-sm font-medium">Class
+      <label className="block space-y-1 text-[13px] font-semibold text-body">Class
         <Select value={classId} onChange={e=>setClassId(e.target.value)} disabled={loading||pending}>
           <option value="">{loading?"Loading classes…":"Select a class"}</option>
           {classes.map(c=><option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </Select>
       </label>
-      <label className="block space-y-1 text-sm font-medium">Published template
+      <label className="block space-y-1 text-[13px] font-semibold text-body">Published template
         <Select value={templateId} onChange={e=>setTemplateId(e.target.value)} disabled={pending}>
           {templates.map(t=><option key={t.templateId} value={t.templateId}>{t.title} · v{t.version}</option>)}
         </Select>
       </label>
-      <label className="block space-y-1 text-sm font-medium">Workspace title
+      <label className="block space-y-1 text-[13px] font-semibold text-body">Workspace title
         <Input value={title} disabled={!plannerEditable} onChange={e=>setTitle(e.target.value)} maxLength={170} placeholder="Capstone Project" />
       </label>
-      <label className="block space-y-1 text-sm font-medium">Base slug
+      <label className="block space-y-1 text-[13px] font-semibold text-body">Base slug
         <Input value={slug} disabled={!plannerEditable} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
         {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
       </label>
-      <label className="block space-y-1 text-sm font-medium">Workspace mode
+      <label className="block space-y-1 text-[13px] font-semibold text-body">Workspace mode
         <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL")}>
           <option value="WHOLE_CLASS">One team</option>
           <option value="TEAMS">Split a class into teams</option>
@@ -188,16 +188,16 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         </Select>
       </label>
       {mode==="TEAMS"?<>
-        <label className="block space-y-1 text-sm font-medium">Preferred team size
+        <label className="block space-y-1 text-[13px] font-semibold text-body">Preferred team size
           <Input type="number" min={1} max={100} value={size} disabled={!plannerEditable} onChange={e=>setSize(Number(e.target.value))} />
         </label>
-        <label className="block space-y-1 text-sm font-medium">Grouping order
+        <label className="block space-y-1 text-[13px] font-semibold text-body">Grouping order
           <Select value={order} disabled={!plannerEditable} onChange={e=>setOrder(e.target.value as "ROLL"|"SHUFFLE")}>
             <option value="ROLL">Roll number</option>
             <option value="SHUFFLE">Seeded shuffle</option>
           </Select>
         </label>
-        {order==="SHUFFLE"?<label className="block space-y-1 text-sm font-medium">Shuffle seed
+        {order==="SHUFFLE"?<label className="block space-y-1 text-[13px] font-semibold text-body">Shuffle seed
           <Input value={seed} disabled={!plannerEditable} onChange={e=>setSeed(e.target.value)} maxLength={128}/>
         </label>:null}
       </>:null}
@@ -210,9 +210,9 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {rosterLoading?<p role="status">Loading current class roster…</p>:null}
     {roster?<p className="text-sm text-muted-foreground">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
     {mode==="INDIVIDUAL"&&currentPreflight?<section aria-label="Before creating: one workspace per student" className="border-b border-border pb-5 text-sm">
-      <h2 className="font-semibold">Before creating: one workspace per student</h2>
+      <h2 className="font-semibold text-foreground">Before creating: one workspace per student</h2>
       <p>{currentPreflight.toCreate} to create · {currentPreflight.alreadyCovered} already covered · {currentPreflight.duplicates} duplicates · {currentPreflight.eligible} eligible</p>
-      <div className="max-h-72 min-w-0 overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
+      <div className="max-h-72 min-w-0 overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-primary" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
         <DataTable
           caption="Learner creation preflight"
           rows={currentPreflight.items.map((row,index)=>({...row,index}))}
@@ -231,13 +231,13 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       <p className="text-xs text-muted-foreground">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
     </section>:null}
     {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 min-[992px]:grid-cols-2" aria-label="Adjustable team preview">
-      {groups.map((team,index)=><section key={index} className="min-w-0 rounded-lg border border-border p-3">
-        <h2 className="font-semibold">{team.name} · {team.membershipIds.length}</h2>
+      {groups.map((team,index)=><section key={index} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+        <h2 className="font-semibold text-foreground">{team.name · {team.membershipIds.length}</h2>
         <ul className="mt-2 space-y-2">{team.membershipIds.map(id=>{
           const learner=names.get(id);
           return <li key={id} className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
             <span className="min-w-0 flex-1 break-words">{learner?.rollNumber??"—"} · {learner?.displayName??"Learner"}</span>
-            {groups.length>1?<label className="min-w-24 text-xs">Team
+            {groups.length>1?<label className="min-w-24 text-[13px] font-semibold text-body">Team
               <Select aria-label={"Move "+(learner?.displayName??"learner")+" to team"} disabled={!plannerEditable} value={index} onChange={event=>{
                 try{const updated=moveMemberBalanced(groups,id,Number(event.target.value));setGroups(updated);setError("");}
                 catch(e){setError(e instanceof Error?e.message:"Cannot move learner");}
@@ -245,7 +245,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
                 {groups.map((g,i)=><option key={i} value={i}>{g.name}</option>)}
               </Select>
             </label>:null}
-            {groups.length>1?<label className="min-w-24 text-xs">Swap with
+            {groups.length>1?<label className="min-w-24 text-[13px] font-semibold text-body">Swap with
               <Select aria-label={"Swap "+(learner?.displayName??"learner")+" with learner in team"} disabled={!plannerEditable} value="" onChange={event=>{
                 const other=groups[Number(event.target.value)]?.membershipIds[0];
                 if(!other)return;
@@ -264,14 +264,14 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {notice?<p role="status" className="text-sm">{notice}</p>:null}
     {outcome&&mode==="INDIVIDUAL"?<section className="space-y-2 border-b border-border pb-5">
-      <h3 className="font-semibold">Latest cohort creation outcome</h3>
+      <h3 className="font-semibold text-foreground">Latest cohort creation outcome</h3>
       <p className="text-sm">{outcome.created.length} created · {outcome.alreadyCovered} already covered</p>
       <p role="status" className="text-sm">{outcome.created.length===0
         ? "No workspaces were created — the selected class may have no active learners."
         : outcome.created.length<outcome.requested-outcome.alreadyCovered
           ? outcome.created.length+" workspace(s) created; "+(outcome.requested-outcome.alreadyCovered-outcome.created.length)+" student(s) failed. Review or export the report below before retrying."
           : "Created "+outcome.created.length+" workspace(s) for the class roster."}</p>
-      <div className="max-h-72 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="Per-learner creation results" tabIndex={0}>
+      <div className="max-h-72 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-primary" role="region" aria-label="Per-learner creation results" tabIndex={0}>
         <DataTable
           caption="Individual workspace creation results"
           rows={outcome.individualResults}
