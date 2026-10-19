@@ -46,7 +46,7 @@ export function RecruiterPlacementPortfolio({
       {[...jobs].sort((a,b)=>Number((unansweredRequests[b.job.id]??0)>0)-Number((unansweredRequests[a.job.id]??0)>0)).map((item) => (
         <article
           key={item.job.id}
-          className={(unansweredRequests[item.job.id]??0)>0 ? "rounded-xl border border-warning bg-surface-secondary p-5" : "rounded-xl border border-border bg-surface p-5"}
+          className={(unansweredRequests[item.job.id]??0)>0 ? "rounded-xl border border-warning bg-muted p-5" : "rounded-xl border border-border bg-surface p-5"}
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
