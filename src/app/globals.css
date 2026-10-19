@@ -860,6 +860,14 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   border-color: #26bac7;
   box-shadow: 0 0 0 2px rgba(38,186,199,.15);
 }
+/* Invalid controls keep the old LMS red halo even after the shared teal-focus rule. */
+[data-slot="input"][aria-invalid="true"]:not(:disabled):focus-visible,
+[data-slot="select"][aria-invalid="true"]:not(:disabled):focus-visible,
+[data-slot="textarea"][aria-invalid="true"]:not(:disabled):focus-visible {
+  border-color: var(--lms-error);
+  outline-color: var(--lms-error);
+  box-shadow: 0 0 0 2px rgba(239,68,68,.2);
+}
 
 /* Menu dropdowns and search popovers are different old LMS overlay types:
  * the menu uses the 6px/9px 11px 28px legacy profile dropdown,
