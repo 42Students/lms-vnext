@@ -1,3 +1,4 @@
+import { Alert } from "@/components/ui/alert";
 "use client";
 
 import {useEffect,useRef,useState} from "react";
@@ -199,7 +200,7 @@ export function FacultyQuizReview({
 
   return (
     <>
-      {notice?<p role="status" className="mt-2 text-sm text-success">{notice}</p>:null}
+      {notice?<Alert tone="success" className="mt-2">{notice}</Alert>:null}
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <Button
           size="sm"
