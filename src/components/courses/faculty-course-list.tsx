@@ -64,7 +64,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
   return (
     <div className="min-w-0 max-w-full space-y-5">
       <div className="flex flex-wrap items-center gap-3 text-sm text-body" role="status">
-        <Disclosure title="{scopeCount} Teaching assignment(s)" className="relative rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+        <Disclosure title={`${scopeCount} Teaching assignment(s)`} className="relative rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
           <ScrollCue axis="y" label="Teaching assignments" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {assignmentChoices.map(item=><li key={item.deliveryId}>
               <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
