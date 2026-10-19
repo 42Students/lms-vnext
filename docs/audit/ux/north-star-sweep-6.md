@@ -390,3 +390,22 @@ src/components/placements/placement-drive-controls.tsx
 src/components/courses/super-admin-lesson-bulk-visibility.tsx
 src/components/courses/super-admin-content-directory-page.tsx
 ```
+
+## 2026-10-19 continuation — latest-main legacy shell/page parity
+
+- **Upstream reconciliation:** synchronized the chat-6 branch with main `3de148112368b7201378f721841a5d4348ec9f6d` in two-parent merge `0d0aaa6b9f33fb438bed665f41467c4848fabb1e`. Restored seven nonoverlapping lane file versions; in the single overlapping college-logo-uploader source, retained main logic and reapplied only shared Input and control radius styling. No main writes, resets or force pushes.
+- Read the OWNER GOAL and NORTH STAR from `docs/orchestrator/queues/master-queue.md`; referenced `old-lms-pages.md`, legacy `components___button.scss`, `components___form.scss`, `components___listing-page-header.scss`, and `pages___admin-list-pages.scss`. Kept chat-13/17/19 ownership of shared global UI, top bar and sidebar intact.
+- **10 [chat-6] source-file commits** in the Super Admin second-third slice:
+  1. `admin/placements/drives/page.tsx`: native search, select filters and Filter button to shared Input/Select/Button; removed hand-written control skin.
+  2. `admin/module-access/page.tsx`: replaced inset white college card grid with border-divided rows on the single page canvas.
+  3. `admin/placements/jobs/[jobId]/applications/page.tsx`: removed seven duplicated select/input skin overrides so global controls own border, height and radius.
+  4. `placement-calendar-workspace.tsx`: removed one redundant outer calendar-control card; tokenized independent calendar cells, blocked dates, warnings and error panels without changing calendar routing/filters.
+  5. `admin/placements/analytics/page.tsx`: inherited shared search/date styling; turned truncation into a slim warning banner.
+  6. `admin/people/directory/[membershipId]/audit/page.tsx`: normalized audit empty state to a hairline list surface and semantic link token.
+  7. `admin/people/unassigned/page.tsx`: aligned directory links/focus rings to primary legacy token.
+  8. `super-admin-drive-tabs.tsx`: standardized breadcrumb focus/hover/link colour.
+  9. `super-admin-interview-operations.tsx`: compact matching-count style and semantic export-error banner.
+  10. `admin/placements/jobs/[jobId]/settings/page.tsx`: replaced bare drive status text with shared StatusBadge.
+- All changes are **visual only**: existing sections, copy, role checks, selected-college scope, forms, data services, query encoding, routing, selection and actions were preserved. Genuine calendar cells and independent overlays remain separate panels, not flattened.
+- **Static validation only:** re-fetched changed sources; checked opening/closing Button, Select, Textarea and StatusBadge tag pairs, no truncated JSX close tags, and the absence of raw controls in the drives filter and applications pages. Calendar's remaining native input is type hidden for GET query propagation, intentionally unchanged. No compiler, tests, CI, dev server, screenshots or visual pixel comparison were run.
+- Verified after 10 source commits: chat-6 branch was **19 commits ahead / 0 behind main** (including preserved premerge lane work). Pixel-perfect runtime parity and TypeScript strict compilation remain unverified.
