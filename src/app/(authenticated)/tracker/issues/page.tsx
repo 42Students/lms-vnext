@@ -42,7 +42,7 @@ export default async function TrackerIssuesPage({
           description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
         <TrackerAdminNav />
-        <div role="status" className="rounded-xl border border-border bg-surface p-6">
+        <div role="status" className="border-y border-border py-6">
           <p className="m-0 font-semibold text-foreground">Tracker database is not enabled.</p>
           <p className="mt-2 text-sm text-body">
             Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
