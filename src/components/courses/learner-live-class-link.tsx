@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 
@@ -30,7 +31,7 @@ export function LearnerLiveClassLink({href,endsAt}:{href:string;endsAt?:string|n
  </p>;
  return <div className="mt-3 flex flex-wrap items-center gap-2">
   <ThirdPartyLink href={href} label="Join Meeting" />
-  <button type="button" onClick={()=>void copy()} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Copy meeting link</button>
+  <Button type="button" variant="secondary" onClick={()=>void copy()} className="min-h-11">Copy meeting link</Button>
   {message?<span role="status" className="text-xs text-muted-foreground">{message}</span>:null}
  </div>;
 }
