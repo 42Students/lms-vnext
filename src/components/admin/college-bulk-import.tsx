@@ -43,7 +43,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <section aria-busy={busy} className="space-y-3 border-t border-border pt-4">
-  <Button type="button" variant="secondary"
+  <Button type="button" variant="secondary" disabled={busy}
    aria-expanded={open} aria-controls={open?"admin-college-bulk-import-panel":undefined}
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
   {open?<div id="admin-college-bulk-import-panel" className="space-y-3">
