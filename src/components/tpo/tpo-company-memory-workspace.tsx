@@ -1,4 +1,5 @@
 "use client";
+import { MenuSeparator } from "@/components/ui/menu";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -215,7 +216,7 @@ export function TpoCompanyMemoryWorkspace({
              className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
              className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">New drive for {company.name}</Link>
-            <div role="separator" className="border-t border-border"/>
+            <MenuSeparator />
             <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
              className="block rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link hover:bg-primary-subtle">Follow-up</Link>
            </nav>
