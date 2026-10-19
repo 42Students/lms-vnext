@@ -94,12 +94,12 @@ export function LearnerPlacementJobDetail({
         </dl>
         <div className="mt-5 flex flex-wrap gap-3">
           <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={initialSaved}/>
-          <a href="#job-role-options" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+          <a href="#job-role-options" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
             {summary.appliedCount ? "View my application" : "See roles & application"} ↓
           </a>
           {website ? (
             <a href={website} target="_blank" rel="noopener noreferrer"
-              className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-5 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
               Company website ↗
             </a>
           ) : null}

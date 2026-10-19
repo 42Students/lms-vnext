@@ -1,5 +1,8 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
 import {useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 type Event={from:string|null;to:string;reason:string|null;when:string};
@@ -94,13 +97,13 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
     <div className="flex items-center justify-between gap-3">
       <h2 className="text-lg font-semibold">Application Details</h2>
       <div className="flex gap-2">
-       <button type="button" onClick={()=>void reload()} disabled={loading}
-        className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 focus-visible:ring-2 focus-visible:ring-primary">Refresh</button>
-       <button type="button" onClick={onClose} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3">Close</button>
+       <Button variant="secondary" type="button" onClick={()=>void reload()} disabled={loading}
+        >Refresh</Button>
+       <Button variant="secondary" type="button" onClick={onClose} >Close</Button>
       </div>
     </div>
-    {!detail&&!loading&&!error?<button type="button" onClick={()=>void reload()}
-      className="mt-4 min-h-11 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover sm:min-h-9">Open application details</button>:null}
+    {!detail&&!loading&&!error?<Button variant="primary" type="button" onClick={()=>void reload()}
+      className="mt-4">Open application details</Button>:null}
     {loading?<p role="status" className="py-4 text-sm">Loading application details…</p>:null}
     {error?<p ref={errorRef} tabIndex={-1} role="alert" className="my-4 text-sm text-error">{error}</p>:null}
     {detail?<div className="mt-4 space-y-5">
@@ -132,11 +135,11 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         </a>:null}
        <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>
        <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No fabricated public resume URL or match score is shown.</p>
-       <button type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
+       <Button variant="secondary" type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
         onClick={()=>void rescreen()}
-        className="mt-3 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+        className="mt-3">
         {rescreening?"Re-screening…":"Re-screen"}
-       </button>
+       </Button>
        <p className="mt-1 text-xs text-muted-foreground">Re-screen checks recorded academic eligibility under current policy. It does not fabricate a match score or reverse an existing screening decision.</p>
        {rescreenResult?<div role="status" className="mt-3 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
         <p className="font-semibold">Current eligibility: {rescreenResult.status}</p>
@@ -154,8 +157,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           <p key={r.id} className="text-sm"><a href={r.testUrl!} 
             rel="noreferrer noopener" className="font-semibold text-[var(--lms-teal-deep)] underline">{r.name} · Open assessment</a>
             <span className="mt-1 block break-all text-xs text-muted-foreground">{r.testUrl}</span>
-            <button type="button" onClick={async()=>{try{await navigator.clipboard.writeText(r.testUrl!);setLinkNotice("Assessment link copied.");}catch{setLinkNotice("Copy unavailable. Select and copy the link shown above.");}}}
-             className="mt-1 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold focus-visible:ring-2 focus-visible:ring-primary">Copy assessment link</button></p>)}</div>
+            <Button variant="secondary" type="button" onClick={async()=>{try{await navigator.clipboard.writeText(r.testUrl!);setLinkNotice("Assessment link copied.");}catch{setLinkNotice("Copy unavailable. Select and copy the link shown above.");}}}
+             className="mt-1">Copy assessment link</Button></p>)}</div>
         :<p className="mt-2 text-sm text-body">Link shared soon</p>}
       </section>
       {linkNotice?<p role="status" className="text-sm text-body">{linkNotice}</p>:null}
@@ -176,13 +179,13 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
            className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:null}
          {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
           <label className="grid gap-1">Offer-letter HTTPS link
-           <input type="url" placeholder="https://..." value={letterInput[o.id]??""}
+           <Input type="url" placeholder="https://..." value={letterInput[o.id]??""}
             onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
-            className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base sm:text-sm"/>
+            />
           </label>
-          <button type="button" disabled={savingLetter} onClick={()=>void attachLetter(o.id)}
-           className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
-           {savingLetter?"Saving…":"Attach Offer Letter"}</button>
+          <Button variant="secondary" type="button" disabled={savingLetter} onClick={()=>void attachLetter(o.id)}
+           >
+           {savingLetter?"Saving…":"Attach Offer Letter"}</Button>
          </div>:null}
         </li>)}</ul>:
         <p className="mt-2 text-sm text-body">No issued offers.</p>}
@@ -196,20 +199,20 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         className="mt-3 max-h-48 space-y-2 overflow-y-auto overscroll-contain pb-5 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">{detail.notes.map(n=>
         <div key={n.id} className="border-b border-border py-2 text-sm">
          <p>{n.body}</p><p className="mt-1 text-xs text-muted-foreground">{when(n.createdAt)}</p>
-         <button type="button" onClick={()=>{setAmendsNoteId(n.id);setNote(n.body);setSuccess("");}}
-          className="mt-1 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-2 font-semibold text-[var(--lms-teal-deep)]">
+         <Button variant="secondary" type="button" onClick={()=>{setAmendsNoteId(n.id);setNote(n.body);setSuccess("");}}
+          className="mt-1">
           Edit Internal Notes
-         </button>
+         </Button>
         </div>)}</div>
        <label className="mt-3 grid gap-2 text-sm font-semibold">{amendsNoteId?"Correct internal note":"Add internal notes (visible only to admins)"}
-        <textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
-         className="rounded border border-border bg-surface p-3 text-base sm:text-sm"/></label>
+        <Textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
+         className="w-full"/></label>
        {success?<p role="status" className="text-sm text-body">{success}</p>:null}
-       <button type="button" disabled={saving||!note.trim()} onClick={()=>void save()}
-        className="mt-3 min-h-11 rounded bg-primary px-4 font-semibold text-foreground disabled:opacity-50">
-         {saving?"Saving…":amendsNoteId?"Save correction":"Add note"}</button>
-       {amendsNoteId?<button type="button" onClick={()=>{setAmendsNoteId(null);setNote("");}}
-         className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3">Cancel correction</button>:null}
+       <Button variant="primary" type="button" disabled={saving||!note.trim()} onClick={()=>void save()}
+        className="mt-3">
+         {saving?"Saving…":amendsNoteId?"Save correction":"Add note"}</Button>
+       {amendsNoteId?<Button variant="secondary" type="button" onClick={()=>{setAmendsNoteId(null);setNote("");}}
+         className="ml-2">Cancel correction</Button>:null}
       </section>
       {sections.map(section=><section key={section.label} className="border-b border-border py-4">
         <h3 className="font-semibold">{section.label}</h3>

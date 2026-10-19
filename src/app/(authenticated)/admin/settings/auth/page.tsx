@@ -18,9 +18,9 @@ export default async function SuperAdminAuthSettings(){
     action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
   </div>;
  return <div className="min-w-0 space-y-6">
-  <Link href="/admin/settings" className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">← Platform settings</Link>
   <PageHeader eyebrow="Super Admin · Platform Security" title="Authentication settings"
-   description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication."/>
+   description="Read-only checklist of deployment-managed privileged login policies. This page neither inspects secrets nor changes authentication."
+   actions={<Link href="/admin/settings" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">← Platform settings</Link>} />
   <div role="status" className="border-b border-border pb-4 text-sm text-body">
    Configuration runtime status is not attested by this page. Privileged second-factor readiness must be verified separately before production.
   </div>

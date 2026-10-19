@@ -1,4 +1,5 @@
 "use client";
+import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -56,7 +57,7 @@ export function LearnerTaskProgressControl(props: {
     </div>
     {showBlocker ? <div className="grid gap-2">
       <label className="text-xs font-semibold text-body">Blocker note
-        <textarea className="mt-1 min-h-20 w-full rounded border border-border bg-surface p-2"
+        <Textarea className="mt-1"
           value={blockerNote} maxLength={4000} disabled={pending}
           onChange={event => setBlockerNote(event.target.value)}
           placeholder="Describe what's blocking this task."/>

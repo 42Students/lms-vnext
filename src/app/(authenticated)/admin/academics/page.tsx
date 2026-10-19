@@ -21,8 +21,8 @@ export default async function SuperAdminAcademicsPage() {
           title="Academics"
           description="Academic administration requires a college safety scope."
         />
-        <Link href="/admin/electives" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Elective slots →</Link>
-        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Batch Promotion Preview →</Link>
+        <Link href="/admin/electives" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Elective slots →</Link>
+        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline sm:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Batch Promotion Preview →</Link>
         <EmptyState
           title="Select a college scope"
           description="Choose a college in the Super Admin scope selector before managing Programs, Periods, Cohorts or Sections."

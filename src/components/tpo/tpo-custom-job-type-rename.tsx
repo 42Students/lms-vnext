@@ -28,10 +28,10 @@ export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:strin
  return <div className="min-w-0 space-y-1">
   <label className="text-xs text-muted-foreground">Custom job type name
    <Input value={name} maxLength={40} disabled={busy} onChange={e=>setName(e.target.value)}
-    className="mt-1 block min-h-11 sm:min-h-9 min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
+    className="mt-1 min-h-11 sm:min-h-9 min-w-0 text-sm"/>
   </label>
   <Button variant="secondary" type="button" disabled={busy||!changed||name.trim().length<2} onClick={()=>void save()}
-   className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 text-xs text-primary-text disabled:opacity-50">Rename</Button>
+   className="min-h-11 sm:min-h-9 text-xs">Rename</Button>
   {error?<p role="alert" className="max-w-xs text-xs text-error">{error}</p>:null}
  </div>;
 }

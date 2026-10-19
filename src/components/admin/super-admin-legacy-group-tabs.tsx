@@ -11,12 +11,11 @@ export function SuperAdminLegacyGroupTabs(){
   if(!group)return null;
   return <nav aria-label={group.title}
     className="w-full min-w-0 overflow-x-auto border-b border-border">
-    <h2 className="pt-3 text-base font-semibold text-[var(--lms-heading)]">{group.title}</h2>
-    <div className="flex min-w-max items-center gap-1 py-2 sm:gap-2">
+    <div className="flex min-w-max items-center gap-1 sm:gap-2">
       {group.tabs.map(tab=><Link key={tab.href} href={tab.href}
         aria-current={superAdminLegacyTabActive(pathname,tab.href)?"page":undefined}
         className={superAdminLegacyTabActive(pathname,tab.href)
-          ?"border-b-[3px] border-primary bg-primary-subtle px-3 py-2 text-[14px] font-[650] text-primary-text"
+          ?"border-b-[3px] border-primary px-3 py-2 text-[14px] font-[650] text-primary-text"
           :"border-b-[3px] border-transparent px-3 py-2 text-[14px] font-medium text-body hover:bg-primary-subtle"}>
         {tab.label}
       </Link>)}

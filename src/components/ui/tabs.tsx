@@ -17,9 +17,19 @@ export type TabsProps = {
 };
 
 /** Counts remain part of the tab name for assistive technology, not a separate control. */
+function tabCount(item: TabItem) {
+  return typeof item.count === "number" && Number.isFinite(item.count)
+    ? Math.max(0, Math.trunc(item.count))
+    : null;
+}
+function tabAccessibleLabel(item: TabItem) {
+  const count = tabCount(item);
+  return count === null ? item.label : `${item.label} ${count}`;
+}
 function tabLabel(item: TabItem) {
-  return <>{item.label}{typeof item.count === "number" && Number.isFinite(item.count) ?
-    <span className="tabular-nums text-[12px] font-semibold text-current opacity-75">{Math.max(0, Math.trunc(item.count))}</span> : null}</>;
+  const count = tabCount(item);
+  return <><span>{item.label}</span>{count !== null ?
+    <span aria-hidden="true" className="tabular-nums text-[12px] font-semibold text-current opacity-75">{count}</span> : null}</>;
 }
 
 export function tabNextEnabled(items: readonly Pick<TabItem, "disabled">[], current: number, direction: 1 | -1) {
@@ -62,19 +72,20 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
             id={`${id}-tab-${index}`} type="button" role="tab"
             aria-controls={renderPanel ? `${id}-panel` : undefined}
             aria-selected={index === activeIndex}
+            aria-label={tabAccessibleLabel(item)}
             disabled={item.disabled || !interactive}
             aria-disabled={item.disabled || !interactive || undefined}
             tabIndex={interactive && index === activeIndex ? 0 : -1}
             onKeyDown={event => keyDown(event, index)}
             onClick={() => { if (interactive) onValueChange?.(item.value); }}
-            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap border-b-[3px] px-0 pb-[13px] pt-[13px] transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-[13px] leading-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50",
+            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap border-b-[3px] px-0 pb-[13px] pt-[13px] transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-[13px] leading-4 font-semibold focus-visible:rounded-t-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:opacity-50",
               index === activeIndex ? "border-[var(--lms-primary)] text-[var(--lms-primary-text)]" : "border-transparent text-[var(--lms-body-text)] hover:bg-transparent hover:text-[var(--lms-primary-text)]")}>
             {tabLabel(item)}
           </button>
         ))}
       </div></ScrollCue> : <ScrollCue axis="x" label={`${ariaLabel} navigation`}><nav aria-label={ariaLabel} className="flex min-w-max gap-[var(--lms-tab-gap)] border-b border-[var(--lms-canvas-border)] pb-0">
-        {items.map(item => item.disabled || !item.href || !isSafeInternalHref(item.href) ? <span key={item.value} aria-disabled="true" className="inline-flex min-h-9 items-center whitespace-nowrap border-b-[3px] border-transparent px-0 text-[13px] leading-4 text-[var(--lms-body-text)] opacity-60">{item.label}</span> : <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
-            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center whitespace-nowrap border-b-[3px] px-0 text-[13px] leading-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
+        {items.map(item => item.disabled || !item.href || !isSafeInternalHref(item.href) ? <span key={item.value} aria-disabled="true" aria-label={tabAccessibleLabel(item)} className="inline-flex min-h-9 items-center gap-2 whitespace-nowrap border-b-[3px] border-transparent px-0 pb-[13px] pt-[13px] text-[13px] leading-4 text-[var(--lms-body-text)] opacity-60">{tabLabel(item)}</span> : <Link key={item.value} href={item.href} aria-label={tabAccessibleLabel(item)} aria-current={item.value === value ? "page" : undefined}
+            className={cx("inline-flex min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap border-b-[3px] px-0 pb-[13px] pt-[13px] text-[13px] leading-4 font-semibold focus-visible:rounded-t-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]",
               item.value === value ? "border-[var(--lms-primary)] text-[var(--lms-primary-text)]" : "border-transparent text-[var(--lms-body-text)] hover:bg-transparent hover:text-[var(--lms-primary-text)]")}>
               {tabLabel(item)}</Link>)}
       </nav></ScrollCue>}

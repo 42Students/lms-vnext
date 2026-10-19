@@ -4,7 +4,7 @@ export function SuperAdminLearningFilterFields({courses,cohorts,selectedCourse,s
  courses:readonly Item[];cohorts:readonly Item[];
  selectedCourse?:string;selectedCohort?:string;
 }){
- const css="w-full";
+ const css="min-h-11 w-full sm:min-h-9";
  return <>
   <label className="grid gap-1 text-sm font-semibold text-body">Choose course
    <Select name="courseCode" defaultValue={selectedCourse??""} className={css}>

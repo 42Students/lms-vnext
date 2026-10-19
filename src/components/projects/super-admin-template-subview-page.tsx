@@ -176,7 +176,7 @@ export async function SuperAdminTemplateSubviewPage({
 
       <Link
         href="/admin/projects/templates"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
+        className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text hover:text-primary-hover"
       >
         ← Template catalogue
       </Link>
@@ -190,6 +190,16 @@ export async function SuperAdminTemplateSubviewPage({
         }
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            <Link href="/admin/projects/templates"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">
+              ← Template catalogue
+            </Link>
+            {detail.template.status === "PUBLISHED" ? (
+              <Link href={"/admin/projects/workspaces/new?templateId=" + encodeURIComponent(detail.template.id)}
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3.5 text-sm font-semibold text-on-primary hover:bg-primary-hover sm:min-h-9">
+                Use this template · Create workspace →
+              </Link>
+            ) : null}
             <StatusBadge
               tone={
                 detail.template.status === "PUBLISHED"
@@ -210,11 +220,6 @@ export async function SuperAdminTemplateSubviewPage({
         }
       />
 
-      {detail.template.status==="PUBLISHED"?
-        <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
-          Use this template · Create workspace →
-        </Link>:null}
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active={section}
@@ -510,7 +515,7 @@ export async function SuperAdminTemplateSubviewPage({
                       href={resource.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 inline-flex min-h-11 items-center break-all text-sm font-semibold text-primary-text hover:underline"
+                      className="mt-4 inline-flex min-h-11 sm:min-h-9 items-center break-all text-sm font-semibold text-primary-text hover:underline"
                     >
                       Open resource →
                     </a>
@@ -642,7 +647,7 @@ export async function SuperAdminTemplateSubviewPage({
                   </div>
 
                   <Link href={templateVersionComparisonHref(detail.template.id, version.id)}
-                    className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+                    className="mt-3 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
                     Compare changes and inspect snapshot →
                   </Link>
 
@@ -680,9 +685,9 @@ export async function SuperAdminTemplateSubviewPage({
             })}
             {historyPaging ? <nav aria-label="Template version pages" className="flex flex-wrap items-center gap-4 text-sm">
               <span className="text-muted-foreground">Page {historyPaging.page} of {historyPaging.totalPages} · 25 per page</span>
-              {historyPaging.page > 1 ? <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text"
+              {historyPaging.page > 1 ? <Link className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text"
                 href={templateVersionHistoryHref(templateId, historyPaging.page - 1)}>Previous</Link> : null}
-              {historyPaging.page < historyPaging.totalPages ? <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text"
+              {historyPaging.page < historyPaging.totalPages ? <Link className="inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text"
                 href={templateVersionHistoryHref(templateId, historyPaging.page + 1)}>Next</Link> : null}
             </nav> : null}
           </section>

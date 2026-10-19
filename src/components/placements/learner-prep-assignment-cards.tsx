@@ -10,7 +10,7 @@ export function LearnerPrepAssignmentCards(){
    setItems(data.assignments);
   }catch{setError("Assigned preparation courses could not be loaded. Your recorded preparation checklist is unaffected.");}
  });},[]);
- return <section aria-label="Assigned preparation" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <section aria-label="Assigned preparation" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold">Assigned preparation</h2>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {!items.length?<p className="text-sm">No preparation courses assigned yet.</p>:

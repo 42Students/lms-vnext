@@ -91,7 +91,7 @@ export function TpoStudentSavedViews(){
     })} >Update selected view</Button>:null}
    </div>
    <div className="max-h-64 space-y-2 overflow-auto">
-    {rows.map(view=><div key={view.id} className="flex flex-wrap items-center gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+    {rows.map(view=><div key={view.id} className="flex flex-wrap items-center gap-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
      <input type="radio" aria-label={"Select "+view.name} name="selected-view" checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      <strong className="min-w-28 text-sm">{view.name}</strong>

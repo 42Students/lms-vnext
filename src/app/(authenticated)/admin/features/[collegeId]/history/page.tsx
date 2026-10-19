@@ -17,7 +17,7 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
   <Link href={"/admin/features/"+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← College module access</Link>
   <PageHeader eyebrow="Super Admin · Feature Controls" title="Recent module-access changes" description={"Recent changes to Projects, Placements and Electives at college, academic and learner scope for "+result.college.name+"."}/>
   <Link href={collegePolicyHistoryHref(collegeId,cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null).replace("/history","/history/export")}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
     Export this audited page (CSV)
   </Link>
   {result.items.length===0?<p role="status" className="border-b border-border py-4 text-sm text-body">No module-access changes recorded for this college yet.</p>:

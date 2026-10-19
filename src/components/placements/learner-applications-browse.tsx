@@ -187,14 +187,14 @@ export function LearnerApplicationsBrowse({
   return (
     <div className="space-y-5">
       {learnerApplicationSelectionMissing(items,url.applicationId) ? (
-        <div role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+        <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
           The linked application is not available in your current learner history.
           <button type="button" onClick={()=>updateQuery({applicationId:null})}
             className="ml-2 min-h-11 font-semibold text-primary-text underline">Return to application list</button>
         </div>
       ) : null}
       {selectedStage.stale ? (
-        <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
           That screening stage is no longer present in your applications. Showing all stages while keeping your other filters.
           <button type="button" onClick={()=>updateQuery({stage:null})}
             className="ml-2 inline-flex min-h-11 sm:min-h-9 items-center font-semibold text-primary-text underline">
@@ -203,7 +203,7 @@ export function LearnerApplicationsBrowse({
         </p>
       ) : null}
       {withdrawNotice ? (
-        <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-foreground">
+        <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm text-foreground">
           {withdrawNotice}
         </p>
       ) : null}
@@ -426,7 +426,7 @@ export function LearnerApplicationsBrowse({
         </>}>
         {selected ? (
           <div className="space-y-5">
-            {selected.driveStatus==="CANCELLED"?<div role="alert" className="rounded-lg border border-warning p-3 text-sm text-body">
+            {selected.driveStatus==="CANCELLED"?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">
               <p className="font-semibold text-foreground">This drive was cancelled</p>
               <p>Review placement cell notices for any published reason. Your saved application history remains available.</p>
               <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">College notices</Link>
@@ -449,7 +449,7 @@ export function LearnerApplicationsBrowse({
               <ol className="mt-3 space-y-2 text-sm text-body">
                 {scheduledRounds.filter(round=>round.applicationId===selected.applicationId)
                   .sort((a,b)=>Date.parse(a.scheduledAt??"9999-12-31")-Date.parse(b.scheduledAt??"9999-12-31"))
-                  .map(round=><li key={round.roundId} className="rounded-md border border-border p-3">
+                  .map(round=><li key={round.roundId} className="rounded-[var(--lms-control-radius)] border border-border p-3">
                     <p className="font-semibold text-foreground">{round.roundName} · Booked</p>
                     <p>{round.scheduledAt?formatDate(new Date(round.scheduledAt)):"Date to be told"}
                       {" · "}{round.mode==="VIRTUAL"?"Online":round.mode==="ON_CAMPUS"?"On campus":round.mode}
@@ -496,7 +496,7 @@ export function LearnerApplicationsBrowse({
               {selected.results.length ? selected.results
                 .slice().sort((a,b)=>a.roundSequence-b.roundSequence)
                 .map((result)=>(
-                  <article key={result.resultId} className="rounded-md border border-border p-4">
+                  <article key={result.resultId} className="rounded-[var(--lms-control-radius)] border border-border p-4">
                     <p className="text-sm font-semibold text-foreground">Round {result.roundSequence} · {result.roundName}</p>
                     <p className="mt-1 text-sm text-body">
                       {humanize(result.outcome)} · {formatDate(result.appliedAt)}

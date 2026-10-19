@@ -138,7 +138,7 @@ export default async function AnnouncementsPage({
         }
       />
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        {includeDeleted ? <input type="hidden" name="deleted" value="1"/> : null}
+        {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
         <label className="text-sm font-semibold text-body">Visibility
           <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1">
             <option value="">All visible states</option>
@@ -181,7 +181,7 @@ export default async function AnnouncementsPage({
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
       }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:min-h-9">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
-      {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
+      {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-5">
        <h2 className="text-lg font-semibold">Placement-cell read receipts</h2>
        <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read.</p>
        <ul className="min-w-0 space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{

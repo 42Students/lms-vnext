@@ -78,10 +78,10 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
         {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
           <label className="flex items-center gap-2">Stale after
-            <select name="staleDays" defaultValue={staleDays} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
+            <Select name="staleDays" defaultValue={staleDays} className="min-w-0">
               {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
-            </select></label>
-          <button type="submit" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold">Apply</button>
+            </Select></label>
+          <Button type="submit" variant="secondary">Apply</Button>
         </form>:null}
       </div>
       {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." /></div> :

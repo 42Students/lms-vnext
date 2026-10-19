@@ -187,7 +187,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     {safeSelected.length} selected. Preview and confirm the next {Math.min(200,safeSelected.length)} rows;
     remaining rows stay selected for the following batch. Each batch must be reviewed and confirmed separately.
    </p>:null}
-  {target==="STUDENTS"?<div className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+  {target==="STUDENTS"?<div className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Paste roll numbers (comma, whitespace or line separated)
      <Textarea value={pastedRolls} onChange={event=>setPastedRolls(event.target.value)}
       rows={2} maxLength={40000} placeholder="23CS001, 23CS002" />
@@ -261,7 +261,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       />
    </label>:null}
   </div>
-  <section aria-label="Actions window" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
+  <section aria-label="Actions window" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4">
    <h3 className="font-semibold">Actions</h3>
    <p className="text-sm text-body">Check how many selected rows can receive each action before you confirm any change.</p>
    {target==="STUDENTS"&&note.trim().length<3?<p className="text-xs text-muted-foreground">To include “Make ineligible” in the action counts, enter an ineligibility reason of at least 3 characters. No eligibility is changed while checking counts.</p>:null}
@@ -295,7 +295,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
          onClick={()=>void runGuarded(shareSelected)}>Confirm share</Button></>}>
         <p className="text-sm">Each application is checked again by the server. The private URL is shown only after sharing succeeds.</p>
       </Dialog>
-      {companyShareUrl?<div className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+      {companyShareUrl?<div className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
       <p className="text-xs font-semibold">Copy this URL now. The secret cannot be recovered later.</p>
       <Input aria-label="Selected applicant share URL" readOnly value={companyShareUrl}
        onFocus={e=>e.currentTarget.select()} />
@@ -344,12 +344,12 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   ):null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
     busy={busy||guardedPending||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void runGuarded(confirm)}/>:null}
-  {outcomes.length>0?<div className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+  {outcomes.length>0?<div className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
     <p role="status" className="text-sm font-semibold">
      {outcomes.filter(item=>item.status==="updated").length} updated ·
      {" "}{outcomes.filter(item=>item.status!=="updated").length} not applied
     </p>
-    {exceptionGroups.length>0?<div aria-label="Not applied by reason" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+    {exceptionGroups.length>0?<div aria-label="Not applied by reason" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
      <h3 className="text-sm font-semibold">Not applied by reason</h3>
      <ul className="space-y-2 text-sm">{exceptionGroups.map(group=><li key={group.reason}>
       <p className="font-semibold">{group.reason} ({group.count})</p>

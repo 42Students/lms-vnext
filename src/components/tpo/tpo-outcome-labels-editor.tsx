@@ -66,7 +66,7 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
    </label>
    <Button variant="secondary" type="button" disabled={busy} aria-label={"Remove "+row.label}
     onClick={()=>setLabels(rows=>rows.filter((_,i)=>i!==index))}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm">Remove</Button>
+    className="min-h-11 sm:min-h-9 text-sm">Remove</Button>
   </li>)}</ul>
   <div className="flex flex-wrap items-end gap-2 border-t border-border pt-4">
    <label className="min-w-52 flex-1 text-sm">New label
@@ -82,11 +82,11 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
     </Select>
    </label>
    <Button variant="secondary" type="button" onClick={add} disabled={!draft.trim()||Boolean(problem)||busy||labels.length>=30}
-    className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm">Add</Button>
+    className="min-h-11 sm:min-h-9 text-sm">Add</Button>
   </div>
   <p className="text-xs text-muted-foreground">{labels.length}/30 labels. Changing a mapping affects how future student choices are grouped; existing recorded outcomes are not silently rewritten.</p>
   <Button variant="primary" type="button" onClick={()=>void save()} disabled={busy||!dirty||invalid>=0}
-   className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Save changes</Button>
+   className="min-h-11 sm:min-h-9 text-sm">Save changes</Button>
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
   {notice?<p role="status" className="text-sm text-success-text">{notice}</p>:null}
  </section>;

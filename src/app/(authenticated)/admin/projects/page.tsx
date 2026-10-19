@@ -134,24 +134,25 @@ export default async function SuperAdminProjectsPage({
         title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={
-          <CreateProjectControl
-            collegeId={collegeId}
-            basePath="/admin/projects"
-            templates={templates.map((template) => ({
-              templateId: template.templateId,
-              title: template.title,
-              version: template.version,
-              summary: template.summary,
-            }))}
-          />
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link>
+            <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
+            <CreateProjectControl
+              collegeId={collegeId}
+              basePath="/admin/projects"
+              templates={templates.map((template) => ({
+                templateId: template.templateId,
+                title: template.title,
+                version: template.version,
+                summary: template.summary,
+              }))}
+            />
+          </div>
         }
       />
 
-      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/workspaces/new">Create workspace</Link>
-        <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9" href="/admin/projects/reassign-mentor">Bulk reassign mentor</Link></div>
-
       {!templatesResult.ok && (
-        <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-sm leading-5 text-body">
           Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
         </p>
       )}

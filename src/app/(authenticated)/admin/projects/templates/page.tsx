@@ -78,10 +78,10 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     <p className="mt-1 text-xs text-muted-foreground">{item.slug}</p>
     {item.summary?<p className="mt-2 text-sm text-body">{item.summary}</p>:null}
     {item.sectionCounts?<div className="mt-3 flex flex-wrap gap-2 text-xs text-body">
-      <span className="rounded border border-border px-2 py-1">Overview</span>
-      <span className="rounded border border-border px-2 py-1">Sprints {item.sectionCounts.sprints}</span>
-      <span className="rounded border border-border px-2 py-1">Tasks {item.sectionCounts.tasks}</span>
-      <span className="rounded border border-border px-2 py-1">Resources {item.sectionCounts.resources}</span>
+      <span className="rounded-full border border-border bg-primary-subtle px-2.5 py-1 text-xs text-body">Overview</span>
+      <span className="rounded-full border border-border bg-primary-subtle px-2.5 py-1 text-xs text-body">Sprints {item.sectionCounts.sprints}</span>
+      <span className="rounded-full border border-border bg-primary-subtle px-2.5 py-1 text-xs text-body">Tasks {item.sectionCounts.tasks}</span>
+      <span className="rounded-full border border-border bg-primary-subtle px-2.5 py-1 text-xs text-body">Resources {item.sectionCounts.resources}</span>
     </div>:null}
     <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
     <div className="mt-3 flex flex-wrap items-center gap-3">

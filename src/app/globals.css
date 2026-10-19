@@ -172,7 +172,7 @@ body {
   --lms-primary-subtle: #164e57;
 }
 
-/* Invisible scrollbars everywhere (owner decision): scrolling still works with wheel, touch, keyboard and
+/* Invisible scrollbars everywhere (owner decision, matching legacy drawer and overlay sources): scrolling works with wheel, touch, keyboard and
    focus; only the bar chrome is hidden. Scrollable regions must still show an edge fade or cue per the UX playbook. */
 * {
   scrollbar-width: none;
@@ -210,6 +210,11 @@ label {
 dialog[open],
 [role="dialog"] {
   animation: lms-overlay-in var(--lms-motion-base) var(--lms-motion-ease);
+}
+/* The dialog is positioned with translate(-50%, -50%). A transform-based
+   entrance animation would briefly override centering and visibly jump. */
+dialog[data-slot="dialog"][open] {
+  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-ease);
 }
 dialog::backdrop {
   animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-ease);
@@ -379,16 +384,23 @@ body {
 [data-slot="tabs"] :is(button,a):focus-visible,
 [data-slot="pagination"] a:focus-visible,
 [data-slot="info-popover"] summary:focus-visible {
-  outline: 2px solid rgba(38, 186, 199, .65);
-  outline-offset: 2px;
-  box-shadow: var(--lms-control-shadow);
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(26, 149, 161, .12);
 }
-[data-slot="button"]:disabled,
+[data-slot="button"]:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+[data-slot="button"]:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
 [data-slot="input"]:disabled,
 [data-slot="select"]:disabled,
 [data-slot="textarea"]:disabled {
   cursor: not-allowed;
-  opacity: .5;
+  opacity: 1;
 }
 [data-slot="input"],
 [data-slot="select"],
@@ -396,8 +408,8 @@ body {
   width: 100%;
   border: 1px solid var(--lms-canvas-border);
   border-radius: var(--lms-control-radius);
-  background: #fff;
-  color: #0a0517;
+  background: var(--lms-form-bg);
+  color: var(--lms-form-ink);
   font-family: inherit;
   font-size: 14px;
   font-weight: 400;
@@ -419,10 +431,10 @@ body {
   color: var(--lms-placeholder);
   opacity: 1;
 }
-[data-slot="input"]:hover:not(:disabled),
+[data-slot="input"]:hover:not(:disabled):not(:read-only),
 [data-slot="select"]:hover:not(:disabled),
-[data-slot="textarea"]:hover:not(:disabled) {
-  border-color: #bfc9da;
+[data-slot="textarea"]:hover:not(:disabled):not(:read-only) {
+  border-color: var(--lms-field-hover-border);
 }
 [data-slot="input"]:focus-visible,
 [data-slot="select"]:focus-visible,
@@ -433,7 +445,7 @@ body {
 [data-slot="select"][aria-invalid="true"],
 [data-slot="textarea"][aria-invalid="true"] {
   border-color: var(--lms-error);
-  background: rgba(239, 68, 68, .04);
+  background: rgba(239, 68, 68, .06);
 }
 [data-slot="input"][aria-invalid="true"]:focus-visible,
 [data-slot="select"][aria-invalid="true"]:focus-visible,
@@ -450,7 +462,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="status-badge"], [data-slot="badge"] {
   min-height: 22px;
   border-radius: 999px;
-  padding: 2px 8px;
+  padding: 1px 8px;
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
@@ -568,7 +580,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="card"] {
   border: 1px solid var(--lms-canvas-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--lms-surface);
   box-shadow: none;
 }
 [data-slot="empty-state"], [data-slot="error-state"] {
@@ -576,8 +588,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   color: var(--lms-body-text);
   line-height: 1.5;
 }
-[data-slot="empty-state"] { border-color: var(--lms-canvas-border); background: #fff; }
-[data-slot="error-state"] { border-color: rgba(239, 68, 68, .25); background: rgba(239, 68, 68, .04); }
+[data-slot="empty-state"] { border-color: transparent; background: transparent; }
+[data-slot="error-state"] { border-color: rgba(239, 68, 68, .25); background: var(--lms-error-subtle); }
 [data-slot="empty-state"] h2,
 [data-slot="error-state"] h2 { color: var(--lms-heading); }
 [data-slot="skeleton"] .lms-skeleton-shimmer { border-radius: var(--lms-skeleton-radius); background: var(--lms-neutral-100); }
@@ -590,7 +602,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   [data-slot="page-canvas"] h1,
   [data-slot="page-header"] h1 { font-size: 26px; }
   [data-slot="button"], [data-slot="input"], [data-slot="select"], [data-slot="pagination"] a { min-height: 44px; }
-  [data-slot="dialog"] { border-radius: 0; box-shadow: none; }
+  /* Legacy Ant mobile modals are centered, inset 16px with rounded panels. */
+  [data-slot="dialog"] { border-radius: 12px; box-shadow: var(--lms-elevation-4); }
 }
 @media (prefers-reduced-motion: reduce) {
   [data-slot="button"], [data-slot="input"], [data-slot="select"],
@@ -624,9 +637,9 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   border-color: #bfc9da;
 }
 [data-slot="button"][data-variant="secondary"]:hover:not(:disabled) {
-  color: #1a95a1;
-  background: #eff8fa;
-  border-color: #26bac7;
+  color: var(--lms-on-primary);
+  background: var(--lms-button-primary);
+  border-color: var(--lms-button-primary);
 }
 [data-slot="button"][data-variant="ghost"]:hover:not(:disabled) {
   color: #1a95a1;
@@ -757,6 +770,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   background: var(--lms-surface);
   border-color: var(--lms-error);
 }
+:root[data-tracker-theme="dark"] { --lms-tooltip-background: #131c2e; }
 :root[data-tracker-theme="dark"] [data-slot="info-popover"] > div {
   color: var(--lms-body-text);
   background: var(--lms-surface);
@@ -829,6 +843,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   --lms-dropdown-shadow: 9px 11px 28px rgba(0,0,0,.1);
   --lms-search-dropdown-shadow: 0 14px 16px rgba(0,0,0,.04);
   --lms-tooltip-shadow: 0 2px 8px rgba(0,0,0,.2);
+  --lms-tooltip-background: #1a1d21;
   --lms-toast-shadow: var(--lms-elevation-3);
   --lms-drawer-shadow: -4px 0 24px rgba(0,0,0,.12);
   --lms-scrollbar-thumb: #c4c4c4;
@@ -844,9 +859,9 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   outline: none;
 }
 :where([data-slot="button"],[data-slot="dropdown-root"] > summary,[data-slot="menu"] [role="menuitem"]):focus-visible {
-  outline: var(--lms-outline-width) solid rgba(38,186,199,.65);
-  outline-offset: 2px;
-  box-shadow: var(--lms-control-shadow);
+  outline: var(--lms-outline-width) solid var(--lms-primary-text);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(26,149,161,.12);
 }
 [data-slot="button"]:active:not(:disabled) { transition-duration: 150ms; }
 [data-slot="button"][aria-busy="true"] { cursor: progress; }
@@ -976,8 +991,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
  * for keyboard/touch overflow regions and opt back into thin scrollbar where
  * the sidebar explicitly requests a hover scrollbar. */
 [data-slot="scroll-cue"] > [role="region"]:focus-visible {
-  outline: 2px solid rgba(38,186,199,.65);
-  outline-offset: 2px;
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 3px;
 }
 [data-slot="scroll-cue"] [data-scroll-fade] { pointer-events: none; }
 .lms-scrollbar-thin {
@@ -1036,4 +1051,44 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 }
 @media (min-width: 1024px) {
   [data-slot="page-canvas"][data-authenticated-canvas="true"] { min-height: calc(100dvh - 132px); }
+}
+
+/* Chat-17 global form and notice aliases from legacy SCSS. */
+:root {
+  --lms-form-ink: #0a0517;
+  --lms-field-hover-border: #bfc9da;
+  --lms-info-border: #bde9ec;
+  --lms-warning-border: #f0d9ad;
+  --lms-warning-surface: #fef6e7;
+}
+body {
+  font-synthesis-weight: none;
+  font-synthesis-style: none;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+:root[data-tracker-theme="dark"] {
+  --lms-heading: #f8fafc;
+  --lms-canvas-border: var(--lms-border);
+  --lms-form-ink: #f8fafc;
+  --lms-form-bg: #172337;
+  --lms-field-hover-border: #64748b;
+  --lms-info-border: #25636c;
+  --lms-warning-border: #92400e;
+  --lms-warning-surface: #422f1c;
+}
+
+/* The tracker dark override must also win over native disabled-control selectors. */
+:root[data-tracker-theme="dark"] :is([data-slot="input"], [data-slot="select"], [data-slot="textarea"]):disabled {
+  background: var(--lms-neutral-50);
+  color: var(--lms-neutral-400);
+  border-color: var(--lms-border);
+}
+
+/* Empty listings live on the single page canvas, including in the optional tracker theme. */
+:root[data-tracker-theme="dark"] [data-slot="empty-state"] {
+  background: transparent;
+  border-color: transparent;
 }

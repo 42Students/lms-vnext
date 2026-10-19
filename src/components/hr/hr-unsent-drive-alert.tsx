@@ -1,6 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {restoreHrUnsentDraft,clearHrUnsentDraftStores} from "@/modules/placements/hr-unsent-draft-storage-model";
 /** REC-home-drives-17: only a scoped, saved, validated draft can be continued. */
@@ -32,9 +34,9 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
     className="mt-3 inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Continue
    </Link>
-   <button type="button"
-    className="ml-3 min-h-9 rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-body underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-    onClick={()=>{setError("");setConfirmDiscard(true);}}>Discard saved draft</button>
+   <Button variant="ghost" type="button"
+    className="ml-3 underline"
+    onClick={()=>{setError("");setConfirmDiscard(true);}}>Discard saved draft</Button>
    <ConfirmActionDialog open={confirmDiscard}
     title="Discard the unsent drive request saved on this device?"
     consequence="This removes your saved draft from this browser. It has not been submitted."

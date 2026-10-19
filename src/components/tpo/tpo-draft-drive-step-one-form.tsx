@@ -75,7 +75,7 @@ export function TpoDraftDriveStepOneForm({
       setPending(false);
     }
   }
-  const cls = "mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground";
+  const cls = "mt-1 block min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground";
   return (
     <form onSubmit={(event) => void submit(event)}
       className="space-y-5 border-b border-border pb-5">
@@ -132,7 +132,7 @@ export function TpoDraftDriveStepOneForm({
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {unknownCreate?<p role="alert" className="text-sm text-body">Review <Link href="/tpo/placements/lifecycle" className="text-primary-text underline">Drives</Link> before creating again. <button type="button" className="underline" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</button></p>:null}
       <button type="submit" disabled={pending || unknownCreate || !companyRelationshipId}
-        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
+        className="min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
         {pending ? "Saving draft…" : "Review and save draft"}
       </button>
     </form>

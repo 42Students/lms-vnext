@@ -1,5 +1,6 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import {Radio} from "@/components/ui/radio";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 import {useState} from "react";
@@ -52,8 +53,8 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
   <h2 className="font-semibold">Sign-in method</h2>
   <fieldset disabled={!ready||saving} className="grid gap-3">
    <legend className="sr-only">Sign-in method</legend>
-   {choices.map(choice=><label key={choice.value} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3">
-    <input type="radio" className="size-4 accent-[var(--lms-button-primary)]" name="signin-method" value={choice.value}
+   {choices.map(choice=><label key={choice.value} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+    <Radio name="signin-method" value={choice.value}
      checked={selection===choice.value} onChange={()=>setSelection(choice.value)}/>
     <span><strong className="block text-sm">{choice.label}</strong><span className="text-xs text-muted-foreground">{choice.hint}</span></span>
    </label>)}

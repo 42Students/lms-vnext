@@ -294,3 +294,61 @@ Files edited in this fifth batch:
 - `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
 
 **Scope preserved:** no user-visible copy or page-body section order changed; no API, request, state, auth, validation or routing logic changed. The shared UI kit and shell remain under their own lanes. Only source edits were performed. As instructed, no local code execution, tests, typecheck, lint, CI, runtime or screenshots were performed; exact old-LMS parity remains unverified. At ledger time, the lane was **30 commits ahead / 0 behind `main`**, with 25 changed files in the diff; merged upstream commits may include many earlier changes.
+
+
+## Page head and canvas ownership correction — 2026-10-19 (latest owner request)
+
+This owner instruction supersedes the earlier shared-component exclusion **only** for
+`src/components/ui/page-header.tsx`, `src/components/ui/page-canvas.tsx`, and the
+authenticated layout/app-shell wiring. Other `src/components/ui/**` files remain with
+the shared UI owner; sidebar and topbar implementation remains with their lanes.
+
+- Before changes, `chatgpt/chat-9-b` had no unique commits and was 1,254 commits
+  behind `main`. It was non-force fast-forwarded to `10ac677d5ab403f3c037d559c3321ac55c6cffa6`.
+- `page-header.tsx`: one horizontal row, h1 30px/600 using the heading token,
+  a single truncated grey subtitle inline with the title, actions aligned right.
+  Legacy eyebrow and description props are combined in the inline subtitle; the
+  separate eyebrow line and description paragraph are gone.
+- `page-canvas.tsx`: retain the existing white, no-shadow 12px radius, 1px
+  `#e5e9f0` border and use the canonical 24px padding at *all* breakpoints.
+- `src/app/(authenticated)/layout.tsx` already wraps every authenticated page
+  and notice in one `PageCanvas` inside `AppShell`, so no redundant wrapper was added.
+  The app-shell main-content left/right gutter was aligned to the legacy
+  expanded sidebar's 24px left and 16px right placement.
+- Super Admin / College Projects view selectors, Super Admin template section tabs,
+  Super Admin grouped tabs, Tenant Setup step tabs, and Project Admin navigation
+  now use a 3px active teal underline on the white canvas rather than filled
+  active pills; the College Projects archive view gets the correct active state.
+
+Commits on `chatgpt/chat-9-b` carry the `[chat-9]` prefix. Read the legacy
+`components___variables.scss`, `components___button.scss`,
+`components___form.scss`, and `components___common.scss` reference values.
+No code, CI, typecheck, lint or visual browser execution was run. Source-level
+checks were limited to complete JSX closing tags and inspected replacements;
+pixel-perfect visual acceptance and strict TypeScript compilation remain unverified.
+
+Additional source-only acceptance: removed the PageHeader bottom rule so chips and tabs
+flow from the page head through whitespace rather than an invented separating hairline.
+Re-fetched all nine touched TSX/JSX files and checked for incomplete closing tags,
+including the `</Select>` regression pattern; none were found. This is not a parser,
+compiler or browser visual test.
+
+
+## Third pass — page-head/canvas and Super Admin last-third verification (2026-10-19)
+
+**Start-of-pass sync:** the lane branch was `0 behind` `main` at the start of this continuation (and contained 12 previous lane commits). All subsequent writes remain on `chatgpt/chat-9-b` under `[chat-9]` commits.
+
+**Canvas/shell integration:**
+- Authenticated layout already places one `PageCanvas` around every authenticated page, access notice and connection notice. No nested canvas was introduced.
+- The older global media queries still set `[data-slot="page-canvas"]` to 16px on small viewports; the canvas now puts the 24px token on its own `style` prop to take precedence while allowing caller-supplied styles.
+- Shell main uses 16px right gutter (24px desktop left gutter) even against an older `main#lms-main-content` specificity override, yielding the reference 256px-sidebar + 24px-left / 16px-right offsets.
+- Shared shell already contains the `TrackerQuickReportLauncher`; removed the additional copy from the Super Admin layout to avoid two fixed launchers and duplicate `Alt+B` event subscriptions.
+- PageHeader remains a single horizontal title/subtitle/actions row with 30px/600 heading and no eyebrow, stacked description or rule. The right actions are bounded so narrow screens do not push the canvas beyond the viewport.
+
+**Last-third routes reviewed:** all 37 entries numbered 75–111 in `docs/orchestrator/ui-ux/pages-admin.md`. Direct styling changes covered tenant setup/directory/creation, platform settings, module access, semester mapping, semester directory, quizzes, students, and Projects overview, creation, templates/versions and subviews, readiness, risks and submissions. Route delegates/redirects were kept intact. The placements-specific shortlisted routes and course/video/resource shared content implementation remain with their owning lanes; this pass did not rewrite those screens' internals.
+
+**Visible changes:** count tokens and canonical radius on template cards, pill counters, active teal tab underlines, canonical 36px desktop controls, back actions in the page head, Tenant Setup creation CTA in its header, neutral notices for empty settings filters, and thin pale-warning strips for degraded reads. Independently actionable cards, original data sections, copy, permissions and routes are retained.
+
+**Source review:** re-fetched changed TSX files and reviewed `Button`, `Select`, `Link` opening/closing pairs and known truncated-tag patterns. No truncated `</Select>` or other touched JSX closing tag was found. No code execution, build, lint, tests or CI was performed; TS compilation and visual fidelity remain unverified.
+
+**Concurrent integration state:** after this continuation began, `main` advanced rapidly. The last branch comparison read `29` commits ahead and `831` behind `main`. GitHub branch updates here preserve the lane commits without force-pushing; this is *not* a claim of a subsequent merge of those new upstream commits. A conflict-aware merge remains necessary before final integration.

@@ -1,5 +1,10 @@
 # MASTER QUEUE (owner: use every lane at full throttle, never idle)
 
+## OWNER GOAL (2026-10-19, overrides everything): vNext must look like a NEW MODULE INSIDE THE OLD LMS, not a separate product
+Five checkpoints, in this order, each must be a pixel-level clone of the old LMS (docs/design/old-lms-shell.css, old-lms-pages.md, legacy-styles/):
+1. TOP BAR  2. SIDEBAR  3. INTERNAL PAGES (page head, canvas, tabs, tables, filters, chips, banners)  4. MODALS and drawers  5. BUTTONS (primary solid #0a7c88 white text, radius 9, 36px high, 14px/650; secondary outlined; sizes; hover/focus/disabled).
+When in doubt, copy the legacy SCSS value. Stakeholders must not be able to tell vNext from the old LMS.
+
 ## NORTH STAR (owner, 2026-10-19, TOP PRIORITY, COMPLETE BY MORNING): the vNext SHELL and LOOK must be exactly the old LMS
 SCOPE (owner clarified, binding): change the page SHELL and the global LOOK, NOT the page contents. The owner respects vNext page contents and the way they are arranged inside the page: keep every page's own sections, tables, forms, wording and behaviour. What must become exactly the old LMS, for EVERY page and portal, down to tiny details: sidebar (96px icon rail that expands to 256px on hover, icons, groups, active bar), top bar (68px, command search, + New, notification icons, avatar menu), page canvas (one white rounded canvas on the #f1f4f9 shell), fonts (Inter weights/sizes/line-heights as the old LMS), colours, buttons (solid #0a7c88, white text, radius 9, 36px high), inputs/selects/textareas, dropdown menus, tables (header row, row height, hairlines, hover), badges/pills, tabs, tooltips, modals/dialogs/drawers, toasts, alerts, pagination, scrollbars, focus rings, spacing scale, radii, borders, shadows, transitions. Breakage is acceptable tonight; completeness is not optional. Do not run or wait for CI; the owner fixes and runs CI/CD after waking.
 REFERENCES: docs/design/old-lms-shell-spec.md, old-lms-shell.css (exact TPO shell rules from the running app), old-lms-pages.md, vnext-vs-old-lms-gap.md, and legacy-styles/ (the old LMS SCSS sources: variables, buttons, forms, dropdowns, header, common, antd overrides, layout, notification drawer, login). If a detail is not covered, read the SCSS and match its values; never guess a look.
@@ -100,3 +105,6 @@ Source-level now: compare `docs/audit/legacy-inventory-A.md`, `legacy-inventory-
 
 ## Unowned and spillover
 Anything in docs/audit/ux/COVERAGE-MATRIX.md still red; unit failures in docs/orchestrator/unit-failures-*.md newest file; any lane's overflow.
+
+## AFTER NORTH STAR (orchestrator, 2026-10-19): ONE SOURCE OF TRUTH FOR CONTROLS
+Tokens exist in globals.css and shared components in src/components/ui, but many pages hand-roll raw <button>/<select>/<input>/<textarea> with long class strings. Do after the sweeps: (1) make src/components/ui the single source for every control; (2) add a lint rule or unit test failing on raw controls with long class strings and on hard-coded hex colours outside globals.css/ui; (3) one codemod pass moving remaining raw controls to the shared components.
