@@ -379,7 +379,7 @@ export function FacultyCourseWorkspace({
     workspace;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <PageHeader
         eyebrow="Faculty · Course"
         title={course.courseName}
