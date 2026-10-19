@@ -37,7 +37,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     {key:"slots",header:"Candidate slots",cell:()=>"See candidate interviews above"},
   ];
   return <div className="space-y-6">
-    <PageHeader eyebrow="College Admin · Placements" title={"Interviews · "+data.job.title}
+    <PageHeader title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Interview round filters" className="flex flex-wrap items-end gap-4 rounded-[8px] border border-border p-4">
