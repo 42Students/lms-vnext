@@ -4,6 +4,7 @@ import {useCallback,useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {ScrollCue} from "@/components/ui/scroll-cue";
+import { PopoverPanel } from "@/components/ui/popover";
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 import {learnerNotificationTarget} from "@/modules/activity/learner-notification-inbox-model";
 type Due={key:string;title:string;body:string;href:string;dueAt:string};
@@ -68,7 +69,7 @@ export function LearnerNotificationBell(){
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
      {count>99?"99+":count}</span>:null}
   </button>
-  {open?<section data-slot="notification-popover" role="dialog" aria-modal="false" aria-label="Notifications"
+  {open?<PopoverPanel data-slot="notification-popover" label="Notifications"
    className="absolute right-0 top-full z-50 mt-2 max-h-[min(520px,calc(100dvh-120px))] w-[min(25rem,92vw)] max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-[var(--lms-overlay-shadow)]">
    <div className="flex items-center justify-between">
     <h2 className="font-semibold text-foreground">Notifications</h2>
@@ -111,6 +112,6 @@ export function LearnerNotificationBell(){
      className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
      See all notifications
    </Link>
-  </section>:null}
+  </PopoverPanel>:null}
  </div>;
 }
