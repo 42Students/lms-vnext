@@ -189,3 +189,10 @@ The reviewed/modified files in this continuation:
 - Scope stayed on the Super Admin last-third /admin surfaces, college-side Projects pages and their Projects UI components; `src/modules/projects` holds the domain/service models rather than the TSX surfaces.
 
 **Verification boundary:** every replacement was exact-match guarded against the fetched source and committed separately. No code execution, unit test, typecheck, CI, runtime browser or screenshot diff was performed, as instructed. Source-only edits do not certify pixel-perfect legacy parity or strict TypeScript compilation. Browser comparison at desktop/mobile widths, keyboard tab focus and the final main-branch integration remain outstanding.
+
+
+### Follow-on integration reconciliation (2026-10-19)
+
+After the 29 file-level UI commits and the tracker commit, `main` advanced by 307 independent commits. The lane reconciled the Git ancestry using a two-parent merge commit `0609bdf0e038`, keeping the newer `main` tree as the base and overlaying only lane-owned changes with no upstream file overlap. Five overlapping pages (`/admin/module-access`, `/admin/programs`, `/admin/quizzes`, `/admin/semesters`, `/admin/students`) explicitly prefer newer upstream changes rather than overwriting concurrent work. In `/admin/settings` and `/admin/tenants`, the newer upstream contents were retained and the precise Input/Select legacy-skin overrides were re-applied; the tenant action links were normalized to legacy 36px controls. At reconciliation time, the lane was **31 commits ahead / 0 behind `main`**, with 25 source and audit paths differing. No force push and no changes to `main`.
+
+This is an ancestry/source reconciliation only. No TypeScript execution, tests, lint, CI or visual browser validation were performed. If main advances again, recompare before merging or integrating the lane.
