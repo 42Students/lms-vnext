@@ -5,6 +5,7 @@ Five checkpoints, in this order, each must be a pixel-level clone of the old LMS
 1. TOP BAR  2. SIDEBAR  3. INTERNAL PAGES (page head, canvas, tabs, tables, filters, chips, banners)  4. MODALS and drawers  5. BUTTONS (primary solid #0a7c88 white text, radius 9, 36px high, 14px/650; secondary outlined; sizes; hover/focus/disabled).
 When in doubt, copy the legacy SCSS value. Stakeholders must not be able to tell vNext from the old LMS.
 
+WORK STYLE: lift heavy. Each turn do a LARGE batch (100+ commits or your whole category), plan from greps, keep going, push every ~10 commits; reply only at the end with commits/ticked/open/next file. See docs/design/ui-clone-checklist.md.
 EXHAUSTIVE CHECKLIST (owner asked to be exhaustive): docs/design/ui-clone-checklist.md lists every UI element category (foundations, shell, forms, buttons, data display, overlays and feedback, whole-page types, portals, behaviour) with ONE owner lane per category. Read your category, compare value by value with docs/design/legacy-styles, fix, write docs/audit/ux/clone-<category>.md, then migrate every page onto the shared components.
 
 ## NORTH STAR (owner, 2026-10-19, TOP PRIORITY, COMPLETE BY MORNING): the vNext SHELL and LOOK must be exactly the old LMS

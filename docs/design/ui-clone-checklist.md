@@ -5,6 +5,9 @@ Owner goal (2026-10-19): stakeholders must not be able to tell vNext from the ol
 Each category has ONE owner lane (single owner per file set). Owners: compare vNext to the legacy value by value, fix, write `docs/audit/ux/clone-<category>.md` listing every value checked and its result, then migrate every page that hand-rolls the element onto the shared component. Tick items in your own audit file.
 
 
+## WORK STYLE (owner, binding): lift heavy, work long
+Take on a LARGE amount of work per turn. Do not finish after a handful of files. Plan your whole category first (list every file/instance from grep), then work through it continuously, committing and pushing every ~10 commits, and keep going until you have pushed at least 100 commits OR your whole category is complete under the STRICT TICK RULE. Only then reply, and the reply must contain: commits pushed, items ticked, items still open and why. If you run out of room in a turn, push everything you have, then state the exact next file to continue from so the next message resumes without re-planning. Never stop to ask questions: pick the closest legacy value, note it in your audit file, and proceed.
+
 ## STRICT TICK RULE (owner, binding)
 An item may be ticked ONLY when ALL of these are true; otherwise leave it unticked and write what is missing:
 1. VALUE PROOF: your audit file docs/audit/ux/clone-<category>.md has, for the item, a table of every property with the legacy value (file:line in docs/design/legacy-styles/ or old-lms-shell.css) and the vNext value (file:line), and every row matches exactly. No "approximately", no "similar", no row left out. States included: default, hover, active, focus, disabled, loading, error, empty where the element has them.
