@@ -284,7 +284,7 @@ export function PlacementRoleOptions({
         </div>
       </div>
 
-      <div className="grid gap-3 p-5 lg:grid-cols-2">
+      <div className="grid gap-3 pt-4 lg:grid-cols-2">
         {activeRoles.map((role) => (
           <article
             key={role.id}

@@ -52,7 +52,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
        <p className="mt-1 break-all text-body">{entry.value==="[redacted]"?"[redacted]":entry.value}</p>
       </div>
       <Button variant="secondary" type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
-       className="">
+       className="min-h-11 sm:min-h-9">
        Remove</Button>
      </li>;
     })}
@@ -70,7 +70,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
    </label>
    <p className="text-xs text-body">Use letters, digits, dots, dashes and underscores. Typos create unused keys. Documented settings must be edited in their section above.</p>
    <Button variant="primary" type="button" disabled={!ready||busy||!/^[A-Za-z][A-Za-z0-9._-]*$/.test(key)||!value.trim()}
-    onClick={()=>void apply("POST")} className="">
+    onClick={()=>void apply("POST")} className="min-h-11 sm:min-h-9">
     {busy?"Saving…":"Add setting"}</Button>
   </fieldset>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}

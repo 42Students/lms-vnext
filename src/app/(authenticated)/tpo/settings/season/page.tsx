@@ -81,7 +81,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
           {seasons.map((season) => (
             <article
               key={season.id}
-              className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
+              className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>

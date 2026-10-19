@@ -51,10 +51,10 @@ export default async function TenantDirectory({searchParams}:{
   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />} />
-  <Link href="/admin/domains" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Domains</Link>
+  <Link href="/admin/domains" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Domains</Link>
   <div className="flex flex-wrap gap-3">
-   <Link href="/admin/tenants/create" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Create an organization and its colleges</Link>
-   <Link href="/admin/tenants/setup" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
+   <Link href="/admin/tenants/create" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Create an organization and its colleges</Link>
+   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-primary-text">Get this college ready to go live</Link>
   </div>
   <form className="grid gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold text-body">College
@@ -77,7 +77,7 @@ export default async function TenantDirectory({searchParams}:{
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching colleges · page {data.query.page} of {data.totalPages}</p>
   {data.items.length?<div className="grid gap-3 md:grid-cols-2">
-   {data.items.map(x=><article key={x.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   {data.items.map(x=><article key={x.id} className="min-w-0 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4">
     <h2 className="m-0 break-words font-semibold text-foreground">{x.name}</h2>
     <p className="mt-1 text-sm text-body">{x.organizationName} · {x.code}</p>
     <div className="mt-2 flex flex-wrap gap-2"><StatusBadge tone={x.status==="ACTIVE"?"success":"neutral"}>College {x.status}</StatusBadge>

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -22,10 +23,10 @@ export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
   finally{pending.current=false;setBusy(false);}
  }
  return <span className="inline-flex flex-wrap items-center gap-2">
-  <button type="button" aria-pressed={marked} disabled={busy} onClick={()=>void toggle()}
-   className="min-h-10 rounded-[var(--radius)] border border-border px-3 text-xs font-semibold">
+  <Button variant="secondary" type="button" aria-pressed={marked} disabled={busy} onClick={()=>void toggle()}
+   className="min-h-10 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold">
    {busy?"Saving…":marked?"Unmark decision":"Mark as decision"}
-  </button>
+  </Button>
   {error?<span role="alert" className="text-xs text-danger">{error}</span>:null}
  </span>;
 }

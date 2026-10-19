@@ -22,9 +22,21 @@ describe("chat-19 recruiter sidebar active route aliases", () => {
     expect(legacySidebarItemActive("/hr/home", drives, null, null)).toBe(false);
   });
 
+  it("highlights canonical menu rows on the legacy recruiter portal aliases", () => {
+    for (const [route, href, label] of [
+      ["/recruiter", "/hr/home", "Today"],
+      ["/recruiter/home", "/hr/home", "Today"],
+      ["/recruiter/calendar", "/hr/calendar", "Calendar"],
+      ["/recruiter/company", "/hr/company", "Company & Team"],
+    ]) {
+      expect(legacySidebarItemActive(route, item(label, href), null, null), route).toBe(true);
+    }
+    expect(legacySidebarItemActive("/recruiter/company", item("Today", "/hr/home"), null, null)).toBe(false);
+  });
+
   it("recognizes the recruiter Messages alias, not notification pages", () => {
     const messages = item("Messages", "/hr/conversations");
-    for (const route of ["/hr/messages", "/hr/conversations", "/hr/conversations/abc"]) {
+    for (const route of ["/hr/messages", "/hr/conversations", "/hr/conversations/abc", "/recruiter/messages"]) {
       expect(legacySidebarItemActive(route, messages, null, null), route).toBe(true);
     }
     expect(legacySidebarItemActive("/hr/notifications", messages, null, null)).toBe(false);

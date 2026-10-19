@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 type Season = {
   id: string;
@@ -74,21 +76,21 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
             {(["name", "code", "startDate", "endDate"] as const).map((key) => (
               <label key={key} className="grid gap-1 text-sm font-semibold text-body">
                 {key === "startDate" ? "Start date" : key === "endDate" ? "End date" : key === "name" ? "Season name" : "Season code"}
-                <input type={key.endsWith("Date") ? "date" : "text"}
+                <Input type={key.endsWith("Date") ? "date" : "text"}
                   value={form[key]} disabled={busy}
                   onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-                  className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-sm text-foreground"
+                  className="min-h-11 md:min-h-9"
                   required />
               </label>
             ))}
           </div>
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={() => void save()} disabled={busy}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-60">
+            <Button type="button" onClick={() => void save()} disabled={busy}
+              className="min-h-11 md:min-h-9">
               {busy ? "Saving..." : edit ? "Review and confirm edit" : "Review and confirm new season"}
-            </button>
-            {edit ? <button type="button" onClick={() => select(null)}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm">Cancel edit</button> : null}
+            </Button>
+            {edit ? <Button type="button" variant="secondary" onClick={() => select(null)}
+              className="min-h-11 md:min-h-9">Cancel edit</Button> : null}
           </div>
         </>
       )}

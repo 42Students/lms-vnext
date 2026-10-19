@@ -102,3 +102,42 @@ Second-pass commits and discovered exceptions will be recorded below. Visual pix
 - `src/components/placements/tpo-waitlist-promotion-control.tsx`
 - `src/components/placements/tpo-week-hour-calendar.tsx`
 - `src/components/tpo/tpo-drive-request-actions.tsx`
+
+## Third-pass verification addendum (2026-10-19)
+
+- Before this batch, `chatgpt/chat-5-b` was fast-forwarded to `main` SHA `6222f78a4a19084be6529aa802810ee98193c1d2`. The third pass added **67 source commits covering 67 source files** plus documentation commits, all directly on `chatgpt/chat-5-b` and no commits to `main`.
+- Rechecked the 103-file chat-5 inventory by fetching the branch source, with direct TPO drives/jobs/selection/waitlist/offers/joining and round pages clear of raw utility-radius and fixed-status palette patterns. Remaining known hits were either canonical documentation colors (e.g. `#172033`), or cross-lane TPO reporting, first-third and notification helpers explicitly excluded from this lane's ownership.
+- Tightened nested drive About rows, request-change summaries, the create-drive clone list, legacy warning badge, the drive workspace popover shadow, form and tab/button corner tokens and 44px mobile / 36px desktop targets. No application state logic, routes or wording changed.
+- Branch `main` advanced concurrently while changes were being pushed. All updates are on the lane branch; a later integration merge must reconcile that newer `main` before final acceptance.
+- Validation remains source-only by owner instruction: **no application code, compiler, tests or CI ran**, and no browser pixel comparison was made. The screenshot owner must confirm typography, spacing, canvas, header and sidebar parity at runtime.
+
+## Fourth-pass continuation (2026-10-19)
+
+- Upstream synchronization: PR [#180](https://github.com/42Students/lms-vnext/pull/180) merged `main` into **only** `chatgpt/chat-5-b`, creating merge commit `83baa631542efada407608009db9afa43facf90e`; no direct `main` edits.
+- Exactly **27 source commits / 20 distinct source files** after the merge, prefixed `[chat-5]`. Edited drive workspace, create form, operations overview, TPO lifecycle and workspace tabs, offer and joining pages, applicant pipeline, closeout, round results, waitlist and interview widgets.
+- Verified from file source that the old-LMS visual treatment is applied locally: underline active tabs, secondary white CSV exports, canonical white-on-teal primary actions, hairline list rows, consolidated metric strips and mobile/desktop control minimums. No business copy or action routing was altered.
+- `docs/audit/ux/north-star-sweep-5.md` now points to the full source matrix in `north-star-sweep-chat-5.md` so the short filename used by the owner resolves.
+- **No app runs, tests, compiler/typecheck, CI or browser inspection** were performed. Only source reads and branch commits; literal pixel parity cannot be asserted without integrated side-by-side screenshots.
+
+## Fifth source styling continuation — 2026-10-19
+
+- Attempted to pull the then-latest upstream `main` into `chatgpt/chat-5-b` using integration PR [#181](https://github.com/42Students/lms-vnext/pull/181). GitHub rejected the merge with conflicts (HTTP 405). **No upstream merge was claimed, no history was rewritten, and no commits went to `main`.** The previous successful main sync remains PR #180.
+- Continued file-by-file on the existing lane branch instead of overriding newer upstream changes. **20 additional `[chat-5]` source commits, 19 distinct files** since `95788ffde5dec5074597ecf23352952e7e3f5e48`.
+- Tightened the continuous white-canvas look: replaced per-row bordered cards with hairline-divided rows in bulk applicant selections, round reorder, drive-day pipeline, company change requests, outside participants and bulk request decisions. Consolidated drive-day and reporting metric cards into shared bordered metric strips without reordering facts.
+- Corrected primary button text to the canonical white-on-teal foreground in offer withdrawal, recorded-outside forms, company life-cycle and contact editing, round result actions and publication controls. Matched 44px mobile / 36px desktop targets for check-in, saved views, result recording, presentation ordering and recorded-outside controls.
+- Preserved section headings, rendered copy, state logic, routes, handlers, input validation, role constraints and confirmation behavior. All changes were confined to JSX class strings.
+- Re-read updated source and JSX control closings, including `</Select>`, `</Button>`, `</Input>`, `</Radio>` and `</Checkbox>` where present; no incomplete closing tags were detected in the inspected changed files. **No application execution, typecheck, unit tests, lint, CI or screenshot/browser parity run.** Final integration must resolve PR #181 conflicts rather than discarding either lane's edits or the upstream component syntax fixes.
+
+## Sixth pass — upstream resolution and continued style-only parity (2026-10-19)
+
+- Pulled upstream `main` at `f7dd3e81786adf00538daebf63a075046d159b4c` into `chatgpt/chat-5-b` with two-parent merge `b1f950c9464afd30e34c1ea6992bd847d68431c7`. Both branch histories are retained, and **origin/main was preferred on every conflicted JSX file**. No direct commits to `main`.
+- Reapplied only the lane's styling deltas over the latest upstream JSX across **39 files**. In particular, `rounds/[roundId]/results/page.tsx` keeps upstream `Input`, `Select` and `Button` elements with complete closing tags; `tpo-interview-slot-planner.tsx` keeps upstream `Input`, `Select`, `Button` elements and hooks, with only the round-request row's hairline class restored. Did not resurrect older native `input`, `select`, `button` tags.
+- Reapplied styling in drive/status and offer tabs, applicant/joining/offer/closeout metric strips, form control radii, primary white-on-teal contrast, white secondary CSV controls, mobile target heights, plain canvas spacing, and per-row dividers. Where upstream classes had already changed, made targeted class-only adjustments rather than replacing upstream lines/components.
+- Visually sensitive JSX control closing tags were re-read during each source update, with no incomplete `</Select`, `</Button`, `</Input`, `</Radio`, or `</Checkbox` occurrences detected. This was a **source-only** pass; the application, typecheck, tests, lint, CI and browser screenshots were not run.
+- The earlier #181 PR merge attempt failed automatically, but the subsequent explicit two-parent lane merge resolved it manually. The lane is fully up-to-date with the `main` revision listed above. Future main commits still require reconciliation.
+
+### Additional source-only pass after upstream reconciliation
+
+- Finished four newly inspected TPO elements: interview reschedule primary-button foreground, weekly-calendar follow-up primary-button foreground, sequential-review row divider and bulk round-results outcome list hairline. Retained upstream JSX tags and all event/state logic.
+- An older 40-file sweep from pre-merge history was compared against the latest tree. Where upstream already had more recent styling or shared-control JSX, it remained authoritative; no older HTML/native control tags were restored. Only clear styling deltas were reapplied.
+- No CI, typecheck, app execution or automated code validation was run. Complete component-tag closings were re-read in the touched files.

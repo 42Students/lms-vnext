@@ -8,9 +8,9 @@ export type BannerProps = HTMLAttributes<HTMLElement> & {
 };
 const tones = {
   info: "border-[#bde9ec] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
-  success: "border-[rgba(5,150,105,0.25)] bg-[rgba(5,150,105,0.08)] text-[#065f46]",
-  warning: "border-[#f0d9ad] bg-[#fef6e7] text-[#92400e]",
-  error: "border-[rgba(239,68,68,0.25)] bg-[rgba(239,68,68,0.08)] text-[#b91c1c]",
+  success: "border-[rgba(5,150,105,0.25)] bg-[rgba(5,150,105,0.08)] text-[var(--lms-success-text)]",
+  warning: "border-[#f0d9ad] bg-[#fef6e7] text-[var(--lms-warning-text)]",
+  error: "border-[rgba(239,68,68,0.25)] bg-[rgba(239,68,68,0.08)] text-[var(--lms-error-text)]",
 } as const;
 
 /** Slim legacy LMS notice strip with an inline recovery action. */

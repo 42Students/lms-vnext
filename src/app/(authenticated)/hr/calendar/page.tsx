@@ -350,7 +350,7 @@ export default async function HrCalendarPage({
         <>
           <section
             aria-label="Recruiter calendar summary"
-            className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+            className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-border sm:grid-cols-2 xl:grid-cols-5"
           >
             {[
               [
@@ -376,7 +376,7 @@ export default async function HrCalendarPage({
             ].map(([label, value]) => (
               <div
                 key={String(label)}
-                className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4"
+                className="border-b border-border p-4 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
               >
                 <p className="text-xs font-semibold text-muted-foreground">
                   {label}
@@ -415,18 +415,18 @@ export default async function HrCalendarPage({
                 </p>
               </div>
 
-              <nav aria-label="Calendar event types" className="flex flex-wrap gap-2">
+              <nav aria-label="Calendar event types" className="flex flex-wrap gap-3 border-b border-border">
                 {HR_CALENDAR_CATEGORIES.map(option=><Link key={option}
                   href={calendarHref(anchor,view,option)}
                   aria-current={category===option?"page":undefined}
-                  className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                  className={category===option ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold text-foreground" : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] text-body hover:text-primary-text"}>
                   {option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
                     option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds"}
                 </Link>)}
               </nav>
               <nav
                 aria-label="Calendar views"
-                className="flex flex-wrap gap-2"
+                className="flex flex-wrap gap-3 border-b border-border"
               >
                 {VIEWS.map((option) => (
                   <Link
@@ -443,8 +443,8 @@ export default async function HrCalendarPage({
                     }
                     className={
                       view === option
-                        ? "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold capitalize text-on-primary"
-                        : "inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold capitalize text-body hover:text-primary-text"
+                        ? "inline-flex min-h-9 items-center border-b-[3px] border-primary px-3 py-2 text-[13px] font-semibold capitalize text-foreground"
+                        : "inline-flex min-h-9 items-center border-b-[3px] border-transparent px-3 py-2 text-[13px] font-semibold capitalize text-body hover:text-primary-text"
                     }
                   >
                     {option}
@@ -545,7 +545,7 @@ export default async function HrCalendarPage({
           {eventCount === 0 ? (
             <section
               role="status"
-              className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-8 text-center"
+              className="border-b border-border py-8 text-center"
             >
               <h2 className="text-lg font-semibold text-foreground">
                 {view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
