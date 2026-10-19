@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -67,7 +68,8 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    </label>
    <Button type="submit" className="self-end">Filter</Button>
   </form>
-  <SuperAdminTemplatePageExport items={data.items}/>
+  <ListToolbar label="Global project templates" viewCount={data.total}
+    exportAction={<SuperAdminTemplatePageExport items={data.items}/>} />
   <p className="text-xs text-muted-foreground">{data.total} templates · page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
   {data.items.length?<div className="grid gap-4 md:grid-cols-2">
    {data.items.map(item=><article key={item.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
