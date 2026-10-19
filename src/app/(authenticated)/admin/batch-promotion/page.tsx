@@ -71,7 +71,7 @@ export default async function SuperAdminBatchPromotionPage({
       <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
         <input name="showCompleted" type="checkbox" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
-      <Button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-foreground">Preview</Button>
+      <Button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Preview</Button>
     </form>
     <section aria-label="Batch promotion queue" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
